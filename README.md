@@ -19,6 +19,9 @@ Implemented:
 - Placeholder result image reflecting detected faults (rotation, clipping, exposure, poor inspiration…), per-check feedback in both languages, retry / restart.
 - Unit tests for the evaluation and scoring logic.
 
+## Session 2 — interactive positioning
+Draggable central-ray target and collimator handles (mouse/touch/keyboard + slider alternatives), normalized detector coordinates, L/R side marker, chin/shoulder cues, richer rotation/SID visuals and direction-aware centering/coverage feedback. See [`docs/session-2-positioning.md`](docs/session-2-positioning.md) for decisions and the validated/simplified/provisional rule table.
+
 ## Tech stack
 Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand · next-intl · Vitest · ESLint.
 (shadcn/ui was not needed yet; the few controls are small custom components.)
@@ -58,7 +61,8 @@ Create a `RadCase` object in `src/data/cases/`, register it in `src/data/cases/i
 - Medical values unvalidated; result image is a placeholder schematic.
 - Practice mode only; Assessment Mode is typed (`SimulationMode`) but not implemented.
 - Only PA / AP / lateral selectable; AP-portable and lateral scenarios not authored.
-- Collimation failures also lower centering-related coverage (field is centred on the central ray) — intentional.
+- The collimated field is centred on the central ray (like a real collimator), so mis-centering can clip anatomy — intentional.
+- On touch devices the positioning workspace suppresses panning while editable; scroll via the surrounding gutter.
 - No persistence, accounts or backend.
 
 ## Roadmap

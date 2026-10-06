@@ -7,10 +7,12 @@ import { evaluate } from "./engine";
 const ideal: SimulationSettings = {
   projection: "pa-erect",
   rotationDeg: 0,
-  centerXCm: 0,
-  centerYCm: 20,
-  collimationWidthCm: 33,
-  collimationHeightCm: 36,
+  centralRay: { x: 0, y: -0.07 }, // ≈ 20 cm from the top of the 43 cm detector
+  collimation: { width: 0.94, height: 0.84 }, // ≈ 33 × 36 cm
+  chinPosition: "elevated",
+  shoulderPosition: "rolled-forward",
+  sideMarker: "L",
+  markerPosition: { x: -0.84, y: 0.68 },
   sidCm: 180,
   kvp: 115,
   mas: 3,
@@ -48,7 +50,7 @@ describe("evaluate — Adult Chest PA Erect", () => {
   it("penalises the wrong projection in the positioning category only", () => {
     const r = withChange({ projection: "ap-erect" });
     expect(r.primaryVariant).toBe("wrong-projection");
-    expect(category(r, "positioning")?.ratio).toBeCloseTo(1 / 3);
+    expect(category(r, "positioning")?.ratio).toBeCloseTo(5 / 7);
     expect(category(r, "rotation")?.ratio).toBe(1);
   });
 
@@ -60,21 +62,21 @@ describe("evaluate — Adult Chest PA Erect", () => {
   });
 
   it("flags clipped anatomy when the field is too small", () => {
-    const r = withChange({ collimationHeightCm: 25 });
-    expect(r.checks.find((c) => c.ruleId === "collimation")?.outcome).toBe("fail");
+    const r = withChange({ collimation: { width: 0.94, height: 0.58 } });
+    expect(r.checks.find((c) => c.ruleId === "collimation-clipping")?.outcome).toBe("fail");
     expect(r.variants).toContain("clipped");
   });
 
   it("flags clipping when the centering point shifts the field off the anatomy", () => {
-    const r = withChange({ centerYCm: 30 });
+    const r = withChange({ centralRay: { x: 0, y: 0.4 } });
     expect(r.variants).toContain("clipped");
     expect(r.checks.find((c) => c.ruleId === "centering-vertical")?.outcome).toBe("fail");
   });
 
   it("only gives partial credit for an excessively open field", () => {
-    const r = withChange({ collimationWidthCm: 35, collimationHeightCm: 43, centerYCm: 21.5 });
-    const check = r.checks.find((c) => c.ruleId === "collimation");
-    expect(check?.outcome).toBe("partial");
+    const r = withChange({ centralRay: { x: 0, y: -0.07 }, collimation: { width: 1, height: 1 } });
+    expect(r.checks.find((c) => c.ruleId === "collimation-excess")?.outcome).toBe("partial");
+    expect(r.checks.find((c) => c.ruleId === "collimation-clipping")?.outcome).toBe("pass");
     expect(r.variants).toEqual(["correct"]);
   });
 
@@ -105,10 +107,104 @@ describe("evaluate — Adult Chest PA Erect", () => {
     expect(evaluate(heavy, { ...ideal, mas: 30 }).score.total).toBe(100);
   });
 
+  it("reports clipped anatomy by side with bilingual detail", () => {
+    const r = withChange({ collimation: { width: 0.94, height: 0.58 } });
+    const fb = r.checks.find((c) => c.ruleId === "collimation-clipping")!.feedback;
+    expect(fb.en).toMatch(/apices/);
+    expect(fb.en).toMatch(/costophrenic/);
+    expect(fb.ar.length).toBeGreaterThan(10);
+  });
+
   it("is deterministic", () => {
     expect(evaluate(chestPaErect, chestPaErect.initialSettings)).toEqual(
       evaluate(chestPaErect, chestPaErect.initialSettings),
     );
+  });
+});
+
+const check = (r: ReturnType<typeof evaluate>, id: string) => r.checks.find((c) => c.ruleId === id)!;
+
+describe("centering from the central-ray position", () => {
+  it("passes inside the target region", () => {
+    const r = withChange({ centralRay: { x: 0.05, y: -0.2 } });
+    expect(check(r, "centering-lateral").outcome).toBe("pass");
+    expect(check(r, "centering-vertical").outcome).toBe("pass");
+  });
+
+  it("reports horizontal mis-centering with direction, independent of the vertical axis", () => {
+    const left = withChange({ centralRay: { x: -0.4, y: -0.14 } });
+    const right = withChange({ centralRay: { x: 0.4, y: -0.14 } });
+    expect(check(left, "centering-lateral").outcome).toBe("fail");
+    expect(check(left, "centering-lateral").feedback.en).toMatch(/left of the midline/);
+    expect(check(right, "centering-lateral").feedback.en).toMatch(/right of the midline/);
+    expect(check(left, "centering-vertical").outcome).toBe("pass");
+  });
+
+  it("reports vertical mis-centering as too high / too low", () => {
+    const high = withChange({ centralRay: { x: 0, y: -0.7 } });
+    const low = withChange({ centralRay: { x: 0, y: 0.5 } });
+    expect(check(high, "centering-vertical").feedback.en).toMatch(/too high/);
+    expect(check(low, "centering-vertical").feedback.en).toMatch(/too low/);
+    expect(check(high, "centering-lateral").outcome).toBe("pass");
+  });
+
+  it("gives half credit inside the acceptable band", () => {
+    const r = withChange({ centralRay: { x: 0.15, y: -0.14 } });
+    expect(check(r, "centering-lateral").outcome).toBe("partial");
+    expect(category(r, "centering")?.ratio).toBe(0.75);
+  });
+
+  it("does not change the centering weights (15 of 100)", () => {
+    expect(chestPaErect.scoring.categoryWeights.centering).toBe(15);
+  });
+});
+
+describe("positioning subchecks", () => {
+  it("fails chin and shoulders independently with their own image variants", () => {
+    const chin = withChange({ chinPosition: "tucked" });
+    expect(check(chin, "chin").outcome).toBe("fail");
+    expect(check(chin, "shoulders").outcome).toBe("pass");
+    expect(chin.variants).toContain("chin-overlap");
+    const sh = withChange({ shoulderPosition: "relaxed" });
+    expect(check(sh, "shoulders").outcome).toBe("fail");
+    expect(sh.variants).toContain("scapulae-overlap");
+  });
+
+  it("keeps the side marker unscored", () => {
+    const none = withChange({ sideMarker: null });
+    expect(check(none, "side-marker").outcome).toBe("fail");
+    expect(check(none, "side-marker").scored).toBe(false);
+    expect(none.score.total).toBe(100);
+  });
+
+  it("flags a marker over the lung fields or outside the field", () => {
+    expect(check(withChange({ markerPosition: { x: 0, y: -0.1 } }), "side-marker").outcome).toBe("partial");
+    const outside = withChange({ collimation: { width: 0.94, height: 0.6 }, markerPosition: { x: -0.84, y: 0.68 } });
+    expect(check(outside, "side-marker").feedback.en).toMatch(/outside the collimated field/);
+    expect(check(withChange({ markerPosition: { x: -0.84, y: 0.68 } }), "side-marker").outcome).toBe("pass");
+  });
+});
+
+describe("rotation state evaluation", () => {
+  it("uses the internal rotation state with symmetric bands", () => {
+    for (const deg of [-4, 4]) expect(check(withChange({ rotationDeg: deg }), "rotation").outcome).toBe("partial");
+    for (const deg of [-12, 12]) expect(check(withChange({ rotationDeg: deg }), "rotation").outcome).toBe("fail");
+    expect(check(withChange({ rotationDeg: 1 }), "rotation").outcome).toBe("pass");
+  });
+});
+
+describe("medical traceability", () => {
+  it("every rule declares evidence with a reference", () => {
+    for (const r of chestPaErect.rules) {
+      expect(r.evidence.reference.length, r.id).toBeGreaterThan(0);
+      expect(["validated", "educational-simplification", "provisional"]).toContain(r.evidence.status);
+    }
+  });
+
+  it("keeps exposure technique provisional", () => {
+    for (const id of ["kvp", "mas"]) {
+      expect(chestPaErect.rules.find((r) => r.id === id)?.evidence.status).toBe("provisional");
+    }
   });
 });
 

@@ -14,7 +14,7 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
   const tc = useTranslations("common");
   const ts = useTranslations("sex");
   const locale = useLocale();
-  const { activeCase, settings, phase, result, attempt, loadCase, setSetting, expose, retry, reset } =
+  const { activeCase, settings, mode, phase, result, attempt, loadCase, setSetting, expose, retry, reset } =
     useSimulationStore();
   const resultRef = useRef<HTMLDivElement>(null);
 
@@ -68,7 +68,7 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
       </section>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <PositioningView radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+        <PositioningView radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
         <ConsolePanel radCase={c} settings={settings} onChange={setSetting} onExpose={expose} locked={locked} />
       </div>
 

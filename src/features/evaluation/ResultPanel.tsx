@@ -6,7 +6,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
 import { ResultImage } from "./ResultImage";
-import type { CheckOutcome, EvaluationResult } from "./types";
+import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
 
 interface Props {
   radCase: RadCase;
@@ -27,8 +27,23 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   const t = useTranslations("result");
   const tCat = useTranslations("categories");
   const tCon = useTranslations("console");
+  const tPos = useTranslations("positioning");
   const locale = useLocale();
   const { score } = result;
+  const observedLabel = (kind: CheckResult["observedKind"], value: string) => {
+    switch (kind) {
+      case "projection":
+        return tCon(`projections.${value as "pa-erect"}`);
+      case "breathing":
+        return tCon(`breathingOptions.${value as "no-instruction"}`);
+      case "chinPosition":
+        return tPos(`chinOptions.${value as "tucked"}`);
+      case "shoulderPosition":
+        return tPos(`shoulderOptions.${value as "relaxed"}`);
+      default:
+        return value;
+    }
+  };
 
   return (
     <section aria-labelledby="result-heading" className="rounded-lg border border-line bg-panel">
@@ -97,9 +112,10 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                       <span aria-hidden>{OUTCOME_ICON[k.outcome]} </span>
                       {localize(k.label, locale)}
                       <span className="ms-2 text-xs font-semibold">{t(`outcome.${k.outcome}`)}</span>
+                      {!k.scored && <span className="ms-2 text-xs font-normal text-muted">({t("notScored")})</span>}
                     </span>
                     <span className="text-xs text-muted">
-                      {t("yourSetting")}: <bdi dir={k.observedKind ? undefined : "ltr"} className={k.observedKind ? undefined : "font-mono"}>{k.observedKind === "projection" ? tCon(`projections.${k.observed}`) : k.observedKind === "breathing" ? tCon(`breathingOptions.${k.observed}`) : k.observed}</bdi>
+                      {t("yourSetting")}: <bdi dir={k.observedKind ? undefined : "ltr"} className={k.observedKind ? undefined : "font-mono"}>{observedLabel(k.observedKind, k.observed)}</bdi>
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-ink">{localize(k.feedback, locale)}</p>

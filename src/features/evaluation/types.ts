@@ -1,5 +1,5 @@
 import type { LocalizedText } from "@/domain/localized";
-import type { CategoryId, ImageVariantId } from "@/domain/simulation";
+import type { CategoryId, EnumSettingKey, ImageVariantId } from "@/domain/simulation";
 import type { ScoreSummary } from "@/features/scoring/score";
 
 export type CheckOutcome = "pass" | "partial" | "fail";
@@ -12,10 +12,12 @@ export interface CheckResult {
   /** 0, 0.5 or 1. */
   credit: number;
   weight: number;
+  /** False for educational-only checks (weight 0) that never affect the score. */
+  scored: boolean;
   /** What the student set, formatted for display (e.g. "8 °"). */
   observed: string;
   /** Set when `observed` is an enum id that the UI should translate. */
-  observedKind?: "projection" | "breathing";
+  observedKind?: EnumSettingKey;
   feedback: LocalizedText;
   variant?: ImageVariantId;
 }

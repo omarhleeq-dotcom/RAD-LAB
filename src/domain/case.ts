@@ -2,6 +2,8 @@ import type { LocalizedText } from "./localized";
 import type {
   BreathingId,
   CategoryId,
+  EnumSettingKey,
+  NormPoint,
   ImageVariantId,
   NumericSettingKey,
   ProjectionId,
@@ -35,11 +37,25 @@ export interface DetectorRegion {
   heightCm: number;
 }
 
+/** How firmly a medical rule is backed by docs/RAD-LAB_Medical_Reference_Chest_PA.md. */
+export type EvidenceStatus = "validated" | "educational-simplification" | "provisional";
+
+/** Traceability for a medically meaningful rule. */
+export interface RuleEvidence {
+  status: EvidenceStatus;
+  /** Section of the medical reference (or "none" when provisional). */
+  reference: string;
+  /** What exactly is validated vs simplified/provisional. */
+  note?: string;
+}
+
 export interface RuleFeedback {
   pass: LocalizedText;
   /** Used for a failed/partial result when no direction-specific text exists. */
   fail: LocalizedText;
+  /** Numeric rules: value below the ideal band. Centering: toward the left (x) / top (y) of the detector. */
   low?: LocalizedText;
+  /** Numeric rules: value above the ideal band. Centering: toward the right (x) / bottom (y) of the detector. */
   high?: LocalizedText;
 }
 
@@ -51,13 +67,14 @@ interface RuleBase {
   /** Short name of what is being checked. */
   label: LocalizedText;
   feedback: RuleFeedback;
+  evidence: RuleEvidence;
 }
 
 /** Setting must equal a specific value. */
 export interface EqualsRule extends RuleBase {
   kind: "equals";
-  setting: "projection" | "breathing";
-  expected: ProjectionId | BreathingId;
+  setting: EnumSettingKey;
+  expected: string;
   variantOnFail?: ImageVariantId;
 }
 
@@ -73,17 +90,60 @@ export interface RangeRule extends RuleBase {
 }
 
 /**
- * The collimated field (centered on the central ray, clamped to the detector)
- * must cover the required anatomy without being opened excessively wide.
+ * The collimated field (centered on the central ray, clamped to the detector) is checked against
+ * the case's `requiredAnatomy`. Two independent subchecks of the Positioning category:
+ * - "clipping": any required anatomy outside the field fails.
+ * - "excess": a field opened more than `maxMarginCm` beyond the anatomy earns partial credit.
  */
 export interface CoverageRule extends RuleBase {
   kind: "coverage";
-  /** The case's `requiredAnatomy` is the region that must be covered. */
+  check: "clipping" | "excess";
   maxMarginCm: number;
   variantOnClipped?: ImageVariantId;
+  /** Clipping only: which anatomy is lost when the field cuts off this side of the required region. */
+  clippedSides?: Record<"left" | "right" | "top" | "bottom", LocalizedText>;
 }
 
-export type CheckRule = EqualsRule | RangeRule | CoverageRule;
+/**
+ * Central-ray position on one axis against `RadCase.positioning.centering`.
+ * Feedback `low` = toward the left (x) / top (y) of the detector, `high` = right / bottom.
+ */
+export interface CenteringRule extends RuleBase {
+  kind: "centering";
+  axis: "x" | "y";
+}
+
+/**
+ * Side-marker placement. Educational only: give it `weight: 0` until a validated scoring rule exists.
+ * TODO(medical-review): rule for marker side vs. patient side is not defined in the medical reference.
+ */
+export interface MarkerRule extends RuleBase {
+  kind: "marker";
+  /** `fail` = nothing placed. */
+  feedback: RuleFeedback & { overlap: LocalizedText; outsideField: LocalizedText };
+}
+
+export type CheckRule = EqualsRule | RangeRule | CoverageRule | CenteringRule | MarkerRule;
+
+/** Educational centering target region, normalized (see NormPoint). Provisional tolerances. */
+export interface CenteringSpec {
+  /** Midline (x = 0) and mid-thoracic / T7 teaching region (y). */
+  target: NormPoint;
+  /** Half-extent of the full-credit region. */
+  idealTolerance: NormPoint;
+  /** Half-extent of the half-credit region. */
+  acceptableTolerance: NormPoint;
+}
+
+export interface PositioningSpec {
+  centering: CenteringSpec;
+  /** Smallest collimation size (fraction of detector) the UI allows. */
+  minCollimation: number;
+  /** Side-marker size on the detector, used for overlap/bounds checks. */
+  markerSizeCm: number;
+  /** Where a marker appears when first chosen (outside the required anatomy). */
+  defaultMarkerPosition: NormPoint;
+}
 
 export interface ScoringRules {
   /** Category weights; should sum to 100. Configurable per case. */
@@ -122,6 +182,7 @@ export interface RadCase {
   /** Anatomy that must be demonstrated (drives coverage + schematic drawing). */
   requiredAnatomy: DetectorRegion;
   controls: Record<NumericSettingKey, NumericControlSpec>;
+  positioning: PositioningSpec;
   availableProjections: ProjectionId[];
   availableBreathing: BreathingId[];
   /** State when the case loads. Intentionally not the ideal answer. */
