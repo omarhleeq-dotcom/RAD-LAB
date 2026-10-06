@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { collimatedField } from "@/features/simulation/geometry";
+import { planRotationDeg } from "./visual-model";
 
 const PV = { detX: 380, pxPerCm: 4.5, midY: 140, sidPx: 1.7 };
 /** Educational SID reference for the case (docs/RAD-LAB_Medical_Reference_Chest_PA.md §2). Mirrors the SID rule target (S10b-26: 183 cm; 180 cm is its rounding). */
@@ -46,7 +47,7 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
           <line x1={ptX} y1={midY - 72} x2={ptX} y2={midY + 72} stroke="#4ade80" strokeWidth={1.5} strokeDasharray="3 5" opacity={0.8} />
         </g>
       )}
-      <g transform={`rotate(${settings.rotationDeg + baseAngle} ${ptX} ${midY})`}>
+      <g transform={`rotate(${planRotationDeg(settings.projection, settings.rotationDeg) + baseAngle} ${ptX} ${midY})`}>
         <ellipse cx={ptX} cy={midY} rx={16} ry={55} fill="#5d778a" stroke="#d8e4ec" strokeWidth={1.5} />
         <path d={`M ${ptX + noseDir * 16} ${midY - 7} L ${ptX + noseDir * 30} ${midY} L ${ptX + noseDir * 16} ${midY + 7} Z`} fill="#d8e4ec" />
       </g>
