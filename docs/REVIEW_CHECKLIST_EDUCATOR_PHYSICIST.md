@@ -23,10 +23,10 @@ Verdict: they support the *concept* that a marker should be present and correct,
 - [ ] Confirm the viewer-side convention (PA display: patient left = viewer right) against a departmental teaching standard.
 
 ## B. Technique (`src/data/exams/xray/chest-pa-technique.ts`; the patient attenuation is case data in `src/data/cases/chest-pa-erect.ts`)
-- [ ] kVp reference range 100–150 and demo band 110–125.
+- [ ] kVp reference range 100–150 and demo band 110–125. *(Only 110–125 is Bontrager; partial bands are engine teaching choices, S12-1.)*
 - [ ] Reference point 120 kVp · 3.2 mAs · 180 cm → DI 0; kVp exponent 3; one attenuation; detector/grid assumption.
 - [ ] DI scoring bands ±1 / ±3.
-- [ ] SID: 180 cm reference; bands 175–185 full, 150–200 partial.
+- [ ] SID: 180 cm reference; bands 175–185 full, 150–200 partial. *(Bontrager gives only the 183 cm minimum; the upper limit and partial band are engine teaching choices, S12-1.)*
 - [ ] AEC: 3-field layout, preferred lung-field chambers, anatomy factors, backup behaviour.
 - [ ] Readiness advisories (breathing, marker, keep-still).
 
