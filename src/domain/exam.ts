@@ -1,10 +1,11 @@
 import type { Evidence, TechniqueProfile } from "./technique";
 import type {
   CheckRule,
+  ChoiceControlSpec,
   DetectorRegion,
   DetectorSpec,
   ImageCriterion,
-  NumericControlSpec,
+  NumericControls,
   PatientProfile,
   PositioningSpec,
   PossibleError,
@@ -16,7 +17,6 @@ import type { RadiographAssetSpec } from "./radiograph";
 import type {
   BreathingId,
   MotionInstructionId,
-  NumericSettingKey,
   ProjectionId,
   SimulationSettings,
 } from "./simulation";
@@ -37,7 +37,10 @@ import type {
  * single object (proved by the Session 7 characterisation snapshot).
  */
 
-/** Positioning scenes the UI can draw today (hand-drawn SVG in `features/positioning`). */
+/**
+ * Positioning scenes the UI can draw (hand-drawn SVG in `features/positioning`). The ids are resolved through the scene
+ * registry (`features/positioning/scenes.tsx`, S11): one id per hand-drawn scene (PA now; Lateral and AP add theirs).
+ */
 export const SCENE_IDS = ["chest-pa-frontal"] as const;
 export type SceneId = (typeof SCENE_IDS)[number];
 
@@ -79,7 +82,9 @@ export interface ExamDefinition {
   /** Anatomy that must be demonstrated (drives coverage + schematic drawing). Provisional size. */
   requiredAnatomy: DetectorRegion;
   /** Technically selectable ranges (what the console allows) — not the educational target, not a scoring tolerance. */
-  controls: Record<NumericSettingKey, NumericControlSpec>;
+  controls: NumericControls;
+  /** Extra enum controls (side against the detector, arm position, patient state …). Absent for Chest PA. */
+  choiceControls?: ChoiceControlSpec[];
   /** Protocol for the technique / exposure model (target, tolerance, evidence class kept separate). */
   technique: ExamTechniqueProfile;
   /** Centering target and tolerances, collimation limit, marker size and laterality convention (`markerSide`). */
@@ -92,8 +97,8 @@ export interface ExamDefinition {
   imageCriteria: ImageCriterion[];
 
   /**
-   * Bindings to the code that draws the exam. Declarative ids only: the UI still has one scene and one renderer, so
-   * nothing resolves them yet (a second scene / renderer is what justifies a registry; see docs/PLATFORM_ARCHITECTURE.md §4.5).
+   * Bindings to the code that draws the exam. `scene.id` is resolved by the scene registry (S11); `render.renderer`
+   * still names the one renderer (a second renderer is what would justify a registry for it).
    */
   scene: { id: SceneId };
   render: { renderer: RendererId };

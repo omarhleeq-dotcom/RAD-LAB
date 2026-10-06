@@ -35,20 +35,26 @@ const EPS = 1e-9;
 /** Inverse-square factor relative to the reference distance: >1 closer than reference, <1 farther. */
 export const inverseSquareFactor = (referenceCm: number, sidCm: number) => (referenceCm / sidCm) ** 2;
 
+/** Attenuation of this patient for the selected projection (S11): the per-projection value, else the scalar. */
+export function attenuationFor(profile: TechniqueProfile, projection: SimulationSettings["projection"] | undefined): number {
+  const { attenuation, attenuationByProjection } = profile.patient;
+  return (projection && attenuationByProjection?.[projection]) || attenuation;
+}
+
 /** Manual mAs that would land exactly on the target at this kVp / SID for this patient and system. */
-export function targetMas(profile: TechniqueProfile, s: Pick<SimulationSettings, "kvp" | "sidCm">): number {
+export function targetMas(profile: TechniqueProfile, s: Pick<SimulationSettings, "kvp" | "sidCm"> & Partial<Pick<SimulationSettings, "projection">>): number {
   const { reference, kvpExponent } = profile.manual;
   const kvpGain = Math.pow(s.kvp / reference.kvp, kvpExponent);
   const geometry = inverseSquareFactor(reference.sidCm, s.sidCm);
   return (
-    (reference.mas * profile.patient.attenuation) / (kvpGain * geometry * profile.system.relativeResponse)
+    (reference.mas * attenuationFor(profile, s.projection)) / (kvpGain * geometry * profile.system.relativeResponse)
   );
 }
 
 /** Manual-mode receptor exposure relative to the target (EI/EIT). */
 export function manualExposureRatio(
   profile: TechniqueProfile,
-  s: Pick<SimulationSettings, "kvp" | "mas" | "sidCm">,
+  s: Pick<SimulationSettings, "kvp" | "mas" | "sidCm"> & Partial<Pick<SimulationSettings, "projection">>,
 ): number {
   return s.mas / targetMas(profile, s);
 }

@@ -11,9 +11,12 @@ import type { CheckRule } from "@/domain/case";
 import { RENDERER_IDS, SCENE_IDS, type CaseDefinition, type ExamDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
 import { EVIDENCE_CLASSES, type Evidence } from "@/domain/technique";
-import type { NumericSettingKey } from "@/domain/simulation";
+import { CATEGORIES, type NumericSettingKey, type RequiredNumericSettingKey } from "@/domain/simulation";
+import { CRITICAL_DETECTORS } from "@/features/evaluation/critical";
 
-const NUMERIC_KEYS: NumericSettingKey[] = ["rotationDeg", "sidCm", "kvp", "mas"];
+const NUMERIC_KEYS: RequiredNumericSettingKey[] = ["rotationDeg", "sidCm", "kvp", "mas"];
+/** Numeric settings a range rule may target: the four required ones, plus tube angulation when the exam declares it. */
+const RULE_NUMERIC_KEYS: NumericSettingKey[] = [...NUMERIC_KEYS, "tubeAngulationDeg"];
 
 const filled = (t: LocalizedText | undefined) => !!t && t.en.trim().length > 0 && t.ar.trim().length > 0;
 /** Every medical rule / value must name one of the five evidence classes and a reference (or "none"). */
@@ -43,20 +46,32 @@ export function validateExam(exam: ExamDefinition): string[] {
   const r = exam.requiredAnatomy;
   need(W > 0 && H > 0, "detector size must be positive");
   need(r.xCm >= 0 && r.yCm >= 0 && r.xCm + r.widthCm <= W && r.yCm + r.heightCm <= H, "requiredAnatomy must lie inside the detector");
-  for (const k of NUMERIC_KEYS) {
+  // The four required controls, then any optional numeric control the exam declares (tube angulation, S11-2).
+  for (const k of RULE_NUMERIC_KEYS) {
     const c = exam.controls[k];
+    if (!c && k === "tubeAngulationDeg") continue;
     need(!!c && c.min < c.max && c.step > 0, `control ${k}: min < max and step > 0`);
-    if (c?.stations) {
-      need(c.stations.every((s, i) => s >= c.min && s <= c.max && (i === 0 || s > c.stations![i - 1]!)), `control ${k}: stations ascending inside [min, max]`);
-    }
+    const st = c?.stations;
+    if (c && st) need(st.every((s, i) => s >= c.min && s <= c.max && (i === 0 || s > st[i - 1]!)), `control ${k}: stations ascending inside [min, max]`);
   }
+
+  // extra enum controls (S11): the setting key is `choices.<id>`
+  const choices = exam.choiceControls ?? [];
+  need(new Set(choices.map((x) => x.id)).size === choices.length, "choice control ids must be unique");
+  for (const cc of choices) {
+    need(cc.id.length > 0 && !cc.id.includes("."), `choice control "${cc.id}": id must be non-empty and contain no '.'`);
+    need(filled(cc.label) && (!cc.hint || filled(cc.hint)), `choice control ${cc.id}: label (and hint) need EN and AR text`);
+    need(cc.options.length >= 2 && new Set(cc.options.map((o) => o.id)).size === cc.options.length, `choice control ${cc.id}: needs at least two options with unique ids`);
+    for (const o of cc.options) need(filled(o.label), `choice control ${cc.id}.${o.id}: label needs EN and AR text`);
+  }
+  const choiceOptions = (id: string) => choices.find((x) => x.id === id)?.options.map((o) => o.id);
 
   // rules
   const ids = exam.rules.map((x) => x.id);
   need(new Set(ids).size === ids.length, "rule ids must be unique");
   const weights = exam.scoring.categoryWeights;
   for (const rule of exam.rules) {
-    need(weights[rule.category] !== undefined && weights[rule.category] > 0, `rule ${rule.id}: category "${rule.category}" has no positive weight`);
+    need((weights[rule.category] ?? 0) > 0, `rule ${rule.id}: category "${rule.category}" has no positive weight`);
     need(isEvidence(rule.evidence), `rule ${rule.id}: evidence needs a class and a reference`);
     for (const [where, t] of ruleTexts(rule)) need(filled(t), `${where}: needs EN and AR text`);
     if (rule.kind === "equals") {
@@ -65,22 +80,30 @@ export function validateExam(exam: ExamDefinition): string[] {
         breathing: exam.availableBreathing,
         motionInstruction: exam.availableMotionInstructions,
       };
-      const list = options[rule.setting];
-      if (list) need(list.includes(rule.expected), `rule ${rule.id}: expected "${rule.expected}" is not an available ${rule.setting}`);
+      if (rule.setting.startsWith("choices.")) {
+        const list = choiceOptions(rule.setting.slice("choices.".length));
+        need(!!list, `rule ${rule.id}: "${rule.setting}" is not a declared choice control`);
+        if (list) need(list.includes(rule.expected), `rule ${rule.id}: expected "${rule.expected}" is not an option of ${rule.setting}`);
+      } else {
+        const list = options[rule.setting];
+        if (list) need(list.includes(rule.expected), `rule ${rule.id}: expected "${rule.expected}" is not an available ${rule.setting}`);
+      }
     }
     if (rule.kind === "range") {
-      need(NUMERIC_KEYS.includes(rule.setting), `rule ${rule.id}: "${rule.setting}" is not a numeric control`);
+      need(RULE_NUMERIC_KEYS.includes(rule.setting) && !!exam.controls[rule.setting], `rule ${rule.id}: "${rule.setting}" is not a declared numeric control`);
       need(rule.acceptable[0] <= rule.ideal[0] && rule.ideal[1] <= rule.acceptable[1] && rule.ideal[0] <= rule.ideal[1], `rule ${rule.id}: ideal band must lie inside the acceptable band`);
     }
   }
 
   // scoring
+  for (const k of Object.keys(weights)) need((CATEGORIES as readonly string[]).includes(k) || filled(exam.scoring.categoryLabels?.[k]), `category "${k}" outside the core six needs a bilingual label in categoryLabels`);
   const sum = Object.values(weights).reduce((a, b) => a + b, 0);
   need(sum === 100, `category weights sum to ${sum}, not 100`);
   need(exam.scoring.passThreshold > 0 && exam.scoring.passThreshold <= 100, "passThreshold must be in (0, 100]");
   const cf = exam.scoring.criticalFindings.map((x) => x.id);
   need(new Set(cf).size === cf.length, "critical finding ids must be unique");
   for (const f of exam.scoring.criticalFindings) {
+    need(f.id in CRITICAL_DETECTORS, `critical finding ${f.id}: no detector is registered for it`);
     need(filled(f.label) && filled(f.reason), `critical finding ${f.id}: label and reason need EN and AR`);
     need(isEvidence(f.concept) && isEvidence(f.evidence), `critical finding ${f.id}: concept and evidence need a class and a reference`);
   }
@@ -88,6 +111,12 @@ export function validateExam(exam: ExamDefinition): string[] {
   // positioning conventions
   need(exam.positioning.markerSide.L !== undefined && exam.positioning.markerSide.R !== undefined, "markerSide must define L and R");
   need(exam.positioning.markerSide.L !== exam.positioning.markerSide.R, "markerSide: L and R must be on opposite halves");
+  const mr = exam.positioning.markerRule;
+  if (mr?.kind === "detector-side") {
+    const opts = choiceOptions(mr.choiceId);
+    need(!!opts, `markerRule: choice control "${mr.choiceId}" is not declared`);
+    if (opts) need(opts.includes("L") && opts.includes("R"), `markerRule: choice control "${mr.choiceId}" must offer the options "L" and "R"`);
+  }
   need(exam.positioning.minCollimation > 0 && exam.positioning.minCollimation <= 1, "minCollimation must be in (0, 1]");
   return p;
 }
@@ -115,6 +144,16 @@ export function validateCase(exam: ExamDefinition, def: CaseDefinition): string[
   for (const k of NUMERIC_KEYS) {
     const c = exam.controls[k];
     need(s[k] >= c.min && s[k] <= c.max, `initial ${k} (${s[k]}) is outside the control range`);
+  }
+  // optional controls (S11): initial state present exactly when the exam declares the control, and valid
+  const ang = exam.controls.tubeAngulationDeg;
+  need((s.tubeAngulationDeg !== undefined) === !!ang, "initial tubeAngulationDeg must be set exactly when the exam declares the control");
+  if (ang && s.tubeAngulationDeg !== undefined) need(s.tubeAngulationDeg >= ang.min && s.tubeAngulationDeg <= ang.max, `initial tubeAngulationDeg (${s.tubeAngulationDeg}) is outside the control range`);
+  const declared = exam.choiceControls ?? [];
+  for (const cc of declared) need(cc.options.some((o) => o.id === s.choices?.[cc.id]), `initial choice "${cc.id}" must be one of its options`);
+  for (const k of Object.keys(s.choices ?? {})) need(declared.some((cc) => cc.id === k), `initial choice "${k}" is not a declared choice control`);
+  for (const [proj, a] of Object.entries(def.patientTechnique.attenuationByProjection ?? {})) {
+    need(exam.availableProjections.includes(proj as never) && (a ?? 0) > 0, `patientTechnique.attenuationByProjection.${proj}: must be a positive value for an available projection`);
   }
 
   // the cooperation profile must answer every instruction the learner can give

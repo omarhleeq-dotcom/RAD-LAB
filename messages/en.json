@@ -122,6 +122,8 @@
     "kvpHint": "Beam energy / penetration",
     "masHint": "X-ray quantity",
     "sidHint": "Shared with the positioning view",
+    "tubeAngulation": "Tube angulation",
+    "tubeAngulationHint": "Positive = caudad (towards the feet), negative = cephalad. 0° = perpendicular",
     "decrease": "Decrease {name}",
     "increase": "Increase {name}",
     "adjustHint": "Use − / + or the slider. Arrow keys, Page Up / Page Down, Home and End work on the slider.",

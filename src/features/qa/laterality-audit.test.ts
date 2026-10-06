@@ -25,10 +25,10 @@ describe("laterality audit", () => {
     expect(c.positioning.markerSide).toEqual({ L: "viewer-right", R: "viewer-left" });
     expect(c.positioning.defaultMarkerPosition.L.x).toBeGreaterThan(0);
     expect(c.positioning.defaultMarkerPosition.R.x).toBeLessThan(0);
-    expect(c.radiograph.denseZones[1]!.cu).toBeGreaterThan(c.radiograph.midlineU);
+    expect(c.radiograph.denseZones![1]!.cu).toBeGreaterThan(c.radiograph.midlineU!);
     // The scapula schematic is symmetric about the midline, so it cannot imply a patient side.
-    const { left, right } = c.radiograph.scapulae;
-    expect(Math.abs(left.cu + right.cu - 2 * c.radiograph.midlineU)).toBeLessThan(0.05);
+    const { left, right } = c.radiograph.scapulae!;
+    expect(Math.abs(left.cu + right.cu - 2 * c.radiograph.midlineU!)).toBeLessThan(0.05);
   });
 
   it("scoring, rendering and feedback agree on the marker side in every matrix scenario", () => {

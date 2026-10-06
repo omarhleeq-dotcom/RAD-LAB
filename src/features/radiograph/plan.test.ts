@@ -262,8 +262,8 @@ describe("concept and rendered magnitude are classified separately; nothing draw
   it("plan effects carry both records", () => {
     const p = plan({ rotationDeg: 8, motionInstruction: "none", mas: 1, shoulderPosition: "relaxed", chinPosition: "tucked", breathing: "no-instruction", kvp: 70 });
     for (const e of p.effects) {
-      expect(e.concept).toEqual(EFFECT_CONCEPTS[e.id]);
-      expect(e.magnitude).toEqual(EFFECT_MAGNITUDES[e.id]);
+      expect(e.concept).toEqual((EFFECT_CONCEPTS as Record<string, unknown>)[e.id]);
+      expect(e.magnitude).toEqual((EFFECT_MAGNITUDES as Record<string, unknown>)[e.id]);
     }
   });
 });

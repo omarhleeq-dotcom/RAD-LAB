@@ -1,10 +1,11 @@
 "use client";
 
 import { useId } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
 import type { RadCase } from "@/domain/case";
 import type { ExposureMode, SimulationMode, SimulationSettings } from "@/domain/simulation";
+import { localize } from "@/lib/localized";
 import { assessReadiness } from "@/features/technique/readiness";
 import { AecPanel } from "./AecPanel";
 import { ReadinessPanel } from "./ReadinessPanel";
@@ -70,6 +71,7 @@ function Segmented<T extends string>({
  */
 export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, locked }: Props) {
   const t = useTranslations("console");
+  const locale = useLocale();
   const c = radCase.controls;
   const readinessId = useId();
   const readiness = assessReadiness(radCase, settings, locked ? "result" : "setup");
@@ -100,6 +102,30 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           onSelect={(v) => onChange("projection", v)}
           label={(v) => t(`projections.${v}`)}
         />
+        {/* Optional controls an exam declares (S11): absent for Chest PA, so its console is unchanged. */}
+        {radCase.choiceControls?.map((cc) => (
+          <Segmented
+            key={cc.id}
+            legend={localize(cc.label, locale)}
+            options={cc.options.map((o) => o.id)}
+            value={settings.choices?.[cc.id] ?? ""}
+            disabled={locked}
+            onSelect={(v) => onChange("choices", { ...settings.choices, [cc.id]: v })}
+            label={(v) => localize(cc.options.find((o) => o.id === v)!.label, locale)}
+            help={cc.hint ? localize(cc.hint, locale) : undefined}
+          />
+        ))}
+        {c.tubeAngulationDeg && (
+          <StepField
+            label={t("tubeAngulation")}
+            hint={t("tubeAngulationHint")}
+            unit="°"
+            spec={c.tubeAngulationDeg}
+            value={settings.tubeAngulationDeg ?? 0}
+            disabled={locked}
+            onChange={(v) => onChange("tubeAngulationDeg", v)}
+          />
+        )}
         <StepField
           label={t("sid")}
           hint={t("sidHint")}

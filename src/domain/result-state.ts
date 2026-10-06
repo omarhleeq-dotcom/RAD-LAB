@@ -23,6 +23,8 @@ export interface RadiographResultState {
   geometry: {
     projection: ProjectionId;
     rotationDeg: number;
+    /** Tube angulation, degrees, positive = caudad. Present only when the exam declares the control (S11-2). */
+    tubeAngulationDeg?: number;
     sidCm: number;
     centralRay: NormPoint;
     /** Collimated light field on the detector, cm from the top-left corner. */
@@ -36,6 +38,8 @@ export interface RadiographResultState {
     shoulders: ShoulderPositionId;
     breathing: BreathingId;
     marker: { side: SideMarkerId; position: NormPoint } | null;
+    /** The exam's extra enum control values (S11). Present only when the exam declares such controls. */
+    choices?: Record<string, string>;
   };
   technique: {
     mode: ExposureMode;

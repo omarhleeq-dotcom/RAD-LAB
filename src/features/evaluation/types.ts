@@ -30,6 +30,8 @@ export interface CheckResult {
   observed: string;
   /** Set when `observed` is an enum id that the UI should translate. */
   observedKind?: EnumSettingKey;
+  /** Set when `observed` is the value of an exam-declared choice control (id of that control, S11). */
+  observedChoice?: string;
   feedback: LocalizedText;
   variant?: ImageVariantId;
   /** Evidence class + reference of the rule that produced this check (shown to the learner). */
