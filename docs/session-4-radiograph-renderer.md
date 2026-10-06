@@ -56,7 +56,7 @@ RadiographCanvas (React) ── draws it, then the learner's marker as an annota
 | 3 | motion | loss of sharpness (blur) of the anatomy — *before* noise, because quantum noise arises at the detector and is not blurred by patient motion |
 | 4 | technique effects | low penetration (dense zones) → low-exposure fine-detail loss → quantum-noise-like texture |
 | 5 | display processing | brightness normalised to the pre-technique level inside the field |
-| 6 | field / collimation mask | unexposed outside the collimated field (and beyond the source image) with a soft penumbra |
+| 6 | field / collimation mask | unexposed (dark) outside the collimated field, soft penumbra; inside the field, detector area the source image does not cover is a neutral grey **"no reference data" hatch** (never black) |
 | 7 | annotation | the learner's L/R marker, drawn on top, clipped by the field |
 
 ## 3. Baseline asset
@@ -69,24 +69,26 @@ CC0 1.0, *Normal posteroanterior (PA) chest radiograph (X-ray)*, Mikael Häggstr
 
 `RadiographResultState` (schema v2 — v1 plus `patientResponse`) was inspected first. Everything below is driven only by existing state; nothing is fabricated from an unrelated control.
 
-| Effect | Driven by (state field) | Clinical principle class | Visual mapping |
-|---|---|---|---|
-| Baseline appearance | none (no fault effects) | EDUCATIONAL SIMPLIFICATION | the asset |
-| **Rotation** → thoracic asymmetry, spinous line vs. clavicles, small transradiancy difference | `geometry.rotationDeg` | COMMON REFERENCE (WHO: spinous processes ≈ midway between medial clavicle ends) | educational approximation; **never** a whole-image rotation; no px↔° claim |
-| **Collimation clipping** | `geometry.fieldCm`, `clippedSides` | VALIDATED (geometry) | anatomy outside the field is *actually unexposed*, per side |
-| **Centering** | `geometry.centralRay` → field (field is centred on the ray) | VALIDATED (geometry) | field moves; anatomy stays where it is on the detector |
-| **Excess field** | `findings` (`collimation-excess`) | EDUCATIONAL SIMPLIFICATION | larger exposed region only; **no scatter/contrast penalty drawn** (provisional, no physical model) |
-| **Scapulae** | `patient.shoulders` | COMMON REFERENCE (IAEA: medial scapular borders outside the lungs) | schematic overlay over lateral lung fields |
-| **Chin** | `patient.chin` | EDUCATIONAL SIMPLIFICATION | schematic jaw/soft-tissue shadow over the apices; control ≠ angle |
-| **Reduced inspiration** | `patientResponse.inspiration` | COMMON REFERENCE (deep/full inspiration) | shorter lung fields, higher diaphragm; no rib-count rule |
-| **Motion** | `patientResponse.motion` | VALIDATED (motion → loss of sharpness) | blur; magnitude educational, not a distance |
-| **Low exposure** | `exposure.quantumNoise` (level, 1/√ratio) | VALIDATED (DR principle) | deterministic quantum-noise-like texture + loss of fine low-contrast detail; **brightness held normalised** |
-| **Excess exposure** | `exposure.tendency` / `doseAwareness` | VALIDATED (DR principle) | **no change to the picture by design** — never darkened; the problem is shown by DI / dose-awareness feedback |
-| **Low penetration** | `exposure.penetration === "low"` | COMMON REFERENCE (IAEA: retrocardiac lung / mediastinum visualised) | reduced structure contrast inside mediastinal / cardiac / retrocardiac zones only; independent of mAs |
-| **Marker** | `patient.marker` (side + detector-relative position) | EDUCATIONAL SIMPLIFICATION | drawn where placed; clipped by the field; never corrected |
-| Projection not simulated | `geometry.projection` ≠ PA | scope | PA appearance shown with a notice |
+Each effect has **two separate evidence records**: the clinical **concept** (what is true in radiography, with its evidence class) and the **rendered magnitude** (how much is drawn). The concept may be validated or a common criterion; **the rendered magnitude is always an EDUCATIONAL VISUAL APPROXIMATION** (or "nothing drawn"). Nothing visual in this renderer is a clinically validated appearance, and the UI says so on every card ("Clinical concept: …" / "Rendered magnitude: Educational visual approximation").
 
-Every plan effect carries `drivers` (state paths) and an evidence record in the image-quality reference's own classification, mapped to the five project evidence classes (`EVIDENCE_CLASSES`); the learner sees the class next to each explanation.
+| Effect | Driven by (state field) | Clinical **concept** (class · source) | Rendered **magnitude** |
+|---|---|---|---|
+| Baseline appearance | none (no fault effects) | EDUCATIONAL SIMPLIFICATION · asset requirements | none — the asset as is |
+| **Rotation** → thoracic asymmetry, spinous line vs. clavicles, small transradiancy difference | `geometry.rotationDeg` | COMMON REFERENCE · WHO: spinous processes ≈ midway between the medial clavicle ends; rotation changes that relationship and hemithoracic projection (direction evidence-supported; body morphology changes it) | EDUCATIONAL VISUAL APPROXIMATION · never a whole-image rotation; no px↔° claim |
+| **Collimation clipping** | `geometry.fieldCm`, `clippedSides` | VALIDATED · anatomy outside the field is not imaged (geometry) | EDUCATIONAL VISUAL APPROXIMATION · the field edge is exact; where the anatomy lies under it follows an approximate landmark mapping (§6) |
+| **Centering** | `geometry.centralRay` → field | VALIDATED · the field follows the central ray | none — the field moves, the anatomy does not |
+| **Excess field** | `findings` (`collimation-excess`) | EDUCATIONAL SIMPLIFICATION | none — larger exposed region only; **no scatter/contrast penalty** (provisional, no physical model) |
+| **Scapulae** | `patient.shoulders` | COMMON REFERENCE · IAEA: medial scapular borders outside the lung fields | EDUCATIONAL VISUAL APPROXIMATION · schematic overlay shape, position and density |
+| **Chin** | `patient.chin` | VALIDATED · chin elevated / clear of the upper chest is the Session 2 positioning rule (the control is not an angle) | EDUCATIONAL VISUAL APPROXIMATION · schematic jaw / soft-tissue shadow |
+| **Reduced inspiration** | `patientResponse.inspiration` | COMMON REFERENCE · deep/full inspiration; reduced inspiration tends to show reduced expansion and higher diaphragms (direction evidence-supported); no rib-count rule | EDUCATIONAL VISUAL APPROXIMATION · fixed 12 % shortening of apex→dome, raised diaphragm |
+| **Motion** | `patientResponse.motion` | VALIDATED · patient/respiratory motion reduces sharpness | EDUCATIONAL VISUAL APPROXIMATION · fixed blur size, not a movement distance |
+| **Low exposure** | `exposure.quantumNoise` (level, 1/√ratio) | VALIDATED · insufficient detector exposure increases noise and impairs low-contrast information (AAPM/ACR) | EDUCATIONAL VISUAL APPROXIMATION · deterministic noise amplitude + detail loss; **brightness held normalised**; not a real detector's noise, EI or dose |
+| **Excess exposure** | `exposure.tendency` / `doseAwareness` | VALIDATED · DR can look acceptable across a broad exposure range (dose creep) | none — **no change to the picture by design**; never darkened; shown by DI / dose-awareness feedback |
+| **Low penetration** | `exposure.penetration === "low"` | COMMON REFERENCE · IAEA: retrocardiac lung / mediastinum should be visualised | EDUCATIONAL VISUAL APPROXIMATION · fixed fraction of local contrast kept in dense zones only; independent of mAs |
+| **Marker** | `patient.marker` (side + detector-relative position) | EDUCATIONAL SIMPLIFICATION · annotation behaviour, patient-side correctness unscored | EDUCATIONAL VISUAL APPROXIMATION · a glyph at the placed position, clipped by the field, never corrected |
+| Projection not simulated | `geometry.projection` ≠ PA | scope | none — PA appearance shown with a notice |
+
+Every plan effect carries `drivers` (state paths), a `concept` record (one of the five project `EVIDENCE_CLASSES`, mapped from the image-quality reference's own classification) and a `magnitude` record (`educational-visual-approximation` or `none`, never "validated"); both are shown to the learner next to each explanation, and tests enforce the split.
 
 ### Magnitudes (all EDUCATIONAL; see `tuning.ts`)
 Rotation: spinous column shift 0.4 % image-width per degree (Gaussian σ 6 % so the medial clavicle ends move far less), interior shift 0.15 %/°, transradiancy tilt 0.3 %/° (clamped to the console's ±20°). Reduced inspiration: apex→dome distance shortened by 12 %. Motion: 0.35 cm vertical × 0.12 cm horizontal box blur. Noise: σ = 9 · √(relativeNoise² − 1) grey levels, applied only when the model's noise level is *increased/marked*; fine-detail gain 1/(1 + 0.25·(relativeNoise² − 1)). Low penetration keeps 30 % of local structure contrast in the dense zones. None of these is calibrated.
@@ -120,11 +122,13 @@ keep-still instruction  →  holds still, or does not         →  motion: none 
 - **Recommended later integration:** if educators adopt a patient-instruction rubric, give the Breathing category a second weighted subcheck (or rename it "Patient instructions") with explicit weights approved by an educator; keep the unscored status until then.
 - **Readiness** (workflow status, never correctness) gained one advisory: no keep-still instruction given. A "wrong" instruction is still "ready", so Practice Mode does not leak the answer.
 
-## 6. Coordinate mapping, bands and the landmark box
+## 6. Coordinate mapping, coverage gap and the default marker
 
-The baseline's *anatomy landmark box* (apices, lateral lung/rib margins, costophrenic angles) is mapped onto `RadCase.requiredAnatomy` so that a field edge that cuts the required region also cuts the drawn anatomy (otherwise a "clipped" score could sit next to a complete-looking image). The two aspect ratios differ, so the mapping is slightly anisotropic (≈ 13 % in x). The source image does not cover the whole 35 × 43 cm detector: ≈ 1.8 cm on each side and ≈ 5 cm at the bottom are **beyond the reference image** and render as unexposed black; the UI says so ("dark margins lie outside the collimated field or beyond the edge of the reference image"). The required-anatomy region itself is a Session 2 provisional demo value.
+The baseline's *anatomy landmark box* (apices, lateral lung/rib margins, costophrenic angles) is mapped onto `RadCase.requiredAnatomy` so that a field edge that cuts the required region also cuts the drawn anatomy (otherwise a "clipped" score could sit next to a complete-looking image). The two aspect ratios differ, so the mapping is **anisotropic (≈ 13 % in x)**. **This distorts anatomical proportions, including the apparent cardiothoracic ratio, and the result must not be used to judge heart size, lung width or any proportion** (see Limitations and review items).
 
-The Session 2 default marker position (lower-left corner) lies partly outside a typical tight field, so a learner who does not move it sees a clipped marker (an "L" can lose its foot and look like a bar). This is the faithful consequence of marker-vs-field geometry and is explained by the existing marker feedback.
+**Detector coverage gap.** The source image does not cover the whole 35 × 43 cm detector: ≈ 1.8 cm each side and ≈ 5 cm at the bottom lie beyond the reference image. In digital radiography black reads as direct unattenuated exposure, and dark areas are also what the collimator shadow looks like, so those areas are **not** drawn black. Inside the field they are a **neutral grey diagonal hatch ("no reference data")** that cannot be mistaken for exposure, collimation or anatomy; outside the collimated field the detector stays the dark collimator shadow. The hatch is drawn after all image effects, so noise, blur, penetration or rotation never bleed into it, and display-brightness normalisation ignores it. The UI note (EN + AR) explains both treatments.
+
+**Default marker.** The Session 2 default marker position (lower-left corner, 3 cm) lay partly outside a typical correct field, so a learner who never moved it saw an "L" with its foot cut off (looking like a bar). The default is now a 2.2 cm marker in the lateral margin (x ≈ 1.7–3.9 cm, y ≈ 10.9–13.1 cm): inside a typical correct field (≥ ≈ 33 cm wide, central ray within ≈ ±0.7 cm of the midline) and outside the required-anatomy region. A narrower or clearly off-centre field still genuinely clips or drops the marker (behaviour kept, tested). The only data changed is the case's marker size and default position.
 
 ## 7. Deliberately NOT implemented
 
@@ -142,11 +146,12 @@ The Session 2 default marker position (lower-left corner) lies partly outside a 
 
 ## 8. Tests
 
-243 unit tests pass (151 before Session 4 → +92). New / extended suites:
+259 unit tests pass (151 before Session 4 → +108). New / extended suites:
 
 - `patient/response.test.ts` (19): correct vs incorrect breathing; keep-still vs omitted/wrong; inspiration ⟂ motion for all 12 combinations; determinism; **motion and inspiration not inferred from kVp/mAs/SID/rotation/AEC/geometry/chin/shoulders/projection**; swappable profile; weight-0 scoring (score identical for every instruction); readiness does not leak the answer.
 - `radiograph/plan.test.ts` (21): correct baseline; box→region mapping; rotation cues (sign, proportionality, clamp, no angle/transform); centering moves the field not the anatomy; each clipping direction; excess field = no penalty; scapulae/chin flags; inspiration/motion from the patient response only; low-exposure vs excess-exposure vs penetration separation; motion ⟂ noise; marker placement/side/never auto-corrected/visible fraction; non-PA flag; combined errors; determinism/serialisability/seed from the case; evidence + drivers on every effect.
 - `radiograph/pipeline.test.ts` (33, on a synthetic phantom, Node): byte-identical repeat renders; **rotation moves the spinous column ± and keeps the image footprint and lateral margins (not a whole-image rotation)**; reduced inspiration raises the diaphragm edge and keeps the apex; monotonic vertical map; **all four clipping directions leave the clipped anatomy unexposed and nothing outside the field carries signal**; open field applies no penalty; **low exposure adds noise and does not change mean brightness (mAs 0.5–2)**; noise grows as exposure falls; **excess exposure is pixel-identical to the reference for mAs up to 40 (no darkening)**; brightness invariant across five exposures; **low penetration lowers structure contrast only in dense zones with no brightness shift and is not repaired by mAs**; motion blurs edges, adds no noise, does not change brightness; low exposure does not blur; overlays are local; combined errors compose; input immutability.
+- **Fix-pass regression tests** — `pipeline.test.ts` ("detector area the baseline does not cover"): the uncovered bands exist; inside the field they are exactly the two neutral grey hatch values (never black, > 60 grey levels above the collimator shadow) and alternate; outside the collimated field the same area is the dark shadow; the hatch is byte-identical under noise, blur, penetration and rotation; brightness normalisation ignores it. `plan.test.ts` ("default marker"): the default marker is complete (fraction 1 and the `side-marker` check passes) in every typical correct field × central ray × L/R, stays outside the required-anatomy region, equals the initial marker position, and is still dropped/clipped by a narrowed field. `plan.test.ts` ("concept and rendered magnitude"): every effect has both records; magnitude is never "validated"; validated/evidence-supported concepts (motion, noise, penetration, rotation, scapulae, jaw, inspiration) still carry an approximate magnitude; effects that draw nothing say so.
 - `radiograph/architecture.test.ts`: scoring/technique/patient logic never imports the renderer or reads pixels; renderer never imports the engine; pipeline/plan are pure; no randomness; canvas LTR and locale-agnostic; logical CSS only in new components.
 - `i18n/messages.test.ts` (+7): EN/AR parity (already enforced) plus every effect and instruction translated, Arabic text is Arabic, disclaimers present, no brightness-as-exposure wording, no measured-quantity claims, instruction wording never labelled right/wrong.
 - `simulation-store.test.ts` (+4), `result-state.test.ts` (+1), updated settings fixtures in four older test files (a new required setting).
@@ -155,27 +160,27 @@ The Session 2 default marker position (lower-left corner) lies partly outside a 
 
 Playwright 1.x + Chromium against the **production build** (`npm run build && next start`), driving the real UI only (never the store): `scripts/verify-session4.mjs` (not a project dependency; `npm i --no-save playwright`). Matrix: **EN (LTR) and AR (RTL)** × **desktop 1440 × 900 (mouse)**, **tablet 820 × 1180 (touch, taps)**, **mobile 390 × 844 (touch, taps)**.
 
-- **Desktop, both languages — 20 acquisitions:** correct baseline; rotation + and −; clipping top / bottom / left / right; low exposure; excess exposure; low penetration; scapulae; chin; reduced inspiration; motion; marker R (clipped by the field), marker clipped out of the field, marker L and R fully visible (moved by keyboard); AP projection (not-representative notice); combined errors.
+- **Desktop, both languages — 22 acquisitions:** correct baseline; rotation + and −; centering off (field shifted, no clipping); clipping top / bottom / left / right; low exposure; excess exposure; low penetration; scapulae; chin; reduced inspiration; motion; the **default marker** L and R (never moved) and a marker genuinely dropped by a narrowed field; **fully open field (grey "no reference data" hatch probes)**; AP projection (not-representative notice); combined errors.
 - **Tablet and mobile, both languages — 6 acquisitions each:** correct, rotation, clipping, low exposure, motion, combined.
 - Per acquisition (≈ 36 assertions): `html dir`; no result and no explanation before exposure (Practice Mode does not leak); the expected effects are present and the forbidden ones absent (e.g. motion ⇒ no inspiration/low-exposure effect); the explanation cards match the canvas; no raw setting ids shown; no horizontal overflow; radiograph inside the viewport; canvas `direction: ltr`; zero console errors / page errors.
 - Cross-checks: **the same acquisition gives a byte-identical radiograph (PNG hash) in EN and AR and on desktop/tablet/mobile** (RTL does not mirror the anatomy or the marker; rendering is deterministic); excess exposure is pixel-identical to the correct picture; every fault differs from the correct picture; rotation + and − differ.
-- Keyboard: arrow keys change the breathing and the keep-still instruction; marker moved with Shift+Arrow; Retry keeps the instructions, clears the result, and exposing again reproduces the identical picture.
-- **Results:** full matrix **788 / 788** checks passed; follow-up runs after the last changes: Retry/determinism **141 / 141**, visible-marker scenarios **65 / 65** each. Screenshots were inspected visually (page and image, desktop/tablet/mobile, EN/AR): baseline, rotation ±, clipping on all four sides, noise, penetration, motion, inspiration, scapulae, chin, markers, combined errors, mobile scaling, RTL layout. A contact sheet of the effects is in [`session-4-effects-contact-sheet.jpg`](session-4-effects-contact-sheet.jpg) (registry **A-004**).
+- Keyboard: arrow keys change the breathing and the keep-still instruction; Retry keeps the instructions, clears the result, and exposing again reproduces the identical picture.
+- **Results:** full matrix **906 / 906** checks passed on the production build after the fix pass (an earlier matrix passed 788 / 788 before it). The default-marker check counts bright glyph pixels in the marker's detector area (recorded in full ⇒ > 80, dropped ⇒ 0); the hatch check reads canvas pixels in the uncovered bands of an open field (exactly the two hatch greys, never black). Screenshots were inspected visually (page and image, desktop/tablet/mobile, EN/AR). Rendered results for review are committed under [`session-4-renders/`](session-4-renders/) (13 cases in EN and AR + a contact sheet per language + a magnified low-penetration comparison; registry **A-004**), and the older montage in [`session-4-effects-contact-sheet.jpg`](session-4-effects-contact-sheet.jpg).
 
 ### Defects found and fixed during verification / visual inspection
 1. **Pre-existing (Sessions 1–3): enum settings were shown untranslated in the result feedback** (“Your setting: pa-erect / tucked / no-instruction”) in both languages, because `evalRule` dropped `observedKind`. Fixed; regression test in `engine.test.ts` and a raw-id assertion in the browser script.
 2. Visual tuning from inspecting renders (not logic bugs): scapula overlay was too faint to read (raised), motion blur and quantum noise were too strong (reduced), rotation was too subtle at 10–12° (raised).
 3. Verification-script defects (not product): an mAs value that is not a console station silently selected the minimum; fixed and now asserted.
-4. Observed, kept by design: with the Session 2 default marker position and a typical field, the marker's lower edge is cut by the field, so an “L” can look like a bar. That is the faithful geometric consequence (and the existing marker feedback says it is partly outside the field); the visible-marker scenarios confirm L/R render correctly and are not mirrored in Arabic.
+4. **Found in review, fixed in the fix pass:** (a) detector areas beyond the reference image were drawn **black**, which reads as direct exposure and is confusable with the collimator shadow → now a neutral grey hatch; (b) the Session 2 default marker position was partly outside a typical correct field, so an “L” lost its foot and looked like a bar → new default inside the field (§6); (c) evidence labels merged the clinical concept with the drawn magnitude → separate "Clinical concept" / "Rendered magnitude" records (§4). Each has regression tests.
 
 ## 10. Limitations
 
+- **Anisotropic landmark mapping (≈ 13 % in x) distorts anatomical proportions**, including the apparent **cardiothoracic ratio**, lung width and heart size. The renderer is for image-quality cues only and must not be used to teach or judge proportions. Not changed in this session (it keeps field cuts and drawn anatomy consistent with the Session 2 required-anatomy region); it needs a Session 5 decision.
 - **Baseline patient mismatch.** The reference radiograph is a 21-year-old woman; the case patient is a 45-year-old man. Treated strictly as an appearance baseline, labelled in the UI; case data deliberately untouched.
 - One baseline image: all variation is synthetic. Effects are approximations of a *direction*; none reproduces how a real radiograph of a rotated, moving or under-exposed patient looks.
 - Scapula and jaw overlays are schematic drawings, not real anatomy from the reference image.
-- The reference image covers ≈ 88 % of the detector height and ≈ 90 % of its width; the rest renders black.
+- The reference image covers ≈ 88 % of the detector height and ≈ 90 % of its width; the rest is drawn as a neutral grey "no reference data" hatch inside the field (never black).
 - The landmark box and zones were placed by eye on this image (TODO(medical-review)).
-- Anisotropic (≈ 13 %) mapping of the landmark box onto the Session 2 required-anatomy region.
 - Single cooperation profile; keep-still instruction is unscored; Practice Mode only (the post-exposure analysis and effect cards are not yet gated for Assessment Mode).
 - Mobile: the result image is shown at the working resolution of 840 × 1032 px scaled by CSS; no zoom/pan, no window/level control.
 - AP and lateral are shown as "not representative".
@@ -190,13 +195,15 @@ Playwright 1.x + Chromium against the **production build** (`npm run build && ne
 6. Arabic terminology (hemithorax, transradiancy, quantum noise, dose creep, spinous processes).
 7. The appearance baseline vs the case patient (demographics, habitus).
 8. Whether the transradiancy tilt under rotation should be kept.
+9. **The ≈ 13 % anisotropic mapping and its effect on anatomical proportions (cardiothoracic ratio appearance):** keep, change the required-anatomy region, or source a baseline whose proportions fit the detector.
+10. The grey hatch wording / appearance for "no reference data", and the 2.2 cm default marker size and position.
 
 ## 12. Recommended Session 5 scope (QA, not new features)
 
 1. **Decide the baseline/patient mismatch:** either align the case demographics with the CC0 baseline (young adult female) or source an open-licence adult-male PA baseline (documenting it in the registry), then re-check the landmarks.
 2. Educator/physicist review of §11 items 1–6 and adjust `tuning.ts` / asset data only.
 3. Visual regression harness: commit golden canvas hashes/screenshots for the scenarios in `scripts/verify-session4.mjs`; run Playwright in CI.
-4. Resolve the detector-coverage gap (reference image vs. 35 × 43 cm detector) — by a baseline that covers the detector or by case data.
+4. Resolve the detector-coverage gap (reference image vs. 35 × 43 cm detector) — by a baseline that covers the detector or by case data — **and the ≈ 13 % anisotropic mapping that distorts anatomical proportions, including cardiothoracic-ratio appearance**; the two are best solved together.
 5. Gate post-exposure explanations (effect cards, DI analysis) for Assessment Mode.
 6. Accessibility pass on the canvas (text alternative summarising the applied effects), zoom/pan on mobile.
 7. Decide scoring integration for patient instructions (§5).

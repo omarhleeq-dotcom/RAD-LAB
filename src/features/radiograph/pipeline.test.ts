@@ -332,3 +332,59 @@ describe("renderer is independent of the scoring path", () => {
     expect(Buffer.from(src.data as Float32Array).equals(Buffer.from(copy))).toBe(true);
   });
 });
+
+describe("detector area the baseline does not cover (regression: must never render as black)", () => {
+  const ref = render({ collimation: { width: 1, height: 1 }, centralRay: { x: 0, y: 0 } }); // field = whole detector
+  const im = ref.plan.image;
+  const bandBottom = { x1: cmToPx(8), x2: cmToPx(28), y1: cmToPx(im.y1 + im.heightCm) + 3, y2: H - 3 };
+  const bandLeft = { x1: 3, x2: cmToPx(im.x1) - 3, y1: cmToPx(5), y2: cmToPx(30) };
+  const values = (o: typeof ref.out, b: typeof bandBottom) => {
+    const v = new Set<number>();
+    for (let y = b.y1; y < b.y2; y++) for (let x = b.x1; x < b.x2; x++) v.add(at(o, x, y));
+    return v;
+  };
+
+  it("the reference image really leaves bands on the bottom and both sides", () => {
+    expect(im.y1 + im.heightCm).toBeLessThan(43 - 3);
+    expect(im.x1).toBeGreaterThan(1);
+    expect(35 - (im.x1 + im.widthCm)).toBeGreaterThan(1);
+    expect(bandBottom.y2 - bandBottom.y1).toBeGreaterThan(20);
+    expect(bandLeft.x2 - bandLeft.x1).toBeGreaterThan(4);
+  });
+
+  it("inside the field they are a neutral grey hatch, clearly different from black exposure / the collimator shadow", () => {
+    for (const band of [bandBottom, bandLeft]) {
+      const v = values(ref.out, band);
+      expect([...v].sort()).toEqual([TUNING.noData.dark, TUNING.noData.light].sort());
+      expect(Math.min(...v)).toBeGreaterThan(TUNING.background + 60);
+      expect(Math.min(...v)).toBeGreaterThan(60);
+    }
+  });
+
+  it("alternates (it is a pattern, not a flat tone that could be read as anatomy or collimation)", () => {
+    let flips = 0, prev = -1;
+    const y = Math.round((bandBottom.y1 + bandBottom.y2) / 2);
+    for (let x = bandBottom.x1; x < bandBottom.x2; x++) { const c = at(ref.out, x, y); if (prev !== -1 && c !== prev) flips++; prev = c; }
+    expect(flips).toBeGreaterThan(4);
+  });
+
+  it("outside the collimated field the same detector area is the dark collimator shadow, not the hatch", () => {
+    const tight = render({ centralRay: { x: 0, y: -0.4 }, collimation: { width: 0.9, height: 0.4 } });
+    expect(tight.plan.fieldCm.y2).toBeLessThan(im.y1 + im.heightCm);
+    for (let y = bandBottom.y1; y < bandBottom.y2; y += 2) for (let x = bandBottom.x1; x < bandBottom.x2; x += 2) expect(at(tight.out, x, y)).toBeLessThanOrEqual(TUNING.background + 1);
+  });
+
+  it("the hatch is identical whatever effects are on the image (no noise, blur, penetration or rotation bleeds into it)", () => {
+    const heavy = render({ collimation: { width: 1, height: 1 }, centralRay: { x: 0, y: 0 }, mas: 0.5, kvp: 70, motionInstruction: "none", rotationDeg: 15, breathing: "no-instruction", shoulderPosition: "relaxed", chinPosition: "tucked" });
+    for (const band of [bandBottom, bandLeft]) {
+      for (let y = band.y1; y < band.y2; y++) for (let x = band.x1; x < band.x2; x++) expect(at(heavy.out, x, y)).toBe(at(ref.out, x, y));
+    }
+  });
+
+  it("display normalisation ignores the hatch: brightness is measured on image data only", () => {
+    const x1 = cmToPx(im.x1) + 6, x2 = cmToPx(im.x1 + im.widthCm) - 6, y2 = cmToPx(im.y1 + im.heightCm) - 6;
+    const dataMean = meanRect(ref.out, x1, 0, x2, y2);
+    expect(Math.abs(ref.out.meanInField - dataMean)).toBeLessThan(2);
+  });
+});
+

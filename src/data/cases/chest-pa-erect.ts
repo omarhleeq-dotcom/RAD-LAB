@@ -66,8 +66,12 @@ export const chestPaErect: RadCase = {
       acceptableTolerance: { x: 0.17, y: 0.25 }, // ≈ ±3 cm / ±5.4 cm
     },
     minCollimation: 0.3,
-    markerSizeCm: 3,
-    defaultMarkerPosition: { x: -0.84, y: 0.68 },
+    // Session 4 fix: a 2.2 cm marker placed in the lateral margin (x ≈ 1.7–3.9 cm, y ≈ 10.9–13.1 cm) lies INSIDE a typical
+    // correct field (≥ ≈ 33 cm wide, central ray within ≈ ±0.7 cm of the midline) and outside the required-anatomy
+    // region (x ≥ 4 cm), so a learner who never moves it still records a complete L / R. A narrower or clearly
+    // off-centre field genuinely clips it (behaviour kept).
+    markerSizeCm: 2.2,
+    defaultMarkerPosition: { x: -0.84, y: -0.44 },
   },
   technique: chestPaTechnique,
   radiograph: chestPaRadiograph,
@@ -88,7 +92,7 @@ export const chestPaErect: RadCase = {
     chinPosition: "tucked",
     shoulderPosition: "relaxed",
     sideMarker: null,
-    markerPosition: { x: -0.84, y: 0.68 },
+    markerPosition: { x: -0.84, y: -0.44 },
     sidCm: 120,
     kvp: 70,
     mas: 12,

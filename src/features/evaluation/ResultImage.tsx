@@ -31,7 +31,7 @@ export function ResultImage({ radCase, plan }: Props) {
       </div>
       <figcaption className="mt-2 space-y-1 text-xs text-muted">
         <p className="font-medium text-ink">{t("educationalNote")}</p>
-        <p>{t("darkMargins")}</p>
+        <p>{t("margins")}</p>
         <p>{tr("imageBrightnessNote")}</p>
         <p lang={locale}>{localize(radCase.radiograph.credit, locale)}</p>
       </figcaption>

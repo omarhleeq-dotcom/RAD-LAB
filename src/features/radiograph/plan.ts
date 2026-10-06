@@ -35,13 +35,24 @@ export type EffectId =
   | "marker"
   | "projection";
 
-/** One visible (or deliberately invisible) effect, with the state that drives it and its evidence class. */
+/**
+ * How big the drawn effect is. Kept SEPARATE from the clinical concept: a concept can be validated while the
+ * amount drawn is only ever an educational approximation, and nothing drawn may read as validated appearance.
+ */
+export interface VisualMagnitude {
+  kind: "educational-visual-approximation" | "none";
+  note: string;
+}
+
+/** One visible (or deliberately invisible) effect, with the state that drives it and its two evidence records. */
 export interface PlanEffect {
   id: EffectId;
   /** Result-state fields that drive the effect (documentation + tests; never pixels). */
   drivers: string[];
-  /** Class of the clinical PRINCIPLE. The visual mapping is always an educational approximation. */
-  principle: Evidence;
+  /** Evidence class of the clinical CONCEPT (what is true in radiography). */
+  concept: Evidence;
+  /** Status of the RENDERED MAGNITUDE (how it is drawn). Never "validated". */
+  magnitude: VisualMagnitude;
   /** False for effects that intentionally change nothing in the picture (excess exposure). */
   changesPixels: boolean;
 }
@@ -83,22 +94,46 @@ const ev = (status: Evidence["status"], section: string, note: string): Evidence
   note,
 });
 
-/** Principles behind each effect. Statuses follow the Image-quality reference's own classification. */
-export const EFFECT_PRINCIPLES: Record<EffectId, Evidence> = {
+/** Clinical CONCEPT behind each effect (never the drawn magnitude). Statuses follow the Image-quality reference. */
+export const EFFECT_CONCEPTS: Record<EffectId, Evidence> = {
   baseline: ev("educational-simplification", "Asset requirements", "Educational appearance baseline, not clinical ground truth."),
-  rotation: ev("common-reference", "Rotation", "Spinous processes ≈ midway between medial clavicle ends (WHO); direction supported, magnitude body-habitus dependent and educational."),
-  "collimation-clipping": ev("validated", "Anatomical coverage and collimation", "Anatomy outside the field is not imaged (geometry); cropping implementation is educational."),
+  rotation: ev("common-reference", "Rotation", "Spinous processes ≈ midway between medial clavicle ends (WHO); rotation changes that relationship and the hemithoracic projection. Direction evidence-supported; body morphology changes the appearance."),
+  "collimation-clipping": ev("validated", "Anatomical coverage and collimation", "Anatomy outside the field is not imaged (geometry)."),
   "excess-field": ev("educational-simplification", "Anatomical coverage and collimation", "Larger exposed region only; exact scatter/contrast penalty is provisional and not drawn."),
   centering: ev("validated", "Anatomical coverage and collimation", "The field follows the central ray (geometry)."),
-  scapulae: ev("common-reference", "Scapular positioning", "IAEA: medial scapular borders outside the lung fields; the overlap drawn is a schematic approximation."),
-  chin: ev("educational-simplification", "Chin / upper-chest positioning", "Overlap of lower-jaw/soft tissue is an educational approximation; the control is not an anatomical angle."),
-  inspiration: ev("common-reference", "Inspiration", "Deep/full inspiration is a common quality criterion; reduced expansion / higher diaphragm is directional, magnitude educational; no rib-count rule."),
-  motion: ev("validated", "Motion", "Motion → loss of sharpness is validated; blur magnitude is educational."),
-  "low-exposure": ev("validated", "Low detector exposure / quantum noise", "Insufficient detector exposure increases noise and impairs low-contrast information; noise amplitude is educational."),
+  scapulae: ev("common-reference", "Scapular positioning", "IAEA: medial scapular borders outside the lung fields; incorrect preparation gives more superimposition."),
+  chin: ev("validated", "Chin / upper-chest positioning", "Chin elevated / clear of the upper chest is the validated positioning rule (Positioning ref §2, §5.8). The jaw overlap drawn is only a schematic; the control is not an anatomical angle."),
+  inspiration: ev("common-reference", "Inspiration", "Deep/full inspiration is a common quality criterion; reduced inspiration tends to show reduced expansion and higher diaphragms (evidence-supported direction). No rib-count rule."),
+  motion: ev("validated", "Motion", "Patient / respiratory motion reduces sharpness (validated principle)."),
+  "low-exposure": ev("validated", "Low detector exposure / quantum noise", "Insufficient detector exposure increases noise and impairs low-contrast information (AAPM / ACR)."),
   "excess-exposure": ev("validated", "Excess detector exposure", "DR can look acceptable across a broad exposure range (dose creep); the image is deliberately not darkened."),
-  "low-penetration": ev("common-reference", "Penetration and anatomical visibility", "IAEA: retrocardiac lung and mediastinum should be visualised; the visibility change is an educational approximation."),
+  "low-penetration": ev("common-reference", "Penetration and anatomical visibility", "IAEA: retrocardiac lung and mediastinum should be visualised; insufficient penetration reduces visibility through dense regions."),
   marker: ev("educational-simplification", "Side marker and annotations", "Learner-selected marker at its detector-relative position; patient-side correctness is unscored."),
   projection: ev("educational-simplification", "Scope", "Only the PA appearance exists; AP/lateral are not simulated."),
+};
+
+const APPROX = (note: string): VisualMagnitude => ({ kind: "educational-visual-approximation", note });
+const NO_MAGNITUDE = (note: string): VisualMagnitude => ({ kind: "none", note });
+
+/**
+ * Rendered magnitude of each effect. Always an EDUCATIONAL VISUAL APPROXIMATION where something is drawn
+ * (amounts in tuning.ts), whatever the class of the concept. Effects that draw nothing say so.
+ */
+export const EFFECT_MAGNITUDES: Record<EffectId, VisualMagnitude> = {
+  baseline: NO_MAGNITUDE("Reference appearance only; no effect applied."),
+  rotation: APPROX("Spine / interior shift and transradiancy tilt scale with the internal value; not a measurement of degrees of rotation."),
+  "collimation-clipping": APPROX("The field edge is exact geometry; where the anatomy lies under it follows an approximate landmark mapping."),
+  "excess-field": NO_MAGNITUDE("Only a larger exposed region; no scatter / contrast penalty is drawn."),
+  centering: NO_MAGNITUDE("The field simply follows the central ray."),
+  scapulae: APPROX("Schematic scapula shape, position and density."),
+  chin: APPROX("Schematic jaw / soft-tissue shape, position and density."),
+  inspiration: APPROX("Lung fields shortened by a fixed fraction and the diaphragm raised; no rib count."),
+  motion: APPROX("Fixed blur size; not a movement distance."),
+  "low-exposure": APPROX("Deterministic noise amplitude and detail loss; not a real detector's noise or an EI / dose."),
+  "excess-exposure": NO_MAGNITUDE("No visible change by design; the image is not darkened."),
+  "low-penetration": APPROX("Fixed fraction of local contrast kept in dense zones; not a penetration measurement."),
+  marker: APPROX("Drawn as a glyph at the detector-relative position."),
+  projection: NO_MAGNITUDE("The PA appearance is shown for layout only."),
 };
 
 /** Stable seed from the case id (FNV-1a), so the noise pattern is fixed per case and never random. */
@@ -115,7 +150,8 @@ export function markerVisibleFraction(center: { x: number; y: number }, sizeCm: 
   const x1 = center.x - sizeCm / 2, x2 = center.x + sizeCm / 2, y1 = center.y - sizeCm / 2, y2 = center.y + sizeCm / 2;
   const w = Math.max(0, Math.min(x2, field.x2) - Math.max(x1, field.x1));
   const h = Math.max(0, Math.min(y2, field.y2) - Math.max(y1, field.y1));
-  return (w * h) / (sizeCm * sizeCm);
+  // Rounded so floating-point noise never turns a fully recorded marker into 0.9999999999999997.
+  return Math.round(((w * h) / (sizeCm * sizeCm)) * 1e6) / 1e6;
 }
 
 export function buildRenderPlan(state: RadiographResultState, radCase: RadCase): RenderPlan {
@@ -179,9 +215,9 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const faults = new Set<EffectId>(["projection", "rotation", "collimation-clipping", "scapulae", "chin", "inspiration", "motion", "low-exposure", "low-penetration"]);
   const effects: PlanEffect[] = active
     .filter(([, on]) => on)
-    .map(([id, , drivers, changesPixels]) => ({ id, drivers, principle: EFFECT_PRINCIPLES[id], changesPixels }));
+    .map(([id, , drivers, changesPixels]) => ({ id, drivers, concept: EFFECT_CONCEPTS[id], magnitude: EFFECT_MAGNITUDES[id], changesPixels }));
   if (!effects.some((e) => faults.has(e.id))) {
-    effects.unshift({ id: "baseline", drivers: [], principle: EFFECT_PRINCIPLES.baseline, changesPixels: false });
+    effects.unshift({ id: "baseline", drivers: [], concept: EFFECT_CONCEPTS.baseline, magnitude: EFFECT_MAGNITUDES.baseline, changesPixels: false });
   }
 
   return {

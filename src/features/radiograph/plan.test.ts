@@ -3,6 +3,7 @@ import { chestPaErect } from "@/data/cases/chest-pa-erect";
 import type { SimulationSettings } from "@/domain/simulation";
 import { evaluate } from "@/features/evaluation/engine";
 import { buildRenderPlan, markerVisibleFraction, noiseSeedFor } from "./plan";
+import { EFFECT_CONCEPTS, EFFECT_MAGNITUDES } from "./plan";
 import { plan } from "./test-utils";
 
 const ids = (p: ReturnType<typeof plan>) => p.effects.map((e) => e.id);
@@ -185,10 +186,92 @@ describe("render plan from RadiographResultState", () => {
   it("every effect carries an evidence class and drivers from the state (never pixels)", () => {
     const p = plan({ rotationDeg: 8, mas: 1, shoulderPosition: "relaxed", motionInstruction: "none", kvp: 70 });
     for (const e of p.effects) {
-      expect(["validated", "common-reference", "vendor-protocol-dependent", "educational-simplification", "provisional"]).toContain(e.principle.status);
-      expect(e.principle.reference).toMatch(/Image-quality ref/);
+      expect(["validated", "common-reference", "vendor-protocol-dependent", "educational-simplification", "provisional"]).toContain(e.concept.status);
+      expect(e.concept.reference).toMatch(/Image-quality ref/);
     }
     expect(p.effects.find((e) => e.id === "rotation")?.drivers).toEqual(["geometry.rotationDeg"]);
     expect(p.effects.find((e) => e.id === "motion")?.drivers).toEqual(["patientResponse.motion"]);
   });
 });
+
+describe("concept and rendered magnitude are classified separately; nothing drawn reads as validated appearance", () => {
+  const all = Object.keys(EFFECT_CONCEPTS) as (keyof typeof EFFECT_CONCEPTS)[];
+
+  it("every effect has a clinical concept record AND a magnitude record", () => {
+    expect(Object.keys(EFFECT_MAGNITUDES).sort()).toEqual(all.slice().sort());
+    for (const id of all) {
+      expect(EFFECT_CONCEPTS[id].reference, id).toMatch(/Image-quality ref/);
+      expect(EFFECT_MAGNITUDES[id].note.length, id).toBeGreaterThan(10);
+    }
+  });
+
+  it("the rendered magnitude is never 'validated': it is an educational visual approximation, or nothing is drawn", () => {
+    for (const id of all) {
+      expect(["educational-visual-approximation", "none"], id).toContain(EFFECT_MAGNITUDES[id].kind);
+      expect(JSON.stringify(EFFECT_MAGNITUDES[id]), id).not.toMatch(/validated/i);
+    }
+  });
+
+  it("validated / evidence-supported concepts still carry an approximate magnitude (motion, noise, penetration, rotation, scapulae, jaw, inspiration)", () => {
+    const expected = { motion: "validated", "low-exposure": "validated", "low-penetration": "common-reference", rotation: "common-reference", scapulae: "common-reference", chin: "validated", inspiration: "common-reference" } as const;
+    for (const [id, status] of Object.entries(expected) as [keyof typeof EFFECT_CONCEPTS, string][]) {
+      expect(EFFECT_CONCEPTS[id].status, id).toBe(status);
+      expect(EFFECT_MAGNITUDES[id].kind, id).toBe("educational-visual-approximation");
+    }
+  });
+
+  it("effects that draw nothing say so (excess exposure, excess field, centering)", () => {
+    for (const id of ["excess-exposure", "excess-field", "centering", "baseline", "projection"] as const) expect(EFFECT_MAGNITUDES[id].kind, id).toBe("none");
+  });
+
+  it("plan effects carry both records", () => {
+    const p = plan({ rotationDeg: 8, motionInstruction: "none", mas: 1, shoulderPosition: "relaxed", chinPosition: "tucked", breathing: "no-instruction", kvp: 70 });
+    for (const e of p.effects) {
+      expect(e.concept).toEqual(EFFECT_CONCEPTS[e.id]);
+      expect(e.magnitude).toEqual(EFFECT_MAGNITUDES[e.id]);
+    }
+  });
+});
+
+describe("default marker (regression: the default L must not be clipped by a typical correct field)", () => {
+  const pos = chestPaErect.positioning;
+  const fields = [
+    { collimation: { width: 0.94, height: 0.84 } },
+    { collimation: { width: 0.95, height: 0.86 } },
+    { collimation: { width: 0.97, height: 0.9 } },
+    { collimation: { width: 1, height: 0.9 } },
+    { collimation: { width: 0.94, height: 0.8 } },
+  ];
+  const rays = [{ x: 0, y: -0.14 }, { x: 0, y: -0.07 }, { x: 0.02, y: -0.1 }, { x: -0.03, y: -0.05 }];
+
+  it("the first-placed marker and the initial marker position are the case's default", () => {
+    expect(chestPaErect.initialSettings.markerPosition).toEqual(pos.defaultMarkerPosition);
+  });
+
+  it("is completely inside every typical correct field and recorded in full, for L and R", () => {
+    for (const f of fields) for (const ray of rays) for (const side of ["L", "R"] as const) {
+      const patch = { ...f, centralRay: ray, sideMarker: side, markerPosition: pos.defaultMarkerPosition };
+      const r = evaluate(chestPaErect, { ...chestPaErect.initialSettings, projection: "pa-erect", ...patch });
+      const m = plan(patch).marker!;
+      expect(m.visibleFraction, JSON.stringify(patch)).toBe(1);
+      expect(r.checks.find((c) => c.ruleId === "side-marker")?.outcome, JSON.stringify(patch)).toBe("pass");
+    }
+  });
+
+  it("stays outside the required-anatomy region, so it never sits over the lungs", () => {
+    const c = pos.defaultMarkerPosition, a = chestPaErect.requiredAnatomy, d = chestPaErect.detector;
+    const cx = ((c.x + 1) / 2) * d.widthCm, cy = ((c.y + 1) / 2) * d.heightCm, h = pos.markerSizeCm / 2;
+    const overlaps = cx + h > a.xCm && cx - h < a.xCm + a.widthCm && cy + h > a.yCm && cy - h < a.yCm + a.heightCm;
+    expect(overlaps).toBe(false);
+  });
+
+  it("is still genuinely clipped / dropped when the field is narrowed over it (behaviour kept)", () => {
+    const narrow = plan({ sideMarker: "L", markerPosition: pos.defaultMarkerPosition, collimation: { width: 0.7, height: 0.84 } }).marker!;
+    expect(narrow.visibleFraction).toBe(0);
+    const edge = plan({ sideMarker: "L", markerPosition: pos.defaultMarkerPosition, collimation: { width: 0.9, height: 0.84 } }).marker!;
+    expect(edge.visibleFraction).toBeLessThan(1);
+    const r = evaluate(chestPaErect, { ...chestPaErect.initialSettings, projection: "pa-erect", sideMarker: "L", collimation: { width: 0.7, height: 0.84 } });
+    expect(r.checks.find((c) => c.ruleId === "side-marker")?.outcome).toBe("partial");
+  });
+});
+

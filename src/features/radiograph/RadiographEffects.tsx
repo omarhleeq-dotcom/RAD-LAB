@@ -6,7 +6,7 @@ import type { RenderPlan } from "./plan";
 
 /**
  * Post-exposure explanation: which learner action / simulated state produced which visible effect, with the
- * evidence class of the clinical principle. Shown only with the result, so Practice Mode reveals nothing earlier.
+ * two separate evidence records — the clinical CONCEPT and the RENDERED MAGNITUDE. Shown only with the result, so Practice Mode reveals nothing earlier.
  */
 export function RadiographEffects({ plan }: { plan: RenderPlan }) {
   const t = useTranslations("radiograph");
@@ -23,11 +23,22 @@ export function RadiographEffects({ plan }: { plan: RenderPlan }) {
           <li key={e.id} data-effect={e.id} className="rounded border border-line bg-paper/60 p-3">
             <h3 className="text-sm font-semibold">{t(`effects.${e.id}.title`)}</h3>
             <p className="mt-1 text-sm">{t(`effects.${e.id}.desc`)}</p>
-            <p className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted">
-              <span>{t("principle")}:</span>
-              <EvidenceBadge status={e.principle.status} />
-              <span>{t("approximation")}</span>
-            </p>
+            <dl className="mt-2 space-y-1 text-xs text-muted">
+              <div className="flex flex-wrap items-center gap-2">
+                <dt>{t("concept")}:</dt>
+                <dd>
+                  <EvidenceBadge status={e.concept.status} />
+                </dd>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <dt>{t("magnitude")}:</dt>
+                <dd>
+                  <span className="inline-block rounded border border-line bg-paper px-1.5 py-0.5 align-middle text-[0.65rem] font-bold uppercase tracking-wide text-muted">
+                    {e.magnitude.kind === "none" ? t("magnitudeNone") : t("magnitudeApprox")}
+                  </span>
+                </dd>
+              </div>
+            </dl>
           </li>
         ))}
       </ul>

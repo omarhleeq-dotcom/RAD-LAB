@@ -313,14 +313,11 @@
     "title": "Simulated educational radiograph",
     "alt": "Simulated educational PA chest radiograph rendered from your settings. It is not a diagnostic image.",
     "educationalNote": "Educational reference appearance — not an image of the case patient, and not a diagnostic or clinically validated radiograph. The visual effects are educational approximations: their size does not measure real rotation, movement, noise or dose.",
-    "darkMargins": "Dark margins lie outside the collimated field or beyond the edge of the reference image.",
     "notRepresentative": "This projection is not simulated yet. The PA reference appearance is shown for layout only and does not represent your selected projection.",
     "loading": "Rendering the radiograph…",
     "failed": "The reference image could not be loaded.",
     "effectsTitle": "What shaped this image",
-    "effectsIntro": "Each item links something you did to a visible effect. The amounts drawn are educational approximations.",
-    "principle": "Clinical principle",
-    "approximation": "Visual effect: educational approximation",
+    "effectsIntro": "Each item links something you did to a visible effect. The clinical concept and the amount drawn are classified separately: the amount drawn is always an educational approximation, never a validated appearance.",
     "effects": {
       "baseline": {
         "title": "Reference appearance",
@@ -378,6 +375,11 @@
         "title": "Projection not simulated",
         "desc": "The projection you selected is not simulated in this version. The PA reference appearance is shown for layout only."
       }
-    }
+    },
+    "concept": "Clinical concept",
+    "magnitude": "Rendered magnitude",
+    "magnitudeApprox": "Educational visual approximation",
+    "magnitudeNone": "Nothing drawn (by design)",
+    "margins": "Dark margins lie outside the collimated field. Grey hatched areas inside the field have no reference-image data: they are not exposure, collimation or anatomy."
   }
 }

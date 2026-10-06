@@ -12,7 +12,10 @@
  *   4  technique effects         low penetration (dense zones), then low-exposure detail loss and noise
  *   5  display processing        brightness normalised to the pre-technique level inside the field, so no
  *                                exposure/penetration value can lighten or darken the picture
- *   6  field / collimation mask  unexposed outside the collimated field and beyond the source image
+ *   6  field / collimation mask  unexposed (dark) outside the collimated field; 'no reference data' hatch where the
+ *                                source image does not cover an exposed part of the detector
+ * Detector area inside the field that the source image does not cover is a neutral grey hatch ("no reference
+ * data"), never black, so it cannot be mistaken for direct exposure, collimation or anatomy.
  * The learner's side marker is an annotation layer drawn on top by the canvas component (not here).
  *
  * Every effect size is an EDUCATIONAL VISUAL APPROXIMATION (see tuning.ts).
@@ -198,10 +201,13 @@ export function renderRadiograph(
   const lut = plan.anatomy.inspiration ? inspirationLut(spec, plan.anatomy.inspiration.extentReduction) : null;
   const needZone = plan.technique.penetrationContrastKept !== null;
 
-  // Exposure mask: collimated field × source-image extent, with a soft penumbra.
+  // Two independent masks, each with a soft penumbra: the collimated field (what is exposed) and the extent of
+  // the source image (where reference data exist). Field-but-no-data is drawn as a neutral hatch, never black.
   const f = plan.fieldCm, im = plan.image;
   const edge = (c: number, lo: number, hi: number) => smoothstep(lo - feather / 2, lo + feather / 2, c) * (1 - smoothstep(hi - feather / 2, hi + feather / 2, c));
-  const mask = new Float32Array(N);
+  const mask = new Float32Array(N); // field × data: where the image is real, exposed data
+  const fieldMask = new Float32Array(N);
+  const dataMask = new Float32Array(N);
   const luma = new Float32Array(N);
   const zone = needZone ? new Float32Array(N) : null;
 
@@ -216,14 +222,16 @@ export function renderRadiograph(
 
   for (let y = 0; y < H; y++) {
     const cy = (y + 0.5) / pxPerCm;
-    const mRow = edge(cy, f.y1, f.y2) * edge(cy, im.y1, im.y1 + im.heightCm);
+    const fRow = edge(cy, f.y1, f.y2), dRow = edge(cy, im.y1, im.y1 + im.heightCm);
     const vOut = (cy - im.y1) / im.heightCm;
     const vSrc = lut ? lut[Math.round(clamp01(vOut) * (lut.length - 1))]! : vOut;
     for (let x = 0; x < W; x++) {
       const cx = (x + 0.5) / pxPerCm;
       const i = y * W + x;
-      const m = mRow * edge(cx, f.x1, f.x2) * edge(cx, im.x1, im.x1 + im.widthCm);
-      mask[i] = m;
+      const fm = fRow * edge(cx, f.x1, f.x2), dm = dRow * edge(cx, im.x1, im.x1 + im.widthCm);
+      fieldMask[i] = fm;
+      dataMask[i] = dm;
+      mask[i] = fm * dm;
       const uOut = (cx - im.x1) / im.widthCm;
       let uSrc = uOut;
       if (rot) {
@@ -297,11 +305,17 @@ export function renderRadiograph(
   const bg = TUNING.background;
   const outLuma = new Uint8ClampedArray(N);
   let sum = 0, n = 0;
-  for (let i = 0; i < N; i++) {
-    const m = mask[i]!;
-    const v = bg + (Math.min(255, Math.max(0, img[i]! * gain)) - bg) * m;
-    outLuma[i] = v;
-    if (m > 0.5) { sum += outLuma[i]!; n++; }
+  const period = TUNING.noData.periodCm * pxPerCm;
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const i = y * W + x;
+      const d = dataMask[i]!, fm = fieldMask[i]!;
+      // Diagonal hatch in detector space: the same pattern regardless of any effect on the image.
+      const hatch = Math.floor((x + y) / period) % 2 === 0 ? TUNING.noData.light : TUNING.noData.dark;
+      const exposed = d * Math.min(255, Math.max(0, img[i]! * gain)) + (1 - d) * hatch;
+      outLuma[i] = bg + (exposed - bg) * fm;
+      if (mask[i]! > 0.5) { sum += outLuma[i]!; n++; }
+    }
   }
   return {
     width: W,

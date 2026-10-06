@@ -38,10 +38,14 @@ const SCENARIOS = {
   inspiration: { set: { breathing: "expiration-hold" }, effects: ["inspiration"], absent: ["motion"] },
   motion: { set: { motion: "none" }, effects: ["motion"], absent: ["inspiration", "low-exposure"] },
   "marker-R": { set: { marker: "R" }, effects: ["marker"] },
-  "marker-clipped": { set: { cw: 24 }, effects: ["marker"] },
-  // The learner moves the marker up (Shift+ArrowUp ×2) so the whole glyph is recorded inside the field.
-  "marker-L-visible": { set: { nudge: 2 }, effects: ["marker"] },
-  "marker-R-visible": { set: { marker: "R", nudge: 2 }, effects: ["marker"] },
+  "marker-clipped": { set: { cw: 24 }, effects: ["marker"], markerVisible: false },
+  // Regression: the DEFAULT marker (never moved) is recorded in full inside a typical correct field.
+  "marker-L-default": { set: {}, effects: ["marker"], markerVisible: true },
+  "marker-R-default": { set: { marker: "R" }, effects: ["marker"], markerVisible: true },
+  // Centering error without clipping: the field is shifted, the anatomy is not.
+  "centering-off": { set: { cx: 3, cw: 35, ch: 36 }, effects: ["centering"], absent: ["collimation-clipping"] },
+  // Fully open field: detector area the baseline does not cover is a grey hatch, never black.
+  "open-field": { set: { cx: 0, cy: 21.5, cw: 35, ch: 43 }, effects: ["excess-field"], hatchProbe: true },
   "ap-projection": { set: { projection: "ap-erect" }, effects: ["projection"], notRepresentative: true },
   combined: { set: { rotation: 8, cx: 5, cw: 26, mas: 1, shoulders: "relaxed", chin: "tucked", motion: "none", breathing: "no-instruction", kvp: 80 }, effects: ["rotation", "collimation-clipping", "low-exposure", "scapulae", "chin", "motion", "inspiration", "low-penetration", "marker"] },
 };
@@ -127,6 +131,24 @@ async function run() {
         const effects = (await holder.locator("canvas").getAttribute("data-effects")).split(" ");
         for (const e of sc.effects) ok(`${tag}: effect ${e}`, effects.includes(e), effects.join(","));
         for (const e of sc.absent ?? []) ok(`${tag}: no effect ${e}`, !effects.includes(e), effects.join(","));
+        const pixelAt = (px, py) => holder.locator("canvas").evaluate((c, [x, y]) => c.getContext("2d").getImageData(x, y, 1, 1).data[0], [px, py]);
+        if (sc.markerVisible !== undefined) {
+          // The marker box (2.2 cm at the default position ≈ x 2.8, y 12.04 cm; 24 px/cm) holds bright glyph pixels only if recorded.
+          const bright = await holder.locator("canvas").evaluate((c) => {
+            const d = c.getContext("2d").getImageData(41, 263, 52, 52).data;
+            let n = 0;
+            for (let i = 0; i < d.length; i += 4) if (d[i] > 235) n++;
+            return n;
+          });
+          ok(`${tag}: default marker ${sc.markerVisible ? "fully recorded" : "dropped (outside the field)"}`, sc.markerVisible ? bright > 80 : bright === 0, String(bright));
+        }
+        if (sc.hatchProbe) {
+          // Bottom band (≈ 38.2–43 cm) and left band (< 1.8 cm) are inside the open field but beyond the reference image.
+          for (const [x, y] of [[420, 1000], [300, 1010], [20, 500], [30, 700]]) {
+            const v = await pixelAt(x, y);
+            ok(`${tag}: no-data hatch at ${x},${y} is neutral grey (not black)`, v === 92 || v === 112, String(v));
+          }
+        }
         if (sc.notRepresentative) ok(`${tag}: not-representative notice`, (await page.locator('[data-testid="not-representative"]').count()) === 1);
         else ok(`${tag}: no not-representative notice`, (await page.locator('[data-testid="not-representative"]').count()) === 0);
         // Regression: observed settings are shown translated, never as raw ids.

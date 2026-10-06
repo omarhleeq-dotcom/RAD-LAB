@@ -136,8 +136,8 @@ Rules for entries:
 | Original source | Screenshots of the RAD-LAB result renderer (production build, EN desktop) applied to A-003 |
 | License | CC0 1.0 (derived solely from A-003 plus RAD-LAB UI/rendering output) |
 | Attribution legally required | No (credit given in the app and in A-001) |
-| Local project path | `docs/session-4-effects-contact-sheet.jpg` (documentation only, not served by the app) |
-| RAD-LAB modifications | Montage of 12 renderer outputs with captions; JPEG quality 82. Each tile is a simulated educational result, **not** a clinical image. |
+| Local project path | `docs/session-4-effects-contact-sheet.jpg` and `docs/session-4-renders/*.jpg` (13 renderer outputs in EN and AR plus a contact sheet per language); documentation only, not served by the app |
+| RAD-LAB modifications | Screenshots of renderer outputs (resized to 480 px wide, JPEG quality 86) and captioned montages. Each image is a simulated educational result, **not** a clinical image. |
 | Date / method | 2026-10-06; produced from `scripts/verify-session4.mjs` screenshots |
 | Notes | Contains the learner-style L marker where shown; no real patient data. |
 

@@ -42,8 +42,13 @@ export const TUNING = {
   penetration: { contrastKept: 0.3, baseRadiusCm: 1.6 },
   /** Soft edge of the collimated field / image extent (penumbra), detector cm. */
   featherCm: 0.1,
-  /** Unexposed area (outside the field or the source image). */
+  /** Unexposed area: outside the collimated field (a collimator shadow). */
   background: 4,
+  /**
+   * "No reference data": detector area INSIDE the field that the baseline image does not cover. It must never
+   * read as exposure (black), collimation (dark) or anatomy, so it is a neutral mid-grey diagonal hatch.
+   */
+  noData: { light: 112, dark: 92, periodCm: 0.4 },
   /** Display normalisation may not stretch the image by more than this factor. */
   maxDisplayGain: 1.25,
 } as const;

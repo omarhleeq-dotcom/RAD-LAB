@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CASES } from "@/data/cases";
 import { EVIDENCE_CLASSES } from "@/domain/technique";
-import { EFFECT_PRINCIPLES } from "@/features/radiograph/plan";
+import { EFFECT_CONCEPTS } from "@/features/radiograph/plan";
 import ar from "../../messages/ar.json";
 import en from "../../messages/en.json";
 
@@ -49,7 +49,7 @@ describe("Session 4 text (patient instructions + radiograph effects)", () => {
   const c = CASES[0]!;
 
   it("every radiograph effect has a title and description in EN and AR", () => {
-    for (const id of Object.keys(EFFECT_PRINCIPLES)) for (const part of ["title", "desc"]) {
+    for (const id of Object.keys(EFFECT_CONCEPTS)) for (const part of ["title", "desc"]) {
       expect(get(en as Tree, `radiograph.effects.${id}.${part}`), id).toBeTruthy();
       expect(get(ar as Tree, `radiograph.effects.${id}.${part}`), id).toMatch(arabic);
     }
@@ -72,6 +72,19 @@ describe("Session 4 text (patient instructions + radiograph effects)", () => {
     }
     expect(get(ar as Tree, "console.readiness.items.motion-not-instructed")).toMatch(arabic);
     expect(get(ar as Tree, "result.variants.motion")).toMatch(arabic);
+  });
+
+  it("explains the grey hatch (no reference data) and separates concept from rendered magnitude (EN + AR)", () => {
+    for (const lang of [en, ar] as Tree[]) {
+      for (const k of ["radiograph.margins", "radiograph.concept", "radiograph.magnitude", "radiograph.magnitudeApprox", "radiograph.magnitudeNone", "radiograph.effectsIntro"]) {
+        expect(get(lang, k), k).toBeTruthy();
+      }
+    }
+    expect(get(en as Tree, "radiograph.margins") as string).toMatch(/hatched/);
+    expect(get(en as Tree, "radiograph.margins") as string).toMatch(/not exposure, collimation or anatomy/);
+    expect(get(ar as Tree, "radiograph.margins") as string).toMatch(arabic);
+    expect(get(en as Tree, "radiograph.magnitudeApprox") as string).toBe("Educational visual approximation");
+    expect(get(en as Tree, "radiograph.effectsIntro") as string).toMatch(/never a validated appearance/);
   });
 
   it("keeps the educational disclaimers: not the case patient, not diagnostic, effects are approximations (EN + AR)", () => {
