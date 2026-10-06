@@ -54,7 +54,7 @@ Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M
 - **Size:** **M**.
 
 ## Session 11b — PA scoring update (behaviour change, Chest PA only) — **PARTLY DONE as a draft PR**
-- **Delivered:** S10b-1 kV (already matched the engine; pinned by tests), S10b-26 SID (full credit 180–185, reference 183), PA marker presence (`missing-marker` critical finding mirroring wrong-side). **Blocked:** S10b-3 rotation-direction feedback until the owner defines the `rotationDeg` sign mapping (O12). Records: `DECISIONS.md` S11b-1, O12.
+- **Delivered:** S10b-1 kV (already matched the engine; pinned by tests), S10b-26 SID (full credit 180–185, reference 183), PA marker presence (`missing-marker` critical finding mirroring wrong-side). **Then (S11c):** convention fixed (S11c-1) and S10b-3 rotation-direction feedback delivered (S11c-2); O12 closed. Records: `DECISIONS.md` S11b-1, O12.
 
 ## Session 11 — Engine generalisation, part 2 (deferred from Session 7; zero behaviour change again), limited to the Chest Lateral reference's needs
 - **Status (2026-10-06): implemented as a draft PR** — mechanisms only, Chest PA byte-identical; see [`session-11-generalisation.md`](session-11-generalisation.md). Decisions S11-1 … S11-4 in `DECISIONS.md`.

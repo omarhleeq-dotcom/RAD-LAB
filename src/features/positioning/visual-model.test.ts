@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chinOverlapsApices, rotationVisual, scapulaOffset } from "./visual-model";
+import { chinOverlapsApices, planRotationDeg, rotationVisual, scapulaOffset } from "./visual-model";
 
 describe("rotationVisual (educational drawing model)", () => {
   it("is symmetric and neutral at 0°", () => {
@@ -33,5 +33,27 @@ describe("patient cue drawing helpers", () => {
   it("shows the chin over the apices only when tucked", () => {
     expect(chinOverlapsApices("tucked")).toBe(true);
     expect(chinOverlapsApices("elevated")).toBe(false);
+  });
+});
+
+describe("planRotationDeg (S11c-1: positive rotationDeg = patient LEFT side toward the receptor)", () => {
+  // Plan view: +x toward the detector; in a PA the patient faces +x and the patient's left is +y (plan down).
+  // SVG rotate(a) is clockwise: (x, y) -> (x cos a - y sin a, x sin a + y cos a).
+  const leftSideTowardDetector = (deg: number) => {
+    const a = (planRotationDeg("pa-erect", deg) * Math.PI) / 180;
+    return -Math.sin(a); // x component of the rotated left-side vector (0, 1)
+  };
+  it("positive rotation swings the PA patient's left side toward the detector, negative the right side", () => {
+    expect(leftSideTowardDetector(10)).toBeGreaterThan(0);
+    expect(leftSideTowardDetector(-10)).toBeLessThan(0);
+    expect(leftSideTowardDetector(0)).toBeCloseTo(0);
+  });
+  it("matches the result image: positive rotation moves the spine toward the viewer's right (patient's left)", () => {
+    expect(rotationVisual(10).spineShift).toBeGreaterThan(0);
+    expect(leftSideTowardDetector(10)).toBeGreaterThan(0);
+  });
+  it("leaves AP and lateral drawings unchanged", () => {
+    expect(planRotationDeg("ap-erect", 7)).toBe(7);
+    expect(planRotationDeg("lateral-left", 7)).toBe(7);
   });
 });

@@ -3,7 +3,7 @@
  * internal rotation state (`rotationDeg`) directly. The medical reference warns that clavicle/spinous
  * process appearance depends on body morphology, so nothing here maps pixel distances to clinical degrees.
  */
-import type { ChinPositionId, ShoulderPositionId } from "@/domain/simulation";
+import type { ChinPositionId, ProjectionId, ShoulderPositionId } from "@/domain/simulation";
 
 const toRad = (deg: number) => (deg * Math.PI) / 180;
 
@@ -12,7 +12,7 @@ export interface RotationVisual {
   thoraxScale: number;
   /**
    * Per-lung width scale, named by the VIEWER's side of the displayed image (PA display: the viewer's left is the
-   * patient's right). The drawing is symmetric and unlabelled; which sign means which patient side is not interpreted.
+   * patient's right). The drawing is symmetric and unlabelled. S11c-1: positive rotationDeg = patient LEFT side toward the receptor = viewer-right lung drawn larger (the Bontrager note is silent on which lung looks larger; educational approximation).
    */
   viewerLeftLungScale: number;
   viewerRightLungScale: number;
@@ -40,3 +40,14 @@ export function scapulaOffset(shoulders: ShoulderPositionId, unit = 1): number {
 
 /** Whether the chin is drawn over the lung apices. */
 export const chinOverlapsApices = (chin: ChinPositionId) => chin === "tucked";
+
+/**
+ * Plan-view (top-down, SVG: +x toward the detector, +y = detector-left-to-right = the patient's left in a PA) rotation
+ * of the patient figure, in SVG degrees (positive = clockwise). S11c-1: positive `rotationDeg` = the patient's LEFT side
+ * toward the receptor in a PA, the same convention as the result image / detector view. In a PA the patient faces +x,
+ * so the left side must swing toward +x, which is a counter-clockwise turn. Lateral and AP drawings are unchanged
+ * (AP/lateral rotation conventions are not defined yet; their existing drawing already turns the left side toward the receptor in AP).
+ */
+export function planRotationDeg(projection: ProjectionId, rotationDeg: number): number {
+  return projection === "ap-erect" || projection === "lateral-left" ? rotationDeg : -rotationDeg;
+}

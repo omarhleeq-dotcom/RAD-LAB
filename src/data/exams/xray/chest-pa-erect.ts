@@ -362,11 +362,22 @@ export const chestPaErectExam: ExamDefinition = {
           en: "The patient is rotated. Rotation changes how the thorax is projected: the spinous processes no longer lie midway between the medial ends of the clavicles and the two sides of the chest look different, which can mislead when the image is read. Ask the patient to stand square to the detector, then correct. (How rotation looks varies with body build, so a drawn amount is not a number of degrees.)",
           ar: "المريض مائل (دوران). يغيّر الدوران طريقة إسقاط القفص الصدري: لا تقع النتوءات الشوكية في منتصف المسافة بين النهايتين الإنسيتين للترقوتين، ويبدو جانبا الصدر مختلفين، وقد يضلّل ذلك عند قراءة الصورة. اطلب من المريض الوقوف متعامدًا مع الكاسيت ثم صحّح الوضعية. (يختلف مظهر الدوران باختلاف بنية الجسم، لذا لا يعني المقدار المرسوم عددًا من الدرجات.)",
         },
+        // Direction feedback (S10b-3, S11c-1/2): BONTRAGER-9 p.83 — the sternal clavicle end closest to the spine
+        // indicates the side rotated toward the receptor. low = negative rotationDeg (right side toward the receptor),
+        // high = positive rotationDeg (left side toward the receptor). Feedback only; scoring is unchanged.
+        low: {
+          en: "The patient is rotated with the RIGHT side toward the detector. On the image, the sternal end of the right clavicle (on the viewer's left) lies closer to the spinous processes than the left (BONTRAGER-9 p.83), and the two sides of the chest look different, which can mislead when the image is read. Ask the patient to stand square to the detector, then correct. (How rotation looks varies with body build, so a drawn amount is not a number of degrees.)",
+          ar: "المريض مائل (دوران) بحيث يكون الجانب الأيمن باتجاه الكاسيت. في الصورة تقع النهاية القصية للترقوة اليمنى (على يسار المشاهد) أقرب إلى النتوءات الشوكية من اليسرى، ويبدو جانبا الصدر مختلفين، وقد يضلّل ذلك عند قراءة الصورة. اطلب من المريض الوقوف متعامدًا مع الكاسيت ثم صحّح الوضعية. (يختلف مظهر الدوران باختلاف بنية الجسم، لذا لا يعني المقدار المرسوم عددًا من الدرجات.)",
+        },
+        high: {
+          en: "The patient is rotated with the LEFT side toward the detector. On the image, the sternal end of the left clavicle (on the viewer's right) lies closer to the spinous processes than the right (BONTRAGER-9 p.83), and the two sides of the chest look different, which can mislead when the image is read. Ask the patient to stand square to the detector, then correct. (How rotation looks varies with body build, so a drawn amount is not a number of degrees.)",
+          ar: "المريض مائل (دوران) بحيث يكون الجانب الأيسر باتجاه الكاسيت. في الصورة تقع النهاية القصية للترقوة اليسرى (على يمين المشاهد) أقرب إلى النتوءات الشوكية من اليمنى، ويبدو جانبا الصدر مختلفين، وقد يضلّل ذلك عند قراءة الصورة. اطلب من المريض الوقوف متعامدًا مع الكاسيت ثم صحّح الوضعية. (يختلف مظهر الدوران باختلاف بنية الجسم، لذا لا يعني المقدار المرسوم عددًا من الدرجات.)",
+        },
       },
       evidence: {
         status: "educational-simplification",
         reference: "§2 Rotation; §3B; §6 Rotation",
-        note: "Neutral target is validated; the +/-2 and +/-5 degree bands are provisional and the sign of rotation is not interpreted.",
+        note: "Neutral target is validated; the +/-2 and +/-5 degree bands are provisional. Direction feedback (S10b-3, S11c-2) follows BONTRAGER-9 p.83 through the S11c-1 sign convention (positive rotationDeg = patient's LEFT side toward the receptor = spine toward the viewer's right); it is feedback only and never changes the score.",
       },
     },
     {
