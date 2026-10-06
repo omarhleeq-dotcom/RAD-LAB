@@ -134,15 +134,15 @@
  },
  "modality": "general-radiography",
  "patient": {
-  "age": 45,
+  "age": 21,
   "description": {
-   "ar": "ذكر عمره ٤٥ عامًا، قادر على المشي والوقوف واتباع تعليمات التنفس.",
-   "en": "45-year-old male, ambulant, able to stand and follow breathing instructions."
+   "ar": "أنثى عمرها ٢١ عامًا، قادرة على المشي والوقوف واتباع تعليمات التنفس.",
+   "en": "21-year-old female, ambulant, able to stand and follow breathing instructions."
   },
-  "sex": "male"
+  "sex": "female"
  },
  "patientCondition": {
-  "ar": "حالته مستقرة ولا توجد قيود على الحركة. وصل المريض وهو مائل قليلًا إلى أحد الجانبين.",
+  "ar": "حالتها مستقرة ولا توجد قيود على الحركة. وصلت المريضة وهي مائلة قليلًا إلى أحد الجانبين.",
   "en": "Stable. No mobility limitations. The patient has arrived slightly turned to one side."
  },
  "patientCooperation": {
