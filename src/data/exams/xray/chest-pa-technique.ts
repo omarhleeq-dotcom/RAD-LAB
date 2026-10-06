@@ -1,12 +1,13 @@
-import type { TechniqueProfile } from "@/domain/technique";
+import type { ExamTechniqueProfile } from "@/domain/exam";
 
 /**
- * Technique / exposure PROTOCOL PROFILE for the demo adult chest case.
+ * Technique / exposure PROTOCOL PROFILE of the Chest PA erect exam (Session 7: an exam concern; the simulated
+ * patient's attenuation is supplied by the case, `CaseDefinition.patientTechnique`).
  *
  * Nothing here is a medical constant. It is a configurable, vendor-neutral EDUCATIONAL protocol, and every group
  * carries its own evidence class (docs/RAD-LAB_Medical_Reference_Chest_PA_Technique.md §2, §13, §15). The four
  * concepts the brief keeps apart:
- *   A. selectable range     → RadCase.controls (console hardware limits)
+ *   A. selectable range     → ExamDefinition.controls (console hardware limits)
  *   B. protocol target      → `manual.reference`, `kvp.targetBand`, `aec.*`        (PROVISIONAL, local-protocol)
  *   C. scoring tolerance    → `deviation`, `kvp.referenceRange` (partial credit)   (PROVISIONAL)
  *   D. evidence class       → `evidence` fields and `assumptions`
@@ -14,7 +15,7 @@ import type { TechniqueProfile } from "@/domain/technique";
  * TODO(medical-review): every PROVISIONAL / EDUCATIONAL value needs educator / medical-physicist review and a
  * named equipment+protocol profile before it is presented as anything but a demo.
  */
-export const chestPaTechnique: TechniqueProfile = {
+export const chestPaTechnique: ExamTechniqueProfile = {
   id: "demo-adult-reference-dr",
   label: {
     en: "Demo protocol — average adult, generic DR system (provisional)",
@@ -26,15 +27,6 @@ export const chestPaTechnique: TechniqueProfile = {
     note: "A demo protocol, not a clinical technique chart.",
   },
 
-  patient: {
-    attenuation: 1,
-    label: { en: "Average adult (reference attenuation)", ar: "بالغ متوسط (توهين مرجعي)" },
-    evidence: {
-      status: "educational-simplification",
-      reference: "Technique ref §10",
-      note: "One reference attenuation for now. The engine already takes attenuation as an input so other body habitus can be added as data later.",
-    },
-  },
   system: {
     label: { en: "Generic digital detector with grid (assumed)", ar: "كاشف رقمي عام مع شبكة (افتراضي)" },
     relativeResponse: 1,

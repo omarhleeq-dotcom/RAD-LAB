@@ -14,7 +14,7 @@ const code = (p: string) => src(p).replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|
 const prod = (dir: string) => files(path.join(root, dir)).filter((f) => /\.tsx?$/.test(f) && !/\.test\.|test-utils/.test(f));
 
 describe("architecture guards (CLAUDE.md rule 3: scoring never depends on rendering)", () => {
-  const logicDirs = ["evaluation", "scoring", "technique", "patient", "simulation"];
+  const logicDirs = ["evaluation", "scoring", "technique", "patient", "simulation", "exam"];
   it("scoring / evaluation / technique / patient logic never imports the renderer or reads pixels", () => {
     for (const f of logicDirs.flatMap(prod).filter((f) => !f.endsWith(".tsx"))) {
       const text = src(f);
