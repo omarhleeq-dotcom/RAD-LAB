@@ -20,6 +20,7 @@ import {
   rectInside,
   rectsOverlap,
   regionToRect,
+  viewerSideOf,
 } from "@/features/simulation/geometry";
 import { derivePatientResponse } from "@/features/patient/response";
 import { computeDetectorExposure } from "@/features/technique/model";
@@ -95,18 +96,25 @@ function evalCentering(rule: CenteringRule, s: SimulationSettings, c: RadCase): 
   return { outcome: r.state === "acceptable" ? "partial" : "fail", observed, feedback };
 }
 
+/**
+ * Marker placement + laterality. The side convention comes from case data (`positioning.markerSide`) and is the
+ * same one the renderer draws with: PA display, patient left = viewer right. Unscored (weight 0) like the rest of
+ * this rule; the issues found are reported together so a wrong-side marker is never hidden by another remark.
+ */
 function evalMarker(rule: MarkerRule, s: SimulationSettings, c: RadCase): Partial<CheckResult> {
   if (!s.sideMarker) return { outcome: "fail", observed: "—", feedback: rule.feedback.fail };
   const rect = markerRect(s.markerPosition, c.positioning.markerSizeCm, c.detector);
   const observed = s.sideMarker;
   const detectorRect = { x1: 0, y1: 0, x2: c.detector.widthCm, y2: c.detector.heightCm };
+  const issues: LocalizedText[] = [];
+  if (viewerSideOf(s.markerPosition) !== c.positioning.markerSide[s.sideMarker]) issues.push(rule.feedback.wrongSide);
   if (!rectInside(rect, detectorRect) || !rectInside(rect, collimatedField(s, c.detector))) {
-    return { outcome: "partial", observed, feedback: rule.feedback.outsideField };
+    issues.push(rule.feedback.outsideField);
+  } else if (rectsOverlap(rect, regionToRect(c.requiredAnatomy))) {
+    issues.push(rule.feedback.overlap);
   }
-  if (rectsOverlap(rect, regionToRect(c.requiredAnatomy))) {
-    return { outcome: "partial", observed, feedback: rule.feedback.overlap };
-  }
-  return { outcome: "pass", observed, feedback: rule.feedback.pass };
+  if (issues.length === 0) return { outcome: "pass", observed, feedback: rule.feedback.pass };
+  return { outcome: "partial", observed, feedback: issues.length === 1 ? issues[0]! : joinText(issues) };
 }
 
 const fmtDI = (di: number) => `${di > 0 ? "+" : ""}${fmt(di)} DI`;

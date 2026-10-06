@@ -24,6 +24,12 @@ export type MotionInstructionId = "none" | "remain-still" | "relax-and-move";
 export type ChinPositionId = "tucked" | "elevated";
 export type ShoulderPositionId = "relaxed" | "rolled-forward";
 export type SideMarkerId = "L" | "R";
+/**
+ * Which half of the displayed detector / radiograph, as the viewer sees it (never mirrored by UI language / RTL).
+ * DISPLAY CONVENTION (educational): the PA radiograph is displayed as if the viewer faces the patient, so the
+ * patient's LEFT is on the viewer's RIGHT. Detector x < 0 is the viewer's left half, x > 0 the viewer's right half.
+ */
+export type ViewerSide = "viewer-left" | "viewer-right";
 
 /**
  * A point in normalized detector coordinates, independent of rendering size and UI direction.

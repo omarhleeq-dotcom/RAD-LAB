@@ -16,7 +16,7 @@ const ok: SimulationSettings = {
   chinPosition: "elevated",
   shoulderPosition: "rolled-forward",
   sideMarker: "L",
-  markerPosition: { x: -0.84, y: 0.68 },
+  markerPosition: { x: 0.84, y: 0.68 },
   sidCm: 180,
   kvp: 120,
   mas: 3.2,

@@ -9,7 +9,9 @@
  */
 import type { RadCase } from "@/domain/case";
 import type { RadiographResultState } from "@/domain/result-state";
+import type { ViewerSide } from "@/domain/simulation";
 import type { Evidence } from "@/domain/technique";
+import { viewerSideOf } from "@/features/simulation/geometry";
 import { TUNING } from "./tuning";
 
 export interface CmRect {
@@ -83,7 +85,20 @@ export interface RenderPlan {
     /** Fraction of local structure contrast kept in the dense zones (null = low penetration not present). */
     penetrationContrastKept: number | null;
   };
-  marker: { side: "L" | "R"; centerCm: { x: number; y: number }; sizeCm: number; visibleFraction: number } | null;
+  /**
+   * `viewerSide` is the image half the marker lies on; `expectedViewerSide` comes from the case's laterality
+   * convention (PA display: patient left = viewer right). The glyph is ALWAYS drawn where the learner placed it
+   * (never corrected, never mirrored by UI language / RTL); `wrongSide` only reports the mismatch.
+   */
+  marker: {
+    side: "L" | "R";
+    centerCm: { x: number; y: number };
+    sizeCm: number;
+    visibleFraction: number;
+    viewerSide: ViewerSide | null;
+    expectedViewerSide: ViewerSide;
+    wrongSide: boolean;
+  } | null;
   effects: PlanEffect[];
 }
 
@@ -192,7 +207,17 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
           y: ((patient.marker.position.y + 1) / 2) * detector.heightCm,
         };
         const sizeCm = positioning.markerSizeCm;
-        return { side: patient.marker.side, centerCm: center, sizeCm, visibleFraction: markerVisibleFraction(center, sizeCm, fieldCm) };
+        const viewerSide = viewerSideOf(patient.marker.position);
+        const expectedViewerSide = positioning.markerSide[patient.marker.side];
+        return {
+          side: patient.marker.side,
+          centerCm: center,
+          sizeCm,
+          visibleFraction: markerVisibleFraction(center, sizeCm, fieldCm),
+          viewerSide,
+          expectedViewerSide,
+          wrongSide: viewerSide !== expectedViewerSide,
+        };
       })()
     : null;
 

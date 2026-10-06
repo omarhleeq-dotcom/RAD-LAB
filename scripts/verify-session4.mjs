@@ -9,7 +9,8 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const OUT = process.env.OUT ?? "/tmp/s4";
-const ONLY = process.argv[2];
+const ONLY = process.argv[2]?.split(",");
+const DEV = process.env.DEV?.split(",");
 mkdirSync(OUT, { recursive: true });
 const msgs = { en: JSON.parse(readFileSync("messages/en.json", "utf8")), ar: JSON.parse(readFileSync("messages/ar.json", "utf8")) };
 
@@ -21,7 +22,7 @@ const DEVICES = {
 const MAS = [0.5, 0.63, 0.8, 1, 1.25, 1.6, 2, 2.5, 3.2, 4, 5, 6.3, 8, 10, 12.5, 16, 20, 25, 32, 40];
 
 // UI-level settings (what a learner would do). `correct` is the reference acquisition.
-const CORRECT = { nudge: 0, projection: "pa-erect", rotation: 0, cx: 0, cy: 18.5, cw: 33, ch: 36, chin: "elevated", shoulders: "rolled-forward", marker: "L", sid: 180, kvp: 115, mas: 3.2, breathing: "deep-inspiration-hold", motion: "remain-still" };
+const CORRECT = { projection: "pa-erect", rotation: 0, cx: 0, cy: 18.5, cw: 33, ch: 36, chin: "elevated", shoulders: "rolled-forward", marker: "L", sid: 180, kvp: 115, mas: 3.2, breathing: "deep-inspiration-hold", motion: "remain-still" };
 const SCENARIOS = {
   correct: { set: {}, effects: ["baseline", "marker"], absent: ["rotation", "motion", "low-exposure", "scapulae", "chin", "inspiration", "low-penetration", "collimation-clipping"] },
   "rotation-pos": { set: { rotation: 12 }, effects: ["rotation"] },
@@ -38,10 +39,14 @@ const SCENARIOS = {
   inspiration: { set: { breathing: "expiration-hold" }, effects: ["inspiration"], absent: ["motion"] },
   motion: { set: { motion: "none" }, effects: ["motion"], absent: ["inspiration", "low-exposure"] },
   "marker-R": { set: { marker: "R" }, effects: ["marker"] },
-  "marker-clipped": { set: { cw: 24 }, effects: ["marker"], markerVisible: false },
+  "marker-clipped": { set: { cw: 24 }, effects: ["marker"], marker: { right: false, left: false, wrongSide: false } },
   // Regression: the DEFAULT marker (never moved) is recorded in full inside a typical correct field.
-  "marker-L-default": { set: {}, effects: ["marker"], markerVisible: true },
-  "marker-R-default": { set: { marker: "R" }, effects: ["marker"], markerVisible: true },
+  // Laterality (PA display: patient left = viewer right): L belongs on the viewer's RIGHT, R on the viewer's LEFT.
+  "marker-L-default": { set: {}, effects: ["marker"], marker: { right: true, left: false, wrongSide: false } },
+  "marker-R-default": { set: { marker: "R" }, effects: ["marker"], marker: { right: false, left: true, wrongSide: false } },
+  // The learner moves L over to the viewer's left (Shift+ArrowLeft ×17): drawn where placed, never corrected, flagged.
+  "marker-L-wrong-side": { set: { markerMove: ["Shift+ArrowLeft", 17] }, effects: ["marker"], marker: { right: false, left: true, wrongSide: true } },
+  "marker-R-wrong-side": { set: { marker: "R", markerMove: ["Shift+ArrowRight", 17] }, effects: ["marker"], marker: { right: true, left: false, wrongSide: true } },
   // Centering error without clipping: the field is shifted, the anatomy is not.
   "centering-off": { set: { cx: 3, cw: 35, ch: 36 }, effects: ["centering"], absent: ["collimation-clipping"] },
   // Fully open field: detector area the baseline does not cover is a grey hatch, never black.
@@ -73,10 +78,10 @@ async function configure(page, device, loc, s) {
   await choose(page, device, radio(m.positioning.chinOptions[s.chin]));
   await choose(page, device, radio(m.positioning.shoulderOptions[s.shoulders]));
   await choose(page, device, page.locator('label:has(input[name="side-marker"])').nth(s.marker === "L" ? 1 : 2));
-  if (s.nudge) {
+  if (s.markerMove) {
     const handle = page.getByRole("button", { name: m.positioning.markerHandle.replace("{side}", s.marker), exact: true });
     await handle.focus();
-    for (let i = 0; i < s.nudge; i++) await page.keyboard.press("Shift+ArrowUp");
+    for (let i = 0; i < s.markerMove[1]; i++) await page.keyboard.press(s.markerMove[0]);
   }
   await setRange(page, m.positioning.centerX, s.cx);
   await setRange(page, m.positioning.centerY, s.cy);
@@ -98,7 +103,8 @@ async function run() {
   for (const loc of ["en", "ar"]) {
     for (const device of Object.keys(DEVICES)) {
       const ctx = await browser.newContext({ ...DEVICES[device], locale: loc === "ar" ? "ar" : "en-US" });
-      const names = (ONLY ? [ONLY] : device === "desktop" ? Object.keys(SCENARIOS) : SUBSET);
+      if (DEV && !DEV.includes(device)) { await ctx.close(); continue; }
+      const names = (ONLY ?? (device === "desktop" ? Object.keys(SCENARIOS) : SUBSET));
       for (const name of names) {
         const sc = SCENARIOS[name];
         const tag = `${loc}/${device}/${name}`;
@@ -131,16 +137,21 @@ async function run() {
         const effects = (await holder.locator("canvas").getAttribute("data-effects")).split(" ");
         for (const e of sc.effects) ok(`${tag}: effect ${e}`, effects.includes(e), effects.join(","));
         for (const e of sc.absent ?? []) ok(`${tag}: no effect ${e}`, !effects.includes(e), effects.join(","));
+        const resultText = await page.locator('[aria-labelledby="result-heading"]').innerText();
         const pixelAt = (px, py) => holder.locator("canvas").evaluate((c, [x, y]) => c.getContext("2d").getImageData(x, y, 1, 1).data[0], [px, py]);
-        if (sc.markerVisible !== undefined) {
-          // The marker box (2.2 cm at the default position ≈ x 2.8, y 12.04 cm; 24 px/cm) holds bright glyph pixels only if recorded.
-          const bright = await holder.locator("canvas").evaluate((c) => {
-            const d = c.getContext("2d").getImageData(41, 263, 52, 52).data;
+        if (sc.marker) {
+          // Marker boxes (2.2 cm at the default y ≈ 12 cm; 24 px/cm): viewer's LEFT ≈ x 2.8 cm, viewer's RIGHT ≈ x 32.2 cm.
+          const bright = (bx) => holder.locator("canvas").evaluate((c, bx0) => {
+            const d = c.getContext("2d").getImageData(bx0, 263, 52, 52).data;
             let n = 0;
             for (let i = 0; i < d.length; i += 4) if (d[i] > 235) n++;
             return n;
-          });
-          ok(`${tag}: default marker ${sc.markerVisible ? "fully recorded" : "dropped (outside the field)"}`, sc.markerVisible ? bright > 80 : bright === 0, String(bright));
+          }, bx);
+          const left = await bright(41), right = await bright(747);
+          ok(`${tag}: marker glyph ${sc.marker.right ? "on" : "not on"} the viewer's right half`, sc.marker.right ? right > 80 : right === 0, `right=${right}`);
+          ok(`${tag}: marker glyph ${sc.marker.left ? "on" : "not on"} the viewer's left half`, sc.marker.left ? left > 80 : left === 0, `left=${left}`);
+          const flagged = /wrong side of the image|الجانب الخطأ من الصورة/.test(resultText);
+          ok(`${tag}: wrong-side marker ${sc.marker.wrongSide ? "is flagged in the feedback" : "is not flagged"}`, flagged === sc.marker.wrongSide);
         }
         if (sc.hatchProbe) {
           // Bottom band (≈ 38.2–43 cm) and left band (< 1.8 cm) are inside the open field but beyond the reference image.
@@ -152,7 +163,6 @@ async function run() {
         if (sc.notRepresentative) ok(`${tag}: not-representative notice`, (await page.locator('[data-testid="not-representative"]').count()) === 1);
         else ok(`${tag}: no not-representative notice`, (await page.locator('[data-testid="not-representative"]').count()) === 0);
         // Regression: observed settings are shown translated, never as raw ids.
-        const resultText = await page.locator('[aria-labelledby="result-heading"]').innerText();
         ok(`${tag}: no raw setting ids in feedback`, !/\b(pa-erect|ap-erect|no-instruction|rolled-forward|remain-still|deep-inspiration-hold|expiration-hold)\b/.test(resultText));
         const shown = await page.locator("[data-effect]").evaluateAll((n) => n.map((x) => x.getAttribute("data-effect")));
         ok(`${tag}: effects list matches canvas`, shown.join(" ") === effects.join(" "), shown.join(","));

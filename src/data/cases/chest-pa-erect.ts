@@ -66,12 +66,15 @@ export const chestPaErect: RadCase = {
       acceptableTolerance: { x: 0.17, y: 0.25 }, // ≈ ±3 cm / ±5.4 cm
     },
     minCollimation: 0.3,
-    // Session 4 fix: a 2.2 cm marker placed in the lateral margin (x ≈ 1.7–3.9 cm, y ≈ 10.9–13.1 cm) lies INSIDE a typical
-    // correct field (≥ ≈ 33 cm wide, central ray within ≈ ±0.7 cm of the midline) and outside the required-anatomy
-    // region (x ≥ 4 cm), so a learner who never moves it still records a complete L / R. A narrower or clearly
-    // off-centre field genuinely clips it (behaviour kept).
+    // Session 4 fix: a 2.2 cm marker placed in the lateral margin of ITS side (x ≈ 1.7–3.9 cm or 31.1–33.3 cm,
+    // y ≈ 10.9–13.1 cm) lies INSIDE a typical correct field (≥ ≈ 33 cm wide, central ray within ≈ ±0.7 cm of the
+    // midline) and outside the required-anatomy region, so a learner who never moves it still records a complete
+    // L / R. A narrower or clearly off-centre field genuinely clips it (behaviour kept).
     markerSizeCm: 2.2,
-    defaultMarkerPosition: { x: -0.84, y: -0.44 },
+    // Laterality convention (marker scoring AND rendering): PA display, patient left = viewer right → L on the
+    // viewer's right half, R on the viewer's left half. Educational convention; never affected by UI language / RTL.
+    markerSide: { L: "viewer-right", R: "viewer-left" },
+    defaultMarkerPosition: { L: { x: 0.84, y: -0.44 }, R: { x: -0.84, y: -0.44 } },
   },
   technique: chestPaTechnique,
   radiograph: chestPaRadiograph,
@@ -92,7 +95,7 @@ export const chestPaErect: RadCase = {
     chinPosition: "tucked",
     shoulderPosition: "relaxed",
     sideMarker: null,
-    markerPosition: { x: -0.84, y: -0.44 },
+    markerPosition: { x: 0.84, y: -0.44 },
     sidCm: 120,
     kvp: 70,
     mas: 12,
@@ -269,6 +272,10 @@ export const chestPaErect: RadCase = {
           en: "The marker covers the lung fields. Move it into the margin, away from the anatomy of interest.",
           ar: "العلامة تغطي الحقلين الرئويين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
         },
+        wrongSide: {
+          en: "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side.",
+          ar: "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
+        },
         outsideField: {
           en: "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field.",
           ar: "العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
@@ -277,7 +284,7 @@ export const chestPaErect: RadCase = {
       evidence: {
         status: "educational-simplification",
         reference: "§3F",
-        note: "Placement interaction only; deliberately unscored. TODO(medical-review): validated rule for marker side vs patient side.",
+        note: "Placement interaction only; deliberately unscored (weight 0). Laterality uses an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL). TODO(medical-review): confirm the convention and decide whether marker side should be scored.",
       },
     },
     {

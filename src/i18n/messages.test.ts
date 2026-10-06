@@ -87,6 +87,14 @@ describe("Session 4 text (patient instructions + radiograph effects)", () => {
     expect(get(en as Tree, "radiograph.effectsIntro") as string).toMatch(/never a validated appearance/);
   });
 
+  it("states the marker laterality convention in EN and AR (PA display: patient left = viewer right)", () => {
+    expect(get(en as Tree, "positioning.markerConvention") as string).toMatch(/patient's left appears on the viewer's right/);
+    expect(get(en as Tree, "positioning.markerConvention") as string).toMatch(/Place L on the viewer's right/);
+    expect(get(ar as Tree, "positioning.markerConvention") as string).toMatch(arabic);
+    expect(get(en as Tree, "positioning.frontView") as string).not.toMatch(/from the tube/);
+    expect(get(ar as Tree, "positioning.frontView") as string).toMatch(arabic);
+  });
+
   it("keeps the educational disclaimers: not the case patient, not diagnostic, effects are approximations (EN + AR)", () => {
     const note = get(en as Tree, "radiograph.educationalNote") as string;
     expect(note).toMatch(/not an image of the case patient/);

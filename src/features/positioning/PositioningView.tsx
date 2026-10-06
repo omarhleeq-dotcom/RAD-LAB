@@ -35,7 +35,13 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled }:
   const statusText = parts.length ? parts.join(" · ") : t("centeringOk");
 
   const setMarker = (m: SideMarkerId | null) => {
-    if (m && !settings.sideMarker) onChange("markerPosition", { ...positioning.defaultMarkerPosition });
+    const defaults = positioning.defaultMarkerPosition;
+    const old = settings.sideMarker;
+    const at = settings.markerPosition;
+    const atDefault = old !== null && at.x === defaults[old].x && at.y === defaults[old].y;
+    // First choice → that side's default; switching L↔R while the marker still sits at its default follows it to the
+    // other side. A marker the learner has moved is never relocated for them.
+    if (m && (!old || atDefault)) onChange("markerPosition", { ...defaults[m] });
     onChange("sideMarker", m);
   };
 
@@ -106,6 +112,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled }:
             ))}
           </div>
           <p className="mt-1 text-xs text-muted">{t("markerHint")}</p>
+          {showGuides && <p className="mt-1 text-xs text-muted">{t("markerConvention")}</p>}
         </fieldset>
 
         <details className="sm:col-span-2" open>

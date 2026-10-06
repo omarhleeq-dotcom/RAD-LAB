@@ -51,7 +51,7 @@
     "sid": "SID",
     "rotationValue": "Rotation: {deg}°",
     "title": "Patient positioning workspace",
-    "frontView": "Detector view (from the tube)",
+    "frontView": "Detector view as displayed (patient's left on the viewer's right)",
     "topView": "Plan view (from above)",
     "schematicNote": "Schematic illustration — not to scale and not anatomically exact. Left/right here mean the left/right of the detector view.",
     "workspaceHint": "Drag the crosshair to aim the central ray. Drag the amber handles to open or close the field. With the crosshair focused, use the arrow keys (Shift = larger steps).",
@@ -101,7 +101,8 @@
     },
     "chinOverlay": "Chin over apices",
     "scapula": "Scapula",
-    "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker."
+    "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
+    "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left."
   },
   "console": {
     "title": "X-ray console",

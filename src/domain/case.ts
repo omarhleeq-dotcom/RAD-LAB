@@ -11,7 +11,9 @@ import type {
   MotionInstructionId,
   NumericSettingKey,
   ProjectionId,
+  SideMarkerId,
   SimulationSettings,
+  ViewerSide,
 } from "./simulation";
 
 export interface PatientProfile {
@@ -144,7 +146,7 @@ export interface CenteringRule extends RuleBase {
 export interface MarkerRule extends RuleBase {
   kind: "marker";
   /** `fail` = nothing placed. */
-  feedback: RuleFeedback & { overlap: LocalizedText; outsideField: LocalizedText };
+  feedback: RuleFeedback & { overlap: LocalizedText; outsideField: LocalizedText; wrongSide: LocalizedText };
 }
 
 export type CheckRule = EqualsRule | RangeRule | CoverageRule | CenteringRule | MarkerRule | TechniqueRule;
@@ -165,8 +167,14 @@ export interface PositioningSpec {
   minCollimation: number;
   /** Side-marker size on the detector, used for overlap/bounds checks. */
   markerSizeCm: number;
-  /** Where a marker appears when first chosen (outside the required anatomy). */
-  defaultMarkerPosition: NormPoint;
+  /**
+   * Laterality convention shared by marker scoring AND rendering (a single source of truth): on which half of the
+   * displayed detector each marker belongs. PA display: patient left = viewer right, so L → "viewer-right".
+   * Educational convention, never affected by UI language / RTL. TODO(medical-review): confirm with educators.
+   */
+  markerSide: Record<SideMarkerId, ViewerSide>;
+  /** Where each marker appears when first chosen: the lateral margin of ITS side, outside the required anatomy. */
+  defaultMarkerPosition: Record<SideMarkerId, NormPoint>;
 }
 
 export interface ScoringRules {

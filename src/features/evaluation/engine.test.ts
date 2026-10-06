@@ -13,7 +13,7 @@ const ideal: SimulationSettings = {
   chinPosition: "elevated",
   shoulderPosition: "rolled-forward",
   sideMarker: "L",
-  markerPosition: { x: -0.84, y: 0.68 },
+  markerPosition: { x: 0.84, y: 0.68 },
   sidCm: 180,
   kvp: 115,
   mas: 3,
@@ -183,9 +183,9 @@ describe("positioning subchecks", () => {
 
   it("flags a marker over the lung fields or outside the field", () => {
     expect(check(withChange({ markerPosition: { x: 0, y: -0.1 } }), "side-marker").outcome).toBe("partial");
-    const outside = withChange({ collimation: { width: 0.94, height: 0.6 }, markerPosition: { x: -0.84, y: 0.68 } });
+    const outside = withChange({ collimation: { width: 0.94, height: 0.6 }, markerPosition: { x: 0.84, y: 0.68 } });
     expect(check(outside, "side-marker").feedback.en).toMatch(/outside the collimated field/);
-    expect(check(withChange({ markerPosition: { x: -0.84, y: 0.68 } }), "side-marker").outcome).toBe("pass");
+    expect(check(withChange({ markerPosition: { x: 0.84, y: 0.68 } }), "side-marker").outcome).toBe("pass");
   });
 });
 

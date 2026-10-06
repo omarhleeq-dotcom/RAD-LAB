@@ -1,5 +1,5 @@
 import type { DetectorRegion, DetectorSpec } from "@/domain/case";
-import type { SimulationSettings } from "@/domain/simulation";
+import type { SimulationSettings, ViewerSide } from "@/domain/simulation";
 
 export interface Rect {
   x1: number;
@@ -58,6 +58,14 @@ export function markerRect(center: SimulationSettings["markerPosition"], sizeCm:
   const cx = ((center.x + 1) / 2) * detector.widthCm;
   const cy = ((center.y + 1) / 2) * detector.heightCm;
   return { x1: cx - sizeCm / 2, x2: cx + sizeCm / 2, y1: cy - sizeCm / 2, y2: cy + sizeCm / 2 };
+}
+
+/**
+ * Which half of the displayed detector a marker centre lies on (viewer's view; x < 0 left, x > 0 right).
+ * A centre exactly on the midline belongs to neither side.
+ */
+export function viewerSideOf(position: SimulationSettings["markerPosition"]): ViewerSide | null {
+  return position.x < 0 ? "viewer-left" : position.x > 0 ? "viewer-right" : null;
 }
 
 export function rectInside(inner: Rect, outer: Rect): boolean {

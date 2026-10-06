@@ -233,8 +233,9 @@ describe("concept and rendered magnitude are classified separately; nothing draw
   });
 });
 
-describe("default marker (regression: the default L must not be clipped by a typical correct field)", () => {
+describe("default marker (regression: complete inside a typical correct field, on the correct image side)", () => {
   const pos = chestPaErect.positioning;
+  const sides = ["L", "R"] as const;
   const fields = [
     { collimation: { width: 0.94, height: 0.84 } },
     { collimation: { width: 0.95, height: 0.86 } },
@@ -242,36 +243,41 @@ describe("default marker (regression: the default L must not be clipped by a typ
     { collimation: { width: 1, height: 0.9 } },
     { collimation: { width: 0.94, height: 0.8 } },
   ];
-  const rays = [{ x: 0, y: -0.14 }, { x: 0, y: -0.07 }, { x: 0.02, y: -0.1 }, { x: -0.03, y: -0.05 }];
+  const rays = [{ x: 0, y: -0.14 }, { x: 0, y: -0.07 }, { x: 0.02, y: -0.1 }, { x: -0.02, y: -0.05 }];
 
-  it("the first-placed marker and the initial marker position are the case's default", () => {
-    expect(chestPaErect.initialSettings.markerPosition).toEqual(pos.defaultMarkerPosition);
+  it("the initial marker position is the L default (a marker is placed at ITS side's default when chosen)", () => {
+    expect(chestPaErect.initialSettings.markerPosition).toEqual(pos.defaultMarkerPosition.L);
   });
 
   it("is completely inside every typical correct field and recorded in full, for L and R", () => {
-    for (const f of fields) for (const ray of rays) for (const side of ["L", "R"] as const) {
-      const patch = { ...f, centralRay: ray, sideMarker: side, markerPosition: pos.defaultMarkerPosition };
+    for (const f of fields) for (const ray of rays) for (const side of sides) {
+      const patch = { ...f, centralRay: ray, sideMarker: side, markerPosition: pos.defaultMarkerPosition[side] };
       const r = evaluate(chestPaErect, { ...chestPaErect.initialSettings, projection: "pa-erect", ...patch });
       const m = plan(patch).marker!;
       expect(m.visibleFraction, JSON.stringify(patch)).toBe(1);
+      expect(m.wrongSide, JSON.stringify(patch)).toBe(false);
       expect(r.checks.find((c) => c.ruleId === "side-marker")?.outcome, JSON.stringify(patch)).toBe("pass");
     }
   });
 
   it("stays outside the required-anatomy region, so it never sits over the lungs", () => {
-    const c = pos.defaultMarkerPosition, a = chestPaErect.requiredAnatomy, d = chestPaErect.detector;
-    const cx = ((c.x + 1) / 2) * d.widthCm, cy = ((c.y + 1) / 2) * d.heightCm, h = pos.markerSizeCm / 2;
-    const overlaps = cx + h > a.xCm && cx - h < a.xCm + a.widthCm && cy + h > a.yCm && cy - h < a.yCm + a.heightCm;
-    expect(overlaps).toBe(false);
+    for (const side of sides) {
+      const c = pos.defaultMarkerPosition[side], a = chestPaErect.requiredAnatomy, d = chestPaErect.detector;
+      const cx = ((c.x + 1) / 2) * d.widthCm, cy = ((c.y + 1) / 2) * d.heightCm, h = pos.markerSizeCm / 2;
+      const overlaps = cx + h > a.xCm && cx - h < a.xCm + a.widthCm && cy + h > a.yCm && cy - h < a.yCm + a.heightCm;
+      expect(overlaps, side).toBe(false);
+    }
   });
 
   it("is still genuinely clipped / dropped when the field is narrowed over it (behaviour kept)", () => {
-    const narrow = plan({ sideMarker: "L", markerPosition: pos.defaultMarkerPosition, collimation: { width: 0.7, height: 0.84 } }).marker!;
-    expect(narrow.visibleFraction).toBe(0);
-    const edge = plan({ sideMarker: "L", markerPosition: pos.defaultMarkerPosition, collimation: { width: 0.9, height: 0.84 } }).marker!;
-    expect(edge.visibleFraction).toBeLessThan(1);
-    const r = evaluate(chestPaErect, { ...chestPaErect.initialSettings, projection: "pa-erect", sideMarker: "L", collimation: { width: 0.7, height: 0.84 } });
-    expect(r.checks.find((c) => c.ruleId === "side-marker")?.outcome).toBe("partial");
+    for (const side of sides) {
+      const at = pos.defaultMarkerPosition[side];
+      const narrow = plan({ sideMarker: side, markerPosition: at, collimation: { width: 0.7, height: 0.84 } }).marker!;
+      expect(narrow.visibleFraction, side).toBe(0);
+      const edge = plan({ sideMarker: side, markerPosition: at, collimation: { width: 0.9, height: 0.84 } }).marker!;
+      expect(edge.visibleFraction, side).toBeLessThan(1);
+      const r = evaluate(chestPaErect, { ...chestPaErect.initialSettings, projection: "pa-erect", sideMarker: side, markerPosition: at, centralRay: { x: 0, y: -0.14 }, collimation: { width: 0.7, height: 0.84 } });
+      expect(r.checks.find((c) => c.ruleId === "side-marker")?.outcome, side).toBe("partial");
+    }
   });
 });
-
