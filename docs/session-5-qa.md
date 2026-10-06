@@ -98,9 +98,9 @@ Run on 2026-10-06 against the production build:
 |---|---|
 | `npm run typecheck` | pass |
 | `npm run lint` | pass (0 problems) |
-| `npm test` | **611 / 611** (was 276; +335, mostly the matrix: 52 scenarios × 7 agreement tests + golden + laterality audit + regressions) |
+| `npm test` | **644 / 644** (was 276; +335, mostly the matrix: 52 scenarios × 7 agreement tests + golden + laterality audit + regressions) |
 | `npm run build` | pass |
-| Browser matrix `scripts/qa/run-matrix.mjs` — EN + AR × desktop 1440×900 (52 scenarios), tablet 820×1180 and mobile 390×844 touch (7 scenarios each) | **2686 / 2686** checks (score, effects, cards, labels, alt text, marker side in pixels, golden image, RTL/device pixel identity, overflow, console errors) |
+| Browser matrix `scripts/qa/run-matrix.mjs` — EN + AR × desktop 1440×900 (52 scenarios), tablet 820×1180 and mobile 390×844 touch (7 scenarios each) | **2982 / 2982** checks (after the fix pass; includes pass-mark label, critical findings in EN/AR) (score, effects, cards, labels, alt text, marker side in pixels, golden image, RTL/device pixel identity, overflow, console errors) |
 | `scripts/qa/a11y-audit.mjs` (axe WCAG A/AA, keyboard, focus, canvas alt) EN/AR × desktop/mobile | 0 violations |
 | GitHub Actions workflow | added; first run happens on the PR |
 
