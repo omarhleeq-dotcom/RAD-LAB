@@ -127,3 +127,44 @@ describe("expose, lock, retry, restart", () => {
     expect(st().result).toEqual(first);
   });
 });
+
+describe("patient instructions (Session 4)", () => {
+  it("starts with no instruction given; the learner chooses instructions, never the outcome", () => {
+    expect(st().settings?.breathing).toBe("no-instruction");
+    expect(st().settings?.motionInstruction).toBe("none");
+    // There is no setting for an outcome: only instructions can be stored.
+    expect(Object.keys(st().settings ?? {})).not.toEqual(expect.arrayContaining(["inspiration", "motion", "inspirationQuality", "motionState"]));
+  });
+
+  it("the exposure derives the simulated response from the stored instructions", () => {
+    set("breathing", "deep-inspiration-hold");
+    set("motionInstruction", "remain-still");
+    st().expose();
+    expect(st().result?.resultState.patientResponse).toMatchObject({
+      instructions: { breathing: "deep-inspiration-hold", motion: "remain-still" },
+      inspiration: "adequate",
+      motion: "none",
+    });
+  });
+
+  it("instructions lock after the exposure, are kept by Retry and cleared by Restart", () => {
+    set("motionInstruction", "relax-and-move");
+    st().expose();
+    set("motionInstruction", "remain-still"); // ignored: locked
+    expect(st().settings?.motionInstruction).toBe("relax-and-move");
+    st().retry();
+    expect(st().settings?.motionInstruction).toBe("relax-and-move");
+    st().reset();
+    expect(st().settings?.motionInstruction).toBe("none");
+  });
+
+  it("the same actions give the same result (deterministic)", () => {
+    set("motionInstruction", "none");
+    st().expose();
+    const first = JSON.stringify(st().result?.resultState);
+    st().reset();
+    set("motionInstruction", "none");
+    st().expose();
+    expect(JSON.stringify(st().result?.resultState)).toBe(first);
+  });
+});

@@ -26,6 +26,7 @@ Medical baseline: `RAD-LAB_Medical_Reference_Chest_PA.md` (the "reference"). Not
 | Excess field | principle VALIDATED; 5 cm margin PROVISIONAL | §2, §3D |
 | SID 180 cm | VALIDATED target; ±5 / 150–200 bands PROVISIONAL | §2 |
 | Side marker placement | EDUCATIONAL SIMPLIFICATION, unscored | §3F |
+| Side marker laterality (added in Session 4) | EDUCATIONAL display convention (PA display: patient left = viewer right → L on the viewer's right), shared by scoring and rendering, unscored. Session 2 had no side rule and a side-independent default position (a bug). | §3F; see session-4 doc §6 |
 | kVp / mAs bands | PROVISIONAL (carried from Session 1, not changed) | §4 |
 
 Rotation visual (spine shift, lung asymmetry) is a drawing model only; scoring uses `rotationDeg`. No pixel-to-degree claim is made (§6).

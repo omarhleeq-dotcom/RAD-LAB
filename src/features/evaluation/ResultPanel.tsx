@@ -1,11 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
+import { buildRenderPlan } from "@/features/radiograph/plan";
+import { RadiographEffects } from "@/features/radiograph/RadiographEffects";
 import { TechniqueResult } from "@/features/technique/TechniqueResult";
 import { ResultImage } from "./ResultImage";
 import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
@@ -30,15 +33,19 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   const tCat = useTranslations("categories");
   const tCon = useTranslations("console");
   const tPos = useTranslations("positioning");
+  const tPat = useTranslations("patient");
   const tEv = useTranslations("evidence");
   const locale = useLocale();
   const { score } = result;
+  const plan = useMemo(() => buildRenderPlan(result.resultState, radCase), [result.resultState, radCase]);
   const observedLabel = (kind: CheckResult["observedKind"], value: string) => {
     switch (kind) {
       case "projection":
         return tCon(`projections.${value as "pa-erect"}`);
       case "breathing":
-        return tCon(`breathingOptions.${value as "no-instruction"}`);
+        return tPat(`breathingOptions.${value as "no-instruction"}`);
+      case "motionInstruction":
+        return tPat(`motionOptions.${value as "none"}`);
       case "chinPosition":
         return tPos(`chinOptions.${value as "tucked"}`);
       case "shoulderPosition":
@@ -56,9 +63,9 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
           {t("title")}
         </h2>
       </div>
-      <div className="grid gap-6 p-4 lg:grid-cols-[minmax(0,22rem)_1fr]">
+      <div className="grid gap-6 p-4 lg:grid-cols-[minmax(0,26rem)_1fr]">
         <div className="space-y-4">
-          <ResultImage radCase={radCase} settings={settings} variants={result.variants} noise={result.exposure.quantumNoise.level} />
+          <ResultImage radCase={radCase} plan={plan} />
           <div>
             <h3 className="text-sm font-semibold">{t("variantsTitle")}</h3>
             <ul className="mt-1 list-disc ps-5 text-sm text-muted">
@@ -149,6 +156,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
         </div>
       </div>
     </section>
+    <RadiographEffects plan={plan} />
     <TechniqueResult radCase={radCase} kvp={settings.kvp} manualMas={settings.mas} exposure={result.exposure} />
     </div>
   );

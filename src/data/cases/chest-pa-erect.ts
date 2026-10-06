@@ -1,4 +1,6 @@
 import type { RadCase } from "@/domain/case";
+import { chestPaCooperativeAdult } from "./chest-pa-patient";
+import { chestPaRadiograph } from "./chest-pa-radiograph";
 import { chestPaTechnique } from "./chest-pa-technique";
 
 /**
@@ -64,10 +66,19 @@ export const chestPaErect: RadCase = {
       acceptableTolerance: { x: 0.17, y: 0.25 }, // ≈ ±3 cm / ±5.4 cm
     },
     minCollimation: 0.3,
-    markerSizeCm: 3,
-    defaultMarkerPosition: { x: -0.84, y: 0.68 },
+    // Session 4 fix: a 2.2 cm marker placed in the lateral margin of ITS side (x ≈ 1.7–3.9 cm or 31.1–33.3 cm,
+    // y ≈ 10.9–13.1 cm) lies INSIDE a typical correct field (≥ ≈ 33 cm wide, central ray within ≈ ±0.7 cm of the
+    // midline) and outside the required-anatomy region, so a learner who never moves it still records a complete
+    // L / R. A narrower or clearly off-centre field genuinely clips it (behaviour kept).
+    markerSizeCm: 2.2,
+    // Laterality convention (marker scoring AND rendering): PA display, patient left = viewer right → L on the
+    // viewer's right half, R on the viewer's left half. Educational convention; never affected by UI language / RTL.
+    markerSide: { L: "viewer-right", R: "viewer-left" },
+    defaultMarkerPosition: { L: { x: 0.84, y: -0.44 }, R: { x: -0.84, y: -0.44 } },
   },
   technique: chestPaTechnique,
+  radiograph: chestPaRadiograph,
+  patientCooperation: chestPaCooperativeAdult,
   availableProjections: ["pa-erect", "ap-erect", "lateral-left"],
   availableBreathing: [
     "deep-inspiration-hold",
@@ -75,6 +86,7 @@ export const chestPaErect: RadCase = {
     "normal-breathing",
     "no-instruction",
   ],
+  availableMotionInstructions: ["none", "remain-still", "relax-and-move"],
   initialSettings: {
     projection: "ap-erect",
     rotationDeg: 8,
@@ -83,13 +95,14 @@ export const chestPaErect: RadCase = {
     chinPosition: "tucked",
     shoulderPosition: "relaxed",
     sideMarker: null,
-    markerPosition: { x: -0.84, y: 0.68 },
+    markerPosition: { x: 0.84, y: -0.44 },
     sidCm: 120,
     kvp: 70,
     mas: 12,
     exposureMode: "manual",
     aecChambers: [],
     breathing: "no-instruction",
+    motionInstruction: "none",
   },
   scoring: {
     categoryWeights: {
@@ -259,6 +272,10 @@ export const chestPaErect: RadCase = {
           en: "The marker covers the lung fields. Move it into the margin, away from the anatomy of interest.",
           ar: "العلامة تغطي الحقلين الرئويين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
         },
+        wrongSide: {
+          en: "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side.",
+          ar: "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
+        },
         outsideField: {
           en: "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field.",
           ar: "العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
@@ -267,7 +284,7 @@ export const chestPaErect: RadCase = {
       evidence: {
         status: "educational-simplification",
         reference: "§3F",
-        note: "Placement interaction only; deliberately unscored. TODO(medical-review): validated rule for marker side vs patient side.",
+        note: "Placement interaction only; deliberately unscored (weight 0). Laterality uses an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL). TODO(medical-review): confirm the convention and decide whether marker side should be scored.",
       },
     },
     {
@@ -537,6 +554,34 @@ export const chestPaErect: RadCase = {
         reference: "§2 Respiration; §5 item 10",
       },
     },
+    {
+      // Session 4. Unscored on purpose: the Image-quality reference supports "motion → loss of sharpness"
+      // (validated) but defines no scoring rule for the instruction itself, and re-weighting the Breathing
+      // category (10 %) would be an unsupported change. The consequence is shown in the result image instead.
+      id: "motion-instruction",
+      kind: "equals",
+      category: "breathing",
+      weight: 0,
+      setting: "motionInstruction",
+      expected: "remain-still",
+      variantOnFail: "motion",
+      label: { en: "Instruction to stay still (not scored)", ar: "تعليمات الثبات (غير محسوبة)" },
+      feedback: {
+        pass: {
+          en: "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement.",
+          ar: "طلبتَ من المريض أن يبقى ثابتًا. في هذه المحاكاة يلتزم المريض المتعاون بالثبات فلا تتشوه الصورة بالحركة.",
+        },
+        fail: {
+          en: "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction.",
+          ar: "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
+        },
+      },
+      evidence: {
+        status: "educational-simplification",
+        reference: "Image-quality ref (Motion)",
+        note: "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      },
+    },
   ],
   possibleErrors: [
     {
@@ -556,6 +601,11 @@ export const chestPaErect: RadCase = {
       id: "poor-inspiration",
       variant: "poor-inspiration",
       description: { en: "Poor inspiration", ar: "شهيق غير كافٍ" },
+    },
+    {
+      id: "motion",
+      variant: "motion",
+      description: { en: "Patient motion (loss of sharpness)", ar: "حركة المريض (فقدان الحدّة)" },
     },
     {
       id: "low-exposure",
@@ -594,6 +644,10 @@ export const chestPaErect: RadCase = {
         en: "Both lungs fully included, apices to costophrenic angles",
         ar: "الرئتان كاملتان من القمم إلى الزوايا الضلعية الحجابية",
       },
+    },
+    {
+      id: "sharpness",
+      description: { en: "No loss of sharpness from patient movement", ar: "لا يوجد فقدان في الحدّة بسبب حركة المريض" },
     },
     {
       id: "exposure",

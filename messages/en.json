@@ -51,7 +51,7 @@
     "sid": "SID",
     "rotationValue": "Rotation: {deg}°",
     "title": "Patient positioning workspace",
-    "frontView": "Detector view (from the tube)",
+    "frontView": "Detector view as displayed (patient's left on the viewer's right)",
     "topView": "Plan view (from above)",
     "schematicNote": "Schematic illustration — not to scale and not anatomically exact. Left/right here mean the left/right of the detector view.",
     "workspaceHint": "Drag the crosshair to aim the central ray. Drag the amber handles to open or close the field. With the crosshair focused, use the arrow keys (Shift = larger steps).",
@@ -101,7 +101,8 @@
     },
     "chinOverlay": "Chin over apices",
     "scapula": "Scapula",
-    "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker."
+    "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
+    "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left."
   },
   "console": {
     "title": "X-ray console",
@@ -109,7 +110,6 @@
     "kvp": "kVp",
     "mas": "mAs",
     "sid": "SID",
-    "breathing": "Breathing instruction",
     "expose": "EXPOSE",
     "exposing": "Exposing…",
     "locked": "Exposure complete",
@@ -117,12 +117,6 @@
       "pa-erect": "PA erect",
       "ap-erect": "AP erect",
       "lateral-left": "Left lateral"
-    },
-    "breathingOptions": {
-      "deep-inspiration-hold": "Take a deep breath in and hold",
-      "expiration-hold": "Breathe out and hold",
-      "normal-breathing": "Breathe normally",
-      "no-instruction": "No instruction"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -166,14 +160,13 @@
         "aec-no-chamber": "AEC is selected but no sensing chamber is chosen. Select at least one chamber.",
         "aec-chambers-outside-field": "No selected AEC chamber is inside the light field, so the AEC may not terminate normally.",
         "breathing-not-instructed": "No breathing instruction has been given yet.",
-        "marker-missing": "No side marker has been placed yet."
+        "marker-missing": "No side marker has been placed yet.",
+        "motion-not-instructed": "No instruction about keeping still has been given yet."
       }
     }
   },
   "result": {
     "title": "Simulated result",
-    "placeholderLabel": "PLACEHOLDER — schematic only, not a real radiograph",
-    "alt": "Schematic placeholder illustrating the simulated image quality.",
     "score": "Score",
     "outOf": "out of 100",
     "passed": "Acceptable image",
@@ -198,7 +191,8 @@
       "scapulae-overlap": "Scapulae overlying the lung fields",
       "low-exposure": "Low detector exposure — increased quantum-noise tendency",
       "excess-exposure": "Excess detector exposure — dose-creep risk (may still look acceptable)",
-      "low-penetration": "Low penetration tendency (kVp too low)"
+      "low-penetration": "Low penetration tendency (kVp too low)",
+      "motion": "Patient motion — loss of sharpness"
     },
     "retry": "Retry with my settings",
     "restart": "Restart case",
@@ -297,5 +291,96 @@
     "assumptionsTitle": "Model assumptions & evidence",
     "assumptionsIntro": "Every medical rule behind this feedback is classified. Only “validated” items are claims of fact; the rest are protocol- or demo-specific.",
     "profile": "Protocol profile"
+  },
+  "patient": {
+    "title": "Patient instructions",
+    "intro": "Speak to the patient before the exposure. You choose what to say; the simulated patient then responds to what you said.",
+    "breathingLegend": "Breathing instruction",
+    "motionLegend": "Instruction about keeping still",
+    "breathingOptions": {
+      "deep-inspiration-hold": "“Take a deep breath in and hold it.”",
+      "expiration-hold": "“Breathe out and hold it.”",
+      "normal-breathing": "“Breathe normally.”",
+      "no-instruction": "No breathing instruction"
+    },
+    "motionOptions": {
+      "none": "No instruction about keeping still",
+      "remain-still": "“Stay still and don't move until I tell you.”",
+      "relax-and-move": "“Relax — you can move naturally.”"
+    },
+    "note": "RAD-LAB does not measure real breathing or movement. The result shows an educational consequence of what you said to this simulated patient."
+  },
+  "radiograph": {
+    "title": "Simulated educational radiograph",
+    "alt": "Simulated educational PA chest radiograph rendered from your settings. It is not a diagnostic image.",
+    "educationalNote": "Educational reference appearance — not an image of the case patient, and not a diagnostic or clinically validated radiograph. The visual effects are educational approximations: their size does not measure real rotation, movement, noise or dose.",
+    "notRepresentative": "This projection is not simulated yet. The PA reference appearance is shown for layout only and does not represent your selected projection.",
+    "loading": "Rendering the radiograph…",
+    "failed": "The reference image could not be loaded.",
+    "effectsTitle": "What shaped this image",
+    "effectsIntro": "Each item links something you did to a visible effect. The clinical concept and the amount drawn are classified separately: the amount drawn is always an educational approximation, never a validated appearance.",
+    "effects": {
+      "baseline": {
+        "title": "Reference appearance",
+        "desc": "The reference PA appearance is shown with no simulated faults. It is an educational baseline, not a standard every patient will match."
+      },
+      "rotation": {
+        "title": "Rotation → thoracic asymmetry",
+        "desc": "The line of the spinous processes moves relative to the medial ends of the clavicles, one hemithorax looks wider than the other and the lungs differ slightly in transradiancy. The direction is supported by the literature; the amount drawn is an educational approximation, not a measurement of degrees of rotation (body build changes this appearance)."
+      },
+      "collimation-clipping": {
+        "title": "Field edges clip anatomy",
+        "desc": "Anatomy outside the collimated field is not exposed, so it is missing from the image on the side(s) where the field cuts the required region. The field follows your central-ray and collimation settings."
+      },
+      "excess-field": {
+        "title": "Larger exposed field",
+        "desc": "A larger field exposes and shows more tissue. No scatter or contrast penalty is drawn, because there is no validated physical model for it here; the real cost is unnecessary exposure."
+      },
+      "centering": {
+        "title": "Central ray off-centre → field shifted",
+        "desc": "The field is centred on your central ray, so a central-ray error moves the exposed area across the anatomy. The anatomy itself stays where it is on the detector."
+      },
+      "scapulae": {
+        "title": "Shoulders not rolled forward → scapulae over the lungs",
+        "desc": "Schematic scapulae overlap the lateral lung fields and hide lung tissue. Rolling the shoulders forward moves the scapulae out of the lung fields (a common PA chest quality criterion). The overlay is a schematic, not a real scapula from the reference image."
+      },
+      "chin": {
+        "title": "Chin tucked → jaw over the apices",
+        "desc": "A schematic lower-jaw and soft-tissue shadow overlaps the upper chest and the apices. The chin control is a position cue, not an anatomical angle."
+      },
+      "inspiration": {
+        "title": "Reduced inspiration → raised diaphragm",
+        "desc": "After your breathing instruction, the simulated patient did not take a full breath in: the lungs look less expanded, the diaphragm sits higher and the lung fields are shorter. RAD-LAB does not measure real inspiration and uses no rib-count rule."
+      },
+      "motion": {
+        "title": "Patient movement → loss of sharpness",
+        "desc": "Because the stay-still instruction was missing or wrong, the simulated patient moved: edges are blurred. The blur size is an educational approximation, not a movement distance."
+      },
+      "low-exposure": {
+        "title": "Low detector exposure → noise",
+        "desc": "Fewer photons reach the detector, so the image is noisier and subtle low-contrast detail is harder to see. Displayed brightness is kept normalised on purpose: low exposure does not make the image lighter. The noise is a deterministic educational texture, not a prediction for a real detector."
+      },
+      "excess-exposure": {
+        "title": "Excess detector exposure → no obvious change",
+        "desc": "Detector exposure above the target can still give an acceptable-looking image after digital processing, and the image is not darker. The problem (dose creep) shows in the DI and dose-awareness feedback, not in the picture. More mAs is not rewarded."
+      },
+      "low-penetration": {
+        "title": "Low penetration → dense regions less visible",
+        "desc": "With low kVp, structures behind dense regions (the spine and retrocardiac lung behind the heart, the mediastinum) are less visible. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+      },
+      "marker": {
+        "title": "Your side marker",
+        "desc": "Your marker is drawn where you placed it on the detector and is cut off by the field like any other image content. It is not corrected for you."
+      },
+      "projection": {
+        "title": "Projection not simulated",
+        "desc": "The projection you selected is not simulated in this version. The PA reference appearance is shown for layout only."
+      }
+    },
+    "concept": "Clinical concept",
+    "magnitude": "Rendered magnitude",
+    "magnitudeApprox": "Educational visual approximation",
+    "magnitudeNone": "Nothing drawn (by design)",
+    "margins": "Dark margins lie outside the collimated field. Grey hatched areas inside the field have no reference-image data: they are not exposure, collimation or anatomy."
   }
 }

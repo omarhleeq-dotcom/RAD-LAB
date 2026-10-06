@@ -13,13 +13,14 @@ const ideal: SimulationSettings = {
   chinPosition: "elevated",
   shoulderPosition: "rolled-forward",
   sideMarker: "L",
-  markerPosition: { x: -0.84, y: 0.68 },
+  markerPosition: { x: 0.84, y: 0.68 },
   sidCm: 180,
   kvp: 115,
   mas: 3,
   exposureMode: "manual",
   aecChambers: [],
   breathing: "deep-inspiration-hold",
+  motionInstruction: "remain-still",
 };
 
 const withChange = (patch: Partial<SimulationSettings>) => evaluate(chestPaErect, { ...ideal, ...patch });
@@ -182,9 +183,9 @@ describe("positioning subchecks", () => {
 
   it("flags a marker over the lung fields or outside the field", () => {
     expect(check(withChange({ markerPosition: { x: 0, y: -0.1 } }), "side-marker").outcome).toBe("partial");
-    const outside = withChange({ collimation: { width: 0.94, height: 0.6 }, markerPosition: { x: -0.84, y: 0.68 } });
+    const outside = withChange({ collimation: { width: 0.94, height: 0.6 }, markerPosition: { x: 0.84, y: 0.68 } });
     expect(check(outside, "side-marker").feedback.en).toMatch(/outside the collimated field/);
-    expect(check(withChange({ markerPosition: { x: -0.84, y: 0.68 } }), "side-marker").outcome).toBe("pass");
+    expect(check(withChange({ markerPosition: { x: 0.84, y: 0.68 } }), "side-marker").outcome).toBe("pass");
   });
 });
 
@@ -218,5 +219,18 @@ describe("conflicting exposure findings", () => {
       const r = withChange({ kvp: 70, mas });
       expect(r.variants.filter((v) => v === "low-exposure" || v === "excess-exposure").length).toBeLessThanOrEqual(1);
     }
+  });
+});
+
+describe("observed setting labels (regression: observedKind was dropped, so ids showed untranslated)", () => {
+  it("enum-valued checks carry the setting kind so the UI can translate the id", () => {
+    const r = evaluate(chestPaErect, { ...ideal, motionInstruction: "none", breathing: "no-instruction" });
+    const kind = (id: string) => r.checks.find((c) => c.ruleId === id)?.observedKind;
+    expect(kind("projection")).toBe("projection");
+    expect(kind("chin")).toBe("chinPosition");
+    expect(kind("shoulders")).toBe("shoulderPosition");
+    expect(kind("breathing")).toBe("breathing");
+    expect(kind("motion-instruction")).toBe("motionInstruction");
+    expect(kind("rotation")).toBeUndefined(); // numeric checks stay formatted numbers
   });
 });
