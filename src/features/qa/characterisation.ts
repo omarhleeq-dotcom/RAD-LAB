@@ -133,7 +133,7 @@ function resultMessageKeys(result: ReturnType<typeof evaluate>, plan: ReturnType
         ? t(rest.join("."), { total: result.score.total })
         : key === "radiograph.clippingMarginNote"
           ? t(rest.join("."), { sides: plan.marginOnlySides.map((s) => translator(locale, "radiograph")(`altSides.${s}`)).join(" / ") })
-          : t(rest.join("."));
+          : t(rest.join("."), { sex: caseUnderTest.patient.sex });
     }
     return out;
   };
