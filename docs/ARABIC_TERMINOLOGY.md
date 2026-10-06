@@ -38,3 +38,20 @@ All Arabic in RAD-LAB (UI in `messages/ar.json`, case text in `src/data/cases/*`
 | Educational pass mark | درجة النجاح التعليمية | result | | |
 | Not drawn in this image | غير مرسومة في هذه الصورة | result | | |
 | Educational prototype — not for clinical use; values pending educator/physicist review | نموذج تعليمي أولي — ليس للاستخدام السريري؛ القيم بانتظار مراجعة مدرّس أو فيزيائي طبي | preview banner (every page) | «مدرّس» أم «معلّم/أستاذ»؟ «فيزيائي طبي» مناسب؟ | |
+
+## Session 8 — feminine forms for the female case (D7; machine-drafted, not yet reviewed)
+
+The patient-instruction and patient-description strings agree with the case's sex (ICU `select` in `messages/ar.json`; masculine is the `other` branch). Please confirm each:
+
+| English | Female (current) | Male (unchanged) | Where | OK? |
+|---|---|---|---|---|
+| "Take a deep breath in and hold it." | «خذي شهيقًا عميقًا واحبسي نفسك.» | «خذ شهيقًا عميقًا واحبس نفسك.» | patient instructions | |
+| "Breathe out and hold it." | «أخرجي الزفير واحبسي نفسك.» | «أخرج الزفير واحبس نفسك.» | patient instructions | |
+| "Breathe normally." | «تنفّسي بشكل طبيعي.» | «تنفّس بشكل طبيعي.» | patient instructions | |
+| "Stay still and don't move until I tell you." | «ابقَي ثابتة ولا تتحركي حتى أخبرك.» | «ابقَ ثابتًا ولا تتحرك حتى أخبرك.» | patient instructions | |
+| "Relax — you can move normally." | «استرخي — يمكنك التحرك بشكل طبيعي.» | «استرخِ — …» | patient instructions | |
+| "{sex}, {age} years old" | أنثى عمرها {age} عامًا | ذكر عمره {age} عامًا | home card | |
+| "…able to stand and follow breathing instructions" | قادرة على المشي والوقوف واتباع تعليمات التنفس | قادر … | case description | |
+| "Stable… The patient has arrived slightly turned…" | حالتها مستقرة … وصلت المريضة وهي مائلة قليلًا … | حالته … وصل المريض وهو مائل … | case condition | |
+| "the simulated patient (female / male)" | المريضة المحاكاة (لم تأخذ شهيقًا / تحركت) | المريض المحاكى | effect cards | |
+| Generic "the patient" in headings / labels / rule feedback | المريض (unchanged) | المريض | many | generic noun — keep, or make sex-aware? |
