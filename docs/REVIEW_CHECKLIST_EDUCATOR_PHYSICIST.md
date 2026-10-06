@@ -8,7 +8,7 @@ One list for everything Sessions 2–5 left for expert review. Tick, correct in 
 - [ ] Rotation bands ±2° full / ±5° partial; whether a picture within ±2° should be drawn symmetric (Session 5 decision).
 - [ ] 5 cm excess-field margin.
 - [ ] Chin and shoulder rules and the schematic overlays (position, density).
-- [ ] **Marker convention** (PA display: L on the viewer's right, R on the left) and whether side / presence should be scored (currently weight 0; verified sources still needed — `session-5-qa.md` §0.1). Default marker size / positions.
+- [ ] **Marker convention** (PA display: L on the viewer's right, R on the left; no verified source defines it) and the new scored `side-marker` subcheck (Positioning, relative weight 1; wrong side = no credit; also a critical finding). Default marker size / positions. Sources: `session-5-qa.md` §0.1.
 
 ## B. Technique (`chest-pa-technique.ts`)
 - [ ] kVp reference range 100–150 and demo band 110–125.

@@ -11,7 +11,7 @@
  *  - wrong-side-marker: a placed marker sits on the wrong side for the case's laterality convention (an EDUCATIONAL
  *                       display convention, PA: patient left = viewer right). Same flag as the marker check's
  *                       "wrong side" feedback and the renderer's `marker.wrongSide`, so score, feedback and picture agree.
- *                       No marker placed is a MISSING marker (reported by the unscored marker check), not a wrong side.
+ *                       No marker placed is a MISSING marker (reported by the marker check), not a wrong side.
  */
 import type { CriticalFindingId, RadCase } from "@/domain/case";
 import type { PatientResponse } from "@/domain/patient";

@@ -140,7 +140,8 @@ export interface CenteringRule extends RuleBase {
 }
 
 /**
- * Side-marker placement. Educational only: give it `weight: 0` until a validated scoring rule exists.
+ * Side-marker placement + laterality. Scored as a Positioning subcheck (Session 5 fix pass); the viewer-side convention
+ * is educational. Wrong side = no credit, other issues = half credit.
  * TODO(medical-review): rule for marker side vs. patient side is not defined in the medical reference.
  */
 export interface MarkerRule extends RuleBase {

@@ -135,9 +135,11 @@ describe("scenario matrix: cross-scenario expectations", () => {
     }
   });
 
-  it("unscored checks (marker, keep-still) never change the total", () => {
-    for (const id of ["marker-none", "marker-L-wrong-side", "marker-R-wrong-side", "marker-cut-by-field", "motion-none", "motion-relax"]) {
-      expect(score(id), id).toBe(100);
+  it("the keep-still check is unscored; the side marker is a scored Positioning subcheck", () => {
+    for (const id of ["motion-none", "motion-relax"]) expect(score(id), id).toBe(100);
+    for (const id of ["marker-none", "marker-L-wrong-side", "marker-R-wrong-side", "marker-cut-by-field"]) {
+      expect(score(id), id).toBeLessThan(100);
+      expect(score(id), id).toBeGreaterThan(90); // a Positioning subcheck cannot cost more than 25/8 points
     }
   });
 

@@ -64,7 +64,7 @@ describe("marker scoring: correct side passes, wrong side is flagged", () => {
   it("L on the viewer's left (patient's right) and R on the viewer's right are flagged as the wrong side", () => {
     for (const [side, x] of [["L", -0.84], ["R", 0.84]] as const) {
       const c = marker(run(side, x));
-      expect(c.outcome, side).toBe("partial");
+      expect(c.outcome, side).toBe("fail");
       expect(c.feedback.en, side).toMatch(/wrong side of the image/);
       expect(c.feedback.en, side).toMatch(/patient's left appears on the viewer's right/);
       expect(c.feedback.ar, side).toMatch(/[؀-ۿ]/);
@@ -78,21 +78,25 @@ describe("marker scoring: correct side passes, wrong side is flagged", () => {
 
   it("wrong side is never hidden by another remark: both are reported", () => {
     const c = marker(run("L", -0.84, { collimation: { width: 0.5, height: 0.84 } })); // also outside the field
-    expect(c.outcome).toBe("partial");
+    expect(c.outcome).toBe("fail");
     expect(c.feedback.en).toMatch(/wrong side/);
     expect(c.feedback.en).toMatch(/outside the collimated field/);
   });
 
-  it("no marker placed is still a failed (unscored) check", () => {
+  it("no marker placed is a failed (scored) check", () => {
     expect(marker(run(null, 0.84)).outcome).toBe("fail");
   });
 
-  it("stays unscored: weight 0, so no marker side can change the score", () => {
+  it("is scored inside Positioning only (weight 1): a wrong side or a missing marker lowers the positioning category, never other categories", () => {
     const ok = run("L", 0.84), wrong = run("L", -0.84), none = run(null, 0.84);
-    expect(marker(wrong).scored).toBe(false);
-    expect(marker(wrong).weight).toBe(0);
-    expect(wrong.score).toEqual(ok.score);
-    expect(none.score).toEqual(ok.score);
+    expect(marker(wrong).scored).toBe(true);
+    expect(marker(wrong).weight).toBe(1);
+    expect(marker(wrong).credit).toBe(0);
+    expect(wrong.score.total).toBeLessThan(ok.score.total);
+    expect(none.score.total).toBeLessThan(ok.score.total);
+    for (const r of [wrong, none]) {
+      expect(r.score.categories.filter((k) => k.category !== "positioning")).toEqual(ok.score.categories.filter((k) => k.category !== "positioning"));
+    }
     expect(chestPaErect.scoring.categoryWeights).toEqual({ positioning: 25, rotation: 20, centering: 15, exposure: 20, sid: 10, breathing: 10 });
   });
 

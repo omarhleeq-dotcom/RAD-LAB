@@ -54,7 +54,7 @@ describe("evaluate — Adult Chest PA Erect", () => {
   it("penalises the wrong projection in the positioning category only", () => {
     const r = withChange({ projection: "ap-erect" });
     expect(r.primaryVariant).toBe("wrong-projection");
-    expect(category(r, "positioning")?.ratio).toBeCloseTo(5 / 7);
+    expect(category(r, "positioning")?.ratio).toBeCloseTo(6 / 8);
     expect(category(r, "rotation")?.ratio).toBe(1);
   });
 
@@ -174,15 +174,20 @@ describe("positioning subchecks", () => {
     expect(sh.variants).toContain("scapulae-overlap");
   });
 
-  it("keeps the side marker unscored", () => {
+  it("scores the side marker as a Positioning subcheck (relative weight 1; top-level weights unchanged)", () => {
     const none = withChange({ sideMarker: null });
     expect(check(none, "side-marker").outcome).toBe("fail");
-    expect(check(none, "side-marker").scored).toBe(false);
-    expect(none.score.total).toBe(100);
+    expect(check(none, "side-marker").scored).toBe(true);
+    expect(check(none, "side-marker").weight).toBe(1);
+    expect(category(none, "positioning")?.ratio).toBeCloseTo(7 / 8);
+    expect(none.score.total).toBe(96.9);
+    expect(chestPaErect.scoring.categoryWeights).toEqual({ positioning: 25, rotation: 20, centering: 15, exposure: 20, sid: 10, breathing: 10 });
   });
 
   it("flags a marker over the lung fields or outside the field", () => {
-    expect(check(withChange({ markerPosition: { x: 0, y: -0.1 } }), "side-marker").outcome).toBe("partial");
+    // Over the lung fields on the correct side: half credit. Midline (neither side) is a wrong side: no credit.
+    expect(check(withChange({ markerPosition: { x: 0.4, y: -0.1 } }), "side-marker").outcome).toBe("partial");
+    expect(check(withChange({ markerPosition: { x: 0, y: -0.1 } }), "side-marker").outcome).toBe("fail");
     const outside = withChange({ collimation: { width: 0.94, height: 0.6 }, markerPosition: { x: 0.84, y: 0.68 } });
     expect(check(outside, "side-marker").feedback.en).toMatch(/outside the collimated field/);
     expect(check(withChange({ markerPosition: { x: 0.84, y: -0.44 } }), "side-marker").outcome).toBe("pass");
