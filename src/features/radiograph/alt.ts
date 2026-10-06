@@ -11,6 +11,8 @@ export interface AltDescription {
   /** Visible effects in plan order (baseline / marker / centering-only effects are described separately or not at all). */
   findings: Exclude<EffectId, "baseline" | "marker">[];
   clippedSides: AltSide[];
+  /** Clipped sides where the field cuts only the margin of the provisional required region, not the drawn lungs. */
+  marginOnlySides: AltSide[];
   /** No simulated fault is visible: the reference appearance. */
   reference: boolean;
   marker:
@@ -33,5 +35,5 @@ export function describeRadiograph(plan: RenderPlan): AltDescription {
           wrongSide: m.wrongSide,
           partlyCut: m.visibleFraction < 1,
         };
-  return { findings, clippedSides: [...plan.clippedSides], reference: plan.effects.some((e) => e.id === "baseline"), marker };
+  return { findings, clippedSides: [...plan.clippedSides], marginOnlySides: [...plan.marginOnlySides], reference: plan.effects.some((e) => e.id === "baseline"), marker };
 }

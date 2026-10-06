@@ -31,6 +31,7 @@ export function ResultImage({ radCase, plan }: Props) {
         ? t("altFindings.collimation-clipping", { sides: list.format(d.clippedSides.map((s) => t(`altSides.${s}`))) })
         : t(`altFindings.${id}`),
     );
+    if (d.marginOnlySides.length) parts.push(t("altClippingMargin", { sides: list.format(d.marginOnlySides.map((side) => t(`altSides.${side}`))) }));
     if (d.reference) parts.push(t("altReference"));
     if (phrases.length) parts.push(t("altFindingsLead", { list: list.format(phrases) }));
     const m = d.marker;

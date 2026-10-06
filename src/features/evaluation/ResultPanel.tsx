@@ -31,6 +31,7 @@ const OUTCOME_ICON: Record<CheckOutcome, string> = { pass: "✓", partial: "◐"
 
 export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: Props) {
   const t = useTranslations("result");
+  const tRad = useTranslations("radiograph");
   const tCat = useTranslations("categories");
   const tCon = useTranslations("console");
   const tPos = useTranslations("positioning");
@@ -170,6 +171,11 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-ink">{localize(k.feedback, locale)}</p>
+                  {k.ruleId === "collimation-clipping" && k.outcome !== "pass" && plan.marginOnlySides.length > 0 && (
+                    <p data-testid="clip-margin-note" className="mt-0.5 text-xs text-muted">
+                      {tRad("clippingMarginNote", { sides: plan.marginOnlySides.map((side) => tRad(`altSides.${side}`)).join(" / ") })}
+                    </p>
+                  )}
                   {needsNotDrawnLabel(k.ruleId, k.outcome, plan) && (
                     <p data-testid="not-drawn" className="mt-0.5 text-xs text-muted">{t("notDrawn")}</p>
                   )}

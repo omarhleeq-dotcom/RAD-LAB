@@ -393,6 +393,8 @@
     "magnitudeApprox": "Educational visual approximation",
     "magnitudeNone": "Nothing drawn (by design)",
     "margins": "Dark margins lie outside the collimated field. Grey hatched areas inside the field have no reference-image data: they are not exposure, collimation or anatomy.",
+    "clippingMarginNote": "Margin only at {sides}: the field cuts only the margin of the provisional required region (a demo size awaiting educator review), beyond the lungs, ribs and costophrenic angles drawn in this baseline picture. The score still applies the region, but the picture shows those structures complete.",
+    "altClippingMargin": "At {sides} the field cuts only the margin of the required region; the lungs shown are complete.",
     "altReference": "No simulated image-quality fault is visible: this is the reference appearance.",
     "altFindingsLead": "Visible findings: {list}.",
     "altSides": {

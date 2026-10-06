@@ -69,6 +69,15 @@ export interface RenderPlan {
   fieldCm: CmRect;
   /** Sides on which the field cuts the required anatomy (same value the score uses; for the text alternative). */
   clippedSides: ("left" | "right" | "top" | "bottom")[];
+  /**
+   * Session 5 fix pass 2. The score clips against the provisional required REGION (case data); the picture can only
+   * show lungs / ribs / costophrenic angles inside the baseline's landmark box. `landmarkClippedSides` = the clipped
+   * sides on which the field also cuts into that box (visible loss of drawn lung); `marginOnlySides` = clipped sides
+   * on which the field cuts only the margin between the region and the box (neck / upper abdomen in the baseline).
+   * The score is never adapted to this; the UI uses it to say so instead of staying silent.
+   */
+  landmarkClippedSides: ("left" | "right" | "top" | "bottom")[];
+  marginOnlySides: ("left" | "right" | "top" | "bottom")[];
   /** False for projections that are not simulated (AP / lateral): the PA appearance is shown for layout only. */
   representative: boolean;
   anatomy: {
@@ -188,6 +197,23 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const boxTop = req.yCm + (req.heightCm - boxHpx * cmPerPx) / 2;
   const image = { x1: boxLeft - box.u1 * widthCm, y1: boxTop - box.v1 * heightCm, widthCm, heightCm };
 
+  // The baseline's landmark box (apices → costophrenic angles, lateral lung margins) on the detector, in cm.
+  const landmarkCm = {
+    x1: image.x1 + box.u1 * widthCm,
+    x2: image.x1 + box.u2 * widthCm,
+    y1: image.y1 + box.v1 * heightCm,
+    y2: image.y1 + box.v2 * heightCm,
+  };
+  // Tolerance 1e-6 cm: the box is fitted flush to the region on the limiting axis (floating-point noise only).
+  const EPS = 1e-6;
+  const landmarkCut = (side: "left" | "right" | "top" | "bottom") =>
+    side === "left" ? geometry.fieldCm.x1 > landmarkCm.x1 + EPS
+    : side === "right" ? geometry.fieldCm.x2 < landmarkCm.x2 - EPS
+    : side === "top" ? geometry.fieldCm.y1 > landmarkCm.y1 + EPS
+    : geometry.fieldCm.y2 < landmarkCm.y2 - EPS;
+  const landmarkClippedSides = geometry.clippedSides.filter(landmarkCut);
+  const marginOnlySides = geometry.clippedSides.filter((side) => !landmarkCut(side));
+
   const has = (ruleId: string) => state.findings.some((f) => f.ruleId === ruleId);
   const deg = clamp(geometry.rotationDeg, -TUNING.rotation.maxDeg, TUNING.rotation.maxDeg);
   // Session 5 consistency rule: rotation is drawn only when the rotation check is not passed. Within the case's
@@ -266,6 +292,8 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
     image,
     fieldCm,
     clippedSides: [...geometry.clippedSides],
+    landmarkClippedSides,
+    marginOnlySides,
     representative,
     anatomy: {
       rotation,
