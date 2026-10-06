@@ -164,12 +164,11 @@ describe("wrong-side marker", () => {
     }
   });
 
-  it("the marker is a scored Positioning subcheck (weight 1): a wrong side lowers the number (positioning only) AND gates the pass mark", () => {
+  it("the marker check itself stays unscored (weight 0): the numeric score does not depend on the marker", () => {
     const correct = run();
     const wrong = run({ sideMarker: "L", markerPosition: { x: -0.84, y: -0.44 } });
-    expect(chestPaErect.rules.find((r) => r.id === "side-marker")?.weight).toBe(1);
-    expect(wrong.score.total).toBeLessThan(correct.score.total);
-    expect(wrong.score.categories.find((k) => k.category === "positioning")!.weight).toBe(25);
+    expect(chestPaErect.rules.find((r) => r.id === "side-marker")?.weight).toBe(0);
+    expect(wrong.score.total).toBe(correct.score.total);
     expect(wrong.score.passed).toBe(false);
   });
 

@@ -134,7 +134,7 @@ export const EFFECT_CONCEPTS: Record<EffectId, Evidence> = {
   "low-exposure": ev("validated", "Low detector exposure / quantum noise", "Insufficient detector exposure increases noise and impairs low-contrast information (AAPM / ACR)."),
   "excess-exposure": ev("validated", "Excess detector exposure", "DR can look acceptable across a broad exposure range (dose creep); the image is deliberately not darkened."),
   "low-penetration": ev("common-reference", "Penetration and anatomical visibility", "IAEA: retrocardiac lung and mediastinum should be visualised; insufficient penetration reduces visibility through dense regions."),
-  marker: ev("educational-simplification", "Side marker and annotations", "Learner-selected marker at its detector-relative position; patient-side correctness is checked separately (scored subcheck + critical finding)."),
+  marker: ev("educational-simplification", "Side marker and annotations", "Learner-selected marker at its detector-relative position; patient-side correctness is not scored (a wrong-side marker is a critical finding, a pass-mark gate)."),
   projection: ev("educational-simplification", "Scope", "Only the PA appearance exists; AP/lateral are not simulated."),
 };
 

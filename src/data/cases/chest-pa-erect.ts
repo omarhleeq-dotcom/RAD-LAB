@@ -176,7 +176,7 @@ export const chestPaErect: RadCase = {
         evidence: {
           status: "provisional",
           reference: "Image-quality ref — Side marker and annotations",
-          note: "PROVISIONAL / educational: the laterality convention and the gate are simulator rules. A missing marker is not a wrong side (it is reported, and scored, by the marker check).",
+          note: "PROVISIONAL / educational: the laterality convention and the gate are simulator rules. Support read in full: Chung 2020 (PMC7685512) counted markers on the incorrect side as errors (4 of 421 audited paediatric radiographs; digital correction of a wrong radiopaque marker counted as acceptable), Fuller 2016 (PMC5016621) is an opinion editorial citing case reports of harm; neither defines which viewer side L / R belongs on. A missing marker is not a wrong side (it is reported by the unscored marker check). The marker check itself stays unscored (weight 0) and the numeric score is unchanged.",
         },
       },
     ],
@@ -323,13 +323,8 @@ export const chestPaErect: RadCase = {
       id: "side-marker",
       kind: "marker",
       category: "positioning",
-      // Fix pass (item 4): scored as a Positioning subcheck (relative weight 1; top-level weights unchanged).
-      // Presence, correct side and being recorded inside the field are supported as practice by peer-reviewed audits
-      // (Chung et al. PLoS One 2020; Fuller J Med Radiat Sci 2016; ACR digital radiography parameter via the repo's
-      // image-quality reference). Which VIEWER side L / R belongs on is NOT established by any verified source: it stays
-      // an educational display convention (`positioning.markerSide`).
-      weight: 1,
-      label: { en: "Side marker", ar: "علامة الجانب" },
+      weight: 0,
+      label: { en: "Side marker (not scored)", ar: "علامة الجانب (غير محسوبة)" },
       feedback: {
         pass: {
           en: "Side marker placed inside the image, clear of the lung fields.",
@@ -353,9 +348,9 @@ export const chestPaErect: RadCase = {
         },
       },
       evidence: {
-        status: "provisional",
-        reference: "Positioning ref §3F; Image-quality ref (Side marker and annotations); Chung 2020 PLoS One (PMC7685512); Fuller 2016 J Med Radiat Sci (PMC5016621)",
-        note: "CONCEPT (common quality criterion): a correct side marker should be recorded inside the primary field and not obscure anatomy; a missing / wrong marker is a recognised labelling error with patient-safety consequences. IMPLEMENTATION (provisional): relative weight 1 inside Positioning, wrong side = no credit, other issues = half credit. The viewer side L / R belongs on is an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL); no verified source defines it. TODO(medical-review): confirm the convention and weight.",
+        status: "educational-simplification",
+        reference: "Positioning ref §3F; Image-quality ref (Side marker and annotations); docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md §A.1 (marker evidence verification)",
+        note: "Placement interaction only; deliberately unscored (weight 0): the repository references keep marker behaviour unscored until a validated scoring rule and orientation mapping exist, and the sources read in full (Chung 2020; Fuller 2016) are a single-site paediatric audit and a two-page editorial: they support that a marker is expected and that a wrong-side or missing marker is a recognised labelling error, but give no scoring rule, weight or viewer-side convention, and did not measure placement inside the field. Laterality uses an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL). A wrong-side marker is still a critical finding (pass-mark gate). TODO(medical-review): confirm the convention and decide whether marker side / presence should be scored.",
       },
     },
     {
