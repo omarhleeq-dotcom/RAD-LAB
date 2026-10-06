@@ -112,7 +112,7 @@ async function run() {
         const errors = [];
         page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
         page.on("pageerror", (e) => errors.push(String(e)));
-        await page.goto(`${BASE}/${loc}/simulation/chest-pa-erect`, { waitUntil: "networkidle" });
+        await page.goto(`${BASE}/${loc}/xray/chest-pa-erect/practice`, { waitUntil: "networkidle" });
         ok(`${tag}: html dir`, (await page.getAttribute("html", "dir")) === (loc === "ar" ? "rtl" : "ltr"));
         if (name === "correct" && device === "desktop") {
           // Keyboard: the patient-instruction radio groups are reachable and arrow keys change the selection.

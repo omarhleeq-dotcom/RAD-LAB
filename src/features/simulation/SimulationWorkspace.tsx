@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { localize } from "@/lib/localized";
 import { ResultPanel } from "@/features/evaluation/ResultPanel";
 import { PatientInstructionsPanel } from "@/features/patient/PatientInstructionsPanel";
@@ -29,11 +28,8 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
   const locked = phase === "result";
 
   return (
-    <main className="mx-auto max-w-7xl space-y-5 px-4 py-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="/" className="inline-flex min-h-6 items-center py-1 text-sm text-brand hover:underline">
-          ← {tc("backHome")}
-        </Link>
+    <div className="mx-auto max-w-7xl space-y-5 px-4 py-6">
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium">
           <span className="rounded bg-brand/10 px-2 py-1 text-brand-strong">{t("modePractice")}</span>
           <span className="rounded bg-paper px-2 py-1 text-muted">{t("attempt", { n: attempt })}</span>
@@ -81,6 +77,6 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
           <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
         )}
       </div>
-    </main>
+    </div>
   );
 }

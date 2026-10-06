@@ -1,7 +1,7 @@
 // Session 5 accessibility / UX audit (Playwright + axe-core, run manually; not part of CI).
 //   npm i --no-save playwright axe-core && BASE=http://localhost:3100 node scripts/qa/a11y-audit.mjs
 // Checks, in EN and AR, on desktop and mobile: axe-core WCAG 2.x A/AA rules (incl. colour contrast) on the home page,
-// the set-up screen and a result screen; keyboard reachability and visible focus of every control; the text
+// the Session 9 shell pages, the set-up screen and a result screen; keyboard reachability and visible focus of every control; the text
 // alternative of the canvas; no horizontal overflow; touch-target size on mobile.
 import { chromium } from "playwright";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -25,7 +25,12 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
   };
   await page.goto(`${BASE}/${loc}`, { waitUntil: "networkidle" });
   await axe("home");
-  await page.goto(`${BASE}/${loc}/simulation/chest-pa-erect`, { waitUntil: "networkidle" });
+  // Session 9 shell pages: modality, exam hub, unknown-case state, bilingual 404 (axe only).
+  for (const [area, path] of [["modality", `/${loc}/xray`], ["exam", `/${loc}/xray/chest-pa-erect`], ["unknown-case", `/${loc}/xray/chest-pa-erect/practice?case=nope`], ["not-found", `/${loc}/no-such-page`]]) {
+    await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
+    await axe(area);
+  }
+  await page.goto(`${BASE}/${loc}/xray/chest-pa-erect/practice`, { waitUntil: "networkidle" });
   await axe("setup");
 
   // Keyboard: Tab through the whole page; every stop must have a visible focus indicator; record the order.
