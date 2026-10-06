@@ -1,3 +1,4 @@
+import { createTranslator } from "next-intl";
 import { describe, expect, it } from "vitest";
 import { CASES } from "@/data/cases";
 import { EVIDENCE_CLASSES } from "@/domain/technique";
@@ -33,7 +34,7 @@ describe("EN / AR message catalogues", () => {
   });
 
   it("keep placeholders identical across languages", () => {
-    const ph = (s: string) => (s.match(/\{\w+\}/g) ?? []).sort().join(",");
+    const ph = (s: string) => [...new Set(s.match(/\{\w+\}/g) ?? [])].sort().join(",");
     for (const k of leaves(en as Tree)) expect(ph(get(ar as Tree, k) as string), k).toBe(ph(get(en as Tree, k) as string));
   });
 
@@ -145,5 +146,25 @@ describe("case data is fully bilingual", () => {
     for (const r of CASES[0]!.rules.filter((r) => r.kind === "technique")) {
       for (const f of Object.values(r.feedback)) expect(f.ar).toMatch(/[؀-ۿ]/);
     }
+  });
+});
+
+describe("sex-aware Arabic strings", () => {
+  const sexKeys = leaves(ar as Tree).filter((k) => (get(ar as Tree, k) as string).includes("{sex, select,"));
+  it("have a female branch and an 'other' (masculine) branch", () => {
+    expect(sexKeys.length).toBeGreaterThan(0);
+    for (const k of sexKeys) {
+      const v = get(ar as Tree, k) as string;
+      expect(v, k).toMatch(/female \{/);
+      expect(v, k).toMatch(/other \{/);
+    }
+  });
+
+  it("render both forms for the same keys", () => {
+    const t = createTranslator({ locale: "ar", messages: ar as never });
+    expect(t("home.patientLine", { sex: "female", sexLabel: "أنثى", age: 21 })).toBe("أنثى عمرها 21 عامًا");
+    expect(t("home.patientLine", { sex: "male", sexLabel: "ذكر", age: 45 })).toBe("ذكر عمره 45 عامًا");
+    expect(t("patient.motionOptions.remain-still", { sex: "female" })).toBe("«ابقَي ثابتة ولا تتحركي حتى أخبرك.»");
+    expect(t("patient.motionOptions.remain-still", { sex: "male" })).toBe("«ابقَ ثابتًا ولا تتحرك حتى أخبرك.»");
   });
 });

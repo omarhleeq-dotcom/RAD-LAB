@@ -33,7 +33,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
             <li key={c.id} className="flex flex-col rounded-lg border border-line bg-panel p-5">
               <h3 className="text-lg font-semibold">{localize(c.title, locale)}</h3>
               <p className="mt-1 text-sm text-muted">
-                {t("patientLine", { age: c.patient.age, sex: ts(c.patient.sex) })}
+                {t("patientLine", { age: c.patient.age, sex: c.patient.sex, sexLabel: ts(c.patient.sex) })}
               </p>
               <p className="mt-3 flex-1">{localize(c.clinicalScenario, locale)}</p>
               <div className="mt-4 flex items-center justify-between gap-3">

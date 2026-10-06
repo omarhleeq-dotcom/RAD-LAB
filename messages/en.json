@@ -24,7 +24,7 @@
       "ct": "CT workflow",
       "mri": "MRI workflow"
     },
-    "patientLine": "{age}-year-old {sex}"
+    "patientLine": "{age}-year-old {sexLabel}"
   },
   "sex": {
     "male": "male",
