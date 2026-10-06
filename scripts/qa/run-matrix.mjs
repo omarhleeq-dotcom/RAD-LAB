@@ -164,7 +164,8 @@ async function runScenario(browser, loc, device, sc) {
     }, bx);
     const [l, r] = [await bright(markerBox.left), await bright(markerBox.right)];
     const onRight = g.marker.viewerSide === "viewer-right";
-    ok(`${tag}: marker glyph is on the viewer's ${onRight ? "right" : "left"} half only`, onRight ? r > 80 && l === 0 : l > 80 && r === 0, `l=${l} r=${r}`);
+    ok(`${tag}: marker glyph is on the viewer's ${onRight ? "right" : "left"} half only`, // Heavy quantum noise can put a few bright pixels in the other box, so require a clear margin, not zero.
+      onRight ? r > 80 && r > 3 * l : l > 80 && l > 3 * r, `l=${l} r=${r}`);
   }
 
   // 6. Layout / direction / console.

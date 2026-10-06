@@ -40,7 +40,7 @@ export function RangeField({ label, value, min, max, step, unit, onChange, disab
       <input
         id={id}
         type="range"
-        className="block w-full disabled:opacity-50"
+        className="block h-6 w-full disabled:opacity-50"
         min={min}
         max={max}
         step={step}

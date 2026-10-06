@@ -142,7 +142,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                     <p data-testid="not-drawn" className="mt-0.5 text-xs text-muted">{t("notDrawn")}</p>
                   )}
                   <details className="mt-1 text-xs text-muted">
-                    <summary className="cursor-pointer">
+                    <summary className="min-h-6 cursor-pointer py-0.5">
                       {t("evidenceToggle")} <EvidenceBadge status={k.evidence.status} />
                     </summary>
                     <p className="mt-1">
