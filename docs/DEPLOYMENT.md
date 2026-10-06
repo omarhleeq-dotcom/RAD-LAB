@@ -86,6 +86,8 @@ npm run preview:smoke        # serves out/ like Cloudflare Pages, then drives it
 
 `scripts/preview/serve-out.mjs` is a minimal stand-in for Cloudflare Pages (clean URLs, `_redirects`, `_headers`, `404.html`); real Cloudflare behaviour may differ in details. `preview:smoke` checks: `/` → `/en`; headers / robots / 404; banner and `noindex` meta on every page in EN and AR; EN↔AR switching; every request same-origin and no console/CSP errors at 390 px; then the real-UI scenario runner (one fully correct exam and three exams with critical findings, EN + AR, mobile, with the golden-image comparison).
 
+**Results (2026-10-06, Session 6, static export served by the stand-in server):** typecheck, lint, 662/662 unit tests (golden phantom hash unchanged), `npm run build`, `npm run build:pages` pass; `preview:smoke` 200/200 scenario checks + header/banner/same-origin/console checks; full EN/AR × desktop/tablet/mobile browser matrix **3159/3159** (identical to Session 5, so the banner changed no golden image — none was regenerated); axe audit 0 violations.
+
 ## 5. Troubleshooting
 
 | Symptom | Likely cause / fix |
