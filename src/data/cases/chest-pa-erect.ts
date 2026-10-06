@@ -47,7 +47,12 @@ export const chestPaErect: RadCase = {
   },
   requiredProjection: "pa-erect",
   detector: { widthCm: 35, heightCm: 43 },
-  // Required anatomy region on the detector (cm from its top-left corner). Demo values.
+  // Required anatomy region on the detector (cm from its top-left corner). Demo values (provisional).
+  // The CLINICAL criterion (apices, both lungs, costophrenic angles included) comes from the medical references;
+  // the size in cm is a demo value. It is NOT derived from the baseline image's aspect ratio: the renderer fits the
+  // baseline into this region with one uniform scale (see features/radiograph/plan.ts) and shows anything the
+  // baseline does not cover as "no reference data" hatch. Session 5 briefly changed this to 27 x 28 cm to match the
+  // baseline; reverted because no repo reference supports that value.
   requiredAnatomy: { xCm: 4, yCm: 3, widthCm: 27, heightCm: 31 },
   controls: {
     rotationDeg: { min: -20, max: 20, step: 1 },
@@ -114,6 +119,67 @@ export const chestPaErect: RadCase = {
       breathing: 10,
     },
     passThreshold: 70,
+    // Critical findings gate the pass mark (the numeric score and the weights above are NOT changed by them).
+    // CONCEPT = COMMON QUALITY CRITERION (maps to the repo's "common-reference" class: such an image would normally be
+    // repeated in practice). IMPLEMENTATION = PROVISIONAL / educational: that each one forces "below the pass mark"
+    // is a simulator rule, not a real-world reject decision (Positioning ref "Image rejection").
+    // TODO(medical-review): confirm the list of critical findings with a radiography educator.
+    criticalFindings: [
+      {
+        id: "wrong-projection",
+        label: { en: "Wrong projection", ar: "إسقاط خاطئ" },
+        reason: {
+          en: "Critical finding — wrong projection: a different projection from the one requested was performed. Performing the wrong examination is a fundamental error, not a matter of degree, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.",
+          ar: "ملاحظة حرجة — إسقاط خاطئ: أُجري إسقاط مختلف عن المطلوب. إجراء الفحص الخاطئ خطأ جوهري وليس مسألة درجات، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة العملية تُعاد الصورة عادةً في مثل هذه الحالة.",
+        },
+        concept: {
+          status: "common-reference",
+          reference: "Positioning ref §2 Patient orientation, §3A; the exam request",
+          note: "COMMON QUALITY CRITERION: the projection performed must be the projection requested (PA is requested for routine erect chest because it reduces cardiac magnification vs AP).",
+        },
+        evidence: {
+          status: "provisional",
+          reference: "Positioning ref §Image rejection",
+          note: "PROVISIONAL / educational: forcing the pass mark below the threshold is a simulator rule, not a real-world automatic reject decision. The numeric score is unchanged.",
+        },
+      },
+      {
+        id: "patient-motion",
+        label: { en: "Visible patient motion", ar: "حركة مرئية للمريض" },
+        reason: {
+          en: "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.",
+          ar: "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة العملية تُعاد الصورة عادةً في مثل هذه الحالة.",
+        },
+        concept: {
+          status: "common-reference",
+          reference: "Image-quality ref — Motion",
+          note: "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
+        },
+        evidence: {
+          status: "provisional",
+          reference: "Positioning ref §Image rejection",
+          note: "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
+        },
+      },
+      {
+        id: "wrong-side-marker",
+        label: { en: "Wrong-side marker", ar: "علامة جانب خاطئة" },
+        reason: {
+          en: "Critical finding — wrong-side marker: the marker is on the wrong side for the patient's side (in this simulator's PA display convention, L belongs on the viewer's right and R on the viewer's left). A wrong-side marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated or corrected.",
+          ar: "ملاحظة حرجة — علامة جانب خاطئة: العلامة المسجَّلة على الصورة في الجانب الخطأ بالنسبة لجانب المريض (وفق اصطلاح عرض PA في هذا المحاكي: تُوضع L على يمين المشاهد وR على يساره). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة العملية تُعاد الصورة أو تُصحَّح عادةً في مثل هذه الحالة.",
+        },
+        concept: {
+          status: "common-reference",
+          reference: "Image-quality ref — Side marker and annotations (side identification must be visible)",
+          note: "COMMON QUALITY CRITERION: the image must identify the correct patient side. Which viewer side L / R belongs on is this simulator's EDUCATIONAL display convention (no validated orientation mapping is adopted in the references).",
+        },
+        evidence: {
+          status: "provisional",
+          reference: "Image-quality ref — Side marker and annotations",
+          note: "PROVISIONAL / educational: the laterality convention and the gate are simulator rules. Support read in full: Chung 2020 (PMC7685512) counted markers on the incorrect side as errors (4 of 421 audited paediatric radiographs; digital correction of a wrong radiopaque marker counted as acceptable), Fuller 2016 (PMC5016621) is an opinion editorial citing case reports of harm; neither defines which viewer side L / R belongs on. A missing marker is not a wrong side (it is reported by the unscored marker check). The marker check itself stays unscored (weight 0) and the numeric score is unchanged.",
+        },
+      },
+    ],
   },
   rules: [
     {
@@ -131,8 +197,8 @@ export const chestPaErect: RadCase = {
           ar: "الإسقاط صحيح: PA وقوفًا كما هو مطلوب.",
         },
         fail: {
-          en: "The projection does not match the request (PA erect). The projection changes which structures are magnified and how the heart and scapulae are shown. Re-position the patient as requested.",
-          ar: "الإسقاط لا يطابق الطلب (PA وقوفًا). يؤثر الإسقاط في الهياكل المكبَّرة وفي ظهور القلب واللوحين. أعد وضع المريض حسب الطلب.",
+          en: "The projection does not match the request (PA erect). PA is preferred for routine erect chest imaging because it reduces cardiac magnification compared with AP. Re-position the patient as requested.",
+          ar: "الإسقاط لا يطابق الطلب (PA وقوفًا). يُفضَّل إسقاط PA في تصوير الصدر الروتيني وقوفًا لأنه يقلل تكبير القلب مقارنةً بإسقاط AP. أعد وضع المريض حسب الطلب.",
         },
       },
       evidence: {
@@ -201,8 +267,8 @@ export const chestPaErect: RadCase = {
           ar: "المجال مفتوح أكثر من اللازم.",
         },
         high: {
-          en: "The field is opened wider than necessary. Extra field size exposes tissue outside the area of interest and adds scatter and patient dose. Close the shutters closer to the anatomy, without cutting it off.",
-          ar: "المجال مفتوح أكثر من اللازم. المجال الزائد يعرّض أنسجة خارج المنطقة المطلوبة ويزيد التشتت وجرعة المريض. قرّب حواف المجال من التشريح دون أن تقطعه.",
+          en: "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off.",
+          ar: "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
         },
       },
       evidence: {
@@ -283,8 +349,8 @@ export const chestPaErect: RadCase = {
       },
       evidence: {
         status: "educational-simplification",
-        reference: "§3F",
-        note: "Placement interaction only; deliberately unscored (weight 0). Laterality uses an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL). TODO(medical-review): confirm the convention and decide whether marker side should be scored.",
+        reference: "Positioning ref §3F; Image-quality ref (Side marker and annotations); docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md §A.1 (marker evidence verification)",
+        note: "Placement interaction only; deliberately unscored (weight 0): the repository references keep marker behaviour unscored until a validated scoring rule and orientation mapping exist, and the sources read in full (Chung 2020; Fuller 2016) are a single-site paediatric audit and a two-page editorial: they support that a marker is expected and that a wrong-side or missing marker is a recognised labelling error, but give no scoring rule, weight or viewer-side convention, and did not measure placement inside the field. Laterality uses an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL). A wrong-side marker is still a critical finding (pass-mark gate). TODO(medical-review): confirm the convention and decide whether marker side / presence should be scored.",
       },
     },
     {
@@ -304,8 +370,8 @@ export const chestPaErect: RadCase = {
           ar: "المريض متعامد مع الكاسيت — لا يوجد دوران ملحوظ.",
         },
         fail: {
-          en: "The patient is rotated. Rotation distorts the heart and mediastinum and makes one lung appear different from the other, which can mimic disease. Check that the shoulders and the anterior superior iliac spines are equidistant from the detector, then correct.",
-          ar: "المريض مائل (دوران). يشوّه الدوران ظلّ القلب والمنصف ويجعل إحدى الرئتين تبدو مختلفة عن الأخرى وقد يحاكي مرضًا. تأكد أن الكتفين متساويا البعد عن الكاسيت ثم صحّح الوضعية.",
+          en: "The patient is rotated. Rotation changes how the thorax is projected: the spinous processes no longer lie midway between the medial ends of the clavicles and the two sides of the chest look different, which can mislead when the image is read. Ask the patient to stand square to the detector, then correct. (How rotation looks varies with body build, so a drawn amount is not a number of degrees.)",
+          ar: "المريض مائل (دوران). يغيّر الدوران طريقة إسقاط القفص الصدري: لا تقع النتوءات الشوكية في منتصف المسافة بين النهايتين الإنسيتين للترقوتين، ويبدو جانبا الصدر مختلفين، وقد يضلّل ذلك عند قراءة الصورة. اطلب من المريض الوقوف متعامدًا مع الكاسيت ثم صحّح الوضعية. (يختلف مظهر الدوران باختلاف بنية الجسم، لذا لا يعني المقدار المرسوم عددًا من الدرجات.)",
         },
       },
       evidence: {
@@ -390,12 +456,12 @@ export const chestPaErect: RadCase = {
           ar: "قيمة kVp ضمن النطاق المستهدف في هذا البروتوكول التجريبي. يُدرَّس تصوير صدر البالغ PA كفحص بجهد أنبوبي عالٍ نسبيًا: الجهد الأعلى يعطي حزمة أكثر اختراقًا تساعد على إظهار المنصف والحقلين الرئويين معًا. النطاق الدقيق هدف تجريبي مؤقت وليس قيمة عالمية.",
         },
         low: {
-          en: "kVp is below this demo protocol's target band. A lower tube potential gives a less penetrating beam that is absorbed more by dense structures, so the retrocardiac lung and the spine behind the heart are harder to demonstrate. Extra mAs adds photons but not penetrating energy. (About 100–150 kV is a common reference range for chest, not a universal rule.)",
-          ar: "قيمة kVp أقل من النطاق المستهدف في هذا البروتوكول التجريبي. الجهد الأنبوبي المنخفض يعطي حزمة أقل اختراقًا تمتصها البنى الكثيفة أكثر، فيصعب إظهار الرئة خلف القلب والعمود الفقري خلفه. زيادة mAs تضيف فوتونات لكنها لا تضيف طاقة اختراق. (نحو 100–150 kV نطاق مرجعي شائع للصدر وليس قاعدة عالمية.)",
+          en: "kVp is below this demo protocol's target band. A lower tube potential gives a less penetrating beam that is absorbed more by dense structures, so the retrocardiac lung and the spine behind the heart can be harder to demonstrate. Extra mAs adds photons but not penetrating energy. (About 100–150 kV is a common reference range for chest, not a universal rule; this simulation draws the reduced visibility only below that range.)",
+          ar: "قيمة kVp أقل من النطاق المستهدف في هذا البروتوكول التجريبي. الجهد الأنبوبي المنخفض يعطي حزمة أقل اختراقًا تمتصها البنى الكثيفة أكثر، فقد يصعب إظهار الرئة خلف القلب والعمود الفقري خلفه. زيادة mAs تضيف فوتونات لكنها لا تضيف طاقة اختراق. (نحو 100–150 kV نطاق مرجعي شائع للصدر وليس قاعدة عالمية؛ وهذه المحاكاة ترسم انخفاض الوضوح فقط تحت هذا النطاق.)",
         },
         high: {
-          en: "kVp is above this demo protocol's target band. A higher-energy beam penetrates more, lowers subject contrast and produces more scatter. Whether that is acceptable depends on the detector, image processing and local protocol, so the band is a provisional demo target rather than a universal limit.",
-          ar: "قيمة kVp أعلى من النطاق المستهدف في هذا البروتوكول التجريبي. الحزمة الأعلى طاقة تخترق أكثر وتقلل تباين الجسم وتزيد التشتت. مدى قبول ذلك يعتمد على الكاشف ومعالجة الصورة والبروتوكول المحلي، لذا فالنطاق هدف تجريبي مؤقت وليس حدًا عالميًا.",
+          en: "kVp is above this demo protocol's target band. A higher-energy beam is more penetrating. Whether that is acceptable depends on the detector, image processing and local protocol, so the band is a provisional demo target rather than a universal limit. This simulation draws no image effect for a higher kVp.",
+          ar: "قيمة kVp أعلى من النطاق المستهدف في هذا البروتوكول التجريبي. الحزمة الأعلى طاقة أكثر اختراقًا. مدى قبول ذلك يعتمد على الكاشف ومعالجة الصورة والبروتوكول المحلي، لذا فالنطاق هدف تجريبي مؤقت وليس حدًا عالميًا. لا ترسم هذه المحاكاة أي أثر في الصورة عند ارتفاع kVp.",
         },
         fail: {
           en: "kVp is outside the demo protocol's range.",
@@ -505,7 +571,7 @@ export const chestPaErect: RadCase = {
       kind: "range",
       category: "sid",
       setting: "sidCm",
-      ideal: [180, 185],
+      ideal: [175, 185],
       acceptable: [150, 200],
       unit: "cm",
       variantOnLow: "magnified-geometry",
@@ -516,8 +582,8 @@ export const chestPaErect: RadCase = {
           ar: "قيمة SID ضمن النطاق التجريبي المستهدف.",
         },
         low: {
-          en: "SID is shorter than the demo target. A shorter SID increases magnification (notably of the heart) and geometric unsharpness, and raises the exposure at the detector (inverse-square) so manual technique would need to be reduced.",
-          ar: "قيمة SID أقصر من النطاق التجريبي. تزيد المسافة الأقصر من التكبير (خصوصًا القلب) وعدم الحدّة الهندسي، وترفع التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي.",
+          en: "SID is shorter than the demo target (180 cm is the common reference). A shorter SID raises the exposure at the detector (inverse-square), so manual technique would need to be reduced, and it increases geometric magnification. In one 2025 study of AP semi-erect adult chest imaging, reducing SID from 180 cm increased entrance skin dose and 100 cm reduced image quality. This simulation does not draw magnification.",
+          ar: "قيمة SID أقصر من النطاق التجريبي (180 سم هو المرجع الشائع). تزيد المسافة الأقصر التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي، كما تزيد التكبير الهندسي. وفي دراسة واحدة عام 2025 على تصوير صدر البالغ AP شبه المنتصب، أدى خفض SID عن 180 سم إلى زيادة جرعة الجلد الداخلة، وأدى 100 سم إلى انخفاض جودة الصورة. لا ترسم هذه المحاكاة التكبير.",
         },
         high: {
           en: "SID is longer than the demo target; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. An AEC compensates for this in the educational model.",
@@ -545,8 +611,8 @@ export const chestPaErect: RadCase = {
           ar: "صحيح: شهيق عميق مع حبس النفس فتكون الرئتان ممتلئتين جيدًا.",
         },
         fail: {
-          en: "The lungs will not be fully inflated. A poor inspiration crowds the lung markings, raises the diaphragm and enlarges the apparent heart size. Instruct the patient to take a deep breath in and hold it.",
-          ar: "لن تكون الرئتان ممتلئتين بالكامل. يؤدي ضعف الشهيق إلى ازدحام العلامات الرئوية وارتفاع الحجاب الحاجز وتضخم ظاهري لحجم القلب. اطلب من المريض شهيقًا عميقًا مع حبس النفس.",
+          en: "The lungs will not be fully expanded. Reduced inspiration tends to show less expanded lungs and higher diaphragms. Instruct the patient to take a deep breath in and hold it.",
+          ar: "لن تكون الرئتان ممتلئتين بالكامل. يميل ضعف الشهيق إلى إظهار رئتين أقل تمددًا وحجابين حاجزين أعلى. اطلب من المريض شهيقًا عميقًا مع حبس النفس.",
         },
       },
       evidence: {

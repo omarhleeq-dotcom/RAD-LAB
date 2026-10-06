@@ -23,6 +23,11 @@ export function RadiographEffects({ plan }: { plan: RenderPlan }) {
           <li key={e.id} data-effect={e.id} className="rounded border border-line bg-paper/60 p-3">
             <h3 className="text-sm font-semibold">{t(`effects.${e.id}.title`)}</h3>
             <p className="mt-1 text-sm">{t(`effects.${e.id}.desc`)}</p>
+            {e.id === "collimation-clipping" && plan.marginOnlySides.length > 0 && (
+              <p data-testid="clip-margin-note" className="mt-1 text-sm">
+                {t("clippingMarginNote", { sides: plan.marginOnlySides.map((side) => t(`altSides.${side}`)).join(" / ") })}
+              </p>
+            )}
             <dl className="mt-2 space-y-1 text-xs text-muted">
               <div className="flex flex-wrap items-center gap-2">
                 <dt>{t("concept")}:</dt>

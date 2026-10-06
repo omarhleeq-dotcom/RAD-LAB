@@ -10,7 +10,10 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run lint && npm run test"
+    "check": "npm run typecheck && npm run lint && npm run test",
+    "qa:golden": "UPDATE_GOLDEN=1 vitest run src/features/qa",
+    "qa:visual": "node scripts/qa/run-matrix.mjs",
+    "qa:a11y": "node scripts/qa/a11y-audit.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

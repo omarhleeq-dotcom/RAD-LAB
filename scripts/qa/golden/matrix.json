@@ -1,0 +1,1919 @@
+{
+ "correct": {
+  "score": 100,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {},
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "correct-R": {
+  "score": 100,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {},
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "R",
+   "viewerSide": "viewer-left",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "correct-aec": {
+  "score": 100,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {},
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "correct-edge": {
+  "score": 100,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {},
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "ceef02c05d17e131"
+ },
+ "projection-ap": {
+  "score": 92.9,
+  "passed": false,
+  "critical": [
+   "wrong-projection"
+  ],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "projection": "fail"
+  },
+  "variants": [
+   "wrong-projection"
+  ],
+  "effects": [
+   "projection",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "projection-lateral": {
+  "score": 92.9,
+  "passed": false,
+  "critical": [
+   "wrong-projection"
+  ],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "projection": "fail"
+  },
+  "variants": [
+   "wrong-projection"
+  ],
+  "effects": [
+   "projection",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "rotation-pos4": {
+  "score": 90,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 10,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "rotation": "partial"
+  },
+  "variants": [
+   "rotated"
+  ],
+  "effects": [
+   "rotation",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "9b96ae0fadb6452a"
+ },
+ "rotation-pos12": {
+  "score": 80,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 0,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "rotation": "fail"
+  },
+  "variants": [
+   "rotated"
+  ],
+  "effects": [
+   "rotation",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "b040fcdbd5c5d3b9"
+ },
+ "rotation-neg12": {
+  "score": 80,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 0,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "rotation": "fail"
+  },
+  "variants": [
+   "rotated"
+  ],
+  "effects": [
+   "rotation",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "09762b0e01f60266"
+ },
+ "rotation-pos3": {
+  "score": 90,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 10,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "rotation": "partial"
+  },
+  "variants": [
+   "rotated"
+  ],
+  "effects": [
+   "rotation",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "4d5926b97dd7ff9e"
+ },
+ "centering-x-partial": {
+  "score": 96.3,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 11.3,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "centering-lateral": "partial"
+  },
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "412bf01f8bd2be10"
+ },
+ "centering-x-off": {
+  "score": 92.5,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "centering-lateral": "fail"
+  },
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "412bf01f8bd2be10"
+ },
+ "centering-y-high": {
+  "score": 83.6,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 16.1,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "collimation-excess": "partial",
+   "centering-vertical": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "excess-field",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "top"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "952f86bd5cfc7654"
+ },
+ "centering-y-low": {
+  "score": 85.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "centering-vertical": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "bottom"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "e316666452fb9844"
+ },
+ "clip-top": {
+  "score": 85.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "side-marker": "partial",
+   "centering-vertical": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "top"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 0,
+   "wrongSide": false
+  },
+  "hash": "9003dc5a5e7287e8"
+ },
+ "clip-bottom": {
+  "score": 85.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "centering-vertical": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "bottom"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "99ee695171fbdd30"
+ },
+ "clip-left": {
+  "score": 85.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "centering-lateral": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "left"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "1a545d472eeabaf6"
+ },
+ "clip-right": {
+  "score": 85.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "side-marker": "partial",
+   "centering-lateral": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "right"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 0,
+   "wrongSide": false
+  },
+  "hash": "eba0bc6fb2465db9"
+ },
+ "clip-margin-only": {
+  "score": 92.9,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "top",
+   "bottom"
+  ],
+  "marginOnlySides": [
+   "top",
+   "bottom"
+  ],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "dad1b1b197755ced"
+ },
+ "excess-field": {
+  "score": 94.5,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 23.2,
+   "rotation": 20,
+   "centering": 11.3,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-excess": "partial",
+   "centering-vertical": "partial"
+  },
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "excess-field",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "64a33fcf6662d214"
+ },
+ "chin-tucked": {
+  "score": 96.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 21.4,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "chin": "fail"
+  },
+  "variants": [
+   "chin-overlap"
+  ],
+  "effects": [
+   "chin",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "de6059cda6ea08e4"
+ },
+ "shoulders-relaxed": {
+  "score": 96.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 21.4,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "shoulders": "fail"
+  },
+  "variants": [
+   "scapulae-overlap"
+  ],
+  "effects": [
+   "scapulae",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "08b0065ab8114b48"
+ },
+ "marker-none": {
+  "score": 100,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "side-marker": "fail"
+  },
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": null,
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "marker-L-wrong-side": {
+  "score": 100,
+  "passed": false,
+  "critical": [
+   "wrong-side-marker"
+  ],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "side-marker": "partial"
+  },
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-left",
+   "visibleFraction": 1,
+   "wrongSide": true
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "marker-R-wrong-side": {
+  "score": 100,
+  "passed": false,
+  "critical": [
+   "wrong-side-marker"
+  ],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "side-marker": "partial"
+  },
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "R",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": true
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "marker-cut-by-field": {
+  "score": 100,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "side-marker": "partial"
+  },
+  "variants": [
+   "correct"
+  ],
+  "effects": [
+   "baseline",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 0.635227,
+   "wrongSide": false
+  },
+  "hash": "ef8a911d1d4dfe7e"
+ },
+ "sid-150": {
+  "score": 91,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 16,
+   "sid": 5,
+   "breathing": 10
+  },
+  "outcomes": {
+   "dose-optimization": "partial",
+   "sid": "partial"
+  },
+  "variants": [
+   "excess-exposure",
+   "magnified-geometry"
+  ],
+  "effects": [
+   "baseline",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 2,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "sid-120": {
+  "score": 86,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 16,
+   "sid": 0,
+   "breathing": 10
+  },
+  "outcomes": {
+   "dose-optimization": "partial",
+   "sid": "fail"
+  },
+  "variants": [
+   "magnified-geometry",
+   "excess-exposure"
+  ],
+  "effects": [
+   "baseline",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 2,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "sid-200": {
+  "score": 91,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 16,
+   "sid": 5,
+   "breathing": 10
+  },
+  "outcomes": {
+   "exposure-adequacy": "partial",
+   "sid": "partial"
+  },
+  "variants": [
+   "low-exposure"
+  ],
+  "effects": [
+   "low-exposure",
+   "marker"
+  ],
+  "notDrawn": 1,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "5bb3a879307a19cd"
+ },
+ "kvp-105": {
+  "score": 94,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 14,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "kvp": "partial",
+   "exposure-adequacy": "partial"
+  },
+  "variants": [
+   "low-exposure"
+  ],
+  "effects": [
+   "low-exposure",
+   "marker"
+  ],
+  "notDrawn": 1,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "3c9f009d110675a5"
+ },
+ "kvp-70": {
+  "score": 96,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 16,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "kvp": "fail"
+  },
+  "variants": [
+   "low-penetration"
+  ],
+  "effects": [
+   "low-penetration",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d5299b56f961cfc8"
+ },
+ "kvp-140": {
+  "score": 94,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 14,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "kvp": "partial",
+   "dose-optimization": "partial"
+  },
+  "variants": [
+   "excess-exposure"
+  ],
+  "effects": [
+   "baseline",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 2,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "mas-low": {
+  "score": 92,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 12,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "exposure-adequacy": "fail"
+  },
+  "variants": [
+   "low-exposure"
+  ],
+  "effects": [
+   "low-exposure",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "040b113bf9fdb4bb"
+ },
+ "mas-very-low": {
+  "score": 92,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 12,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "exposure-adequacy": "fail"
+  },
+  "variants": [
+   "low-exposure"
+  ],
+  "effects": [
+   "low-exposure",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "b03121314442f946"
+ },
+ "mas-above": {
+  "score": 96,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 16,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "dose-optimization": "partial"
+  },
+  "variants": [
+   "excess-exposure"
+  ],
+  "effects": [
+   "baseline",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 1,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "mas-excess": {
+  "score": 92,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 12,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "dose-optimization": "fail"
+  },
+  "variants": [
+   "excess-exposure"
+  ],
+  "effects": [
+   "baseline",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 1,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "aec-centre-only": {
+  "score": 96,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 16,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "dose-optimization": "partial",
+   "aec-chambers": "partial"
+  },
+  "variants": [
+   "excess-exposure"
+  ],
+  "effects": [
+   "baseline",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 2,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "aec-outside-field": {
+  "score": 84.9,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 12,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "side-marker": "partial",
+   "dose-optimization": "fail",
+   "aec-chambers": "fail"
+  },
+  "variants": [
+   "clipped",
+   "excess-exposure"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 2,
+  "clippedSides": [
+   "left",
+   "right"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 0,
+   "wrongSide": false
+  },
+  "hash": "fbd31500164ade56"
+ },
+ "breathing-expiration": {
+  "score": 90,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 0
+  },
+  "outcomes": {
+   "breathing": "fail"
+  },
+  "variants": [
+   "poor-inspiration"
+  ],
+  "effects": [
+   "inspiration",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "b4234a1007520655"
+ },
+ "breathing-normal": {
+  "score": 90,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 0
+  },
+  "outcomes": {
+   "breathing": "fail"
+  },
+  "variants": [
+   "poor-inspiration"
+  ],
+  "effects": [
+   "inspiration",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "b4234a1007520655"
+ },
+ "breathing-none": {
+  "score": 90,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 0
+  },
+  "outcomes": {
+   "breathing": "fail"
+  },
+  "variants": [
+   "poor-inspiration"
+  ],
+  "effects": [
+   "inspiration",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "b4234a1007520655"
+ },
+ "motion-none": {
+  "score": 100,
+  "passed": false,
+  "critical": [
+   "patient-motion"
+  ],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "motion-instruction": "fail"
+  },
+  "variants": [
+   "motion"
+  ],
+  "effects": [
+   "motion",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "8696beb219e0aca2"
+ },
+ "motion-relax": {
+  "score": 100,
+  "passed": false,
+  "critical": [
+   "patient-motion"
+  ],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "motion-instruction": "fail"
+  },
+  "variants": [
+   "motion"
+  ],
+  "effects": [
+   "motion",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "8696beb219e0aca2"
+ },
+ "combo-rotation-clip": {
+  "score": 65.4,
+  "passed": false,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 0,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "rotation": "fail",
+   "centering-lateral": "fail"
+  },
+  "variants": [
+   "clipped",
+   "rotated"
+  ],
+  "effects": [
+   "rotation",
+   "collimation-clipping",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "left"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "4bcdd52c5aba8e24"
+ },
+ "combo-low-kvp-low-mas": {
+  "score": 88,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 8,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "kvp": "fail",
+   "exposure-adequacy": "fail"
+  },
+  "variants": [
+   "low-penetration",
+   "low-exposure"
+  ],
+  "effects": [
+   "low-exposure",
+   "low-penetration",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "3271762242ebe03c"
+ },
+ "combo-low-kvp-high-mas": {
+  "score": 92,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 12,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "kvp": "fail",
+   "dose-optimization": "partial"
+  },
+  "variants": [
+   "low-penetration",
+   "excess-exposure"
+  ],
+  "effects": [
+   "excess-exposure",
+   "low-penetration",
+   "marker"
+  ],
+  "notDrawn": 1,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d5299b56f961cfc8"
+ },
+ "combo-preparation": {
+  "score": 82.9,
+  "passed": false,
+  "critical": [
+   "patient-motion"
+  ],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 0
+  },
+  "outcomes": {
+   "chin": "fail",
+   "shoulders": "fail",
+   "breathing": "fail",
+   "motion-instruction": "fail"
+  },
+  "variants": [
+   "chin-overlap",
+   "scapulae-overlap",
+   "poor-inspiration",
+   "motion"
+  ],
+  "effects": [
+   "scapulae",
+   "chin",
+   "inspiration",
+   "motion",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "321ac9b82c598405"
+ },
+ "combo-ap-rotated": {
+  "score": 72.9,
+  "passed": false,
+  "critical": [
+   "wrong-projection"
+  ],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 0,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "projection": "fail",
+   "rotation": "fail"
+  },
+  "variants": [
+   "wrong-projection",
+   "rotated"
+  ],
+  "effects": [
+   "projection",
+   "rotation",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "4bc383a033a98750"
+ },
+ "combo-short-sid-excess": {
+  "score": 86,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 25,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 16,
+   "sid": 0,
+   "breathing": 10
+  },
+  "outcomes": {
+   "dose-optimization": "partial",
+   "sid": "fail"
+  },
+  "variants": [
+   "magnified-geometry",
+   "excess-exposure"
+  ],
+  "effects": [
+   "baseline",
+   "excess-exposure",
+   "marker"
+  ],
+  "notDrawn": 2,
+  "clippedSides": [],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "d0cbc7b6c3edbe4c"
+ },
+ "combo-aec-clipped": {
+  "score": 85.4,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 7.5,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "centering-lateral": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "centering",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "left"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "1a545d472eeabaf6"
+ },
+ "combo-marker-and-clip": {
+  "score": 92.9,
+  "passed": false,
+  "critical": [
+   "wrong-side-marker"
+  ],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail",
+   "side-marker": "partial"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "left",
+   "right"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-left",
+   "visibleFraction": 0,
+   "wrongSide": true
+  },
+  "hash": "593af778e515a386"
+ },
+ "combo-all-wrong": {
+  "score": 19.1,
+  "passed": false,
+  "critical": [
+   "wrong-projection",
+   "patient-motion",
+   "wrong-side-marker"
+  ],
+  "categories": {
+   "positioning": 3.6,
+   "rotation": 0,
+   "centering": 7.5,
+   "exposure": 8,
+   "sid": 0,
+   "breathing": 0
+  },
+  "outcomes": {
+   "projection": "fail",
+   "collimation-clipping": "fail",
+   "chin": "fail",
+   "shoulders": "fail",
+   "side-marker": "partial",
+   "rotation": "fail",
+   "centering-lateral": "fail",
+   "kvp": "fail",
+   "exposure-adequacy": "fail",
+   "sid": "fail",
+   "breathing": "fail",
+   "motion-instruction": "fail"
+  },
+  "variants": [
+   "wrong-projection",
+   "clipped",
+   "chin-overlap",
+   "scapulae-overlap",
+   "rotated",
+   "low-penetration",
+   "low-exposure",
+   "magnified-geometry",
+   "poor-inspiration",
+   "motion"
+  ],
+  "effects": [
+   "projection",
+   "rotation",
+   "collimation-clipping",
+   "centering",
+   "scapulae",
+   "chin",
+   "inspiration",
+   "motion",
+   "low-exposure",
+   "low-penetration",
+   "marker"
+  ],
+  "notDrawn": 1,
+  "clippedSides": [
+   "left"
+  ],
+  "marginOnlySides": [],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-left",
+   "visibleFraction": 0,
+   "wrongSide": true
+  },
+  "hash": "9b180cb7fa54222c"
+ },
+ "initial-state": {
+  "score": 13.8,
+  "passed": false,
+  "critical": [
+   "wrong-projection",
+   "patient-motion"
+  ],
+  "categories": {
+   "positioning": 1.8,
+   "rotation": 0,
+   "centering": 0,
+   "exposure": 12,
+   "sid": 0,
+   "breathing": 0
+  },
+  "outcomes": {
+   "projection": "fail",
+   "collimation-clipping": "fail",
+   "collimation-excess": "partial",
+   "chin": "fail",
+   "shoulders": "fail",
+   "side-marker": "fail",
+   "rotation": "fail",
+   "centering-lateral": "fail",
+   "centering-vertical": "fail",
+   "kvp": "fail",
+   "dose-optimization": "partial",
+   "sid": "fail",
+   "breathing": "fail",
+   "motion-instruction": "fail"
+  },
+  "variants": [
+   "wrong-projection",
+   "clipped",
+   "chin-overlap",
+   "scapulae-overlap",
+   "rotated",
+   "low-penetration",
+   "magnified-geometry",
+   "poor-inspiration",
+   "motion",
+   "excess-exposure"
+  ],
+  "effects": [
+   "projection",
+   "rotation",
+   "collimation-clipping",
+   "excess-field",
+   "centering",
+   "scapulae",
+   "chin",
+   "inspiration",
+   "motion",
+   "excess-exposure",
+   "low-penetration"
+  ],
+  "notDrawn": 2,
+  "clippedSides": [
+   "left",
+   "top"
+  ],
+  "marginOnlySides": [],
+  "marker": null,
+  "hash": "9b4388dd0dd3cce8"
+ }
+}

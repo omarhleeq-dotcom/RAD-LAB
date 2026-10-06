@@ -116,7 +116,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled }:
         </fieldset>
 
         <details className="sm:col-span-2" open>
-          <summary className="cursor-pointer text-sm font-medium">{t("fineAdjust")}</summary>
+          <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{t("fineAdjust")}</summary>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             <RangeField label={t("centerX")} unit="cm" min={-W / 2} max={W / 2} step={0.5} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: roundTo(v / (W / 2)) })} />
             <RangeField label={t("centerY")} unit="cm" min={0} max={H} step={0.5} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: roundTo((v / H) * 2 - 1) })} />

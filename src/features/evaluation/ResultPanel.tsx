@@ -8,6 +8,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
 import { buildRenderPlan } from "@/features/radiograph/plan";
+import { needsNotDrawnLabel, variantIsDrawn } from "@/features/radiograph/consistency";
 import { RadiographEffects } from "@/features/radiograph/RadiographEffects";
 import { TechniqueResult } from "@/features/technique/TechniqueResult";
 import { ResultImage } from "./ResultImage";
@@ -30,6 +31,7 @@ const OUTCOME_ICON: Record<CheckOutcome, string> = { pass: "✓", partial: "◐"
 
 export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: Props) {
   const t = useTranslations("result");
+  const tRad = useTranslations("radiograph");
   const tCat = useTranslations("categories");
   const tCon = useTranslations("console");
   const tPos = useTranslations("positioning");
@@ -70,9 +72,15 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
             <h3 className="text-sm font-semibold">{t("variantsTitle")}</h3>
             <ul className="mt-1 list-disc ps-5 text-sm text-muted">
               {result.variants.map((v) => (
-                <li key={v}>{t(`variants.${v}`)}</li>
+                <li key={v} data-variant={v} data-drawn={variantIsDrawn(v, plan)}>
+                  {t(`variants.${v}`)}
+                  {v !== "correct" && !variantIsDrawn(v, plan) && <span className="ms-1 text-xs">({t("notDrawnVariant")})</span>}
+                </li>
               ))}
             </ul>
+            {result.variants.some((v) => v !== "correct" && !variantIsDrawn(v, plan)) && (
+              <p className="mt-1 text-xs text-muted">{t("notDrawnNote")}</p>
+            )}
           </div>
         </div>
 
@@ -93,6 +101,39 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
               {score.passed ? t("passed") : t("failed")}
             </p>
           </div>
+          <p className="-mt-3 text-xs text-muted">{t("scoreNote")}</p>
+
+          {result.criticalFindings.length > 0 && (
+            <section aria-labelledby="critical-heading" className="rounded border-2 border-bad bg-bad/5 p-3">
+              <h3 id="critical-heading" className="text-sm font-bold text-bad">
+                {t("criticalTitle")}
+              </h3>
+              <p className="mt-1 text-xs text-muted">{t("criticalNote", { total: score.total })}</p>
+              <ul className="mt-2 space-y-3">
+                {result.criticalFindings.map((f) => (
+                  <li key={f.id} data-critical={f.id} className="text-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-semibold text-ink">{localize(f.label, locale)}</span>
+                      <EvidenceBadge status={f.evidence.status} />
+                    </div>
+                    <p className="mt-1 text-ink">{localize(f.reason, locale)}</p>
+                    <details className="mt-1 text-xs text-muted">
+                      <summary className="cursor-pointer">{t("criticalEvidence")}</summary>
+                      <p className="mt-1">
+                        <span className="font-semibold">{t("criticalConcept")}:</span> <EvidenceBadge status={f.concept.status} /> {f.concept.note}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-semibold">{t("criticalImplementation")}:</span> <EvidenceBadge status={f.evidence.status} /> {f.evidence.note}
+                      </p>
+                      <p className="mt-1">
+                        {tEv("reference")}: <bdi dir="ltr">{f.concept.reference}</bdi>
+                      </p>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <div>
             <h3 className="text-sm font-semibold">{t("breakdown")}</h3>
@@ -130,8 +171,16 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-ink">{localize(k.feedback, locale)}</p>
+                  {k.ruleId === "collimation-clipping" && k.outcome !== "pass" && plan.marginOnlySides.length > 0 && (
+                    <p data-testid="clip-margin-note" className="mt-0.5 text-xs text-muted">
+                      {tRad("clippingMarginNote", { sides: plan.marginOnlySides.map((side) => tRad(`altSides.${side}`)).join(" / ") })}
+                    </p>
+                  )}
+                  {needsNotDrawnLabel(k.ruleId, k.outcome, plan) && (
+                    <p data-testid="not-drawn" className="mt-0.5 text-xs text-muted">{t("notDrawn")}</p>
+                  )}
                   <details className="mt-1 text-xs text-muted">
-                    <summary className="cursor-pointer">
+                    <summary className="min-h-6 cursor-pointer py-0.5">
                       {t("evidenceToggle")} <EvidenceBadge status={k.evidence.status} />
                     </summary>
                     <p className="mt-1">

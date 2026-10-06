@@ -25,6 +25,7 @@ import {
 import { derivePatientResponse } from "@/features/patient/response";
 import { computeDetectorExposure } from "@/features/technique/model";
 import { centeringOnAxis } from "./centering";
+import { detectCriticalFindings } from "./critical";
 import { buildResultState } from "./result-state";
 import type { CheckResult, EvaluationResult } from "./types";
 
@@ -231,7 +232,11 @@ function evalRule(rule: CheckRule, s: SimulationSettings, c: RadCase, x: Detecto
 export function evaluate(c: RadCase, settings: SimulationSettings): EvaluationResult {
   const exposure = computeDetectorExposure(c.technique, settings, c.detector);
   const checks = c.rules.flatMap((r) => evalRule(r, settings, c, exposure) ?? []);
-  const score = computeScore(checks, c.scoring);
+  const patientResponse = derivePatientResponse(c.patientCooperation, settings);
+  const baseScore = computeScore(checks, c.scoring);
+  // Critical findings gate the pass mark only: total, credits and category weights are untouched.
+  const criticalFindings = detectCriticalFindings(c, settings, patientResponse);
+  const score = { ...baseScore, passed: baseScore.thresholdMet && criticalFindings.length === 0 };
 
   // Failed checks take precedence over partial ones when choosing the dominant variant.
   const ordered = [...checks.filter((k) => k.outcome === "fail"), ...checks.filter((k) => k.outcome === "partial")];
@@ -246,7 +251,8 @@ export function evaluate(c: RadCase, settings: SimulationSettings): EvaluationRe
     score,
     variants: [...finalVariants],
     primaryVariant: variants[0] ?? "correct",
+    criticalFindings,
     exposure,
-    resultState: buildResultState(c, settings, exposure, derivePatientResponse(c.patientCooperation, settings), checks, [...finalVariants]),
+    resultState: buildResultState(c, settings, exposure, patientResponse, checks, [...finalVariants]),
   };
 }

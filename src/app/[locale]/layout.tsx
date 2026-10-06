@@ -39,6 +39,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
             </div>
           </header>
           {children}
+          <footer className="border-t border-line bg-panel">
+            <p role="note" className="mx-auto max-w-7xl px-4 py-3 text-xs text-muted">
+              {t("disclaimer")}
+            </p>
+          </footer>
         </NextIntlClientProvider>
       </body>
     </html>

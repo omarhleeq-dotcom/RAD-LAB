@@ -1,9 +1,18 @@
-import type { RuleEvidence } from "@/domain/case";
+import type { CriticalFindingId, RuleEvidence } from "@/domain/case";
 import type { LocalizedText } from "@/domain/localized";
 import type { RadiographResultState } from "@/domain/result-state";
 import type { DetectorExposureResult } from "@/domain/technique";
 import type { CategoryId, EnumSettingKey, ImageVariantId } from "@/domain/simulation";
 import type { ScoreSummary } from "@/features/scoring/score";
+
+/** A critical finding that was present in this attempt (resolved from the case's `CriticalFindingRule`). */
+export interface CriticalFinding {
+  id: CriticalFindingId;
+  label: LocalizedText;
+  reason: LocalizedText;
+  concept: RuleEvidence;
+  evidence: RuleEvidence;
+}
 
 export type CheckOutcome = "pass" | "partial" | "fail";
 
@@ -33,6 +42,8 @@ export interface EvaluationResult {
   /** Image variants implied by non-passing checks; `["correct"]` when everything passes. */
   variants: ImageVariantId[];
   primaryVariant: ImageVariantId;
+  /** Critical findings present; any one forces "below the educational pass mark" (score.passed = false). */
+  criticalFindings: CriticalFinding[];
   /** Deterministic educational detector-exposure result (DI-like, noise, penetration, dose awareness). */
   exposure: DetectorExposureResult;
   /** Renderer-facing state for the future image renderer (Session 4). Never derived from pixels. */

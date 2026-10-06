@@ -20,13 +20,48 @@ describe("render plan from RadiographResultState", () => {
     expect(p.technique).toMatchObject({ noiseSigma: 0, detailGain: 1, penetrationContrastKept: null });
   });
 
-  it("maps the baseline's anatomy box onto the required-anatomy region (so field cuts and drawn anatomy agree)", () => {
+  it("fits the baseline's anatomy box inside the required-anatomy region, centred, never beyond it (width-limited here)", () => {
     const p = plan();
     const b = chestPaErect.radiograph.anatomyBox, r = chestPaErect.requiredAnatomy;
-    expect(p.image.x1 + b.u1 * p.image.widthCm).toBeCloseTo(r.xCm, 6);
-    expect(p.image.x1 + b.u2 * p.image.widthCm).toBeCloseTo(r.xCm + r.widthCm, 6);
-    expect(p.image.y1 + b.v1 * p.image.heightCm).toBeCloseTo(r.yCm, 6);
-    expect(p.image.y1 + b.v2 * p.image.heightCm).toBeCloseTo(r.yCm + r.heightCm, 6);
+    const left = p.image.x1 + b.u1 * p.image.widthCm, right = p.image.x1 + b.u2 * p.image.widthCm;
+    const top = p.image.y1 + b.v1 * p.image.heightCm, bottom = p.image.y1 + b.v2 * p.image.heightCm;
+    expect(left).toBeGreaterThanOrEqual(r.xCm - 1e-6);
+    expect(right).toBeLessThanOrEqual(r.xCm + r.widthCm + 1e-6);
+    expect(top).toBeGreaterThanOrEqual(r.yCm - 1e-6);
+    expect(bottom).toBeLessThanOrEqual(r.yCm + r.heightCm + 1e-6);
+    // Centred on the region on both axes, and touching it on the limiting (width) axis.
+    expect(left - r.xCm).toBeCloseTo(r.xCm + r.widthCm - right, 6);
+    expect(top - r.yCm).toBeCloseTo(r.yCm + r.heightCm - bottom, 6);
+    expect(right - left).toBeCloseTo(r.widthCm, 6);
+    expect(bottom - top).toBeLessThan(r.heightCm); // the baseline does not cover the whole 31 cm region height
+  });
+
+  it("Session 5: the mapping is aspect-preserving (no anisotropic distortion of anatomical proportions)", () => {
+    const p = plan();
+    const spec = chestPaErect.radiograph;
+    const sx = p.image.widthCm / spec.widthPx, sy = p.image.heightCm / spec.heightPx;
+    expect(Math.abs(sx / sy - 1), `x/y scale ratio ${sx / sy}`).toBeLessThan(0.005);
+    // Cardiothoracic-style proportion of the drawn lung box equals that of the source box.
+    const b = spec.anatomyBox;
+    const drawn = ((b.u2 - b.u1) * p.image.widthCm) / ((b.v2 - b.v1) * p.image.heightCm);
+    const source = ((b.u2 - b.u1) * spec.widthPx) / ((b.v2 - b.v1) * spec.heightPx);
+    expect(Math.abs(drawn / source - 1)).toBeLessThan(0.005);
+  });
+
+  it("the required region is never adapted to the picture: uncovered detector area is left to the no-reference-data hatch", () => {
+    const p = plan();
+    expect(chestPaErect.requiredAnatomy.heightCm).toBe(31);
+    // The source image does not span the whole detector; that remainder is hatch (pipeline tests cover the pattern).
+    const covers = p.image.x1 <= 0 && p.image.y1 <= 0 && p.image.x1 + p.image.widthCm >= p.detector.widthCm && p.image.y1 + p.image.heightCm >= p.detector.heightCm;
+    expect(covers).toBe(false);
+  });
+
+  it("Session 5: rotation inside the full-credit band is drawn symmetric; outside it is drawn (picture agrees with the score)", () => {
+    for (const deg of [-2, -1, 1, 2]) {
+      expect(plan({ rotationDeg: deg }).anatomy.rotation, `${deg}°`).toBeNull();
+      expect(ids(plan({ rotationDeg: deg })), `${deg}°`).not.toContain("rotation");
+    }
+    for (const deg of [-5, -3, 3, 5, 12]) expect(plan({ rotationDeg: deg }).anatomy.rotation, `${deg}°`).not.toBeNull();
   });
 
   it("rotation: coordinated cues scaled by the internal value, sign preserved, clamped to the console range", () => {

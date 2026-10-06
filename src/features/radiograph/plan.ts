@@ -64,9 +64,20 @@ export interface RenderPlan {
   caseId: string;
   assetId: string;
   detector: { widthCm: number; heightCm: number };
-  /** Where the source image sits on the detector (cm); the anatomy landmark box is mapped onto the required region. */
+  /** Where the source image sits on the detector (cm); uniform scale, landmark box centred inside the required region. */
   image: { x1: number; y1: number; widthCm: number; heightCm: number };
   fieldCm: CmRect;
+  /** Sides on which the field cuts the required anatomy (same value the score uses; for the text alternative). */
+  clippedSides: ("left" | "right" | "top" | "bottom")[];
+  /**
+   * Session 5 fix pass 2. The score clips against the provisional required REGION (case data); the picture can only
+   * show lungs / ribs / costophrenic angles inside the baseline's landmark box. `landmarkClippedSides` = the clipped
+   * sides on which the field also cuts into that box (visible loss of drawn lung); `marginOnlySides` = clipped sides
+   * on which the field cuts only the margin between the region and the box (neck / upper abdomen in the baseline).
+   * The score is never adapted to this; the UI uses it to say so instead of staying silent.
+   */
+  landmarkClippedSides: ("left" | "right" | "top" | "bottom")[];
+  marginOnlySides: ("left" | "right" | "top" | "bottom")[];
   /** False for projections that are not simulated (AP / lateral): the PA appearance is shown for layout only. */
   representative: boolean;
   anatomy: {
@@ -123,7 +134,7 @@ export const EFFECT_CONCEPTS: Record<EffectId, Evidence> = {
   "low-exposure": ev("validated", "Low detector exposure / quantum noise", "Insufficient detector exposure increases noise and impairs low-contrast information (AAPM / ACR)."),
   "excess-exposure": ev("validated", "Excess detector exposure", "DR can look acceptable across a broad exposure range (dose creep); the image is deliberately not darkened."),
   "low-penetration": ev("common-reference", "Penetration and anatomical visibility", "IAEA: retrocardiac lung and mediastinum should be visualised; insufficient penetration reduces visibility through dense regions."),
-  marker: ev("educational-simplification", "Side marker and annotations", "Learner-selected marker at its detector-relative position; patient-side correctness is unscored."),
+  marker: ev("educational-simplification", "Side marker and annotations", "Learner-selected marker at its detector-relative position; patient-side correctness is not scored (a wrong-side marker is a critical finding, a pass-mark gate)."),
   projection: ev("educational-simplification", "Scope", "Only the PA appearance exists; AP/lateral are not simulated."),
 };
 
@@ -173,14 +184,43 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const { radiograph: spec, detector, requiredAnatomy: req, positioning } = radCase;
   const { geometry, patient, exposure, patientResponse } = state;
   const box = spec.anatomyBox;
-  // Map the anatomy landmark box onto the required-anatomy region so field cuts and drawn anatomy agree.
-  const widthCm = req.widthCm / (box.u2 - box.u1);
-  const heightCm = req.heightCm / (box.v2 - box.v1);
-  const image = { x1: req.xCm - box.u1 * widthCm, y1: req.yCm - box.v1 * heightCm, widthCm, heightCm };
+  // Fit the anatomy landmark box INSIDE the required-anatomy region with ONE uniform scale ("contain": no
+  // anisotropic distortion of anatomical proportions), centred on the region. The clinical region comes from the
+  // case/references and is never adapted to the picture; whatever of the region or detector the baseline does not
+  // cover is drawn as the "no reference data" hatch by the pipeline.
+  const boxWpx = (box.u2 - box.u1) * spec.widthPx;
+  const boxHpx = (box.v2 - box.v1) * spec.heightPx;
+  const cmPerPx = Math.min(req.widthCm / boxWpx, req.heightCm / boxHpx);
+  const widthCm = spec.widthPx * cmPerPx;
+  const heightCm = spec.heightPx * cmPerPx;
+  const boxLeft = req.xCm + (req.widthCm - boxWpx * cmPerPx) / 2;
+  const boxTop = req.yCm + (req.heightCm - boxHpx * cmPerPx) / 2;
+  const image = { x1: boxLeft - box.u1 * widthCm, y1: boxTop - box.v1 * heightCm, widthCm, heightCm };
 
+  // The baseline's landmark box (apices → costophrenic angles, lateral lung margins) on the detector, in cm.
+  const landmarkCm = {
+    x1: image.x1 + box.u1 * widthCm,
+    x2: image.x1 + box.u2 * widthCm,
+    y1: image.y1 + box.v1 * heightCm,
+    y2: image.y1 + box.v2 * heightCm,
+  };
+  // Tolerance 1e-6 cm: the box is fitted flush to the region on the limiting axis (floating-point noise only).
+  const EPS = 1e-6;
+  const landmarkCut = (side: "left" | "right" | "top" | "bottom") =>
+    side === "left" ? geometry.fieldCm.x1 > landmarkCm.x1 + EPS
+    : side === "right" ? geometry.fieldCm.x2 < landmarkCm.x2 - EPS
+    : side === "top" ? geometry.fieldCm.y1 > landmarkCm.y1 + EPS
+    : geometry.fieldCm.y2 < landmarkCm.y2 - EPS;
+  const landmarkClippedSides = geometry.clippedSides.filter(landmarkCut);
+  const marginOnlySides = geometry.clippedSides.filter((side) => !landmarkCut(side));
+
+  const has = (ruleId: string) => state.findings.some((f) => f.ruleId === ruleId);
   const deg = clamp(geometry.rotationDeg, -TUNING.rotation.maxDeg, TUNING.rotation.maxDeg);
+  // Session 5 consistency rule: rotation is drawn only when the rotation check is not passed. Within the case's
+  // "no meaningful rotation" tolerance the thorax is drawn symmetric, so the picture, the score and the feedback
+  // always describe the same finding (the tolerance band itself is provisional case data).
   const rotation =
-    deg === 0
+    deg === 0 || !has("rotation")
       ? null
       : {
           degrees: deg,
@@ -221,7 +261,6 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
       })()
     : null;
 
-  const has = (ruleId: string) => state.findings.some((f) => f.ruleId === ruleId);
   const active: [EffectId, boolean, string[], boolean][] = [
     ["projection", !representative, ["geometry.projection"], false],
     ["rotation", rotation !== null, ["geometry.rotationDeg"], true],
@@ -252,6 +291,9 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
     detector: { widthCm: detector.widthCm, heightCm: detector.heightCm },
     image,
     fieldCm,
+    clippedSides: [...geometry.clippedSides],
+    landmarkClippedSides,
+    marginOnlySides,
     representative,
     anatomy: {
       rotation,

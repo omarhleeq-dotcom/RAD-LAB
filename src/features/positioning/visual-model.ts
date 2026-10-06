@@ -10,9 +10,12 @@ const toRad = (deg: number) => (deg * Math.PI) / 180;
 export interface RotationVisual {
   /** Overall thorax width scale as the chest turns away from the detector (never below 0.55). */
   thoraxScale: number;
-  /** Per-lung width scale: the side turning toward the detector looks wider, the other narrower. */
-  leftLungScale: number;
-  rightLungScale: number;
+  /**
+   * Per-lung width scale, named by the VIEWER's side of the displayed image (PA display: the viewer's left is the
+   * patient's right). The drawing is symmetric and unlabelled; which sign means which patient side is not interpreted.
+   */
+  viewerLeftLungScale: number;
+  viewerRightLungScale: number;
   /** Horizontal shift of the spinous-process line relative to the thorax centre, in drawing units. */
   spineShift: number;
 }
@@ -24,8 +27,8 @@ export function rotationVisual(rotationDeg: number): RotationVisual {
   const rad = toRad(rotationDeg);
   return {
     thoraxScale: Math.max(0.55, Math.cos(rad)),
-    leftLungScale: 1 - LUNG_ASYMMETRY * Math.sin(rad),
-    rightLungScale: 1 + LUNG_ASYMMETRY * Math.sin(rad),
+    viewerLeftLungScale: 1 - LUNG_ASYMMETRY * Math.sin(rad),
+    viewerRightLungScale: 1 + LUNG_ASYMMETRY * Math.sin(rad),
     spineShift: Math.sin(rad) * SPINE_SHIFT_UNITS,
   };
 }

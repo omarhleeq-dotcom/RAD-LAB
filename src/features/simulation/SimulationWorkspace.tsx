@@ -31,7 +31,7 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
   return (
     <main className="mx-auto max-w-7xl space-y-5 px-4 py-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="/" className="text-sm text-brand hover:underline">
+        <Link href="/" className="inline-flex min-h-6 items-center py-1 text-sm text-brand hover:underline">
           ← {tc("backHome")}
         </Link>
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium">

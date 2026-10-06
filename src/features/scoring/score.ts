@@ -15,6 +15,12 @@ export interface CategoryScore {
 export interface ScoreSummary {
   /** 0–100, rounded to one decimal. */
   total: number;
+  /** True when the numeric total reaches the case's threshold (before any critical-finding gate). */
+  thresholdMet: boolean;
+  /**
+   * The educational pass mark. Equals `thresholdMet` here; the evaluation engine additionally forces it to false when
+   * a critical finding is present (the numeric `total` and the category weights are never altered).
+   */
   passed: boolean;
   categories: CategoryScore[];
 }
@@ -41,6 +47,7 @@ export function computeScore(checks: CheckResult[], rules: ScoringRules): ScoreS
   const total = available === 0 ? 0 : round1((earned / available) * 100);
   return {
     total,
+    thresholdMet: total >= rules.passThreshold,
     passed: total >= rules.passThreshold,
     categories: categories.map((c) => ({ ...c, earned: round1(c.earned) })),
   };

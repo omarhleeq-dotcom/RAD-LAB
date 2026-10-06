@@ -172,8 +172,8 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         <circle cx={mid} cy={-35} r={34} fill="#7b93a5" />
         <rect x={mid - 14} y={-6} width={28} height={30} fill="#7b93a5" />
         <path d={`M 20 28 Q ${mid} -8 ${W - 20} 28 L ${W - 36} ${H - 90} Q ${mid} ${H - 70} 36 ${H - 90} Z`} fill="#5d778a" />
-        <rect x={mid - 8 - lungW * rv.leftLungScale} y={lungY} width={lungW * rv.leftLungScale} height={lungH} rx={50} fill="#33516a" />
-        <rect x={mid + 8} y={lungY} width={lungW * rv.rightLungScale} height={lungH} rx={50} fill="#33516a" />
+        <rect x={mid - 8 - lungW * rv.viewerLeftLungScale} y={lungY} width={lungW * rv.viewerLeftLungScale} height={lungH} rx={50} fill="#33516a" />
+        <rect x={mid + 8} y={lungY} width={lungW * rv.viewerRightLungScale} height={lungH} rx={50} fill="#33516a" />
         {/* clavicles with medial (sternal) ends */}
         <g stroke="#b9cad6" strokeWidth={5} strokeLinecap="round" opacity={0.85}>
           <line x1={mid - 12} y1={lungY + 6} x2={mid - lungW - 20} y2={lungY - 4} />

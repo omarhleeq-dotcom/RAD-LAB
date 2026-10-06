@@ -177,11 +177,31 @@ export interface PositioningSpec {
   defaultMarkerPosition: Record<SideMarkerId, NormPoint>;
 }
 
+/** Critical findings: each one, when present, forces "below the educational pass mark" whatever the number is. */
+export type CriticalFindingId = "wrong-projection" | "patient-motion" | "wrong-side-marker";
+
+/**
+ * A critical-finding rule (case data). Critical findings GATE the pass mark; they never change the numeric score
+ * or any category weight. Detection is a pure function of the settings (`features/evaluation/critical.ts`).
+ */
+export interface CriticalFindingRule {
+  id: CriticalFindingId;
+  label: LocalizedText;
+  /** Why this forces "below the pass mark" (shown to the learner in both languages). */
+  reason: LocalizedText;
+  /** The clinical CONCEPT (a common quality criterion: such an image would be rejected / repeated in practice). */
+  concept: Evidence;
+  /** The IMPLEMENTATION in this simulator (the gating itself is provisional / educational). */
+  evidence: Evidence;
+}
+
 export interface ScoringRules {
   /** Category weights; should sum to 100. Configurable per case. */
   categoryWeights: Record<CategoryId, number>;
   /** Total score (0–100) at or above which the attempt counts as acceptable. */
   passThreshold: number;
+  /** Findings that force "below the pass mark" regardless of the numeric score (weights are unchanged). */
+  criticalFindings: CriticalFindingRule[];
 }
 
 export interface PossibleError {
