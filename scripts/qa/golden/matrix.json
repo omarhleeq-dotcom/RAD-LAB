@@ -1,6 +1,8 @@
 {
  "correct": {
   "score": 100,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -25,10 +27,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "correct-R": {
   "score": 100,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -53,10 +57,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "correct-aec": {
   "score": 100,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -81,10 +87,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "correct-edge": {
   "score": 100,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -109,10 +117,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "a77e12312817e680"
+  "hash": "ceef02c05d17e131"
  },
  "projection-ap": {
   "score": 92.9,
+  "passed": false,
+  "critical": [
+   "wrong-projection"
+  ],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -139,10 +151,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "projection-lateral": {
   "score": 92.9,
+  "passed": false,
+  "critical": [
+   "wrong-projection"
+  ],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -169,10 +185,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "rotation-pos4": {
   "score": 90,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 10,
@@ -199,10 +217,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "0058b443d596c98d"
+  "hash": "9b96ae0fadb6452a"
  },
  "rotation-pos12": {
   "score": 80,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 0,
@@ -229,10 +249,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "c0da5a0230ddb004"
+  "hash": "b040fcdbd5c5d3b9"
  },
  "rotation-neg12": {
   "score": 80,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 0,
@@ -259,10 +281,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "2c143002fedcf2ae"
+  "hash": "09762b0e01f60266"
  },
  "rotation-pos3": {
   "score": 90,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 10,
@@ -289,10 +313,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "f379cbb318f837b2"
+  "hash": "4d5926b97dd7ff9e"
  },
  "centering-x-partial": {
   "score": 96.3,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -320,10 +346,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "e86261e3edbba47d"
+  "hash": "412bf01f8bd2be10"
  },
  "centering-x-off": {
   "score": 92.5,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -351,10 +379,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "e86261e3edbba47d"
+  "hash": "412bf01f8bd2be10"
  },
  "centering-y-high": {
   "score": 83.6,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 16.1,
    "rotation": 20,
@@ -387,10 +417,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "24f1dbc304031800"
+  "hash": "952f86bd5cfc7654"
  },
  "centering-y-low": {
   "score": 85.4,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -421,12 +453,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "191a5f282dc72c21"
+  "hash": "e316666452fb9844"
  },
  "clip-top": {
-  "score": 83.6,
+  "score": 85.4,
+  "passed": true,
+  "critical": [],
   "categories": {
-   "positioning": 16.1,
+   "positioning": 17.9,
    "rotation": 20,
    "centering": 7.5,
    "exposure": 20,
@@ -435,7 +469,6 @@
   },
   "outcomes": {
    "collimation-clipping": "fail",
-   "collimation-excess": "partial",
    "side-marker": "partial",
    "centering-vertical": "fail"
   },
@@ -444,7 +477,6 @@
   ],
   "effects": [
    "collimation-clipping",
-   "excess-field",
    "centering",
    "marker"
   ],
@@ -458,10 +490,12 @@
    "visibleFraction": 0,
    "wrongSide": false
   },
-  "hash": "cc77a9d968e77832"
+  "hash": "9003dc5a5e7287e8"
  },
  "clip-bottom": {
   "score": 85.4,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -492,10 +526,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "1b94a876b97ecd46"
+  "hash": "99ee695171fbdd30"
  },
  "clip-left": {
   "score": 85.4,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -526,10 +562,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "97431d449b0c1bee"
+  "hash": "1a545d472eeabaf6"
  },
  "clip-right": {
   "score": 85.4,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -561,10 +599,12 @@
    "visibleFraction": 0,
    "wrongSide": false
   },
-  "hash": "5601c6af9493b0e1"
+  "hash": "eba0bc6fb2465db9"
  },
  "excess-field": {
   "score": 94.5,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 23.2,
    "rotation": 20,
@@ -594,10 +634,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "4ae94ac682efbbf3"
+  "hash": "64a33fcf6662d214"
  },
  "chin-tucked": {
   "score": 96.4,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 21.4,
    "rotation": 20,
@@ -624,10 +666,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "59ced98a54286c11"
+  "hash": "de6059cda6ea08e4"
  },
  "shoulders-relaxed": {
   "score": 96.4,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 21.4,
    "rotation": 20,
@@ -654,10 +698,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "1a4fc74ef939127e"
+  "hash": "08b0065ab8114b48"
  },
  "marker-none": {
   "score": 100,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -678,10 +724,14 @@
   "notDrawn": 0,
   "clippedSides": [],
   "marker": null,
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "marker-L-wrong-side": {
   "score": 100,
+  "passed": false,
+  "critical": [
+   "wrong-side-marker"
+  ],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -708,10 +758,14 @@
    "visibleFraction": 1,
    "wrongSide": true
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "marker-R-wrong-side": {
   "score": 100,
+  "passed": false,
+  "critical": [
+   "wrong-side-marker"
+  ],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -738,10 +792,12 @@
    "visibleFraction": 1,
    "wrongSide": true
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "marker-cut-by-field": {
   "score": 100,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -768,10 +824,12 @@
    "visibleFraction": 0.635227,
    "wrongSide": false
   },
-  "hash": "f0d6aa5fa6a78363"
+  "hash": "ef8a911d1d4dfe7e"
  },
  "sid-150": {
   "score": 91,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -801,10 +859,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "sid-120": {
   "score": 86,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -834,10 +894,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "sid-200": {
   "score": 91,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -865,10 +927,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "911942bd11df459f"
+  "hash": "5bb3a879307a19cd"
  },
  "kvp-105": {
   "score": 94,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -896,10 +960,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "929b187072cfabe6"
+  "hash": "3c9f009d110675a5"
  },
  "kvp-70": {
   "score": 96,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -926,10 +992,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "28ec3dc949cde7c6"
+  "hash": "d5299b56f961cfc8"
  },
  "kvp-140": {
   "score": 94,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -958,10 +1026,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "mas-low": {
   "score": 92,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -988,10 +1058,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "092d259bc0e7b14b"
+  "hash": "040b113bf9fdb4bb"
  },
  "mas-very-low": {
   "score": 92,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1018,10 +1090,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "0230150a0047eff5"
+  "hash": "b03121314442f946"
  },
  "mas-above": {
   "score": 96,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1049,10 +1123,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "mas-excess": {
   "score": 92,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1080,10 +1156,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "aec-centre-only": {
   "score": 96,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1112,10 +1190,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "aec-outside-field": {
   "score": 84.9,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -1150,10 +1230,12 @@
    "visibleFraction": 0,
    "wrongSide": false
   },
-  "hash": "a135f482e00e005e"
+  "hash": "fbd31500164ade56"
  },
  "breathing-expiration": {
   "score": 90,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1180,10 +1262,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "74a85bfffb91ff62"
+  "hash": "b4234a1007520655"
  },
  "breathing-normal": {
   "score": 90,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1210,10 +1294,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "74a85bfffb91ff62"
+  "hash": "b4234a1007520655"
  },
  "breathing-none": {
   "score": 90,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1240,10 +1326,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "74a85bfffb91ff62"
+  "hash": "b4234a1007520655"
  },
  "motion-none": {
   "score": 100,
+  "passed": false,
+  "critical": [
+   "patient-motion"
+  ],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1270,10 +1360,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "7803085e78cfa2a8"
+  "hash": "8696beb219e0aca2"
  },
  "motion-relax": {
   "score": 100,
+  "passed": false,
+  "critical": [
+   "patient-motion"
+  ],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1300,10 +1394,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "7803085e78cfa2a8"
+  "hash": "8696beb219e0aca2"
  },
  "combo-rotation-clip": {
   "score": 65.4,
+  "passed": false,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 0,
@@ -1337,10 +1433,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "99418d855f38c542"
+  "hash": "4bcdd52c5aba8e24"
  },
  "combo-low-kvp-low-mas": {
   "score": 88,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1370,10 +1468,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "90116692b89b00c7"
+  "hash": "3271762242ebe03c"
  },
  "combo-low-kvp-high-mas": {
   "score": 92,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1403,10 +1503,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "28ec3dc949cde7c6"
+  "hash": "d5299b56f961cfc8"
  },
  "combo-preparation": {
   "score": 82.9,
+  "passed": false,
+  "critical": [
+   "patient-motion"
+  ],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -1442,10 +1546,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "f0dc4ea40e8aa9ae"
+  "hash": "321ac9b82c598405"
  },
  "combo-ap-rotated": {
   "score": 72.9,
+  "passed": false,
+  "critical": [
+   "wrong-projection"
+  ],
   "categories": {
    "positioning": 17.9,
    "rotation": 0,
@@ -1475,10 +1583,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "01067652cc663400"
+  "hash": "4bc383a033a98750"
  },
  "combo-short-sid-excess": {
   "score": 86,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1508,10 +1618,12 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "613fda17d598f874"
+  "hash": "d0cbc7b6c3edbe4c"
  },
  "combo-aec-clipped": {
   "score": 85.4,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -1542,10 +1654,14 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "97431d449b0c1bee"
+  "hash": "1a545d472eeabaf6"
  },
  "combo-marker-and-clip": {
   "score": 92.9,
+  "passed": false,
+  "critical": [
+   "wrong-side-marker"
+  ],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -1576,10 +1692,16 @@
    "visibleFraction": 0,
    "wrongSide": true
   },
-  "hash": "c9691e3e0c277d7a"
+  "hash": "593af778e515a386"
  },
  "combo-all-wrong": {
   "score": 19.1,
+  "passed": false,
+  "critical": [
+   "wrong-projection",
+   "patient-motion",
+   "wrong-side-marker"
+  ],
   "categories": {
    "positioning": 3.6,
    "rotation": 0,
@@ -1637,10 +1759,15 @@
    "visibleFraction": 0,
    "wrongSide": true
   },
-  "hash": "6fb4c90213343320"
+  "hash": "9b180cb7fa54222c"
  },
  "initial-state": {
   "score": 13.8,
+  "passed": false,
+  "critical": [
+   "wrong-projection",
+   "patient-motion"
+  ],
   "categories": {
    "positioning": 1.8,
    "rotation": 0,
@@ -1696,6 +1823,6 @@
    "top"
   ],
   "marker": null,
-  "hash": "988b7bee9a9209ce"
+  "hash": "9b4388dd0dd3cce8"
  }
 }

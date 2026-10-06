@@ -64,7 +64,7 @@ export interface RenderPlan {
   caseId: string;
   assetId: string;
   detector: { widthCm: number; heightCm: number };
-  /** Where the source image sits on the detector (cm); the anatomy landmark box is mapped onto the required region. */
+  /** Where the source image sits on the detector (cm); uniform scale, landmark box centred inside the required region. */
   image: { x1: number; y1: number; widthCm: number; heightCm: number };
   fieldCm: CmRect;
   /** Sides on which the field cuts the required anatomy (same value the score uses; for the text alternative). */
@@ -175,10 +175,18 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const { radiograph: spec, detector, requiredAnatomy: req, positioning } = radCase;
   const { geometry, patient, exposure, patientResponse } = state;
   const box = spec.anatomyBox;
-  // Map the anatomy landmark box onto the required-anatomy region so field cuts and drawn anatomy agree.
-  const widthCm = req.widthCm / (box.u2 - box.u1);
-  const heightCm = req.heightCm / (box.v2 - box.v1);
-  const image = { x1: req.xCm - box.u1 * widthCm, y1: req.yCm - box.v1 * heightCm, widthCm, heightCm };
+  // Fit the anatomy landmark box INSIDE the required-anatomy region with ONE uniform scale ("contain": no
+  // anisotropic distortion of anatomical proportions), centred on the region. The clinical region comes from the
+  // case/references and is never adapted to the picture; whatever of the region or detector the baseline does not
+  // cover is drawn as the "no reference data" hatch by the pipeline.
+  const boxWpx = (box.u2 - box.u1) * spec.widthPx;
+  const boxHpx = (box.v2 - box.v1) * spec.heightPx;
+  const cmPerPx = Math.min(req.widthCm / boxWpx, req.heightCm / boxHpx);
+  const widthCm = spec.widthPx * cmPerPx;
+  const heightCm = spec.heightPx * cmPerPx;
+  const boxLeft = req.xCm + (req.widthCm - boxWpx * cmPerPx) / 2;
+  const boxTop = req.yCm + (req.heightCm - boxHpx * cmPerPx) / 2;
+  const image = { x1: boxLeft - box.u1 * widthCm, y1: boxTop - box.v1 * heightCm, widthCm, heightCm };
 
   const has = (ruleId: string) => state.findings.some((f) => f.ruleId === ruleId);
   const deg = clamp(geometry.rotationDeg, -TUNING.rotation.maxDeg, TUNING.rotation.maxDeg);

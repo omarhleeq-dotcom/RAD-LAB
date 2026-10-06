@@ -205,7 +205,12 @@
     "notDrawn": "Scored from your settings — not drawn in this image",
     "notDrawnVariant": "not drawn in this image",
     "drawn": "shown in the image",
-    "notDrawnNote": "Some findings are scored from your settings but are not visible in the picture by design (for example SID, a kVp inside the reference range, or excess exposure — digital images can look acceptable at excess exposure)."
+    "notDrawnNote": "Some findings are scored from your settings but are not visible in the picture by design (for example SID, a kVp inside the reference range, or excess exposure — digital images can look acceptable at excess exposure).",
+    "criticalTitle": "Critical findings",
+    "criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. The numeric score ({total}) and the category weights are unchanged.",
+    "criticalEvidence": "Evidence for this critical finding",
+    "criticalConcept": "Concept (common quality criterion)",
+    "criticalImplementation": "Implementation (provisional / educational)"
   },
   "categories": {
     "positioning": "Positioning",

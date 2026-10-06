@@ -7,12 +7,12 @@ const spec = chestPaErect.positioning.centering;
 describe("centeringOnAxis", () => {
   it("detects correct centering at the target and on the tolerance boundary", () => {
     expect(centeringOnAxis(spec.target, spec, "x").state).toBe("ideal");
-    expect(centeringOnAxis({ x: 0.08, y: -0.15 }, spec, "x").state).toBe("ideal");
-    expect(centeringOnAxis({ x: 0, y: -0.15 + 0.1 }, spec, "y").state).toBe("ideal");
+    expect(centeringOnAxis({ x: 0.08, y: -0.14 }, spec, "x").state).toBe("ideal");
+    expect(centeringOnAxis({ x: 0, y: -0.14 + 0.1 }, spec, "y").state).toBe("ideal");
   });
 
   it("detects off-centre positions with direction", () => {
-    const left = centeringOnAxis({ x: -0.5, y: -0.15 }, spec, "x");
+    const left = centeringOnAxis({ x: -0.5, y: -0.14 }, spec, "x");
     expect(left).toMatchObject({ state: "off", direction: "low" });
     expect(left.offset).toBeCloseTo(-0.5);
     expect(centeringOnAxis({ x: 0, y: 0.6 }, spec, "y")).toMatchObject({ state: "off", direction: "high" });
@@ -24,7 +24,7 @@ describe("centeringOnAxis", () => {
   });
 
   it("evaluates axes independently", () => {
-    const s = centeringStatus({ x: 0.5, y: -0.15 }, spec);
+    const s = centeringStatus({ x: 0.5, y: -0.14 }, spec);
     expect(s.x.state).toBe("off");
     expect(s.y.state).toBe("ideal");
   });

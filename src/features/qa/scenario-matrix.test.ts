@@ -108,6 +108,33 @@ describe("scenario matrix: cross-scenario expectations", () => {
     expect(by("centering-x-off").result.score.categories.find((x) => x.category === "centering")!.ratio).toBeLessThan(1);
   });
 
+  it("critical findings gate the pass mark in every scenario, derived independently of the engine (item 2)", () => {
+    for (const [id, , r] of reports) {
+      const st = r.result.resultState;
+      const expected = [
+        ...(st.geometry.projection !== "pa-erect" ? ["wrong-projection"] : []),
+        ...(st.patientResponse.motion === "motion" ? ["patient-motion"] : []),
+        ...(r.plan.marker?.wrongSide ? ["wrong-side-marker"] : []),
+      ];
+      expect(r.result.criticalFindings.map((f) => f.id), id).toEqual(expected);
+      expect(r.result.score.passed, id).toBe(r.result.score.thresholdMet && expected.length === 0);
+      // The gate never changes the number.
+      expect(r.result.score.thresholdMet, id).toBe(r.result.score.total >= 70);
+    }
+  });
+
+  it("wrong projection, visible motion and a wrong-side marker are below the pass mark although their numbers are high", () => {
+    for (const id of ["projection-ap", "projection-lateral", "motion-none", "motion-relax", "marker-L-wrong-side", "marker-R-wrong-side"]) {
+      expect(by(id).result.score.passed, id).toBe(false);
+      expect(by(id).result.criticalFindings.length, id).toBeGreaterThan(0);
+    }
+    expect(score("projection-ap")).toBeGreaterThanOrEqual(70);
+    for (const id of ["correct", "correct-R", "correct-aec", "correct-edge", "marker-none"]) {
+      expect(by(id).result.score.passed, id).toBe(true);
+      expect(by(id).result.criticalFindings, id).toEqual([]);
+    }
+  });
+
   it("unscored checks (marker, keep-still) never change the total", () => {
     for (const id of ["marker-none", "marker-L-wrong-side", "marker-R-wrong-side", "marker-cut-by-field", "motion-none", "motion-relax"]) {
       expect(score(id), id).toBe(100);
@@ -167,6 +194,8 @@ function snapshot() {
     const bytes = Uint8Array.from(img.luma, (v) => Math.max(0, Math.min(255, Math.round(v))));
     out[id] = {
       score: r.result.score.total,
+      passed: r.result.score.passed,
+      critical: r.result.criticalFindings.map((f) => f.id),
       categories: Object.fromEntries(r.result.score.categories.map((k) => [k.category, k.earned])),
       outcomes: Object.fromEntries(r.result.checks.filter((k) => k.outcome !== "pass").map((k) => [k.ruleId, k.outcome])),
       variants: r.result.variants,

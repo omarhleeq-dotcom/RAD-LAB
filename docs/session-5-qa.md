@@ -4,6 +4,30 @@ Scope: Chest PA only. No new features, no new medical rules, top-level weights u
 
 Related: [`session-5-qa-matrix.md`](session-5-qa-matrix.md) (all 52 scenarios) · [`session-5-baseline-options.md`](session-5-baseline-options.md) · [`REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md) · [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) · contact sheet [`session-5-renders/matrix-contact-sheet.jpg`](session-5-renders/matrix-contact-sheet.jpg).
 
+## 0. Review fix pass (same branch / PR #5; before merge)
+Four review items; no top-level weight and no numeric score was changed by any of them.
+
+| # | Item | Outcome | Tests |
+|---|---|---|---|
+| 1 | Wrong projection must not pass (AP / lateral for a requested PA exam scored 92.9–100) | A wrong projection is now a **critical finding**: below the educational pass mark whatever the number. The number stays 92.9 (projection is 2 of 7 positioning weight) | `critical-findings.test.ts` ("1 · a wrong projection must not pass"), matrix `projection-ap` / `projection-lateral` |
+| 2 | Critical findings gate the pass mark | New case-data rule list `scoring.criticalFindings`: **wrong projection**, **visible patient motion**, **wrong-side marker**. Any one forces `score.passed = false` (“Below the educational pass mark”); `score.total`, the checks' credits and the weights 25/20/15/20/10/10 are untouched (`score.thresholdMet` still reports the numeric result). The reason is shown in a “Critical findings” panel in EN and AR with its evidence. Pure detection in `features/evaluation/critical.ts` | `critical-findings.test.ts` (incl. “numeric score unchanged”, “weights unchanged”, bilingual, classification), matrix test “critical findings gate the pass mark in every scenario, derived independently of the engine” |
+| 3 | Revert the required-anatomy / centering change | `requiredAnatomy` back to **27 × 31 cm**, centering target back to **y −0.14**; no repo reference supports 27 × 28 / −0.15 (the three references give no cm values at all; the aspect ratio of the baseline picture is not a clinical criterion). The renderer keeps a **distortion-free uniform scale**: the baseline's landmark box is fitted *inside* the region (width-limited: 27 × 28.0 cm drawn, centred in the 27 × 31 region); anything the baseline does not cover is the existing grey “no reference data” hatch. A field cutting the costophrenic angles / lower lungs **still fails** (`clip-bottom`: `collimation-clipping` ✕, clipped side = bottom) | `plan.test.ts` (box inside region, centred, uniform), `engine.test.ts` (“reference-based values, not fitted to the baseline”, “a field that clips the costophrenic angles still fails”) |
+| 4 | Marker-side scoring: research | **Not supported by what could be verified → kept unscored (weight 0)**; wrong side is gated by item 2. See §0.1 | `critical-findings.test.ts` (“marker check stays unscored”) |
+
+**Known consequence of item 3 (decision for owner).** The fitted baseline does not span the whole 31 cm region height, so a field edge that cuts the 1.5 cm strips above / below the drawn landmark box fails the clipping *score* while the picture still shows the full drawn lungs. This is the honest limit of a 27 × 31 cm provisional region against a 27 × 28 cm baseline; it is documented, not hidden, and goes away if a baseline matching the region (or a region measured on the baseline) is adopted by a reviewer. All 52 scenarios still agree on which sides are clipped (matrix test); only `clip-top`'s numbers moved (83.6 → 85.4; its fixed-cm field no longer counts as an excess field against the 31 cm region).
+
+### 0.1 Marker-side evidence (item 4)
+Question: do authoritative sources (IAEA, WHO, AAPM, ACR, PubMed only) support **scoring** anatomical side-marker practice / wrong-side errors, and which viewer side belongs to L / R in a PA display?
+
+What the repository's own references say (all already in `docs/`): the Image-quality reference states that current ACR digital-radiography guidance requires side identification to be visible and that **patient-side correctness remains unscored unless a validated orientation mapping is adopted**; the Positioning reference §3F says to keep marker behaviour out of scoring until a validated rule exists. No orientation mapping (which viewer side L / R belongs on) is given.
+
+External research performed (web search restricted to iaea.org, who.int, aapm.org, acr.org, pubmed / ncbi): search returned the items below. **I could not open any of them**: the sandbox's egress proxy blocks `gravitas.acr.org`, `pmc.ncbi.nlm.nih.gov`, `pubmed.ncbi.nlm.nih.gov` and `www.ncbi.nlm.nih.gov` (fetches returned EGRESS_BLOCKED), so **nothing below was read in its primary text and none of it is used as evidence**:
+- ACR–AAPM–SIIM–SPR *Practice Parameter for Digital Radiography* (gravitas.acr.org, DocId 135) and ACR–SPR–STR *Practice Parameter for the Performance of Chest Radiography* (DocId 129) — search summaries mention that the side (right / left) of the anatomy imaged should be visible on images and that laterality labelling accuracy should be checked on review.
+- PubMed Central: “A clinical audit of anatomical side marker use in a pediatric medical imaging department” (PMC7685512; also PMC5016612) and “Side marker creep: have radiographers changed their side marker habits?” (PMC5016621) — search summaries describe missing / incorrect side markers as a recognised labelling error with patient-safety consequences. Reported rates in the summaries (e.g. missing markers 1–40.8 %) are unverified and **not** cited as facts.
+No IAEA, WHO or AAPM source on the topic surfaced.
+
+Decision: (a) the *concept* “side identification must be present and correct” is a common quality criterion (already in the repo's Image-quality reference) and is why wrong side is a critical finding (item 2); (b) the **orientation mapping is not established by any verified source** → the marker rule stays an EDUCATIONAL display convention (`markerSide`, PA display: L on the viewer's right) and is **not added as a numeric subcheck** (weight 0); (c) a *missing* marker is not gated (not in the owner's list) and not scored. To change this, a reviewer needs to read the ACR parameters / audits and either (i) allow the hosts above in the environment's network policy so they can be verified here, or (ii) paste the relevant text, and then decide whether presence and/or side should become a scored subcheck inside the positioning category.
+
 ## 1. Preflight
 - PR #4 (Session 4) was merged (`7c2a9c3`); the Session 5 branch starts from that `main`.
 - All references and Session 2–4 docs read before any change.
@@ -23,7 +47,7 @@ The agreement rules (`src/features/radiograph/consistency.ts`, the single regist
 | 1 | **Rotation drawn for any non-zero value** (1–2° passes the score as “no meaningful rotation” but the image and the “What shaped this image” card showed rotation) | Rotation is drawn only when the rotation check is not passed | `plan.test.ts` (Session 5), matrix “rotation drawn exactly when check fails” |
 | 2 | **Findings listed that the picture cannot show** (“Increased magnification / unsharpness”, kVp-below-band text describing reduced retrocardiac visibility, excess exposure) with no hint | “not drawn in this image” label on checks and on the variant list + explanatory note; kVp texts now say when no effect is drawn | matrix tests; `engine.test.ts` |
 | 3 | **SID full-credit band was 180–185 cm**, asymmetric, contradicting the documented ±5 cm | `[175, 185]` | `engine.test.ts` |
-| 4 | **Anisotropic baseline mapping** (≈ 10–13 % in x) distorted proportions incl. cardiothoracic-ratio appearance | Required-anatomy region is now 27 × 28 cm (was 27 × 31), equal in aspect to the baseline's landmark box (860 × 892 px); one uniform scale; centering target moved 18.5 → 18.3 cm (y −0.14 → −0.15). Clipped scores and clipped anatomy still agree (matrix test, all 52 scenarios) | `plan.test.ts`, `engine.test.ts` |
+| 4 | **Anisotropic baseline mapping** (≈ 10–13 % in x) distorted proportions incl. cardiothoracic-ratio appearance | One uniform scale (“contain”): the landmark box is fitted inside the unchanged 27 × 31 cm required region and centred; uncovered area = the existing no-reference-data hatch. *(An earlier revision of this PR changed the region to 27 × 28 cm; reverted in the fix pass — §0, item 3.)* Clipped scores and clipped anatomy still agree (matrix test, all 52 scenarios) | `plan.test.ts`, `engine.test.ts` |
 | 5 | **Static, generic alt text** on the radiograph canvas | Text alternative built from the plan (visible findings, clipped sides, marker side / wrong side / cut off), EN + AR | browser matrix (`run-matrix.mjs`) |
 | 6 | **Colour contrast** of the “warn” colour on tinted backgrounds 3.75–4.1 : 1 (AA needs 4.5) | `--color-warn` #a86400 → #8a5300 (≥ 5.0 : 1) | `scripts/qa/a11y-audit.mjs` (axe: 0 violations) |
 | 7 | **Touch / pointer targets** < 24 px (range sliders 16 px, back link and summaries 20 px) | min 24 px height | `a11y-audit.mjs` |
@@ -31,7 +55,7 @@ The agreement rules (`src/features/radiograph/consistency.ts`, the single regist
 | 9 | `leftLungScale` / `rightLungScale` named patient-style sides but drawn on the viewer's left / right | renamed `viewerLeft/RightLungScale` | laterality audit test |
 | 10 | No “not a diagnostic system” statement on every page | footer disclaimer (EN + AR) | browser matrix / a11y audit |
 
-Findings that are **design decisions, not bugs** (kept, listed under “Decisions for owner”): a wrong projection still scores 92.9 (projection is 2 of 7 positioning weight); unscored checks (marker, keep-still) can be flagged while the score stays 100.
+Findings that are **design decisions, not bugs** (kept, listed under “Decisions for owner”): a wrong projection still *scores* 92.9 (projection is 2 of 7 positioning weight) but is now below the pass mark through the critical-finding gate (§0); unscored checks (marker, keep-still) can be flagged while the score stays 100 — the gate, not the score, decides the pass mark.
 
 ## 4. Laterality audit (PA display: patient left = viewer right)
 Layers audited: case data (marker convention, default marker positions, dense zone / heart on the viewer's right, symmetric scapula schematic), positioning UI (caption “Detector view as displayed (patient's left on the viewer's right)”, marker handle, practice guide line), marker scoring (`evalMarker`), geometry (`viewerSideOf`), renderer (`RenderPlan.marker`, canvas `direction: ltr`), feedback text, text alternative, AEC chamber labels (“detector view”). `src/features/qa/laterality-audit.test.ts`: one convention; scoring ⇔ plan ⇔ feedback agree on the marker side in every scenario; no feedback names a *patient* side (only “detector view / viewer”) in EN and AR; no source file in the scoring/geometry/renderer branches on locale or direction; workspace and canvas are `direction: ltr`. Browser: marker glyph probed on the correct half in EN and AR, and the canvas is byte-identical in EN and AR. Result: **no laterality defect found**; one naming defect (#9).
@@ -53,10 +77,10 @@ Every rule, tolerance and feedback sentence was checked against the three reposi
 | 180 cm SID, 100–150 kV | COMMON REFERENCE | unchanged |
 | DI equation, brightness ≠ exposure, EI ≠ dose, no universal EIT / DI limit | VALIDATED | unchanged; no numeric EI/EIT anywhere (tests) |
 | “Acceptable image” | implied a real accept/reject decision | educational pass mark wording (#8) |
-| Keep-still instruction unscored; marker unscored | no scoring rule in references | unchanged (conservative) |
+| Keep-still instruction unscored; marker unscored | no scoring rule in references | unchanged (conservative); both can now trigger a critical finding (fix pass §0) |
 
 ## 6. Renderer polish
-- **Aspect-preserving mapping**: done (bug #4). Side effects: the image now starts at the detector top (no hatch sliver), the bottom “no reference data” band is larger (≈ 7 cm) and the side bands unchanged (≈ 1.8 cm). The grey hatch and its explanation are kept.
+- **Aspect-preserving mapping**: done (bug #4, fix pass §0 item 3): uniform scale, landmark box centred in the 27 × 31 cm region, ≈ 1.8 cm side bands and ≈ 7 cm bottom band of “no reference data” hatch (a ≈ 0.2 cm sliver at the top). The grey hatch and its explanation are kept.
 - **Low penetration / motion magnitudes**: compared at normal display size (420 px wide; `matrix-contact-sheet.jpg`, `kvp-70`, `motion-none` goldens). Both are clearly visible, so **no magnitude was changed**; all keep the “Educational visual approximation” label.
 
 ## 7. Accessibility and UX
@@ -81,9 +105,9 @@ Run on 2026-10-06 against the production build:
 | GitHub Actions workflow | added; first run happens on the PR |
 
 ## 10. Decisions for owner (conservative defaults applied)
-1. **Required-anatomy region 27 × 31 → 27 × 28 cm** (and centering target y −0.14 → −0.15) so the baseline maps without distortion. Provisional educational values; it slightly changes which fields clip. Alternative: keep 27 × 31 and accept the distortion — not recommended.
-2. **Wrong projection still “passes”** (AP/lateral selected: 92.9 / 100). Not changed (weights are configuration; inventing a critical-error rule is out of scope). Recommend a critical-error cap in the Assessment Mode design.
-3. **Keep-still and marker checks remain unscored** (the picture is blurred / the marker flagged while the score is 100).
+1. ~~Required-anatomy region 27 × 28 cm~~ — **reverted** (fix pass): the region stays 27 × 31 cm / target y −0.14 (no reference supports a change). Open: the 1.5 cm strip mismatch described in §0 (adopt a baseline or a region measured on it).
+2. **Wrong projection** now gates the pass mark (critical finding); its numeric score (92.9) is deliberately unchanged. Open: whether Assessment Mode should also cap the number.
+3. **Keep-still and marker checks remain unscored** (score stays 100) but visible motion and a wrong-side marker are critical findings that gate the pass mark. A missing marker is neither scored nor gated. Open: marker-side scoring awaits verified sources (§0.1).
 4. **Rotation inside ±2° is drawn symmetric** (picture agrees with the score), i.e. the picture is not continuous at the band edge.
 5. **Baseline mismatch**: unchanged; see [`session-5-baseline-options.md`](session-5-baseline-options.md) (only 2 real candidates, neither verified as an adult male PA of good quality).
 6. Educational-pass-mark wording replaces “Acceptable image”.
@@ -99,5 +123,5 @@ Run on 2026-10-06 against the production build:
 ## 12. Recommended next steps
 1. Educator / physicist review via the checklist; fix terminology.
 2. Decide the baseline (data-only demographic change vs. new asset).
-3. Assessment Mode: gate effect cards, DI analysis, “not drawn” notes, guides; decide critical-error rules and patient-instruction scoring.
+3. Assessment Mode: gate effect cards, DI analysis, “not drawn” notes, guides; review the critical-finding list (§0) and decide patient-instruction scoring.
 4. Then AP portable (new asset + renderer), keeping this matrix as the template.

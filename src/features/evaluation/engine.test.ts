@@ -8,7 +8,7 @@ import { evaluate } from "./engine";
 const ideal: SimulationSettings = {
   projection: "pa-erect",
   rotationDeg: 0,
-  centralRay: { x: 0, y: -0.15 }, // ≈ 18.3 cm from the top of the 43 cm detector (centre of the required region)
+  centralRay: { x: 0, y: -0.07 }, // ≈ 20 cm from the top of the 43 cm detector
   collimation: { width: 0.94, height: 0.84 }, // ≈ 33 × 36 cm
   chinPosition: "elevated",
   shoulderPosition: "rolled-forward",
@@ -255,9 +255,29 @@ describe("Session 5 regressions", () => {
     expect(check(withChange({ kvp: 140 }), "kvp").feedback.en).toMatch(/draws no image effect/);
   });
 
-  it("the required anatomy region has the aspect ratio of the baseline's anatomy box", () => {
-    const b = chestPaErect.radiograph.anatomyBox, spec = chestPaErect.radiograph, a = chestPaErect.requiredAnatomy;
+  it("Session 5 fix pass: the required region and centering target are the reference-based values, not fitted to the baseline", () => {
+    const a = chestPaErect.requiredAnatomy;
+    expect(a).toEqual({ xCm: 4, yCm: 3, widthCm: 27, heightCm: 31 });
+    // Target level = centre of the required region (18.5 cm of 43 cm → −0.14).
+    expect(chestPaErect.positioning.centering.target.y).toBeCloseTo(((a.yCm + a.heightCm / 2) / chestPaErect.detector.heightCm) * 2 - 1, 2);
+    // The region is deliberately NOT the baseline's landmark-box aspect (that would be fitting the criterion to a picture).
+    const b = chestPaErect.radiograph.anatomyBox, spec = chestPaErect.radiograph;
     const boxAspect = ((b.u2 - b.u1) * spec.widthPx) / ((b.v2 - b.v1) * spec.heightPx);
-    expect(Math.abs(a.widthCm / a.heightCm / boxAspect - 1)).toBeLessThan(0.005);
+    expect(Math.abs(a.widthCm / a.heightCm / boxAspect - 1)).toBeGreaterThan(0.05);
+  });
+
+  it("a field that clips the costophrenic angles / lower lungs still fails the clipping check", () => {
+    const a = chestPaErect.requiredAnatomy;
+    const detH = chestPaErect.detector.heightCm;
+    // Field bottom 0.5 cm above the bottom of the required region (= inside the costophrenic angles), same centre.
+    const centreY = ((a.yCm + a.heightCm / 2) / detH) * 2 - 1;
+    const halfNeeded = a.heightCm / 2 - 0.5;
+    const r = withChange({ centralRay: { x: 0, y: centreY }, collimation: { width: 0.94, height: (halfNeeded * 2) / detH } });
+    expect(check(r, "collimation-clipping").outcome).toBe("fail");
+    expect(check(r, "collimation-clipping").feedback.en).toMatch(/costophrenic/);
+    expect(r.variants).toContain("clipped");
+    // …and a field exactly covering the region passes.
+    const ok = withChange({ centralRay: { x: 0, y: centreY }, collimation: { width: 0.94, height: (a.heightCm + 0.2) / detH } });
+    expect(check(ok, "collimation-clipping").outcome).toBe("pass");
   });
 });

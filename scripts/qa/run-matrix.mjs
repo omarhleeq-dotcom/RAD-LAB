@@ -131,6 +131,16 @@ async function runScenario(browser, loc, device, sc) {
   const scoreText = (await page.locator('[aria-labelledby="result-heading"] [role="status"] div').first().innerText()).trim();
   ok(`${tag}: score shown equals the golden (${g.score})`, Number(scoreText) === g.score, scoreText);
 
+  // 2b. Pass mark + critical findings ⇔ golden (critical findings gate the pass mark; the number is unchanged).
+  const passLabel = (await page.locator('[aria-labelledby="result-heading"] p.rounded-md').first().innerText()).trim();
+  ok(`${tag}: pass-mark label equals the golden (${g.passed ? "meets" : "below"})`, passLabel === (g.passed ? msgs[loc].result.passed : msgs[loc].result.failed), passLabel);
+  const critical = await page.locator("[data-critical]").evaluateAll((n) => n.map((x) => x.getAttribute("data-critical")));
+  ok(`${tag}: critical findings shown equal the golden (${g.critical.join(",") || "none"})`, critical.join(",") === g.critical.join(","), critical.join(","));
+  if (g.critical.length) {
+    const crit = await page.locator("#critical-heading").locator("xpath=..").innerText();
+    ok(`${tag}: critical reason is shown in ${loc.toUpperCase()}`, loc === "ar" ? /[\u0600-\u06FF]/.test(crit) && /دون درجة النجاح/.test(crit) : /below the pass mark/i.test(crit));
+  }
+
   // 3. Feedback ⇔ golden: wrong-side flag, 'not drawn' labels, no raw ids.
   const resultText = await page.locator('[aria-labelledby="result-heading"]').innerText();
   const flagged = /wrong side of the image|الجانب الخطأ من الصورة/.test(resultText);

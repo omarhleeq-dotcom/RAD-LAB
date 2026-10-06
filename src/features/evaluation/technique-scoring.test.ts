@@ -11,7 +11,7 @@ const profile = chestPaErect.technique;
 const ok: SimulationSettings = {
   projection: "pa-erect",
   rotationDeg: 0,
-  centralRay: { x: 0, y: -0.15 },
+  centralRay: { x: 0, y: -0.07 },
   collimation: { width: 0.94, height: 0.84 },
   chinPosition: "elevated",
   shoulderPosition: "rolled-forward",

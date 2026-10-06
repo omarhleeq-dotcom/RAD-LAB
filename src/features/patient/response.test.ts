@@ -14,7 +14,7 @@ const ideal: SimulationSettings = {
   ...chestPaErect.initialSettings,
   projection: "pa-erect",
   rotationDeg: 0,
-  centralRay: { x: 0, y: -0.15 },
+  centralRay: { x: 0, y: -0.07 },
   collimation: { width: 0.94, height: 0.84 },
   chinPosition: "elevated",
   shoulderPosition: "rolled-forward",
@@ -113,12 +113,18 @@ describe("scoring integration is conservative", () => {
     expect(chestPaErect.scoring.categoryWeights).toEqual({ positioning: 25, rotation: 20, centering: 15, exposure: 20, sid: 10, breathing: 10 });
   });
 
-  it("the remain-still instruction is evidence only: it never changes the score", () => {
+  it("the remain-still instruction never changes the NUMERIC score (it can only trigger the critical-finding gate)", () => {
     const base = evaluate(chestPaErect, ideal);
     expect(base.score.total).toBe(100);
+    expect(base.score.passed).toBe(true);
     for (const m of ["none", "relax-and-move"] as const) {
       const r = evaluate(chestPaErect, { ...ideal, motionInstruction: m });
-      expect(r.score).toEqual(base.score);
+      expect(r.score.total).toBe(base.score.total);
+      expect(r.score.categories).toEqual(base.score.categories);
+      expect(r.score.thresholdMet).toBe(true);
+      // Visible motion is a critical finding: below the pass mark despite the unchanged 100.
+      expect(r.score.passed).toBe(false);
+      expect(r.criticalFindings.map((f) => f.id)).toEqual(["patient-motion"]);
       const check = r.checks.find((c) => c.ruleId === "motion-instruction")!;
       expect(check.outcome).toBe("fail");
       expect(check.scored).toBe(false);

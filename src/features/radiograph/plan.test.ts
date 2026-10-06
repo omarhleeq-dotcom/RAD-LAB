@@ -20,13 +20,20 @@ describe("render plan from RadiographResultState", () => {
     expect(p.technique).toMatchObject({ noiseSigma: 0, detailGain: 1, penetrationContrastKept: null });
   });
 
-  it("maps the baseline's anatomy box onto the required-anatomy region (so field cuts and drawn anatomy agree)", () => {
+  it("fits the baseline's anatomy box inside the required-anatomy region, centred, never beyond it (width-limited here)", () => {
     const p = plan();
     const b = chestPaErect.radiograph.anatomyBox, r = chestPaErect.requiredAnatomy;
-    expect(p.image.x1 + b.u1 * p.image.widthCm).toBeCloseTo(r.xCm, 6);
-    expect(p.image.x1 + b.u2 * p.image.widthCm).toBeCloseTo(r.xCm + r.widthCm, 6);
-    expect(p.image.y1 + b.v1 * p.image.heightCm).toBeCloseTo(r.yCm, 6);
-    expect(p.image.y1 + b.v2 * p.image.heightCm).toBeCloseTo(r.yCm + r.heightCm, 6);
+    const left = p.image.x1 + b.u1 * p.image.widthCm, right = p.image.x1 + b.u2 * p.image.widthCm;
+    const top = p.image.y1 + b.v1 * p.image.heightCm, bottom = p.image.y1 + b.v2 * p.image.heightCm;
+    expect(left).toBeGreaterThanOrEqual(r.xCm - 1e-6);
+    expect(right).toBeLessThanOrEqual(r.xCm + r.widthCm + 1e-6);
+    expect(top).toBeGreaterThanOrEqual(r.yCm - 1e-6);
+    expect(bottom).toBeLessThanOrEqual(r.yCm + r.heightCm + 1e-6);
+    // Centred on the region on both axes, and touching it on the limiting (width) axis.
+    expect(left - r.xCm).toBeCloseTo(r.xCm + r.widthCm - right, 6);
+    expect(top - r.yCm).toBeCloseTo(r.yCm + r.heightCm - bottom, 6);
+    expect(right - left).toBeCloseTo(r.widthCm, 6);
+    expect(bottom - top).toBeLessThan(r.heightCm); // the baseline does not cover the whole 31 cm region height
   });
 
   it("Session 5: the mapping is aspect-preserving (no anisotropic distortion of anatomical proportions)", () => {
@@ -41,8 +48,12 @@ describe("render plan from RadiographResultState", () => {
     expect(Math.abs(drawn / source - 1)).toBeLessThan(0.005);
   });
 
-  it("Session 5: the image covers the detector from its top edge (no hatch sliver above the anatomy)", () => {
-    expect(plan().image.y1).toBeLessThanOrEqual(0.05);
+  it("the required region is never adapted to the picture: uncovered detector area is left to the no-reference-data hatch", () => {
+    const p = plan();
+    expect(chestPaErect.requiredAnatomy.heightCm).toBe(31);
+    // The source image does not span the whole detector; that remainder is hatch (pipeline tests cover the pattern).
+    const covers = p.image.x1 <= 0 && p.image.y1 <= 0 && p.image.x1 + p.image.widthCm >= p.detector.widthCm && p.image.y1 + p.image.heightCm >= p.detector.heightCm;
+    expect(covers).toBe(false);
   });
 
   it("Session 5: rotation inside the full-credit band is drawn symmetric; outside it is drawn (picture agrees with the score)", () => {

@@ -102,6 +102,38 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
           </div>
           <p className="-mt-3 text-xs text-muted">{t("scoreNote")}</p>
 
+          {result.criticalFindings.length > 0 && (
+            <section aria-labelledby="critical-heading" className="rounded border-2 border-bad bg-bad/5 p-3">
+              <h3 id="critical-heading" className="text-sm font-bold text-bad">
+                {t("criticalTitle")}
+              </h3>
+              <p className="mt-1 text-xs text-muted">{t("criticalNote", { total: score.total })}</p>
+              <ul className="mt-2 space-y-3">
+                {result.criticalFindings.map((f) => (
+                  <li key={f.id} data-critical={f.id} className="text-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-semibold text-ink">{localize(f.label, locale)}</span>
+                      <EvidenceBadge status={f.evidence.status} />
+                    </div>
+                    <p className="mt-1 text-ink">{localize(f.reason, locale)}</p>
+                    <details className="mt-1 text-xs text-muted">
+                      <summary className="cursor-pointer">{t("criticalEvidence")}</summary>
+                      <p className="mt-1">
+                        <span className="font-semibold">{t("criticalConcept")}:</span> <EvidenceBadge status={f.concept.status} /> {f.concept.note}
+                      </p>
+                      <p className="mt-1">
+                        <span className="font-semibold">{t("criticalImplementation")}:</span> <EvidenceBadge status={f.evidence.status} /> {f.evidence.note}
+                      </p>
+                      <p className="mt-1">
+                        {tEv("reference")}: <bdi dir="ltr">{f.concept.reference}</bdi>
+                      </p>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           <div>
             <h3 className="text-sm font-semibold">{t("breakdown")}</h3>
             <ul className="mt-2 space-y-2">

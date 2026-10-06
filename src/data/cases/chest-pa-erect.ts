@@ -48,11 +48,12 @@ export const chestPaErect: RadCase = {
   requiredProjection: "pa-erect",
   detector: { widthCm: 35, heightCm: 43 },
   // Required anatomy region on the detector (cm from its top-left corner). Demo values (provisional).
-  // Session 5: 27 × 28 cm (was 27 × 31) so its aspect ratio equals that of the baseline image's anatomy landmark
-  // box (860 × 892 px → 0.964): the renderer can then map the box onto this region with ONE uniform scale (no
-  // anisotropic distortion of anatomical proportions) while a field edge that cuts this region still cuts the drawn
-  // anatomy. Same width and lateral position; centre moved 18.5 → 18.3 cm so the image starts at the detector top.
-  requiredAnatomy: { xCm: 4, yCm: 4.3, widthCm: 27, heightCm: 28 },
+  // The CLINICAL criterion (apices, both lungs, costophrenic angles included) comes from the medical references;
+  // the size in cm is a demo value. It is NOT derived from the baseline image's aspect ratio: the renderer fits the
+  // baseline into this region with one uniform scale (see features/radiograph/plan.ts) and shows anything the
+  // baseline does not cover as "no reference data" hatch. Session 5 briefly changed this to 27 x 28 cm to match the
+  // baseline; reverted because no repo reference supports that value.
+  requiredAnatomy: { xCm: 4, yCm: 3, widthCm: 27, heightCm: 31 },
   controls: {
     rotationDeg: { min: -20, max: 20, step: 1 },
     sidCm: { min: 100, max: 200, step: 5 },
@@ -62,10 +63,10 @@ export const chestPaErect: RadCase = {
   },
   positioning: {
     // Educational target region. Midline + mid-thoracic/T7 teaching landmark (reference §2 Centering, §3C).
-    // y = centre of requiredAnatomy (18.3 cm of 43 cm → -0.15). NOT a clinical measurement.
+    // y = centre of requiredAnatomy (18.5 cm of 43 cm → -0.14). NOT a clinical measurement.
     // TODO(medical-review): tolerances are provisional.
     centering: {
-      target: { x: 0, y: -0.15 },
+      target: { x: 0, y: -0.14 },
       idealTolerance: { x: 0.08, y: 0.1 }, // ≈ ±1.4 cm / ±2.2 cm on this detector
       acceptableTolerance: { x: 0.17, y: 0.25 }, // ≈ ±3 cm / ±5.4 cm
     },
@@ -118,6 +119,67 @@ export const chestPaErect: RadCase = {
       breathing: 10,
     },
     passThreshold: 70,
+    // Critical findings gate the pass mark (the numeric score and the weights above are NOT changed by them).
+    // CONCEPT = COMMON QUALITY CRITERION (maps to the repo's "common-reference" class: such an image would normally be
+    // repeated in practice). IMPLEMENTATION = PROVISIONAL / educational: that each one forces "below the pass mark"
+    // is a simulator rule, not a real-world reject decision (Positioning ref "Image rejection").
+    // TODO(medical-review): confirm the list of critical findings with a radiography educator.
+    criticalFindings: [
+      {
+        id: "wrong-projection",
+        label: { en: "Wrong projection", ar: "إسقاط خاطئ" },
+        reason: {
+          en: "Critical finding — wrong projection: a different projection from the one requested was performed. Performing the wrong examination is a fundamental error, not a matter of degree, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.",
+          ar: "ملاحظة حرجة — إسقاط خاطئ: أُجري إسقاط مختلف عن المطلوب. إجراء الفحص الخاطئ خطأ جوهري وليس مسألة درجات، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة العملية تُعاد الصورة عادةً في مثل هذه الحالة.",
+        },
+        concept: {
+          status: "common-reference",
+          reference: "Positioning ref §2 Patient orientation, §3A; the exam request",
+          note: "COMMON QUALITY CRITERION: the projection performed must be the projection requested (PA is requested for routine erect chest because it reduces cardiac magnification vs AP).",
+        },
+        evidence: {
+          status: "provisional",
+          reference: "Positioning ref §Image rejection",
+          note: "PROVISIONAL / educational: forcing the pass mark below the threshold is a simulator rule, not a real-world automatic reject decision. The numeric score is unchanged.",
+        },
+      },
+      {
+        id: "patient-motion",
+        label: { en: "Visible patient motion", ar: "حركة مرئية للمريض" },
+        reason: {
+          en: "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.",
+          ar: "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة العملية تُعاد الصورة عادةً في مثل هذه الحالة.",
+        },
+        concept: {
+          status: "common-reference",
+          reference: "Image-quality ref — Motion",
+          note: "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
+        },
+        evidence: {
+          status: "provisional",
+          reference: "Positioning ref §Image rejection",
+          note: "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
+        },
+      },
+      {
+        id: "wrong-side-marker",
+        label: { en: "Wrong-side marker", ar: "علامة جانب خاطئة" },
+        reason: {
+          en: "Critical finding — wrong-side marker: the marker is on the wrong side for the patient's side (in this simulator's PA display convention, L belongs on the viewer's right and R on the viewer's left). A wrong-side marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated or corrected.",
+          ar: "ملاحظة حرجة — علامة جانب خاطئة: العلامة المسجَّلة على الصورة في الجانب الخطأ بالنسبة لجانب المريض (وفق اصطلاح عرض PA في هذا المحاكي: تُوضع L على يمين المشاهد وR على يساره). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة العملية تُعاد الصورة أو تُصحَّح عادةً في مثل هذه الحالة.",
+        },
+        concept: {
+          status: "common-reference",
+          reference: "Image-quality ref — Side marker and annotations (side identification must be visible)",
+          note: "COMMON QUALITY CRITERION: the image must identify the correct patient side. Which viewer side L / R belongs on is this simulator's EDUCATIONAL display convention (no validated orientation mapping is adopted in the references).",
+        },
+        evidence: {
+          status: "provisional",
+          reference: "Image-quality ref — Side marker and annotations",
+          note: "PROVISIONAL / educational: the laterality convention and the gate are simulator rules. A missing marker is not a wrong side (it is reported by the unscored marker check). The marker check itself stays unscored (weight 0) and the numeric score is unchanged.",
+        },
+      },
+    ],
   },
   rules: [
     {
