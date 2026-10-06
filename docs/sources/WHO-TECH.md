@@ -10,7 +10,7 @@
 **Strength:** a WHO technique manual for general / district-hospital use; its exposure values are locally adjusted examples, not universal protocols.
 
 ## General (technique)
-- **p.4** — The exposure values given assume an FFD of 140 cm and a fixed 10:1 grid, for a reference adult of 180 cm height / 80 kg; the values are to be adjusted locally. kV sets the contrast; mAs sets the blackening. (FFD 140 cm differs from the 180 cm of EC16260 and the ≥ 183 cm of ACR-CHEST for upright chest work.)
+- **p.4** — The exposure values given assume an FFD of 140 cm and a fixed 10:1 grid, for a reference adult of 180 cm height / 80 kg; the values are to be adjusted locally. kV sets the contrast; mAs sets the blackening. **Correction (Session 10b final addition): the 140 cm FFD is the WHIS-RAD installation basis for the manual's exposure tables, not a target SID** (so it does not conflict with 180 cm in EC16260 or ≥ 183 cm in ACR-CHEST / BONTRAGER-9).
 
 ## Chest PA (standing)
 - **p.6** — Shoulders pressed well forward; deep breath held. Adult: **120 kV**, mAs average 2–2.5 (range 1–12). Right / Left marker. Image criteria: apices visible; **rib 10 posterior and rib 6 anterior** above the diaphragm; lower diaphragm and both costophrenic angles visible; lung structure and spine seen behind the heart.
@@ -26,4 +26,4 @@
 ## How RAD-LAB may use this source
 - `common-reference` for: 120 kV adult chest, left lateral as the normal lateral (right optional), upright / slightly-forward lateral posture, straight lateral sternum, AP sitting and supine as variants, Right / Left marker on PA and AP, rib 10 posterior / 6 anterior.
 - Not for: a lateral centring *level*, a numeric mAs target (values are locally adjusted), a lateral marker convention, or a collimation region size beyond the film sizes it lists.
-- Sizes: the manual lists adult film sizes of 35 × 43 and 35 × 35 cm and 24 × 30 cm for children, advising collimation further where possible (supplied note, locator not recorded); not decisive for O2 / S10b-15.
+- Sizes: the manual lists adult film sizes of 35 × 43 and 35 × 35 cm and 24 × 30 cm for children, advising collimation further where possible (**locator corrected: printed pp.6–10**); not decisive for O2 / S10b-15.
