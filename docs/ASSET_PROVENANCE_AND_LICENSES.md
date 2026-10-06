@@ -159,3 +159,41 @@ Rules for entries:
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.
 - Session 6 added no external assets (hosting configuration, a text banner and documents only). Candidate sources / datasets for other modalities are listed — **not downloaded, not registered** — in `docs/MODALITY_SOURCES_CANDIDATES.md`.
+
+---
+
+## O10 commercial-licence audit (Session 12, step 1 — 2026-10-06)
+
+Criteria: S10-3 (own work, public domain / CC0, CC BY or purchased licence; NC / ND excluded; SA only with owner approval; Radiopaedia not used).
+
+### A. Registered assets (A-001 … A-005)
+
+| Entry | Source / licence | Commercial-compatible | In repo | Result |
+|---|---|---|---|---|
+| A-001 master (PA chest, Häggström) | Wikimedia Commons, CC0 1.0, verified 2026-10-06 directly against Commons (see entry) | Yes | `assets/source/chest-pa/` (not served) | Pass. Nothing to revisit; no attribution legally required, voluntary credit kept. |
+| A-002 derived (annotations neutralised) | CC0 (inherited) | Yes | `public/images/chest-pa/` | Pass |
+| A-003 web copy | CC0 (inherited) | Yes | `public/images/chest-pa/` | Pass |
+| A-004 doc screenshots | CC0 (derived from A-003 + RAD-LAB output) | Yes | `docs/session-4-renders/` | Pass |
+| A-005 goldens / contact sheet | CC0 (derived from A-003 + RAD-LAB output) | Yes | `scripts/qa/golden/`, `docs/session-5-renders/` | Pass |
+
+No fonts, icons, audio or datasets are registered. The A-001 licence record was **not re-fetched** in this audit (the Commons API was rate-limited, see B); the entry's 2026-10-06 verification stands and no derivative or attribution line needs revisiting on the evidence in the repo.
+
+### B. Assets the Chest Lateral exam would need
+
+| Needed asset | Source | Licence | Commercial-compatible | In repo | Result |
+|---|---|---|---|---|---|
+| Lateral chest baseline radiograph (adult, erect, annotations neutral) | none identified. `MODALITY_SOURCES_CANDIDATES.md` lists Wikimedia Commons lateral chest images as "to verify" only | unverified | unknown | No | **BLOCKED — no licence-verified image exists in the repo and none could be verified** |
+| Lateral overlays (arms, scapula, soft tissue) | would be authored procedurally by RAD-LAB code | own work | Yes | n/a | Not yet needed |
+| R / L side marker | learner-controlled annotation layer drawn by the renderer | own work | Yes | already in renderer | Pass |
+| Lateral positioning scene art | schematic, authored by RAD-LAB (no generated scene art, owner decision) | own work | Yes | No | Not yet authored |
+
+Verification attempt: `commons.wikimedia.org` API (search for lateral chest radiographs; `meta=siteinfo` retry) returned **HTTP 429 "too many requests"** from the session's shared egress IP on three attempts. Not bypassed. No Wikimedia, Radiopaedia or other image was downloaded, so none can be registered. **No asset was used.**
+
+### C. Options (cost / licence / effort)
+
+1. **Retry Commons from another network route or later** (the owner can also check candidates by hand and give file titles). Licence: CC0 / CC BY only; verify `extmetadata` licence, `AttributionRequired`, SHA-1, annotations and patient demographics per A-001 practice. Cost: free. Effort: low. **Recommended**, with the owner supplying 1-3 candidate file titles if rate limiting persists.
+2. **Owner-supplied or purchased image** with a written commercial licence (e.g. a hospital-owned or stock radiograph with patient-consent / de-identification evidence). Cost: money / legal time. Effort: medium.
+3. **Open dataset image** (NIH / OpenI, etc.): each dataset's terms must be read first; only after a compatibility review. Effort: medium-high; many are "to verify".
+4. **Schematic / phantom fallback**: lower realism, must be labelled; owner has ruled out generated scene art, so only a hand-authored vector schematic would qualify. Effort: high.
+
+Per the S12 rule, no implementation starts until an image is licence-verified.
