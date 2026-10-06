@@ -14,7 +14,8 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "common" });
-  return { title: `${t("appName")} — ${t("tagline")}` };
+  // Pilot preview: never indexed (also enforced by public/_headers and public/robots.txt).
+  return { title: `${t("appName")} — ${t("tagline")}`, robots: { index: false, follow: false } };
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
@@ -28,6 +29,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
       <body className="antialiased">
         <NextIntlClientProvider>
           <header className="border-b border-line bg-panel">
+            <p
+              role="note"
+              data-testid="preview-banner"
+              className="border-b border-signal/60 bg-signal/25 px-4 py-1.5 text-center text-xs font-semibold text-ink"
+            >
+              {t("previewBanner")}
+            </p>
             <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
               <Link href="/" className="flex items-baseline gap-3">
                 <span dir="ltr" className="text-xl font-bold tracking-wide text-brand-strong">

@@ -1,0 +1,3 @@
+# Pilot preview: private educational prototype, not for indexing.
+User-agent: *
+Disallow: /

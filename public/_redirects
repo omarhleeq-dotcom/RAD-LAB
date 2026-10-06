@@ -1,0 +1,4 @@
+# Cloudflare Pages. The app is a fully pre-rendered static export (every route is a real file), so there is
+# NO catch-all SPA fallback: unknown paths correctly fall through to 404.html. Only the bare root needs a redirect
+# (the Next routing middleware is not part of a static export).
+/  /en  302

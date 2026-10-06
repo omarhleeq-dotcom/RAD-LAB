@@ -31,6 +31,9 @@ A deterministic, canvas-based Chest PA result renderer driven by `RadiographResu
 ## Session 5 — Chest PA QA and polish
 End-to-end QA of the whole Chest PA workflow with a 53-scenario matrix (fully correct, every single error, realistic combinations) in which the **score, the feedback and the rendered image describe the same findings**; a laterality audit; a medical-consistency audit of every rule and sentence against the repository references; a uniform-scale (distortion-free) baseline mapping inside the unchanged required-anatomy region; **critical findings** (wrong projection, visible patient motion, wrong-side marker) that force “Below the educational pass mark” without changing the numeric score or weights; bilingual text alternative for the radiograph; accessibility fixes (axe: 0 violations); golden-image visual regression; GitHub Actions CI (typecheck, lint, tests, build). See [`docs/session-5-qa.md`](docs/session-5-qa.md), [`docs/session-5-qa-matrix.md`](docs/session-5-qa-matrix.md), [`docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md), [`docs/ARABIC_TERMINOLOGY.md`](docs/ARABIC_TERMINOLOGY.md) and [`docs/session-5-baseline-options.md`](docs/session-5-baseline-options.md).
 
+## Session 6 — pilot preview deployment and platform architecture
+**(A)** The repo is prepared for a Cloudflare Pages preview (static export `npm run build:pages` → `out/`, `_headers` / `_redirects` / `robots.txt`, noindex, a visible bilingual "Educational prototype" banner on every page, no analytics or external requests). Owner steps for a phone browser, including restricting the site to named emails with Zero Trust Access: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). Local check: `npm run build:pages && npm run preview:smoke`. **(B)** Design only (no behaviour change): [`docs/PLATFORM_ARCHITECTURE.md`](docs/PLATFORM_ARCHITECTURE.md) (modality → exam → mode, exam-definition schema, contracts, evidence/licensing per modality, asset strategy, navigation), [`docs/ROADMAP_SESSIONS.md`](docs/ROADMAP_SESSIONS.md) (Sessions 7+), [`docs/adr/`](docs/adr/README.md) and [`docs/MODALITY_SOURCES_CANDIDATES.md`](docs/MODALITY_SOURCES_CANDIDATES.md) (candidate sources / imagery, all "to verify").
+
 ## Educational, non-diagnostic disclaimer
 RAD-LAB is an **educational simulator**. It is not a diagnostic, clinical or dose-calculation tool and must not be used for patient care. The radiograph shown is a reference image of a different patient with simulated, approximate effects; technique values, tolerances and visual magnitudes are provisional demonstration data awaiting educator / medical-physicist review. Scores are educational, not real-world accept / reject decisions.
 
@@ -44,6 +47,7 @@ npm install
 npm run dev        # http://localhost:3000  (redirects to /en)
 npm run check      # typecheck + lint + tests
 npm run build && npm start
+npm run build:pages   # static export to out/ (pilot preview hosting, see docs/DEPLOYMENT.md)
 ```
 
 ### QA tooling (manual; not part of CI)

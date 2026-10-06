@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:pages": "RADLAB_STATIC_EXPORT=1 next build",
+    "preview:smoke": "node scripts/preview/smoke.mjs",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
