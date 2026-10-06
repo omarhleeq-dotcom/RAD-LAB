@@ -101,3 +101,22 @@ Machine-assisted proposals so the Lateral exam (Session 12) starts from a review
 | Horizontal central ray | الشعاع المركزي الأفقي | positioning | | |
 | Marker nearest the detector / nearest the tube | علامة الجانب الأقرب إلى الكاسيت / إلى الأنبوب | marker rule (O6) | **لا تُعتمد قبل قرار O6** | |
 
+## Session 10 — Chest AP (proposed terms — **pending educator review**; NOT used anywhere in the UI)
+Machine-assisted proposals. No existing string in `messages/*.json` or case data was changed. The display / marker convention for AP is an open owner decision (O8) — do not fix wording that depends on it. Terms already proposed for Lateral (anterior / posterior, superimposition, etc.) are not repeated.
+
+| English | Proposed Arabic | Intended use | Question for the reviewer | OK? |
+|---|---|---|---|---|
+| AP projection (anteroposterior) | الإسقاط الأمامي الخلفي (AP) | exam title, console | إبقاء الاختصار لاتينيًا كما في جدول PA؟ | |
+| Semi-erect | شبه منتصب (نصف جالس) | patient state (O9) | | |
+| Supine | الاستلقاء على الظهر | patient state (O9) | | |
+| Portable / mobile unit | جهاز متنقل (محمول) | set-up | «الجهاز المتنقل» أم «المحمول»؟ | |
+| Bedside / ward examination | فحص عند سرير المريض | order text | | |
+| Magnification | التكبير | effect cards | | |
+| Source-to-image distance reduced | تقليل المسافة بين المصدر والكاسيت | feedback | قارن «SID / التجهيز» في الجدول أعلاه | |
+| Anti-scatter grid | شبكة منع التشتت (الجريد) | technique | | |
+| Grid cut-off | قطع الشبكة | effect cards | مصطلح غير مستقر | |
+| Scatter correction (software) | تصحيح التشتت (برمجي) | technique note | | |
+| Cardiac silhouette size | حجم الظل القلبي | feedback | | |
+| Tube angulation | زاوية الأنبوب | control (if kept) | | |
+| Patient unable to take a full breath / hold still | المريض غير قادر على أخذ شهيق كامل / السكون | case condition (generic noun, see S8-1) | يُعاد النظر في المذكر / المؤنث | |
+
