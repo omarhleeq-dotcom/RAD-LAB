@@ -1,6 +1,6 @@
 # RAD-LAB — pilot preview deployment (Cloudflare Pages)
 
-**Status:** the repository is *prepared*; nothing is deployed. The owner only has to connect it (≈ 10 minutes, doable from a phone browser). The repo stays **private**; do not use GitHub Pages and do not change the repo's visibility or settings.
+**Status:** the repository is *prepared*; nothing is deployed until the owner adds two repo secrets (§A, ≈ 10 minutes, doable from a phone browser). The repo stays **private**; do not use GitHub Pages and do not change the repo's visibility or settings.
 
 > Cloudflare changes its dashboard often. Wording marked **(may differ)** could not be verified from this environment (no Cloudflare account, no network access to the dashboard) and is written from the documented flow as I know it. If a label differs, pick the closest one; the *values* (build command, output directory, Node version, branch) are what matter.
 
@@ -21,7 +21,45 @@
 
 **CSP note.** `script-src` has to include `'unsafe-inline'` because a static Next export embeds its bootstrap as inline scripts and a static host cannot add per-request nonces; `style-src` needs it for inline styles. Everything else is `'self'` only. This is acceptable for a no-login, no-data prototype; tighten with hashes if the app ever handles accounts.
 
-## 1. Connect the repo (phone browser steps)
+## A. Primary route: GitHub Actions direct upload
+
+Why: the Cloudflare Git-integration flow (§1) could not be completed from the owner's phone browser. `.github/workflows/deploy-pages.yml` builds the static export in GitHub Actions and uploads `out/` to Cloudflare Pages with Wrangler. The repo stays private; Cloudflare never gets access to the repo. The workflow:
+
+- runs on every push to `main` (production deploy, branch `main`) and every pull request (preview deploy, branch = PR branch name);
+- creates the Pages project `rad-lab` if missing (idempotent), then runs `pages deploy out --project-name=rad-lab`;
+- posts or updates **one** comment on the PR with the preview URL;
+- is **skipped with a notice** (not failed) when the secrets are absent, and for fork PRs (GitHub withholds secrets from forks);
+- does not run tests or Playwright (`ci.yml` does).
+
+### Owner steps (phone browser)
+
+Cloudflare/GitHub labels below **may differ**.
+
+1. **Find the Account ID.** Log in at <https://dash.cloudflare.com>. Open **Workers & Pages** (☰ menu); the **Account ID** is shown on that overview page (right side, or at the bottom on a phone), with a copy button. Alternatively, on the account home page open the ⋮ menu next to the account name and choose **Copy account ID**. **(may differ)** Do not paste it into issues or chats.
+2. **Create the scoped API token.** Tap the profile icon → **My Profile → API Tokens → Create Token → Create Custom Token → Get started**. **(may differ)**
+   - Token name: `rad-lab-pages-deploy`.
+   - Permissions: one row only: **Account** → **Cloudflare Pages** → **Edit**.
+   - Account Resources: **Include → your account**. No zone permissions, no other scopes.
+   - Optional: set an expiry date.
+   - **Continue to summary → Create Token.** Copy the token now; Cloudflare shows it only once.
+3. **Add the two repo secrets.** On GitHub open `omarhleeq-dotcom/RAD-LAB` → **Settings → Secrets and variables → Actions → New repository secret** (on a phone, "Desktop site" mode may help to reach Settings). **(may differ)** Add:
+
+   | Name (exact) | Value |
+   |---|---|
+   | `CLOUDFLARE_API_TOKEN` | the token from step 2 |
+   | `CLOUDFLARE_ACCOUNT_ID` | the Account ID from step 1 |
+
+4. **Trigger the first deploy.** Merge the PR that added the workflow (a push to `main` deploys production), or open the workflow run for the PR under **Actions → Deploy Pages** and tap **Re-run all jobs** (there is no manual trigger).
+5. **Find the deployed URL.**
+   - Production (push to `main`): `https://rad-lab.pages.dev`. If the name `rad-lab` was already taken on Cloudflare, the project gets a different `*.pages.dev` host; the real URL is printed in the deploy step log and shown at **Workers & Pages → rad-lab**. **(may differ)**
+   - Pull request previews: the PR gets one comment (updated on every push) with a branch URL like `https://<branch-name>.rad-lab.pages.dev` (branch name lower-cased, non-alphanumerics replaced by `-`, possibly truncated) and a per-commit URL like `https://<8-char-hash>.rad-lab.pages.dev`. All deployments are also listed at **Workers & Pages → rad-lab → Deployments**. **(may differ)**
+6. **Restrict access before sharing the link:** follow the Zero Trust Access steps in §3 (email one-time-PIN allow-list). The Pages shortcut in §3 step 5 may differ because the project was created by Wrangler, so the manual Access application (§3 step 3) is the reliable path. Cover both `rad-lab.pages.dev` and `*.rad-lab.pages.dev`.
+
+Troubleshooting: *"Authentication error [code: 10000]"* in the log means the token lacks **Account → Cloudflare Pages → Edit** or targets another account. The notice "Deploy skipped" means a secret is missing or misspelled. Rotate the token any time at **My Profile → API Tokens**, then update the secret. The workflow never echoes secrets (they are only passed via `env` / action inputs).
+
+## 1. Alternative: Cloudflare Git integration (failed from a phone browser)
+
+Kept for reference; it could not be completed on mobile, so §A is the primary route. Do not enable both for the same project name, or every push deploys twice.
 
 1. Open <https://dash.cloudflare.com/sign-up> and create a free Cloudflare account (email + password); confirm the email.
 2. Log in at <https://dash.cloudflare.com>. In the left menu (on a phone: the ☰ menu) open **Workers & Pages**. **(may differ — recently labelled "Compute (Workers)" / "Workers & Pages")**
