@@ -65,7 +65,7 @@ Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M
 - **Prerequisites:** Sessions 7–11 (exam/case split, D7 demographics, shell, Lateral reference, generalisation limited to the Lateral reference's needs); **O6 marker convention decided** and **O7** (lateral side(s)); the unread sources of the reference §1.2 (EUR 16260, ACR, WHO chest manual, StatPearls, IAEA) read; baseline asset sourced.
 - **Evidence needs:** lateral-specific positioning, centring, technique and quality criteria from IAEA/WHO/ACR (not recalled from memory); marker convention for lateral.
 - **Assets:** a lateral chest radiograph, openly licensed (CC0/CC BY), verified at source, registered (A-006+), landmarks authored; no fabricated image.
-- **Risks:** source scarcity for a good lateral baseline (fallback: schematic/phantom, clearly labelled, lowers realism); new superimposition/rotation cues are uncalibrated approximations; sign-off still outstanding.
+- **Risks:** source scarcity for a good lateral baseline (fallback: schematic/phantom, clearly labelled, lowers realism); new superimposition/rotation cues are uncalibrated approximations; educator / physicist sign-off (O5) is recommended before release or teaching but is not a gate (S10b-20).
 - **Size:** **L–XL** (reference + asset + QA matrix).
 
 ## Session 13 — Chest AP (erect / supine / portable) (implementation)

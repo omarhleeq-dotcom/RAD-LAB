@@ -1,5 +1,7 @@
 # Review package for the educator / medical physicist (O5, S10b-17)
 
+**Review is not a gate (S10b-20, owner decision 2026-10-06, final):** this review is **not** a gate for sessions or for owner use; it is **recommended before commercial release or before teaching students**. The owner (radiography degree) is the first-line content reviewer; the "Educational prototype — not for clinical use" banner stays.
+
 **Status:** created in the Session 10b follow-up (docs only). Everything below is **provisional**: nothing is validated, nothing in code, data or scoring changed. The long list of Chest PA items is in [`REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md); this file adds the items created since (Sessions 10 – 10b). Decisions are in [`DECISIONS.md`](DECISIONS.md); sources in [`sources/REGISTER.md`](sources/REGISTER.md).
 
 **Source provenance for the reviewer:** claims in `docs/sources/*.md` were recorded from the owner's advisor reading (full text read by the advisor; not re-verified against the originals by Claude Code). **Please spot-check the locators** against the originals (EC16260 PDF pp.15, 20, 21; WHO-CHEST pp.3, 4, 5, 17, 27–29, 32; ACR-CHEST Sec I, IV, VI; ACR-PORTABLE Sec I, II, IV, VI; WHO-TECH pp.4, 6–10; BONTRAGER-9 pp.32, 33, 36, 81–84, 87, 92, 94, 96; CLARK-12 p.10; STATPEARLS-POS sections "Projections", "Positioning – Chest" and its licence).
@@ -68,5 +70,5 @@ O2 (27 × 31 cm region), the whole Chest PA checklist, the preview banner wordin
 
 Question for the AR reviewer: confirm or correct each term in the final column of `ARABIC_TERMINOLOGY.md`; keep left / right wording as "the viewer's side of the displayed image".
 
-## 6. Owner-proposed Arabic corrections (pending educator review; no UI string changed)
+## 6. Owner-proposed Arabic corrections (owner-approved, to apply in a UI text session; no UI string changed)
 Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Owner-proposed corrections". Question for the **AR** reviewer on each: accept, reject or reword. Covers: breath wording (نَفَس), "able to stand" wording, the age pattern (number agreement 3–10), "الكاشف" for detector throughout (keep "البكي" for Bucky), "لوحا الكتف", the posterior costophrenic angle term, "البقاء ساكنًا", preference for "الإسقاط", and three new terms (leaning slightly forwards, holding the support arm, patient-position label). Collimation and quantum-noise wording are left to the educator.
