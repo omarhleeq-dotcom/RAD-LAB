@@ -1,5 +1,5 @@
 # ADR-0007 — Large volumes live outside git, described by a checksummed manifest
-**Status:** Proposed · **Date:** 2026-10-06
+**Status:** Proposed (nothing implemented). Owner decision D5 (Session 7) narrows the first imagery: own-work schematics and synthetic phantoms labelled "schematic / synthetic - not a patient image" (EN + AR), so no large real volume is needed before the realistic-imagery stage · **Date:** 2026-10-06
 
 ## Context
 CT/MRI volumes are tens of MB; the pilot is "connect the repo and deploy"; Cloudflare Pages has per-file and per-deployment limits (**to verify**). Today's assets are ≤ 1 MB.

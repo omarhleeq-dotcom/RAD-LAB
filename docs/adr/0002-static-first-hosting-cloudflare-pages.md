@@ -1,5 +1,5 @@
 # ADR-0002 — Static-first pilot hosting on Cloudflare Pages (private repo)
-**Status:** Accepted (repo prepared in Session 6; the owner connects the account) · **Date:** 2026-10-06
+**Status:** Accepted. **Amended by owner decision D6 (Session 7) and Session 6b (PR #7):** the site is deployed by **GitHub Actions** (`.github/workflows/deploy-pages.yml`, direct upload of `out/` with Wrangler) to the Cloudflare Pages project **`rad-lab`** — Cloudflare is *not* connected to the repo; main → production, pull requests → preview with the URL posted on the PR. The repo stays private; the site must not be shared before the Zero Trust email restriction is enabled; tokens and secrets are never pasted. · **Date:** 2026-10-06
 
 ## Context
 The repo is private and must stay private. The pilot needs a shareable URL (phone), per-branch previews, no cost, no secrets, no analytics, no runtime third-party requests. The app has no backend and every route can be pre-rendered.

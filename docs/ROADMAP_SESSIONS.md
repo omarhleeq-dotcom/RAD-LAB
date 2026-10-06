@@ -1,15 +1,18 @@
 # Proposed roadmap — Sessions 7+
 
-**Status: proposal for the owner; nothing started.** Rationale and design: [`PLATFORM_ARCHITECTURE.md`](PLATFORM_ARCHITECTURE.md); decisions: [`adr/`](adr/README.md); sources/imagery candidates: [`MODALITY_SOURCES_CANDIDATES.md`](MODALITY_SOURCES_CANDIDATES.md). Order follows the owner's brief; it deliberately departs from spec §25 (Session 7 = Practice/Assessment) because Assess needs backend/privacy decisions (ADR-0009).
+**Status: Session 7 done (exam/case split only; see below); Sessions 8+ are a proposal for the owner.** Owner decisions D1–D6 are in [`DECISIONS.md`](DECISIONS.md). Rationale and design: [`PLATFORM_ARCHITECTURE.md`](PLATFORM_ARCHITECTURE.md); decisions: [`adr/`](adr/README.md); sources/imagery candidates: [`MODALITY_SOURCES_CANDIDATES.md`](MODALITY_SOURCES_CANDIDATES.md). Order follows the owner's brief; it deliberately departs from spec §25 (Session 7 = Practice/Assessment) because Assess needs backend/privacy decisions (ADR-0009).
 
 Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M** ≈ 1 · **L** ≈ 2 · **XL** ≈ 3+ (may split). Sizes are guesses and exclude owner/expert review time.
 
-## Gate G0 — before Session 7 (non-code, owner)
+## Gate G0 — before Session 7 (non-code, owner) — partly resolved in Session 7
 - Connect the Cloudflare preview (`DEPLOYMENT.md`), enable Zero Trust Access with the reviewers' emails.
 - Start educator / medical-physicist review of `REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md` and the Arabic table; decide the **baseline mismatch** (`session-5-baseline-options.md`), the **27 × 31 cm region**, and the **marker rubric** — or consciously carry them as open (they stay labelled provisional either way).
-- Decide: Simulate ≠ Practice? shell before or after Lateral? (open decisions 6–7).
+- ~~Decide: Simulate ≠ Practice? shell before or after Lateral?~~ **Decided:** D1 one mode (Practice) for now; D2 shell before Lateral. Still open: baseline mismatch (O1), 27 × 31 cm region (O2), marker rubric (O3), unread sources (O4), educator / physicist review incl. Arabic and banner wording (O5).
 
-## Session 7 — Engine generalisation (refactor, Chest PA unchanged)
+## Session 7 — Engine generalisation (refactor, Chest PA unchanged) — **DONE in part (exam/case split); the rest deferred**
+
+> **Delivered (PR for branch `ccr-d6617413-5q6htb`):** `ExamDefinition` / `CaseDefinition` + `composeCase()` + validators + Chest PA split into exam and case data + registries, proved byte-identical by `scripts/qa/characterisation/` and the goldens. **Deferred by the Session 7 prompt (its scope wins over the bullet list below):** `ControlSpec[]` / generalised `SimulationSettings`, per-exam `CATEGORIES` / `ImageVariantId` / `EffectId` / critical-finding vocabularies, data-driven console and `SceneSpec`, optional `RadiographAssetSpec` groups, the `modalities/xray/*` move. They now belong with Session 9 (they need the Lateral exam to say what they must become). Detail: `PLATFORM_ARCHITECTURE.md` §2.4.
+
 - **Scope:** introduce `ExamDefinition` / `CaseDefinition` / `ControlSpec[]` and per-exam scoring categories behind a `compose()` that still yields today's `RadCase`; generalise `SimulationSettings`, `CATEGORIES`, `ImageVariantId`, `EffectId`, `RadiographAssetSpec` (optional landmark groups), critical-finding ids to data-declared vocabularies; make the console and the positioning scene generate from data (`ControlSpec`, `SceneSpec`); move code into `modalities/xray/*`. **No new exam, no UI change.**
 - **Acceptance:** all 53 scenario goldens (`scripts/qa/golden/matrix.json`), 53 image goldens, the 662+ unit tests, weights 25/20/15/20/10/10, the EN/AR × desktop/tablet/mobile Playwright matrix and axe audit are **identical**; the architecture test still forbids pixel scoring and randomness.
 - **Prerequisites:** Session 6 merged; G0 not required.
@@ -18,13 +21,13 @@ Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M
 - **Risks:** silent behaviour drift (mitigated by goldens); over-abstracting before a second exam exists (mitigate: only generalise what Lateral/AP *needs*; rule of three); store/UI churn.
 - **Size:** **L**.
 
-## Session 8 — Platform shell: catalogue, exam hub, mode containers
+## Session 8 — Platform shell: catalogue, exam hub, mode containers (**next; D2: before Chest Lateral**)
 - **Scope:** `/[locale]/[modality]/[exam]` hub + mode tiles; redirect for `/simulation/[caseId]`; breadcrumb and mode switcher; Learn/Reference *containers* (generic content-block renderer, `LocalizedText` blocks with `SourceRef`, review badges); X-ray Chest PA exposes Practice + a small Learn/Reference seed written from existing reference docs; remove the hard-coded roadmap chips. Static export still works.
-- **Prerequisites:** Session 7 (catalogue reads `ExamDefinition`); owner decision on mode set.
+- **Prerequisites:** Session 7 (done: catalogue reads `ExamDefinition`; the default case keeps the exam id as its public id, so `/simulation/chest-pa-erect` is unchanged until the redirect exists). Mode set decided: D1, one mode (Practice) for now — Learn / Reference are containers.
 - **Evidence:** Learn/Reference text must be derived from the repo's Chest PA reference documents (cited sections) — no new medical claims.
 - **Assets:** none new (schematic SVG only, own work).
 - **Risks:** link breakage for shared pilot URLs (redirects); i18n key growth; Arabic review backlog.
-- **Size:** **M–L**. *(Owner may swap with Session 9; see G0.)*
+- **Size:** **M–L**. *(D2: the shell comes before Chest Lateral.)*
 
 ## Session 9 — Chest Lateral
 - **Scope:** write `RAD-LAB_Medical_Reference_Chest_Lateral*.md` first (positioning, technique, image quality — same standard as PA), then `ExamDefinition` + case + baseline + landmarks + scene + scenario matrix + goldens; add only the new effect modules/rule kinds the reference requires.
@@ -53,8 +56,8 @@ Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M
 ## Session 12 — CT: Learn + Reference
 - **Scope:** modality entry in the catalogue (status: preview), content only (no engine): what CT is, scan geometry, key parameters, dose concepts (CTDIvol, DLP — definitions), windowing concept, protocol *examples* clearly classed, safety/contrast overview; glossary EN/AR; Reference tables with `SourceRef`s. Static schematic figures (own work).
 - **Prerequisites:** Session 8 (content containers); CT sources read (AAPM 96/204, IAEA, ACR) and the CT reference document written.
-- **Evidence needs:** dose-metric definitions and units; no numeric reference levels unless sourced and labelled local/provisional.
-- **Assets:** schematic SVG only (own); optional Commons figures (verified).
+- **Evidence needs:** dose-metric definitions and units; no numeric reference levels unless sourced and labelled local/provisional. **D4:** definitions (CTDIvol, DLP) first; a numeric reference level only with a cited published source and its country or region.
+- **Assets:** schematic SVG only (own), labelled "schematic / synthetic - not a patient image" in EN and AR (**D5**); optional Commons figures (verified).
 - **Risks:** dose numbers mistaken for clinical limits; Arabic CT terminology; scope creep into image reading.
 - **Size:** **M–L**.
 
@@ -84,7 +87,7 @@ Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M
 
 ## Later (not scheduled; each needs an owner decision first)
 - **MRI / US Simulate** (parameter presets → pre-computed series; probe-pose → sweep look-up). Needs asset capture/derivation plan and a performance budget.
-- **Assessment mode + instructor tools** — only after ADR-0009 prerequisites: auth, storage/retention, privacy notice, integrity (server-side evaluation), instructor roles, reviewed non-provisional rules. Likely a backend decision session first (**M**, no code) then implementation (**XL**).
+- **Assessment mode + instructor tools** — **D3: the last item of the roadmap.** Only after ADR-0009 prerequisites: auth, storage/retention, privacy notice, integrity (server-side evaluation), instructor roles, reviewed non-provisional rules. Likely a backend decision session first (**M**, no code) then implementation (**XL**).
 - **Pediatric / difficulty-level cases** (spec §6–7) — new `CaseDefinition`s once exams are stable.
 - **Authoring tool / JSON import** for instructors (ADR-0004 keeps definitions serialisable).
 

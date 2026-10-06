@@ -1,5 +1,5 @@
 # ADR-0006 — Evidence classes and the asset registry as a platform-wide gate
-**Status:** Accepted for X-ray (Sessions 3–5); proposed to extend to every modality · **Date:** 2026-10-06
+**Status:** Accepted for X-ray (Sessions 3–5); proposed to extend to every modality. Owner decisions D4 (CT dose: definitions first, numeric levels only with a cited source and region) and D5 (first CT/MRI/US imagery: labelled schematics / synthetic phantoms) apply it · **Date:** 2026-10-06
 
 ## Context
 CLAUDE.md rule 1: no invented medical facts; unvalidated values are provisional. The five evidence classes and `ASSET_PROVENANCE_AND_LICENSES.md` exist. CT dose figures and especially MRI safety content raise the stakes.

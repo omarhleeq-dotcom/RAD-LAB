@@ -1,5 +1,5 @@
 # ADR-0005 — One engine module per modality behind a common contract
-**Status:** Proposed · **Date:** 2026-10-06
+**Status:** Proposed (not implemented; Session 7 kept the single X-ray engine in `features/*` and did not create `src/modalities/`) · **Date:** 2026-10-06
 
 ## Context
 CT, MRI and US differ from radiography in state (protocols, sequences, probe pose), results (volumes, series, live frames) and safety content (`PLATFORM_ARCHITECTURE.md` §4.4). They must still share navigation, content, evidence/licensing, i18n and scoring-gate semantics.

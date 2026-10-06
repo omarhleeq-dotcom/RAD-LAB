@@ -1,6 +1,6 @@
-# RAD-LAB — platform architecture (design, Session 6)
+# RAD-LAB — platform architecture (design Session 6; exam/case split implemented Session 7)
 
-**Status: design only.** No production behaviour was changed to write this document; Chest PA scoring, weights (25/20/15/20/10/10), rendering and goldens are untouched. Nothing here is implemented unless §2 says so. Decisions are recorded as ADRs in [`adr/`](adr/README.md); the proposed order of work is in [`ROADMAP_SESSIONS.md`](ROADMAP_SESSIONS.md); candidate sources and datasets are in [`MODALITY_SOURCES_CANDIDATES.md`](MODALITY_SOURCES_CANDIDATES.md).
+**Status: mostly design.** Session 6 wrote this document without changing behaviour. **Session 7 implemented one part of it — the `ExamDefinition` / `CaseDefinition` split behind a `composeCase()` compatibility view — as a pure refactor with zero behaviour change** (§2.4 says exactly what exists, where, and what is still hard-wired). Everything else here is still a proposal. Owner decisions D1–D6 are in [`DECISIONS.md`](DECISIONS.md). Decisions are recorded as ADRs in [`adr/`](adr/README.md); the proposed order of work is in [`ROADMAP_SESSIONS.md`](ROADMAP_SESSIONS.md); candidate sources and datasets are in [`MODALITY_SOURCES_CANDIDATES.md`](MODALITY_SOURCES_CANDIDATES.md).
 
 > RAD-LAB is an **educational** platform. No medical value in this document is validated. Where a value or rule is suggested for a future exam it is marked *illustrative* and must pass the evidence gate (§6) before it reaches a learner.
 
@@ -32,7 +32,7 @@ Definitions (the spec §9 names only Practice and Assessment; Learn / Reference 
 `Learn + Reference` → `Simulate` → `Practice` → `Assess`.
 X-ray is at Practice. CT, MRI and US start at Learn + Reference. Assess comes last everywhere because it needs decisions outside the front-end (accounts, storage, privacy, integrity — ADR-0009).
 
-## 2. Current architecture, as-is (Sessions 1–5, `main` @ `1e4a2f0`)
+## 2. Current architecture, as-is (Sessions 1–5; §2.1–2.3 describe `main` @ `1e4a2f0` before Session 7 — §2.4 is the Session 7 delta)
 
 ### 2.1 Layers (enforced by convention + `src/features/radiograph/architecture.test.ts`)
 
@@ -79,8 +79,47 @@ Data flow of one attempt:
 
 ### 2.3 What this means for the next exams
 
-- **Chest Lateral / Chest AP** share the *rule kinds*, geometry, technique model, scoring, renderer core and QA pattern. They are blocked from being "data only" by: the fixed `SimulationSettings` / `CATEGORIES` / `ImageVariantId` vocabulary, the chest-specific `RadiographAssetSpec` and effect table, the SVG positioning art, and the merged exam/case object. All five are *generalisation refactors with a mechanical, golden-checked proof* (Session 7), not redesigns.
+- *(Session 7 update: the "merged exam/case object" blocker below is removed — see §2.4.)* **Chest Lateral / Chest AP** share the *rule kinds*, geometry, technique model, scoring, renderer core and QA pattern. They are blocked from being "data only" by: the fixed `SimulationSettings` / `CATEGORIES` / `ImageVariantId` vocabulary, the chest-specific `RadiographAssetSpec` and effect table, the SVG positioning art, and the merged exam/case object. All five are *generalisation refactors with a mechanical, golden-checked proof* (Session 7), not redesigns.
 - **CT / MRI / US** share almost nothing below the UI: different settings (protocol parameters, sequence parameters, probe pose), different results (volumes, image series, live B-mode), different safety content and different asset sizes. They share: `LocalizedText`/i18n, evidence classes, asset registry, the scoring-gate pattern, the "state → plan → pure renderer, no pixel scoring" principle, and navigation (§9).
+
+### 2.4 Session 7 outcome: exam / case split (implemented) and what is still hard-wired
+
+**Implemented** (pure refactor; zero behaviour change, proved below):
+
+```
+src/domain/exam.ts                  ExamDefinition, CaseDefinition, ExamTechniqueProfile, PatientTechniqueModel, SCENE_IDS, RENDERER_IDS
+src/features/exam/compose.ts        composeCase(exam, case) → RadCase (compat view, memoised); publicCaseId()
+src/features/exam/validate.ts       validateExam(), validateCase()  — structural checks (weights = 100, rule ↔ control/option
+                                    consistency, initial state inside console range, cooperation answers every instruction, EN+AR text,
+                                    evidence class present, known scene/renderer id). No medical judgement.
+src/data/exams/index.ts             EXAMS registry, getExam()
+src/data/exams/xray/chest-pa-erect.ts        ExamDefinition: controls, rules, tolerances, scoring weights + pass mark + critical findings,
+                                    positioning (centering, marker convention `markerSide`), requiredAnatomy, detector, option lists,
+                                    possibleErrors, imageCriteria, evidence, scene { "chest-pa-frontal" }, render { "radiograph-2d" }
+src/data/exams/xray/chest-pa-technique.ts    technique PROTOCOL (ExamTechniqueProfile = TechniqueProfile minus patient)
+src/data/cases/chest-pa-erect.ts    CaseDefinition "adult-demo" (patient, order text, condition, patient attenuation, initial state)
+                                    + `chestPaErect = composeCase(exam, case)`
+src/data/cases/chest-pa-radiograph.ts / chest-pa-patient.ts   case-level baseline asset + landmarks / cooperation profile (unchanged)
+src/data/cases/index.ts             CASE_DEFINITIONS, CASES (composed), getCase()
+```
+
+- **What moved where.** Exam: everything that says what the exam *is*. Case: everything that is one patient scenario. The one split inside an existing object is `TechniqueProfile`: the protocol is the exam's, `patient.attenuation` is the case's (`CaseDefinition.patientTechnique`), merged back by `composeCase`. Rules, weights, tolerances, wording and every value were moved by line range, not retyped.
+- **Compatibility.** `RadCase` is unchanged and is what the engine, renderer, store, routes and UI still consume. The default case of an exam keeps the exam id as its public id (`chest-pa-erect`), so routes, shared links and the noise seed are unchanged (decision S7-1).
+- **Proof of zero change.** `scripts/qa/characterisation/` (committed *before* the refactor; never regenerated) pins, for all 53 scenarios, score / per-category scores / critical findings / verdict / every check with EN+AR feedback / result-screen message keys and EN+AR text / EN+AR canvas alt text / the full evaluation result / the full render plan / a SHA-256 of the phantom render, plus the composed case object and the SHA-256 of all 53 golden PNGs. `src/features/qa/characterisation.test.ts` compares byte-for-byte in CI. The browser golden comparison (`scripts/qa/run-matrix.mjs`) and the full EN/AR × device matrix were run on the final head with zero regenerated images (`session-7-results` section in `docs/session-5-qa.md`-style table: see the PR).
+- **"Data-only exam" check.** `src/features/exam/exam.test.ts` builds a *fixture* exam (different required projection and category weights) from the Chest PA exam and runs the real engine: the rule, the critical-finding gate and the weights all follow the data. Not a shipped exam.
+
+**Still hard-wired to Chest PA** (left as is on purpose; each needs the second exam to say what it must become — rule of three — or would change the UI):
+
+| Area | Where | Why left | Next |
+|---|---|---|---|
+| `SimulationSettings` (flat, fixed keys), `EnumSettingKey`, `NumericSettingKey` | `domain/simulation.ts` | A control list (`ControlSpec[]`) needs the Lateral exam's real controls to design; rules/console/store/result-state all key off it | Session 9, with Lateral |
+| `CATEGORIES` / `CategoryId` (six fixed), `ImageVariantId`, `EffectId` + evidence tables, `CriticalFindingId` + `isPresent` switch | `domain/simulation.ts`, `features/radiograph/{plan,consistency}.ts`, `features/evaluation/critical.ts` | i18n labels for categories / effects are message keys, not data; generalising now would be speculative | Session 9 (add only what Lateral needs) |
+| Console and positioning scene | `features/xray-console/*`, `features/positioning/*` (hard-wired JSX / hand-drawn SVG) | Generating them from data is a visible-UI refactor with no second consumer; `ExamDefinition.scene` / `.render` are declarative ids that nothing resolves yet | when a second scene exists |
+| `RadiographAssetSpec` required landmark groups (`scapulae`, `jaw`, `lungApexV`, `denseZones`) | `domain/radiograph.ts` | Chest-specific shape; optional groups need a second asset | Session 9 |
+| Folder move to `modalities/xray/{engine,renderer,views}` | — | Pure churn with no behavioural benefit before a second modality | with the first non-X-ray engine |
+| Consumers of `RadCase` | engine, plan, store, UI | Strangler pattern: migrate one at a time, delete the compat view last | Session 8+ |
+
+Differences from `ROADMAP_SESSIONS.md` Session 7: the prompt for this session limited the scope to the exam/case split plus proof; it did not include generalising the vocabularies, the data-driven console / scene, or the `modalities/` move (rows above). The 662-test baseline is now 682 (4 characterisation + 16 exam/case tests); weights, the engine, the renderer and all goldens are unchanged.
 
 ## 3. Target module structure
 
@@ -128,16 +167,16 @@ Dependency rule: `domain` ← `modalities/*/engine|renderer` (pure) ← `stores`
 
 ## 4. Exam-definition and case schema
 
-### 4.1 Split today's `RadCase`
+### 4.1 Split today's `RadCase` — **done in Session 7 for the fields below; see §2.4 for paths and for what remains**
 
 | Concept | Contains | Today | Target |
 |---|---|---|---|
-| **ExamDefinition** | what the exam *is*: controls, rules, tolerances, scoring categories + weights, critical findings, scene, result-render spec, technique profile *family*, evidence, review status | inside `RadCase` (`rules`, `controls`, `scoring`, `technique`, `positioning`, `availableProjections`…) | `data/exams/xray/chest-pa-erect.ts` |
-| **CaseDefinition** | one patient scenario on that exam: patient, clinical scenario, patient condition, initial state, cooperation profile, baseline asset, difficulty, which rules are active | inside `RadCase` (`patient`, `clinicalScenario`, `initialSettings`, `patientCooperation`, `radiograph`) | `data/cases/chest-pa-erect/adult-demo.ts` |
+| **ExamDefinition** | what the exam *is*: controls, rules, tolerances, scoring categories + weights, critical findings, scene, result-render spec, technique profile *family*, evidence, review status | was inside `RadCase` (`rules`, `controls`, `scoring`, `technique`, `positioning`, `availableProjections`…) | **implemented**: `data/exams/xray/chest-pa-erect.ts` (`domain/exam.ts`). Review status is `provisional` + exam-level `evidence`; a fuller `ReviewStatus` (reviewers, dates, open questions) is not built |
+| **CaseDefinition** | one patient scenario on that exam: patient, clinical scenario, patient condition, initial state, cooperation profile, baseline asset, difficulty, which rules are active | was inside `RadCase` (`patient`, `clinicalScenario`, `initialSettings`, `patientCooperation`, `radiograph`) | **implemented**: `data/cases/chest-pa-erect.ts` (id `adult-demo`; the target path `cases/<exam>/<case>.ts` is deferred until an exam has more than one case). Difficulty and per-case rule activation are not built |
 
-Chest PA = 1 exam + 1 case; a pediatric or "needs reinforcement" patient is a *new case*, not a new exam. The migration keeps `RadCase` as a compatibility view (`compose(exam, case)`) so the engine and goldens do not change in the first step.
+Chest PA = 1 exam + 1 case; a pediatric or "needs reinforcement" patient is a *new case*, not a new exam. The migration keeps `RadCase` as a compatibility view — **implemented as `composeCase(exam, case)`** (`features/exam/compose.ts`) — so the engine and goldens did not change in the first step.
 
-### 4.2 Sketch (illustrative TypeScript; not implemented)
+### 4.2 Sketch (illustrative TypeScript; **not** implemented — the implemented types are in `src/domain/exam.ts` and are narrower: no `ControlSpec[]`, no `modes`, no `simulation` union, scoring categories are still the fixed `CategoryId` set)
 
 ```ts
 type ModalityId = "xray" | "ct" | "mri" | "us";
@@ -181,6 +220,9 @@ interface RadiographySim {
 ```
 
 Key changes versus today: (1) settings become a **declarative control list** (typed per exam, validated at load by a schema test) instead of one global interface; (2) scoring **categories are declared** per exam (spec §10: "weights can vary per exam type"), the six Chest categories being one declaration; (3) effects are **bound by id** (`EffectBinding { effectId, driver, tuningKey }`) so an exam picks from an effect catalogue; (4) the positioning view is a `SceneSpec`.
+
+### 4.2a Declarative scene / render bindings (Session 7)
+`ExamDefinition.scene = { id: "chest-pa-frontal" }` and `.render = { renderer: "radiograph-2d" }` are ids validated against `SCENE_IDS` / `RENDERER_IDS`. They document which code draws the exam but nothing resolves them yet: there is one scene (hand-drawn SVG in `features/positioning`) and one renderer. A registry lookup (`SCENES[id]`, `RENDERERS[id]`) is added when the second one exists (§2.4).
 
 ### 4.3 How Chest PA, Chest Lateral and Chest AP differ — as data
 
@@ -319,27 +361,27 @@ Choose modality → exam → mode, mobile-first (the owner reviews on a phone).
 
 ## 10. Quality, testing and migration approach
 
-- **Golden-first refactors.** Before any engine generalisation, freeze today's proofs: the 53-scenario golden (`scripts/qa/golden/matrix.json`), 53 PNG goldens, 662 unit tests, the browser matrix. Refactor passes only if these are **byte/value identical** (Session 7 acceptance).
-- **Strangler pattern:** introduce `ExamDefinition`/`CaseDefinition` and a `compose()` that yields today's `RadCase`; migrate consumers one at a time; delete the compat view last.
+- **Golden-first refactors.** Before any engine generalisation, freeze today's proofs. Session 7 did this with `scripts/qa/characterisation/` (scenario snapshot, composed case, golden-image checksums; compared in CI) on top of the 53-scenario golden (`scripts/qa/golden/matrix.json`), 53 PNG goldens, the unit tests and the browser matrix. A refactor passes only if these are **byte/value identical**; a legitimate behaviour change (e.g. an owner-approved demographic change) regenerates only the file it touches, in a commit that says so.
+- **Strangler pattern:** `ExamDefinition`/`CaseDefinition` and `composeCase()` exist (Session 7); migrate consumers one at a time; delete the compat view last.
 - Each new exam brings its own scenario matrix + goldens (template: `docs/session-5-qa.md`), its own reference document, its own review checklist section.
-- CI stays no-secrets/no-deploy; the pilot deployment is Cloudflare building `main` + branches (ADR-0002).
+- CI (`ci.yml`) stays no-secrets/no-deploy; deployment is a separate GitHub Actions workflow (`deploy-pages.yml`, direct upload to Cloudflare Pages project `rad-lab`; main → production, PRs → preview; D6, ADR-0002).
 
 ## 11. Instructor / institution readiness (spec §12, not built)
 Seams kept open, nothing built: serialisable `AttemptRecord`; case/exam ids stable; a catalogue that can be filtered per assessment (`assessment = { examIds, cases, attempts, timeLimit }` as a future type); disclosure policy by mode; `engineVersion`/`contentVersion` stamped on every result. Assess prerequisites are listed in ADR-0009.
 
 ## 12. Open decisions carried forward and new ones
 
-**Carried forward (unchanged from Sessions 4–5, still open):**
-1. **Baseline demographic mismatch**: baseline radiograph = 21-year-old woman (A-001); case patient = 45-year-old man. Options in `session-5-baseline-options.md`: (a) change case demographics to match, (b) source a male PA baseline (no verified candidate), (c) leave as labelled. *Interacts with the platform*: the baseline belongs to a `CaseDefinition`, so decision (a)/(b) is cheap after the exam/case split.
+**Carried forward (unchanged from Sessions 4–5, still open — now O1–O5 in [`DECISIONS.md`](DECISIONS.md)):**
+1. **Baseline demographic mismatch**: baseline radiograph = 21-year-old woman (A-001); case patient = 45-year-old man. Options in `session-5-baseline-options.md`: (a) change case demographics to match, (b) source a male PA baseline (no verified candidate), (c) leave as labelled. *Interacts with the platform*: the baseline belongs to a `CaseDefinition`, so decision (a)/(b) is cheap now that the exam/case split exists (Session 7). Recommendation (a), awaiting approval; impact: [`session-7-demographics-impact.md`](session-7-demographics-impact.md).
 2. **Provisional 27 × 31 cm required-anatomy region** and the 1.5 cm landmark-strip mismatch (checklist §A): keep the labelled demo region, adopt a baseline matching it, or measure on a validated baseline.
 3. **Marker rubric**: presence / side / in-field / over-anatomy / weight, and the PA viewer-side convention — currently weight 0, wrong side is a critical finding. Sources read: Chung 2020, Fuller 2016 (neither gives a rule). Needed before Lateral/AP because the convention differs per projection.
 4. **Unread sources**: ACR digital-radiography / chest practice parameters; Australian Institute of Radiography professional-practice guideline cited by Barry et al. (and the Barry audit itself) — to read before the marker rubric and before the Lateral/AP reference documents.
 5. **Educator / medical-physicist review** of everything in `REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md` (A–G) and the Arabic terminology table. No Chest-PA value is validated.
 
-**New (decide before or during Session 7+):**
-6. Are *Simulate* and *Practice* separate modes (this document) or is Simulate a toggle inside Practice?
-7. Does the shell (catalogue + exam hub, Session 8) come before Chest Lateral (default) or after?
-8. Hosting beyond the pilot (static is enough until Assess), custom domain, who may see previews (Zero Trust email list; `DEPLOYMENT.md` §3).
-9. Assess prerequisites (ADR-0009): identity, storage, retention, privacy/legal, integrity, who owns data.
-10. Whether numeric dose reference levels are ever shown (always provisional/local) or only the *method* (CTDIvol/DLP definitions).
-11. Which CT/MRI/US sources are acceptable to the owner (see candidates doc) and whether synthetic phantoms are acceptable as the first imagery.
+**New items 6–11 were decided by the owner in Session 7 (details in [`DECISIONS.md`](DECISIONS.md)):**
+6. Simulate vs Practice → **D1: one mode (Practice) for now**; split only if a no-hints / timed / exam-like variant is needed.
+7. Shell before Lateral → **D2: yes, build the shell first.**
+8. Hosting → **D6: Cloudflare Pages project `rad-lab` via GitHub Actions, repo private, no sharing before Zero Trust email restriction.** *Still open:* custom domain and who may see previews beyond the pilot.
+9. Assess prerequisites → **D3: Assess deferred to the end of the roadmap** (identity, storage, retention, privacy, server scoring all stay undecided until then).
+10. Numeric dose reference levels → **D4: teach definitions (CTDIvol, DLP) first; numeric levels only with a cited published source and its country / region.**
+11. First CT/MRI/US imagery → **D5: own-work schematics and synthetic phantoms, always labelled "schematic / synthetic - not a patient image" (EN + AR); realistic images only later from verified open licences.**
