@@ -6,7 +6,7 @@ Short records of the main platform decisions (Session 6; statuses updated in Ses
 |---|---|---|
 | [0001](0001-adr-format.md) | Record decisions as ADRs | Accepted |
 | [0002](0002-static-first-hosting-cloudflare-pages.md) | Static-first pilot hosting on Cloudflare Pages (project `rad-lab`, GitHub Actions deploy), private repo | Accepted (D6) |
-| [0003](0003-modality-exam-mode-hierarchy.md) | Hierarchy modality → exam → mode, five modes | Proposed; one mode (Practice) for now (D1) |
+| [0003](0003-modality-exam-mode-hierarchy.md) | Hierarchy modality → exam → mode, five modes | Proposed; one mode (Practice) for now (D1); route shape implemented by ADR-0011 |
 | [0004](0004-declarative-exam-definitions.md) | Declarative exam + case definitions replace the fixed `RadCase` / `SimulationSettings` | Accepted; exam/case split implemented in Session 7, vocabularies / `ControlSpec` / console / scene remaining |
 | [0005](0005-per-modality-engines-common-contract.md) | One engine module per modality behind a common contract | Proposed (not implemented) |
 | [0006](0006-evidence-and-licensing-gate.md) | Evidence classes and the asset registry as a platform-wide gate | Accepted for X-ray; D4, D5 extend it |
@@ -14,6 +14,7 @@ Short records of the main platform decisions (Session 6; statuses updated in Ses
 | [0008](0008-deterministic-no-pixel-scoring.md) | Deterministic engines; renderers never feed scoring; disclosure is a policy | Accepted |
 | [0009](0009-modes-progression-assess-last.md) | New modalities climb Learn+Reference → Simulate → Practice → Assess; Assess last | Accepted (D3) |
 | [0010](0010-orientation-conventions-are-data.md) | Image orientation conventions are data and never mirrored by RTL | Accepted for X-ray, proposed to extend |
+| [0011](0011-routing-url-scheme-and-static-deep-links.md) | Public URL scheme `/{locale}/{modality}/{exam}/practice[?case=]`, old-URL redirects, static deep links | Accepted (Session 9, Option A) |
 
 ## Template
 ```

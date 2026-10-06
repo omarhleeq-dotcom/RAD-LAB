@@ -1,7 +1,9 @@
 "use client";
 
+import { Suspense } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
+import { useSearchParams } from "next/navigation";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
@@ -10,7 +12,7 @@ const LABELS: Record<string, { short: string; native: string }> = {
   ar: { short: "ع", native: "العربية" },
 };
 
-export function LanguageSwitcher() {
+function Switcher({ query }: { query: string }) {
   const t = useTranslations("common");
   const current = useLocale();
   const pathname = usePathname();
@@ -19,7 +21,7 @@ export function LanguageSwitcher() {
       {routing.locales.map((locale) => (
         <Link
           key={locale}
-          href={pathname}
+          href={`${pathname}${query}`}
           locale={locale}
           hrefLang={locale}
           lang={locale}
@@ -34,5 +36,19 @@ export function LanguageSwitcher() {
         </Link>
       ))}
     </nav>
+  );
+}
+
+/** Keeps the page and its query (`?case=`) when switching language. The query is read on the client only. */
+function WithQuery() {
+  const q = useSearchParams().toString();
+  return <Switcher query={q ? `?${q}` : ""} />;
+}
+
+export function LanguageSwitcher() {
+  return (
+    <Suspense fallback={<Switcher query="" />}>
+      <WithQuery />
+    </Suspense>
   );
 }

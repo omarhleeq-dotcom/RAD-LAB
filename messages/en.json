@@ -6,24 +6,19 @@
     "provisionalBadge": "Provisional demo data",
     "comingSoon": "Coming soon",
     "backHome": "Back to home",
+    "home": "Home",
+    "breadcrumb": "Breadcrumb",
+    "skipToContent": "Skip to main content",
+    "loading": "Loading…",
     "previewBanner": "Educational prototype — not for clinical use; values pending educator/physicist review",
     "disclaimer": "Educational simulator — not a diagnostic or clinically validated system. Do not use it for patient care. Technique and tolerance values are provisional demonstration data until reviewed by an educator or medical physicist."
   },
   "home": {
     "title": "Practice radiography before the real patient.",
     "subtitle": "RAD-LAB is an educational simulator for radiologic technology students. Position the patient, set the technique, expose, then learn from precise feedback.",
-    "casesTitle": "Chest X-ray cases",
-    "startCase": "Start simulation",
+    "catalogTitle": "Choose an imaging modality",
     "mvpNote": "Practice mode · no account required",
     "provisionalNotice": "Technique values in this MVP are provisional demo data and have not been clinically validated. Do not use them as clinical guidance.",
-    "roadmapTitle": "Planned modules",
-    "roadmap": {
-      "chestAp": "Chest AP portable",
-      "chestLateral": "Chest lateral",
-      "extremities": "Extremities & spine",
-      "ct": "CT workflow",
-      "mri": "MRI workflow"
-    },
     "patientLine": "{age}-year-old {sexLabel}"
   },
   "sex": {
@@ -428,5 +423,27 @@
     "altMarkerPartial": "The marker is partly cut off by the field.",
     "altMarkerHidden": "Side marker {side} lies outside the field and is not recorded.",
     "altMarkerNone": "No side marker is recorded."
+  },
+  "modality": {
+    "examsTitle": "Exams"
+  },
+  "exam": {
+    "casesTitle": "Cases",
+    "startCase": "Start simulation",
+    "modes": {
+      "practice": "Position the patient, set the technique, expose, then learn from precise feedback and a score."
+    }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "We could not find that page. The link may be wrong or out of date.",
+    "caseTitle": "Case not found",
+    "caseBody": "This exam has no case with that identifier. Go back to the exam to choose one of its cases.",
+    "backToExam": "Back to the exam"
+  },
+  "legacy": {
+    "title": "This page has moved",
+    "body": "Taking you to the new address of this exam.",
+    "link": "Continue to the exam"
   }
 }

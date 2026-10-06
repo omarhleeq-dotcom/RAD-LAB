@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { RouteFocus } from "@/components/shell/RouteFocus";
 import { Link } from "@/i18n/navigation";
 import { dirFor, routing } from "@/i18n/routing";
 import "../globals.css";
@@ -14,8 +15,9 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "common" });
-  // Pilot preview: never indexed (also enforced by public/_headers and public/robots.txt).
-  return { title: `${t("appName")} — ${t("tagline")}`, robots: { index: false, follow: false } };
+  // Pilot preview: never indexed (also enforced by public/_headers and public/robots.txt). Pages set their own title.
+  const full = `${t("appName")} — ${t("tagline")}`;
+  return { title: { default: full, template: `%s — ${t("appName")}` }, robots: { index: false, follow: false } };
 }
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
@@ -28,6 +30,12 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
     <html lang={locale} dir={dirFor(locale)}>
       <body className="antialiased">
         <NextIntlClientProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-brand focus:px-3 focus:py-2 focus:text-white"
+          >
+            {t("skipToContent")}
+          </a>
           <header className="border-b border-line bg-panel">
             <p
               role="note"
@@ -46,7 +54,10 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
               <LanguageSwitcher />
             </div>
           </header>
-          {children}
+          <RouteFocus />
+          <main id="main-content" tabIndex={-1} className="outline-none">
+            {children}
+          </main>
           <footer className="border-t border-line bg-panel">
             <p role="note" className="mx-auto max-w-7xl px-4 py-3 text-xs text-muted">
               {t("disclaimer")}

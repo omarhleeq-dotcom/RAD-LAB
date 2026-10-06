@@ -1,19 +1,22 @@
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { CASES, getCase } from "@/data/cases";
-import { SimulationWorkspace } from "@/features/simulation/SimulationWorkspace";
+import { LEGACY_CASE_ROUTES } from "@/data/legacy-routes";
+import { LegacyRedirect } from "@/features/platform/LegacyRedirect";
 import { routing } from "@/i18n/routing";
 
+/**
+ * Old URL `/{locale}/simulation/{caseId}`. The host redirects it (public/_redirects, next.config redirects); this
+ * page is the client-side fallback so a link still reaches the exam if those rules are not applied.
+ */
 export function generateStaticParams() {
-  return routing.locales.flatMap((locale) => CASES.map((c) => ({ locale, caseId: c.id })));
+  return routing.locales.flatMap((locale) => LEGACY_CASE_ROUTES.map((r) => ({ locale, caseId: r.caseId })));
 }
 
-export default async function SimulationPage({ params }: PageProps<"/[locale]/simulation/[caseId]">) {
+export default async function LegacySimulationPage({ params }: PageProps<"/[locale]/simulation/[caseId]">) {
   const { locale, caseId } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  const radCase = getCase(caseId);
-  if (!radCase) notFound();
-  return <SimulationWorkspace caseId={radCase.id} />;
+  if (!LEGACY_CASE_ROUTES.some((r) => r.caseId === caseId)) notFound();
+  return <LegacyRedirect caseId={caseId} />;
 }

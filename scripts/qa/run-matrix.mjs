@@ -113,7 +113,7 @@ async function runScenario(browser, loc, device, sc) {
   const errors = [];
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
   page.on("pageerror", (e) => errors.push(String(e)));
-  await page.goto(`${BASE}/${loc}/simulation/chest-pa-erect`, { waitUntil: "networkidle" });
+  await page.goto(`${BASE}/${loc}/xray/chest-pa-erect/practice`, { waitUntil: "networkidle" });
   ok(`${tag}: html dir`, (await page.getAttribute("html", "dir")) === (loc === "ar" ? "rtl" : "ltr"));
   if (!sc.fromInitial) await configure(page, device, loc, u);
   ok(`${tag}: no result / effects before the exposure (Practice Mode does not leak)`, (await page.locator('[data-testid="radiograph"]').count()) === 0);

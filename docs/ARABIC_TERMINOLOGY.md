@@ -55,3 +55,24 @@ The patient-instruction and patient-description strings agree with the case's se
 | "Stable… The patient has arrived slightly turned…" | حالتها مستقرة … وصلت المريضة وهي مائلة قليلًا … | حالته … وصل المريض وهو مائل … | case condition | |
 | "the simulated patient (female / male)" | المريضة المحاكاة (لم تأخذ شهيقًا / تحركت) | المريض المحاكى | effect cards | |
 | Generic "the patient" in headings / labels / rule feedback | المريض (unchanged) | المريض | many | generic noun — keep, or make sex-aware? |
+
+## Session 9 — platform shell (new, flagged for educator review)
+| English | Current Arabic | Where | Question for the reviewer | OK? |
+|---|---|---|---|---|
+| X-ray (modality) | الأشعة السينية | catalogue card | «الأشعة السينية» أم «التصوير الشعاعي»؟ | |
+| CT (modality) | التصوير المقطعي المحوسب | catalogue card (coming soon) | «الأشعة المقطعية» أشيع؟ | |
+| MRI (modality) | التصوير بالرنين المغناطيسي | catalogue card (coming soon) | | |
+| Ultrasound (modality) | التصوير بالموجات فوق الصوتية | catalogue card (coming soon) | «السونار»؟ | |
+| Practice (mode) | التدريب | exam hub, breadcrumb | | |
+| Exams / Cases | الفحوص / الحالات | modality and exam pages | «الفحوصات»؟ | |
+| Choose an imaging modality | اختر نوع التصوير | home | | |
+| Home / Breadcrumb / Skip to main content | الرئيسية / مسار التنقل / انتقل إلى المحتوى الرئيسي | shell | | |
+| Loading… | جارٍ التحميل… | shell | | |
+| Page not found (+ body) | الصفحة غير موجودة / تعذّر العثور على هذه الصفحة. قد يكون الرابط خاطئًا أو قديمًا. | 404 | | |
+| Case not found (+ body) | الحالة غير موجودة / لا توجد في هذا الفحص حالة بهذا المعرّف. ارجع إلى الفحص لاختيار إحدى حالاته. | unknown `?case=` | | |
+| Back to the exam | العودة إلى الفحص | not-found | | |
+| This page has moved (+ body, link) | انتقلت هذه الصفحة / جارٍ نقلك إلى العنوان الجديد لهذا الفحص. / المتابعة إلى الفحص | old-URL stub | | |
+| Practice mode blurb | ضع المريض، اضبط عوامل التعريض، أجرِ التعريض، ثم تعلّم من تغذية راجعة دقيقة ودرجة. | exam hub | يستخدم المذكّر العام للمتعلّم (كالنص الرئيسي الحالي) | |
+
+The shell strings are addressed to the learner, not the patient, so none is sex-aware; patient-facing Arabic still comes from the case (S8-1).
+
