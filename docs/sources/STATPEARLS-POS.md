@@ -1,10 +1,12 @@
 # STATPEARLS-POS — extraction notes
 
+> **Provenance:** Claims recorded from the owner's advisor reading (full text read by the advisor; not re-verified against the originals by Claude Code); locators to be spot-checked during educator/physicist review (O5).
+
 **Source:** *X-ray Radiographic Patient Positioning.* StatPearls [Internet], StatPearls Publishing, NCBI Bookshelf **NBK565865** (the id **NBK557488** that appeared in earlier drafts was wrong and has been corrected in the references). The Chest PA reference cites authors Tafti A, Byerly DW.
 **Type:** secondary, peer-reviewed review article.
 **Read by:** the owner's advisor (Claude chat), from text pasted by the owner. Not fetched or re-read by the repository session; no copy is stored in the repo (S10-4).
 **Locators:** none (no page numbers). Cited by section: **"Projections"** and **"Positioning – Chest"**.
-**Terms / commercial use (S10-3):** licence **to verify** on the Bookshelf page (nothing is recorded in the repo). Until verified: facts paraphrased and cited only.
+**Terms / commercial use (S10-3):** licence **to verify** on the Bookshelf page (nothing is recorded in the repo). Until verified: facts paraphrased and cited only. Used for paraphrased, cited facts only; no text or figures reused (S10-3).
 **Strength:** a single secondary source. Any rule that rests on it alone is marked "single secondary source; educator to confirm" (S10-2 and S10-5 still apply).
 
 ## General (Projections)

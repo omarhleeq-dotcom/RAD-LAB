@@ -1,5 +1,7 @@
 # WHO-CHEST — extraction notes
 
+> **Provenance:** Claims recorded from the owner's advisor reading (full text read by the advisor; not re-verified against the originals by Claude Code); locators to be spot-checked during educator/physicist review (O5).
+
 **Source:** Ellis SM, Flower C; eds Ostensen H, Pettersson H. *The WHO manual of diagnostic imaging: radiographic anatomy and interpretation of the chest and the pulmonary system.* World Health Organization, 2006 (ISBN 92 4 154677 8; WHO web listing dated 2012).
 **Read by:** the owner's advisor (Claude chat), from an owner-supplied copy. Not fetched or re-read by the repository session; the PDF is not in the repo (S10-4).
 **Locators:** printed page numbers.
