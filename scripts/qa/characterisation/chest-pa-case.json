@@ -805,7 +805,7 @@
    ],
    "category": "sid",
    "evidence": {
-    "note": "180 cm is a COMMON REFERENCE / strong educational target (IAEA example; 140–200 cm in the cited criteria), not the only valid SID. The ±5 cm full-credit and 150–200 cm acceptable bands are PROVISIONAL. SID also feeds the exposure model (inverse square, VALIDATED physics; its mapping is an EDUCATIONAL MODEL).",
+    "note": "S11b (S10b-26): the reference is ≥ 183 cm (BONTRAGER-9 p.83, 92, 94); 180 cm (72 in rounded) earns full credit. Full credit 180–185 cm (existing 185 cm upper limit kept) and the 150–200 cm acceptable band are PROVISIONAL. Earlier note: 180 cm was a COMMON REFERENCE (IAEA example; 140–200 cm in the cited criteria), not the only valid SID. SID also feeds the exposure model (inverse square, VALIDATED physics; its mapping is an EDUCATIONAL MODEL).",
     "reference": "Positioning ref §2 SID; Technique ref §3.1, §9",
     "status": "common-reference"
    },
@@ -819,8 +819,8 @@
      "en": "SID is longer than the demo target; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. An AEC compensates for this in the educational model."
     },
     "low": {
-     "ar": "قيمة SID أقصر من النطاق التجريبي (180 سم هو المرجع الشائع). تزيد المسافة الأقصر التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي، كما تزيد التكبير الهندسي. وفي دراسة واحدة عام 2025 على تصوير صدر البالغ AP شبه المنتصب، أدى خفض SID عن 180 سم إلى زيادة جرعة الجلد الداخلة، وأدى 100 سم إلى انخفاض جودة الصورة. لا ترسم هذه المحاكاة التكبير.",
-     "en": "SID is shorter than the demo target (180 cm is the common reference). A shorter SID raises the exposure at the detector (inverse-square), so manual technique would need to be reduced, and it increases geometric magnification. In one 2025 study of AP semi-erect adult chest imaging, reducing SID from 180 cm increased entrance skin dose and 100 cm reduced image quality. This simulation does not draw magnification."
+     "ar": "قيمة SID أقصر من النطاق التجريبي (183 سم هو المرجع، و180 سم تقريب له). تزيد المسافة الأقصر التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي، كما تزيد التكبير الهندسي. وفي دراسة واحدة عام 2025 على تصوير صدر البالغ AP شبه المنتصب، أدى خفض SID عن 180 سم إلى زيادة جرعة الجلد الداخلة، وأدى 100 سم إلى انخفاض جودة الصورة. لا ترسم هذه المحاكاة التكبير.",
+     "en": "SID is shorter than the demo target (183 cm is the reference; 180 cm is its rounding). A shorter SID raises the exposure at the detector (inverse-square), so manual technique would need to be reduced, and it increases geometric magnification. In one 2025 study of AP semi-erect adult chest imaging, reducing SID from 180 cm increased entrance skin dose and 100 cm reduced image quality. This simulation does not draw magnification."
     },
     "pass": {
      "ar": "قيمة SID ضمن النطاق التجريبي المستهدف.",
@@ -829,7 +829,7 @@
    },
    "id": "sid",
    "ideal": [
-    175,
+    180,
     185
    ],
    "kind": "range",
@@ -955,7 +955,7 @@
      "status": "common-reference"
     },
     "evidence": {
-     "note": "PROVISIONAL / educational: the laterality convention and the gate are simulator rules. Support read in full: Chung 2020 (PMC7685512) counted markers on the incorrect side as errors (4 of 421 audited paediatric radiographs; digital correction of a wrong radiopaque marker counted as acceptable), Fuller 2016 (PMC5016621) is an opinion editorial citing case reports of harm; neither defines which viewer side L / R belongs on. A missing marker is not a wrong side (it is reported by the unscored marker check). The marker check itself stays unscored (weight 0) and the numeric score is unchanged.",
+     "note": "PROVISIONAL / educational: the laterality convention and the gate are simulator rules. Support read in full: Chung 2020 (PMC7685512) counted markers on the incorrect side as errors (4 of 421 audited paediatric radiographs; digital correction of a wrong radiopaque marker counted as acceptable), Fuller 2016 (PMC5016621) is an opinion editorial citing case reports of harm; neither defines which viewer side L / R belongs on. A missing marker is a separate critical finding (S11b-1) with the same gate severity. The marker check itself stays unscored (weight 0) and the numeric score is unchanged.",
      "reference": "Image-quality ref — Side marker and annotations",
      "status": "provisional"
     },
@@ -967,6 +967,27 @@
     "reason": {
      "ar": "ملاحظة حرجة — علامة جانب خاطئة: العلامة المسجَّلة على الصورة في الجانب الخطأ بالنسبة لجانب المريض (وفق اصطلاح عرض PA في هذا المحاكي: تُوضع L على يمين المشاهد وR على يساره). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة العملية تُعاد الصورة أو تُصحَّح عادةً في مثل هذه الحالة.",
      "en": "Critical finding — wrong-side marker: the marker is on the wrong side for the patient's side (in this simulator's PA display convention, L belongs on the viewer's right and R on the viewer's left). A wrong-side marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated or corrected."
+    }
+   },
+   {
+    "concept": {
+     "note": "COMMON QUALITY CRITERION: the image must carry a side marker (S10b-8: presence required for PA).",
+     "reference": "BONTRAGER-9 p.32–33; ACR-CHEST Sec IV; WHO-TECH p.6, 8, 10",
+     "status": "common-reference"
+    },
+    "evidence": {
+     "note": "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the wrong-side marker. Pending educator / physicist review (O5). The numeric score is unchanged.",
+     "reference": "Side marker and annotations — S10b-8; S11b-1",
+     "status": "provisional"
+    },
+    "id": "missing-marker",
+    "label": {
+     "ar": "علامة الجانب غير موضوعة",
+     "en": "Missing side marker"
+    },
+    "reason": {
+     "ar": "ملاحظة حرجة — علامة الجانب غير موضوعة: لم توضع علامة L / R على الصورة. من دون العلامة لا يمكن تحديد جانب المريض، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية، تمامًا كما في العلامة الخاطئة. وفي الممارسة العملية تُعاد الصورة أو تُصحَّح عادةً في مثل هذه الحالة.",
+     "en": "Critical finding — missing side marker: no L / R marker was placed on the image. Without a marker the patient's side cannot be identified, so the attempt is below the pass mark whatever the numeric score, the same as a wrong-side marker. In practice such an image would normally be repeated or corrected."
     }
    }
   ],

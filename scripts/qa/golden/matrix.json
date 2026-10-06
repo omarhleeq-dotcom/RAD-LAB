@@ -762,8 +762,10 @@
  },
  "marker-none": {
   "score": 100,
-  "passed": true,
-  "critical": [],
+  "passed": false,
+  "critical": [
+   "missing-marker"
+  ],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1856,7 +1858,8 @@
   "passed": false,
   "critical": [
    "wrong-projection",
-   "patient-motion"
+   "patient-motion",
+   "missing-marker"
   ],
   "categories": {
    "positioning": 1.8,

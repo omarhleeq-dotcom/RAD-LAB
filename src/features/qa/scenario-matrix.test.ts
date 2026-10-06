@@ -115,6 +115,7 @@ describe("scenario matrix: cross-scenario expectations", () => {
         ...(st.geometry.projection !== "pa-erect" ? ["wrong-projection"] : []),
         ...(st.patientResponse.motion === "motion" ? ["patient-motion"] : []),
         ...(r.plan.marker?.wrongSide ? ["wrong-side-marker"] : []),
+        ...(r.plan.marker === null ? ["missing-marker"] : []),
       ];
       expect(r.result.criticalFindings.map((f) => f.id), id).toEqual(expected);
       expect(r.result.score.passed, id).toBe(r.result.score.thresholdMet && expected.length === 0);
@@ -129,10 +130,13 @@ describe("scenario matrix: cross-scenario expectations", () => {
       expect(by(id).result.criticalFindings.length, id).toBeGreaterThan(0);
     }
     expect(score("projection-ap")).toBeGreaterThanOrEqual(70);
-    for (const id of ["correct", "correct-R", "correct-aec", "correct-edge", "marker-none"]) {
+    for (const id of ["correct", "correct-R", "correct-aec", "correct-edge"]) {
       expect(by(id).result.score.passed, id).toBe(true);
       expect(by(id).result.criticalFindings, id).toEqual([]);
     }
+    // S11b-1: a missing marker gates the pass mark like a wrong-side one; the number stays 100.
+    expect(by("marker-none").result.score.passed).toBe(false);
+    expect(by("marker-none").result.criticalFindings.map((f) => f.id)).toEqual(["missing-marker"]);
   });
 
   it("unscored checks (marker, keep-still) never change the total", () => {

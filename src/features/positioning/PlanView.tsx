@@ -6,8 +6,8 @@ import type { SimulationSettings } from "@/domain/simulation";
 import { collimatedField } from "@/features/simulation/geometry";
 
 const PV = { detX: 380, pxPerCm: 4.5, midY: 140, sidPx: 1.7 };
-/** Educational SID reference for the case (docs/RAD-LAB_Medical_Reference_Chest_PA.md §2). Mirrors the SID rule target. */
-const SID_REFERENCE_CM = 180;
+/** Educational SID reference for the case (docs/RAD-LAB_Medical_Reference_Chest_PA.md §2). Mirrors the SID rule target (S10b-26: 183 cm; 180 cm is its rounding). */
+const SID_REFERENCE_CM = 183;
 
 interface Props {
   radCase: RadCase;
