@@ -197,3 +197,13 @@ Verification attempt: `commons.wikimedia.org` API (search for lateral chest radi
 4. **Schematic / phantom fallback**: lower realism, must be labelled; owner has ruled out generated scene art, so only a hand-authored vector schematic would qualify. Effort: high.
 
 Per the S12 rule, no implementation starts until an image is licence-verified.
+
+### D. Follow-up attempts (S12-5, 2026-10-06 / 07)
+
+| Source | Attempt | Result |
+|---|---|---|
+| Wikimedia Commons (API) | One further retry after a pause (no mirrors / caches / workarounds) | **HTTP 429 again**; nothing fetched. Cumulative: 4 attempts, all 429. |
+| CDC PHIL (`wwwn.cdc.gov/phil`) | Site reachable (HTTP 200). `Search.aspx?q=` errors; the Quick Search form returned **no result list** to a plain server-side request (it appears to need an interactive browser session). One request each; no scraping, no mirrors. | **No candidate identified.** PHIL's holdings are mainly pathogen / public-health imagery (chest films there are typically disease cases), so a *normal adult lateral* is unlikely; no record was read, so no licence text or de-identification evidence could be recorded. |
+| NIH / OpenI and other datasets | Not attempted (S12-5: terms must be read, recorded and the owner must approve first) | n/a |
+
+**Outcome: still no licence-verified lateral chest baseline. Nothing downloaded or registered; no image used.** Per S12-5 the Lateral exam is not implemented. To unblock: the owner can supply 1–3 Commons file titles / PHIL image IDs (or a purchased / owner-owned image with a written commercial licence), or approve a named dataset after its terms are read.
