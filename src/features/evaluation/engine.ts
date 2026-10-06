@@ -21,6 +21,7 @@ import {
   rectsOverlap,
   regionToRect,
 } from "@/features/simulation/geometry";
+import { derivePatientResponse } from "@/features/patient/response";
 import { computeDetectorExposure } from "@/features/technique/model";
 import { centeringOnAxis } from "./centering";
 import { buildResultState } from "./result-state";
@@ -211,6 +212,7 @@ function evalRule(rule: CheckRule, s: SimulationSettings, c: RadCase, x: Detecto
     outcome,
     credit: outcome === "pass" ? 1 : outcome === "partial" ? PARTIAL_CREDIT : 0,
     observed: partial.observed ?? "",
+    observedKind: partial.observedKind,
     feedback: partial.feedback ?? rule.feedback.fail,
     variant: partial.variant,
     evidence: rule.evidence,
@@ -237,6 +239,6 @@ export function evaluate(c: RadCase, settings: SimulationSettings): EvaluationRe
     variants: [...finalVariants],
     primaryVariant: variants[0] ?? "correct",
     exposure,
-    resultState: buildResultState(c, settings, exposure, checks, [...finalVariants]),
+    resultState: buildResultState(c, settings, exposure, derivePatientResponse(c.patientCooperation, settings), checks, [...finalVariants]),
   };
 }

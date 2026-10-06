@@ -25,7 +25,7 @@ describe("renderer-facing result state", () => {
   const st = r.resultState;
 
   it("contains every input the Session 4 renderer needs", () => {
-    expect(st.schemaVersion).toBe(1);
+    expect(st.schemaVersion).toBe(2);
     expect(st.caseId).toBe("chest-pa-erect");
     expect(st.geometry).toMatchObject({ projection: "pa-erect", rotationDeg: 6, sidCm: 160, centralRay: { x: 0.05, y: -0.05 } });
     expect(st.geometry.fieldCm.x2).toBeGreaterThan(st.geometry.fieldCm.x1);
@@ -36,6 +36,15 @@ describe("renderer-facing result state", () => {
     for (const k of ["exposureRatio", "deviationIndex", "tendency", "quantumNoise", "penetration", "doseAwareness", "deliveredMas", "sid", "aec"]) {
       expect(st.exposure).toHaveProperty(k);
     }
+  });
+
+  it("carries the simulated patient response (instruction → assumed response → outcome), serialisable", () => {
+    expect(st.patientResponse).toEqual({
+      profileId: "cooperative-adult",
+      instructions: { breathing: "deep-inspiration-hold", motion: "none" },
+      inspiration: "adequate",
+      motion: "motion",
+    });
   });
 
   it("has no displayed-brightness field: brightness is a renderer / display-processing concern", () => {

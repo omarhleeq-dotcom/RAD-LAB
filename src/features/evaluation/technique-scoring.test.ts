@@ -23,6 +23,7 @@ const ok: SimulationSettings = {
   exposureMode: "manual",
   aecChambers: [],
   breathing: "deep-inspiration-hold",
+  motionInstruction: "remain-still",
 };
 const run = (patch: Partial<SimulationSettings> = {}) => evaluate(chestPaErect, { ...ok, ...patch });
 const check = (r: ReturnType<typeof run>, id: string) => r.checks.find((c) => c.ruleId === id);

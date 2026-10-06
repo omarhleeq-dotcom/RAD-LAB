@@ -7,6 +7,7 @@ const ready: SimulationSettings = {
   ...chestPaErect.initialSettings,
   sideMarker: "L",
   breathing: "deep-inspiration-hold",
+  motionInstruction: "remain-still",
   centralRay: { x: 0, y: -0.07 },
   collimation: { width: 0.94, height: 0.84 },
 };

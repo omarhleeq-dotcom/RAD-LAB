@@ -20,6 +20,7 @@ const ideal: SimulationSettings = {
   exposureMode: "manual",
   aecChambers: [],
   breathing: "deep-inspiration-hold",
+  motionInstruction: "remain-still",
 };
 
 const withChange = (patch: Partial<SimulationSettings>) => evaluate(chestPaErect, { ...ideal, ...patch });
@@ -218,5 +219,18 @@ describe("conflicting exposure findings", () => {
       const r = withChange({ kvp: 70, mas });
       expect(r.variants.filter((v) => v === "low-exposure" || v === "excess-exposure").length).toBeLessThanOrEqual(1);
     }
+  });
+});
+
+describe("observed setting labels (regression: observedKind was dropped, so ids showed untranslated)", () => {
+  it("enum-valued checks carry the setting kind so the UI can translate the id", () => {
+    const r = evaluate(chestPaErect, { ...ideal, motionInstruction: "none", breathing: "no-instruction" });
+    const kind = (id: string) => r.checks.find((c) => c.ruleId === id)?.observedKind;
+    expect(kind("projection")).toBe("projection");
+    expect(kind("chin")).toBe("chinPosition");
+    expect(kind("shoulders")).toBe("shoulderPosition");
+    expect(kind("breathing")).toBe("breathing");
+    expect(kind("motion-instruction")).toBe("motionInstruction");
+    expect(kind("rotation")).toBeUndefined(); // numeric checks stay formatted numbers
   });
 });

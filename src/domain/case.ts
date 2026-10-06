@@ -1,4 +1,6 @@
 import type { LocalizedText } from "./localized";
+import type { PatientCooperationProfile } from "./patient";
+import type { RadiographAssetSpec } from "./radiograph";
 import type { Evidence, EvidenceClass, TechniqueProfile } from "./technique";
 import type {
   BreathingId,
@@ -6,6 +8,7 @@ import type {
   EnumSettingKey,
   NormPoint,
   ImageVariantId,
+  MotionInstructionId,
   NumericSettingKey,
   ProjectionId,
   SimulationSettings,
@@ -210,8 +213,13 @@ export interface RadCase {
   /** Protocol profile for the technique/exposure model. A different case supplies a different profile. */
   technique: TechniqueProfile;
   positioning: PositioningSpec;
+  /** Educational baseline radiograph + asset-specific landmarks consumed by the Session 4 renderer. */
+  radiograph: RadiographAssetSpec;
+  /** Deterministic instruction → patient-response model (Session 4). Another case supplies another patient. */
+  patientCooperation: PatientCooperationProfile;
   availableProjections: ProjectionId[];
   availableBreathing: BreathingId[];
+  availableMotionInstructions: MotionInstructionId[];
   /** State when the case loads. Intentionally not the ideal answer. */
   initialSettings: SimulationSettings;
   rules: CheckRule[];

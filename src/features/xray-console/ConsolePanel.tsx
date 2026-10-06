@@ -100,15 +100,6 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           onSelect={(v) => onChange("projection", v)}
           label={(v) => t(`projections.${v}`)}
         />
-        <Segmented
-          legend={t("breathing")}
-          options={radCase.availableBreathing}
-          value={settings.breathing}
-          disabled={locked}
-          onSelect={(v) => onChange("breathing", v)}
-          label={(v) => t(`breathingOptions.${v}`)}
-        />
-
         <StepField
           label={t("sid")}
           hint={t("sidHint")}

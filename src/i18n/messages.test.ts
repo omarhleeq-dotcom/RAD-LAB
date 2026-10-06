@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CASES } from "@/data/cases";
 import { EVIDENCE_CLASSES } from "@/domain/technique";
+import { EFFECT_PRINCIPLES } from "@/features/radiograph/plan";
 import ar from "../../messages/ar.json";
 import en from "../../messages/en.json";
 
@@ -40,6 +41,65 @@ describe("EN / AR message catalogues", () => {
     const text = JSON.stringify(en).toLowerCase();
     expect(text).not.toMatch(/dark image|too dark|too light|underexposed image looks|overexposed image looks/);
     expect(get(en as Tree, "technique.brightness") as string).toMatch(/not by how light or dark/);
+  });
+});
+
+describe("Session 4 text (patient instructions + radiograph effects)", () => {
+  const arabic = /[؀-ۿ]/;
+  const c = CASES[0]!;
+
+  it("every radiograph effect has a title and description in EN and AR", () => {
+    for (const id of Object.keys(EFFECT_PRINCIPLES)) for (const part of ["title", "desc"]) {
+      expect(get(en as Tree, `radiograph.effects.${id}.${part}`), id).toBeTruthy();
+      expect(get(ar as Tree, `radiograph.effects.${id}.${part}`), id).toMatch(arabic);
+    }
+  });
+
+  it("every instruction the case offers is translated in EN and AR", () => {
+    for (const b of c.availableBreathing) {
+      expect(get(en as Tree, `patient.breathingOptions.${b}`), b).toBeTruthy();
+      expect(get(ar as Tree, `patient.breathingOptions.${b}`), b).toMatch(arabic);
+    }
+    for (const m of c.availableMotionInstructions) {
+      expect(get(en as Tree, `patient.motionOptions.${m}`), m).toBeTruthy();
+      expect(get(ar as Tree, `patient.motionOptions.${m}`), m).toMatch(arabic);
+    }
+  });
+
+  it("the Arabic UI text is Arabic, not copied English", () => {
+    for (const k of leaves(ar as Tree).filter((x) => x.startsWith("patient.") || x.startsWith("radiograph."))) {
+      expect(get(ar as Tree, k), k).toMatch(arabic);
+    }
+    expect(get(ar as Tree, "console.readiness.items.motion-not-instructed")).toMatch(arabic);
+    expect(get(ar as Tree, "result.variants.motion")).toMatch(arabic);
+  });
+
+  it("keeps the educational disclaimers: not the case patient, not diagnostic, effects are approximations (EN + AR)", () => {
+    const note = get(en as Tree, "radiograph.educationalNote") as string;
+    expect(note).toMatch(/not an image of the case patient/);
+    expect(note).toMatch(/not a diagnostic/);
+    expect(note).toMatch(/educational approximations/);
+    expect(get(ar as Tree, "radiograph.educationalNote") as string).toMatch(/ليس|وليس/);
+    expect(get(en as Tree, "patient.note") as string).toMatch(/does not measure real breathing or movement/);
+    expect(get(ar as Tree, "patient.note") as string).toMatch(arabic);
+  });
+
+  it("does not teach exposure as brightness, and says excess exposure is not darker", () => {
+    expect(get(en as Tree, "radiograph.effects.low-exposure.desc") as string).toMatch(/does not make the image lighter/);
+    expect(get(en as Tree, "radiograph.effects.excess-exposure.desc") as string).toMatch(/not darker/);
+    expect(JSON.stringify(en)).not.toMatch(/overexposed image looks|underexposed image looks/i);
+  });
+
+  it("does not present a measured quantity: no rib count, degree-per-pixel or millimetre claims", () => {
+    const text = JSON.stringify([get(en as Tree, "radiograph"), get(en as Tree, "patient")]);
+    expect(text).not.toMatch(/\d+\s*(mm|px|pixels|ribs)\b/i);
+    expect(get(en as Tree, "radiograph.effects.inspiration.desc") as string).toMatch(/no rib-count rule/);
+  });
+
+  it("keeps the instruction wording neutral: it never labels an option as correct before exposure", () => {
+    for (const k of leaves(en as Tree).filter((x) => x.startsWith("patient.breathingOptions.") || x.startsWith("patient.motionOptions."))) {
+      expect(get(en as Tree, k) as string, k).not.toMatch(/\b(correct|incorrect|wrong|right answer|recommended)\b/i);
+    }
   });
 });
 

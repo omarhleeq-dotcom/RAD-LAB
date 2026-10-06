@@ -9,7 +9,9 @@ What it does (and nothing else — see docs/ASSET_PROVENANCE_AND_LICENSES.md):
      background (air / soft-tissue gradient above the shoulders) — no bone, lung, vessel or other structure is
      under them. Text pixels are replaced by a harmonic (Laplace) interpolation of the surrounding pixels plus
      deterministic grain matched to the neighbouring noise level. Nothing outside the masked boxes is edited;
-  3. re-encodes as JPEG (quality 92). The re-encode changes every pixel slightly; the script reports the change.
+  3. re-encodes as JPEG (quality 92). The re-encode changes every pixel slightly; the script reports the change;
+  4. writes the web-resolution copy (1000 px wide, Lanczos, JPEG quality 88) that the app actually serves
+     (registry entry A-003). No other processing.
 Deterministic: fixed seed, no timestamps.
 """
 import hashlib
@@ -22,6 +24,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets/source/chest-pa/Normal_posteroanterior_(PA)_chest_radiograph_(X-ray).jpg"
 DST = ROOT / "public/images/chest-pa/chest-pa-baseline.jpg"
+WEB = ROOT / "public/images/chest-pa/chest-pa-baseline-1000.jpg"
+WEB_WIDTH = 1000
 COMMONS_SHA1 = "3124c4cf4c55eb3d2defa9b909f08f94e941ec43"
 
 # Boxes (x0, y0, x1, y1) in master pixels that contain ONLY an annotation on smooth background.
@@ -90,6 +94,10 @@ def main() -> int:
         print("annotation", r[0], "masked px:", r[1], "grain sigma:", r[2], "max glyph value:", r[3])
     print("mean |abs change| outside boxes after JPEG re-encode:", round(float(np.abs(back - arr.astype(int))[outside].mean()), 3))
     print("output:", DST.relative_to(ROOT), DST.stat().st_size, "bytes", "sha1", hashlib.sha1(DST.read_bytes()).hexdigest())
+    full = Image.open(DST).convert("L")  # content is greyscale: store the web copy as 8-bit greyscale
+    web = full.resize((WEB_WIDTH, round(full.height * WEB_WIDTH / full.width)), Image.LANCZOS)
+    web.save(WEB, "JPEG", quality=88, optimize=True)
+    print("web copy:", WEB.relative_to(ROOT), web.size, WEB.stat().st_size, "bytes", "sha1", hashlib.sha1(WEB.read_bytes()).hexdigest())
     return 0
 
 

@@ -7,6 +7,7 @@
  * an exposure meter (technique reference §5).
  */
 import type { CategoryId, ChinPositionId, ImageVariantId, NormPoint, ProjectionId, ShoulderPositionId, SideMarkerId, BreathingId } from "./simulation";
+import type { PatientResponse } from "./patient";
 import type { AecChamberId, DetectorExposureResult, ExposureMode } from "./technique";
 
 export interface ResultFinding {
@@ -17,7 +18,7 @@ export interface ResultFinding {
 }
 
 export interface RadiographResultState {
-  schemaVersion: 1;
+  schemaVersion: 2;
   caseId: string;
   geometry: {
     projection: ProjectionId;
@@ -44,6 +45,11 @@ export interface RadiographResultState {
     aecChambers: AecChamberId[];
   };
   exposure: DetectorExposureResult;
+  /**
+   * Simulated patient response to the learner's instructions (Session 4): learner action → assumed response →
+   * educational image-quality state. NOT a measurement of real inspiration or motion.
+   */
+  patientResponse: PatientResponse;
   /** Image-quality findings implied by non-passing checks (positioning, technique, …). */
   variants: ImageVariantId[];
   /** Non-passing checks with their category, for annotating the rendered result. */

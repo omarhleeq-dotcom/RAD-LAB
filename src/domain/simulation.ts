@@ -15,6 +15,12 @@ export type BreathingId =
   | "normal-breathing"
   | "no-instruction";
 
+/**
+ * What the radiographer tells the patient about keeping still (Session 4). The learner chooses the INSTRUCTION,
+ * never the resulting image defect; the simulated patient's response is derived in `features/patient`.
+ */
+export type MotionInstructionId = "none" | "remain-still" | "relax-and-move";
+
 export type ChinPositionId = "tucked" | "elevated";
 export type ShoulderPositionId = "relaxed" | "rolled-forward";
 export type SideMarkerId = "L" | "R";
@@ -61,11 +67,14 @@ export interface SimulationSettings {
   exposureMode: ExposureMode;
   /** Selected AEC sensing chambers, canonical order (see toggleChamber). Only used in AEC mode. */
   aecChambers: AecChamberId[];
+  /** Breathing instruction given to the patient (what is said, not what the patient then does). */
   breathing: BreathingId;
+  /** Instruction about keeping still given to the patient (what is said, not what the patient then does). */
+  motionInstruction: MotionInstructionId;
 }
 
 /** Settings that take one of a fixed set of string ids. */
-export type EnumSettingKey = "projection" | "breathing" | "chinPosition" | "shoulderPosition";
+export type EnumSettingKey = "projection" | "breathing" | "chinPosition" | "shoulderPosition" | "motionInstruction";
 
 export type SettingKey = keyof SimulationSettings;
 export type NumericSettingKey = {
@@ -95,6 +104,7 @@ export type ImageVariantId =
   | "chin-overlap"
   | "scapulae-overlap"
   | "poor-inspiration"
+  | "motion"
   // Technique findings are about DETECTOR exposure / penetration, never about displayed brightness.
   | "low-exposure"
   | "excess-exposure"

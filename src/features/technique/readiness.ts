@@ -19,6 +19,7 @@ export type ReadinessItemId =
   | "aec-no-chamber"
   | "aec-chambers-outside-field"
   | "breathing-not-instructed"
+  | "motion-not-instructed"
   | "marker-missing";
 export type ReadinessCategory = "system" | "technique" | "aec" | "patient" | "positioning";
 
@@ -62,6 +63,7 @@ export function assessReadiness(
   }
 
   if (s.breathing === "no-instruction") items.push({ id: "breathing-not-instructed", category: "patient", level: "caution" });
+  if (s.motionInstruction === "none") items.push({ id: "motion-not-instructed", category: "patient", level: "caution" });
   if (!s.sideMarker) items.push({ id: "marker-missing", category: "positioning", level: "caution" });
 
   const blocked = items.some((i) => i.level === "blocked");

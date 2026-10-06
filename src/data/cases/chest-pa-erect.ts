@@ -1,4 +1,6 @@
 import type { RadCase } from "@/domain/case";
+import { chestPaCooperativeAdult } from "./chest-pa-patient";
+import { chestPaRadiograph } from "./chest-pa-radiograph";
 import { chestPaTechnique } from "./chest-pa-technique";
 
 /**
@@ -68,6 +70,8 @@ export const chestPaErect: RadCase = {
     defaultMarkerPosition: { x: -0.84, y: 0.68 },
   },
   technique: chestPaTechnique,
+  radiograph: chestPaRadiograph,
+  patientCooperation: chestPaCooperativeAdult,
   availableProjections: ["pa-erect", "ap-erect", "lateral-left"],
   availableBreathing: [
     "deep-inspiration-hold",
@@ -75,6 +79,7 @@ export const chestPaErect: RadCase = {
     "normal-breathing",
     "no-instruction",
   ],
+  availableMotionInstructions: ["none", "remain-still", "relax-and-move"],
   initialSettings: {
     projection: "ap-erect",
     rotationDeg: 8,
@@ -90,6 +95,7 @@ export const chestPaErect: RadCase = {
     exposureMode: "manual",
     aecChambers: [],
     breathing: "no-instruction",
+    motionInstruction: "none",
   },
   scoring: {
     categoryWeights: {
@@ -537,6 +543,34 @@ export const chestPaErect: RadCase = {
         reference: "§2 Respiration; §5 item 10",
       },
     },
+    {
+      // Session 4. Unscored on purpose: the Image-quality reference supports "motion → loss of sharpness"
+      // (validated) but defines no scoring rule for the instruction itself, and re-weighting the Breathing
+      // category (10 %) would be an unsupported change. The consequence is shown in the result image instead.
+      id: "motion-instruction",
+      kind: "equals",
+      category: "breathing",
+      weight: 0,
+      setting: "motionInstruction",
+      expected: "remain-still",
+      variantOnFail: "motion",
+      label: { en: "Instruction to stay still (not scored)", ar: "تعليمات الثبات (غير محسوبة)" },
+      feedback: {
+        pass: {
+          en: "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement.",
+          ar: "طلبتَ من المريض أن يبقى ثابتًا. في هذه المحاكاة يلتزم المريض المتعاون بالثبات فلا تتشوه الصورة بالحركة.",
+        },
+        fail: {
+          en: "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction.",
+          ar: "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
+        },
+      },
+      evidence: {
+        status: "educational-simplification",
+        reference: "Image-quality ref (Motion)",
+        note: "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      },
+    },
   ],
   possibleErrors: [
     {
@@ -556,6 +590,11 @@ export const chestPaErect: RadCase = {
       id: "poor-inspiration",
       variant: "poor-inspiration",
       description: { en: "Poor inspiration", ar: "شهيق غير كافٍ" },
+    },
+    {
+      id: "motion",
+      variant: "motion",
+      description: { en: "Patient motion (loss of sharpness)", ar: "حركة المريض (فقدان الحدّة)" },
     },
     {
       id: "low-exposure",
@@ -594,6 +633,10 @@ export const chestPaErect: RadCase = {
         en: "Both lungs fully included, apices to costophrenic angles",
         ar: "الرئتان كاملتان من القمم إلى الزوايا الضلعية الحجابية",
       },
+    },
+    {
+      id: "sharpness",
+      description: { en: "No loss of sharpness from patient movement", ar: "لا يوجد فقدان في الحدّة بسبب حركة المريض" },
     },
     {
       id: "exposure",

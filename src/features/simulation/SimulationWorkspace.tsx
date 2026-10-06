@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { localize } from "@/lib/localized";
 import { ResultPanel } from "@/features/evaluation/ResultPanel";
+import { PatientInstructionsPanel } from "@/features/patient/PatientInstructionsPanel";
 import { PositioningView } from "@/features/positioning/PositioningView";
 import { ConsolePanel } from "@/features/xray-console/ConsolePanel";
 import { useSimulationStore } from "@/stores/simulation-store";
@@ -68,7 +69,10 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
       </section>
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <PositioningView radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
+        <div className="min-w-0 space-y-5">
+          <PositioningView radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
+          <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+        </div>
         <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
       </div>
 

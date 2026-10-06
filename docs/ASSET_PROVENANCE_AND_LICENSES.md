@@ -105,3 +105,42 @@ Rules for entries:
 5. **Re-encode:** saved as JPEG quality 92. This changes all pixels slightly (mean absolute change outside the annotation boxes ≈ 0.49 grey level on 0–255). No resampling, crop, rotation, tone-curve, sharpening or contrast change was applied.
 6. **Not changed:** geometry, size, tonal rendering of any anatomy.
 7. Any later derivative (e.g. a downscaled web copy, or per-frame renderer processing) must be added to this registry as its own entry.
+
+### A-003 — Chest PA educational baseline: web-resolution copy (derived from A-002)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Chest PA educational baseline, web resolution |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Original filename | n/a (derived). Source chain: A-001 → A-002 → A-003. |
+| Creator / author | Original: Mikael Häggström. Derivation: RAD-LAB (`scripts/derive-chest-pa-baseline.py`). |
+| Original organization / source | Wikimedia Commons (via A-001) |
+| Original source URL | see A-001 |
+| License | CC0 1.0 Universal (inherited; RAD-LAB asserts no additional rights) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (`RadCase.radiograph.credit`, EN + AR). |
+| Local project path | `public/images/chest-pa/chest-pa-baseline-1000.jpg` (the file the app loads) |
+| RAD-LAB modifications | Downscaled from A-002 to 1000 × 1144 px (Lanczos), converted to 8-bit greyscale (the source content is greyscale), JPEG quality 88. No other processing. |
+| Date / method of verification | 2026-10-06. Reproducible with `python3 -I scripts/derive-chest-pa-baseline.py` (fixed inputs; checks the A-001 SHA-1 first). |
+| Checksum | SHA-1 `5eca10ae10303ad4082e9b0c4ebd58bf7d982559` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 1000 × 1144 px, 147,359 bytes |
+| Notes | The renderer decodes this file in the browser and applies deterministic educational effects at display time. Those effects are **runtime transformations of this asset**, not new assets; they are documented in `docs/session-4-radiograph-renderer.md`. The schematic scapula and jaw overlays are drawn procedurally by RAD-LAB code and use no external imagery. |
+
+### A-004 — Effects contact sheet (documentation image, derived from A-003)
+
+| Field | Value |
+|---|---|
+| Asset name | Session 4 effects contact sheet |
+| Asset type | Documentation image (JPEG montage of application screenshots) |
+| Original source | Screenshots of the RAD-LAB result renderer (production build, EN desktop) applied to A-003 |
+| License | CC0 1.0 (derived solely from A-003 plus RAD-LAB UI/rendering output) |
+| Attribution legally required | No (credit given in the app and in A-001) |
+| Local project path | `docs/session-4-effects-contact-sheet.jpg` (documentation only, not served by the app) |
+| RAD-LAB modifications | Montage of 12 renderer outputs with captions; JPEG quality 82. Each tile is a simulated educational result, **not** a clinical image. |
+| Date / method | 2026-10-06; produced from `scripts/verify-session4.mjs` screenshots |
+| Notes | Contains the learner-style L marker where shown; no real patient data. |
+
+### Not external assets (for completeness)
+- `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
+- No fonts, icons, audio or datasets were added in Session 4.

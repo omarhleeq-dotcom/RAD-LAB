@@ -1,4 +1,5 @@
 import type { RadCase } from "@/domain/case";
+import type { PatientResponse } from "@/domain/patient";
 import type { RadiographResultState } from "@/domain/result-state";
 import type { ImageVariantId, SimulationSettings } from "@/domain/simulation";
 import type { DetectorExposureResult } from "@/domain/technique";
@@ -13,13 +14,14 @@ export function buildResultState(
   c: RadCase,
   s: SimulationSettings,
   exposure: DetectorExposureResult,
+  patientResponse: PatientResponse,
   checks: CheckResult[],
   variants: ImageVariantId[],
 ): RadiographResultState {
   const field = collimatedField(s, c.detector);
   const clipped = clippedSides(coverageMargins(field, regionToRect(c.requiredAnatomy)));
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     caseId: c.id,
     geometry: {
       projection: s.projection,
@@ -43,6 +45,7 @@ export function buildResultState(
       aecChambers: [...s.aecChambers],
     },
     exposure,
+    patientResponse,
     variants,
     findings: checks.flatMap((k) =>
       k.outcome === "pass" ? [] : [{ ruleId: k.ruleId, category: k.category, outcome: k.outcome, variant: k.variant }],
