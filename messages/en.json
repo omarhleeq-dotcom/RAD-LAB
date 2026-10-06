@@ -6,6 +6,7 @@
     "provisionalBadge": "Provisional demo data",
     "comingSoon": "Coming soon",
     "backHome": "Back to home",
+    "previewBanner": "Educational prototype — not for clinical use; values pending educator/physicist review",
     "disclaimer": "Educational simulator — not a diagnostic or clinically validated system. Do not use it for patient care. Technique and tolerance values are provisional demonstration data until reviewed by an educator or medical physicist."
   },
   "home": {

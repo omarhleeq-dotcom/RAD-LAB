@@ -37,3 +37,4 @@ All Arabic in RAD-LAB (UI in `messages/ar.json`, case text in `src/data/cases/*`
 | Evidence classes | مثبت · مرجع شائع / غير عالمي · يعتمد على الجهاز / البروتوكول المحلي · تبسيط تعليمي · مؤقت | evidence badges | تأكيد المقابلات الخمسة | |
 | Educational pass mark | درجة النجاح التعليمية | result | | |
 | Not drawn in this image | غير مرسومة في هذه الصورة | result | | |
+| Educational prototype — not for clinical use; values pending educator/physicist review | نموذج تعليمي أولي — ليس للاستخدام السريري؛ القيم بانتظار مراجعة مدرّس أو فيزيائي طبي | preview banner (every page) | «مدرّس» أم «معلّم/أستاذ»؟ «فيزيائي طبي» مناسب؟ | |

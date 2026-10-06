@@ -53,3 +53,8 @@ Verdict: they support the *concept* that a marker should be present and correct,
 ## G. Assets
 - [ ] Baseline (young woman) vs case patient (45-year-old man): choose per [`session-5-baseline-options.md`](session-5-baseline-options.md).
 - [ ] Registry [`ASSET_PROVENANCE_AND_LICENSES.md`](ASSET_PROVENANCE_AND_LICENSES.md) A-001 … A-005.
+
+## H. Pilot preview and platform (Session 6)
+- [ ] Preview banner wording, EN and AR: "Educational prototype — not for clinical use; values pending educator/physicist review" / «نموذج تعليمي أولي — ليس للاستخدام السريري؛ القيم بانتظار مراجعة مدرّس أو فيزيائي طبي» (`messages/*.json` → `common.previewBanner`).
+- [ ] Platform design decisions listed in [`PLATFORM_ARCHITECTURE.md`](PLATFORM_ARCHITECTURE.md) §12 (mode set, Assess prerequisites, dose reference levels policy, acceptable sources / imagery).
+

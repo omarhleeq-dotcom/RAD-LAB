@@ -158,3 +158,4 @@ Rules for entries:
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.
+- Session 6 added no external assets (hosting configuration, a text banner and documents only). Candidate sources / datasets for other modalities are listed — **not downloaded, not registered** — in `docs/MODALITY_SOURCES_CANDIDATES.md`.
