@@ -1,0 +1,124 @@
+{
+  "common": {
+    "appName": "RAD-LAB",
+    "tagline": "Radiography simulation lab",
+    "language": "Language",
+    "provisionalBadge": "Provisional demo data",
+    "comingSoon": "Coming soon",
+    "backHome": "Back to home"
+  },
+  "home": {
+    "title": "Practice radiography before the real patient.",
+    "subtitle": "RAD-LAB is an educational simulator for radiologic technology students. Position the patient, set the technique, expose, then learn from precise feedback.",
+    "casesTitle": "Chest X-ray cases",
+    "startCase": "Start simulation",
+    "mvpNote": "Practice mode · no account required",
+    "provisionalNotice": "Technique values in this MVP are provisional demo data and have not been clinically validated. Do not use them as clinical guidance.",
+    "roadmapTitle": "Planned modules",
+    "roadmap": {
+      "chestAp": "Chest AP portable",
+      "chestLateral": "Chest lateral",
+      "extremities": "Extremities & spine",
+      "ct": "CT workflow",
+      "mri": "MRI workflow"
+    },
+    "patientLine": "{age}-year-old {sex}"
+  },
+  "sex": {
+    "male": "male",
+    "female": "female"
+  },
+  "workspace": {
+    "caseTitle": "Examination request",
+    "patient": "Patient",
+    "scenario": "Clinical scenario",
+    "request": "Requested examination",
+    "condition": "Patient condition",
+    "modePractice": "Practice mode",
+    "attempt": "Attempt {n}",
+    "step1": "1 · Position",
+    "step2": "2 · Technique",
+    "step3": "3 · Result",
+    "practiceHint": "Adjust the patient and equipment so the image meets the request, then press Expose. Detailed feedback is shown afterwards."
+  },
+  "positioning": {
+    "title": "Patient positioning",
+    "frontView": "Detector view (from the tube)",
+    "topView": "Plan view (from above)",
+    "detector": "Detector / Bucky",
+    "tube": "X-ray tube",
+    "patient": "Patient",
+    "field": "Collimated field",
+    "centralRay": "Central ray",
+    "rotation": "Patient rotation",
+    "centerX": "Central ray — lateral",
+    "centerY": "Central ray — level",
+    "collWidth": "Collimation — width",
+    "collHeight": "Collimation — height",
+    "sid": "SID",
+    "rotationValue": "Rotation: {deg}°",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact.",
+    "alt": "Schematic of the patient, detector and X-ray tube reflecting the current positioning settings."
+  },
+  "console": {
+    "title": "X-ray console",
+    "projection": "Projection / view",
+    "kvp": "kVp",
+    "mas": "mAs",
+    "sid": "SID",
+    "breathing": "Breathing instruction",
+    "expose": "EXPOSE",
+    "exposing": "Exposing…",
+    "locked": "Exposure complete",
+    "projections": {
+      "pa-erect": "PA erect",
+      "ap-erect": "AP erect",
+      "lateral-left": "Left lateral"
+    },
+    "breathingOptions": {
+      "deep-inspiration-hold": "Take a deep breath in and hold",
+      "expiration-hold": "Breathe out and hold",
+      "normal-breathing": "Breathe normally",
+      "no-instruction": "No instruction"
+    }
+  },
+  "result": {
+    "title": "Simulated result",
+    "placeholderLabel": "PLACEHOLDER — schematic only, not a real radiograph",
+    "alt": "Schematic placeholder illustrating the simulated image quality.",
+    "score": "Score",
+    "outOf": "out of 100",
+    "passed": "Acceptable image",
+    "failed": "Needs improvement",
+    "breakdown": "Score by category",
+    "feedback": "Feedback",
+    "yourSetting": "Your setting",
+    "outcome": {
+      "pass": "Correct",
+      "partial": "Partly correct",
+      "fail": "Incorrect"
+    },
+    "variantsTitle": "Image quality findings",
+    "variants": {
+      "correct": "No technical faults demonstrated",
+      "rotated": "Patient rotation",
+      "wrong-projection": "Projection does not match the request",
+      "clipped": "Required anatomy clipped",
+      "poor-inspiration": "Poor inspiration",
+      "underexposed": "Underexposed",
+      "overexposed": "Overexposed",
+      "magnified-geometry": "Increased magnification / unsharpness"
+    },
+    "retry": "Retry with my settings",
+    "restart": "Restart case",
+    "retryHelp": "Retry keeps your last settings so you can correct your mistakes."
+  },
+  "categories": {
+    "positioning": "Positioning",
+    "rotation": "Rotation",
+    "centering": "Centering",
+    "exposure": "Exposure / technique",
+    "sid": "SID / setup",
+    "breathing": "Breathing"
+  }
+}
