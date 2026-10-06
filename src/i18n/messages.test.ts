@@ -161,7 +161,7 @@ describe("sex-aware Arabic strings", () => {
   });
 
   it("render both forms for the same keys", () => {
-    const t = createTranslator({ locale: "ar", messages: ar as never });
+    const t = createTranslator({ locale: "ar", messages: ar as never }) as unknown as (key: string, values?: Record<string, string | number>) => string;
     expect(t("home.patientLine", { sex: "female", sexLabel: "أنثى", age: 21 })).toBe("أنثى عمرها 21 عامًا");
     expect(t("home.patientLine", { sex: "male", sexLabel: "ذكر", age: 45 })).toBe("ذكر عمره 45 عامًا");
     expect(t("patient.motionOptions.remain-still", { sex: "female" })).toBe("«ابقَي ثابتة ولا تتحركي حتى أخبرك.»");
@@ -169,7 +169,7 @@ describe("sex-aware Arabic strings", () => {
   });
 
   it("male branch formats byte-identically to the strings before Session 8", () => {
-    const t = createTranslator({ locale: "ar", messages: ar as never });
+    const t = createTranslator({ locale: "ar", messages: ar as never }) as unknown as (key: string, values?: Record<string, string | number>) => string;
     const male = { sex: "male" } as const;
     const before: Record<string, string> = {
       "patient.breathingOptions.deep-inspiration-hold": "«خذ شهيقًا عميقًا واحبس نفسك.»",
