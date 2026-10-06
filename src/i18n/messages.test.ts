@@ -167,4 +167,21 @@ describe("sex-aware Arabic strings", () => {
     expect(t("patient.motionOptions.remain-still", { sex: "female" })).toBe("«ابقَي ثابتة ولا تتحركي حتى أخبرك.»");
     expect(t("patient.motionOptions.remain-still", { sex: "male" })).toBe("«ابقَ ثابتًا ولا تتحرك حتى أخبرك.»");
   });
+
+  it("male branch formats byte-identically to the strings before Session 8", () => {
+    const t = createTranslator({ locale: "ar", messages: ar as never });
+    const male = { sex: "male" } as const;
+    const before: Record<string, string> = {
+      "patient.breathingOptions.deep-inspiration-hold": "«خذ شهيقًا عميقًا واحبس نفسك.»",
+      "patient.breathingOptions.expiration-hold": "«أخرج الزفير واحبس نفسك.»",
+      "patient.breathingOptions.normal-breathing": "«تنفّس بشكل طبيعي.»",
+      "patient.motionOptions.remain-still": "«ابقَ ثابتًا ولا تتحرك حتى أخبرك.»",
+      "patient.motionOptions.relax-and-move": "«استرخِ — يمكنك التحرك بشكل طبيعي.»",
+      "radiograph.effects.inspiration.desc":
+        "بعد تعليمات التنفس التي أعطيتها، لم يأخذ المريض المحاكى شهيقًا كاملًا: تبدو الرئتان أقل تمددًا ويرتفع الحجاب الحاجز وتقصر الحقول الرئوية. لا تقيس RAD-LAB الشهيق الحقيقي ولا تستخدم قاعدة عدّ الأضلاع.",
+      "radiograph.effects.motion.desc": "لأن تعليمات الثبات غابت أو كانت خاطئة، تحرك المريض المحاكى: الحواف ضبابية. حجم الضبابية تقريب تعليمي وليس مسافة حركة.",
+    };
+    for (const [k, v] of Object.entries(before)) expect(t(k, male), k).toBe(v);
+    expect(t("home.patientLine", { ...male, sexLabel: "ذكر", age: 45 })).toBe("ذكر عمره 45 عامًا");
+  });
 });
