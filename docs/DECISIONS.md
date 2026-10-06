@@ -1,6 +1,6 @@
 # RAD-LAB — decisions log
 
-Owner-approved decisions (D1–D7, S9-4, S10-1 … S10-5, the provisional S10b-1 … S10b-26 and the Session 11 decisions S11-1 … S11-4 of 2026-10-06), the decisions that are still open (O2–O11; O1 was resolved by D7), and the implementation choices a session made on its own authority that the owner may overrule (S7-x). Architecture-level records live in [`adr/`](adr/README.md); this file is the short, dated list of *what was decided and by whom*, so later sessions do not re-open them.
+Owner-approved decisions (D1–D7, S9-4, S10-1 … S10-5, the provisional S10b-1 … S10b-26 and the Session 11 decisions S11-1 … S11-8 of 2026-10-06), the decisions that are still open (O2–O11; O1 was resolved by D7), and the implementation choices a session made on its own authority that the owner may overrule (S7-x). Architecture-level records live in [`adr/`](adr/README.md); this file is the short, dated list of *what was decided and by whom*, so later sessions do not re-open them.
 
 Recorded in Session 7 (2026-10-06). The wording of D1–D6 follows the owner's instruction for that session; D7 was added on 2026-10-06 in a docs-only follow-up on the same PR.
 
@@ -51,6 +51,10 @@ Recorded in Session 7 (2026-10-06). The wording of D1–D6 follows the owner's i
 | **S11-2** | **Tube angulation is a needed control** (AP: about 5° caudad, S10b-23). Session 11 builds a **generic angulation mechanism**; **PA default 0°, behaviour unchanged.** *(owner decision 2026-10-06, final)* | Optional numeric control `tubeAngulationDeg` (positive = caudad); absent from PA data. The AP target and scoring are Session 13. |
 | **S11-3** | **The grid is fixed for chest v1; there is no grid control.** *(owner decision 2026-10-06, final)* | Overrides the "grid in / out — new / unknown" entry of the Needs summary; no grid mechanism is built. |
 | **S11-4** | **A patient build attribute is not in v1;** S10b-24 (lateral CR / receptor height for broad-shouldered patients) stays **teaching-only, later.** *(owner decision 2026-10-06, final)* | No build field on the case in Session 11 or 12. |
+| **S11-5** | **No dedicated patient-state mechanism.** AP patient state (supine; semi-erect later, O9 stays open) will be declared in S13 as exam data via the generic `choiceControls` mechanism if needed. *(owner decision 2026-10-06, final)* | Avoids a mechanism without a concrete need (rule of three). |
+| **S11-6** | **The `!` non-null assertions added to three existing test files are accepted** (type-only; no assertion changed). *(owner decision 2026-10-06, final)* | PA landmark fields became optional types. |
+| **S11-7** | **New Arabic strings `console.tubeAngulation` and `console.tubeAngulationHint` are pending owner review;** they will be finalised in the UI text session. They are not shown for Chest PA. *(owner decision 2026-10-06)* | Unreviewed Arabic must not be treated as final. |
+| **S11-8** | **Playwright matrix and axe were not run in S11** because the practice DOM, post-Expose DOM and result canvas are SHA-256 identical to main (EN/AR, 1280/390). They run in S12 when visible UI changes. *(owner decision 2026-10-06)* | No visible change to test. |
 
 ## Open decisions
 
