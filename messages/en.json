@@ -451,6 +451,28 @@
           "desc": "The projection you selected is not simulated in this exam. The lateral reference appearance is shown for layout only."
         }
       }
+    },
+    "ap": {
+      "alt": "Simulated educational AP chest radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The AP reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the AP reference appearance.",
+      "altFindings": {
+        "projection": "the selected projection is not simulated; the AP appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference AP appearance is shown with no simulated faults. It is a teaching approximation: a representative normal adult AP radiograph of a different person, not the patient of this case. The position of the original exposure (supine or not) is not claimed."
+        },
+        "rotation": {
+          "title": "Rotation → thoracic asymmetry",
+          "desc": "The line of the spine moves relative to the sternoclavicular joints and the lateral rib borders, so the two sides no longer look equal. Only the amount is scored for the AP, not the direction. The amount drawn is an educational approximation, not a measurement of degrees of rotation (body build changes this appearance)."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The AP reference appearance is shown for layout only."
+        }
+      }
     }
   },
   "modality": {
@@ -488,5 +510,21 @@
     "cueArms": "Arms raised above the head (a support may be used)",
     "cueChin": "Chin lifted and clear of the apices",
     "cueStraight": "Standing straight: no rotation and no leaning sideways"
+  },
+  "positioningAp": {
+    "sideAlt": "Schematic side view of the supine patient on the bed with the detector under the back, the tube above and the tube angle.",
+    "sideViewCaption": "Side view (head end on the viewer's left)",
+    "head": "Head",
+    "feet": "Feet",
+    "angleReadout": "Tube angle: {angle}° (+ = toward the feet)",
+    "frontView": "Detector view as displayed (AP: patient's left on the viewer's right)",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. Left/right here mean the left/right of the detector view. The side view is a drawing of the set-up, not a measurement.",
+    "rotationHelp": "Educational visual model: the internal rotation value is scored, not the drawn appearance. For the AP only the amount of rotation is given, not its direction.",
+    "markerConvention": "Display convention (AP, same as PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left, in the lateral edge of the field.",
+    "cuesLegendHelp": "Required for an AP supine chest (practice guide):",
+    "cuePosition": "Patient supine (head end raised if semi-erect is requested)",
+    "cueShoulders": "Shoulders rolled forward (arms rotated inward)",
+    "cueAngle": "Tube angled about 5° toward the feet (caudad)",
+    "cueCentre": "Central ray at T7, 8–10 cm below the jugular notch"
   }
 }

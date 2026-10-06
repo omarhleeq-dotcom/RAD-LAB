@@ -23,9 +23,13 @@ export interface SceneProps {
 /** The Chest Lateral scene (S12): the same interactive view with the lateral figure, cues and texts. */
 const ChestLateralScene = (props: SceneProps) => <ChestPaFrontalScene {...props} variant="lateral" />;
 
+/** The Chest AP supine scene (S13): the frontal detector view with a side view of the supine patient and the tube angle. */
+const ChestApSupineScene = (props: SceneProps) => <ChestPaFrontalScene {...props} variant="ap" />;
+
 export const SCENES: Record<SceneId, ComponentType<SceneProps>> = {
   "chest-pa-frontal": ChestPaFrontalScene,
   "chest-lateral": ChestLateralScene,
+  "chest-ap-supine": ChestApSupineScene,
 };
 
 /** The scene an (composed) case draws: its exam's `scene.id`. The exam id is the part of the public case id before "/". */

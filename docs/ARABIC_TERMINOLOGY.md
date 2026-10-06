@@ -156,3 +156,13 @@ Rules followed: "الكاشف" (not "الكاسيت") for the detector; phone-sh
 | Lateral exam data (case text, rules, critical findings, choice controls, AEC labels, baseline credit line) | `src/data/exams/xray/chest-lateral-erect.ts`, `chest-lateral-technique.ts`, `src/data/cases/chest-lateral-erect.ts`, `chest-lateral-radiograph.ts` (every `ar:` value) | «الجانب الملاصق للكاشف»، «الذراعان»، «مرفوعتان فوق الرأس»، «علامة خاطئة (الجانب الملاصق للكاشف)»، «الحقل الأمامي / المركزي / الخلفي»، … |
 
 Questions for the reviewer: «الجانب الملاصق للكاشف» (side against the detector); «تباعد الأضلاع الخلفية» (posterior rib separation); «مسند للذراعين» (arm support); «جهة القص» (sternum side); the draft marker-convention sentence (L left margin / R right margin).
+
+## Session 13 — Chest AP strings added to the UI (**DRAFT, pending owner / educator review; machine-assisted**)
+Rules followed: "الكاشف" (not "الكاسيت"); phone-short wording; left / right tied to the viewer's side of the display. None is reviewed.
+| Where | Keys / data | Draft Arabic (summary) |
+|---|---|---|
+| AP positioning view | `messages/ar.json` → `positioningAp.*` (sideAlt, sideViewCaption, head, feet, angleReadout, frontView, schematicNote, rotationHelp, markerConvention, cuesLegendHelp, cuePosition, cueShoulders, cueAngle, cueCentre) | «الرأس»، «القدمان»، «زاوية الأنبوب: {angle}° (+ = نحو القدمين)»، «عرض جانبي (جهة الرأس على يسار المشاهد)» |
+| AP result image + effect cards | `radiograph.ap.*` (alt, notRepresentative, altReference, altFindings.projection, effects.baseline / rotation / projection) | «المظهر المرجعي»، «الدوران ← عدم تناظر الصدر»، «الإسقاط غير مُحاكى» |
+| AP exam data (case text, rules, critical findings, `state` choice control, AEC labels, baseline credit line with the NIH attribution) | `src/data/exams/xray/chest-ap-supine.ts`, `chest-ap-technique.ts`, `src/data/cases/chest-ap-supine.ts`, `chest-ap-radiograph.ts` | «AP مستلقيًا»، «وضعية المريض»، «شبه جالس»، «ميل الأنبوب (نحو القدمين)»، «علامة الجانب (جانب المريض)» |
+
+Questions for the reviewer: «مستلقيًا / شبه جالس» (supine / semi-erect); «ميل الأنبوب نحو القدمين» (caudad); «الشق الوداجي» (jugular notch); «المفصلان القصّيان الترقويان» (sternoclavicular joints); the NIH credit line (Latin citation inside Arabic text).
