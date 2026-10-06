@@ -104,7 +104,7 @@ describe("fixture exam / case validate with the new optional data", () => {
     expect(unregisteredVariants(chestPaErectExam)).toEqual([]);
     expect(unregisteredVariants({ rules: [], possibleErrors: [{ id: "x", variant: "never-registered", description: t("x") }] })).toEqual(["never-registered"]);
     expect(Object.keys(SCENES).sort()).toEqual(["chest-pa-frontal"]);
-    expect(Object.keys(CRITICAL_DETECTORS).sort()).toEqual(["patient-motion", "wrong-projection", "wrong-side-marker"]);
+    expect(Object.keys(CRITICAL_DETECTORS).sort()).toEqual(["missing-marker", "patient-motion", "wrong-projection", "wrong-side-marker"]);
   });
 });
 

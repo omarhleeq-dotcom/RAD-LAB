@@ -34,8 +34,8 @@ describe("critical findings: baseline", () => {
     expect(r.score.passed).toBe(true);
   });
 
-  it("the three critical findings are configured as case data, once each", () => {
-    expect(chestPaErect.scoring.criticalFindings.map((f) => f.id).sort()).toEqual(["patient-motion", "wrong-projection", "wrong-side-marker"]);
+  it("the four critical findings are configured as case data, once each (S11b-1 added missing-marker)", () => {
+    expect(chestPaErect.scoring.criticalFindings.map((f) => f.id).sort()).toEqual(["missing-marker", "patient-motion", "wrong-projection", "wrong-side-marker"]);
   });
 
   it("keeps the top-level weights 25/20/15/20/10/10", () => {
@@ -143,11 +143,20 @@ describe("wrong-side marker", () => {
     expect(ids(run({ sideMarker: "R", markerPosition: { x: -0.84, y: -0.44 } }))).toEqual([]);
   });
 
-  it("no marker placed is a missing marker (unscored check), not a wrong side", () => {
+  it("no marker placed is a missing-marker critical finding (S11b-1), not a wrong side; same gate severity, score unchanged", () => {
     const r = run({ sideMarker: null });
-    expect(ids(r)).toEqual([]);
+    expect(ids(r)).toEqual(["missing-marker"]);
     expect(r.checks.find((c) => c.ruleId === "side-marker")?.outcome).toBe("fail");
-    expect(r.score.passed).toBe(true);
+    expect(r.score.total).toBe(100);
+    expect(r.score.thresholdMet).toBe(true);
+    expect(r.score.passed).toBe(false);
+  });
+
+  it("a wrong-side marker is still exactly one wrong-side-marker finding with the same gate result (unchanged)", () => {
+    const r = run({ sideMarker: "L", markerPosition: { x: -0.84, y: -0.44 } });
+    expect(ids(r)).toEqual(["wrong-side-marker"]);
+    expect(r.score.total).toBe(100);
+    expect(r.score.passed).toBe(false);
   });
 
   it("uses the same wrong-side flag as the marker check feedback, in every placement (score = feedback)", () => {

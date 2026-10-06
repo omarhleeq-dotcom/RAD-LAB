@@ -43,3 +43,6 @@ export function isMarkerWrongSide(
   const required = requiredMarkerLetter(positioning, choices);
   return required !== undefined && marker.side !== required;
 }
+
+/** True when no side marker was placed (S11b-1: a missing marker gates the pass mark like a wrong-side one). */
+export const isMarkerMissing = (side: SideMarkerId | null): boolean => side === null;

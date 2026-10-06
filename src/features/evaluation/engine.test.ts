@@ -235,10 +235,22 @@ describe("observed setting labels (regression: observedKind was dropped, so ids 
   });
 });
 
+describe("S11b-1 (S10b-1): PA kV bands (identical to the previous engine behaviour)", () => {
+  it.each([[110, "pass"], [115, "pass"], [125, "pass"], [100, "partial"], [105, "partial"], [109, "partial"], [126, "partial"], [150, "partial"], [95, "fail"], [99, "fail"], [151, "fail"]] as const)(
+    "%s kVp -> %s",
+    (kvp, outcome) => {
+      const k = check(withChange({ kvp }), "kvp");
+      expect(k.outcome, `${kvp} kVp`).toBe(outcome);
+      expect(k.credit, `${kvp} kVp`).toBe(outcome === "pass" ? 1 : outcome === "partial" ? 0.5 : 0);
+    },
+  );
+});
+
 describe("Session 5 regressions", () => {
-  it("the SID full-credit band is symmetric around 180 cm as documented (±5), not 180–185", () => {
-    for (const sid of [175, 180, 185]) expect(check(withChange({ sidCm: sid }), "sid").outcome, `${sid} cm`).toBe("pass");
-    for (const sid of [170, 190]) expect(check(withChange({ sidCm: sid }), "sid").outcome, `${sid} cm`).toBe("partial");
+  it("S11b-3 (S10b-26): SID full credit from 180 cm up to the existing 185 cm limit; 183 is the reference", () => {
+    for (const sid of [180, 183, 185]) expect(check(withChange({ sidCm: sid }), "sid").outcome, `${sid} cm`).toBe("pass");
+    for (const sid of [175, 179, 190]) expect(check(withChange({ sidCm: sid }), "sid").outcome, `${sid} cm`).toBe("partial");
+    for (const sid of [149, 201]) expect(check(withChange({ sidCm: sid }), "sid").outcome, `${sid} cm`).toBe("fail");
   });
 
   it("feedback text does not carry claims the repository references do not support", () => {

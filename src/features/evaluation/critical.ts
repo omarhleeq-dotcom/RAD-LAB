@@ -11,12 +11,12 @@
  *  - wrong-side-marker: a placed marker sits on the wrong side for the case's laterality convention (an EDUCATIONAL
  *                       display convention, PA: patient left = viewer right). Same flag as the marker check's
  *                       "wrong side" feedback and the renderer's `marker.wrongSide`, so score, feedback and picture agree.
- *                       No marker placed is a MISSING marker (reported by the unscored marker check), not a wrong side.
+ *  - missing-marker  : no marker placed (S11b-1); a separate finding with the same gate severity as wrong-side-marker.
  */
 import type { CriticalFindingId, RadCase } from "@/domain/case";
 import type { PatientResponse } from "@/domain/patient";
 import type { SimulationSettings } from "@/domain/simulation";
-import { isMarkerWrongSide } from "@/features/simulation/marker-rule";
+import { isMarkerMissing, isMarkerWrongSide } from "@/features/simulation/marker-rule";
 import type { CriticalFinding } from "./types";
 
 type Detector = (c: RadCase, s: SimulationSettings, response: PatientResponse) => boolean;
@@ -30,6 +30,7 @@ type Detector = (c: RadCase, s: SimulationSettings, response: PatientResponse) =
 export const CRITICAL_DETECTORS: Record<string, Detector> = {
   "wrong-projection": (c, s) => s.projection !== c.requiredProjection,
   "patient-motion": (_c, _s, response) => response.motion === "motion",
+  "missing-marker": (_c, s) => isMarkerMissing(s.sideMarker),
   "wrong-side-marker": (c, s) =>
     s.sideMarker !== null && isMarkerWrongSide(c.positioning, { side: s.sideMarker, position: s.markerPosition }, s.choices),
 };
