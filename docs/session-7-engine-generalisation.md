@@ -51,3 +51,4 @@ The roadmap bullet list also names generalising the vocabularies, a data-driven 
 - **Session 8 — implement D7** (align the case data to the baseline image; small): the only kind of change that should regenerate `chest-pa-case.json`; sequence in [`session-7-demographics-impact.md`](session-7-demographics-impact.md) §3.
 - **Session 9 — platform shell** (D2, before Chest Lateral): the catalogue can read `EXAMS` / `CASE_DEFINITIONS` directly; `CASES` stays the compat view for the existing routes.
 - **Session 10 — the generalisation deferred in §5** (separate, so its zero-change proof is not mixed with the shell's intentional UI changes); **Session 11 — Chest Lateral.**
+  *(Renumbered by decision S10-1 in Session 10: Session 10 = Chest Lateral reference, docs only; Session 11 = this generalisation, limited to the Lateral reference's needs; Session 12 = Chest Lateral implementation. See `ROADMAP_SESSIONS.md`.)*
