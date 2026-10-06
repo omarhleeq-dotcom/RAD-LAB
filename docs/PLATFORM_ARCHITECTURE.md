@@ -112,14 +112,14 @@ src/data/cases/index.ts             CASE_DEFINITIONS, CASES (composed), getCase(
 
 | Area | Where | Why left | Next |
 |---|---|---|---|
-| `SimulationSettings` (flat, fixed keys), `EnumSettingKey`, `NumericSettingKey` | `domain/simulation.ts` | A control list (`ControlSpec[]`) needs the Lateral exam's real controls to design; rules/console/store/result-state all key off it | Session 10 |
-| `CATEGORIES` / `CategoryId` (six fixed), `ImageVariantId`, `EffectId` + evidence tables, `CriticalFindingId` + `isPresent` switch | `domain/simulation.ts`, `features/radiograph/{plan,consistency}.ts`, `features/evaluation/critical.ts` | i18n labels for categories / effects are message keys, not data; generalising now would be speculative | Session 10 (add only what Lateral needs) |
+| `SimulationSettings` (flat, fixed keys), `EnumSettingKey`, `NumericSettingKey` | `domain/simulation.ts` | A control list (`ControlSpec[]`) needs the Lateral exam's real controls to design; rules/console/store/result-state all key off it | Session 11 (limited to the Lateral reference's needs, S10-1) |
+| `CATEGORIES` / `CategoryId` (six fixed), `ImageVariantId`, `EffectId` + evidence tables, `CriticalFindingId` + `isPresent` switch | `domain/simulation.ts`, `features/radiograph/{plan,consistency}.ts`, `features/evaluation/critical.ts` | i18n labels for categories / effects are message keys, not data; generalising now would be speculative | Session 11 (add only what the Lateral reference lists as needed, S10-1) |
 | Console and positioning scene | `features/xray-console/*`, `features/positioning/*` (hard-wired JSX / hand-drawn SVG) | Generating them from data is a visible-UI refactor with no second consumer; `ExamDefinition.scene` / `.render` are declarative ids that nothing resolves yet | when a second scene exists |
-| `RadiographAssetSpec` required landmark groups (`scapulae`, `jaw`, `lungApexV`, `denseZones`) | `domain/radiograph.ts` | Chest-specific shape; optional groups need a second asset | Session 10 |
+| `RadiographAssetSpec` required landmark groups (`scapulae`, `jaw`, `lungApexV`, `denseZones`) | `domain/radiograph.ts` | Chest-specific shape; optional groups need a second asset | Session 11 (S10-1) |
 | Folder move to `modalities/xray/{engine,renderer,views}` | — | Pure churn with no behavioural benefit before a second modality | with the first non-X-ray engine |
-| Consumers of `RadCase` | engine, plan, store, UI | Strangler pattern: migrate one at a time, delete the compat view last | Session 10 |
+| Consumers of `RadCase` | engine, plan, store, UI | Strangler pattern: migrate one at a time, delete the compat view last | deferred (not needed for Lateral, S10-1) |
 
-**Session numbering (after D7):** Session 8 = implement D7 (demographics alignment); Session 9 = platform shell (D2); Session 10 = the deferred generalisation in the table above (separate, zero-behaviour; reason in `ROADMAP_SESSIONS.md`); Session 11 = Chest Lateral; later sessions shifted by two.
+**Session numbering (after D7):** Session 8 = implement D7 (demographics alignment); Session 9 = platform shell (D2); Session 10 = Chest Lateral reference (docs only; S10-1) — its "Needs for Session 11" section and S7-4 mapping say which rows of the table above are needed; Session 11 = the deferred generalisation limited to those needs (separate, zero-behaviour; reason in `ROADMAP_SESSIONS.md`); Session 12 = Chest Lateral implementation; later sessions shifted by three relative to the original numbering (Chest AP 13, more X-ray 14, CT 15–16, MRI 17, US 18).
 
 Differences from `ROADMAP_SESSIONS.md` Session 7: the prompt for this session limited the scope to the exam/case split plus proof; it did not include generalising the vocabularies, the data-driven console / scene, or the `modalities/` move (rows above). The 662-test baseline is now 682 (4 characterisation + 16 exam/case tests); weights, the engine, the renderer and all goldens are unchanged.
 
@@ -228,7 +228,7 @@ Key changes versus today: (1) settings become a **declarative control list** (ty
 
 ### 4.3 How Chest PA, Chest Lateral and Chest AP differ — as data
 
-Values below are **illustrative placeholders** to show *where* each difference lives. Every medical value must come from a reference document of the same standard as `docs/RAD-LAB_Medical_Reference_Chest_PA*.md`, written and read **before** the exam is authored (roadmap Sessions 11–12).
+Values below are **illustrative placeholders** to show *where* each difference lives. Every medical value must come from a reference document of the same standard as `docs/RAD-LAB_Medical_Reference_Chest_PA*.md`, written and read **before** the exam is authored (roadmap Session 10 for the Lateral reference — draft, [`RAD-LAB_Medical_Reference_Chest_Lateral.md`](RAD-LAB_Medical_Reference_Chest_Lateral.md) — and Sessions 12–13 for the exams).
 
 | Aspect | Chest PA erect (exists) | Chest Lateral (future) | Chest AP (future; erect / supine / portable) |
 |---|---|---|---|

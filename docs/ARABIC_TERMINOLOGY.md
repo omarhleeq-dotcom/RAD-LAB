@@ -76,3 +76,47 @@ The patient-instruction and patient-description strings agree with the case's se
 
 The shell strings are addressed to the learner, not the patient, so none is sex-aware; patient-facing Arabic still comes from the case (S8-1).
 
+## Session 10 — Chest Lateral (proposed terms — **pending educator review**; NOT used anywhere in the UI)
+Machine-assisted proposals so the Lateral exam (Session 12) starts from a reviewed list. No existing string in `messages/*.json` or case data was changed. Left/right wording stays "the viewer's side of the displayed image" unless a term explicitly names the patient's side. The anterior / posterior directions of a lateral display and the marker rule are open owner decisions (O6, O7) — do not fix wording for them yet.
+
+| English | Proposed Arabic | Intended use | Question for the reviewer | OK? |
+|---|---|---|---|---|
+| Lateral projection / lateral chest | الإسقاط الجانبي / صدر جانبي | exam title, console | «الوضع الجانبي» أم «الإسقاط الجانبي»؟ | |
+| Left lateral / right lateral | جانبي أيسر / جانبي أيمن | projection options (O7) | هل يُسمّى بجانب المريض الأقرب إلى الكاسيت؟ | |
+| True lateral | جانبي حقيقي (تام) | rotation feedback | | |
+| Obliquity (departure from true lateral) | الميلان عن الوضع الجانبي الحقيقي | rotation feedback | هل «الميلان» أم «الدوران» كما في PA؟ | |
+| Midsagittal plane | المستوى السهمي المنصِّف | positioning | | |
+| Anterior / posterior | الأمامي / الخلفي | positioning, image | | |
+| Side against the detector | الجانب الملاصق للكاسيت | positioning control (if kept) | | |
+| Arms raised above the head | رفع الذراعين فوق الرأس | arm-position control | | |
+| Humeri (upper-arm bones) | عظما العضد | feedback | | |
+| Superimposition / overlap | التراكب | feedback, effect cards | «التداخل»؟ | |
+| Sternum | القص (عظم القص) | feedback | | |
+| Thoracic spine | العمود الفقري الصدري | feedback | | |
+| Posterior ribs | الأضلاع الخلفية | rotation feedback | | |
+| Hemidiaphragms / diaphragmatic domes | نصفا الحجاب الحاجز / القبتان الحجابيتان | feedback | | |
+| Retrosternal space | الحيّز خلف القص | image criteria | | |
+| Retrocardiac space | الحيّز خلف القلب | image criteria | | |
+| Posterior costophrenic sulcus | الجيب الضلعي الحجابي الخلفي | coverage feedback | قارن «الزاوية» في جدول PA أعلاه | |
+| Horizontal central ray | الشعاع المركزي الأفقي | positioning | | |
+| Marker nearest the detector / nearest the tube | علامة الجانب الأقرب إلى الكاسيت / إلى الأنبوب | marker rule (O6) | **لا تُعتمد قبل قرار O6** | |
+
+## Session 10 — Chest AP (proposed terms — **pending educator review**; NOT used anywhere in the UI)
+Machine-assisted proposals. No existing string in `messages/*.json` or case data was changed. The display / marker convention for AP is an open owner decision (O8) — do not fix wording that depends on it. Terms already proposed for Lateral (anterior / posterior, superimposition, etc.) are not repeated.
+
+| English | Proposed Arabic | Intended use | Question for the reviewer | OK? |
+|---|---|---|---|---|
+| AP projection (anteroposterior) | الإسقاط الأمامي الخلفي (AP) | exam title, console | إبقاء الاختصار لاتينيًا كما في جدول PA؟ | |
+| Semi-erect | شبه منتصب (نصف جالس) | patient state (O9) | | |
+| Supine | الاستلقاء على الظهر | patient state (O9) | | |
+| Portable / mobile unit | جهاز متنقل (محمول) | set-up | «الجهاز المتنقل» أم «المحمول»؟ | |
+| Bedside / ward examination | فحص عند سرير المريض | order text | | |
+| Magnification | التكبير | effect cards | | |
+| Source-to-image distance reduced | تقليل المسافة بين المصدر والكاسيت | feedback | قارن «SID / التجهيز» في الجدول أعلاه | |
+| Anti-scatter grid | شبكة منع التشتت (الجريد) | technique | | |
+| Grid cut-off | قطع الشبكة | effect cards | مصطلح غير مستقر | |
+| Scatter correction (software) | تصحيح التشتت (برمجي) | technique note | | |
+| Cardiac silhouette size | حجم الظل القلبي | feedback | | |
+| Tube angulation | زاوية الأنبوب | control (if kept) | | |
+| Patient unable to take a full breath / hold still | المريض غير قادر على أخذ شهيق كامل / السكون | case condition (generic noun, see S8-1) | يُعاد النظر في المذكر / المؤنث | |
+
