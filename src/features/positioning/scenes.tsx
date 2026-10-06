@@ -20,8 +20,12 @@ export interface SceneProps {
   disabled: boolean;
 }
 
+/** The Chest Lateral scene (S12): the same interactive view with the lateral figure, cues and texts. */
+const ChestLateralScene = (props: SceneProps) => <ChestPaFrontalScene {...props} variant="lateral" />;
+
 export const SCENES: Record<SceneId, ComponentType<SceneProps>> = {
   "chest-pa-frontal": ChestPaFrontalScene,
+  "chest-lateral": ChestLateralScene,
 };
 
 /** The scene an (composed) case draws: its exam's `scene.id`. The exam id is the part of the public case id before "/". */

@@ -52,8 +52,31 @@ describe("planRotationDeg (S11c-1: positive rotationDeg = patient LEFT side towa
     expect(rotationVisual(10).spineShift).toBeGreaterThan(0);
     expect(leftSideTowardDetector(10)).toBeGreaterThan(0);
   });
-  it("leaves AP and lateral drawings unchanged", () => {
+  it("leaves the AP drawing unchanged (it already turns the left side toward the receptor)", () => {
     expect(planRotationDeg("ap-erect", 7)).toBe(7);
-    expect(planRotationDeg("lateral-left", 7)).toBe(7);
+  });
+});
+
+describe("S12-2: the lateral turn is the same physical turn as the PA's (positive = left-side turn)", () => {
+  // PlanView draws a left lateral with the figure rotated by the base angle −90° from the PA drawing, then by planRotationDeg.
+  const BASE_LATERAL = -90;
+  const vec = (angleDeg: number, [x, y]: [number, number]): [number, number] => {
+    const a = (angleDeg * Math.PI) / 180;
+    return [x * Math.cos(a) - y * Math.sin(a), x * Math.sin(a) + y * Math.cos(a)];
+  };
+  const lateralAngle = (deg: number) => BASE_LATERAL + planRotationDeg("lateral-left", deg);
+  it("a straight left lateral has the left side against the detector (+x) and the nose at −y", () => {
+    const left = vec(lateralAngle(0), [0, 1]);
+    const nose = vec(lateralAngle(0), [1, 0]);
+    expect(left[0]).toBeCloseTo(1);
+    expect(nose[1]).toBeCloseTo(-1);
+  });
+  it("positive rotation turns the front away from the detector, negative toward it (same turn sense as the PA)", () => {
+    expect(vec(lateralAngle(10), [1, 0])[0]).toBeLessThan(0);
+    expect(vec(lateralAngle(-10), [1, 0])[0]).toBeGreaterThan(0);
+  });
+  it("uses the same sign flip as the PA, so one positive value is one physical turn in both projections", () => {
+    expect(planRotationDeg("lateral-left", 7)).toBe(planRotationDeg("pa-erect", 7));
+    expect(planRotationDeg("lateral-left", 7)).toBe(-7);
   });
 });

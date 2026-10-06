@@ -43,6 +43,8 @@ export function composeCase(exam: ExamDefinition, def: CaseDefinition): RadCase 
     detector: exam.detector,
     requiredAnatomy: exam.requiredAnatomy,
     controls: exam.controls,
+    // Optional exam-declared enum controls (S11): the key is added only when declared, so Chest PA's composed case is unchanged.
+    ...(exam.choiceControls ? { choiceControls: exam.choiceControls } : {}),
     // the protocol is the exam's; how strongly this patient attenuates is the case's
     technique: { ...exam.technique, patient: def.patientTechnique },
     positioning: exam.positioning,

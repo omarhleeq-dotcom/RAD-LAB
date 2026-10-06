@@ -144,6 +144,18 @@ export function rotationShiftU(u: number, rot: NonNullable<RenderPlan["anatomy"]
   return spine + interior;
 }
 
+/**
+ * Lateral baseline (no frontal midline, S12): offset (fraction of image width, + = toward the viewer's right = posterior
+ * in this simulator's lateral display) of the SECOND copy of the posterior thorax, and the weight of that copy (0 at the
+ * sternum side, `separationBlend` at the posterior chest wall). Together they draw the posterior ribs and costophrenic
+ * angles doubled by an amount that grows with the internal rotation value — an educational "separation" cue.
+ */
+export function lateralSeparation(u: number, rot: NonNullable<RenderPlan["anatomy"]["rotation"]>, spec: RadiographAssetSpec): { shiftU: number; weight: number } {
+  const { u1, u2 } = spec.anatomyBox;
+  const x = clamp01((u - u1) / (u2 - u1));
+  return { shiftU: rot.thoraxShiftU, weight: TUNING.rotation.separationBlend * smoothstep(0.35, 0.95, x) };
+}
+
 // ───────────────────────── schematic overlays / zones ─────────────────────────
 
 function ellipseR(e: ImageEllipse, u: number, v: number): number {
@@ -236,13 +248,18 @@ export function renderRadiograph(
       mask[i] = fm * dm;
       const uOut = (cx - im.x1) / im.widthCm;
       let uSrc = uOut;
-      if (rot) {
+      const separated = rot !== null && spec.midlineU === undefined;
+      if (rot && !separated) {
         // Backward mapping with one refinement step: content at u moves by rotationShiftU(u).
         const first = uOut - rotationShiftU(uOut, rot, spec);
         uSrc = uOut - rotationShiftU(first, rot, spec);
       }
       const uc = clamp01(uSrc), vc = clamp01(vSrc);
       let value = sample(uc, vc);
+      if (separated) {
+        const sep = lateralSeparation(uc, rot, spec);
+        value += sep.weight * (sample(clamp01(uc - sep.shiftU), vc) - value);
+      }
       if (plan.positioning.scapulaeOverlap && spec.scapulae) {
         value += scapulaOverlay(spec.scapulae.left, "left", uc, vc) + scapulaOverlay(spec.scapulae.right, "right", uc, vc);
       }

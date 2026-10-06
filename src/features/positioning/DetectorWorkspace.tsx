@@ -16,6 +16,7 @@ import {
   type FieldEdge,
 } from "@/features/simulation/coords";
 import { collimatedField } from "@/features/simulation/geometry";
+import { LateralFigure } from "./LateralFigure";
 import { chinOverlapsApices, rotationVisual, scapulaOffset } from "./visual-model";
 
 /** Drawing scale: SVG units per detector cm. Only the drawing depends on it; state is normalized. */
@@ -33,6 +34,8 @@ interface Props {
   onChange: <K extends keyof SimulationSettings>(key: K, value: SimulationSettings[K]) => void;
   disabled: boolean;
   showGuides: boolean;
+  /** Which hand-drawn patient figure to draw (S12). Default: the Chest PA frontal figure. */
+  figure?: "chest-pa" | "chest-lateral";
 }
 
 const EDGE_CURSOR: Record<FieldEdge, string> = {
@@ -69,8 +72,10 @@ function keyDelta(e: KeyboardEvent): [number, number] | null {
  * Touch: Chromium only honours `touch-action` on the root <svg>, not on SVG children, so the workspace
  * suppresses touch panning while editable (and releases it once locked); the surrounding gutter still scrolls.
  */
-export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides }: Props) {
+export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = "chest-pa" }: Props) {
   const t = useTranslations("positioning");
+  const tl = useTranslations("positioningLateral");
+  const lateralFigure = figure === "chest-lateral";
   const [drag, setDrag] = useState<{ target: DragTarget; grab: NormPoint } | null>(null);
 
   const { detector, requiredAnatomy: a, positioning } = radCase;
@@ -160,14 +165,25 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
     <svg
       viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
       role="group"
-      aria-label={t("alt")}
+      aria-label={lateralFigure ? tl("alt") : t("alt")}
       className="h-auto w-full select-none"
       style={{ direction: "ltr", touchAction: disabled ? "auto" : "none" }}
     >
       <rect x={-6} y={-6} width={W + 12} height={H + 12} rx={6} fill="#1a2b38" />
       <rect x={0} y={0} width={W} height={H} fill="#0b141b" />
 
+      {lateralFigure && (
+        <LateralFigure
+          W={W}
+          H={H}
+          region={{ x: a.xCm * U, y: lungY, w: a.widthCm * U, h: lungH }}
+          rotationDeg={settings.rotationDeg}
+          chin={settings.chinPosition}
+          armsRaised={settings.choices?.arms === "raised"}
+        />
+      )}
       {/* Patient (front view). Anatomy is drawn in detector space; it is never mirrored by RTL. */}
+      {!lateralFigure && (<>
       <g transform={`translate(${mid} 0) scale(${thoraxScale} 1) translate(${-mid} 0)`}>
         <circle cx={mid} cy={-35} r={34} fill="#7b93a5" />
         <rect x={mid - 14} y={-6} width={28} height={30} fill="#7b93a5" />
@@ -192,6 +208,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       </g>
       {/* spinous-process line: shifts relative to the clavicular ends as the thorax rotates */}
       <line x1={mid + rv.spineShift} y1={20} x2={mid + rv.spineShift} y2={H - 100} stroke="#d8e4ec" strokeWidth={2} strokeDasharray="6 6" opacity={0.6} />
+      </>)}
 
       {showGuides && (
         <g aria-hidden>
@@ -218,7 +235,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
             strokeDasharray="4 4"
           />
           <text x={mid + 6} y={16} fontSize={14} fill="#7dd3fc" stroke="#0b141b" strokeWidth={3} paintOrder="stroke">
-            {t("midline")}
+            {lateralFigure ? tl("midline") : t("midline")}
           </text>
           <text x={tgtView.x + (tgt.acceptableTolerance.x * W) / 2 + 4} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 14} fontSize={13} fill="#4ade80" stroke="#0b141b" strokeWidth={3} paintOrder="stroke">
             {t("targetZone")}

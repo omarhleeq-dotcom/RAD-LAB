@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from "vitest";
 import { chestPaAdultDemo, chestPaErect } from "@/data/cases/chest-pa-erect";
+import { chestLateralErectExam } from "@/data/exams/xray/chest-lateral-erect";
 import { chestPaErectExam } from "@/data/exams/xray/chest-pa-erect";
 import type { CheckRule, RadCase } from "@/domain/case";
 import type { CaseDefinition, ExamDefinition } from "@/domain/exam";
@@ -103,8 +104,10 @@ describe("fixture exam / case validate with the new optional data", () => {
   it("registries: PA names only registered variants; scene ids and registry agree", () => {
     expect(unregisteredVariants(chestPaErectExam)).toEqual([]);
     expect(unregisteredVariants({ rules: [], possibleErrors: [{ id: "x", variant: "never-registered", description: t("x") }] })).toEqual(["never-registered"]);
-    expect(Object.keys(SCENES).sort()).toEqual(["chest-pa-frontal"]);
-    expect(Object.keys(CRITICAL_DETECTORS).sort()).toEqual(["missing-marker", "patient-motion", "wrong-projection", "wrong-side-marker"]);
+    // S12: the Chest Lateral scene and its `arms-over-lungs` detector are registered (the PA declares neither).
+    expect(Object.keys(SCENES).sort()).toEqual(["chest-lateral", "chest-pa-frontal"]);
+    expect(Object.keys(CRITICAL_DETECTORS).sort()).toEqual(["arms-over-lungs", "missing-marker", "patient-motion", "wrong-projection", "wrong-side-marker"]);
+    expect(unregisteredVariants(chestLateralErectExam)).toEqual([]);
   });
 });
 

@@ -7,6 +7,7 @@
  * u: 0 = left edge, 1 = right edge (as displayed, never mirrored by RTL); v: 0 = top, 1 = bottom.
  */
 import type { LocalizedText } from "./localized";
+import type { ProjectionId } from "./simulation";
 import type { Evidence } from "./technique";
 
 export interface ImageRect {
@@ -30,6 +31,12 @@ export interface RadiographAssetSpec {
   src: string;
   widthPx: number;
   heightPx: number;
+  /**
+   * Projection the baseline depicts (S12). Optional: absent = "pa-erect" (the Chest PA baseline, unchanged). The result
+   * image is "representative" only when the simulated projection equals it; an asset with no `midlineU` also draws the
+   * rotation effect as a posterior-rib separation instead of a frontal spine shift.
+   */
+  projection?: ProjectionId;
   /** Registry entries (docs/ASSET_PROVENANCE_AND_LICENSES.md) this asset derives from. */
   registryIds: string[];
   /** Voluntary attribution line (the licence does not require it). */
