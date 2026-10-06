@@ -51,7 +51,7 @@ Verdict: they support the *concept* that a marker should be present and correct,
 - [ ] Every term in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) and all case text.
 
 ## G. Assets
-- [ ] Baseline (young woman) vs case patient (45-year-old man): choose per [`session-5-baseline-options.md`](session-5-baseline-options.md).
+- [ ] Baseline (young woman) vs case patient (45-year-old man): **decided (D7, 2026-10-06): align the case data to the image; image unchanged; executed in Session 8** — reviewer to confirm the new Arabic wording ([`session-7-demographics-impact.md`](session-7-demographics-impact.md)). Options considered: [`session-5-baseline-options.md`](session-5-baseline-options.md).
 - [ ] Registry [`ASSET_PROVENANCE_AND_LICENSES.md`](ASSET_PROVENANCE_AND_LICENSES.md) A-001 … A-005.
 
 ## H. Pilot preview and platform (Session 6)

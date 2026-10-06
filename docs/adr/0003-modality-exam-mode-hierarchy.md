@@ -14,4 +14,4 @@ Three-level catalogue: **modality** (X-ray, CT, MRI, US) → **exam** (e.g. Ches
 - **Fewer modes** (Learn + Practice + Assess) — Reference (searchable, cited facts) and Simulate (sandbox, no rubric) have different content/evidence rules; merging them blurs the evidence gate (§6.2).
 
 ## Consequences
-+ New modalities ship Learn/Reference without an engine. + The roadmap is visible in the UI. − A route migration (redirect for `/simulation/[caseId]`). − Owner decided (D1) to keep one mode for now; the shell (Session 8, D2: before Chest Lateral) is built around exam → Practice, with Learn / Reference containers and room for more modes.
++ New modalities ship Learn/Reference without an engine. + The roadmap is visible in the UI. − A route migration (redirect for `/simulation/[caseId]`). − Owner decided (D1) to keep one mode for now; the shell (Session 9, D2: before Chest Lateral; Session 8 implements D7) is built around exam → Practice, with Learn / Reference containers and room for more modes.

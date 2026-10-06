@@ -25,4 +25,4 @@ Excluded on licence: CC BY-SA, CC BY-NC, request-access datasets (NIH ChestX-ray
 4. Adopting any image means re-placing the landmark data (`src/data/cases/chest-pa-radiograph.ts`: anatomy box, midline, dome, scapulae, jaw, dense zones) and regenerating the goldens (`npm run qa:visual -- --update-goldens`); the landmark box aspect must stay equal to the required-anatomy region's (a unit test enforces it).
 
 ## Decision for owner
-Which of: (a) keep the female baseline and align the case demographics, (b) source and approve a male baseline, (c) leave as is. Nothing here is blocking.
+Which of: (a) keep the female baseline and align the case demographics, (b) source and approve a male baseline, (c) leave as is. Nothing here is blocking. **Update (2026-10-06): the owner chose (a) — align the case demographics to A-001 (decision D7, Session 8).**

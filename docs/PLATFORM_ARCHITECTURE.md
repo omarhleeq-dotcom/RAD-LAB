@@ -112,12 +112,14 @@ src/data/cases/index.ts             CASE_DEFINITIONS, CASES (composed), getCase(
 
 | Area | Where | Why left | Next |
 |---|---|---|---|
-| `SimulationSettings` (flat, fixed keys), `EnumSettingKey`, `NumericSettingKey` | `domain/simulation.ts` | A control list (`ControlSpec[]`) needs the Lateral exam's real controls to design; rules/console/store/result-state all key off it | Session 9, with Lateral |
-| `CATEGORIES` / `CategoryId` (six fixed), `ImageVariantId`, `EffectId` + evidence tables, `CriticalFindingId` + `isPresent` switch | `domain/simulation.ts`, `features/radiograph/{plan,consistency}.ts`, `features/evaluation/critical.ts` | i18n labels for categories / effects are message keys, not data; generalising now would be speculative | Session 9 (add only what Lateral needs) |
+| `SimulationSettings` (flat, fixed keys), `EnumSettingKey`, `NumericSettingKey` | `domain/simulation.ts` | A control list (`ControlSpec[]`) needs the Lateral exam's real controls to design; rules/console/store/result-state all key off it | Session 10 |
+| `CATEGORIES` / `CategoryId` (six fixed), `ImageVariantId`, `EffectId` + evidence tables, `CriticalFindingId` + `isPresent` switch | `domain/simulation.ts`, `features/radiograph/{plan,consistency}.ts`, `features/evaluation/critical.ts` | i18n labels for categories / effects are message keys, not data; generalising now would be speculative | Session 10 (add only what Lateral needs) |
 | Console and positioning scene | `features/xray-console/*`, `features/positioning/*` (hard-wired JSX / hand-drawn SVG) | Generating them from data is a visible-UI refactor with no second consumer; `ExamDefinition.scene` / `.render` are declarative ids that nothing resolves yet | when a second scene exists |
-| `RadiographAssetSpec` required landmark groups (`scapulae`, `jaw`, `lungApexV`, `denseZones`) | `domain/radiograph.ts` | Chest-specific shape; optional groups need a second asset | Session 9 |
+| `RadiographAssetSpec` required landmark groups (`scapulae`, `jaw`, `lungApexV`, `denseZones`) | `domain/radiograph.ts` | Chest-specific shape; optional groups need a second asset | Session 10 |
 | Folder move to `modalities/xray/{engine,renderer,views}` | — | Pure churn with no behavioural benefit before a second modality | with the first non-X-ray engine |
-| Consumers of `RadCase` | engine, plan, store, UI | Strangler pattern: migrate one at a time, delete the compat view last | Session 8+ |
+| Consumers of `RadCase` | engine, plan, store, UI | Strangler pattern: migrate one at a time, delete the compat view last | Session 10 |
+
+**Session numbering (after D7):** Session 8 = implement D7 (demographics alignment); Session 9 = platform shell (D2); Session 10 = the deferred generalisation in the table above (separate, zero-behaviour; reason in `ROADMAP_SESSIONS.md`); Session 11 = Chest Lateral; later sessions shifted by two.
 
 Differences from `ROADMAP_SESSIONS.md` Session 7: the prompt for this session limited the scope to the exam/case split plus proof; it did not include generalising the vocabularies, the data-driven console / scene, or the `modalities/` move (rows above). The 662-test baseline is now 682 (4 characterisation + 16 exam/case tests); weights, the engine, the renderer and all goldens are unchanged.
 
@@ -226,7 +228,7 @@ Key changes versus today: (1) settings become a **declarative control list** (ty
 
 ### 4.3 How Chest PA, Chest Lateral and Chest AP differ — as data
 
-Values below are **illustrative placeholders** to show *where* each difference lives. Every medical value must come from a reference document of the same standard as `docs/RAD-LAB_Medical_Reference_Chest_PA*.md`, written and read **before** the exam is authored (roadmap Sessions 9–10).
+Values below are **illustrative placeholders** to show *where* each difference lives. Every medical value must come from a reference document of the same standard as `docs/RAD-LAB_Medical_Reference_Chest_PA*.md`, written and read **before** the exam is authored (roadmap Sessions 11–12).
 
 | Aspect | Chest PA erect (exists) | Chest Lateral (future) | Chest AP (future; erect / supine / portable) |
 |---|---|---|---|
@@ -372,7 +374,7 @@ Seams kept open, nothing built: serialisable `AttemptRecord`; case/exam ids stab
 ## 12. Open decisions carried forward and new ones
 
 **Carried forward (unchanged from Sessions 4–5, still open — now O1–O5 in [`DECISIONS.md`](DECISIONS.md)):**
-1. **Baseline demographic mismatch**: baseline radiograph = 21-year-old woman (A-001); case patient = 45-year-old man. Options in `session-5-baseline-options.md`: (a) change case demographics to match, (b) source a male PA baseline (no verified candidate), (c) leave as labelled. *Interacts with the platform*: the baseline belongs to a `CaseDefinition`, so decision (a)/(b) is cheap now that the exam/case split exists (Session 7). Recommendation (a), awaiting approval; impact: [`session-7-demographics-impact.md`](session-7-demographics-impact.md).
+1. **Baseline demographic mismatch**: baseline radiograph = 21-year-old woman (A-001); case patient = 45-year-old man. Options in `session-5-baseline-options.md`: (a) change case demographics to match, (b) source a male PA baseline (no verified candidate), (c) leave as labelled. *Interacts with the platform*: the baseline belongs to a `CaseDefinition`, so decision (a)/(b) is cheap now that the exam/case split exists (Session 7). **Resolved by owner decision D7 (2026-10-06): option (a) — align the case data to the image (adult female, about 21), image unchanged; executed in Session 8.** Impact and safe order: [`session-7-demographics-impact.md`](session-7-demographics-impact.md).
 2. **Provisional 27 × 31 cm required-anatomy region** and the 1.5 cm landmark-strip mismatch (checklist §A): keep the labelled demo region, adopt a baseline matching it, or measure on a validated baseline.
 3. **Marker rubric**: presence / side / in-field / over-anatomy / weight, and the PA viewer-side convention — currently weight 0, wrong side is a critical finding. Sources read: Chung 2020, Fuller 2016 (neither gives a rule). Needed before Lateral/AP because the convention differs per projection.
 4. **Unread sources**: ACR digital-radiography / chest practice parameters; Australian Institute of Radiography professional-practice guideline cited by Barry et al. (and the Barry audit itself) — to read before the marker rubric and before the Lateral/AP reference documents.

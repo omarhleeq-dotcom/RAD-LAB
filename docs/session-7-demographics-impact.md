@@ -1,6 +1,6 @@
 # Session 7 — impact of aligning the case demographics to the baseline image
 
-**Status: analysis only. Nothing was changed.** The case patient is still a 45-year-old male; the baseline radiograph (A-001) is still described by its author as a 21-year-old woman. This note lists every place the case's age, sex, pronouns, name, build or thickness appear or influence anything, what would change if the case were aligned to the baseline image (**adult female, about 21**), and the safest order of work. It is the input to the open decision in [`DECISIONS.md`](DECISIONS.md) ("baseline demographic mismatch"; recommendation: align the case to the image, awaiting owner approval).
+**Status: analysis only. Nothing was changed. Owner decision D7 (2026-10-06) approved aligning the case data to the image; it is executed in Session 8 following §3.** The case patient is still a 45-year-old male; the baseline radiograph (A-001) is still described by its author as a 21-year-old woman. This note lists every place the case's age, sex, pronouns, name, build or thickness appear or influence anything, what would change if the case were aligned to the baseline image (**adult female, about 21**), and the safest order of work. It is the input to decision **D7** in [`DECISIONS.md`](DECISIONS.md) ("baseline demographic mismatch"; the recommendation to align the case to the image was approved by the owner on 2026-10-06; O1 is resolved).
 
 Method: repository-wide search (`src/`, `messages/`, `scripts/`, `docs/`) for age/sex/pronoun/name/build/thickness words in English and Arabic, then a check of every reader of `patient.age`, `patient.sex`, `patient.description`, `technique.patient` and the technique `attenuation`; the Session 7 characterisation snapshot (`scripts/qa/characterisation/`) was searched for the same strings to see what the golden proofs actually pin.
 
@@ -76,7 +76,7 @@ Not changed, and why: `attenuation` (#6) stays 1 (a 21-year-old adult female is 
 
 ## 3. Recommended sequence (safest first)
 
-1. **Owner decision** recorded in `DECISIONS.md` (align case → image; recommended). Until then nothing changes.
+1. **Owner decision** recorded in `DECISIONS.md` as **D7** (align case → image; approved 2026-10-06). Execution is Session 8; until then nothing changes.
 2. **Arabic educator confirms the wording** of the four affected strings (#2, #3, #12, and whether generic المريض stays) — text only, no code.
 3. **Separate commit A — message template:** fix `patientLine` in Arabic so it is grammatical for either sex (still renders correctly for the current male case). Verify home and workspace in `/ar`.
 4. **Separate commit B — case data:** change the `CaseDefinition` fields in §2.1. Run the characterisation test: **only** `chest-pa-case.json` may differ; then regenerate that single file with `npm run qa:characterise`, review its diff (it must show only the demographic strings), and commit it **with** the data change and a message that says it is an owner-approved demographic change. `chest-pa-scenarios.json`, `golden-image-checksums.json`, the PNG goldens and `matrix.json` must be unchanged (CI enforces this; do not regenerate them).

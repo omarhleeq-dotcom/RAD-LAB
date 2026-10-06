@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Short records of the main platform decisions (Session 6; statuses updated in Session 7 — the owner's decisions D1–D6 are in [`../DECISIONS.md`](../DECISIONS.md)). Status values: **Proposed** (design only, awaiting owner), **Accepted** (already true in the code or deployment), **Superseded**. Nothing marked Proposed is implemented. Design detail: [`../PLATFORM_ARCHITECTURE.md`](../PLATFORM_ARCHITECTURE.md); order of work: [`../ROADMAP_SESSIONS.md`](../ROADMAP_SESSIONS.md).
+Short records of the main platform decisions (Session 6; statuses updated in Session 7 — the owner's decisions D1–D7 are in [`../DECISIONS.md`](../DECISIONS.md)). Status values: **Proposed** (design only, awaiting owner), **Accepted** (already true in the code or deployment), **Superseded**. Nothing marked Proposed is implemented. Design detail: [`../PLATFORM_ARCHITECTURE.md`](../PLATFORM_ARCHITECTURE.md); order of work: [`../ROADMAP_SESSIONS.md`](../ROADMAP_SESSIONS.md).
 
 | # | Decision | Status |
 |---|---|---|
