@@ -97,7 +97,7 @@ Production deploys (`main`) happen automatically on every merge to `main`. Nothi
 
 ## 3. IMPORTANT before sharing the link: restrict who can open it (Cloudflare Zero Trust Access, free tier)
 
-The repo is private but **the deployed site is public to anyone who has the URL** (it is `noindex`, so search engines should not list it, but that is not access control). The prototype contains provisional medical values and a clearly marked banner, yet you may not want strangers — or unreviewed educator feedback — hitting it. **Recommended before sending any link to an educator/physicist:** allow only named email addresses.
+The repo is private but **the deployed site is public to anyone who has the URL** (it is `noindex`, so search engines should not list it, but that is not access control). The prototype contains provisional medical values and a clearly marked banner, yet you may not want strangers — or unreviewed educator feedback — hitting it. (Educator / physicist review is recommended before commercial release or teaching students but is not a gate for owner use, S10b-20.) **Recommended before sending any link to an educator/physicist:** allow only named email addresses.
 
 Free plan: Zero Trust is free for up to 50 users. **(may differ — plan limits change; check the pricing page.)** Sign-in uses a one-time PIN sent to the allowed email, so reviewers need no Cloudflare account.
 

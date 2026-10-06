@@ -1,5 +1,7 @@
 # Arabic terminology — for educator review
 
+> **Status (S10b-20, 2026-10-06):** the owner-proposed corrections (last section) are **owner-approved, to apply in a UI text session**; **all other listed terms are accepted by the owner**. No UI string was changed. Educator review is recommended before release or teaching students, not a gate.
+
 All Arabic in RAD-LAB (UI in `messages/ar.json`, case text in `src/data/cases/*`) was drafted with machine assistance and has **not** been reviewed by a radiography educator. Please confirm or correct each term (final column) — then update both files. Left/right wording is always *the viewer's side of the displayed image* ("يمين/يسار المشاهد", "عرض الكاسيت"), never the patient's.
 
 | English | Current Arabic | Where | Question for the reviewer | OK? |
@@ -120,3 +122,27 @@ Machine-assisted proposals. No existing string in `messages/*.json` or case data
 | Tube angulation | زاوية الأنبوب | control (if kept) | | |
 | Patient unable to take a full breath / hold still | المريض غير قادر على أخذ شهيق كامل / السكون | case condition (generic noun, see S8-1) | يُعاد النظر في المذكر / المؤنث | |
 
+
+## Owner-proposed corrections (owner-approved, to apply in a UI text session; no UI string change now)
+Proposed and **owner-approved** (S10b-20) in Session 10b (docs only). Nothing in `messages/*.json` or case data was changed; **all items below are to be applied in a UI text session** (educator review is recommended before release, not a gate). **All other terms listed in this file are accepted by the owner** (unreviewed by an educator). Groups refer to [`REVIEW_PACKAGE.md`](REVIEW_PACKAGE.md) §5.
+
+| Group | Current | Proposed | Note |
+|---|---|---|---|
+| AR-B | «…واحبسي نفسك» (breath) | «…واحبسي نَفَسَكِ» | «نفسك» is ambiguous (نَفْس / نَفَس) |
+| AR-B | «أخرجي الزفير واحبسي نفسك» | «أخرجي نَفَسَكِ واحبسيه» | same |
+| AR-B | «قادرة على المشي والوقوف…» | «قادرة على الوقوف…» | match the English |
+| AR-B | «أنثى عمرها {age} عامًا» | pattern «أنثى، العمر: {age} سنة» | number agreement breaks for 3–10 |
+| AR-A / D / E | «الكاسيت» for detector (detector view, side against the detector, SID wording «المسافة بين المصدر والكاسيت») | «الكاشف» throughout, e.g. «المسافة بين المصدر والكاشف»; keep «البكي» for Bucky | detector ≠ cassette (DR) |
+| AR-A | «اللوحان / لوحا الكتف» | «لوحا الكتف» | |
+| AR-D | «الجيب الضلعي الحجابي الخلفي» | «الزاوية الضلعية الحجابية الخلفية» | consistency with the PA table |
+| AR-E | «…أخذ شهيق كامل / السكون» | «…البقاء ساكنًا» | |
+| AR-A | «الإسقاط / المنظر» | prefer «الإسقاط» | |
+| AR-A | collimation; quantum noise («الضجيج / الضوضاء الكمّية») | — | left to the educator |
+
+New proposed terms:
+
+| Group | English | Proposed Arabic |
+|---|---|---|
+| AR-D | leaning slightly forwards | مائل قليلًا إلى الأمام |
+| AR-D | holding the support arm | الإمساك بذراع الحامل |
+| AR-E | patient-position label | علامة وضعية المريض |

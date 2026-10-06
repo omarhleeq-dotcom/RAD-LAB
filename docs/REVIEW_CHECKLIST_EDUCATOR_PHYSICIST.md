@@ -1,6 +1,6 @@
 # Consolidated review checklist — educator / medical physicist
 
-One list for everything Sessions 2–5 left for expert review. Tick, correct in the named file, and note the reviewer and date. Nothing here has been clinically validated.
+One list for everything Sessions 2–5 left for expert review. Tick, correct in the named file, and note the reviewer and date. Nothing here has been clinically validated. **Review status (S10b-20):** this review is not a gate for sessions or owner use; it is recommended before commercial release or teaching students; the owner is the first-line content reviewer.
 
 ## A. Positioning and geometry (`src/data/exams/xray/chest-pa-erect.ts`; moved from `src/data/cases/` in Session 7, values unchanged)
 - [ ] Required anatomy region 27 × 31 cm and its position (apices → costophrenic angles, both lungs). *(A Session 5 revision to 27 × 28 cm was reverted: no reference supports it. The baseline's landmark box is 27 × 28 cm of it, leaving ≈ 1.5 cm strips of neck / upper abdomen above and below: a field edge in a strip fails the score although every drawn lung stays visible; the result screen now labels this “margin only” — see `session-5-qa.md` §0.2.)* Decide: keep the demo region and its labelling, or adopt a baseline matching the region / measure the region on a validated baseline.
