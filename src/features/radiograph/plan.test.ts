@@ -29,6 +29,30 @@ describe("render plan from RadiographResultState", () => {
     expect(p.image.y1 + b.v2 * p.image.heightCm).toBeCloseTo(r.yCm + r.heightCm, 6);
   });
 
+  it("Session 5: the mapping is aspect-preserving (no anisotropic distortion of anatomical proportions)", () => {
+    const p = plan();
+    const spec = chestPaErect.radiograph;
+    const sx = p.image.widthCm / spec.widthPx, sy = p.image.heightCm / spec.heightPx;
+    expect(Math.abs(sx / sy - 1), `x/y scale ratio ${sx / sy}`).toBeLessThan(0.005);
+    // Cardiothoracic-style proportion of the drawn lung box equals that of the source box.
+    const b = spec.anatomyBox;
+    const drawn = ((b.u2 - b.u1) * p.image.widthCm) / ((b.v2 - b.v1) * p.image.heightCm);
+    const source = ((b.u2 - b.u1) * spec.widthPx) / ((b.v2 - b.v1) * spec.heightPx);
+    expect(Math.abs(drawn / source - 1)).toBeLessThan(0.005);
+  });
+
+  it("Session 5: the image covers the detector from its top edge (no hatch sliver above the anatomy)", () => {
+    expect(plan().image.y1).toBeLessThanOrEqual(0.05);
+  });
+
+  it("Session 5: rotation inside the full-credit band is drawn symmetric; outside it is drawn (picture agrees with the score)", () => {
+    for (const deg of [-2, -1, 1, 2]) {
+      expect(plan({ rotationDeg: deg }).anatomy.rotation, `${deg}°`).toBeNull();
+      expect(ids(plan({ rotationDeg: deg })), `${deg}°`).not.toContain("rotation");
+    }
+    for (const deg of [-5, -3, 3, 5, 12]) expect(plan({ rotationDeg: deg }).anatomy.rotation, `${deg}°`).not.toBeNull();
+  });
+
   it("rotation: coordinated cues scaled by the internal value, sign preserved, clamped to the console range", () => {
     expect(plan({ rotationDeg: 0 }).anatomy.rotation).toBeNull();
     const a = plan({ rotationDeg: 5 }).anatomy.rotation!, b = plan({ rotationDeg: 10 }).anatomy.rotation!, n = plan({ rotationDeg: -10 }).anatomy.rotation!;

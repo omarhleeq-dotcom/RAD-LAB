@@ -8,6 +8,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
 import { buildRenderPlan } from "@/features/radiograph/plan";
+import { needsNotDrawnLabel, variantIsDrawn } from "@/features/radiograph/consistency";
 import { RadiographEffects } from "@/features/radiograph/RadiographEffects";
 import { TechniqueResult } from "@/features/technique/TechniqueResult";
 import { ResultImage } from "./ResultImage";
@@ -70,9 +71,15 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
             <h3 className="text-sm font-semibold">{t("variantsTitle")}</h3>
             <ul className="mt-1 list-disc ps-5 text-sm text-muted">
               {result.variants.map((v) => (
-                <li key={v}>{t(`variants.${v}`)}</li>
+                <li key={v} data-variant={v} data-drawn={variantIsDrawn(v, plan)}>
+                  {t(`variants.${v}`)}
+                  {v !== "correct" && !variantIsDrawn(v, plan) && <span className="ms-1 text-xs">({t("notDrawnVariant")})</span>}
+                </li>
               ))}
             </ul>
+            {result.variants.some((v) => v !== "correct" && !variantIsDrawn(v, plan)) && (
+              <p className="mt-1 text-xs text-muted">{t("notDrawnNote")}</p>
+            )}
           </div>
         </div>
 
@@ -93,6 +100,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
               {score.passed ? t("passed") : t("failed")}
             </p>
           </div>
+          <p className="-mt-3 text-xs text-muted">{t("scoreNote")}</p>
 
           <div>
             <h3 className="text-sm font-semibold">{t("breakdown")}</h3>
@@ -130,6 +138,9 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-ink">{localize(k.feedback, locale)}</p>
+                  {needsNotDrawnLabel(k.ruleId, k.outcome, plan) && (
+                    <p data-testid="not-drawn" className="mt-0.5 text-xs text-muted">{t("notDrawn")}</p>
+                  )}
                   <details className="mt-1 text-xs text-muted">
                     <summary className="cursor-pointer">
                       {t("evidenceToggle")} <EvidenceBadge status={k.evidence.status} />

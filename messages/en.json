@@ -5,7 +5,8 @@
     "language": "Language",
     "provisionalBadge": "Provisional demo data",
     "comingSoon": "Coming soon",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "disclaimer": "Educational simulator — not a diagnostic or clinically validated system. Do not use it for patient care. Technique and tolerance values are provisional demonstration data until reviewed by an educator or medical physicist."
   },
   "home": {
     "title": "Practice radiography before the real patient.",
@@ -169,8 +170,8 @@
     "title": "Simulated result",
     "score": "Score",
     "outOf": "out of 100",
-    "passed": "Acceptable image",
-    "failed": "Needs improvement",
+    "passed": "Meets the educational pass mark",
+    "failed": "Below the educational pass mark",
     "breakdown": "Score by category",
     "feedback": "Feedback",
     "yourSetting": "Your setting",
@@ -186,7 +187,7 @@
       "wrong-projection": "Projection does not match the request",
       "clipped": "Required anatomy clipped",
       "poor-inspiration": "Poor inspiration",
-      "magnified-geometry": "Increased magnification / unsharpness",
+      "magnified-geometry": "Increased magnification / unsharpness (geometry)",
       "chin-overlap": "Chin projected over the lung apices",
       "scapulae-overlap": "Scapulae overlying the lung fields",
       "low-exposure": "Low detector exposure — increased quantum-noise tendency",
@@ -199,7 +200,12 @@
     "retryHelp": "Retry keeps your last settings so you can correct your mistakes.",
     "notScored": "not scored",
     "imageBrightnessNote": "Displayed brightness is normalised on digital systems and is not an exposure indicator.",
-    "evidenceToggle": "Evidence for this check"
+    "evidenceToggle": "Evidence for this check",
+    "scoreNote": "An educational score from this simulator, not a real-world accept / reject decision: a radiograph that misses a textbook criterion is not automatically unusable.",
+    "notDrawn": "Scored from your settings — not drawn in this image",
+    "notDrawnVariant": "not drawn in this image",
+    "drawn": "shown in the image",
+    "notDrawnNote": "Some findings are scored from your settings but are not visible in the picture by design (for example SID, a kVp inside the reference range, or excess exposure — digital images can look acceptable at excess exposure)."
   },
   "categories": {
     "positioning": "Positioning",
@@ -269,7 +275,7 @@
       "kvp": "kVp sets the energy spectrum of the beam: it changes penetration and X-ray output. It is not a brightness control — on digital systems processing sets the displayed brightness.",
       "mas": "With other factors equal, mAs sets how many X-rays are produced. Too little gives too little signal and more quantum noise; more than needed adds radiation without a matching benefit.",
       "sid": "X-ray intensity falls with the square of the distance (inverse-square law). In manual mode a different SID changes detector exposure: ×{factor} at {sid} cm compared with {ref} cm. The simulator applies only this relationship; a real imaging chain involves more.",
-      "sidAec": "With AEC the model re-terminates at the target, so a different SID changes the mAs the AEC delivers (here {mas} mAs) rather than the detector exposure. SID still affects magnification and sharpness.",
+      "sidAec": "With AEC the model re-terminates at the target, so a different SID changes the mAs the AEC delivers (here {mas} mAs) rather than the detector exposure. SID still changes the geometry (for example magnification).",
       "aec": "AEC aims for consistent, reproducible receptor exposure. In this model it senses only the selected chambers inside the field, and a chamber under dense anatomy makes it expose for longer. Chamber layout and selection are vendor / local-protocol dependent.",
       "di": "DI compares detector exposure with a target: 0 = on target, +3 ≈ twice, −3 ≈ half. It is not a patient dose, and there is no universal pass/fail band.",
       "noise": "Fewer photons reaching the detector mean more quantum noise (noise ∝ 1/√exposure).",
@@ -312,7 +318,7 @@
   },
   "radiograph": {
     "title": "Simulated educational radiograph",
-    "alt": "Simulated educational PA chest radiograph rendered from your settings. It is not a diagnostic image.",
+    "alt": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image.",
     "educationalNote": "Educational reference appearance — not an image of the case patient, and not a diagnostic or clinically validated radiograph. The visual effects are educational approximations: their size does not measure real rotation, movement, noise or dose.",
     "notRepresentative": "This projection is not simulated yet. The PA reference appearance is shown for layout only and does not represent your selected projection.",
     "loading": "Rendering the radiograph…",
@@ -381,6 +387,38 @@
     "magnitude": "Rendered magnitude",
     "magnitudeApprox": "Educational visual approximation",
     "magnitudeNone": "Nothing drawn (by design)",
-    "margins": "Dark margins lie outside the collimated field. Grey hatched areas inside the field have no reference-image data: they are not exposure, collimation or anatomy."
+    "margins": "Dark margins lie outside the collimated field. Grey hatched areas inside the field have no reference-image data: they are not exposure, collimation or anatomy.",
+    "altReference": "No simulated image-quality fault is visible: this is the reference appearance.",
+    "altFindingsLead": "Visible findings: {list}.",
+    "altSides": {
+      "top": "the top",
+      "bottom": "the bottom",
+      "left": "the viewer's left side",
+      "right": "the viewer's right side"
+    },
+    "altFindings": {
+      "rotation": "asymmetric thorax from rotation",
+      "collimation-clipping": "anatomy cut off by the collimated field at {sides}",
+      "excess-field": "a larger exposed field",
+      "centering": "exposed area shifted by the off-centre central ray",
+      "scapulae": "scapulae overlapping the lung fields",
+      "chin": "jaw shadow over the lung apices",
+      "inspiration": "less expanded lungs and raised diaphragm",
+      "motion": "blurred edges from patient movement",
+      "low-exposure": "increased noise from low detector exposure",
+      "excess-exposure": "no visible change despite excess detector exposure",
+      "low-penetration": "reduced visibility behind the heart and in the mediastinum",
+      "projection": "the selected projection is not simulated; the PA appearance is shown for layout only"
+    },
+    "altMarkerPlaced": "Side marker {side} is drawn in the {viewerSide} of the image.",
+    "altMarkerSides": {
+      "left": "viewer's left half",
+      "right": "viewer's right half",
+      "midline": "middle"
+    },
+    "altMarkerWrong": "This is the wrong side for this marker.",
+    "altMarkerPartial": "The marker is partly cut off by the field.",
+    "altMarkerHidden": "Side marker {side} lies outside the field and is not recorded.",
+    "altMarkerNone": "No side marker is recorded."
   }
 }

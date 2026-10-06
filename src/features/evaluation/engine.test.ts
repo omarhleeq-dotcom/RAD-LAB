@@ -8,12 +8,12 @@ import { evaluate } from "./engine";
 const ideal: SimulationSettings = {
   projection: "pa-erect",
   rotationDeg: 0,
-  centralRay: { x: 0, y: -0.07 }, // ≈ 20 cm from the top of the 43 cm detector
+  centralRay: { x: 0, y: -0.15 }, // ≈ 18.3 cm from the top of the 43 cm detector (centre of the required region)
   collimation: { width: 0.94, height: 0.84 }, // ≈ 33 × 36 cm
   chinPosition: "elevated",
   shoulderPosition: "rolled-forward",
   sideMarker: "L",
-  markerPosition: { x: 0.84, y: 0.68 },
+  markerPosition: { x: 0.84, y: -0.44 },
   sidCm: 180,
   kvp: 115,
   mas: 3,
@@ -185,7 +185,7 @@ describe("positioning subchecks", () => {
     expect(check(withChange({ markerPosition: { x: 0, y: -0.1 } }), "side-marker").outcome).toBe("partial");
     const outside = withChange({ collimation: { width: 0.94, height: 0.6 }, markerPosition: { x: 0.84, y: 0.68 } });
     expect(check(outside, "side-marker").feedback.en).toMatch(/outside the collimated field/);
-    expect(check(withChange({ markerPosition: { x: 0.84, y: 0.68 } }), "side-marker").outcome).toBe("pass");
+    expect(check(withChange({ markerPosition: { x: 0.84, y: -0.44 } }), "side-marker").outcome).toBe("pass");
   });
 });
 
@@ -232,5 +232,32 @@ describe("observed setting labels (regression: observedKind was dropped, so ids 
     expect(kind("breathing")).toBe("breathing");
     expect(kind("motion-instruction")).toBe("motionInstruction");
     expect(kind("rotation")).toBeUndefined(); // numeric checks stay formatted numbers
+  });
+});
+
+describe("Session 5 regressions", () => {
+  it("the SID full-credit band is symmetric around 180 cm as documented (±5), not 180–185", () => {
+    for (const sid of [175, 180, 185]) expect(check(withChange({ sidCm: sid }), "sid").outcome, `${sid} cm`).toBe("pass");
+    for (const sid of [170, 190]) expect(check(withChange({ sidCm: sid }), "sid").outcome, `${sid} cm`).toBe("partial");
+  });
+
+  it("feedback text does not carry claims the repository references do not support", () => {
+    const text = JSON.stringify(chestPaErect.rules.map((r) => r.feedback)).toLowerCase();
+    for (const banned of ["anterior superior iliac", "adds scatter", "enlarges the apparent heart", "crowds the lung markings", "produces more scatter", "lowers subject contrast"]) {
+      expect(text, banned).not.toContain(banned);
+    }
+  });
+
+  it("a kVp below the demo band but inside the reference range says that no image effect is drawn for it", () => {
+    const r = check(withChange({ kvp: 105 }), "kvp");
+    expect(r.outcome).toBe("partial");
+    expect(r.feedback.en).toMatch(/only below that range/);
+    expect(check(withChange({ kvp: 140 }), "kvp").feedback.en).toMatch(/draws no image effect/);
+  });
+
+  it("the required anatomy region has the aspect ratio of the baseline's anatomy box", () => {
+    const b = chestPaErect.radiograph.anatomyBox, spec = chestPaErect.radiograph, a = chestPaErect.requiredAnatomy;
+    const boxAspect = ((b.u2 - b.u1) * spec.widthPx) / ((b.v2 - b.v1) * spec.heightPx);
+    expect(Math.abs(a.widthCm / a.heightCm / boxAspect - 1)).toBeLessThan(0.005);
   });
 });

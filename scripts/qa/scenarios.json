@@ -1,0 +1,501 @@
+{
+ "defaults": {
+  "projection": "pa-erect",
+  "rotation": 0,
+  "cx": 0,
+  "cy": 18.5,
+  "cw": 33,
+  "ch": 36,
+  "chin": "elevated",
+  "shoulders": "rolled-forward",
+  "marker": "L",
+  "markerPlacement": "default",
+  "sid": 180,
+  "kvp": 115,
+  "mas": 3.2,
+  "mode": "manual",
+  "chambers": [],
+  "breathing": "deep-inspiration-hold",
+  "motion": "remain-still"
+ },
+ "scenarios": [
+  {
+   "id": "correct",
+   "group": "correct",
+   "title": "Fully correct exam",
+   "set": {}
+  },
+  {
+   "id": "correct-R",
+   "group": "correct",
+   "title": "Fully correct, R marker (viewer's left)",
+   "set": {
+    "marker": "R"
+   }
+  },
+  {
+   "id": "correct-aec",
+   "group": "correct",
+   "title": "Fully correct, AEC with both lung-field chambers",
+   "set": {
+    "mode": "aec",
+    "chambers": [
+     "left",
+     "right"
+    ]
+   }
+  },
+  {
+   "id": "correct-edge",
+   "group": "correct",
+   "title": "Edge of every tolerance, still full credit",
+   "set": {
+    "rotation": 2,
+    "cx": 1,
+    "sid": 185,
+    "kvp": 125
+   }
+  },
+  {
+   "id": "projection-ap",
+   "group": "single",
+   "title": "AP instead of PA",
+   "set": {
+    "projection": "ap-erect"
+   }
+  },
+  {
+   "id": "projection-lateral",
+   "group": "single",
+   "title": "Lateral instead of PA",
+   "set": {
+    "projection": "lateral-left"
+   }
+  },
+  {
+   "id": "rotation-pos4",
+   "group": "single",
+   "title": "Rotation +4° (partial)",
+   "set": {
+    "rotation": 4
+   }
+  },
+  {
+   "id": "rotation-pos12",
+   "group": "single",
+   "title": "Rotation +12°",
+   "set": {
+    "rotation": 12
+   }
+  },
+  {
+   "id": "rotation-neg12",
+   "group": "single",
+   "title": "Rotation −12°",
+   "set": {
+    "rotation": -12
+   }
+  },
+  {
+   "id": "rotation-pos3",
+   "group": "single",
+   "title": "Rotation +3° (just outside the full-credit band)",
+   "set": {
+    "rotation": 3
+   }
+  },
+  {
+   "id": "centering-x-partial",
+   "group": "single",
+   "title": "Central ray 2.5 cm off the midline (partial)",
+   "set": {
+    "cx": 2.5
+   }
+  },
+  {
+   "id": "centering-x-off",
+   "group": "single",
+   "title": "Central ray 3.5 cm off the midline, no clipping",
+   "set": {
+    "cx": 3.5,
+    "cw": 35
+   }
+  },
+  {
+   "id": "centering-y-high",
+   "group": "single",
+   "title": "Central ray too low on the chest (field slides down; apices cut)",
+   "set": {
+    "cy": 26
+   }
+  },
+  {
+   "id": "centering-y-low",
+   "group": "single",
+   "title": "Central ray too high on the chest (field slides up; lower lungs cut)",
+   "set": {
+    "cy": 10
+   }
+  },
+  {
+   "id": "clip-top",
+   "group": "single",
+   "title": "Field cuts the apices",
+   "set": {
+    "cy": 27,
+    "ch": 22
+   }
+  },
+  {
+   "id": "clip-bottom",
+   "group": "single",
+   "title": "Field cuts the costophrenic angles",
+   "set": {
+    "cy": 10,
+    "ch": 22
+   }
+  },
+  {
+   "id": "clip-left",
+   "group": "single",
+   "title": "Field cuts the viewer's left lung edge",
+   "set": {
+    "cx": 6,
+    "cw": 24
+   }
+  },
+  {
+   "id": "clip-right",
+   "group": "single",
+   "title": "Field cuts the viewer's right lung edge",
+   "set": {
+    "cx": -6,
+    "cw": 24
+   }
+  },
+  {
+   "id": "excess-field",
+   "group": "single",
+   "title": "Fully open field",
+   "set": {
+    "cx": 0,
+    "cy": 21.5,
+    "cw": 35,
+    "ch": 43
+   }
+  },
+  {
+   "id": "chin-tucked",
+   "group": "single",
+   "title": "Chin tucked",
+   "set": {
+    "chin": "tucked"
+   }
+  },
+  {
+   "id": "shoulders-relaxed",
+   "group": "single",
+   "title": "Shoulders not rolled forward",
+   "set": {
+    "shoulders": "relaxed"
+   }
+  },
+  {
+   "id": "marker-none",
+   "group": "single",
+   "title": "No side marker",
+   "set": {
+    "marker": null
+   }
+  },
+  {
+   "id": "marker-L-wrong-side",
+   "group": "single",
+   "title": "L marker placed on the viewer's left",
+   "set": {
+    "markerPlacement": "mirror"
+   }
+  },
+  {
+   "id": "marker-R-wrong-side",
+   "group": "single",
+   "title": "R marker placed on the viewer's right",
+   "set": {
+    "marker": "R",
+    "markerPlacement": "mirror"
+   }
+  },
+  {
+   "id": "marker-cut-by-field",
+   "group": "single",
+   "title": "L marker partly outside a narrower field",
+   "set": {
+    "cw": 30
+   }
+  },
+  {
+   "id": "sid-150",
+   "group": "single",
+   "title": "SID 150 cm (partial)",
+   "set": {
+    "sid": 150
+   }
+  },
+  {
+   "id": "sid-120",
+   "group": "single",
+   "title": "SID 120 cm",
+   "set": {
+    "sid": 120
+   }
+  },
+  {
+   "id": "sid-200",
+   "group": "single",
+   "title": "SID 200 cm (partial)",
+   "set": {
+    "sid": 200
+   }
+  },
+  {
+   "id": "kvp-105",
+   "group": "single",
+   "title": "kVp 105 (below the demo band, inside the reference range)",
+   "set": {
+    "kvp": 105
+   }
+  },
+  {
+   "id": "kvp-70",
+   "group": "single",
+   "title": "kVp 70 (below the reference range)",
+   "set": {
+    "kvp": 70,
+    "mas": 16
+   }
+  },
+  {
+   "id": "kvp-140",
+   "group": "single",
+   "title": "kVp 140 (above the demo band, inside the reference range)",
+   "set": {
+    "kvp": 140
+   }
+  },
+  {
+   "id": "mas-low",
+   "group": "single",
+   "title": "mAs 1 (below target)",
+   "set": {
+    "mas": 1
+   }
+  },
+  {
+   "id": "mas-very-low",
+   "group": "single",
+   "title": "mAs 0.5 (insufficient)",
+   "set": {
+    "mas": 0.5
+   }
+  },
+  {
+   "id": "mas-above",
+   "group": "single",
+   "title": "mAs 5 (above target)",
+   "set": {
+    "mas": 5
+   }
+  },
+  {
+   "id": "mas-excess",
+   "group": "single",
+   "title": "mAs 12.5 (excess, dose-creep risk)",
+   "set": {
+    "mas": 12.5
+   }
+  },
+  {
+   "id": "aec-centre-only",
+   "group": "single",
+   "title": "AEC reading the dense central chamber only",
+   "set": {
+    "mode": "aec",
+    "chambers": [
+     "center"
+    ]
+   }
+  },
+  {
+   "id": "aec-outside-field",
+   "group": "combo",
+   "title": "AEC chambers outside a narrowed light field (backup limit)",
+   "set": {
+    "mode": "aec",
+    "chambers": [
+     "left",
+     "right"
+    ],
+    "cw": 10
+   }
+  },
+  {
+   "id": "breathing-expiration",
+   "group": "single",
+   "title": "“Breathe out and hold it”",
+   "set": {
+    "breathing": "expiration-hold"
+   }
+  },
+  {
+   "id": "breathing-normal",
+   "group": "single",
+   "title": "“Breathe normally”",
+   "set": {
+    "breathing": "normal-breathing"
+   }
+  },
+  {
+   "id": "breathing-none",
+   "group": "single",
+   "title": "No breathing instruction",
+   "set": {
+    "breathing": "no-instruction"
+   }
+  },
+  {
+   "id": "motion-none",
+   "group": "single",
+   "title": "No instruction about keeping still",
+   "set": {
+    "motion": "none"
+   }
+  },
+  {
+   "id": "motion-relax",
+   "group": "single",
+   "title": "“Relax — you can move naturally”",
+   "set": {
+    "motion": "relax-and-move"
+   }
+  },
+  {
+   "id": "combo-rotation-clip",
+   "group": "combo",
+   "title": "Rotated and mis-collimated",
+   "set": {
+    "rotation": 8,
+    "cx": 5,
+    "cw": 26
+   }
+  },
+  {
+   "id": "combo-low-kvp-low-mas",
+   "group": "combo",
+   "title": "Low kVp and low mAs",
+   "set": {
+    "kvp": 70,
+    "mas": 1
+   }
+  },
+  {
+   "id": "combo-low-kvp-high-mas",
+   "group": "combo",
+   "title": "Low kVp compensated with mAs (does not repair penetration)",
+   "set": {
+    "kvp": 70,
+    "mas": 25
+   }
+  },
+  {
+   "id": "combo-preparation",
+   "group": "combo",
+   "title": "Chin, shoulders, breathing and keep-still all missed",
+   "set": {
+    "chin": "tucked",
+    "shoulders": "relaxed",
+    "breathing": "no-instruction",
+    "motion": "none"
+   }
+  },
+  {
+   "id": "combo-ap-rotated",
+   "group": "combo",
+   "title": "AP projection and rotation",
+   "set": {
+    "projection": "ap-erect",
+    "rotation": 10
+   }
+  },
+  {
+   "id": "combo-short-sid-excess",
+   "group": "combo",
+   "title": "Short SID with unchanged mAs (excess exposure, magnification)",
+   "set": {
+    "sid": 120
+   }
+  },
+  {
+   "id": "combo-aec-clipped",
+   "group": "combo",
+   "title": "AEC with the lung chambers, field cutting the left edge",
+   "set": {
+    "mode": "aec",
+    "chambers": [
+     "left",
+     "right"
+    ],
+    "cx": 6,
+    "cw": 24
+   }
+  },
+  {
+   "id": "combo-marker-and-clip",
+   "group": "combo",
+   "title": "Wrong-side marker and a narrow field",
+   "set": {
+    "markerPlacement": "mirror",
+    "cw": 24
+   }
+  },
+  {
+   "id": "combo-all-wrong",
+   "group": "combo",
+   "title": "Everything wrong at once",
+   "set": {
+    "projection": "ap-erect",
+    "rotation": 12,
+    "cx": 5,
+    "cw": 26,
+    "mas": 1,
+    "shoulders": "relaxed",
+    "chin": "tucked",
+    "motion": "none",
+    "breathing": "no-instruction",
+    "kvp": 80,
+    "markerPlacement": "mirror",
+    "sid": 120
+   }
+  },
+  {
+   "id": "initial-state",
+   "group": "combo",
+   "title": "The case's starting state, exposed untouched",
+   "set": {},
+   "fromInitial": true
+  }
+ ],
+ "chamberLabels": {
+  "left": {
+   "en": "Left field (detector view)",
+   "ar": "الحقل الأيسر (عرض الكاسيت)"
+  },
+  "center": {
+   "en": "Central field",
+   "ar": "الحقل المركزي"
+  },
+  "right": {
+   "en": "Right field (detector view)",
+   "ar": "الحقل الأيمن (عرض الكاسيت)"
+  }
+ }
+}

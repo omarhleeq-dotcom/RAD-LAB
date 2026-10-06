@@ -47,8 +47,12 @@ export const chestPaErect: RadCase = {
   },
   requiredProjection: "pa-erect",
   detector: { widthCm: 35, heightCm: 43 },
-  // Required anatomy region on the detector (cm from its top-left corner). Demo values.
-  requiredAnatomy: { xCm: 4, yCm: 3, widthCm: 27, heightCm: 31 },
+  // Required anatomy region on the detector (cm from its top-left corner). Demo values (provisional).
+  // Session 5: 27 × 28 cm (was 27 × 31) so its aspect ratio equals that of the baseline image's anatomy landmark
+  // box (860 × 892 px → 0.964): the renderer can then map the box onto this region with ONE uniform scale (no
+  // anisotropic distortion of anatomical proportions) while a field edge that cuts this region still cuts the drawn
+  // anatomy. Same width and lateral position; centre moved 18.5 → 18.3 cm so the image starts at the detector top.
+  requiredAnatomy: { xCm: 4, yCm: 4.3, widthCm: 27, heightCm: 28 },
   controls: {
     rotationDeg: { min: -20, max: 20, step: 1 },
     sidCm: { min: 100, max: 200, step: 5 },
@@ -58,10 +62,10 @@ export const chestPaErect: RadCase = {
   },
   positioning: {
     // Educational target region. Midline + mid-thoracic/T7 teaching landmark (reference §2 Centering, §3C).
-    // y = centre of requiredAnatomy (18.5 cm of 43 cm → -0.14). NOT a clinical measurement.
+    // y = centre of requiredAnatomy (18.3 cm of 43 cm → -0.15). NOT a clinical measurement.
     // TODO(medical-review): tolerances are provisional.
     centering: {
-      target: { x: 0, y: -0.14 },
+      target: { x: 0, y: -0.15 },
       idealTolerance: { x: 0.08, y: 0.1 }, // ≈ ±1.4 cm / ±2.2 cm on this detector
       acceptableTolerance: { x: 0.17, y: 0.25 }, // ≈ ±3 cm / ±5.4 cm
     },
@@ -131,8 +135,8 @@ export const chestPaErect: RadCase = {
           ar: "الإسقاط صحيح: PA وقوفًا كما هو مطلوب.",
         },
         fail: {
-          en: "The projection does not match the request (PA erect). The projection changes which structures are magnified and how the heart and scapulae are shown. Re-position the patient as requested.",
-          ar: "الإسقاط لا يطابق الطلب (PA وقوفًا). يؤثر الإسقاط في الهياكل المكبَّرة وفي ظهور القلب واللوحين. أعد وضع المريض حسب الطلب.",
+          en: "The projection does not match the request (PA erect). PA is preferred for routine erect chest imaging because it reduces cardiac magnification compared with AP. Re-position the patient as requested.",
+          ar: "الإسقاط لا يطابق الطلب (PA وقوفًا). يُفضَّل إسقاط PA في تصوير الصدر الروتيني وقوفًا لأنه يقلل تكبير القلب مقارنةً بإسقاط AP. أعد وضع المريض حسب الطلب.",
         },
       },
       evidence: {
@@ -201,8 +205,8 @@ export const chestPaErect: RadCase = {
           ar: "المجال مفتوح أكثر من اللازم.",
         },
         high: {
-          en: "The field is opened wider than necessary. Extra field size exposes tissue outside the area of interest and adds scatter and patient dose. Close the shutters closer to the anatomy, without cutting it off.",
-          ar: "المجال مفتوح أكثر من اللازم. المجال الزائد يعرّض أنسجة خارج المنطقة المطلوبة ويزيد التشتت وجرعة المريض. قرّب حواف المجال من التشريح دون أن تقطعه.",
+          en: "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off.",
+          ar: "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
         },
       },
       evidence: {
@@ -304,8 +308,8 @@ export const chestPaErect: RadCase = {
           ar: "المريض متعامد مع الكاسيت — لا يوجد دوران ملحوظ.",
         },
         fail: {
-          en: "The patient is rotated. Rotation distorts the heart and mediastinum and makes one lung appear different from the other, which can mimic disease. Check that the shoulders and the anterior superior iliac spines are equidistant from the detector, then correct.",
-          ar: "المريض مائل (دوران). يشوّه الدوران ظلّ القلب والمنصف ويجعل إحدى الرئتين تبدو مختلفة عن الأخرى وقد يحاكي مرضًا. تأكد أن الكتفين متساويا البعد عن الكاسيت ثم صحّح الوضعية.",
+          en: "The patient is rotated. Rotation changes how the thorax is projected: the spinous processes no longer lie midway between the medial ends of the clavicles and the two sides of the chest look different, which can mislead when the image is read. Ask the patient to stand square to the detector, then correct. (How rotation looks varies with body build, so a drawn amount is not a number of degrees.)",
+          ar: "المريض مائل (دوران). يغيّر الدوران طريقة إسقاط القفص الصدري: لا تقع النتوءات الشوكية في منتصف المسافة بين النهايتين الإنسيتين للترقوتين، ويبدو جانبا الصدر مختلفين، وقد يضلّل ذلك عند قراءة الصورة. اطلب من المريض الوقوف متعامدًا مع الكاسيت ثم صحّح الوضعية. (يختلف مظهر الدوران باختلاف بنية الجسم، لذا لا يعني المقدار المرسوم عددًا من الدرجات.)",
         },
       },
       evidence: {
@@ -390,12 +394,12 @@ export const chestPaErect: RadCase = {
           ar: "قيمة kVp ضمن النطاق المستهدف في هذا البروتوكول التجريبي. يُدرَّس تصوير صدر البالغ PA كفحص بجهد أنبوبي عالٍ نسبيًا: الجهد الأعلى يعطي حزمة أكثر اختراقًا تساعد على إظهار المنصف والحقلين الرئويين معًا. النطاق الدقيق هدف تجريبي مؤقت وليس قيمة عالمية.",
         },
         low: {
-          en: "kVp is below this demo protocol's target band. A lower tube potential gives a less penetrating beam that is absorbed more by dense structures, so the retrocardiac lung and the spine behind the heart are harder to demonstrate. Extra mAs adds photons but not penetrating energy. (About 100–150 kV is a common reference range for chest, not a universal rule.)",
-          ar: "قيمة kVp أقل من النطاق المستهدف في هذا البروتوكول التجريبي. الجهد الأنبوبي المنخفض يعطي حزمة أقل اختراقًا تمتصها البنى الكثيفة أكثر، فيصعب إظهار الرئة خلف القلب والعمود الفقري خلفه. زيادة mAs تضيف فوتونات لكنها لا تضيف طاقة اختراق. (نحو 100–150 kV نطاق مرجعي شائع للصدر وليس قاعدة عالمية.)",
+          en: "kVp is below this demo protocol's target band. A lower tube potential gives a less penetrating beam that is absorbed more by dense structures, so the retrocardiac lung and the spine behind the heart can be harder to demonstrate. Extra mAs adds photons but not penetrating energy. (About 100–150 kV is a common reference range for chest, not a universal rule; this simulation draws the reduced visibility only below that range.)",
+          ar: "قيمة kVp أقل من النطاق المستهدف في هذا البروتوكول التجريبي. الجهد الأنبوبي المنخفض يعطي حزمة أقل اختراقًا تمتصها البنى الكثيفة أكثر، فقد يصعب إظهار الرئة خلف القلب والعمود الفقري خلفه. زيادة mAs تضيف فوتونات لكنها لا تضيف طاقة اختراق. (نحو 100–150 kV نطاق مرجعي شائع للصدر وليس قاعدة عالمية؛ وهذه المحاكاة ترسم انخفاض الوضوح فقط تحت هذا النطاق.)",
         },
         high: {
-          en: "kVp is above this demo protocol's target band. A higher-energy beam penetrates more, lowers subject contrast and produces more scatter. Whether that is acceptable depends on the detector, image processing and local protocol, so the band is a provisional demo target rather than a universal limit.",
-          ar: "قيمة kVp أعلى من النطاق المستهدف في هذا البروتوكول التجريبي. الحزمة الأعلى طاقة تخترق أكثر وتقلل تباين الجسم وتزيد التشتت. مدى قبول ذلك يعتمد على الكاشف ومعالجة الصورة والبروتوكول المحلي، لذا فالنطاق هدف تجريبي مؤقت وليس حدًا عالميًا.",
+          en: "kVp is above this demo protocol's target band. A higher-energy beam is more penetrating. Whether that is acceptable depends on the detector, image processing and local protocol, so the band is a provisional demo target rather than a universal limit. This simulation draws no image effect for a higher kVp.",
+          ar: "قيمة kVp أعلى من النطاق المستهدف في هذا البروتوكول التجريبي. الحزمة الأعلى طاقة أكثر اختراقًا. مدى قبول ذلك يعتمد على الكاشف ومعالجة الصورة والبروتوكول المحلي، لذا فالنطاق هدف تجريبي مؤقت وليس حدًا عالميًا. لا ترسم هذه المحاكاة أي أثر في الصورة عند ارتفاع kVp.",
         },
         fail: {
           en: "kVp is outside the demo protocol's range.",
@@ -505,7 +509,7 @@ export const chestPaErect: RadCase = {
       kind: "range",
       category: "sid",
       setting: "sidCm",
-      ideal: [180, 185],
+      ideal: [175, 185],
       acceptable: [150, 200],
       unit: "cm",
       variantOnLow: "magnified-geometry",
@@ -516,8 +520,8 @@ export const chestPaErect: RadCase = {
           ar: "قيمة SID ضمن النطاق التجريبي المستهدف.",
         },
         low: {
-          en: "SID is shorter than the demo target. A shorter SID increases magnification (notably of the heart) and geometric unsharpness, and raises the exposure at the detector (inverse-square) so manual technique would need to be reduced.",
-          ar: "قيمة SID أقصر من النطاق التجريبي. تزيد المسافة الأقصر من التكبير (خصوصًا القلب) وعدم الحدّة الهندسي، وترفع التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي.",
+          en: "SID is shorter than the demo target (180 cm is the common reference). A shorter SID raises the exposure at the detector (inverse-square), so manual technique would need to be reduced, and it increases geometric magnification. In one 2025 study of AP semi-erect adult chest imaging, reducing SID from 180 cm increased entrance skin dose and 100 cm reduced image quality. This simulation does not draw magnification.",
+          ar: "قيمة SID أقصر من النطاق التجريبي (180 سم هو المرجع الشائع). تزيد المسافة الأقصر التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي، كما تزيد التكبير الهندسي. وفي دراسة واحدة عام 2025 على تصوير صدر البالغ AP شبه المنتصب، أدى خفض SID عن 180 سم إلى زيادة جرعة الجلد الداخلة، وأدى 100 سم إلى انخفاض جودة الصورة. لا ترسم هذه المحاكاة التكبير.",
         },
         high: {
           en: "SID is longer than the demo target; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. An AEC compensates for this in the educational model.",
@@ -545,8 +549,8 @@ export const chestPaErect: RadCase = {
           ar: "صحيح: شهيق عميق مع حبس النفس فتكون الرئتان ممتلئتين جيدًا.",
         },
         fail: {
-          en: "The lungs will not be fully inflated. A poor inspiration crowds the lung markings, raises the diaphragm and enlarges the apparent heart size. Instruct the patient to take a deep breath in and hold it.",
-          ar: "لن تكون الرئتان ممتلئتين بالكامل. يؤدي ضعف الشهيق إلى ازدحام العلامات الرئوية وارتفاع الحجاب الحاجز وتضخم ظاهري لحجم القلب. اطلب من المريض شهيقًا عميقًا مع حبس النفس.",
+          en: "The lungs will not be fully expanded. Reduced inspiration tends to show less expanded lungs and higher diaphragms. Instruct the patient to take a deep breath in and hold it.",
+          ar: "لن تكون الرئتان ممتلئتين بالكامل. يميل ضعف الشهيق إلى إظهار رئتين أقل تمددًا وحجابين حاجزين أعلى. اطلب من المريض شهيقًا عميقًا مع حبس النفس.",
         },
       },
       evidence: {

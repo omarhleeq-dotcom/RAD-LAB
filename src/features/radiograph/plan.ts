@@ -67,6 +67,8 @@ export interface RenderPlan {
   /** Where the source image sits on the detector (cm); the anatomy landmark box is mapped onto the required region. */
   image: { x1: number; y1: number; widthCm: number; heightCm: number };
   fieldCm: CmRect;
+  /** Sides on which the field cuts the required anatomy (same value the score uses; for the text alternative). */
+  clippedSides: ("left" | "right" | "top" | "bottom")[];
   /** False for projections that are not simulated (AP / lateral): the PA appearance is shown for layout only. */
   representative: boolean;
   anatomy: {
@@ -178,9 +180,13 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const heightCm = req.heightCm / (box.v2 - box.v1);
   const image = { x1: req.xCm - box.u1 * widthCm, y1: req.yCm - box.v1 * heightCm, widthCm, heightCm };
 
+  const has = (ruleId: string) => state.findings.some((f) => f.ruleId === ruleId);
   const deg = clamp(geometry.rotationDeg, -TUNING.rotation.maxDeg, TUNING.rotation.maxDeg);
+  // Session 5 consistency rule: rotation is drawn only when the rotation check is not passed. Within the case's
+  // "no meaningful rotation" tolerance the thorax is drawn symmetric, so the picture, the score and the feedback
+  // always describe the same finding (the tolerance band itself is provisional case data).
   const rotation =
-    deg === 0
+    deg === 0 || !has("rotation")
       ? null
       : {
           degrees: deg,
@@ -221,7 +227,6 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
       })()
     : null;
 
-  const has = (ruleId: string) => state.findings.some((f) => f.ruleId === ruleId);
   const active: [EffectId, boolean, string[], boolean][] = [
     ["projection", !representative, ["geometry.projection"], false],
     ["rotation", rotation !== null, ["geometry.rotationDeg"], true],
@@ -252,6 +257,7 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
     detector: { widthCm: detector.widthCm, heightCm: detector.heightCm },
     image,
     fieldCm,
+    clippedSides: [...geometry.clippedSides],
     representative,
     anatomy: {
       rotation,
