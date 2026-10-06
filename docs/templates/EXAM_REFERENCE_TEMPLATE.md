@@ -14,7 +14,7 @@
 *3–5 bullets: what was read in full, what was only an abstract, what was blocked, therefore which rule families are "source needed". If a whole family (positioning, technique, quality) has no read source, say it here.*
 
 ## 1. Sources
-Source rules (all references): authoritative / peer-reviewed only (IAEA, WHO, AAPM, ACR, ICRP, IEC *concepts*, PubMed-indexed literature, EC / professional-society guidelines); no blogs, forums, commercial charts, textbooks-as-authority, Radiopaedia, search-engine snippets. Full text of open-access PMC articles may be retrieved only through the official NCBI E-utilities (`efetch`). **Never** bypass a captcha; never use mirrors, caches or other unofficial routes for a blocked site. No text copied beyond short quotes. Do not add a candidate source to the repository unless it was actually read and cited.
+Source rules (all references): authoritative / peer-reviewed only (IAEA, WHO, AAPM, ACR, ICRP, IEC *concepts*, PubMed-indexed literature, EC / professional-society guidelines); no blogs, forums, commercial charts, textbooks-as-authority (S10-5), search-engine snippets, secondary sites; Radiopaedia is excluded entirely (S10-3). Full text of open-access PMC articles may be retrieved only through the official NCBI E-utilities (`efetch`). **Never** bypass a captcha; never use mirrors, caches or other unofficial routes for a blocked site. No text copied beyond short quotes. Do not add a candidate source to the repository unless it was actually read and cited.
 
 ### 1.1 Sources read
 | # | Citation (authors, year, journal / publisher, vol:pages, DOI, PMID / PMCID) | Access status | What it supports (and only this) | May it be the *sole* support for a technique value, scoring rule, critical finding or convention? |
@@ -26,8 +26,8 @@ Source rules (all references): authoritative / peer-reviewed only (IAEA, WHO, AA
 |---|---|---|---|
 | | | *egress blocked · captcha (not bypassed) · paywall · not found* | *list in the final report next to O4* |
 
-### 1.3 Unverified leads (NOT evidence)
-*Statements seen only in search-result summaries or secondary pages. Never implemented, scored or shown to a learner on this basis. Each names where it would matter.*
+### 1.3 Leads
+*None. Do not record statements from search-result summaries or secondary sites; the item stays "source needed" until a read source supports it.*
 
 ## 2. Classification
 *Reuse the five evidence classes of `EVIDENCE_CLASSES` (`validated`, `common-reference`, `vendor-protocol-dependent`, `educational-simplification`, `provisional`). "source needed" = no class can be assigned; the item is not implemented, or only as `provisional` with a TODO.*

@@ -9,7 +9,7 @@
 
 1. The authoritative lateral-chest criteria sources the Chest PA references lean on — the European Commission quality-criteria guideline (EUR 16260), IAEA-TECDOC-1423, the WHO chest manual, the ACR practice parameters, the RCR audit criteria — **could not be read in full in this session** (network egress to those hosts was blocked or required a captcha; see §1). Where the PA references cite them, this document does **not** re-use their lateral content from memory.
 2. What *was* read in full is thin on lateral specifics: one single-site dose / technique study with lateral values (Junda 2021), one multi-centre DRL paper with lateral rooms (Dalah 2025), one reject-rate study (Atkinson 2020), the three side-marker papers already used for PA (Chung 2020, Fuller 2016, Barry 2016), plus abstracts on the role of the lateral view.
-3. Therefore **no lateral positioning rule, centring point, field size, SID, kVp, mAs, image-quality threshold or scoring tolerance is asserted here as sourced.** Each is "source needed" (§3–§6) so that Session 11 does not build on unsupported values. A short list of *unverified leads* (§1.3) records statements found in search-result summaries of third-party pages; they are **not evidence** and must be verified against a primary source before use.
+3. Therefore **no lateral positioning rule, centring point, field size, SID, kVp, mAs, image-quality threshold or scoring tolerance is asserted here as sourced.** Each is "source needed" (§3–§6) so that Session 11 does not build on unsupported values.
 4. The **marker convention for the lateral projection is not decided** (§5, owner decision O6).
 
 ## 1. Sources: what was read, and what each supports
@@ -45,18 +45,10 @@ Existing PA sources (IAEA-TECDOC-1423, StatPearls positioning, the AAPM / IEC / 
 | ACR practice parameters (chest radiography; digital radiography) | Marker / identification, lateral technique, O3 / O4. | Redirected to a third-party host; not followed. **Not read.** |
 | WHO chest manual PDF (R12) | Lateral anatomy and technical-quality text. | `iris.who.int` blocked. **Not read.** |
 | NCBI Bookshelf: StatPearls *X-ray Radiographic Patient Positioning* (NBK557488); *A Systematic Approach to Chest Radiographic Analysis* | Positioning text for the lateral. | Captcha challenge; **not bypassed**. **Not read.** |
-| RCR *adapted anatomical image criteria* (PA chest only exists as a page), AIR professional practice guideline, Bontrager / Merrill textbooks, Radiopaedia | Positioning detail; textbook conventions. | Hosts blocked; textbooks are not open-checkable. **Not read.** Textbooks and Radiopaedia are secondary and are not used as medical authority here. |
+| RCR *adapted anatomical image criteria* (PA chest only exists as a page), AIR professional practice guideline, Bontrager / Merrill textbooks | Positioning detail; textbook conventions. | Hosts blocked; textbooks are not open-checkable. **Not read.** Textbooks are not used as sources for now (S10-5); educator review covers gaps. |
 
-### 1.3 Unverified leads (NOT evidence)
-Statements found only in search-result summaries of third-party pages (none of them opened in full, none a primary source). Recorded so an educator can confirm or refute them against EUR 16260, ACR, WHO or StatPearls; **none may be implemented, scored or shown to a learner on this basis.**
-
-| # | Lead | Where it would matter |
-|---|---|---|
-| L1 | Left lateral is the usual default side. | O7; control options |
-| L2 | Both arms are raised above the head so the humeri are out of the field. | arm-position control; effect |
-| L3 | Marker side: one summary said the side *nearest the tube* is marked for lateral projections; textbook convention elsewhere is usually stated as the side nearest the detector. **These conflict.** | O6 (A vs B) |
-| L4 | Rotation cues: posterior ribs superimposed (separation of about 1 cm at 180 cm SID quoted as the limit), sternum in profile. | rotation rule / effect |
-| L5 | At least ten posterior ribs above the diaphragm; open thoracic intervertebral spaces. | inspiration / quality criteria |
+### 1.3 Leads
+None recorded. Statements taken from search-result summaries or secondary sites were removed (S10-3: commercial product, no secondary-site reliance; Radiopaedia is not used at all). Items they touched — side against the detector, arm position, rotation / obliquity cues, rib counts for inspiration, marker side — stay **source needed** (§3, §5, §6).
 
 **Consequence for Session 11 and 12:** an educator (or a session with unrestricted network access) must read the §1.2 sources — at minimum **EUR 16260 (chest lateral)**, the **ACR parameters**, the **WHO chest manual** and the **StatPearls positioning chapter** — and fill every "source needed" below *before* any lateral rule is implemented. This extends open decision O4.
 
@@ -100,21 +92,21 @@ Every rule must carry one of the five evidence classes in `EVIDENCE_CLASSES`: **
 
 | # | Option | What it would mean | Source status |
 |---|---|---|---|
-| A | **Marker names the patient side nearest the detector** (left lateral → "L"), placed anywhere inside the field, not over anatomy | Rule kind: letter must match the *selected side-against-detector* control, not a screen half | **Source needed** (commonly taught; found only in unverified search summaries — see §1.3 L3). |
-| B | **Marker names the patient side nearest the tube** | As A with the opposite mapping | **Source needed**; *conflicts* with A in unverified summaries (§1.3 L3) — do not choose without a primary source. |
+| A | **Marker names the patient side nearest the detector** (left lateral → "L"), placed anywhere inside the field, not over anatomy | Rule kind: letter must match the *selected side-against-detector* control, not a screen half | **Source needed.** |
+| B | **Marker names the patient side nearest the tube** | As A with the opposite mapping | **Source needed.** A and B are mutually exclusive: choose only from a primary source. |
 | C | **Marker presence only** (placed or not, inside the field, not obscuring anatomy); letter correctness not checked | No wrong-side critical finding for lateral | Supported as *best practice* by R4–R6 for presence; no source for letter rules. Closest to the current PA state (marker weight 0, side-correctness educational). |
 | D | **Display convention fixed in data** (which way the anterior faces on the displayed image) and a letter rule attached to it | A new data field in `ExamDefinition.positioning`; ADR-0010 ("orientation conventions are data") | **Source needed** for the display orientation of a lateral chest. |
 | E | **Defer**: ship the lateral exam without a scored or gated marker, marker control shown as in PA but unscored | No critical finding; marker check weight 0 | Consistent with O3 (no rubric yet). |
 
-**Recommendation:** none made here. Any of A–D needs a primary source (ACR / EC / AIR) read first; E is the only option that needs no new medical claim. The decision is the owner's (O6 in `DECISIONS.md`).
+**Provisional default (S10-5):** option **E** (unscored, ungated) until a full-text source and a final owner decision, required before Session 12. PA behaviour is unchanged. **Recommendation:** none made here. Any of A–D needs a primary source (ACR / EC / AIR) read first; E is the only option that needs no new medical claim. The decision is the owner's (O6 in `DECISIONS.md`).
 
 ## 6. Image quality and result rendering (lateral)
 
 | Criterion / effect | Statement | Class / status |
 |---|---|---|
-| True-lateral alignment / obliquity | Concept exists (R9). Appearance cues (e.g. separation of the posterior ribs, sternum in profile) are **unverified leads** (§1.3 L4–L5), not usable. **No numeric thresholds.** | concept: common-reference; cues and magnitude: source needed |
+| True-lateral alignment / obliquity | Concept exists (R9). Appearance cues and any numeric tolerance: **source needed.** **No numeric thresholds.** | concept: common-reference; cues and magnitude: source needed |
 | Inspiration | **Source needed** for lateral appearance criteria (PA rib counts do not transfer). | source needed |
-| Arms / humeral superimposition | **Source needed** (lead L2). | source needed |
+| Arms / humeral superimposition | **Source needed.** | source needed |
 | Coverage | Which structures a lateral must include: **source needed.** | source needed |
 | Motion; low detector exposure (noise); excess exposure (no darkening); low penetration | Same validated DR principles as PA (PA Image-Quality reference): detector-exposure effects change noise / detail, not brightness; no invented EI. The lateral-specific *places* where penetration shows (e.g. spine through the heart, retrosternal / retrocardiac regions) are **source needed**. | principles: validated (PA reference); lateral landmarks: source needed |
 | Laterality of structures | A lateral image carries side information in the anatomy (R8: right vs left ribs; gastric bubble and cardiac silhouette signs); a renderer must not rely on this to score a marker. | concept supported (abstract) |

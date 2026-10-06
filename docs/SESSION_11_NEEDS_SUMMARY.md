@@ -35,6 +35,7 @@ Marks: **same** as PA · **differs** · **new** · **unknown** (source needed).
 | Migrating consumers off `RadCase` | **Not needed → deferred** | none | S7-2 strangler: both exams compose through `composeCase()`. |
 
 ## 3. Open items that gate Session 12 / 13 (not Session 11)
+- **Provisional marker defaults (S10-5):** Lateral option E and AP option D — unscored and ungated — until a full-text source and a final owner decision (before Session 12 / 13). PA unchanged.
 - **Owner decisions:** O6 lateral marker convention · O7 lateral side(s) · O8 AP marker / display convention · O9 AP variants (exam vs control vs case; the spec §6 portable / ICU decision is not in `DECISIONS.md`).
 - **Sources to read before implementing** (each is also in the references' §1.2): EC EUR 16260; IAEA publications; ACR chest / digital-radiography / portable parameters; WHO chest manual PDF; StatPearls positioning; AIR / RCR criteria; Fitzgerald & Lockwood 2025 full text (AP SID).
 - **Assets:** a lateral baseline and AP baseline(s), openly licensed and registered; none fetched or added.

@@ -41,10 +41,10 @@ Sources used by the Chest PA references are not re-used for AP claims here.
 | WHO chest manual PDF (Ellis & Flower 2012, ISBN 9241546778) | AP-versus-PA appearance, erect-versus-supine signs, technical-quality text | `iris.who.int` blocked; landing page only. |
 | NCBI Bookshelf — StatPearls *X-ray Radiographic Patient Positioning* (NBK557488) | AP positioning (erect, supine, mobile), rotation, SID | Captcha challenge; not bypassed. |
 | Fitzgerald & Lockwood 2025 full text (publisher site) | An AP SID reference value and its image-quality criteria (R1 is abstract only) | Publisher host not reachable / not open access through E-utilities. |
-| RCR / AIR criteria and guideline, textbooks (Bontrager / Merrill), Radiopaedia | Positioning conventions, marker convention | Hosts blocked; textbooks and Radiopaedia are secondary and not used as authority. |
+| RCR / AIR criteria and guideline, textbooks (Bontrager / Merrill) | Positioning conventions, marker convention | Hosts blocked; textbooks are not used as sources for now (S10-5); educator review covers gaps. |
 
-### 1.3 Unverified leads (NOT evidence)
-None were collected for AP in this session (no search-result summaries were used as support). The PLATFORM_ARCHITECTURE §4.3 table lists "tube angulation", "shoulder / scapula position" and "grid decision as a control" as AP-specific candidates marked **"sources needed"**; they remain unverified placeholders.
+### 1.3 Leads
+None recorded. No search-result summary or secondary site was used as support for AP. The `PLATFORM_ARCHITECTURE.md` §4.3 candidates ("tube angulation", "shoulder / scapula position", "grid decision as a control") are repository placeholders marked "sources needed", not leads; they stay **source needed**.
 
 ## 2. Classification
 The five evidence classes of `EVIDENCE_CLASSES` apply (`validated`, `common-reference`, `vendor-protocol-dependent`, `educational-simplification`, `provisional`). "Source needed" = no class assignable; not implemented, or only as `provisional` with a TODO.
@@ -84,7 +84,7 @@ The five evidence classes of `EVIDENCE_CLASSES` apply (`validated`, `common-refe
 | A | **Same viewer-half convention as PA** (patient left = viewer right), stored as AP exam data | **Source needed** (display convention for AP) |
 | B | A different AP display / marker convention stored as data | **Source needed** |
 | C | **Marker presence only** (placed, inside the field, not over anatomy); letter not checked; no wrong-side critical finding | Supported as best practice for presence (R10); no letter rule sourced |
-| D | **Defer**: unscored, ungated marker, as PA today | Needs no new medical claim |
+| D | **Defer**: unscored, ungated marker, as PA today | Needs no new medical claim. **Provisional default (S10-5)** until a full-text source and a final owner decision, required before Session 13. |
 
 ### 5.2 Set-up variants (O9 — not decided)
 Erect (department), semi-erect, supine, mobile / portable: **exam vs patient-state control vs case** is a structural owner decision. Evidence status: all four exist in the sources read (R1, R2, R4, R7), none is positioned from a read positioning source. A patient-state **control** keeps one exam; separate exams multiply scenes, landmarks and baselines. The roadmap entry (Session 13) says "erect / supine / portable" and "portable / ICU context decided (spec §6)" — the spec decision is not recorded in `DECISIONS.md`.
