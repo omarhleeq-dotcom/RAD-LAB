@@ -1,4 +1,7 @@
+import type { RuleEvidence } from "@/domain/case";
 import type { LocalizedText } from "@/domain/localized";
+import type { RadiographResultState } from "@/domain/result-state";
+import type { DetectorExposureResult } from "@/domain/technique";
 import type { CategoryId, EnumSettingKey, ImageVariantId } from "@/domain/simulation";
 import type { ScoreSummary } from "@/features/scoring/score";
 
@@ -20,6 +23,8 @@ export interface CheckResult {
   observedKind?: EnumSettingKey;
   feedback: LocalizedText;
   variant?: ImageVariantId;
+  /** Evidence class + reference of the rule that produced this check (shown to the learner). */
+  evidence: RuleEvidence;
 }
 
 export interface EvaluationResult {
@@ -28,4 +33,8 @@ export interface EvaluationResult {
   /** Image variants implied by non-passing checks; `["correct"]` when everything passes. */
   variants: ImageVariantId[];
   primaryVariant: ImageVariantId;
+  /** Deterministic educational detector-exposure result (DI-like, noise, penetration, dose awareness). */
+  exposure: DetectorExposureResult;
+  /** Renderer-facing state for the future image renderer (Session 4). Never derived from pixels. */
+  resultState: RadiographResultState;
 }

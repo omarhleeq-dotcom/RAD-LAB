@@ -123,6 +123,51 @@
       "expiration-hold": "Breathe out and hold",
       "normal-breathing": "Breathe normally",
       "no-instruction": "No instruction"
+    },
+    "subtitle": "Educational · vendor-neutral",
+    "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
+    "digitalHint": "On a digital system the displayed brightness is processed and is not an exposure meter. After the exposure, technique is judged from the target-relative detector exposure (DI), noise and dose awareness.",
+    "patientPrep": "Patient preparation",
+    "kvpHint": "Beam energy / penetration",
+    "masHint": "X-ray quantity",
+    "sidHint": "Shared with the positioning view",
+    "decrease": "Decrease {name}",
+    "increase": "Increase {name}",
+    "adjustHint": "Use − / + or the slider. Arrow keys, Page Up / Page Down, Home and End work on the slider.",
+    "modeLegend": "Exposure mode",
+    "modeManual": "Manual",
+    "modeAec": "AEC",
+    "modeManualHelp": "You select kVp and mAs.",
+    "modeAecHelp": "The system ends the exposure from the selected chamber(s). You select kVp and the chambers.",
+    "masAuto": "AUTO",
+    "masAutoHelp": "mAs is set by the AEC in this mode (your manual mAs is kept for when you switch back).",
+    "aec": {
+      "title": "AEC sensing chambers",
+      "disclaimer": "Vendor-neutral educational diagram. Real systems differ in the number, position and shape of chambers, in how they are selected and in how the exposure is terminated.",
+      "purpose": "AEC aims for consistent, reproducible receptor exposure and compensates for differences in anatomical thickness. Which chambers suit an examination depends on the system and the local protocol.",
+      "hint": "Select chambers in the diagram or with the checkboxes below. The amber frame is the collimated field.",
+      "legend": "Selected chambers",
+      "none": "No chamber selected",
+      "inField": "inside the field",
+      "partialField": "partly inside the field",
+      "outsideField": "outside the field",
+      "diagramAlt": "Vendor-neutral diagram of the detector with the patient's lung fields, the collimated field and three AEC sensing chambers.",
+      "detector": "Detector"
+    },
+    "readiness": {
+      "title": "Exposure readiness",
+      "ready": "Ready to expose",
+      "caution": "Ready — with notes",
+      "blocked": "Not ready",
+      "note": "Workflow status only: it checks that the steps are complete and safe to run, not whether your values are right.",
+      "items": {
+        "exposure-done": "The exposure has been made. Use “Retry with my settings” or “Restart case” to continue.",
+        "technique-invalid": "A technique value is outside what the console can select.",
+        "aec-no-chamber": "AEC is selected but no sensing chamber is chosen. Select at least one chamber.",
+        "aec-chambers-outside-field": "No selected AEC chamber is inside the light field, so the AEC may not terminate normally.",
+        "breathing-not-instructed": "No breathing instruction has been given yet.",
+        "marker-missing": "No side marker has been placed yet."
+      }
     }
   },
   "result": {
@@ -148,16 +193,19 @@
       "wrong-projection": "Projection does not match the request",
       "clipped": "Required anatomy clipped",
       "poor-inspiration": "Poor inspiration",
-      "underexposed": "Underexposed",
-      "overexposed": "Overexposed",
       "magnified-geometry": "Increased magnification / unsharpness",
       "chin-overlap": "Chin projected over the lung apices",
-      "scapulae-overlap": "Scapulae overlying the lung fields"
+      "scapulae-overlap": "Scapulae overlying the lung fields",
+      "low-exposure": "Low detector exposure — increased quantum-noise tendency",
+      "excess-exposure": "Excess detector exposure — dose-creep risk (may still look acceptable)",
+      "low-penetration": "Low penetration tendency (kVp too low)"
     },
     "retry": "Retry with my settings",
     "restart": "Restart case",
     "retryHelp": "Retry keeps your last settings so you can correct your mistakes.",
-    "notScored": "not scored"
+    "notScored": "not scored",
+    "imageBrightnessNote": "Displayed brightness is normalised on digital systems and is not an exposure indicator.",
+    "evidenceToggle": "Evidence for this check"
   },
   "categories": {
     "positioning": "Positioning",
@@ -166,5 +214,88 @@
     "exposure": "Exposure / technique",
     "sid": "SID / setup",
     "breathing": "Breathing"
+  },
+  "evidence": {
+    "label": "Evidence",
+    "reference": "Reference",
+    "validated": "VALIDATED",
+    "common-reference": "COMMON REFERENCE / NOT UNIVERSAL",
+    "vendor-protocol-dependent": "VENDOR / LOCAL-PROTOCOL DEPENDENT",
+    "educational-simplification": "EDUCATIONAL SIMPLIFICATION",
+    "provisional": "PROVISIONAL"
+  },
+  "technique": {
+    "title": "Technique & exposure analysis",
+    "model": "Educational model — it does not predict a real detector's exposure index or any patient dose, and its DI bands are provisional.",
+    "brightnessTitle": "Brightness is not an exposure meter",
+    "brightness": "On digital radiography, image processing normalises the displayed brightness and contrast, so an image can look acceptable even when detector exposure is too low or too high. Judge exposure by the detector exposure (DI), noise and dose awareness — not by how light or dark the image looks.",
+    "modeLabel": "Exposure mode",
+    "modeManual": "Manual",
+    "modeAec": "AEC",
+    "kvp": "kVp",
+    "masSelected": "mAs (selected)",
+    "masDelivered": "mAs delivered by the AEC (model)",
+    "sid": "SID",
+    "relativeExposure": "Detector exposure vs target",
+    "di": "Deviation index (DI-like)",
+    "tendency": "Exposure tendency",
+    "noise": "Quantum-noise tendency",
+    "penetration": "Penetration tendency",
+    "dose": "Dose awareness",
+    "tendencies": {
+      "insufficient": "Insufficient",
+      "below-target": "Below target",
+      "target-range": "Within the target range",
+      "above-target": "Above target",
+      "excessive": "Excessive"
+    },
+    "noiseLevels": {
+      "reduced": "Reduced",
+      "target": "At target",
+      "increased": "Increased",
+      "marked": "Markedly increased"
+    },
+    "penetrations": {
+      "low": "Low (below the reference kV range)",
+      "within-reference-range": "Within the reference kV range",
+      "high": "High (above the reference kV range)"
+    },
+    "doses": {
+      "optimized": "Optimised",
+      "below-target": "Below target (image-quality risk)",
+      "above-target": "Above target",
+      "dose-creep-risk": "Dose-creep risk"
+    },
+    "gaugeTitle": "Detector exposure relative to the target",
+    "gaugeAlt": "Scale of the deviation index from −6 to +6 with the target at 0 and your exposure marked.",
+    "gaugeTarget": "Target",
+    "gaugeNote": "DI = 10 × log10(EI / EIT). +3 ≈ twice the target exposure, −3 ≈ half. The ±1 and ±3 scoring bands are provisional demo values, not universal limits. EI is not patient dose.",
+    "whyTitle": "Why",
+    "why": {
+      "kvp": "kVp sets the energy spectrum of the beam: it changes penetration and X-ray output. It is not a brightness control — on digital systems processing sets the displayed brightness.",
+      "mas": "With other factors equal, mAs sets how many X-rays are produced. Too little gives too little signal and more quantum noise; more than needed adds radiation without a matching benefit.",
+      "sid": "X-ray intensity falls with the square of the distance (inverse-square law). In manual mode a different SID changes detector exposure: ×{factor} at {sid} cm compared with {ref} cm. The simulator applies only this relationship; a real imaging chain involves more.",
+      "sidAec": "With AEC the model re-terminates at the target, so a different SID changes the mAs the AEC delivers (here {mas} mAs) rather than the detector exposure. SID still affects magnification and sharpness.",
+      "aec": "AEC aims for consistent, reproducible receptor exposure. In this model it senses only the selected chambers inside the field, and a chamber under dense anatomy makes it expose for longer. Chamber layout and selection are vendor / local-protocol dependent.",
+      "di": "DI compares detector exposure with a target: 0 = on target, +3 ≈ twice, −3 ≈ half. It is not a patient dose, and there is no universal pass/fail band.",
+      "noise": "Fewer photons reaching the detector mean more quantum noise (noise ∝ 1/√exposure).",
+      "dose": "Digital systems can hide excess exposure behind a good-looking image. The aim is adequate image quality with the least reasonable exposure."
+    },
+    "aecTitle": "AEC outcome (educational model)",
+    "aecBackup": "No selected chamber was inside the field: the AEC ran to its backup limit.",
+    "aecChamber": "Chamber",
+    "aecState": "State",
+    "aecActive": "Active — sensed",
+    "aecNotSelected": "Not selected",
+    "aecOutside": "Selected but not irradiated",
+    "aecUnder": "Under",
+    "anatomy": {
+      "lung": "lung field",
+      "mediastinum": "mediastinum / spine",
+      "outside-patient": "outside the patient"
+    },
+    "assumptionsTitle": "Model assumptions & evidence",
+    "assumptionsIntro": "Every medical rule behind this feedback is classified. Only “validated” items are claims of fact; the rest are protocol- or demo-specific.",
+    "profile": "Protocol profile"
   }
 }

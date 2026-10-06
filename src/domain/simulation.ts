@@ -1,3 +1,7 @@
+import type { AecChamberId, ExposureMode } from "./technique";
+
+export type { ExposureMode };
+
 /**
  * Modality-agnostic-ish simulation vocabulary. The first implementation targets
  * general radiography (chest). Other exams reuse the same rule engine by
@@ -48,9 +52,15 @@ export interface SimulationSettings {
   sideMarker: SideMarkerId | null;
   /** Marker centre on the detector, normalized. Only meaningful once a marker is placed. */
   markerPosition: NormPoint;
+  /** The single SID state, shared by the positioning view and the exposure model (never duplicated). */
   sidCm: number;
   kvp: number;
+  /** Manual-mode mAs. Kept (not cleared) while AEC is active so switching back restores it. */
   mas: number;
+  /** Manual vs AEC. In AEC the system terminates the exposure; `mas` is not used. */
+  exposureMode: ExposureMode;
+  /** Selected AEC sensing chambers, canonical order (see toggleChamber). Only used in AEC mode. */
+  aecChambers: AecChamberId[];
   breathing: BreathingId;
 }
 
@@ -85,6 +95,8 @@ export type ImageVariantId =
   | "chin-overlap"
   | "scapulae-overlap"
   | "poor-inspiration"
-  | "underexposed"
-  | "overexposed"
+  // Technique findings are about DETECTOR exposure / penetration, never about displayed brightness.
+  | "low-exposure"
+  | "excess-exposure"
+  | "low-penetration"
   | "magnified-geometry";

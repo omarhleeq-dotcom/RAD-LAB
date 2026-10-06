@@ -1,4 +1,5 @@
 import type { LocalizedText } from "./localized";
+import type { Evidence, EvidenceClass, TechniqueProfile } from "./technique";
 import type {
   BreathingId,
   CategoryId,
@@ -27,6 +28,11 @@ export interface NumericControlSpec {
   min: number;
   max: number;
   step: number;
+  /**
+   * Optional discrete console stations (ascending). When present, +/- and the slider walk this list instead
+   * of `step` (e.g. a preferred-number mAs series), as real consoles do. Within [min, max].
+   */
+  stations?: number[];
 }
 
 /** Rectangle on the detector, cm from its top-left corner. */
@@ -37,17 +43,14 @@ export interface DetectorRegion {
   heightCm: number;
 }
 
-/** How firmly a medical rule is backed by docs/RAD-LAB_Medical_Reference_Chest_PA.md. */
-export type EvidenceStatus = "validated" | "educational-simplification" | "provisional";
+/**
+ * How firmly a medical rule is backed by the medical references (docs/RAD-LAB_Medical_Reference_Chest_PA*.md).
+ * Session 3 widened this from three to the five classes of the technique reference §2.
+ */
+export type EvidenceStatus = EvidenceClass;
 
 /** Traceability for a medically meaningful rule. */
-export interface RuleEvidence {
-  status: EvidenceStatus;
-  /** Section of the medical reference (or "none" when provisional). */
-  reference: string;
-  /** What exactly is validated vs simplified/provisional. */
-  note?: string;
-}
+export type RuleEvidence = Evidence;
 
 export interface RuleFeedback {
   pass: LocalizedText;
@@ -68,6 +71,24 @@ interface RuleBase {
   label: LocalizedText;
   feedback: RuleFeedback;
   evidence: RuleEvidence;
+}
+
+/**
+ * Technique subchecks, all evaluated from the deterministic technique model (`features/technique`) against
+ * the case's `TechniqueProfile`. Each is an independent, evidence-labelled subcheck of the Exposure category:
+ * - "kvp-band": kVp vs the common reference range (partial) and the provisional protocol band (full).
+ * - "exposure-adequacy": is there enough receptor exposure (quantum-noise side)? Excess never fails this check.
+ * - "dose-optimization": is the receptor exposure kept near target (dose-creep side)? Low exposure never fails it.
+ * - "aec-chambers": AEC only; explains the AEC consequence. Intended `weight: 0` so the consequence is scored once,
+ *   by the two checks above. Not applicable (omitted) in manual mode.
+ * Feedback keys: `pass`, `low`, `high`, `fail` (see each check in the engine). For "exposure-adequacy", `high` is
+ * the text for a passing check whose exposure is above target (it points to dose optimization).
+ */
+export interface TechniqueRule extends RuleBase {
+  kind: "technique";
+  check: "kvp-band" | "exposure-adequacy" | "dose-optimization" | "aec-chambers";
+  variantOnLow?: ImageVariantId;
+  variantOnHigh?: ImageVariantId;
 }
 
 /** Setting must equal a specific value. */
@@ -123,7 +144,7 @@ export interface MarkerRule extends RuleBase {
   feedback: RuleFeedback & { overlap: LocalizedText; outsideField: LocalizedText };
 }
 
-export type CheckRule = EqualsRule | RangeRule | CoverageRule | CenteringRule | MarkerRule;
+export type CheckRule = EqualsRule | RangeRule | CoverageRule | CenteringRule | MarkerRule | TechniqueRule;
 
 /** Educational centering target region, normalized (see NormPoint). Provisional tolerances. */
 export interface CenteringSpec {
@@ -181,7 +202,13 @@ export interface RadCase {
   detector: DetectorSpec;
   /** Anatomy that must be demonstrated (drives coverage + schematic drawing). */
   requiredAnatomy: DetectorRegion;
+  /**
+   * Technically selectable ranges (what the console allows). NOT the educational target and NOT a scoring
+   * tolerance: those live in `technique`.
+   */
   controls: Record<NumericSettingKey, NumericControlSpec>;
+  /** Protocol profile for the technique/exposure model. A different case supplies a different profile. */
+  technique: TechniqueProfile;
   positioning: PositioningSpec;
   availableProjections: ProjectionId[];
   availableBreathing: BreathingId[];
