@@ -35,6 +35,9 @@ export function ResultImage({ radCase, settings, variants }: Props) {
   const ribs = poorInsp ? 6 : 10;
   const lungBottom = poorInsp ? 250 : 320;
   const mid = W / 2;
+  const marker = settings.sideMarker;
+  const mx = ((settings.markerPosition.x + 1) / 2) * W;
+  const my = ((settings.markerPosition.y + 1) / 2) * H;
 
   return (
     <figure className="m-0">
@@ -68,9 +71,21 @@ export function ResultImage({ radCase, settings, variants }: Props) {
               })}
             </g>
             <ellipse cx={mid - 25 + shift} cy={lungBottom - 85} rx={50 * heartScale} ry={65 * heartScale} fill="#aab3b9" opacity={0.85} />
+            {has("scapulae-overlap") && (
+              <g fill="#8a949b" opacity={0.55}>
+                <ellipse cx={mid - 105} cy={190} rx={26} ry={72} />
+                <ellipse cx={mid + 105} cy={190} rx={26} ry={72} />
+              </g>
+            )}
+            {has("chin-overlap") && <ellipse cx={mid} cy={52} rx={62} ry={34} fill="#aab3b9" opacity={0.8} />}
             <line x1={mid + shift} y1={20} x2={mid + shift} y2={lungBottom + 30} stroke="#cfd6db" strokeWidth={14} opacity={0.7} />
             <path d={`M 20 ${lungBottom + 15} Q ${mid} ${lungBottom - 25} ${W - 20} ${lungBottom + 15}`} stroke="#9aa5ac" strokeWidth={6} fill="none" />
           </g>
+          {marker && (
+            <text x={mx} y={my + 10} textAnchor="middle" fontSize={28} fontWeight={800} fill="#f4f6f8" stroke="#16191c" strokeWidth={0.5}>
+              {marker}
+            </text>
+          )}
         </g>
         <text x={W / 2} y={H - 14} textAnchor="middle" fontSize={20} fontWeight={700} fill="#b3261e">
           PLACEHOLDER
