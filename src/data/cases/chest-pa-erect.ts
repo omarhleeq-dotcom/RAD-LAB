@@ -1,4 +1,5 @@
 import type { RadCase } from "@/domain/case";
+import { chestPaTechnique } from "./chest-pa-technique";
 
 /**
  * Adult Chest X-ray — PA Erect.
@@ -13,6 +14,9 @@ import type { RadCase } from "@/domain/case";
  * docs/RAD-LAB_Medical_Reference_Chest_PA.md (validated / educational-simplification / provisional).
  * Tolerances and region sizes remain provisional even where the underlying target is validated.
  */
+/** Console mAs stations (≈ +25 % per step). Selectable range only: says nothing about a correct value. */
+const MAS_STATIONS = [0.5, 0.63, 0.8, 1, 1.25, 1.6, 2, 2.5, 3.2, 4, 5, 6.3, 8, 10, 12.5, 16, 20, 25, 32, 40];
+
 export const chestPaErect: RadCase = {
   id: "chest-pa-erect",
   modality: "general-radiography",
@@ -47,7 +51,8 @@ export const chestPaErect: RadCase = {
     rotationDeg: { min: -20, max: 20, step: 1 },
     sidCm: { min: 100, max: 200, step: 5 },
     kvp: { min: 50, max: 150, step: 1 },
-    mas: { min: 0.5, max: 40, step: 0.5 },
+    // mAs steps through a preferred-number (R10-style) series, like a console; the range is hardware, not a target.
+    mas: { min: 0.5, max: 40, step: 0.5, stations: MAS_STATIONS },
   },
   positioning: {
     // Educational target region. Midline + mid-thoracic/T7 teaching landmark (reference §2 Centering, §3C).
@@ -62,6 +67,7 @@ export const chestPaErect: RadCase = {
     markerSizeCm: 3,
     defaultMarkerPosition: { x: -0.84, y: 0.68 },
   },
+  technique: chestPaTechnique,
   availableProjections: ["pa-erect", "ap-erect", "lateral-left"],
   availableBreathing: [
     "deep-inspiration-hold",
@@ -81,6 +87,8 @@ export const chestPaErect: RadCase = {
     sidCm: 120,
     kvp: 70,
     mas: 12,
+    exposureMode: "manual",
+    aecChambers: [],
     breathing: "no-instruction",
   },
   scoring: {
@@ -349,68 +357,130 @@ export const chestPaErect: RadCase = {
         note: "Target modelled as the centre of the required-anatomy region, not a measured T7 position; tolerances provisional.",
       },
     },
+    // ── Exposure / technique (Session 3). Four independent subchecks driven by the technique model and the
+    //    case's TechniqueProfile; none of them rewards "more exposure" or reads displayed brightness. ──
     {
       id: "kvp",
-      kind: "range",
+      kind: "technique",
+      check: "kvp-band",
       category: "exposure",
-      setting: "kvp",
-      ideal: [110, 125],
-      acceptable: [95, 135],
-      unit: "kVp",
-      variantOnLow: "underexposed",
-      variantOnHigh: "overexposed",
-      label: { en: "kVp", ar: "kVp" },
+      weight: 1,
+      variantOnLow: "low-penetration",
+      label: { en: "kVp (beam energy / penetration)", ar: "kVp (طاقة الحزمة / الاختراق)" },
       feedback: {
         pass: {
-          en: "kVp is within the demo target band.",
-          ar: "قيمة kVp ضمن النطاق التجريبي المستهدف.",
+          en: "kVp is inside this demo protocol's target band. Adult PA chest is taught as a relatively high-kVp examination: a higher tube potential gives a more penetrating beam, which helps show the mediastinum and the lung fields together. The exact band is a provisional demo target, not a universal value.",
+          ar: "قيمة kVp ضمن النطاق المستهدف في هذا البروتوكول التجريبي. يُدرَّس تصوير صدر البالغ PA كفحص بجهد أنبوبي عالٍ نسبيًا: الجهد الأعلى يعطي حزمة أكثر اختراقًا تساعد على إظهار المنصف والحقلين الرئويين معًا. النطاق الدقيق هدف تجريبي مؤقت وليس قيمة عالمية.",
         },
         low: {
-          en: "kVp is lower than the demo target. Lower penetration reduces detail in dense regions and raises contrast too much for a chest image.",
-          ar: "قيمة kVp أقل من النطاق التجريبي. انخفاض الاختراق يقلل التفاصيل في المناطق الكثيفة ويرفع التباين أكثر من اللازم في صورة الصدر.",
+          en: "kVp is below this demo protocol's target band. A lower tube potential gives a less penetrating beam that is absorbed more by dense structures, so the retrocardiac lung and the spine behind the heart are harder to demonstrate. Extra mAs adds photons but not penetrating energy. (About 100–150 kV is a common reference range for chest, not a universal rule.)",
+          ar: "قيمة kVp أقل من النطاق المستهدف في هذا البروتوكول التجريبي. الجهد الأنبوبي المنخفض يعطي حزمة أقل اختراقًا تمتصها البنى الكثيفة أكثر، فيصعب إظهار الرئة خلف القلب والعمود الفقري خلفه. زيادة mAs تضيف فوتونات لكنها لا تضيف طاقة اختراق. (نحو 100–150 kV نطاق مرجعي شائع للصدر وليس قاعدة عالمية.)",
         },
         high: {
-          en: "kVp is higher than the demo target, which lowers contrast and increases scatter.",
-          ar: "قيمة kVp أعلى من النطاق التجريبي، مما يقلل التباين ويزيد التشتت.",
+          en: "kVp is above this demo protocol's target band. A higher-energy beam penetrates more, lowers subject contrast and produces more scatter. Whether that is acceptable depends on the detector, image processing and local protocol, so the band is a provisional demo target rather than a universal limit.",
+          ar: "قيمة kVp أعلى من النطاق المستهدف في هذا البروتوكول التجريبي. الحزمة الأعلى طاقة تخترق أكثر وتقلل تباين الجسم وتزيد التشتت. مدى قبول ذلك يعتمد على الكاشف ومعالجة الصورة والبروتوكول المحلي، لذا فالنطاق هدف تجريبي مؤقت وليس حدًا عالميًا.",
         },
-        fail: { en: "kVp is outside the target band.", ar: "قيمة kVp خارج النطاق المستهدف." },
+        fail: {
+          en: "kVp is outside the demo protocol's range.",
+          ar: "قيمة kVp خارج نطاق البروتوكول التجريبي.",
+        },
       },
       evidence: {
         status: "provisional",
-        reference: "§4 kVp",
-        note: "No universal kVp is validated; demo band only.",
+        reference: "Technique ref §3.2, §8, §15.1",
+        note: "100–150 kV is a COMMON REFERENCE range (IAEA example) and earns partial credit; the narrower full-credit band is PROVISIONAL / LOCAL-PROTOCOL DEPENDENT. kVp physics (spectrum, penetration, output) is VALIDATED but is never mapped to displayed darkness.",
       },
     },
     {
-      id: "mas",
-      kind: "range",
+      id: "exposure-adequacy",
+      kind: "technique",
+      check: "exposure-adequacy",
       category: "exposure",
-      setting: "mas",
-      ideal: [2, 5],
-      acceptable: [1, 8],
-      unit: "mAs",
-      variantOnLow: "underexposed",
-      variantOnHigh: "overexposed",
-      label: { en: "mAs", ar: "mAs" },
+      weight: 2,
+      variantOnLow: "low-exposure",
+      label: { en: "Detector exposure — adequate signal", ar: "تعريض الكاشف — إشارة كافية" },
       feedback: {
         pass: {
-          en: "mAs is within the demo target band.",
-          ar: "قيمة mAs ضمن النطاق التجريبي المستهدف.",
-        },
-        low: {
-          en: "mAs is too low: too few photons reach the detector, giving a noisy, underexposed image.",
-          ar: "قيمة mAs منخفضة: يصل عدد قليل من الفوتونات إلى الكاسيت فتنتج صورة ناقصة التعريض ومليئة بالتشويش.",
+          en: "Detector exposure is close to this protocol's target (DI near 0) or above it, so there is enough signal and quantum noise is not limiting the image.",
+          ar: "تعريض الكاشف قريب من هدف هذا البروتوكول (DI قريب من 0) أو أعلى منه، فالإشارة كافية والضجيج الكمّي لا يحدّ من جودة الصورة.",
         },
         high: {
-          en: "mAs is too high: the image is overexposed and the patient receives unnecessary dose.",
-          ar: "قيمة mAs مرتفعة: الصورة زائدة التعريض ويتلقى المريض جرعة غير ضرورية.",
+          en: "The signal is adequate, but exposure above the target is not “better”: it adds radiation without a matching diagnostic benefit. See the dose-optimization check.",
+          ar: "الإشارة كافية، لكن التعريض فوق الهدف ليس «أفضل»: فهو يضيف إشعاعًا دون فائدة تشخيصية مقابلة. راجع فحص تحسين الجرعة.",
         },
-        fail: { en: "mAs is outside the target band.", ar: "قيمة mAs خارج النطاق المستهدف." },
+        low: {
+          en: "Detector exposure is below the target (negative DI). Fewer photons reach the detector, so quantum noise rises and fine detail is harder to see. Digital processing can still make the image look acceptable, so judge exposure by the detector exposure / DI, not by displayed brightness. Bring the exposure back toward the target (mAs, SID or AEC set-up).",
+          ar: "تعريض الكاشف أقل من الهدف (DI سالب). يصل عدد أقل من الفوتونات إلى الكاشف فيزداد الضجيج الكمّي وتصعب رؤية التفاصيل الدقيقة. يمكن لمعالجة الصورة الرقمية أن تُظهرها مقبولة رغم ذلك، لذا احكم على التعريض من تعريض الكاشف/DI وليس من سطوع الصورة المعروضة. أعد التعريض نحو الهدف (mAs أو SID أو إعداد AEC).",
+        },
+        fail: {
+          en: "Detector exposure is well below the target: the image would be noisy.",
+          ar: "تعريض الكاشف أقل بكثير من الهدف: ستكون الصورة مليئة بالضجيج.",
+        },
       },
       evidence: {
         status: "provisional",
-        reference: "§4 mAs",
-        note: "No universal mAs is validated; demo band only.",
+        reference: "Technique ref §5, §6, §8, §15.2–15.5",
+        note: "VALIDATED: DI equation and the digital-exposure concepts (noise, DI sign). PROVISIONAL: the ±1 / ±3 DI scoring bands and the demo target the exposure is measured against; no universal EIT or DI pass/fail limit is claimed.",
+      },
+    },
+    {
+      id: "dose-optimization",
+      kind: "technique",
+      check: "dose-optimization",
+      category: "exposure",
+      weight: 2,
+      variantOnHigh: "excess-exposure",
+      label: { en: "Dose awareness — avoid unnecessary exposure", ar: "الوعي بالجرعة — تجنّب التعريض غير الضروري" },
+      feedback: {
+        pass: {
+          en: "Detector exposure is not above this protocol's target, so no unnecessary exposure was added.",
+          ar: "تعريض الكاشف ليس أعلى من هدف هذا البروتوكول، فلم يُضَف تعريض غير ضروري.",
+        },
+        high: {
+          en: "Detector exposure is above the target (positive DI). A digital system can still show an acceptable-looking image after processing, so excess exposure is easy to miss — this is how “dose creep” happens. More exposure than needed adds radiation without a matching diagnostic benefit (optimization). Reduce mAs, or check the SID and the AEC chamber selection.",
+          ar: "تعريض الكاشف أعلى من الهدف (DI موجب). يمكن للنظام الرقمي أن يعرض صورة تبدو مقبولة بعد المعالجة، لذا يسهل إغفال التعريض الزائد — وهكذا يحدث «زحف الجرعة». التعريض الأكبر من اللازم يضيف إشعاعًا دون فائدة تشخيصية مقابلة (مبدأ التحسين). قلّل mAs أو راجع SID واختيار حجرة AEC.",
+        },
+        fail: {
+          en: "Detector exposure is far above the target: a clear dose-creep risk.",
+          ar: "تعريض الكاشف أعلى بكثير من الهدف: خطر واضح لزحف الجرعة.",
+        },
+      },
+      evidence: {
+        status: "provisional",
+        reference: "Technique ref §7, §8, §15.2–15.5",
+        note: "VALIDATED: digital dynamic range can hide excess exposure (dose creep) and optimization is the goal. PROVISIONAL: the DI scoring bands. No patient dose is calculated.",
+      },
+    },
+    {
+      id: "aec-chambers",
+      kind: "technique",
+      check: "aec-chambers",
+      category: "exposure",
+      // Explains the AEC consequence; the consequence itself is scored once, by the two exposure checks above.
+      weight: 0,
+      label: { en: "AEC chamber selection (explains the AEC result)", ar: "اختيار حجرة AEC (يفسّر نتيجة AEC)" },
+      feedback: {
+        pass: {
+          en: "The selected chamber(s) lie under the lung fields and inside the light field, so in this educational model the AEC terminates at the target. This chamber layout is a vendor-neutral teaching diagram; real systems differ.",
+          ar: "الحجرة/الحجرات المختارة تقع تحت الحقلين الرئويين وداخل المجال الضوئي، لذا ينهي AEC التعريض عند الهدف في هذا النموذج التعليمي. تخطيط الحجرات مخطط تعليمي محايد؛ الأنظمة الحقيقية تختلف.",
+        },
+        high: {
+          en: "The selected chamber(s) include dense central anatomy (mediastinum / spine). They sense less signal, so the AEC keeps exposing for longer and the lung fields receive more than the target. In this demo protocol the lung-field chambers are used for chest; real conventions are vendor / local-protocol dependent.",
+          ar: "الحجرات المختارة تشمل تشريحًا مركزيًا كثيفًا (المنصف / العمود الفقري). تستشعر إشارة أقل فيواصل AEC التعريض مدة أطول فيتلقى الحقلان الرئويان أكثر من الهدف. في هذا البروتوكول التجريبي تُستخدم حجرات الحقلين الرئويين للصدر؛ والأعراف الحقيقية تعتمد على الجهاز والبروتوكول المحلي.",
+        },
+        low: {
+          en: "The selected chamber(s) see less attenuating regions, so the AEC ends the exposure early and the lung fields receive less than the target.",
+          ar: "الحجرات المختارة ترى مناطق أقل توهينًا فينهي AEC التعريض مبكرًا فيتلقى الحقلان الرئويان أقل من الهدف.",
+        },
+        fail: {
+          en: "No selected chamber is sufficiently inside the light field, so the AEC has nothing to sense and runs to its backup limit — a large over-exposure in this model. Selected chambers must lie inside the collimated field and under the anatomy of interest.",
+          ar: "لا توجد حجرة مختارة داخل المجال الضوئي بما يكفي، فلا يجد AEC ما يستشعره ويعمل حتى حدّه الاحتياطي — تعريض زائد كبير في هذا النموذج. يجب أن تقع الحجرات المختارة داخل المجال المحدَّد وتحت التشريح المطلوب.",
+        },
+      },
+      evidence: {
+        status: "vendor-protocol-dependent",
+        reference: "Technique ref §4",
+        note: "VALIDATED: the purpose of AEC. VENDOR / LOCAL-PROTOCOL DEPENDENT: chamber geometry, number, selection and termination. The lung-field preference is an educational, protocol-specific choice of this demo case.",
       },
     },
     {
@@ -429,19 +499,19 @@ export const chestPaErect: RadCase = {
           ar: "قيمة SID ضمن النطاق التجريبي المستهدف.",
         },
         low: {
-          en: "SID is shorter than the demo target. A shorter SID increases magnification (notably of the heart) and geometric unsharpness.",
-          ar: "قيمة SID أقصر من النطاق التجريبي. تزيد المسافة الأقصر من التكبير (خصوصًا القلب) وعدم الحدّة الهندسي.",
+          en: "SID is shorter than the demo target. A shorter SID increases magnification (notably of the heart) and geometric unsharpness, and raises the exposure at the detector (inverse-square) so manual technique would need to be reduced.",
+          ar: "قيمة SID أقصر من النطاق التجريبي. تزيد المسافة الأقصر من التكبير (خصوصًا القلب) وعدم الحدّة الهندسي، وترفع التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي.",
         },
         high: {
-          en: "SID is longer than the demo target; exposure at the detector drops, so other factors would need adjusting.",
-          ar: "قيمة SID أطول من النطاق التجريبي؛ ينخفض التعريض عند الكاسيت وتحتاج بقية العوامل إلى تعديل.",
+          en: "SID is longer than the demo target; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. An AEC compensates for this in the educational model.",
+          ar: "قيمة SID أطول من النطاق التجريبي؛ ينخفض التعريض عند الكاسيت (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. يعوّض AEC ذلك في النموذج التعليمي.",
         },
         fail: { en: "SID is outside the target band.", ar: "قيمة SID خارج النطاق المستهدف." },
       },
       evidence: {
-        status: "educational-simplification",
-        reference: "§2 SID; §3 / §5 item 6",
-        note: "180 cm target is validated; the +/-5 cm ideal and 150-200 cm acceptable bands are provisional.",
+        status: "common-reference",
+        reference: "Positioning ref §2 SID; Technique ref §3.1, §9",
+        note: "180 cm is a COMMON REFERENCE / strong educational target (IAEA example; 140–200 cm in the cited criteria), not the only valid SID. The ±5 cm full-credit and 150–200 cm acceptable bands are PROVISIONAL. SID also feeds the exposure model (inverse square, VALIDATED physics; its mapping is an EDUCATIONAL MODEL).",
       },
     },
     {
@@ -488,14 +558,25 @@ export const chestPaErect: RadCase = {
       description: { en: "Poor inspiration", ar: "شهيق غير كافٍ" },
     },
     {
-      id: "underexposed",
-      variant: "underexposed",
-      description: { en: "Underexposure", ar: "نقص التعريض" },
+      id: "low-exposure",
+      variant: "low-exposure",
+      description: {
+        en: "Low detector exposure (increased quantum noise)",
+        ar: "تعريض كاشف منخفض (ضجيج كمّي متزايد)",
+      },
     },
     {
-      id: "overexposed",
-      variant: "overexposed",
-      description: { en: "Overexposure", ar: "زيادة التعريض" },
+      id: "excess-exposure",
+      variant: "excess-exposure",
+      description: {
+        en: "Excess detector exposure (dose-creep risk; may look acceptable after processing)",
+        ar: "تعريض كاشف زائد (خطر زحف الجرعة؛ قد تبدو الصورة مقبولة بعد المعالجة)",
+      },
+    },
+    {
+      id: "low-penetration",
+      variant: "low-penetration",
+      description: { en: "Insufficient beam penetration (kVp too low)", ar: "اختراق غير كافٍ للحزمة (kVp منخفض)" },
     },
   ],
   imageCriteria: [
@@ -516,7 +597,10 @@ export const chestPaErect: RadCase = {
     },
     {
       id: "exposure",
-      description: { en: "Appropriate exposure", ar: "تعريض مناسب" },
+      description: {
+        en: "Detector exposure near target with adequate penetration (judged by DI, not by displayed brightness)",
+        ar: "تعريض كاشف قريب من الهدف مع اختراق كافٍ (يُحكم عليه من DI وليس من سطوع الصورة المعروضة)",
+      },
     },
   ],
 };

@@ -6,9 +6,11 @@ import type {
   MarkerRule,
   RadCase,
   RangeRule,
+  TechniqueRule,
 } from "@/domain/case";
 import type { LocalizedText } from "@/domain/localized";
 import type { SimulationSettings } from "@/domain/simulation";
+import type { DetectorExposureResult } from "@/domain/technique";
 import { computeScore } from "@/features/scoring/score";
 import {
   clippedSides,
@@ -19,7 +21,9 @@ import {
   rectsOverlap,
   regionToRect,
 } from "@/features/simulation/geometry";
+import { computeDetectorExposure } from "@/features/technique/model";
 import { centeringOnAxis } from "./centering";
+import { buildResultState } from "./result-state";
 import type { CheckResult, EvaluationResult } from "./types";
 
 const PARTIAL_CREDIT = 0.5;
@@ -104,7 +108,80 @@ function evalMarker(rule: MarkerRule, s: SimulationSettings, c: RadCase): Partia
   return { outcome: "pass", observed, feedback: rule.feedback.pass };
 }
 
-function evalKind(rule: CheckRule, s: SimulationSettings, c: RadCase): Partial<CheckResult> {
+const fmtDI = (di: number) => `${di > 0 ? "+" : ""}${fmt(di)} DI`;
+const fmtRatio = (r: number) => `×${fmt(r)}`;
+
+/**
+ * Technique subchecks. All numbers come from the case's TechniqueProfile; this function only compares the
+ * deterministic exposure result to those tolerances (see TechniqueRule for the semantics of each check).
+ * Returns null when the check does not apply (AEC chamber check in manual mode).
+ */
+function evalTechnique(
+  rule: TechniqueRule,
+  s: SimulationSettings,
+  c: RadCase,
+  x: DetectorExposureResult,
+): Partial<CheckResult> | null {
+  const p = c.technique;
+  const { ideal, acceptable } = p.deviation;
+  const eps = 1e-9;
+  switch (rule.check) {
+    case "kvp-band": {
+      const observed = `${fmt(s.kvp)} kVp`;
+      if (inside(s.kvp, p.kvp.targetBand)) return { outcome: "pass", observed, feedback: rule.feedback.pass };
+      const direction = s.kvp < p.kvp.targetBand[0] ? "low" : "high";
+      const feedback = rule.feedback[direction] ?? rule.feedback.fail;
+      const outcome = inside(s.kvp, p.kvp.referenceRange) ? "partial" : "fail";
+      const variant = direction === "low" && outcome === "fail" ? rule.variantOnLow : rule.variantOnHigh;
+      return { outcome, observed, feedback, variant: outcome === "fail" ? variant : undefined };
+    }
+    case "exposure-adequacy": {
+      const observed = `${fmtDI(x.deviationIndex)} · ${fmtRatio(x.exposureRatio)}`;
+      const di = x.deviationIndex;
+      if (di >= ideal[0] - eps) {
+        // Adequate signal. Above-target exposure is still adequate here; dose-optimization handles that.
+        return { outcome: "pass", observed, feedback: di > ideal[1] + eps ? (rule.feedback.high ?? rule.feedback.pass) : rule.feedback.pass };
+      }
+      return {
+        outcome: di >= acceptable[0] - eps ? "partial" : "fail",
+        observed,
+        feedback: rule.feedback.low ?? rule.feedback.fail,
+        variant: rule.variantOnLow,
+      };
+    }
+    case "dose-optimization": {
+      const observed = `${fmtDI(x.deviationIndex)} · ${fmtRatio(x.exposureRatio)}`;
+      const di = x.deviationIndex;
+      if (di <= ideal[1] + eps) {
+        // Within or below the target band: nothing to optimise on the dose side (low exposure is the adequacy check's concern).
+        return { outcome: "pass", observed, feedback: rule.feedback.pass };
+      }
+      return {
+        outcome: di <= acceptable[1] + eps ? "partial" : "fail",
+        observed,
+        feedback: rule.feedback.high ?? rule.feedback.fail,
+        variant: rule.variantOnHigh,
+      };
+    }
+    case "aec-chambers": {
+      if (s.exposureMode !== "aec" || !x.aec) return null;
+      const observed = s.aecChambers.length ? s.aecChambers.join(" + ") : "—";
+      if (!x.aec.terminatedOnChambers) return { outcome: "fail", observed, feedback: rule.feedback.fail };
+      const r = x.aec.chamberRelativeExposure as number;
+      const di = Math.abs(10 * Math.log10(r));
+      if (di <= ideal[1] + eps) return { outcome: "pass", observed, feedback: rule.feedback.pass };
+      const feedback = (r > 1 ? rule.feedback.high : rule.feedback.low) ?? rule.feedback.fail;
+      return { outcome: di <= acceptable[1] + eps ? "partial" : "fail", observed, feedback };
+    }
+  }
+}
+
+function evalKind(
+  rule: CheckRule,
+  s: SimulationSettings,
+  c: RadCase,
+  x: DetectorExposureResult,
+): Partial<CheckResult> | null {
   switch (rule.kind) {
     case "equals":
       return evalEquals(rule, s);
@@ -116,11 +193,14 @@ function evalKind(rule: CheckRule, s: SimulationSettings, c: RadCase): Partial<C
       return evalCentering(rule, s, c);
     case "marker":
       return evalMarker(rule, s, c);
+    case "technique":
+      return evalTechnique(rule, s, c, x);
   }
 }
 
-function evalRule(rule: CheckRule, s: SimulationSettings, c: RadCase): CheckResult {
-  const partial = evalKind(rule, s, c);
+function evalRule(rule: CheckRule, s: SimulationSettings, c: RadCase, x: DetectorExposureResult): CheckResult | null {
+  const partial = evalKind(rule, s, c, x);
+  if (!partial) return null;
   const outcome = partial.outcome ?? "fail";
   return {
     ruleId: rule.id,
@@ -133,24 +213,30 @@ function evalRule(rule: CheckRule, s: SimulationSettings, c: RadCase): CheckResu
     observed: partial.observed ?? "",
     feedback: partial.feedback ?? rule.feedback.fail,
     variant: partial.variant,
+    evidence: rule.evidence,
   };
 }
 
 /** Pure, deterministic evaluation of a settings snapshot against a case. */
 export function evaluate(c: RadCase, settings: SimulationSettings): EvaluationResult {
-  const checks = c.rules.map((r) => evalRule(r, settings, c));
+  const exposure = computeDetectorExposure(c.technique, settings, c.detector);
+  const checks = c.rules.flatMap((r) => evalRule(r, settings, c, exposure) ?? []);
   const score = computeScore(checks, c.scoring);
 
   // Failed checks take precedence over partial ones when choosing the dominant variant.
   const ordered = [...checks.filter((k) => k.outcome === "fail"), ...checks.filter((k) => k.outcome === "partial")];
   let variants = [...new Set(ordered.flatMap((k) => (k.variant ? [k.variant] : [])))];
-  // Under- and over-exposure are mutually exclusive on one image; keep the dominant (first) one.
-  const exposureFault = variants.find((v) => v === "underexposed" || v === "overexposed");
-  variants = variants.filter((v) => (v !== "underexposed" && v !== "overexposed") || v === exposureFault);
+  // Low and excess detector exposure are mutually exclusive on one image; keep the dominant (first) one.
+  const isExposureFault = (v: string) => v === "low-exposure" || v === "excess-exposure";
+  const exposureFault = variants.find(isExposureFault);
+  variants = variants.filter((v) => !isExposureFault(v) || v === exposureFault);
+  const finalVariants = variants.length ? variants : (["correct"] as const);
   return {
     checks,
     score,
-    variants: variants.length ? variants : ["correct"],
+    variants: [...finalVariants],
     primaryVariant: variants[0] ?? "correct",
+    exposure,
+    resultState: buildResultState(c, settings, exposure, checks, [...finalVariants]),
   };
 }

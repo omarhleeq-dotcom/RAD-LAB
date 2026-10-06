@@ -67,9 +67,9 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
         <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
       </section>
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <PositioningView radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
-        <ConsolePanel radCase={c} settings={settings} onChange={setSetting} onExpose={expose} locked={locked} />
+        <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
       </div>
 
       <div ref={resultRef} className="scroll-mt-4">

@@ -14,13 +14,16 @@ Implemented:
 - Landing page, case library, language switcher (English LTR / Arabic RTL, URL-prefixed `/en`, `/ar`).
 - Data-driven typed case model; first case `chest-pa-erect`.
 - Patient positioning workspace (2D SVG): front view + plan view reacting to rotation, central-ray centering, collimation, SID, projection.
-- X-ray console: projection, kVp, mAs, SID, breathing instruction, Expose.
+- X-ray console: projection, kVp, mAs, SID, breathing instruction, Expose (extended in Session 3, below).
 - Rule-based evaluation engine + configurable weighted scoring (25/20/15/20/10/10).
 - Placeholder result image reflecting detected faults (rotation, clipping, exposure, poor inspiration…), per-check feedback in both languages, retry / restart.
 - Unit tests for the evaluation and scoring logic.
 
 ## Session 2 — interactive positioning
 Draggable central-ray target and collimator handles (mouse/touch/keyboard + slider alternatives), normalized detector coordinates, L/R side marker, chin/shoulder cues, richer rotation/SID visuals and direction-aware centering/coverage feedback. See [`docs/session-2-positioning.md`](docs/session-2-positioning.md) for decisions and the validated/simplified/provisional rule table.
+
+## Session 3 — technique & exposure console
+Vendor-neutral console (kVp, mAs, SID, Manual/AEC with chamber selection, readiness), a deterministic target-relative detector-exposure model (DI, noise, penetration, dose awareness), evidence-classified technique scoring, and a renderer-facing `RadiographResultState` for Session 4. Digital brightness is never used as an exposure indicator. See [`docs/session-3-technique.md`](docs/session-3-technique.md).
 
 ## Tech stack
 Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand · next-intl · Vitest · ESLint.
@@ -46,7 +49,8 @@ src/
   features/
     simulation/        Workspace composition, geometry helpers
     positioning/       Patient positioning view + controls
-    xray-console/      Technique console
+    xray-console/      Technique console (steppers, AEC panel, readiness)
+    technique/         Pure exposure model: DI, AEC, readiness, console stepping
     evaluation/        Rule engine, result types, result UI
     scoring/           Weighted score aggregation
   stores/              Zustand simulation store

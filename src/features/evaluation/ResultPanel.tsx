@@ -2,9 +2,11 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
+import { EvidenceBadge } from "@/components/EvidenceBadge";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
+import { TechniqueResult } from "@/features/technique/TechniqueResult";
 import { ResultImage } from "./ResultImage";
 import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
 
@@ -28,6 +30,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   const tCat = useTranslations("categories");
   const tCon = useTranslations("console");
   const tPos = useTranslations("positioning");
+  const tEv = useTranslations("evidence");
   const locale = useLocale();
   const { score } = result;
   const observedLabel = (kind: CheckResult["observedKind"], value: string) => {
@@ -46,6 +49,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   };
 
   return (
+    <div className="space-y-5">
     <section aria-labelledby="result-heading" className="rounded-lg border border-line bg-panel">
       <div className="border-b border-line px-4 py-3">
         <h2 id="result-heading" className="font-semibold">
@@ -54,7 +58,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
       </div>
       <div className="grid gap-6 p-4 lg:grid-cols-[minmax(0,22rem)_1fr]">
         <div className="space-y-4">
-          <ResultImage radCase={radCase} settings={settings} variants={result.variants} />
+          <ResultImage radCase={radCase} settings={settings} variants={result.variants} noise={result.exposure.quantumNoise.level} />
           <div>
             <h3 className="text-sm font-semibold">{t("variantsTitle")}</h3>
             <ul className="mt-1 list-disc ps-5 text-sm text-muted">
@@ -119,6 +123,15 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-ink">{localize(k.feedback, locale)}</p>
+                  <details className="mt-1 text-xs text-muted">
+                    <summary className="cursor-pointer">
+                      {t("evidenceToggle")} <EvidenceBadge status={k.evidence.status} />
+                    </summary>
+                    <p className="mt-1">
+                      {tEv("reference")}: <bdi dir="ltr">{k.evidence.reference}</bdi>
+                    </p>
+                    {k.evidence.note && <p className="mt-0.5">{k.evidence.note}</p>}
+                  </details>
                 </li>
               ))}
             </ul>
@@ -136,5 +149,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
         </div>
       </div>
     </section>
+    <TechniqueResult radCase={radCase} kvp={settings.kvp} manualMas={settings.mas} exposure={result.exposure} />
+    </div>
   );
 }

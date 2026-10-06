@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { CASES } from "@/data/cases";
 import { chestPaErect } from "@/data/cases/chest-pa-erect";
 import { CATEGORIES, type SimulationSettings } from "@/domain/simulation";
+import { EVIDENCE_CLASSES } from "@/domain/technique";
 import { evaluate } from "./engine";
 
 const ideal: SimulationSettings = {
@@ -16,6 +17,8 @@ const ideal: SimulationSettings = {
   sidCm: 180,
   kvp: 115,
   mas: 3,
+  exposureMode: "manual",
+  aecChambers: [],
   breathing: "deep-inspiration-hold",
 };
 
@@ -80,13 +83,13 @@ describe("evaluate — Adult Chest PA Erect", () => {
     expect(r.variants).toEqual(["correct"]);
   });
 
-  it("maps low and high technique to under/overexposure with direction-specific feedback", () => {
+  it("maps low and high detector exposure to direction-specific findings (not brightness)", () => {
     const low = withChange({ mas: 0.5 });
     const high = withChange({ mas: 30 });
-    expect(low.primaryVariant).toBe("underexposed");
-    expect(high.primaryVariant).toBe("overexposed");
-    expect(low.checks.find((c) => c.ruleId === "mas")?.feedback.en).toMatch(/too low/);
-    expect(high.checks.find((c) => c.ruleId === "mas")?.feedback.en).toMatch(/too high/);
+    expect(low.primaryVariant).toBe("low-exposure");
+    expect(high.primaryVariant).toBe("excess-exposure");
+    expect(low.checks.find((c) => c.ruleId === "exposure-adequacy")?.feedback.en).toMatch(/below the target/);
+    expect(high.checks.find((c) => c.ruleId === "dose-optimization")?.feedback.en).toMatch(/above the target/);
   });
 
   it("fails breathing for any instruction other than deep inspiration hold", () => {
@@ -197,20 +200,23 @@ describe("medical traceability", () => {
   it("every rule declares evidence with a reference", () => {
     for (const r of chestPaErect.rules) {
       expect(r.evidence.reference.length, r.id).toBeGreaterThan(0);
-      expect(["validated", "educational-simplification", "provisional"]).toContain(r.evidence.status);
+      expect(EVIDENCE_CLASSES).toContain(r.evidence.status);
     }
   });
 
-  it("keeps exposure technique provisional", () => {
-    for (const id of ["kvp", "mas"]) {
-      expect(chestPaErect.rules.find((r) => r.id === id)?.evidence.status).toBe("provisional");
+  it("never labels unvalidated technique rules as validated", () => {
+    for (const id of ["kvp", "exposure-adequacy", "dose-optimization"]) {
+      expect(chestPaErect.rules.find((r) => r.id === id)?.evidence.status, id).toBe("provisional");
     }
+    expect(chestPaErect.rules.find((r) => r.id === "aec-chambers")?.evidence.status).toBe("vendor-protocol-dependent");
   });
 });
 
 describe("conflicting exposure findings", () => {
-  it("never reports both under- and overexposure", () => {
-    const r = withChange({ kvp: 70, mas: 30 });
-    expect(r.variants.filter((v) => v === "underexposed" || v === "overexposed")).toHaveLength(1);
+  it("never reports both low and excess detector exposure", () => {
+    for (const mas of [0.5, 3, 30]) {
+      const r = withChange({ kvp: 70, mas });
+      expect(r.variants.filter((v) => v === "low-exposure" || v === "excess-exposure").length).toBeLessThanOrEqual(1);
+    }
   });
 });
