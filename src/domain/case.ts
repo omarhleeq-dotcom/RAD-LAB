@@ -216,8 +216,13 @@ export interface ImageCriterion {
 }
 
 /**
- * A simulation case. Pure data: adding an exam means adding an object like this,
+ * The compatibility view of one simulation case: an exam plus one patient scenario on it, flattened into the single
+ * object the engine, renderer, store and UI consume. Pure data: adding an exam or a case means adding definitions,
  * not a new page.
+ *
+ * Session 7: no longer hand-written. It is composed by `composeCase(exam, case)` (features/exam/compose.ts) from an
+ * `ExamDefinition` (src/data/exams) and a `CaseDefinition` (src/data/cases); see `domain/exam.ts` for which fields
+ * belong to which half. The rule / scoring / control TYPES in this file belong to the exam half.
  */
 export interface RadCase {
   id: string;

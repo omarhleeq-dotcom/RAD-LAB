@@ -4,6 +4,7 @@ import { chestPaAdultDemo, chestPaErect } from "@/data/cases/chest-pa-erect";
 import { EXAMS, getExam } from "@/data/exams";
 import { chestPaErectExam } from "@/data/exams/xray/chest-pa-erect";
 import type { CaseDefinition, ExamDefinition } from "@/domain/exam";
+import { evaluate } from "@/features/evaluation/engine";
 import { composeCase, publicCaseId } from "./compose";
 import { validateCase, validateExam } from "./validate";
 
@@ -112,5 +113,38 @@ describe("validators catch data mistakes (so a new exam written as data is check
     const problems = validateCase(exam, bad).join("\n");
     expect(problems).toMatch(/initial kvp \(500\)/);
     expect(problems).toMatch(/no response to motion instruction/);
+  });
+});
+
+describe("the engine reads an exam as data (no Chest PA literals): a variant exam changes behaviour through data alone", () => {
+  // A FIXTURE, not a shipped exam: the requested projection and the category weights differ from Chest PA.
+  const fixtureExam: ExamDefinition = {
+    ...chestPaErectExam,
+    id: "fixture-exam",
+    requiredProjection: "lateral-left",
+    rules: chestPaErectExam.rules.map((r) => (r.id === "projection" && r.kind === "equals" ? { ...r, expected: "lateral-left" } : r)),
+    scoring: { ...chestPaErectExam.scoring, categoryWeights: { positioning: 30, rotation: 20, centering: 15, exposure: 15, sid: 10, breathing: 10 } },
+  };
+  const fixtureCase = composeCase(fixtureExam, { ...chestPaAdultDemo, id: "fixture-case", examId: "fixture-exam" });
+
+  it("is a valid exam and the composed case is not the Chest PA one", () => {
+    expect(validateExam(fixtureExam)).toEqual([]);
+    expect(fixtureCase.id).toBe("fixture-exam/fixture-case");
+  });
+
+  it("requesting a lateral makes lateral right and PA a critical wrong projection (rule + critical gate come from data)", () => {
+    const base = { ...fixtureCase.initialSettings };
+    const lateral = evaluate(fixtureCase, { ...base, projection: "lateral-left" });
+    const pa = evaluate(fixtureCase, { ...base, projection: "pa-erect" });
+    expect(lateral.checks.find((k) => k.ruleId === "projection")!.outcome).toBe("pass");
+    expect(lateral.criticalFindings.map((f) => f.id)).not.toContain("wrong-projection");
+    expect(pa.checks.find((k) => k.ruleId === "projection")!.outcome).toBe("fail");
+    expect(pa.criticalFindings.map((f) => f.id)).toContain("wrong-projection");
+  });
+
+  it("category weights are the exam's: 30 positioning points available instead of 25", () => {
+    const r = evaluate(fixtureCase, { ...fixtureCase.initialSettings, projection: "lateral-left" });
+    expect(r.score.categories.find((c) => c.category === "positioning")!.weight).toBe(30);
+    expect(evaluate(chestPaErect, chestPaErect.initialSettings).score.categories.find((c) => c.category === "positioning")!.weight).toBe(25);
   });
 });
