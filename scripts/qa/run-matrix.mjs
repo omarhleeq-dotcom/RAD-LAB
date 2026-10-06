@@ -35,6 +35,8 @@ mkdirSync("scripts/qa/golden/images", { recursive: true });
 const file = JSON.parse(readFileSync("scripts/qa/scenarios.json", "utf8"));
 const golden = JSON.parse(readFileSync("scripts/qa/golden/matrix.json", "utf8"));
 const msgs = { en: JSON.parse(readFileSync("messages/en.json", "utf8")), ar: JSON.parse(readFileSync("messages/ar.json", "utf8")) };
+// Session 8 (D7): patient-instruction labels are sex-aware ICU strings; the case under test is female.
+const forCase = (m) => m.replace(/^\{sex, select, female \{(.*?)\} other \{.*\}\}$/s, "$1");
 const DEVICES = {
   desktop: { viewport: { width: 1440, height: 900 }, hasTouch: false },
   tablet: { viewport: { width: 820, height: 1180 }, hasTouch: true, isMobile: true },
@@ -81,8 +83,8 @@ async function configure(page, device, loc, u) {
     const label = file.chamberLabels[id][loc];
     await choose(page, device, page.locator("label", { hasText: label }).filter({ has: page.locator('input[type="checkbox"]') }).first());
   }
-  await choose(page, device, radio(m.patient.breathingOptions[u.breathing]));
-  await choose(page, device, radio(m.patient.motionOptions[u.motion]));
+  await choose(page, device, radio(forCase(m.patient.breathingOptions[u.breathing])));
+  await choose(page, device, radio(forCase(m.patient.motionOptions[u.motion])));
 }
 
 /** Expected glyph position of the marker (24 px/cm; default y ≈ 12 cm): viewer's left x ≈ 2.8 cm, right x ≈ 32.2 cm. */

@@ -12,7 +12,7 @@ import { chestPaRadiograph } from "./chest-pa-radiograph";
  * `src/data/exams/xray/chest-pa-erect.ts`. Values and wording are unchanged by the split.
  *
  * PROVISIONAL / DEMO DATA, see the exam definition. The baseline radiograph shows a different patient (a young adult
- * woman, A-001) from the case patient described here (docs/session-7-demographics-impact.md).
+ * woman, A-001); since Session 8 (decision D7) the case patient is aligned to it: adult female, 21 (docs/session-7-demographics-impact.md).
  */
 export const chestPaAdultDemo: CaseDefinition = {
   schemaVersion: 1,
@@ -20,11 +20,11 @@ export const chestPaAdultDemo: CaseDefinition = {
   examId: "chest-pa-erect",
   provisional: true,
   patient: {
-    age: 45,
-    sex: "male",
+    age: 21,
+    sex: "female",
     description: {
-      en: "45-year-old male, ambulant, able to stand and follow breathing instructions.",
-      ar: "ذكر عمره ٤٥ عامًا، قادر على المشي والوقوف واتباع تعليمات التنفس.",
+      en: "21-year-old female, ambulant, able to stand and follow breathing instructions.",
+      ar: "أنثى عمرها ٢١ عامًا، قادرة على المشي والوقوف واتباع تعليمات التنفس.",
     },
   },
   clinicalScenario: {
@@ -37,7 +37,7 @@ export const chestPaAdultDemo: CaseDefinition = {
   },
   patientCondition: {
     en: "Stable. No mobility limitations. The patient has arrived slightly turned to one side.",
-    ar: "حالته مستقرة ولا توجد قيود على الحركة. وصل المريض وهو مائل قليلًا إلى أحد الجانبين.",
+    ar: "حالتها مستقرة ولا توجد قيود على الحركة. وصلت المريضة وهي مائلة قليلًا إلى أحد الجانبين.",
   },
   // How strongly this simulated patient attenuates the beam. The technique PROTOCOL is the exam's; the patient is
   // the case's, so a larger patient is a new case (data), never a new exam.

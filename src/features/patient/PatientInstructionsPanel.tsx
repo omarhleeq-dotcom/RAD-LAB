@@ -72,7 +72,7 @@ export function PatientInstructionsPanel({ radCase, settings, onChange, disabled
           value={settings.breathing}
           disabled={disabled}
           onSelect={(v) => onChange("breathing", v)}
-          label={(v) => t(`breathingOptions.${v}`)}
+          label={(v) => t(`breathingOptions.${v}`, { sex: radCase.patient.sex })}
         />
         <Choices
           legend={t("motionLegend")}
@@ -81,7 +81,7 @@ export function PatientInstructionsPanel({ radCase, settings, onChange, disabled
           value={settings.motionInstruction}
           disabled={disabled}
           onSelect={(v) => onChange("motionInstruction", v)}
-          label={(v) => t(`motionOptions.${v}`)}
+          label={(v) => t(`motionOptions.${v}`, { sex: radCase.patient.sex })}
         />
       </div>
       <p className="px-4 pb-3 text-xs text-muted">{t("note")}</p>
