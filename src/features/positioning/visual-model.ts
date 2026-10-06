@@ -43,11 +43,12 @@ export const chinOverlapsApices = (chin: ChinPositionId) => chin === "tucked";
 
 /**
  * Plan-view (top-down, SVG: +x toward the detector, +y = detector-left-to-right = the patient's left in a PA) rotation
- * of the patient figure, in SVG degrees (positive = clockwise). S11c-1: positive `rotationDeg` = the patient's LEFT side
- * toward the receptor in a PA, the same convention as the result image / detector view. In a PA the patient faces +x,
- * so the left side must swing toward +x, which is a counter-clockwise turn. Lateral and AP drawings are unchanged
- * (AP/lateral rotation conventions are not defined yet; their existing drawing already turns the left side toward the receptor in AP).
+ * of the patient figure, in SVG degrees (positive = clockwise). S11c-1 / S12-2: positive `rotationDeg` = the SAME physical
+ * turn about the patient's vertical axis in every projection: the patient's LEFT side swings toward the receptor as in a PA.
+ * PA and lateral: the patient is drawn facing +x (PA) or with the left side toward +x (left lateral, base angle −90° in
+ * `PlanView`), and that turn is counter-clockwise in the SVG, so the sign flips. AP: the patient faces the tube (−x), the
+ * left side is at −y and the same turn is clockwise, so the value is used as is.
  */
 export function planRotationDeg(projection: ProjectionId, rotationDeg: number): number {
-  return projection === "ap-erect" || projection === "lateral-left" ? rotationDeg : -rotationDeg;
+  return projection === "ap-erect" ? rotationDeg : -rotationDeg;
 }

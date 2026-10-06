@@ -214,7 +214,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
         </div>
       </div>
     </section>
-    <RadiographEffects plan={plan} sex={radCase.patient.sex} />
+    <RadiographEffects plan={plan} sex={radCase.patient.sex} lateral={radCase.radiograph.projection === "lateral-left"} />
     <TechniqueResult radCase={radCase} kvp={settings.kvp} manualMas={settings.mas} exposure={result.exposure} />
     </div>
   );

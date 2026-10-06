@@ -11,6 +11,8 @@ interface Props {
   onShoulders: (v: ShoulderPositionId) => void;
   disabled: boolean;
   showGuides: boolean;
+  /** Chest Lateral cues (S12): chin only (arms are an exam control), no PA side diagram, lateral practice guide. */
+  lateral?: boolean;
 }
 
 /** Side-view diagram of the erect patient facing the detector; shows the current chin/shoulder choice. */
@@ -103,8 +105,29 @@ function Choice<T extends string>({
   );
 }
 
-export function PatientCues({ chin, shoulders, onChin, onShoulders, disabled, showGuides }: Props) {
+export function PatientCues({ chin, shoulders, onChin, onShoulders, disabled, showGuides, lateral = false }: Props) {
   const t = useTranslations("positioning");
+  const tl = useTranslations("positioningLateral");
+  if (lateral) {
+    return (
+      <div className="space-y-3">
+        <h3 className="text-sm font-semibold text-white">{t("cuesTitle")}</h3>
+        {showGuides && (
+          <div className="rounded border border-console-line p-2 text-xs text-console-text">
+            <p className="mb-1 font-medium text-white">{tl("cuesLegendHelp")}</p>
+            <ul className="list-disc space-y-0.5 ps-5">
+              <li>{tl("cueErect")}</li>
+              <li>{tl("cueSide")}</li>
+              <li>{tl("cueArms")}</li>
+              <li>{tl("cueChin")}</li>
+              <li>{tl("cueStraight")}</li>
+            </ul>
+          </div>
+        )}
+        <Choice legend={t("chinLegend")} options={["tucked", "elevated"] as const} value={chin} onSelect={onChin} disabled={disabled} label={(v) => t(`chinOptions.${v}`)} />
+      </div>
+    );
+  }
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-semibold text-white">{t("cuesTitle")}</h3>

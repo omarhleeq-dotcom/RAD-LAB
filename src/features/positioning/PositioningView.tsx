@@ -18,10 +18,14 @@ interface Props {
   mode: SimulationMode;
   onChange: <K extends keyof SimulationSettings>(key: K, value: SimulationSettings[K]) => void;
   disabled: boolean;
+  /** Chest Lateral scene (S12) reuses this view with the lateral figure, cues and texts. Default: Chest PA. */
+  variant?: "pa" | "lateral";
 }
 
-export function PositioningView({ radCase, settings, mode, onChange, disabled }: Props) {
+export function PositioningView({ radCase, settings, mode, onChange, disabled, variant = "pa" }: Props) {
   const t = useTranslations("positioning");
+  const tl = useTranslations("positioningLateral");
+  const lateral = variant === "lateral";
   const [guidesOn, setGuidesOn] = useState(true);
   // Assessment mode (not built yet) must never show guides, whatever the toggle says.
   const showGuides = mode === "practice" && guidesOn;
@@ -61,8 +65,8 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled }:
 
       <div className="grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <figure className="m-0">
-          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} />
-          <figcaption className="mt-1 text-center text-xs text-console-text/80">{t("frontView")}</figcaption>
+          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={lateral ? "chest-lateral" : "chest-pa"} />
+          <figcaption className="mt-1 text-center text-xs text-console-text/80">{lateral ? tl("sideView") : t("frontView")}</figcaption>
           <p className="mt-1 text-center text-xs text-console-text/80">{t("workspaceHint")}</p>
           <p
             id="ray-status"
@@ -83,15 +87,16 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled }:
             onShoulders={(v) => onChange("shoulderPosition", v)}
             disabled={disabled}
             showGuides={showGuides}
+            lateral={lateral}
           />
         </div>
       </div>
-      <p className="px-4 pt-2 text-xs text-muted">{t("schematicNote")}</p>
+      <p className="px-4 pt-2 text-xs text-muted">{lateral ? tl("schematicNote") : t("schematicNote")}</p>
 
       <div className="grid gap-4 p-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <RangeField label={t("rotation")} unit="°" {...controls.rotationDeg} value={settings.rotationDeg} disabled={disabled} onChange={(v) => onChange("rotationDeg", v)} />
-          <p className="mt-1 text-xs text-muted">{t("rotationHelp")}</p>
+          <p className="mt-1 text-xs text-muted">{lateral ? tl("rotationHelp") : t("rotationHelp")}</p>
         </div>
 
         <fieldset disabled={disabled} className="sm:col-span-2">
@@ -112,7 +117,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled }:
             ))}
           </div>
           <p className="mt-1 text-xs text-muted">{t("markerHint")}</p>
-          {showGuides && <p className="mt-1 text-xs text-muted">{t("markerConvention")}</p>}
+          {showGuides && <p className="mt-1 text-xs text-muted">{lateral ? tl("markerConvention") : t("markerConvention")}</p>}
         </fieldset>
 
         <details className="sm:col-span-2" open>

@@ -424,7 +424,34 @@
     "altMarkerWrong": "This is the wrong side for this marker.",
     "altMarkerPartial": "The marker is partly cut off by the field.",
     "altMarkerHidden": "Side marker {side} lies outside the field and is not recorded.",
-    "altMarkerNone": "No side marker is recorded."
+    "altMarkerNone": "No side marker is recorded.",
+    "lateral": {
+      "alt": "Simulated educational lateral chest radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The lateral reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the lateral reference appearance.",
+      "altFindings": {
+        "rotation": "posterior ribs drawn apart from rotation",
+        "projection": "the selected projection is not simulated; the lateral appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference lateral appearance is shown with no simulated faults. It is a teaching approximation: a representative normal adult lateral of a different person, not the patient of this case."
+        },
+        "rotation": {
+          "title": "Rotation → posterior ribs apart",
+          "desc": "The posterior ribs and costophrenic angles of the two sides are drawn apart. A small separation is normal on a lateral because of beam divergence; more than that indicates rotation. Only the amount is scored, because the direction is hard to judge. The amount drawn is an educational approximation, not a measurement."
+        },
+        "chin": {
+          "title": "Chin down",
+          "desc": "This check is scored but not drawn on the lateral image in this version."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The lateral reference appearance is shown for layout only."
+        }
+      }
+    }
   },
   "modality": {
     "examsTitle": "Exams"
@@ -447,5 +474,19 @@
     "title": "This page has moved",
     "body": "Taking you to the new address of this exam.",
     "link": "Continue to the exam"
+  },
+  "positioningLateral": {
+    "alt": "Interactive schematic of the detector with a lateral chest, collimated field, central-ray target and side marker.",
+    "midline": "Mid-thorax line",
+    "sideView": "Detector view as displayed (anterior chest on the viewer's left, spine on the right)",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. Left/right here mean the left/right of the detector view; the dashed second rib line shows rotation.",
+    "rotationHelp": "Educational visual model: the internal rotation value is scored, not the drawn appearance. On a lateral, rotation shows as the posterior ribs of the two sides drawn apart; the direction is hard to judge, so only the amount is scored.",
+    "markerConvention": "Display convention (lateral): the anterior chest is on the viewer's left. The marker letter is the side of the patient closest to the detector; place L in the viewer's left margin and R in the right margin. Departments differ.",
+    "cuesLegendHelp": "Required for a lateral erect (practice guide):",
+    "cueErect": "Erect, weight even on both feet",
+    "cueSide": "Side against the detector: left, unless the request calls for the right",
+    "cueArms": "Arms raised above the head (a support may be used)",
+    "cueChin": "Chin lifted and clear of the apices",
+    "cueStraight": "Standing straight: no rotation and no leaning sideways"
   }
 }

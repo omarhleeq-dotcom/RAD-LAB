@@ -44,3 +44,8 @@ Status **not obtained** = the full text has not been read by anyone for this rep
 | Vañó E et al., Br J Radiol 1995;68(816):1349 (PMID 8777597) | **abstract only** | Existence of EC chest criteria and their evaluation |
 | Robinson AE, Acad Radiol 1998 (PMID 9597098) | record only; not used | — |
 | Merrill's atlas (and other textbooks) | not obtained; textbooks may now be used (S10-5 as amended, S10b-25) once read and cited by printed page; Clark's chest chapter not yet read | Further positioning conventions; cross-check of Bontrager |
+
+## Image assets used by the product (not text sources)
+| Asset | Licence / status | Where |
+|---|---|---|
+| A-006 / A-007 — Normal lateral chest radiograph (X-ray), Wikimedia Commons file page `File:Normal_lateral_chest_radiograph_(X-ray).jpg` (S12) | CC0 1.0 **as stated by the owner** (licence text copied from the file page, 2026-10-07); **owner-verified, attached file, re-verify later** (Commons HTTP 429); commercial use permitted; author not yet recorded; no burned-in text, no metadata, no patient data (checked) | `docs/ASSET_PROVENANCE_AND_LICENSES.md` A-006, A-007 |

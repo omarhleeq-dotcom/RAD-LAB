@@ -20,6 +20,15 @@ export const TUNING = {
     thoraxShiftPerDeg: 0.0015,
     /** Relative lung-transradiancy difference between the hemithoraces per degree (gain fraction at the edge). */
     transradiancyPerDeg: 0.003,
+    /**
+     * Lateral (asset with no frontal midline, S12): the posterior half of the thorax is drawn twice with an offset that
+     * grows with the internal value (ghosted posterior ribs / costophrenic angles = "separation"). Fraction of image
+     * width per degree; the sign moves the second copy posterior (positive) or anterior (negative). Magnitude-only
+     * feedback: the amount is an educational approximation, not a measurement of cm or degrees.
+     */
+    separationShiftPerDeg: 0.0045,
+    /** Weight of the offset copy at the posterior chest wall (0.5 = equal blend of the two copies). */
+    separationBlend: 0.5,
   },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },

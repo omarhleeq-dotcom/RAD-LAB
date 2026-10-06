@@ -12,6 +12,7 @@
  *                       display convention, PA: patient left = viewer right). Same flag as the marker check's
  *                       "wrong side" feedback and the renderer's `marker.wrongSide`, so score, feedback and picture agree.
  *  - missing-marker  : no marker placed (S11b-1); a separate finding with the same gate severity as wrong-side-marker.
+ *  - arms-over-lungs : Chest Lateral (S12): the arms are not raised, so their soft tissue overlies the upper lung fields.
  */
 import type { CriticalFindingId, RadCase } from "@/domain/case";
 import type { PatientResponse } from "@/domain/patient";
@@ -31,6 +32,8 @@ export const CRITICAL_DETECTORS: Record<string, Detector> = {
   "wrong-projection": (c, s) => s.projection !== c.requiredProjection,
   "patient-motion": (_c, _s, response) => response.motion === "motion",
   "missing-marker": (_c, s) => isMarkerMissing(s.sideMarker),
+  // S12 (S10b-13, BONTRAGER-9 p.84-85, 94): Lateral only; present when the exam's `arms` choice is not "raised".
+  "arms-over-lungs": (_c, s) => s.choices?.arms !== undefined && s.choices.arms !== "raised",
   "wrong-side-marker": (c, s) =>
     s.sideMarker !== null && isMarkerWrongSide(c.positioning, { side: s.sideMarker, position: s.markerPosition }, s.choices),
 };

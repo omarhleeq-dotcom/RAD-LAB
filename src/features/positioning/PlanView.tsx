@@ -24,7 +24,8 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
   const facesTube = settings.projection === "ap-erect";
   const depth = lateral ? 55 : 16;
   const ptX = detX - 4 - depth;
-  const baseAngle = lateral ? 90 : 0;
+  // S12-2: left lateral = the patient's left side toward the detector (+x), which is a −90° turn from the PA drawing.
+  const baseAngle = lateral ? -90 : 0;
   const tubeX = Math.max(30, detX - settings.sidCm * sidPx);
   const refX = detX - SID_REFERENCE_CM * sidPx;
   const { detector } = radCase;

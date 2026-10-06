@@ -2,10 +2,11 @@ import type { RadCase } from "@/domain/case";
 import type { CaseDefinition } from "@/domain/exam";
 import { composeCase } from "@/features/exam/compose";
 import { getExam } from "../exams";
+import { chestLateralAdultDemo } from "./chest-lateral-erect";
 import { chestPaAdultDemo } from "./chest-pa-erect";
 
 /** Registry of case definitions (patient scenarios). Each belongs to an exam in `src/data/exams`. */
-export const CASE_DEFINITIONS: readonly CaseDefinition[] = [chestPaAdultDemo];
+export const CASE_DEFINITIONS: readonly CaseDefinition[] = [chestPaAdultDemo, chestLateralAdultDemo];
 
 /**
  * The compatibility view the engine, store and UI consume: every case composed with its exam (`composeCase`

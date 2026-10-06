@@ -146,3 +146,13 @@ New proposed terms:
 | AR-D | leaning slightly forwards | مائل قليلًا إلى الأمام |
 | AR-D | holding the support arm | الإمساك بذراع الحامل |
 | AR-E | patient-position label | علامة وضعية المريض |
+
+## Session 12 — Chest Lateral strings added to the UI (**DRAFT, pending owner / educator review; machine-assisted**)
+Rules followed: "الكاشف" (not "الكاسيت") for the detector; phone-short wording; left / right always tied to the viewer's side of the display unless a term names the patient's side. None of these is reviewed.
+| Where | Keys / data | Draft Arabic (summary) |
+|---|---|---|
+| Lateral positioning view | `messages/ar.json` → `positioningLateral.*` (alt, midline, sideView, schematicNote, rotationHelp, markerConvention, cuesLegendHelp, cueErect, cueSide, cueArms, cueChin, cueStraight) | «خط منتصف الصدر»، «مقدمة الصدر على يسار المشاهد»، «ويدل خط الضلع الثاني المتقطع على الدوران»، … |
+| Lateral result image + effect cards | `radiograph.lateral.*` (alt, notRepresentative, altReference, altFindings.rotation / projection, effects.baseline / rotation / chin / projection) | «الدوران ← تباعد الأضلاع الخلفية»، «تقريب تعليمي: صورة جانبية طبيعية تمثيلية لشخص بالغ آخر» |
+| Lateral exam data (case text, rules, critical findings, choice controls, AEC labels, baseline credit line) | `src/data/exams/xray/chest-lateral-erect.ts`, `chest-lateral-technique.ts`, `src/data/cases/chest-lateral-erect.ts`, `chest-lateral-radiograph.ts` (every `ar:` value) | «الجانب الملاصق للكاشف»، «الذراعان»، «مرفوعتان فوق الرأس»، «علامة خاطئة (الجانب الملاصق للكاشف)»، «الحقل الأمامي / المركزي / الخلفي»، … |
+
+Questions for the reviewer: «الجانب الملاصق للكاشف» (side against the detector); «تباعد الأضلاع الخلفية» (posterior rib separation); «مسند للذراعين» (arm support); «جهة القص» (sternum side); the draft marker-convention sentence (L left margin / R right margin).

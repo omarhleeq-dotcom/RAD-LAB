@@ -232,7 +232,8 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
       : {
           degrees: deg,
           spineShiftU: deg * TUNING.rotation.spineShiftPerDeg,
-          thoraxShiftU: deg * TUNING.rotation.thoraxShiftPerDeg,
+          // Lateral baseline (no frontal midline, S12): the whole offset is the posterior-rib separation shift.
+          thoraxShiftU: deg * (spec.midlineU === undefined ? TUNING.rotation.separationShiftPerDeg : TUNING.rotation.thoraxShiftPerDeg),
           transradiancy: deg * TUNING.rotation.transradiancyPerDeg,
         };
 
@@ -244,7 +245,8 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const lowPenetration = exposure.penetration === "low";
   const scapulaeOverlap = patient.shoulders !== "rolled-forward" && spec.scapulae !== undefined;
   const jawOverlap = patient.chin === "tucked" && spec.jaw !== undefined;
-  const representative = geometry.projection === "pa-erect";
+  // S12: representative when the simulated projection is the one the baseline depicts (absent = the PA baseline).
+  const representative = geometry.projection === (spec.projection ?? "pa-erect");
   const fieldCm = { ...geometry.fieldCm };
 
   const marker = patient.marker
