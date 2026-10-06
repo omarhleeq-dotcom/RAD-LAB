@@ -16,18 +16,26 @@
 import type { CriticalFindingId, RadCase } from "@/domain/case";
 import type { PatientResponse } from "@/domain/patient";
 import type { SimulationSettings } from "@/domain/simulation";
-import { viewerSideOf } from "@/features/simulation/geometry";
+import { isMarkerWrongSide } from "@/features/simulation/marker-rule";
 import type { CriticalFinding } from "./types";
 
+type Detector = (c: RadCase, s: SimulationSettings, response: PatientResponse) => boolean;
+
+/**
+ * Detector registry (S11): a critical-finding id is valid only if a pure detector is registered here, so an exam
+ * declares WHICH findings gate its pass mark (data) and the code decides WHETHER one is present. A new exam that needs a
+ * new finding adds its detector here in the same commit (validated by `validateExam`). The marker detector follows the
+ * exam's marker-rule kind (S11-1).
+ */
+export const CRITICAL_DETECTORS: Record<string, Detector> = {
+  "wrong-projection": (c, s) => s.projection !== c.requiredProjection,
+  "patient-motion": (_c, _s, response) => response.motion === "motion",
+  "wrong-side-marker": (c, s) =>
+    s.sideMarker !== null && isMarkerWrongSide(c.positioning, { side: s.sideMarker, position: s.markerPosition }, s.choices),
+};
+
 function isPresent(id: CriticalFindingId, c: RadCase, s: SimulationSettings, response: PatientResponse): boolean {
-  switch (id) {
-    case "wrong-projection":
-      return s.projection !== c.requiredProjection;
-    case "patient-motion":
-      return response.motion === "motion";
-    case "wrong-side-marker":
-      return s.sideMarker !== null && viewerSideOf(s.markerPosition) !== c.positioning.markerSide[s.sideMarker];
-  }
+  return CRITICAL_DETECTORS[id]?.(c, s, response) ?? false;
 }
 
 export function detectCriticalFindings(c: RadCase, s: SimulationSettings, response: PatientResponse): CriticalFinding[] {

@@ -87,12 +87,12 @@ describe("rotation is drawn with anatomical cues, never by rotating the whole im
     const rot = plan({ rotationDeg: 15 }).anatomy.rotation!;
     expect(Math.abs(rotationShiftU(spec.anatomyBox.u1, rot, spec))).toBeLessThan(0.002);
     expect(Math.abs(rotationShiftU(spec.anatomyBox.u2, rot, spec))).toBeLessThan(0.002);
-    expect(rotationShiftU(spec.midlineU, rot, spec)).toBeGreaterThan(0.05);
+    expect(rotationShiftU(spec.midlineU!, rot, spec)).toBeGreaterThan(0.05);
     // Left lung (viewer's left) is compressed, right expanded for positive rotation.
-    const uL = spec.midlineU - 0.2, uR = spec.midlineU + 0.2;
+    const uL = spec.midlineU! - 0.2, uR = spec.midlineU! + 0.2;
     expect(rotationShiftU(uL, rot, spec)).toBeGreaterThan(0);
     expect(rotationShiftU(uR, rot, spec)).toBeGreaterThan(0);
-    expect(rotationShiftU(spec.midlineU, rot, spec)).toBeGreaterThan(rotationShiftU(uR, rot, spec));
+    expect(rotationShiftU(spec.midlineU!, rot, spec)).toBeGreaterThan(rotationShiftU(uR, rot, spec));
   });
 
   it("± rotation are mirror-image cues (opposite shifts), not the same picture", () => {
@@ -219,7 +219,7 @@ describe("technique effects: noise ≠ brightness; excess exposure ≠ darkening
     // kV low, mAs high enough that detector exposure is not low: isolates penetration from noise.
     const lp = render({ kvp: 70, mas: 40 });
     expect(lp.plan.technique.noiseSigma).toBe(0);
-    const z = chestPaErect.radiograph.denseZones[0]!;
+    const z = chestPaErect.radiograph.denseZones![0]!;
     const zc = px(z.cu, z.cv);
     const zoneRect = [zc.x - 4, zc.y - 40, zc.x + 4, zc.y + 40] as const;
     const outRect = [px(0.14, 0.4).x, px(0.14, 0.4).y, px(0.22, 0.4).x, px(0.14, 0.5).y] as const; // peripheral lung, outside zones
@@ -276,12 +276,12 @@ describe("motion → loss of sharpness; distinct from noise", () => {
 describe("positioning overlays are schematic, local and additive", () => {
   it("scapulae add density over the lateral lung fields only when the shoulders are not forward", () => {
     const fwd = render({ shoulderPosition: "rolled-forward" }), relaxed = render({ shoulderPosition: "relaxed" });
-    const s = spec.scapulae.left;
+    const s = spec.scapulae!.left;
     const p = px(s.cu + s.ru * 0.8, s.cv); // medial border of the left scapula
     expect(at(relaxed.out, p.x, p.y)).toBeGreaterThan(at(fwd.out, p.x, p.y) + 8);
     const far = px(0.5, 0.9); // nowhere near a scapula
     expect(Math.abs(at(relaxed.out, far.x, far.y) - at(fwd.out, far.x, far.y))).toBeLessThan(6);
-    expect(scapulaOverlay(spec.scapulae.left, "left", 0.9, 0.9)).toBe(0);
+    expect(scapulaOverlay(spec.scapulae!.left, "left", 0.9, 0.9)).toBe(0);
   });
 
   it("the jaw overlay covers the apices only when the chin is tucked", () => {

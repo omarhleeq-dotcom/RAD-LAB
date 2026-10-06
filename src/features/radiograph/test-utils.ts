@@ -26,7 +26,7 @@ export function makePhantom(): LumaImage {
       if (v <= 0.8 && (lung(0.29) || lung(0.69))) value = 45;
       if (u > 0.475 && u < 0.505 && v > 0.05 && v < 0.95) value = 200; // spine column at the midline
       // High-frequency texture inside the dense zones (what low penetration should wash out).
-      for (const z of spec.denseZones) {
+      for (const z of spec.denseZones ?? []) {
         if (((u - z.cu) / z.ru) ** 2 + ((v - z.cv) / z.rv) ** 2 < 0.6) value += x % 4 < 2 ? 30 : -30;
       }
       data[y * PHANTOM_W + x] = value;

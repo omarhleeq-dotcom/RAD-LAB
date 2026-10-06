@@ -138,7 +138,8 @@ export function inspirationLut(spec: RadiographAssetSpec, extentReduction: numbe
 /** Horizontal displacement (fraction of image width) of source content at u for a given rotation. */
 export function rotationShiftU(u: number, rot: NonNullable<RenderPlan["anatomy"]["rotation"]>, spec: RadiographAssetSpec): number {
   const { u1, u2 } = spec.anatomyBox;
-  const spine = rot.spineShiftU * Math.exp(-0.5 * ((u - spec.midlineU) / TUNING.rotation.spineSigma) ** 2);
+  // No frontal midline in the asset (S11, e.g. a lateral): no spine cue, only the thorax interior shift.
+  const spine = spec.midlineU === undefined ? 0 : rot.spineShiftU * Math.exp(-0.5 * ((u - spec.midlineU) / TUNING.rotation.spineSigma) ** 2);
   const interior = rot.thoraxShiftU * Math.sin(Math.PI * clamp01((u - u1) / (u2 - u1)));
   return spine + interior;
 }
@@ -161,6 +162,7 @@ export function scapulaOverlay(e: ImageEllipse, side: "left" | "right", u: numbe
 
 /** Added grey level of the schematic lower jaw + soft tissue over the apices. */
 export function jawOverlay(spec: RadiographAssetSpec, u: number, v: number): number {
+  if (!spec.jaw) return 0;
   const pts = spec.jaw.border;
   const first = pts[0]!, last = pts[pts.length - 1]!;
   if (u < first.u || u > last.u) return 0;
@@ -241,17 +243,17 @@ export function renderRadiograph(
       }
       const uc = clamp01(uSrc), vc = clamp01(vSrc);
       let value = sample(uc, vc);
-      if (plan.positioning.scapulaeOverlap) {
+      if (plan.positioning.scapulaeOverlap && spec.scapulae) {
         value += scapulaOverlay(spec.scapulae.left, "left", uc, vc) + scapulaOverlay(spec.scapulae.right, "right", uc, vc);
       }
       if (plan.positioning.jawOverlap) value += jawOverlay(spec, uc, vc);
-      if (rot) {
+      if (rot && spec.midlineU !== undefined) {
         // Relative transradiancy difference between the hemithoraces (educational, small).
         const side = Math.max(-1, Math.min(1, (uc - spec.midlineU) / 0.4));
         value *= 1 - rot.transradiancy * side;
       }
       luma[i] = value;
-      if (zone) zone[i] = denseZoneWeight(spec.denseZones, uc, vc);
+      if (zone) zone[i] = denseZoneWeight(spec.denseZones ?? [], uc, vc);
     }
   }
 

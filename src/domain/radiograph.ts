@@ -42,17 +42,24 @@ export interface RadiographAssetSpec {
    * cuts the required region also cuts the drawn anatomy. The (small) anisotropy this implies is documented.
    */
   anatomyBox: ImageRect;
-  /** Thoracic midline (spinous-process line) in the baseline. */
-  midlineU: number;
+  /**
+   * Thoracic midline (spinous-process line) in the baseline. Optional (S11): a lateral has no frontal midline; without
+   * it the rotation effect has no spine / hemithorax cue and is not drawn.
+   */
+  midlineU?: number;
   /** Vertical landmarks used by the reduced-inspiration warp. */
   lungApexV: number;
   /** Highest point of the diaphragmatic domes in the baseline. */
   diaphragmDomeV: number;
 
+  /**
+   * Landmark groups are OPTIONAL per asset (S11): an exam / baseline declares only the groups its projection has, and
+   * the renderer draws only the effects whose group exists. Chest PA declares all three (unchanged).
+   */
   /** Schematic scapula overlays shown when the shoulders are not rolled forward (one blade per side). */
-  scapulae: { left: ImageEllipse; right: ImageEllipse };
+  scapulae?: { left: ImageEllipse; right: ImageEllipse };
   /** Schematic mandible overlay shown when the chin is tucked: bottom border of the jaw as a polyline. */
-  jaw: { border: { u: number; v: number }[]; softTissueRect: ImageRect };
+  jaw?: { border: { u: number; v: number }[]; softTissueRect: ImageRect };
   /** Dense / mediastinal / retrocardiac regions that low penetration makes less visible. */
-  denseZones: ImageEllipse[];
+  denseZones?: ImageEllipse[];
 }

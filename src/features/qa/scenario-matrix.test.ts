@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { chestPaErect } from "@/data/cases/chest-pa-erect";
 import { CATEGORIES } from "@/domain/simulation";
-import { FINDING_EFFECTS, INVISIBLE_EFFECTS, RULE_EFFECTS, VARIANT_EFFECTS, variantIsDrawn } from "@/features/radiograph/consistency";
+import { FINDING_EFFECTS, INVISIBLE_EFFECTS, RULE_EFFECTS, effectsOfVariant, variantIsDrawn } from "@/features/radiograph/consistency";
 import { renderRadiograph } from "@/features/radiograph/pipeline";
 import { makePhantom, PX_PER_CM } from "@/features/radiograph/test-utils";
 import { analyse, SCENARIOS, scenarioSettings } from "./scenario-matrix";
@@ -32,7 +32,7 @@ describe.each(reports)("scenario %s: score, feedback and image describe the same
     expect(r.result.score.total).toBeGreaterThanOrEqual(0);
     expect(r.result.score.total).toBeLessThanOrEqual(100);
     expect(Object.values(c.scoring.categoryWeights).reduce((a, b) => a + b, 0)).toBe(100);
-    expect(r.result.score.categories.map((x) => x.category).every((k) => CATEGORIES.includes(k))).toBe(true);
+    expect(r.result.score.categories.map((x) => x.category).every((k) => (CATEGORIES as readonly string[]).includes(k))).toBe(true);
   });
 
   it("every non-passing check has bilingual feedback and a registry entry", () => {
@@ -78,7 +78,7 @@ describe.each(reports)("scenario %s: score, feedback and image describe the same
       if (v === "correct") continue;
       const drawn = variantIsDrawn(v, r.plan);
       if (v === "excess-exposure") expect(drawn, "excess exposure is invisible by design").toBe(false);
-      else if (VARIANT_EFFECTS[v].length > 0) expect(drawn, `${v} should be drawn`).toBe(true);
+      else if (effectsOfVariant(v).length > 0) expect(drawn, `${v} should be drawn`).toBe(true);
       else expect(v).toBe("magnified-geometry");
     }
   });

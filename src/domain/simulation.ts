@@ -77,15 +77,39 @@ export interface SimulationSettings {
   breathing: BreathingId;
   /** Instruction about keeping still given to the patient (what is said, not what the patient then does). */
   motionInstruction: MotionInstructionId;
+  /**
+   * Tube angulation about the transverse axis, degrees; positive = caudad, negative = cephalad (S11-2). Optional: only
+   * exams that declare the control (`ExamDefinition.controls.tubeAngulationDeg`) carry it; absent = 0° (the PA default).
+   */
+  tubeAngulationDeg?: number;
+  /**
+   * Values of the exam's extra enum controls (`ExamDefinition.choiceControls`), keyed by control id, e.g. which side is
+   * against the detector. Optional: absent for exams without such controls (Chest PA).
+   */
+  choices?: Record<string, string>;
 }
+
+/** Numeric settings every exam has, and the optional ones an exam adds by declaring a control (S11-2). */
+export type RequiredNumericSettingKey = "rotationDeg" | "sidCm" | "kvp" | "mas";
+export type OptionalNumericSettingKey = "tubeAngulationDeg";
+/** Value of an optional numeric setting when the exam does not declare it (the PA behaviour). */
+export const OPTIONAL_NUMERIC_DEFAULTS: Record<OptionalNumericSettingKey, number> = { tubeAngulationDeg: 0 };
+
+/** Reads a numeric setting; an undeclared optional one reads as its default. */
+export const numericSetting = (s: SimulationSettings, key: NumericSettingKey): number =>
+  key === "tubeAngulationDeg" ? (s.tubeAngulationDeg ?? OPTIONAL_NUMERIC_DEFAULTS.tubeAngulationDeg) : s[key];
+
+/** An enum setting an exam declares itself: the key is `choices.<control id>`. */
+export type ChoiceSettingKey = `choices.${string}`;
+/** Reads an enum setting (a built-in enum or an exam-declared choice); undefined when unset. */
+export const enumSetting = (s: SimulationSettings, key: EnumSettingKey | ChoiceSettingKey): string | undefined =>
+  key.startsWith("choices.") ? s.choices?.[key.slice("choices.".length)] : (s[key as EnumSettingKey] as string);
 
 /** Settings that take one of a fixed set of string ids. */
 export type EnumSettingKey = "projection" | "breathing" | "chinPosition" | "shoulderPosition" | "motionInstruction";
 
 export type SettingKey = keyof SimulationSettings;
-export type NumericSettingKey = {
-  [K in SettingKey]: SimulationSettings[K] extends number ? K : never;
-}[SettingKey];
+export type NumericSettingKey = RequiredNumericSettingKey | OptionalNumericSettingKey;
 
 export type SimulationMode = "practice" | "assessment";
 export type SimulationPhase = "setup" | "result";
@@ -99,10 +123,16 @@ export const CATEGORIES = [
   "sid",
   "breathing",
 ] as const;
-export type CategoryId = (typeof CATEGORIES)[number];
+/** The six Chest PA categories (message keys `categories.*` exist for these). */
+export type CoreCategoryId = (typeof CATEGORIES)[number];
+/**
+ * An exam declares its own categories as the keys of `ScoringRules.categoryWeights` (S11 generalisation); a category
+ * outside the core six brings its label in `ScoringRules.categoryLabels`.
+ */
+export type CategoryId = CoreCategoryId | (string & {});
 
 /** Result image variants. Real variants will be added once validated imagery exists. */
-export type ImageVariantId =
+export type CoreImageVariantId =
   | "correct"
   | "rotated"
   | "wrong-projection"
@@ -116,3 +146,9 @@ export type ImageVariantId =
   | "excess-exposure"
   | "low-penetration"
   | "magnified-geometry";
+
+/**
+ * Open vocabulary: an exam may produce variants beyond Chest PA's. A variant is only drawable / explainable once it is
+ * registered in `features/radiograph/consistency.ts` (`VARIANT_EFFECTS`) and has message keys; `validateExam` checks it.
+ */
+export type ImageVariantId = CoreImageVariantId | (string & {});

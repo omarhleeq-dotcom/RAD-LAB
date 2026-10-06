@@ -12,6 +12,7 @@ import type { RadiographResultState } from "@/domain/result-state";
 import type { ViewerSide } from "@/domain/simulation";
 import type { Evidence } from "@/domain/technique";
 import { viewerSideOf } from "@/features/simulation/geometry";
+import { expectedViewerSide as expectedViewerSideOf, isMarkerWrongSide } from "@/features/simulation/marker-rule";
 import { TUNING } from "./tuning";
 
 export interface CmRect {
@@ -21,7 +22,7 @@ export interface CmRect {
   y2: number;
 }
 
-export type EffectId =
+export type CoreEffectId =
   | "baseline"
   | "rotation"
   | "collimation-clipping"
@@ -36,6 +37,12 @@ export type EffectId =
   | "low-penetration"
   | "marker"
   | "projection";
+
+/**
+ * Open vocabulary (S11): an exam may add effects beyond Chest PA's. An effect is only drawn once it has a concept
+ * record, a magnitude record (the tables below) and a pipeline step; Lateral / AP register theirs with their exams.
+ */
+export type EffectId = CoreEffectId | (string & {});
 
 /**
  * How big the drawn effect is. Kept SEPARATE from the clinical concept: a concept can be validated while the
@@ -121,7 +128,7 @@ const ev = (status: Evidence["status"], section: string, note: string): Evidence
 });
 
 /** Clinical CONCEPT behind each effect (never the drawn magnitude). Statuses follow the Image-quality reference. */
-export const EFFECT_CONCEPTS: Record<EffectId, Evidence> = {
+export const EFFECT_CONCEPTS: Record<CoreEffectId, Evidence> = {
   baseline: ev("educational-simplification", "Asset requirements", "Educational appearance baseline, not clinical ground truth."),
   rotation: ev("common-reference", "Rotation", "Spinous processes ≈ midway between medial clavicle ends (WHO); rotation changes that relationship and the hemithoracic projection. Direction evidence-supported; body morphology changes the appearance."),
   "collimation-clipping": ev("validated", "Anatomical coverage and collimation", "Anatomy outside the field is not imaged (geometry)."),
@@ -145,7 +152,7 @@ const NO_MAGNITUDE = (note: string): VisualMagnitude => ({ kind: "none", note })
  * Rendered magnitude of each effect. Always an EDUCATIONAL VISUAL APPROXIMATION where something is drawn
  * (amounts in tuning.ts), whatever the class of the concept. Effects that draw nothing say so.
  */
-export const EFFECT_MAGNITUDES: Record<EffectId, VisualMagnitude> = {
+export const EFFECT_MAGNITUDES: Record<CoreEffectId, VisualMagnitude> = {
   baseline: NO_MAGNITUDE("Reference appearance only; no effect applied."),
   rotation: APPROX("Spine / interior shift and transradiancy tilt scale with the internal value; not a measurement of degrees of rotation."),
   "collimation-clipping": APPROX("The field edge is exact geometry; where the anatomy lies under it follows an approximate landmark mapping."),
@@ -235,8 +242,8 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const noisy = exposure.quantumNoise.level === "increased" || exposure.quantumNoise.level === "marked";
   const excessNoise = Math.sqrt(Math.max(0, rel * rel - 1));
   const lowPenetration = exposure.penetration === "low";
-  const scapulaeOverlap = patient.shoulders !== "rolled-forward";
-  const jawOverlap = patient.chin === "tucked";
+  const scapulaeOverlap = patient.shoulders !== "rolled-forward" && spec.scapulae !== undefined;
+  const jawOverlap = patient.chin === "tucked" && spec.jaw !== undefined;
   const representative = geometry.projection === "pa-erect";
   const fieldCm = { ...geometry.fieldCm };
 
@@ -248,7 +255,7 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
         };
         const sizeCm = positioning.markerSizeCm;
         const viewerSide = viewerSideOf(patient.marker.position);
-        const expectedViewerSide = positioning.markerSide[patient.marker.side];
+        const expectedViewerSide = expectedViewerSideOf(positioning, patient.marker.side);
         return {
           side: patient.marker.side,
           centerCm: center,
@@ -256,12 +263,12 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
           visibleFraction: markerVisibleFraction(center, sizeCm, fieldCm),
           viewerSide,
           expectedViewerSide,
-          wrongSide: viewerSide !== expectedViewerSide,
+          wrongSide: isMarkerWrongSide(positioning, patient.marker, patient.choices),
         };
       })()
     : null;
 
-  const active: [EffectId, boolean, string[], boolean][] = [
+  const active: [CoreEffectId, boolean, string[], boolean][] = [
     ["projection", !representative, ["geometry.projection"], false],
     ["rotation", rotation !== null, ["geometry.rotationDeg"], true],
     ["collimation-clipping", geometry.clippedSides.length > 0, ["geometry.fieldCm", "geometry.clippedSides"], true],
@@ -276,7 +283,7 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
     ["low-penetration", lowPenetration, ["exposure.penetration"], true],
     ["marker", marker !== null, ["patient.marker"], true],
   ];
-  const faults = new Set<EffectId>(["projection", "rotation", "collimation-clipping", "scapulae", "chin", "inspiration", "motion", "low-exposure", "low-penetration"]);
+  const faults = new Set<string>(["projection", "rotation", "collimation-clipping", "scapulae", "chin", "inspiration", "motion", "low-exposure", "low-penetration"]);
   const effects: PlanEffect[] = active
     .filter(([, on]) => on)
     .map(([id, , drivers, changesPixels]) => ({ id, drivers, concept: EFFECT_CONCEPTS[id], magnitude: EFFECT_MAGNITUDES[id], changesPixels }));

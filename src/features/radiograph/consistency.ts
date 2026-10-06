@@ -10,7 +10,8 @@
  *
  * Pure data + pure functions: no scoring, no pixels, no React.
  */
-import type { ImageVariantId } from "@/domain/simulation";
+import type { ExamDefinition } from "@/domain/exam";
+import type { CoreImageVariantId, ImageVariantId } from "@/domain/simulation";
 import type { EffectId, RenderPlan } from "./plan";
 
 /** Effects that exist only because a scored finding is not passed (never drawn for a clean attempt). */
@@ -57,7 +58,7 @@ export const RULE_EFFECTS: Record<string, { effects: EffectId[]; partialDrawn?: 
 };
 
 /** Image-quality variant → the effect that shows it (empty = not drawn by design). */
-export const VARIANT_EFFECTS: Record<ImageVariantId, EffectId[]> = {
+export const VARIANT_EFFECTS: Record<CoreImageVariantId, EffectId[]> = {
   correct: [],
   rotated: ["rotation"],
   "wrong-projection": ["projection"],
@@ -71,6 +72,10 @@ export const VARIANT_EFFECTS: Record<ImageVariantId, EffectId[]> = {
   "low-penetration": ["low-penetration"],
   motion: ["motion"],
 };
+
+/** Effects that show a variant; a variant nobody registered has none (reported "not drawn"), never a crash (S11). */
+export const effectsOfVariant = (variant: ImageVariantId): EffectId[] =>
+  (VARIANT_EFFECTS as Record<string, EffectId[] | undefined>)[variant] ?? [];
 
 /** Effects that are explained to the learner but change nothing in the picture by design (dose creep is invisible). */
 export const INVISIBLE_EFFECTS: readonly EffectId[] = ["excess-exposure"];
@@ -88,11 +93,27 @@ export function checkIsDrawn(ruleId: string, outcome: "pass" | "partial" | "fail
 
 /** True when the picture shows this image-quality variant. */
 export function variantIsDrawn(variant: ImageVariantId, plan: RenderPlan): boolean {
-  const effects = VARIANT_EFFECTS[variant];
+  const effects = effectsOfVariant(variant);
   return effects.length > 0 && effects.every((id) => present(plan, id));
 }
 
 /** True when the learner should be told that this scored finding has no visible effect in the picture. */
 export function needsNotDrawnLabel(ruleId: string, outcome: "pass" | "partial" | "fail", plan: RenderPlan): boolean {
   return outcome !== "pass" && !RULE_EFFECTS[ruleId]?.silent && !checkIsDrawn(ruleId, outcome, plan);
+}
+
+/**
+ * Image variants an exam names (rule `variantOn*`, possible errors) that have no entry in `VARIANT_EFFECTS` — i.e. that
+ * the renderer cannot say anything about. Empty for a well-formed exam (S11: checked by test, kept out of
+ * `validateExam` because logic modules must not depend on the renderer, see the architecture test).
+ */
+export function unregisteredVariants(exam: Pick<ExamDefinition, "rules" | "possibleErrors">): string[] {
+  const named = new Set<string>(exam.possibleErrors.map((e) => e.variant));
+  for (const r of exam.rules) {
+    for (const k of ["variantOnFail", "variantOnLow", "variantOnHigh", "variantOnClipped"] as const) {
+      const v = (r as unknown as Record<string, unknown>)[k];
+      if (typeof v === "string") named.add(v);
+    }
+  }
+  return [...named].filter((v) => !(v in VARIANT_EFFECTS));
 }

@@ -5,12 +5,15 @@ import type { Evidence, EvidenceClass, TechniqueProfile } from "./technique";
 import type {
   BreathingId,
   CategoryId,
+  ChoiceSettingKey,
   EnumSettingKey,
   NormPoint,
   ImageVariantId,
   MotionInstructionId,
   NumericSettingKey,
+  OptionalNumericSettingKey,
   ProjectionId,
+  RequiredNumericSettingKey,
   SideMarkerId,
   SimulationSettings,
   ViewerSide,
@@ -27,6 +30,10 @@ export interface DetectorSpec {
   widthCm: number;
   heightCm: number;
 }
+
+/** Numeric controls: the four every exam has, plus optional ones an exam adds (tube angulation, S11-2). */
+export type NumericControls = Record<RequiredNumericSettingKey, NumericControlSpec> &
+  Partial<Record<OptionalNumericSettingKey, NumericControlSpec>>;
 
 /** Slider bounds for numeric controls on the console / positioning view. */
 export interface NumericControlSpec {
@@ -96,10 +103,10 @@ export interface TechniqueRule extends RuleBase {
   variantOnHigh?: ImageVariantId;
 }
 
-/** Setting must equal a specific value. */
+/** Setting must equal a specific value (a built-in enum setting, or an exam-declared choice `choices.<id>`). */
 export interface EqualsRule extends RuleBase {
   kind: "equals";
-  setting: EnumSettingKey;
+  setting: EnumSettingKey | ChoiceSettingKey;
   expected: string;
   variantOnFail?: ImageVariantId;
 }
@@ -175,10 +182,36 @@ export interface PositioningSpec {
   markerSide: Record<SideMarkerId, ViewerSide>;
   /** Where each marker appears when first chosen: the lateral margin of ITS side, outside the required anatomy. */
   defaultMarkerPosition: Record<SideMarkerId, NormPoint>;
+  /** How the marker letter is judged (S11-1). Absent = anatomical side, the Chest PA rule. */
+  markerRule?: MarkerRuleSpec;
 }
 
+/**
+ * An extra enum control an exam declares (S11 generalisation; e.g. which side is against the detector, arm position,
+ * patient state). The value lives in `SimulationSettings.choices[id]`; labels are bilingual data, not message keys.
+ */
+export interface ChoiceControlSpec {
+  /** Control id; the setting key is `choices.<id>`. */
+  id: string;
+  label: LocalizedText;
+  hint?: LocalizedText;
+  options: { id: string; label: LocalizedText }[];
+}
+
+/**
+ * How the marker LETTER is judged (S11-1). Declared per exam; absent = "anatomical-side" (Chest PA, unchanged).
+ *  - "anatomical-side": the letter is the patient's own side (PA, AP). Wrong when the marker sits on the viewer half
+ *    that `markerSide` does not assign to that letter.
+ *  - "detector-side": the letter is the side of the patient against the detector (Lateral, S10b-21), read from the
+ *    exam's choice control `choiceId`. Wrong when the letter differs from that side, or the half disagrees with
+ *    `markerSide` (the display orientation stays exam data, ADR-0010).
+ */
+export type MarkerRuleSpec = { kind: "anatomical-side" } | { kind: "detector-side"; choiceId: string };
+
 /** Critical findings: each one, when present, forces "below the educational pass mark" whatever the number is. */
-export type CriticalFindingId = "wrong-projection" | "patient-motion" | "wrong-side-marker";
+export type CoreCriticalFindingId = "wrong-projection" | "patient-motion" | "wrong-side-marker";
+/** Open vocabulary: an id is valid once a detector is registered for it (`features/evaluation/critical.ts`). */
+export type CriticalFindingId = CoreCriticalFindingId | (string & {});
 
 /**
  * A critical-finding rule (case data). Critical findings GATE the pass mark; they never change the numeric score
@@ -196,8 +229,13 @@ export interface CriticalFindingRule {
 }
 
 export interface ScoringRules {
-  /** Category weights; should sum to 100. Configurable per case. */
-  categoryWeights: Record<CategoryId, number>;
+  /**
+   * Category weights, sum 100; the KEYS are the exam's categories and their ORDER is the display / score order.
+   * Configurable per exam (Chest PA: positioning, rotation, centering, exposure, sid, breathing).
+   */
+  categoryWeights: Record<string, number>;
+  /** Labels for categories that have no `categories.*` message key (anything beyond the core six). */
+  categoryLabels?: Record<string, LocalizedText>;
   /** Total score (0–100) at or above which the attempt counts as acceptable. */
   passThreshold: number;
   /** Findings that force "below the pass mark" regardless of the numeric score (weights are unchanged). */
@@ -242,7 +280,9 @@ export interface RadCase {
    * Technically selectable ranges (what the console allows). NOT the educational target and NOT a scoring
    * tolerance: those live in `technique`.
    */
-  controls: Record<NumericSettingKey, NumericControlSpec>;
+  controls: NumericControls;
+  /** Extra enum controls the exam declares (absent for Chest PA). */
+  choiceControls?: ChoiceControlSpec[];
   /** Protocol profile for the technique/exposure model. A different case supplies a different profile. */
   technique: TechniqueProfile;
   positioning: PositioningSpec;

@@ -6,6 +6,7 @@
  * Nothing here is a clinical prescription: the model is an EDUCATIONAL, vendor-neutral simplification.
  */
 import type { LocalizedText } from "./localized";
+import type { ProjectionId } from "./simulation";
 
 /**
  * Evidence classes from the technique reference §2. Every medically meaningful rule/value carries one.
@@ -85,7 +86,16 @@ export interface TechniqueProfile {
   evidence: Evidence;
 
   /** Simulated patient. 1 = reference adult. >1 absorbs more (less receptor exposure at equal technique). */
-  patient: { attenuation: number; label: LocalizedText; evidence: Evidence };
+  patient: {
+    attenuation: number;
+    /**
+     * Optional per-projection attenuation of THIS patient (S11): a lateral path is longer than a frontal one. Missing
+     * projection = `attenuation`. Chest PA declares none, so nothing changes. Magnitudes are sourced per exam (S12 / S13).
+     */
+    attenuationByProjection?: Partial<Record<ProjectionId, number>>;
+    label: LocalizedText;
+    evidence: Evidence;
+  };
   /** Detector / grid assumptions (vendor / local-protocol dependent). */
   system: { label: LocalizedText; relativeResponse: number; grid: "assumed" | "none"; evidence: Evidence };
 

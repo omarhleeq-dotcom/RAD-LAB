@@ -26,6 +26,7 @@ export function buildResultState(
     geometry: {
       projection: s.projection,
       rotationDeg: s.rotationDeg,
+      ...(s.tubeAngulationDeg !== undefined ? { tubeAngulationDeg: s.tubeAngulationDeg } : {}),
       sidCm: s.sidCm,
       centralRay: { ...s.centralRay },
       fieldCm: { x1: field.x1, y1: field.y1, x2: field.x2, y2: field.y2 },
@@ -37,6 +38,7 @@ export function buildResultState(
       shoulders: s.shoulderPosition,
       breathing: s.breathing,
       marker: s.sideMarker ? { side: s.sideMarker, position: { ...s.markerPosition } } : null,
+      ...(s.choices ? { choices: { ...s.choices } } : {}),
     },
     technique: {
       mode: s.exposureMode,

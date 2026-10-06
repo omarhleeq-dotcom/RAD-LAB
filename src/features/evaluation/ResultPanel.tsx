@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
 import type { RadCase } from "@/domain/case";
-import type { SimulationSettings } from "@/domain/simulation";
+import type { CoreCategoryId, SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
 import { buildRenderPlan } from "@/features/radiograph/plan";
 import { needsNotDrawnLabel, variantIsDrawn } from "@/features/radiograph/consistency";
@@ -40,7 +40,16 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   const locale = useLocale();
   const { score } = result;
   const plan = useMemo(() => buildRenderPlan(result.resultState, radCase), [result.resultState, radCase]);
-  const observedLabel = (kind: CheckResult["observedKind"], value: string) => {
+  // Core categories use their message keys; a category an exam adds brings its own bilingual label (S11).
+  const categoryLabel = (id: string) => {
+    const own = radCase.scoring.categoryLabels?.[id];
+    return own ? localize(own, locale) : tCat(id as CoreCategoryId);
+  };
+  const observedLabel = (kind: CheckResult["observedKind"], value: string, choice?: string) => {
+    if (choice) {
+      const label = radCase.choiceControls?.find((x) => x.id === choice)?.options.find((o) => o.id === value)?.label;
+      return label ? localize(label, locale) : value;
+    }
     switch (kind) {
       case "projection":
         return tCon(`projections.${value as "pa-erect"}`);
@@ -141,7 +150,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
               {score.categories.map((c) => (
                 <li key={c.category} className="text-sm">
                   <div className="flex justify-between">
-                    <span>{tCat(c.category)}</span>
+                    <span>{categoryLabel(c.category)}</span>
                     <span dir="ltr" className="font-mono tabular-nums">
                       {c.earned} / {c.weight}
                     </span>
@@ -167,7 +176,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                       {!k.scored && <span className="ms-2 text-xs font-normal text-muted">({t("notScored")})</span>}
                     </span>
                     <span className="text-xs text-muted">
-                      {t("yourSetting")}: <bdi dir={k.observedKind ? undefined : "ltr"} className={k.observedKind ? undefined : "font-mono"}>{observedLabel(k.observedKind, k.observed)}</bdi>
+                      {t("yourSetting")}: <bdi dir={k.observedKind || k.observedChoice ? undefined : "ltr"} className={k.observedKind || k.observedChoice ? undefined : "font-mono"}>{observedLabel(k.observedKind, k.observed, k.observedChoice)}</bdi>
                     </span>
                   </div>
                   <p className="mt-1 text-sm text-ink">{localize(k.feedback, locale)}</p>

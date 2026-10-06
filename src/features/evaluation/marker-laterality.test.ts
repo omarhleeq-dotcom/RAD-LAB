@@ -30,8 +30,8 @@ describe("marker laterality convention (single source of truth in case data)", (
 
   it("the convention agrees with the baseline image: L is on the same side as the cardiac silhouette", () => {
     const spec = chestPaErect.radiograph;
-    const heart = spec.denseZones[1]!; // heart + retrocardiac zone
-    expect(heart.cu).toBeGreaterThan(spec.midlineU); // heart on the viewer's right = patient's left
+    const heart = spec.denseZones![1]!; // heart + retrocardiac zone
+    expect(heart.cu).toBeGreaterThan(spec.midlineU!); // heart on the viewer's right = patient's left
     expect(pos.markerSide.L).toBe("viewer-right");
   });
 
