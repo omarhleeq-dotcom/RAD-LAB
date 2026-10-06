@@ -202,6 +202,7 @@ function snapshot() {
       effects: r.effects,
       notDrawn: r.findings.filter((f) => f.labelled).length,
       clippedSides: r.plan.clippedSides,
+      marginOnlySides: r.plan.marginOnlySides,
       marker: r.plan.marker && {
         side: r.plan.marker.side,
         viewerSide: r.plan.marker.viewerSide,

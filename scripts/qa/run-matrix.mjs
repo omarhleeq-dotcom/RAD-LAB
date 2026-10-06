@@ -145,6 +145,9 @@ async function runScenario(browser, loc, device, sc) {
   const resultText = await page.locator('[aria-labelledby="result-heading"]').innerText();
   const flagged = /wrong side of the image|الجانب الخطأ من الصورة/.test(resultText);
   ok(`${tag}: wrong-side marker ${g.marker?.wrongSide ? "is" : "is not"} flagged in the feedback`, flagged === !!g.marker?.wrongSide);
+  // Fix pass 3: a clip that cuts only the margin of the provisional region is labelled (effect card + under the check), in the picture's text alternative too.
+  const marginNotes = await page.locator('[data-testid="clip-margin-note"]').count();
+  ok(`${tag}: 'margin only' clipping notes ${g.marginOnlySides.length ? "present" : "absent"} (golden: ${g.marginOnlySides.join(",") || "none"})`, g.marginOnlySides.length ? marginNotes === 2 : marginNotes === 0);
   ok(`${tag}: 'not drawn' labels equal the golden (${g.notDrawn})`, (await page.locator('[data-testid="not-drawn"]').count()) === g.notDrawn);
   ok(`${tag}: no raw setting ids in feedback`, !/\b(pa-erect|ap-erect|lateral-left|no-instruction|rolled-forward|remain-still|deep-inspiration-hold|expiration-hold)\b/.test(resultText));
 

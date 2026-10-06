@@ -21,6 +21,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -51,6 +52,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "R",
    "viewerSide": "viewer-left",
@@ -81,6 +83,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -111,6 +114,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -145,6 +149,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -179,6 +184,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -211,6 +217,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -243,6 +250,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -275,6 +283,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -307,6 +316,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -340,6 +350,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -373,6 +384,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -411,6 +423,7 @@
   "clippedSides": [
    "top"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -447,6 +460,7 @@
   "clippedSides": [
    "bottom"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -484,6 +498,7 @@
   "clippedSides": [
    "top"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -520,6 +535,7 @@
   "clippedSides": [
    "bottom"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -556,6 +572,7 @@
   "clippedSides": [
    "left"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -593,6 +610,7 @@
   "clippedSides": [
    "right"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -600,6 +618,45 @@
    "wrongSide": false
   },
   "hash": "eba0bc6fb2465db9"
+ },
+ "clip-margin-only": {
+  "score": 92.9,
+  "passed": true,
+  "critical": [],
+  "categories": {
+   "positioning": 17.9,
+   "rotation": 20,
+   "centering": 15,
+   "exposure": 20,
+   "sid": 10,
+   "breathing": 10
+  },
+  "outcomes": {
+   "collimation-clipping": "fail"
+  },
+  "variants": [
+   "clipped"
+  ],
+  "effects": [
+   "collimation-clipping",
+   "marker"
+  ],
+  "notDrawn": 0,
+  "clippedSides": [
+   "top",
+   "bottom"
+  ],
+  "marginOnlySides": [
+   "top",
+   "bottom"
+  ],
+  "marker": {
+   "side": "L",
+   "viewerSide": "viewer-right",
+   "visibleFraction": 1,
+   "wrongSide": false
+  },
+  "hash": "dad1b1b197755ced"
  },
  "excess-field": {
   "score": 94.5,
@@ -628,6 +685,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -660,6 +718,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -692,6 +751,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -723,6 +783,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": null,
   "hash": "d0cbc7b6c3edbe4c"
  },
@@ -752,6 +813,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-left",
@@ -786,6 +848,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "R",
    "viewerSide": "viewer-right",
@@ -818,6 +881,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -853,6 +917,7 @@
   ],
   "notDrawn": 2,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -888,6 +953,7 @@
   ],
   "notDrawn": 2,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -921,6 +987,7 @@
   ],
   "notDrawn": 1,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -954,6 +1021,7 @@
   ],
   "notDrawn": 1,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -986,6 +1054,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1020,6 +1089,7 @@
   ],
   "notDrawn": 2,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1052,6 +1122,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1084,6 +1155,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1117,6 +1189,7 @@
   ],
   "notDrawn": 1,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1150,6 +1223,7 @@
   ],
   "notDrawn": 1,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1184,6 +1258,7 @@
   ],
   "notDrawn": 2,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1224,6 +1299,7 @@
    "left",
    "right"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1256,6 +1332,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1288,6 +1365,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1320,6 +1398,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1354,6 +1433,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1388,6 +1468,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1427,6 +1508,7 @@
   "clippedSides": [
    "left"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1462,6 +1544,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1497,6 +1580,7 @@
   ],
   "notDrawn": 1,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1540,6 +1624,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1577,6 +1662,7 @@
   ],
   "notDrawn": 0,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1612,6 +1698,7 @@
   ],
   "notDrawn": 2,
   "clippedSides": [],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1648,6 +1735,7 @@
   "clippedSides": [
    "left"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-right",
@@ -1686,6 +1774,7 @@
    "left",
    "right"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-left",
@@ -1753,6 +1842,7 @@
   "clippedSides": [
    "left"
   ],
+  "marginOnlySides": [],
   "marker": {
    "side": "L",
    "viewerSide": "viewer-left",
@@ -1822,6 +1912,7 @@
    "left",
    "top"
   ],
+  "marginOnlySides": [],
   "marker": null,
   "hash": "9b4388dd0dd3cce8"
  }

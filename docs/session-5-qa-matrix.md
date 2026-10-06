@@ -22,6 +22,7 @@ Generated from `scripts/qa/scenarios.json` + `scripts/qa/golden/matrix.json` (`n
 | `clip-bottom` | single | Field cuts the costophrenic angles | 85.4 | meets | — | `collimation-clipping`✕, `centering-vertical`✕ | collimation-clipping, centering, marker |  |
 | `clip-left` | single | Field cuts the viewer's left lung edge | 85.4 | meets | — | `collimation-clipping`✕, `centering-lateral`✕ | collimation-clipping, centering, marker |  |
 | `clip-right` | single | Field cuts the viewer's right lung edge | 85.4 | meets | — | `collimation-clipping`✕, `side-marker`◐, `centering-lateral`✕ | collimation-clipping, centering, marker |  |
+| `clip-margin-only` | single | Field cuts only the margin of the provisional required region (above / below the drawn lungs) | 92.9 | meets | — | `collimation-clipping`✕ | collimation-clipping, marker |  |
 | `excess-field` | single | Fully open field | 94.5 | meets | — | `collimation-excess`◐, `centering-vertical`◐ | excess-field, centering, marker |  |
 | `chin-tucked` | single | Chin tucked | 96.4 | meets | — | `chin`✕ | chin, marker |  |
 | `shoulders-relaxed` | single | Shoulders not rolled forward | 96.4 | meets | — | `shoulders`✕ | scapulae, marker |  |

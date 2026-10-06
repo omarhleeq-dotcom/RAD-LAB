@@ -2,7 +2,7 @@
 
 Scope: Chest PA only. No new features, no new medical rules, top-level weights unchanged (25/20/15/20/10/10), rendering deterministic, scoring never reads pixels, no anatomy mirroring in RTL. **This is an educational simulator, not a diagnostic or clinically validated system.**
 
-Related: [`session-5-qa-matrix.md`](session-5-qa-matrix.md) (all 52 scenarios) · [`session-5-baseline-options.md`](session-5-baseline-options.md) · [`REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md) · [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) · contact sheet [`session-5-renders/matrix-contact-sheet.jpg`](session-5-renders/matrix-contact-sheet.jpg).
+Related: [`session-5-qa-matrix.md`](session-5-qa-matrix.md) (all 53 scenarios) · [`session-5-baseline-options.md`](session-5-baseline-options.md) · [`REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md) · [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) · contact sheet [`session-5-renders/matrix-contact-sheet.jpg`](session-5-renders/matrix-contact-sheet.jpg).
 
 ## 0. Review fix pass (same branch / PR #5; before merge)
 Four review items; no top-level weight and no numeric score was changed by any of them.
@@ -52,7 +52,7 @@ Question: do the two cited studies support **scoring** the marker as (a) presenc
 
 **Decision: the clinical criterion and the score are NOT adapted to the picture** (as instructed). The references define the criterion as inclusion of the apices, both lungs, costophrenic angles and the whole rib cage above the diaphragm; the cm size of the region is a provisional demo value. Making the picture “look clipped” would mean inventing anatomy or hiding drawn lung under hatch (the “no reference data” hatch is for detector area the baseline does not cover — here it *does* cover it), so that was rejected. Instead the plan now classifies each clipped side (`RenderPlan.landmarkClippedSides` vs `marginOnlySides`, computed from the field edge against the landmark box, cm geometry only, never pixels) and the UI says so: effect card note, a note under the clipping check, and the image text alternative (EN + AR): “Margin only at the top: the field cuts only the margin of the provisional required region … the picture shows those structures complete.” A cut that reaches the drawn lungs is classified as landmark clipping and removes them exactly as before. Left / right edges are always landmark clipping (the box spans the region's full width).
 
-**Tests** (`src/features/radiograph/clipping-margin.test.ts`, 12): region still 27 × 31 and strips exist; a strip-only cut still **fails** the check and an edge just outside the region passes; plan classification top / bottom / mixed / lateral / none; text-alternative data; pixel agreement (strip content masked at the edge, drawn lungs / costophrenic angles exposed for a margin-only cut, lungs masked for a landmark cut). Existing: all 52 scenarios agree on clipped sides (matrix).
+**Tests** (`src/features/radiograph/clipping-margin.test.ts`, 12): region still 27 × 31 and strips exist; a strip-only cut still **fails** the check and an edge just outside the region passes; plan classification top / bottom / mixed / lateral / none; text-alternative data; pixel agreement (strip content masked at the edge, drawn lungs / costophrenic angles exposed for a margin-only cut, lungs masked for a landmark cut). New matrix scenario `clip-margin-only` (field 3.7–33.3 cm: both strips cut, lungs intact; score 92.9, clipping ✕, marker fully recorded) is checked in the real UI in EN / AR / all devices (two “margin only” notes). Existing: all 53 scenarios agree on clipped sides (matrix).
 
 **Open decision (owner / reviewer):** adopt a baseline matching the region, or measure the region on a validated baseline, so the strips disappear; the label is a stop-gap that keeps the mismatch visible.
 
@@ -62,7 +62,7 @@ Question: do the two cited studies support **scoring** the marker as (a) presenc
 - **Laterality on main verified**: the CC0 baseline's own “Dx” (right) / “Sin” (left) annotations sit on the viewer's left / right, with the heart apex and gastric bubble on the viewer's right; the case convention is `markerSide: { L: "viewer-right", R: "viewer-left" }`; in the correct-baseline render the L marker lies on the viewer's right, and the browser matrix asserts it in EN and AR. No laterality fix was needed as task #1.
 
 ## 2. Method: one scenario matrix, three views of the same finding
-`scripts/qa/scenarios.json` (52 scenarios: 4 fully correct, 41 single errors, 7 combinations incl. the untouched starting state) is the single source of truth, used by
+`scripts/qa/scenarios.json` (53 scenarios: 4 fully correct, 42 single errors, 7 combinations incl. the untouched starting state) is the single source of truth, used by
 
 1. **unit tests** (`src/features/qa/*.test.ts`, run in CI): for every scenario the score, the feedback and the render plan are put side by side and must agree; a golden file (`scripts/qa/golden/matrix.json`) pins score, non-passing checks, variants, effects, marker placement and a hash of the synthetic-phantom render;
 2. **the real UI in Chromium** (`scripts/qa/run-matrix.mjs`, manual): sets every control as a learner would, exposes, then checks score shown, effect cards, “not drawn” labels, text alternative, marker glyph side in the pixels, layout and console errors against the same golden, and compares the canvas with a committed golden image.
@@ -115,22 +115,22 @@ Every rule, tolerance and feedback sentence was checked against the three reposi
 Tools: `scripts/qa/a11y-audit.mjs` (axe-core WCAG 2.0/2.1 A + AA incl. contrast) on home, set-up and result screens, EN and AR, desktop 1440 and mobile 390 (touch): **0 violations** after fixes #6–#7. Keyboard: 29 tab stops, every one with a visible focus ring (3 px outline), DOM order = visual order (positioning → patient instructions → console → Expose → result), result reachable, Retry works with Enter. Canvas: dynamic bilingual text alternative (#5). No horizontal overflow at 1440, 820 and 390. Numbers/units stay `dir="ltr"`. Arabic terminology for educator review: [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md).
 
 ## 8. Visual regression
-- Goldens: `scripts/qa/golden/images/<scenario>.png` (52 greyscale PNGs, 420 × 516, 5.9 MB; registry A-005) + `scripts/qa/golden/matrix.json`.
+- Goldens: `scripts/qa/golden/images/<scenario>.png` (53 greyscale PNGs, 420 × 516, 6.0 MB; registry A-005) + `scripts/qa/golden/matrix.json`.
 - Compare: `npm run build && npx next start -p 3100`, then `node scripts/qa/run-matrix.mjs` (mean abs diff < 0.75 grey levels and < 0.2 % pixels off by > 8). Update intentionally with `--update-goldens` / `npm run qa:golden`.
 - **CI** (`.github/workflows/ci.yml`): typecheck, lint, unit tests, build only. No secrets, no Playwright. The unit-level golden (phantom render hash) runs in CI.
 
 ## 9. Results
-Run on 2026-10-06 against the production build:
+Run on 2026-10-06 (fix pass 3, final) against the production build of branch head:
 
 | Check | Result |
 |---|---|
 | `npm run typecheck` | pass |
 | `npm run lint` | pass (0 problems) |
-| `npm test` | **644 / 644** (was 276; +335, mostly the matrix: 52 scenarios × 7 agreement tests + golden + laterality audit + regressions) |
+| `npm test` (full unit suite) | **662 / 662** in 22 files (644 before this pass + 12 `clipping-margin.test.ts` + 6 matrix tests for the new scenario) |
 | `npm run build` | pass |
-| Browser matrix `scripts/qa/run-matrix.mjs` — EN + AR × desktop 1440×900 (52 scenarios), tablet 820×1180 and mobile 390×844 touch (7 scenarios each) | **2982 / 2982** checks (after the fix pass; includes pass-mark label, critical findings in EN/AR) (score, effects, cards, labels, alt text, marker side in pixels, golden image, RTL/device pixel identity, overflow, console errors) |
-| `scripts/qa/a11y-audit.mjs` (axe WCAG A/AA, keyboard, focus, canvas alt) EN/AR × desktop/mobile | 0 violations |
-| GitHub Actions workflow | added; first run happens on the PR |
+| Browser matrix `scripts/qa/run-matrix.mjs` — EN + AR × desktop 1440×900 (53 scenarios), tablet 820×1180 and mobile 390×844 touch (7 scenarios each) | **3159 / 3159** checks (score, effects, cards, labels, “margin only” notes, alt text, marker side in pixels, golden image, RTL/device pixel identity, overflow, console errors) |
+| `scripts/qa/a11y-audit.mjs` (axe WCAG A/AA, keyboard, focus, canvas alt) EN/AR × desktop/mobile | 0 violations (32 ok/info) |
+| GitHub Actions workflow | added; runs on the PR |
 
 ## 10. Decisions for owner (conservative defaults applied)
 1. ~~Required-anatomy region 27 × 28 cm~~ — **reverted** (fix pass): the region stays 27 × 31 cm / target y −0.14 (no reference supports a change). The 1.5 cm strip mismatch is explained and labelled in §0.2; still open: adopt a baseline matching the region, or measure the region on it.

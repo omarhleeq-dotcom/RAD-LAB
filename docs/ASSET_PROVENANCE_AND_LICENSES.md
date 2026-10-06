@@ -146,7 +146,7 @@ Rules for entries:
 | Field | Value |
 |---|---|
 | Asset name | Session 5 scenario-matrix golden images (test fixtures) and contact sheet (documentation) |
-| Asset type | 8-bit greyscale PNG (420 × 516, 52 files) + one JPEG montage |
+| Asset type | 8-bit greyscale PNG (420 × 516, 53 files) + one JPEG montage |
 | Original source | Output of the RAD-LAB renderer (production build, desktop, EN) applied to A-003 |
 | License | CC0 1.0 (derived solely from A-003 plus RAD-LAB rendering output) |
 | Attribution legally required | No (credit given in the app and in A-001) |
