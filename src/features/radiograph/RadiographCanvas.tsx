@@ -8,6 +8,15 @@ import { renderRadiograph, type LumaImage } from "./pipeline";
 
 /** Working resolution of the canvas: output pixels per detector cm (display scales it with CSS). */
 const PX_PER_CM = 24;
+/** Upper bound of the canvas pixel count when an asset asks for a higher resolution (phone memory / time). */
+const MAX_CANVAS_PIXELS = 1_800_000;
+
+/** Output pixels per cm: the shared default, or the asset's request capped by the canvas pixel budget. */
+export function resultPxPerCm(spec: RadiographAssetSpec, areaCm2: number): number {
+  const want = spec.render?.pxPerCm;
+  if (want === undefined) return PX_PER_CM;
+  return Math.max(PX_PER_CM, Math.min(want, Math.sqrt(MAX_CANVAS_PIXELS / areaCm2)));
+}
 
 const lumaCache = new Map<string, Promise<LumaImage>>();
 
@@ -62,7 +71,7 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
       .then((src) => {
         const canvas = ref.current;
         if (cancelled || !canvas) return;
-        const out = renderRadiograph(plan, spec, src, PX_PER_CM);
+        const out = renderRadiograph(plan, spec, src, resultPxPerCm(spec, plan.detector.widthCm * plan.detector.heightCm));
         canvas.width = out.width;
         canvas.height = out.height;
         const ctx = canvas.getContext("2d");
@@ -88,9 +97,9 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
           ctx.direction = "ltr";
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
-          ctx.font = `700 ${Math.round(m.sizeCm * PX_PER_CM * 0.95)}px ui-sans-serif, "Segoe UI", Arial, sans-serif`;
-          const x = m.centerCm.x * PX_PER_CM, y = m.centerCm.y * PX_PER_CM;
-          ctx.lineWidth = 4;
+          ctx.font = `700 ${Math.round(m.sizeCm * out.pxPerCm * 0.95)}px ui-sans-serif, "Segoe UI", Arial, sans-serif`;
+          const x = m.centerCm.x * out.pxPerCm, y = m.centerCm.y * out.pxPerCm;
+          ctx.lineWidth = (4 * out.pxPerCm) / PX_PER_CM;
           ctx.strokeStyle = "rgba(0,0,0,0.65)";
           ctx.strokeText(m.side, x, y);
           ctx.fillStyle = "#f6f8fa";

@@ -28,6 +28,8 @@ export const handLateralRadiograph: RadiographAssetSpec = {
     note: "Educational appearance baseline of a real normal hand. Not clinical ground truth for any simulated error. Landmarks read by eye; scale assumed (0.0113 cm / px); dorsal / palmar side not claimed; licence owner-verified (O39).",
   },
   // The region from the fingertips to 2.5 cm below the radiocarpal joint (hand-geometry.ts); the rest of the image is more distal forearm.
+  // Result canvas at 48 px/cm (the baseline has ≈ 88 px/cm; the shared 24 px/cm default softened the fingers, S14.2b-FIX). Capped by the canvas.
+  render: { pxPerCm: 48 },
   anatomyBox: { ...handImage("lateral").box },
   // The carpal bones (rows ≈ 1560–1800 of 2123, columns ≈ 260–520).
   denseZones: [{ cu: 0.57, cv: 0.79, ru: 0.22, rv: 0.08 }],
