@@ -171,3 +171,35 @@ Questions for the reviewer: «مستلقيًا / شبه جالس» (supine / sem
 | Where | Data | Draft Arabic |
 |---|---|---|
 | AP exam projection button + result "Your setting" | `chest-ap-supine.ts` → `choiceControls[state].projectionLabels` | «AP مستلقيًا» (AP supine), «AP شبه جالس» (AP semi-erect) |
+
+## Session 13b — scene labels (S13b-1) (**DRAFT, pending owner / educator review; machine-assisted**)
+Keys: `messages/ar.json` → `scene.*`. Rule followed: «الكاشف» for the detector; anatomical directions are image conventions and are not mirrored in RTL.
+| EN | Draft Arabic | Key |
+|---|---|---|
+| Anterior / Posterior | أمامي / خلفي | `anterior`, `posterior` |
+| Head / Feet | الرأس / القدمان | `head`, `feet` |
+| Tube | الأنبوب | `tube` |
+| Detector | الكاشف | `detector` |
+| Bed | السرير | `bed` |
+| Heart | القلب | `heart` |
+| Patient's right / left | يمين المريض / يسار المريض | `patientRight`, `patientLeft` |
+| Central ray | الشعاع المركزي | `centralRay` |
+| Arms over the lungs | الذراعان فوق الرئتين | `armsOverLungs` |
+| Chin tucked / lifted; shoulders rolled / relaxed; arms raised / lowered; lying supine / head end raised (alt-text parts) | مخفوضة / مرفوعة؛ مدورتان إلى الأمام / مسترخيتان؛ مرفوعتان فوق الرأس / منخفضتان فوق الحقلين الرئويين؛ مستلقيًا على الظهر / جهة الرأس مرفوعة | `chinTucked` … `stateSemierect` |
+| Text alternatives of the three drawings | see `altFrontal`, `altLateral`, `altSide` | `alt*` |
+
+Questions for the AR reviewer: «أمامي / خلفي» as anatomical directions; «الشاقول» (vertical) in the AP side alt text; «القدمان» for Feet. `positioning.detector` («الكاسيت / البكي») is no longer used by the scenes.
+
+## Session 13b-2 — «الكاسيت» → «الكاشف» in the positioning scenes (owner-approved correction, text only)
+Only the word / phrase below was replaced; no other Arabic string was touched. «الكاسيت» elsewhere (AEC console / technique texts, result panel, exam data) is outside the three positioning scenes and unchanged.
+| Key (`messages/ar.json`) | Before | After |
+|---|---|---|
+| `positioning.midline` | الخط المنتصف للكاسيت | خط منتصف الكاشف |
+| `positioning.rotationGuide` | عمودي على الكاسيت | عمودي على الكاشف |
+| `positioning.frontView` (detector caption) | عرض الكاسيت كما يظهر … | عرض الكاشف كما يظهر … |
+| `positioning.schematicNote` | … يسار ويمين عرض الكاسيت. | … يسار ويمين عرض الكاشف. |
+| `positioning.cueAnterior` | الصدر الأمامي باتجاه الكاسيت | الصدر الأمامي باتجاه الكاشف |
+| `positioning.cueDetector` (no longer shown) | الكاسيت | الكاشف |
+| `positioning.cueSideAlt` | … ووجهه نحو الكاسيت … | … ووجهه نحو الكاشف … |
+| `positioning.detector` (no longer shown) | الكاسيت / البكي | الكاشف / البكي |
+New draft strings (`scene.*`): `sidValue` «SID {value} سم», `tubeAngle` «زاوية الأنبوب: {angle}° (+ = نحو القدمين)» (numbers isolated with LRM), `rotationReadout` «دوران المريض: {deg}°», `rotationArc` «{deg}°». The old `positioningAp.angleReadout` is no longer used by the scene.

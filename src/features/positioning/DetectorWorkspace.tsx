@@ -16,8 +16,11 @@ import {
   type FieldEdge,
 } from "@/features/simulation/coords";
 import { collimatedField } from "@/features/simulation/geometry";
+import { FrontalFigure } from "./FrontalFigure";
 import { LateralFigure } from "./LateralFigure";
-import { chinOverlapsApices, rotationVisual, scapulaOffset } from "./visual-model";
+import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
+import { LABEL_SIZE, SCENE, UNDER } from "./scene-style";
+import { rotationVisual, scapulaOffset } from "./visual-model";
 
 /** Drawing scale: SVG units per detector cm. Only the drawing depends on it; state is normalized. */
 const U = 10;
@@ -75,6 +78,7 @@ function keyDelta(e: KeyboardEvent): [number, number] | null {
 export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = "chest-pa" }: Props) {
   const t = useTranslations("positioning");
   const tl = useTranslations("positioningLateral");
+  const ts = useTranslations("scene");
   const lateralFigure = figure === "chest-lateral";
   const [drag, setDrag] = useState<{ target: DragTarget; grab: NormPoint } | null>(null);
 
@@ -94,7 +98,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
   const mid = W / 2;
   const status = centeringStatus(settings.centralRay, positioning.centering);
   const rayOk = status.x.state === "ideal" && status.y.state === "ideal";
-  const rayColor = !showGuides ? "#f2b134" : rayOk ? "#4ade80" : "#f2b134";
+  const rayColor = !showGuides ? SCENE.beam : rayOk ? SCENE.good : SCENE.beam;
   const tgt = positioning.centering;
   const tgtView = normToView(tgt.target, frame);
   const sc = scapulaOffset(settings.shoulderPosition);
@@ -169,77 +173,56 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       className="h-auto w-full select-none"
       style={{ direction: "ltr", touchAction: disabled ? "auto" : "none" }}
     >
-      <rect x={-6} y={-6} width={W + 12} height={H + 12} rx={6} fill="#1a2b38" />
-      <rect x={0} y={0} width={W} height={H} fill="#0b141b" />
+      <rect x={-6} y={-6} width={W + 12} height={H + 12} rx={6} fill={SCENE.bezel} />
+      <rect x={0} y={0} width={W} height={H} fill={SCENE.detectorFill} stroke={SCENE.detectorEdge} strokeWidth={2} />
 
-      {lateralFigure && (
-        <LateralFigure
-          W={W}
-          H={H}
-          region={{ x: a.xCm * U, y: lungY, w: a.widthCm * U, h: lungH }}
-          rotationDeg={settings.rotationDeg}
-          chin={settings.chinPosition}
-          armsRaised={settings.choices?.arms === "raised"}
-        />
-      )}
-      {/* Patient (front view). Anatomy is drawn in detector space; it is never mirrored by RTL. */}
-      {!lateralFigure && (<>
-      <g transform={`translate(${mid} 0) scale(${thoraxScale} 1) translate(${-mid} 0)`}>
-        <circle cx={mid} cy={-35} r={34} fill="#7b93a5" />
-        <rect x={mid - 14} y={-6} width={28} height={30} fill="#7b93a5" />
-        <path d={`M 20 28 Q ${mid} -8 ${W - 20} 28 L ${W - 36} ${H - 90} Q ${mid} ${H - 70} 36 ${H - 90} Z`} fill="#5d778a" />
-        <rect x={mid - 8 - lungW * rv.viewerLeftLungScale} y={lungY} width={lungW * rv.viewerLeftLungScale} height={lungH} rx={50} fill="#33516a" />
-        <rect x={mid + 8} y={lungY} width={lungW * rv.viewerRightLungScale} height={lungH} rx={50} fill="#33516a" />
-        {/* clavicles with medial (sternal) ends */}
-        <g stroke="#b9cad6" strokeWidth={5} strokeLinecap="round" opacity={0.85}>
-          <line x1={mid - 12} y1={lungY + 6} x2={mid - lungW - 20} y2={lungY - 4} />
-          <line x1={mid + 12} y1={lungY + 6} x2={mid + lungW + 20} y2={lungY - 4} />
-        </g>
-        <circle cx={mid - 12} cy={lungY + 6} r={7} fill="#d8e4ec" />
-        <circle cx={mid + 12} cy={lungY + 6} r={7} fill="#d8e4ec" />
-        {/* scapulae: over the lung fields when shoulders are relaxed, laterally clear when rolled forward */}
-        <g fill="#9db6c6" opacity={0.6} stroke="#d8e4ec" strokeWidth={1.5}>
-          <ellipse cx={mid - lungW + 14 - sc} cy={lungY + 110} rx={26} ry={72} />
-          <ellipse cx={mid + lungW - 14 + sc} cy={lungY + 110} rx={26} ry={72} />
-        </g>
-        {chinOverlapsApices(settings.chinPosition) && (
-          <ellipse cx={mid} cy={lungY + 14} rx={62} ry={34} fill="#7b93a5" opacity={0.85} stroke="#d8e4ec" strokeWidth={1.5} strokeDasharray="5 4" />
+      {/* Patient. Anatomy is drawn in detector space; it is never mirrored by RTL. The drawing has a text alternative (scene.alt*). */}
+      <g role="img" aria-label={lateralFigure ? ts("altLateral", { arms: ts(settings.choices?.arms === "raised" ? "armsRaised" : "armsLowered"), chin: ts(settings.chinPosition === "tucked" ? "chinTucked" : "chinLifted") }) : ts("altFrontal", { chin: ts(settings.chinPosition === "tucked" ? "chinTucked" : "chinLifted"), shoulders: ts(settings.shoulderPosition === "rolled-forward" ? "shouldersRolled" : "shouldersRelaxed") })}>
+        {lateralFigure ? (
+          <LateralFigure
+            W={W}
+            H={H}
+            region={{ x: a.xCm * U, y: lungY, w: a.widthCm * U, h: lungH }}
+            rotationDeg={settings.rotationDeg}
+            chin={settings.chinPosition}
+            armsRaised={settings.choices?.arms === "raised"}
+            showGuides={showGuides}
+          />
+        ) : (
+          <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={sc} chin={settings.chinPosition} />
         )}
       </g>
-      {/* spinous-process line: shifts relative to the clavicular ends as the thorax rotates */}
-      <line x1={mid + rv.spineShift} y1={20} x2={mid + rv.spineShift} y2={H - 100} stroke="#d8e4ec" strokeWidth={2} strokeDasharray="6 6" opacity={0.6} />
-      </>)}
 
       {showGuides && (
-        <g aria-hidden>
-          <line x1={mid} y1={0} x2={mid} y2={H} stroke="#7dd3fc" strokeWidth={1.5} strokeDasharray="3 7" opacity={0.7} />
+        <g aria-hidden style={{ pointerEvents: "none" }}>
+          <UnderStroked stroke={SCENE.guide} width={2} dash="3 7">
+            {(p) => <line x1={mid} y1={0} x2={mid} y2={H} {...p} />}
+          </UnderStroked>
           <rect
             x={tgtView.x - (tgt.acceptableTolerance.x * W) / 2}
             y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2}
             width={tgt.acceptableTolerance.x * W}
             height={tgt.acceptableTolerance.y * H}
             rx={10}
-            fill="#4ade80"
-            opacity={0.07}
+            fill={SCENE.good}
+            opacity={0.1}
           />
-          <rect
-            x={tgtView.x - (tgt.idealTolerance.x * W) / 2}
-            y={tgtView.y - (tgt.idealTolerance.y * H) / 2}
-            width={tgt.idealTolerance.x * W}
-            height={tgt.idealTolerance.y * H}
-            rx={8}
-            fill="#4ade80"
-            opacity={0.18}
-            stroke="#4ade80"
-            strokeWidth={1.5}
-            strokeDasharray="4 4"
-          />
-          <text x={mid + 6} y={16} fontSize={14} fill="#7dd3fc" stroke="#0b141b" strokeWidth={3} paintOrder="stroke">
-            {lateralFigure ? tl("midline") : t("midline")}
-          </text>
-          <text x={tgtView.x + (tgt.acceptableTolerance.x * W) / 2 + 4} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 14} fontSize={13} fill="#4ade80" stroke="#0b141b" strokeWidth={3} paintOrder="stroke">
-            {t("targetZone")}
-          </text>
+          <UnderStroked stroke={SCENE.good} width={2.5} dash="4 4">
+            {(p) => (
+              <rect
+                x={tgtView.x - (tgt.idealTolerance.x * W) / 2}
+                y={tgtView.y - (tgt.idealTolerance.y * H) / 2}
+                width={tgt.idealTolerance.x * W}
+                height={tgt.idealTolerance.y * H}
+                rx={8}
+                {...p}
+                fill={p.fill ?? SCENE.good}
+                fillOpacity={p.fill ? undefined : 0.14}
+              />
+            )}
+          </UnderStroked>
+          <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{lateralFigure ? tl("midline") : t("midline")}</SceneLabel>
+          <SceneLabel x={W - 8} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 16} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
         </g>
       )}
 
@@ -247,25 +230,56 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         <g {...dragProps({ kind: "marker" })} {...keyProps(settings.markerPosition, "markerPosition")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("markerHandle", { side: marker })} style={{ cursor: disabled ? "default" : "grab" }}>
           <rect x={mv.x - HIT / 2} y={mv.y - HIT / 2} width={HIT} height={HIT} fill="transparent" />
           <rect x={mv.x - mSize / 2} y={mv.y - mSize / 2} width={mSize} height={mSize} rx={4} fill="#e8edf1" stroke="#0b141b" strokeWidth={1.5} />
-          <text x={mv.x} y={mv.y + 10} textAnchor="middle" fontSize={28} fontWeight={800} fill="#0b141b">
+          <text x={mv.x} y={mv.y + 10} textAnchor="middle" fontSize={28} fontWeight={800} fill={SCENE.bg}>
             {marker}
           </text>
         </g>
       )}
 
       {/* outside the collimated field the detector receives no beam */}
-      <path fillRule="evenodd" fill="#000" opacity={0.62} d={`M0 0H${W}V${H}H0Z M${fx} ${fy}h${fw}v${fh}h${-fw}Z`} style={{ pointerEvents: "none" }} />
-      <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke="#f2b134" strokeWidth={3} strokeDasharray="14 8" style={{ pointerEvents: "none" }} />
+      <path fillRule="evenodd" fill="#000" opacity={0.5} d={`M0 0H${W}V${H}H0Z M${fx} ${fy}h${fw}v${fh}h${-fw}Z`} style={{ pointerEvents: "none" }} />
+      <g style={{ pointerEvents: "none" }}>
+        <UnderStroked stroke={SCENE.beam} width={3} dash="14 8">
+          {(p) => <rect x={fx} y={fy} width={fw} height={fh} {...p} fill="none" />}
+        </UnderStroked>
+      </g>
+
+      {/* orientation labels (image convention, never mirrored by RTL): Head at the top, Feet at the bottom edge; anterior / posterior (lateral) or the patient's sides (frontal, practice guides) */}
+      <g aria-hidden style={{ pointerEvents: "none" }}>
+        <SceneArrow x1={-20} y1={-48} x2={-20} y2={-80} />
+        <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{ts("head")}</SceneLabel>
+        <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
+        <SceneLabel x={44} y={H + 24} size={LABEL_SIZE.detector}>{ts("feet")}</SceneLabel>
+        {lateralFigure ? (
+          <>
+            <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("anterior")}</SceneLabel>
+            <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("posterior")}</SceneLabel>
+          </>
+        ) : (
+          showGuides && (
+            <>
+              <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("patientRight")}</SceneLabel>
+              <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("patientLeft")}</SceneLabel>
+            </>
+          )
+        )}
+      </g>
 
       {edges.map(({ edge, x, y }) => (
         <g key={edge} aria-hidden {...dragProps({ kind: "edge", edge })} style={{ cursor: disabled ? "default" : EDGE_CURSOR[edge] }}>
           <rect x={x - HIT / 2} y={y - HIT / 2} width={HIT} height={HIT} fill="transparent" />
-          <rect x={x - HANDLE / 2} y={y - HANDLE / 2} width={HANDLE} height={HANDLE} rx={3} fill="#f2b134" stroke="#0b141b" strokeWidth={1.5} />
+          <rect x={x - HANDLE / 2} y={y - HANDLE / 2} width={HANDLE} height={HANDLE} rx={3} fill={SCENE.beam} stroke={SCENE.underStroke} strokeWidth={2} />
         </g>
       ))}
 
       <g {...dragProps({ kind: "ray" })} {...keyProps(settings.centralRay, "centralRay")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("rayHandle")} aria-describedby="ray-status" style={{ cursor: disabled ? "default" : "grab" }}>
         <circle cx={ray.x} cy={ray.y} r={HIT / 2 + 6} fill="transparent" />
+        {/* the crosshair is drawn on a dark under-stroke so it reads on any fill */}
+        <g stroke={SCENE.underStroke} strokeWidth={3 + UNDER * 2} strokeLinecap="round" opacity={0.85} fill="none">
+          <line x1={ray.x - 26} y1={ray.y} x2={ray.x + 26} y2={ray.y} />
+          <line x1={ray.x} y1={ray.y - 26} x2={ray.x} y2={ray.y + 26} />
+          <circle cx={ray.x} cy={ray.y} r={11} />
+        </g>
         <g stroke={rayColor} strokeWidth={3}>
           <line x1={ray.x - 26} y1={ray.y} x2={ray.x + 26} y2={ray.y} />
           <line x1={ray.x} y1={ray.y - 26} x2={ray.x} y2={ray.y + 26} />
@@ -273,9 +287,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       </g>
 
-      <text x={mid} y={H + 24} textAnchor="middle" fontSize={22} fill="#d8e4ec">
-        {t("detector")}
-      </text>
+      <SceneLabel x={mid} y={H + 24} size={LABEL_SIZE.detector + 2} anchor="middle">{ts("detector")}</SceneLabel>
     </svg>
   );
 }

@@ -3,6 +3,8 @@
 import { useTranslations } from "next-intl";
 import clsx from "clsx";
 import type { ChinPositionId, ShoulderPositionId } from "@/domain/simulation";
+import { HeadProfile, SceneArrow, SceneLabel } from "./SceneParts";
+import { LABEL_SIZE, SCENE, STROKE } from "./scene-style";
 
 interface Props {
   chin: ChinPositionId;
@@ -17,55 +19,42 @@ interface Props {
   ap?: boolean;
 }
 
-/** Side-view diagram of the erect patient facing the detector; shows the current chin/shoulder choice. */
+/**
+ * Side-view diagram of the erect patient facing the detector (Chest PA); shows the current chin / shoulder choice in the
+ * shared scene style (S13b-1): head in profile with the chin cue, trunk, the near arm hanging, the anterior direction toward
+ * the detector. The patient faces the detector on the viewer's right.
+ */
 function SideDiagram({ chin, shoulders }: Pick<Props, "chin" | "shoulders">) {
   const t = useTranslations("positioning");
-  const tucked = chin === "tucked";
+  const ts = useTranslations("scene");
   const rolled = shoulders === "rolled-forward";
   const shoulderX = rolled ? 152 : 134;
   return (
     <svg viewBox="0 0 260 300" role="img" aria-label={t("cueSideAlt")} className="h-auto w-full max-w-[16rem]" style={{ direction: "ltr" }}>
       {/* floor + detector (patient faces right, toward the detector) */}
-      <line x1={20} y1={282} x2={240} y2={282} stroke="#2b4152" strokeWidth={3} />
-      <rect x={214} y={34} width={10} height={228} rx={3} fill="#7b93a5" />
-      <text x={219} y={26} textAnchor="middle" fontSize={11} fill="#d8e4ec">
-        {t("cueDetector")}
-      </text>
-      {/* legs + torso */}
-      <rect x={118} y={200} width={36} height={82} rx={8} fill="#43607a" />
-      <rect x={108} y={98} width={54} height={112} rx={20} fill="#5d778a" />
-      {/* anterior chest arrow toward detector */}
-      <path d="M 168 150 H 204" stroke="#f2b134" strokeWidth={3} markerEnd="url(#arrow)" />
-      <defs>
-        <marker id="arrow" viewBox="0 0 10 10" refX={8} refY={5} markerWidth={7} markerHeight={7} orient="auto">
-          <path d="M0 0 L10 5 L0 10 Z" fill="#f2b134" />
-        </marker>
-      </defs>
-      {/* neck + head, chin tucked or lifted */}
-      <rect x={128} y={78} width={14} height={24} fill="#7b93a5" />
-      <circle cx={135} cy={60} r={22} fill="#7b93a5" />
-      <path
-        d={tucked ? "M 146 70 L 160 90 L 144 84 Z" : "M 154 58 L 170 50 L 154 70 Z"}
-        fill="#d8e4ec"
-        stroke="#0b141b"
-        strokeWidth={1}
-      />
-      {/* shoulder (rolled forward moves toward the detector) and scapula behind it */}
-      <circle cx={shoulderX} cy={112} r={13} fill="#9db6c6" stroke="#d8e4ec" strokeWidth={1.5} />
-      <path d={`M ${rolled ? 106 : 112} 104 q -10 24 0 48`} fill="none" stroke="#d8e4ec" strokeWidth={3} strokeLinecap="round" />
-      <text x={100} y={176} textAnchor="end" fontSize={11} fill="#d8e4ec">
-        {t("scapula")}
-      </text>
-      {/* erect arrow */}
-      <path d="M 52 270 V 40" stroke="#4ade80" strokeWidth={2} strokeDasharray="4 5" markerEnd="url(#arrow-green)" />
-      <defs>
-        <marker id="arrow-green" viewBox="0 0 10 10" refX={8} refY={5} markerWidth={7} markerHeight={7} orient="auto">
-          <path d="M0 0 L10 5 L0 10 Z" fill="#4ade80" />
-        </marker>
-      </defs>
-      <text x={46} y={160} textAnchor="end" fontSize={11} fill="#4ade80">
-        {t("cueErect")}
-      </text>
+      <line x1={20} y1={282} x2={240} y2={282} stroke={SCENE.bed} strokeWidth={STROKE.medium} />
+      <rect x={214} y={44} width={10} height={218} rx={3} fill={SCENE.detector} />
+      <SceneLabel x={219} y={34} size={LABEL_SIZE.view - 1} anchor="middle">{ts("detector")}</SceneLabel>
+      {/* legs + trunk */}
+      <rect x={118} y={200} width={36} height={82} rx={8} fill={SCENE.bed} stroke={SCENE.limbFar} strokeWidth={STROKE.thin} />
+      <rect x={108} y={98} width={54} height={112} rx={20} fill={SCENE.trunk} />
+      {/* neck + head in profile, chin tucked or lifted */}
+      <rect x={126} y={78} width={16} height={26} fill={SCENE.head} />
+      <HeadProfile cx={135} cy={56} s={0.55} facing={1} chin={chin} />
+      {/* near arm hanging; the shoulder moves toward the detector when rolled forward, the scapula stays behind */}
+      <path d={`M ${shoulderX} 112 L ${shoulderX - 4} 168 L ${shoulderX + 6} 214`} fill="none" stroke={SCENE.limb} strokeWidth={13} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={shoulderX} cy={112} r={13} fill={SCENE.limb} stroke={SCENE.bone} strokeWidth={STROKE.thin} />
+      <path d={`M ${rolled ? 106 : 112} 104 q -10 24 0 48`} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.medium} strokeLinecap="round" />
+      <SceneLabel x={96} y={176} size={LABEL_SIZE.view - 1} anchor="end">{t("scapula")}</SceneLabel>
+      {/* anterior chest toward the detector */}
+      <SceneArrow x1={170} y1={150} x2={206} y2={150} color={SCENE.beam} />
+      <SceneLabel x={188} y={140} size={LABEL_SIZE.view - 1} anchor="middle">{ts("anterior")}</SceneLabel>
+      <SceneLabel x={100} y={206} size={LABEL_SIZE.view - 1} anchor="end">{ts("posterior")}</SceneLabel>
+      {/* erect arrow (head up) */}
+      <SceneArrow x1={52} y1={270} x2={52} y2={52} color={SCENE.good} width={2} dashed />
+      <SceneLabel x={46} y={128} size={LABEL_SIZE.view - 1} anchor="end" fill={SCENE.good}>{t("cueErect")}</SceneLabel>
+      <SceneLabel x={52} y={40} size={LABEL_SIZE.view - 1} anchor="middle">{ts("head")}</SceneLabel>
+      <SceneLabel x={52} y={296} size={LABEL_SIZE.view - 1} anchor="middle">{ts("feet")}</SceneLabel>
     </svg>
   );
 }
