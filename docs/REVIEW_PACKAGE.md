@@ -94,6 +94,22 @@ Reviewer key: **E** = radiography educator · **P** = medical physicist · **AR*
 | S13b-2 | AP side view: the head is drawn face up on the bed, the near arm along the side, the leg and foot are generic; the SID is drawn parallel to the central ray from the tube to the detector, the reference tick on the same line | none (schematic) | Acceptable? | E |
 | S13b-2 | Plan view: the rotation arc is drawn between the reference axis and the shoulder axis; for a lateral the reference axis lies along the beam | S12-2 / S13-6 conventions (unchanged) | Confirm the reference axis for the lateral. | E |
 
+### 1e. Session 14.1a additions (Wrist PA / Lateral; docs only, teaching-choice values; nothing implemented, all provisional)
+
+Reference: [`RAD-LAB_Medical_Reference_Wrist.md`](RAD-LAB_Medical_Reference_Wrist.md). Numbers marked "proposal" are **not yet fixed**; S14.1c fixes them and updates this table.
+
+| ID | Provisional item | Source / basis | Question for the reviewer | Who |
+|---|---|---|---|---|
+| S14.1-4a | **kV partial-credit bands** outside the Bontrager full bands 55–65 (PA) / 60–70 (lateral); proposal: about 10 kV beyond each edge of the full band | BONTRAGER-9 p.156 / 158 give only 60 ± 5 / 65 ± 5 (digital); the partial bands are an engine teaching choice | Acceptable partial range for a digital wrist? | E, P |
+| S14.1-4b | **SID:** minimum 102 cm (40 in) is Bontrager; the **upper full-credit limit and the partial band are a teaching choice** (proposal by analogy with S13-3: full credit within a few cm of 102) | BONTRAGER-9 p.156 / 158 (minimum only) | What upper limit would a department accept? | E |
+| S14.1-4c | **Rotation tolerance ±2° full, ±5° partial, magnitude-only feedback** for the wrist (the numbers of the chest exams) | none (Bontrager gives the image criteria, no tolerance) | Are chest-sized tolerances sensible for forearm pronation / supination? Should the lateral differ? | E |
+| S14.1-4d | **Numeric collimation margin** around distal radius / ulna and mid-metacarpals | BONTRAGER-9 p.156 / 158 give what to include, not a margin | How tight / loose is acceptable? | E |
+| S14.1-4e | **Exposure reference for the wrist** (a manual-technique teaching constant; **no numeric mAs target, no EI / EIT / DI number, no AEC claim**) | Bontrager as supplied is silent on mAs / AEC (O26) | Is manual-only acceptable? Supply a source for mAs / AEC if one exists. | E, P |
+| S14.1-4f | **Critical findings:** `missing-marker` and `wrong-side-marker` only (educator decision, provisional); whether `wrong-projection` / `patient-motion` also apply (O24) | BONTRAGER-9 p.32–33 (marker required, side) | Agree with the minimal list? | E |
+| S14.1-4g | **Category weights without breathing** (option A: 28 / 22 / 17 / 22 / 11) (O22) | derived from the PA weights S10b-14; not a medical claim | Which distribution? | E |
+| S14.1-4h | **Marker display on a single limb** (O21) and **unscored items** (shoulder-elbow-wrist plane, hand arch, shielding) | BONTRAGER-9 p.32–33, 36, 156, 158 | Is the unscored list acceptable for v1? | E |
+| S14.1-4i | Spot-check of the **advisor-supplied wrist claims** (p.156, 158, as in the reference §3–§4) against the printed pages | claims not re-verified by Claude Code | Confirm each claim and page number. | E |
+
 ## 3. PA discrepancies (O11)
 Provisional decisions S10b-1…3: kV range (EC / WHO / ACR vs the repo's 100–150 band), AEC chamber mapping (EC right lateral chamber vs the repo's detector-view left/right), rotation sign (WHO p.28 direction not interpreted). Questions are in rows S10b-1, S10b-2, S10b-3 above.
 
