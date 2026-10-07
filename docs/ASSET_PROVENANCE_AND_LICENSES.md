@@ -309,6 +309,84 @@ Rules for entries:
 | File facts | `image/jpeg`, 559 × 1400 px, 115,640 bytes |
 | Notes | Landmarks (`src/data/cases/wrist-lateral-radiograph.ts`) were read by eye. |
 
+### A-014 — Normal hand, PA (dorsoplantar) projection, left hand: unmodified master (S14.2b)
+
+| Field | Value |
+|---|---|
+| Asset name | X-ray of normal hand by dorsoplantar projection |
+| Asset type | Radiograph (adult left hand, PA), JPEG |
+| Original filename | `X-ray of normal hand by dorsoplantar projection.jpg` (**assumed** from a Commons search title; the match with the attached file is **not** confirmed, O39) |
+| Creator / author | Mikael Häggström, M.D. (per the owner's description: own work, self-exam). **Not verified through Commons** (HTTP 429, S14.2-9) |
+| Original organization / source | Wikimedia Commons; taken at Uddevalla Hospital, 29 Oct 2017 (per the owner) |
+| Original source URL | <https://commons.wikimedia.org/wiki/File:X-ray_of_normal_hand_by_dorsoplantar_projection.jpg> (**not read**) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner saw CC0 on the file page). Not confirmed through the Commons API |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/hand/X-ray_of_normal_hand_by_dorsoplantar_projection.jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None.** Byte-identical to the file the owner attached to the S14.2b session |
+| Date / method of verification | 2026-10-07. The owner attached the original. Commons API `imageinfo` request: **HTTP 429 twice** (one retry), nothing else tried. Dimensions and size match the owner's description (1466 × 2082 px, 493 KB). Re-verification = **O39** |
+| Checksum | SHA-1 `07af22bc384109454889ce1c52415922ddc8c0aa`; SHA-256 `fc625315086c915ab0170a6bcb1fc93ffc58ab1cd2bdf331ec2710ee03192b35` |
+| File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 1466 × 2082 px, 505,312 bytes, RGB-encoded greyscale content |
+| De-identification evidence | **Burned-in text found: a mirrored "Sin" (top left, rows 79–158, columns 64–148)** on a slightly lighter label card above the little finger. Removed in A-015. After the fill no pixel above 90 grey remains in the top-left 300 × 260 px. Visual inspection of the full image: no other text, ruler, date or marker. No metadata beyond JFIF. No device, cast, implant or pathology. The description gives age and sex only (31, male); no name is recorded anywhere in RAD-LAB. |
+| Notes | Shows the whole left hand (thumb on the viewer's right, fingers spread slightly), the carpals and the distal radius and ulna (≈ 3 cm of forearm beyond the 2.5 cm line, S14.2-10). The same person as the wrist images A-010 … A-013 and the hand lateral A-016 (per the author). **Not** the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-015 — Hand PA educational baseline: web copy (derived from A-014)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Hand PA educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-014. Derivation: RAD-LAB (`scripts/derive-hand-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-014; owner-verified) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
+| Local project path | `public/images/hand/hand-pa-baseline.jpg` (the file the app loads) |
+| RAD-LAB modifications | **Burned-in text removed by a fill, no crop** (S14.2-7): pixels brighter than 90 inside the box (left 56, top 70, right 160, bottom 166), grown by 3 px, replaced by the least-squares plane fitted to the surrounding non-text ring of the label card. 8-bit greyscale, no resampling (native 1466 × 2082 px), JPEG quality 88, no metadata. The script refuses to run if the master's SHA-1 differs or if it carries EXIF / ICC / comments. |
+| Date / method of verification | 2026-10-07. Reproducible: `python3 -I scripts/derive-hand-baselines.py`. Output re-read: no EXIF, JFIF only; the fill region inspected at 2× (no text, no visible seam apart from the card edge). |
+| Checksum | SHA-1 `a2d9d743cffd97299d321b4e4e2954e832dc91e8`; SHA-256 `22f45127bb9b42362bebf72857a0523420b0b872a47ae94313692dbb6776206f` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 1466 × 2082 px, 364,565 bytes |
+| Notes | Landmarks (`src/data/cases/hand-pa-radiograph.ts`) were read by eye. The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
+### A-016 — Normal hand, lateral projection (extension), left hand: unmodified master (S14.2b)
+
+| Field | Value |
+|---|---|
+| Asset name | X-ray of normal hand by lateral projection |
+| Asset type | Radiograph (adult left hand, lateral, fingers extended and superimposed, thumb separated), JPEG |
+| Original filename | `X-ray of normal hand by lateral projection.jpg` (**assumed** from a Commons search title; not confirmed, O39) |
+| Creator / author | As A-014 (per the owner's description). **Not verified through Commons** |
+| Original organization / source | Wikimedia Commons; Uddevalla Hospital, 29 Oct 2017 (per the owner) |
+| Original source URL | <https://commons.wikimedia.org/wiki/File:X-ray_of_normal_hand_by_lateral_projection.jpg> (**not read**) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (as A-014) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No (voluntary credit under the result image) |
+| Local project path | `assets/source/hand/X-ray_of_normal_hand_by_lateral_projection.jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None.** Byte-identical to the file the owner attached |
+| Date / method of verification | As A-014 (HTTP 429 twice; re-verification O39). 686 × 2123 px and 246 KB match the owner's description |
+| Checksum | SHA-1 `b1708a29ae292ccff95a123087383af1f6d9a32f`; SHA-256 `d0e25d438a770eb0c5c03c7045707111ad14a684392981a366aab771953c0539` |
+| File facts | `image/jpeg`, JFIF only, 686 × 2123 px, 252,377 bytes |
+| De-identification evidence | **Burned-in text found: "SIDA" (bottom right, rows ≈ 2083–2113, from column 604 to the right edge)** over the soft-tissue edge and the black background. Removed in A-017. Visual inspection of the full image: no other text, ruler, date or marker. No metadata beyond JFIF. No device, cast, implant or pathology. |
+| Notes | Fingers extended and superimposed, thumb separated (the extension variant, Bontrager p.153, S14.2-6). Shows the carpals and ≈ 4 cm of distal radius / ulna beyond the 2.5 cm line (S14.2-10). Which side is dorsal / palmar is **not** claimed. The same person as A-014. A teaching approximation. |
+
+### A-017 — Hand lateral educational baseline: web copy (derived from A-016)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Hand lateral educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-016. Derivation: RAD-LAB (`scripts/derive-hand-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-016; owner-verified) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
+| Local project path | `public/images/hand/hand-lateral-baseline.jpg` |
+| RAD-LAB modifications | **Burned-in text removed by a fill, no crop** (S14.2-7): pixels brighter than 100 inside the box (left 596, top 2072, right 686, bottom 2123), grown by 3 px, replaced by the mean of the 4 clean rows above the box continued straight down the same columns. (A crop of the lower 51 rows would have cut the radius / ulna shafts.) 8-bit greyscale, no resampling (native 686 × 2123 px), JPEG quality 88, no metadata. **A small local fill artefact remains** at the lower right (soft tissue only, about 15 × 35 px); no anatomy beyond the soft-tissue edge in the box is altered. |
+| Date / method of verification | 2026-10-07. Reproducible with the same script; after the fill no pixel above 100 grey remains in x ≥ 596, y ≥ 2072. Output re-read: no EXIF. |
+| Checksum | SHA-1 `1b37166d34eacaaf1f4a5346f218d09f2afd1d72`; SHA-256 `3b19a73cbc735042f40fb05c0d0e4c6ca755ed8cf218ba9e585936fd7674f950` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 686 × 2123 px, 180,645 bytes |
+| Notes | Landmarks (`src/data/cases/hand-lateral-radiograph.ts`) were read by eye. |
+
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.
@@ -368,3 +446,6 @@ The owner supplied the lateral image (owner-verified CC0, attached file); the on
 
 ### F. Wrist baselines (S14.1c, 2026-10-07)
 Two images of the same person's left wrist were supplied by the owner and verified through the **Commons API** (HTTP 200, one attempt): author Mikael Häggström, M.D., CC0 1.0, no attribution required, SHA-1 identical to the owner's downloads (A-010, A-012). The lateral carried a burned-in side text and was **cropped** (A-013); the PA is the author's own crop and needed none (A-011). Web copies carry no metadata. Open: the Commons file pages (HTML) were not read, only their API record (O27). Commercial-compatible (CC0, S10-3): yes. Not registered: any overlay art, scene image or font (the wrist scene is hand-drawn SVG code).
+
+### G. Hand baselines (S14.2b, 2026-10-07)
+Two images of the same person's left hand were attached by the owner (A-014, A-016): CC0 **as seen by the owner on the file pages**. The Commons API request was **HTTP 429 twice**, so they are recorded as **owner-verified** and **not** compared with the Commons SHA-1 (open item O39). Both carried a burned-in text ("Sin" mirrored on the PA, "SIDA" on the lateral); it was removed by a documented **fill** (no crop, S14.2-7) in the derive script (A-015, A-017). Web copies carry no metadata. Commercial-compatible (CC0, S10-3): yes, if the owner's statement holds. Not registered: any overlay art, scene image or font (the hand scene is hand-drawn SVG code).
