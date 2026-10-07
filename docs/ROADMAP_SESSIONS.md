@@ -154,3 +154,4 @@ Delivered: Chest Lateral exam, case, asset (A-006 / A-007), scene, tests and QA 
 - **S14.1c — the two wrist exams** (`wrist-pa`, `wrist-lateral`) under `exam-recipe.md` (reference §9.4); images approved by the owner; owner decisions O21–O24 answered first.
 - **S14.1c — delivered (draft PR #23):** `wrist-pa` and `wrist-lateral` (left wrist, CC0 baselines A-010…A-013, fixed-side marker rule, wrist rotation effect, own side-view scene). Open: O27–O31.
 - **S14.2b — delivered (draft PR):** `hand-pa` and `hand-lateral` (extension variant, S14.2-6; left hand, owner-attached CC0 baselines A-014…A-017, hand rotation effect kinds, own side-view scene). Open: O39–O41. Elbow reference docs: see `docs/session-14.2b-hand.md` §7 (phase 2).
+- **S14.3 — delivered (draft PR):** `elbow-ap` and `elbow-lateral` (left elbow, owner-attached CC0 baselines A-018…A-021, elbow rotation model and effect kinds, own side-view scene). Open: O47–O52. Record: `docs/session-14.3-elbow.md`.
