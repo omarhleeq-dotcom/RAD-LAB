@@ -20,8 +20,11 @@ export type MotionState = "none" | "motion";
 export interface PatientCooperationProfile {
   id: string;
   label: LocalizedText;
-  /** Assumed deterministic response of THIS patient to each breathing instruction. */
-  inspirationResponse: Record<BreathingId, InspirationQuality>;
+  /**
+   * Assumed deterministic response of THIS patient to each breathing instruction. Optional (S14.1b): absent for an exam
+   * without a breathing control; the derived inspiration is then always "adequate" (nothing is drawn or scored).
+   */
+  inspirationResponse?: Record<BreathingId, InspirationQuality>;
   /** Assumed deterministic response of THIS patient to each remain-still instruction. */
   motionResponse: Record<MotionInstructionId, MotionState>;
   /** Always an educational assumption, never a measurement. */
@@ -31,7 +34,7 @@ export interface PatientCooperationProfile {
 export interface PatientResponse {
   profileId: string;
   /** The learner's actions, echoed so the result is traceable. */
-  instructions: { breathing: BreathingId; motion: MotionInstructionId };
+  instructions: { breathing?: BreathingId; motion: MotionInstructionId };
   /** Simulated outcome of the breathing instruction. Independent of `motion`. */
   inspiration: InspirationQuality;
   /** Simulated outcome of the remain-still instruction. Independent of `inspiration`. */

@@ -37,7 +37,8 @@ export interface SceneTexts {
 export interface SceneLayout {
   figure: DetectorFigure;
   SecondView: ComponentType<SecondViewProps>;
-  Cues: ComponentType<CuesProps>;
+  /** The patient-cues panel (chin / shoulders). Absent (S14.1b) for a scene without those cues, e.g. a limb. */
+  Cues?: ComponentType<CuesProps>;
   texts: SceneTexts;
 }
 

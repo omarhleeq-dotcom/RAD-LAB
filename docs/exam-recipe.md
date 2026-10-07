@@ -36,14 +36,17 @@ Details and proof: [`session-11-generalisation.md`](session-11-generalisation.md
 | Extra enum controls | `choiceControls` (e.g. `side`, `arms`, `state`), validated EN+AR; button text by position via `ChoiceControlSpec.projectionLabels` (S13-7) | Lateral, AP |
 | Scoring categories | per-exam keys of `categoryWeights` (collimation is scored under `positioning`) | all |
 | Critical findings | id in `CriticalFindingId` + detector in `CRITICAL_DETECTORS` (`features/evaluation/critical.ts`) | Lateral `arms-over-lungs` |
-| Scene | `SCENE_IDS` + `SCENES` registry (`features/positioning/scenes.tsx`); a scene on the shared positioning view is a `SceneLayout` (`scene-layouts.tsx`: detector figure from `detector-figures.tsx`, second view, cues, texts) — S14-0 | all |
+| Scene | `SCENE_IDS` (`domain/exam.ts`; `SceneId` is an open string since S14.1b) + `SCENES` registry (`features/positioning/scenes.tsx`); a scene on the shared positioning view is a `SceneLayout` (`scene-layouts.tsx`: detector figure from `detector-figures.tsx`, second view, cues (optional since S14.1b: a limb scene declares none), texts) — S14-0 | all |
 | Optional landmark groups | on the asset spec (e.g. no scapula group → "not drawn") | AP |
 | Attenuation | `attenuationByProjection` (fallback 1 = PA reference, not measured) | Lateral 2× (provisional) |
 | Baseline projection | `RadiographAssetSpec.projection?` (absent = PA); `midlineU` or the lateral separation fallback | Lateral, AP |
+| Optional chest-only fields (S14.1b) | `chinPosition` / `shoulderPosition` / `breathing` in the initial settings, `availableBreathing`, `patientCooperation.inspirationResponse`, `radiograph.lungApexV` / `diaphragmDomeV`, `technique.aec` are all optional: a limb exam omits them (no cue panel, no breathing control / rule / category, no inspiration warp, manual-only technique). `validateExam` / `validateCase` check them exactly when declared | chest exams declare all |
+| Body part | `BODY_PART_IDS` in `src/data/modalities.ts` (`BodyPartId` open; `validateExam` checks it) — S14.1b | chest |
+| Effect hook (S14.1b) | `EXTRA_EFFECTS` / `EffectDefinition` in `features/radiograph/plan.ts`: concept + magnitude + drivers + a pure `active` predicate; **no effect registered yet, and no pixel step in the hook** (the first limb effect adds its step, landmark group and `tuning.ts` magnitudes — S14.1c) | none yet |
 | Projection | `PROJECTIONS` registry (`src/data/projections.ts`; `ProjectionId` is an open string, `validateExam` checks it) — S14-0 | all |
 | Result wording | `radiograph.<ns>.*`, the namespace declared on the projection in `PROJECTIONS`, read by `wordingNsOf`; falls back to common wording | Lateral, AP |
 
-**Hard-wired to Chest (rule of three; needs a generalisation session if the new exam needs more):** `SimulationSettings` shape, `CATEGORIES`, `ImageVariantId`, `EffectId`, `CriticalFindingId`, the console JSX, the positioning scene art, and the renderer's chest anatomy assumptions (lung / spine / rib effects). Limbs, abdomen, pelvis, head and spine will hit several of these (new anatomy effects, a new scene family; a new projection id is now only a registry entry, S14-0). **That is the first thing to check in step 0**: list the needs from the reference; if any is outside this table, stop and report (§9).
+**Hard-wired to Chest (rule of three; needs a generalisation session if the new exam needs more):** the positioning scene art, the pixel steps of the chest anatomy effects (scapula / jaw / lung warp / spine shift — now run only when the asset declares the landmark group), the console JSX for any control that is not a range or an enum choice, and the chest-named message keys (`CATEGORIES` message labels, `chin-overlap` etc.). `SimulationSettings` chest cues, breathing, `bodyPart`, `SceneId`, the lung landmarks and the AEC section stopped being hard-wired in S14.1b; `CriticalFindingId`, `EffectId`, `ImageVariantId` are open vocabularies (G10 verified: a limb needs no new variant id). Limbs, abdomen, pelvis, head and spine will hit several of these (new anatomy effects, a new scene family; a new projection id is now only a registry entry, S14-0). **That is the first thing to check in step 0**: list the needs from the reference; if any is outside this table, stop and report (§9).
 
 ---
 
@@ -70,7 +73,8 @@ Details and proof: [`session-11-generalisation.md`](session-11-generalisation.md
 |---|---|---|
 | Exams | `src/data/exams/index.ts` | import + append to `EXAMS` |
 | Cases | `src/data/cases/index.ts` | import + append to `CASE_DEFINITIONS` |
-| Scene id | `src/domain/exam.ts` | append to `SCENE_IDS` (validated by `validateExam`) |
+| Scene id | `src/domain/exam.ts` | append to `SCENE_IDS` (validated by `validateExam`; `registries.test.ts` and `limb-generalisation.test.ts` check it against `SCENES`) |
+| Body part (if new) | `src/data/modalities.ts` | append to `BODY_PART_IDS` |
 | Scene component | `src/features/positioning/scenes.tsx` (+ `scene-layouts.tsx` / `detector-figures.tsx` if it reuses the shared view) | `SCENES["<scene-id>"]` |
 | Projection (if new) | `src/data/projections.ts` | one entry in `PROJECTIONS` (+ `console.projections.<id>` messages) |
 | Critical detector (if new) | `src/features/evaluation/critical.ts` | `CriticalFindingId` + `CRITICAL_DETECTORS` entry |
@@ -213,8 +217,9 @@ FINAL REPORT (plain text): files changed per exam, DECISIONS / REVIEW_PACKAGE / 
 **Closed by S14-0** (byte-identical; [`session-14-limbs-generalisation.md`](session-14-limbs-generalisation.md)): scene / result-image code is registry-driven (`SceneLayout`, `DetectorFigure`, projection registry) rather than flags and branches; `ProjectionId` / `WordingNs` are open; the label-collision measurement is a committed script (§4a); the S12-12 order note is in `ROADMAP_SESSIONS.md`.
 
 **Still open:**
-- What a limb exam must still add (new anatomy effects / image variants, critical-finding ids, scene art and the second view, settings beyond the chest cues, console labels): `session-14-limbs-generalisation.md` §4. Each is generalised only against a merged limb reference (S10-2).
-- `SceneId` / `SCENE_IDS`, `CriticalFindingId`, `EffectId`, `ImageVariantId`, `CATEGORIES`, `SimulationSettings` (chin / shoulder fields) remain closed lists / shapes.
+- What a limb exam must still add (its effects with their pixel steps and landmark groups, scene art and the second view, projection / scene / body-part registrations, console labels): `session-14-limbs-generalisation.md` §4 and §6.3. Each is generalised only against a merged limb reference (S10-2).
+- **Closed by S14.1b** (byte-identical): G1–G5 and G9 (optional chest-only fields, open `SceneId` / `bodyPart`, optional lung landmarks and AEC) and the G6 effect hook; G10 verified (no new variant id). `CATEGORIES` is the core six with per-exam keys (S11). `validateExam(exam, registries?)` takes the registries as an optional argument so a test can validate a synthetic exam without touching production data.
+- Typing note: `ExamDefinition<T>` / `RadCase<T>` are generic over the technique profile only so that the chest exams keep `technique.aec` required for the code and tests that name them; platform code takes `AnyExamDefinition` / `RadCase`. When the first limb exam is added to `EXAMS` / `CASES`, those arrays become the broad type and the few chest tests that read `…technique.aec` through them need a narrowing (S14.1c).
 - `planRotationDeg` (plan-view sign, O19) still switches on `"ap-erect"`; a new projection that needs a plan view must decide its sign first (§6).
 - No documented procedure yet for a *credits page* (O18) or for the SID / position image label (S10b-22, O18).
 - The label script found, on the unchanged AP scene, an Arabic-only overlap at tube angle +15° with guides ON (O20, `DECISIONS.md`).

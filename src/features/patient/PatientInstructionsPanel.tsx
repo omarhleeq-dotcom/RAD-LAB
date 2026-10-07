@@ -65,15 +65,18 @@ export function PatientInstructionsPanel({ radCase, settings, onChange, disabled
         <p className="mt-1 text-xs text-muted">{t("intro")}</p>
       </div>
       <div className="grid gap-4 p-4 sm:grid-cols-2">
-        <Choices
-          legend={t("breathingLegend")}
-          name="breathing-instruction"
-          options={radCase.availableBreathing}
-          value={settings.breathing}
-          disabled={disabled}
-          onSelect={(v) => onChange("breathing", v)}
-          label={(v) => t(`breathingOptions.${v}`, { sex: radCase.patient.sex })}
-        />
+        {/* The breathing control exists only when the exam declares it (S14.1b: a limb exam has none). */}
+        {radCase.availableBreathing && settings.breathing !== undefined && (
+          <Choices
+            legend={t("breathingLegend")}
+            name="breathing-instruction"
+            options={radCase.availableBreathing}
+            value={settings.breathing}
+            disabled={disabled}
+            onSelect={(v) => onChange("breathing", v)}
+            label={(v) => t(`breathingOptions.${v}`, { sex: radCase.patient.sex })}
+          />
+        )}
         <Choices
           legend={t("motionLegend")}
           name="motion-instruction"

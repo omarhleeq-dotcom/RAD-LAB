@@ -59,7 +59,7 @@ export function AecPanel({ radCase, settings, onChange, disabled }: Props) {
         <rect x={mid + 8} y={lungY} width={lungW} height={lungH} rx={50} fill="#33516a" opacity={0.85} />
         <line x1={mid} y1={0} x2={mid} y2={H} stroke="#7dd3fc" strokeWidth={1.5} strokeDasharray="3 7" opacity={0.5} />
         {aec.chambers.map((o) => {
-          const spec = technique.aec.chambers.find((c) => c.id === o.id)!;
+          const spec = technique.aec!.chambers.find((c) => c.id === o.id)!;
           const x = px(spec.region.x1, W), y = px(spec.region.y1, H);
           const w = px(spec.region.x2, W) - x, h = px(spec.region.y2, H) - y;
           const label = localize(spec.label, locale);
@@ -113,7 +113,7 @@ export function AecPanel({ radCase, settings, onChange, disabled }: Props) {
 
       <fieldset disabled={disabled} className="space-y-2">
         <legend className="mb-1 text-xs font-medium text-console-text">{t("legend")}</legend>
-        {technique.aec.chambers.map((spec) => {
+        {technique.aec!.chambers.map((spec) => {
           const o = aec.chambers.find((c) => c.id === spec.id)!;
           const coverage = o.fieldCoverage >= 0.999 ? t("inField") : o.fieldCoverage <= 0.001 ? t("outsideField") : t("partialField");
           return (

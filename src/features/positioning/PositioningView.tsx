@@ -79,14 +79,16 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
             <SecondView radCase={radCase} settings={settings} showGuides={showGuides} />
             <figcaption className="mt-1 text-center text-xs text-console-text/80">{tAny(texts.secondViewCaption)}</figcaption>
           </figure>
-          <Cues
-            chin={settings.chinPosition}
-            shoulders={settings.shoulderPosition}
-            onChin={(v) => onChange("chinPosition", v)}
-            onShoulders={(v) => onChange("shoulderPosition", v)}
-            disabled={disabled}
-            showGuides={showGuides}
-          />
+          {Cues && settings.chinPosition !== undefined && settings.shoulderPosition !== undefined && (
+            <Cues
+              chin={settings.chinPosition}
+              shoulders={settings.shoulderPosition}
+              onChin={(v) => onChange("chinPosition", v)}
+              onShoulders={(v) => onChange("shoulderPosition", v)}
+              disabled={disabled}
+              showGuides={showGuides}
+            />
+          )}
         </div>
       </div>
       <p className="px-4 pt-2 text-xs text-muted">{tAny(texts.schematicNote)}</p>

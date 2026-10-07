@@ -53,6 +53,8 @@ export function evaluateAec(
   field: Rect,
   detector: DetectorSpec,
 ): AecOutcome {
+  // No AEC in the protocol (S14.1b, manual-only exam): nothing is sensed.
+  if (!profile.aec) return { chambers: [], terminatedOnChambers: false, chamberRelativeExposure: null };
   const { chambers, minChamberCoverage, anatomyRelativeExposure } = profile.aec;
   const outcomes = chambers.map((spec) => {
     const isSelected = selected.includes(spec.id);

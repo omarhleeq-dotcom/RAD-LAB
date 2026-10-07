@@ -13,6 +13,8 @@ export type { ExposureMode };
  * the engine never switches exhaustively on it. Chest: "pa-erect" | "ap-erect" | "lateral-left".
  */
 export type ProjectionId = string;
+/** Open id of the examined body part (S14.1b); registered in `src/data/modalities.ts` (`BODY_PART_IDS`). Chest exams: "chest". */
+export type BodyPartId = string;
 export type BreathingId =
   | "deep-inspiration-hold"
   | "expiration-hold"
@@ -62,8 +64,10 @@ export interface SimulationSettings {
   /** Central-ray position on the detector, normalized (see NormPoint). */
   centralRay: NormPoint;
   collimation: CollimationSize;
-  chinPosition: ChinPositionId;
-  shoulderPosition: ShoulderPositionId;
+  /** Chest-only cue (S14.1b): present exactly when the exam's scene shows chin / shoulder cues; absent for a limb exam. */
+  chinPosition?: ChinPositionId;
+  /** Chest-only cue (S14.1b), see `chinPosition`. */
+  shoulderPosition?: ShoulderPositionId;
   /** Radiographic side marker; null = none placed yet. */
   sideMarker: SideMarkerId | null;
   /** Marker centre on the detector, normalized. Only meaningful once a marker is placed. */
@@ -77,8 +81,11 @@ export interface SimulationSettings {
   exposureMode: ExposureMode;
   /** Selected AEC sensing chambers, canonical order (see toggleChamber). Only used in AEC mode. */
   aecChambers: AecChamberId[];
-  /** Breathing instruction given to the patient (what is said, not what the patient then does). */
-  breathing: BreathingId;
+  /**
+   * Breathing instruction given to the patient (what is said, not what the patient then does). Optional (S14.1b): present
+   * exactly when the exam declares `availableBreathing`; absent for a limb exam (no control, no rule, no category).
+   */
+  breathing?: BreathingId;
   /** Instruction about keeping still given to the patient (what is said, not what the patient then does). */
   motionInstruction: MotionInstructionId;
   /**

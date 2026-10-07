@@ -10,18 +10,22 @@
  * Any other case of the exam is `<exam id>/<case id>`.
  */
 import type { RadCase } from "@/domain/case";
-import type { CaseDefinition, ExamDefinition } from "@/domain/exam";
+import type { AnyExamDefinition, AnyExamTechniqueProfile, CaseDefinition, ExamDefinition, PatientTechniqueModel } from "@/domain/exam";
 
-const cache = new WeakMap<CaseDefinition, { exam: ExamDefinition; composed: RadCase }>();
+const cache = new WeakMap<CaseDefinition, { exam: AnyExamDefinition; composed: RadCase }>();
 
-export function publicCaseId(exam: ExamDefinition, def: CaseDefinition): string {
+export function publicCaseId(exam: AnyExamDefinition, def: CaseDefinition): string {
   return def.id === exam.defaultCaseId ? exam.id : `${exam.id}/${def.id}`;
 }
 
-export function composeCase(exam: ExamDefinition, def: CaseDefinition): RadCase {
+/**
+ * Generic only so that the composed case keeps the exact technique type of its exam (a chest exam's `technique.aec` stays
+ * required for the code that names the chest case directly); the platform consumes it as a plain `RadCase`.
+ */
+export function composeCase<T extends AnyExamTechniqueProfile>(exam: ExamDefinition<T>, def: CaseDefinition): RadCase<T & { patient: PatientTechniqueModel }> {
   if (def.examId !== exam.id) throw new Error(`case "${def.id}" belongs to exam "${def.examId}", not "${exam.id}"`);
   const hit = cache.get(def);
-  if (hit && hit.exam === exam) return hit.composed;
+  if (hit && hit.exam === exam) return hit.composed as RadCase<T & { patient: PatientTechniqueModel }>;
   const composed: RadCase = {
     id: publicCaseId(exam, def),
     modality: exam.modality,
@@ -49,7 +53,8 @@ export function composeCase(exam: ExamDefinition, def: CaseDefinition): RadCase 
     technique: { ...exam.technique, patient: def.patientTechnique },
     positioning: exam.positioning,
     availableProjections: exam.availableProjections,
-    availableBreathing: exam.availableBreathing,
+    // Optional (S14.1b): the key exists only when the exam declares a breathing control (a limb exam has none).
+    ...(exam.availableBreathing ? { availableBreathing: exam.availableBreathing } : {}),
     availableMotionInstructions: exam.availableMotionInstructions,
     rules: exam.rules,
     scoring: exam.scoring,
@@ -57,5 +62,5 @@ export function composeCase(exam: ExamDefinition, def: CaseDefinition): RadCase 
     imageCriteria: exam.imageCriteria,
   };
   cache.set(def, { exam, composed });
-  return composed;
+  return composed as RadCase<T & { patient: PatientTechniqueModel }>;
 }

@@ -118,7 +118,7 @@ export function TechniqueResult({ radCase, kvp, manualMas, exposure: x }: Props)
           {!x.aec.terminatedOnChambers && <p className="mt-1 text-sm text-bad">{t("aecBackup")}</p>}
           <ul className="mt-2 grid gap-2 sm:grid-cols-3">
             {x.aec.chambers.map((c) => {
-              const spec = radCase.technique.aec.chambers.find((s) => s.id === c.id)!;
+              const spec = radCase.technique.aec!.chambers.find((s) => s.id === c.id)!;
               const state = c.active ? t("aecActive") : c.selected ? t("aecOutside") : t("aecNotSelected");
               return (
                 <li key={c.id} className={clsx("rounded border px-3 py-2 text-sm", c.active ? "border-signal bg-signal/10" : c.selected ? "border-bad/50 bg-bad/5" : "border-line")}>

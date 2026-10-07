@@ -112,6 +112,8 @@ function gaussBlur(src: Float32Array, w: number, h: number, radius: number): Flo
  */
 export function inspirationLut(spec: RadiographAssetSpec, extentReduction: number, size = 2048): Float32Array {
   const apex = spec.lungApexV, dome = spec.diaphragmDomeV;
+  // No lung landmarks (a limb baseline, S14.1b): the identity map.
+  if (apex === undefined || dome === undefined) return Float32Array.from({ length: size }, (_, i) => i / (size - 1));
   const domeOut = apex + (dome - apex) * (1 - extentReduction);
   const pts: [number, number][] = [[0, 0], [apex, apex], [domeOut, dome], [1, 1]];
   const lut = new Float32Array(size);
@@ -212,7 +214,7 @@ export function renderRadiograph(
   const sw = src.width, sh = src.height;
   const feather = TUNING.featherCm;
   const rot = plan.anatomy.rotation;
-  const lut = plan.anatomy.inspiration ? inspirationLut(spec, plan.anatomy.inspiration.extentReduction) : null;
+  const lut = plan.anatomy.inspiration && spec.lungApexV !== undefined ? inspirationLut(spec, plan.anatomy.inspiration.extentReduction) : null;
   const needZone = plan.technique.penetrationContrastKept !== null;
 
   // Two independent masks, each with a soft penumbra: the collimated field (what is exposed) and the extent of

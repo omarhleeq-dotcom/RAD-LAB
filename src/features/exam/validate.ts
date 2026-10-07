@@ -7,9 +7,10 @@
  * It never decides whether a clinical value is right — that is the evidence classes and the review checklist.
  * Used by the data tests, and by any future authoring / import path before a definition reaches a learner.
  */
+import { isRegisteredBodyPart } from "@/data/modalities";
 import { isRegisteredProjection } from "@/data/projections";
 import type { CheckRule } from "@/domain/case";
-import { RENDERER_IDS, SCENE_IDS, type CaseDefinition, type ExamDefinition } from "@/domain/exam";
+import { RENDERER_IDS, SCENE_IDS, type AnyExamDefinition, type CaseDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
 import { EVIDENCE_CLASSES, type Evidence } from "@/domain/technique";
 import { CATEGORIES, type NumericSettingKey, type RequiredNumericSettingKey } from "@/domain/simulation";
@@ -30,7 +31,22 @@ function ruleTexts(r: CheckRule): [string, LocalizedText | undefined][] {
   return base;
 }
 
-export function validateExam(exam: ExamDefinition): string[] {
+/**
+ * What counts as "registered" (S14.1b). Defaults to the platform registries; a test passes its own to validate a
+ * synthetic exam without adding anything to production data.
+ */
+export interface ExamRegistries {
+  projection: (id: string) => boolean;
+  scene: (id: string) => boolean;
+  bodyPart: (id: string) => boolean;
+}
+export const PLATFORM_REGISTRIES: ExamRegistries = {
+  projection: isRegisteredProjection,
+  scene: (id) => (SCENE_IDS as readonly string[]).includes(id),
+  bodyPart: isRegisteredBodyPart,
+};
+
+export function validateExam(exam: AnyExamDefinition, registered: ExamRegistries = PLATFORM_REGISTRIES): string[] {
   const p: string[] = [];
   const need = (ok: boolean, msg: string) => ok || p.push(msg);
 
@@ -38,11 +54,12 @@ export function validateExam(exam: ExamDefinition): string[] {
   need(exam.id.length > 0 && !exam.id.includes("/"), "id must be non-empty and contain no '/'");
   need(filled(exam.title), "title needs EN and AR");
   need(isEvidence(exam.evidence), "exam-level evidence needs a class and a reference");
-  need((SCENE_IDS as readonly string[]).includes(exam.scene.id), `unknown scene "${exam.scene.id}"`);
+  need(registered.scene(exam.scene.id), `unknown scene "${exam.scene.id}" (register it in SCENE_IDS and SCENES)`);
+  need(registered.bodyPart(exam.bodyPart), `unknown bodyPart "${exam.bodyPart}" (register it in src/data/modalities.ts)`);
   need((RENDERER_IDS as readonly string[]).includes(exam.render.renderer), `unknown renderer "${exam.render.renderer}"`);
   need(exam.availableProjections.includes(exam.requiredProjection), "requiredProjection must be one of availableProjections");
   // ProjectionId is open (S14-0): every projection an exam names must be registered in `src/data/projections.ts`.
-  for (const id of exam.availableProjections) need(isRegisteredProjection(id), `unknown projection "${id}" (register it in src/data/projections.ts)`);
+  for (const id of exam.availableProjections) need(registered.projection(id), `unknown projection "${id}" (register it in src/data/projections.ts)`);
 
   // detector / region / controls
   const { widthCm: W, heightCm: H } = exam.detector;
@@ -88,6 +105,7 @@ export function validateExam(exam: ExamDefinition): string[] {
         breathing: exam.availableBreathing,
         motionInstruction: exam.availableMotionInstructions,
       };
+      if (rule.setting === "breathing") need(!!exam.availableBreathing, `rule ${rule.id}: the exam declares no availableBreathing`);
       if (rule.setting.startsWith("choices.")) {
         const list = choiceOptions(rule.setting.slice("choices.".length));
         need(!!list, `rule ${rule.id}: "${rule.setting}" is not a declared choice control`);
@@ -97,6 +115,7 @@ export function validateExam(exam: ExamDefinition): string[] {
         if (list) need(list.includes(rule.expected), `rule ${rule.id}: expected "${rule.expected}" is not an available ${rule.setting}`);
       }
     }
+    if (rule.kind === "technique" && rule.check === "aec-chambers") need(!!exam.technique.aec, `rule ${rule.id}: the technique profile declares no aec`);
     if (rule.kind === "range") {
       need(RULE_NUMERIC_KEYS.includes(rule.setting) && !!exam.controls[rule.setting], `rule ${rule.id}: "${rule.setting}" is not a declared numeric control`);
       need(rule.acceptable[0] <= rule.ideal[0] && rule.ideal[1] <= rule.acceptable[1] && rule.ideal[0] <= rule.ideal[1], `rule ${rule.id}: ideal band must lie inside the acceptable band`);
@@ -105,6 +124,8 @@ export function validateExam(exam: ExamDefinition): string[] {
 
   // scoring
   for (const k of Object.keys(weights)) need((CATEGORIES as readonly string[]).includes(k) || filled(exam.scoring.categoryLabels?.[k]), `category "${k}" outside the core six needs a bilingual label in categoryLabels`);
+  // Breathing is optional (S14.1b): without `availableBreathing` there is no breathing category either.
+  if (!exam.availableBreathing) need((weights.breathing ?? 0) === 0, 'category "breathing" has weight but the exam declares no availableBreathing');
   const sum = Object.values(weights).reduce((a, b) => a + b, 0);
   need(sum === 100, `category weights sum to ${sum}, not 100`);
   need(exam.scoring.passThreshold > 0 && exam.scoring.passThreshold <= 100, "passThreshold must be in (0, 100]");
@@ -129,7 +150,7 @@ export function validateExam(exam: ExamDefinition): string[] {
   return p;
 }
 
-export function validateCase(exam: ExamDefinition, def: CaseDefinition): string[] {
+export function validateCase(exam: AnyExamDefinition, def: CaseDefinition): string[] {
   const p: string[] = [];
   const need = (ok: boolean, msg: string) => ok || p.push(msg);
   const s = def.initialSettings;
@@ -147,7 +168,9 @@ export function validateCase(exam: ExamDefinition, def: CaseDefinition): string[
 
   // initial state must be reachable with this exam's controls
   need(exam.availableProjections.includes(s.projection), `initial projection "${s.projection}" is not available`);
-  need(exam.availableBreathing.includes(s.breathing), `initial breathing "${s.breathing}" is not available`);
+  // Breathing is optional (S14.1b): the initial value exists exactly when the exam declares the control.
+  need((s.breathing !== undefined) === !!exam.availableBreathing, "initial breathing must be set exactly when the exam declares availableBreathing");
+  if (exam.availableBreathing && s.breathing !== undefined) need(exam.availableBreathing.includes(s.breathing), `initial breathing "${s.breathing}" is not available`);
   need(exam.availableMotionInstructions.includes(s.motionInstruction), `initial motion instruction "${s.motionInstruction}" is not available`);
   for (const k of NUMERIC_KEYS) {
     const c = exam.controls[k];
@@ -165,7 +188,7 @@ export function validateCase(exam: ExamDefinition, def: CaseDefinition): string[
   }
 
   // the cooperation profile must answer every instruction the learner can give
-  for (const b of exam.availableBreathing) need(def.patientCooperation.inspirationResponse[b] !== undefined, `patientCooperation has no response to breathing "${b}"`);
+  for (const b of exam.availableBreathing ?? []) need(def.patientCooperation.inspirationResponse?.[b] !== undefined, `patientCooperation has no response to breathing "${b}"`);
   for (const m of exam.availableMotionInstructions) need(def.patientCooperation.motionResponse[m] !== undefined, `patientCooperation has no response to motion instruction "${m}"`);
   return p;
 }
