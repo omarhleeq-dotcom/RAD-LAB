@@ -1,8 +1,6 @@
 import type { ReactNode } from "react";
-import { useTranslations } from "next-intl";
 import { HAND_CM_PER_PX, handImage } from "@/data/exams/xray/hand-geometry";
-import { SceneLabel } from "./SceneParts";
-import { LABEL_SIZE, SCENE, STROKE } from "./scene-style";
+import { SCENE, STROKE } from "./scene-style";
 import { handLateralOffsetCm, handPaBumpCm } from "./hand-visual";
 import type { FigureProps } from "./detector-figures";
 
@@ -18,7 +16,7 @@ import type { FigureProps } from "./detector-figures";
  * through the exam's required-anatomy region, so the figure sits where the baseline image will be drawn. Shapes are schematic,
  * never measured.
  */
-export function HandDrawing({ radCase, settings, showGuides, W, H }: FigureProps) {
+export function HandDrawing({ radCase, settings, W, H }: FigureProps) {
   const lateral = settings.projection === "hand-lateral";
   const im = handImage(lateral ? "lateral" : "pa");
   const a = radCase.requiredAnatomy;
@@ -29,7 +27,7 @@ export function HandDrawing({ radCase, settings, showGuides, W, H }: FigureProps
   const X = (px: number) => a.xCm * U + (px - x0) * k;
   const Y = (py: number) => a.yCm * U + (py - y0) * k;
   const g: G = { X, Y, k, H, W, U, wPx: im.widthPx, hPx: im.heightPx };
-  return lateral ? <LateralDrawing g={g} rotationDeg={settings.rotationDeg} showGuides={showGuides} /> : <PaDrawing g={g} rotationDeg={settings.rotationDeg} />;
+  return lateral ? <LateralDrawing g={g} rotationDeg={settings.rotationDeg} /> : <PaDrawing g={g} rotationDeg={settings.rotationDeg} />;
 }
 
 interface G {
@@ -137,8 +135,7 @@ function PaDrawing({ g, rotationDeg }: { g: G; rotationDeg: number }) {
 
 // ───────────────────────── lateral (extension) ─────────────────────────
 
-function LateralDrawing({ g, rotationDeg, showGuides }: { g: G; rotationDeg: number; showGuides: boolean }) {
-  const ts = useTranslations("sceneHand");
+function LateralDrawing({ g, rotationDeg }: { g: G; rotationDeg: number }) {
   const offPx = handLateralOffsetCm(rotationDeg) / HAND_CM_PER_PX;
   const { X, Y } = g;
   // Bundles that must be superimposed in a true lateral: the extended fingers over the metacarpals (one column), and the distal radius over the ulna.
@@ -170,11 +167,6 @@ function LateralDrawing({ g, rotationDeg, showGuides }: { g: G; rotationDeg: num
       {/* distal radius and ulna: superimposed in a true lateral; a second copy appears apart with the value */}
       {forearm(0, "f0")}
       {offPx !== 0 && forearm(offPx, "f1")}
-      {showGuides && (
-        <g aria-hidden style={{ pointerEvents: "none" }}>
-          <SceneLabel x={X(150)} y={Y(760)} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{ts("thumb")}</SceneLabel>
-        </g>
-      )}
     </>
   );
 }

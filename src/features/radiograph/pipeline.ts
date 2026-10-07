@@ -213,7 +213,18 @@ export function limbRotationValue(
     const first = u - handPaSpacingShiftU(u, v, rot, lm);
     return sample(clamp01(u - handPaSpacingShiftU(first, v, rot, lm)), v);
   }
-  if ((lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") || (lm.kind === "hand-lateral" && rot.kind === "hand-lateral")) {
+  if (lm.kind === "hand-lateral" && rot.kind === "hand-lateral") {
+    // As the wrist lateral, but a band may be limited to a horizontal window of the SOURCE content (the finger / metacarpal column).
+    const value = sample(clamp01(u), v);
+    const us = clamp01(u - rot.shiftU);
+    let w = 0;
+    for (const b of lm.bands) {
+      const win = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.02, b.u1 + 0.02, us) * (1 - smoothstep(b.u2 - 0.02, b.u2 + 0.02, us));
+      w = Math.max(w, bandWeight(b, v) * win);
+    }
+    return value + blend * w * (sample(us, v) - value);
+  }
+  if (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") {
     const value = sample(clamp01(u), v);
     let w = 0;
     for (const b of lm.bands) w = Math.max(w, bandWeight(b, v));

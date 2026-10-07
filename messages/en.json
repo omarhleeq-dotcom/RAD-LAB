@@ -706,7 +706,6 @@
     "rotation": "Wrist rotation (forearm turn)"
   },
   "sceneHand": {
-    "thumb": "Thumb",
     "ulnarSide": "Ulnar side",
     "thumbSide": "Thumb side",
     "fingers": "Fingers",

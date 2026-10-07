@@ -43,7 +43,7 @@ const PER = {
     centreAr: "المفصل السلامي المشطي الثالث",
     centrePage: "third MCP joint",
     kv: { full: [55, 65], partial: [50, 70] },
-    // Excess-collimation margin per side (ENGINE TEACHING CHOICE): the field is centred on the ray, the third MCP lies ≈ 2.8 cm nearer the fingertips than the middle of the region.
+    // Excess-collimation margin per side (ENGINE TEACHING CHOICE): the field is centred on the ray, the third MCP lies ≈ 2.7 cm nearer the fingertips than the middle of the region.
     excessCm: 3.5,
     projectionPass: T("Correct projection: hand PA (palm down, fingers slightly spread), as requested.", "الإسقاط صحيح: اليد بإسقاط PA (راحة اليد للأسفل والأصابع متباعدة قليلًا) كما هو مطلوب."),
     projectionFail: T(
