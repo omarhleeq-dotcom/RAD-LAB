@@ -147,3 +147,8 @@ Read the spec, CLAUDE.md and the previous session doc first; write the reference
 
 ## Session 12 status
 Delivered: Chest Lateral exam, case, asset (A-006 / A-007), scene, tests and QA — see `docs/session-12-chest-lateral.md` and `DECISIONS.md` S12-1 … S12-11. Open: re-verify A-006 on Commons; educator review (O5); chin / arm overlays; broad-shoulder CR lowering and wheelchair / cart variants.
+
+## Session 14.1 (wrist pilot) — split decided 2026-10-07 (`DECISIONS.md` S14.1-3; DECISIONS wins on conflict)
+- **S14.1a — docs only:** [`RAD-LAB_Medical_Reference_Wrist.md`](RAD-LAB_Medical_Reference_Wrist.md) (Wrist PA + Lateral, Bontrager p.156 / 158; Needs section with gaps G1–G10). The Commons image shortlist is outstanding (O25).
+- **S14.1b — byte-identical limb generalisation** (reference §9.3): optional chin / shoulder / breathing / lung fields / AEC, open scene id and `bodyPart`, an effect-registry hook, a test-only synthetic limb fixture. Starts after the reference is merged.
+- **S14.1c — the two wrist exams** (`wrist-pa`, `wrist-lateral`) under `exam-recipe.md` (reference §9.4); images approved by the owner; owner decisions O21–O24 answered first.
