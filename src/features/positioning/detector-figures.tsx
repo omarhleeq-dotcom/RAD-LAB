@@ -350,4 +350,5 @@ export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "elbow-lateral": ELBOW_LATERAL_FIGURE,
   "foot-ap": FOOT_AP_FIGURE,
   "foot-oblique": FOOT_OBLIQUE_FIGURE,
+  "knee-ap": KNEE_AP_FIGURE,
 };

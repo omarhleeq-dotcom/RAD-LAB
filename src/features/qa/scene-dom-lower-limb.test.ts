@@ -45,7 +45,10 @@ for (const examId of EXAM_IDS) {
     const FILE = `scripts/qa/scene-dom/${examId}-hashes.json`;
     const out: Record<string, string> = {};
     for (const c of cases) {
+      // A projection state applies only to the exam's own family (a knee projection on a foot case would depend on the other family's strings).
       for (const [vn, patch] of Object.entries(STATES)) {
+        if (vn.startsWith("projFoot") && !examId.startsWith("foot")) continue;
+        if (vn.startsWith("projKnee") && !examId.startsWith("knee")) continue;
         const settings = { ...c.initialSettings, ...patch } as SimulationSettings;
         for (const locale of ["en", "ar"] as const) {
           for (const mode of ["practice", "assessment"] as const) {

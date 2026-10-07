@@ -11,7 +11,7 @@ import type { RadCase } from "@/domain/case";
 import type { SceneId } from "@/domain/exam";
 import type { SimulationMode, SimulationSettings } from "@/domain/simulation";
 import { PositioningView } from "./PositioningView";
-import { CHEST_AP_SUPINE_LAYOUT, CHEST_LATERAL_LAYOUT, CHEST_PA_LAYOUT, ELBOW_AP_LAYOUT, ELBOW_LATERAL_LAYOUT, HAND_LATERAL_LAYOUT, HAND_PA_LAYOUT, WRIST_LATERAL_LAYOUT, WRIST_PA_LAYOUT, FOOT_AP_LAYOUT, FOOT_OBLIQUE_LAYOUT, type SceneLayout } from "./scene-layouts";
+import { CHEST_AP_SUPINE_LAYOUT, CHEST_LATERAL_LAYOUT, CHEST_PA_LAYOUT, ELBOW_AP_LAYOUT, ELBOW_LATERAL_LAYOUT, HAND_LATERAL_LAYOUT, HAND_PA_LAYOUT, WRIST_LATERAL_LAYOUT, WRIST_PA_LAYOUT, FOOT_AP_LAYOUT, FOOT_OBLIQUE_LAYOUT, KNEE_AP_LAYOUT, type SceneLayout } from "./scene-layouts";
 
 export interface SceneProps {
   radCase: RadCase;
@@ -44,6 +44,7 @@ export const SCENES: Record<SceneId, ComponentType<SceneProps>> = {
   "elbow-lateral": layoutScene(ELBOW_LATERAL_LAYOUT),
   "foot-ap": layoutScene(FOOT_AP_LAYOUT),
   "foot-oblique": layoutScene(FOOT_OBLIQUE_LAYOUT),
+  "knee-ap": layoutScene(KNEE_AP_LAYOUT),
 };
 
 /** The scene an (composed) case draws: its exam's `scene.id`. The exam id is the part of the public case id before "/". */

@@ -121,7 +121,9 @@
       "elbow-ap": "Elbow AP (extended)",
       "elbow-lateral": "Elbow lateral (flexed 90°)",
       "foot-ap": "Foot AP (dorsoplantar)",
-      "foot-oblique": "Foot AP medial oblique"
+      "foot-oblique": "Foot AP medial oblique",
+      "knee-ap": "Knee AP",
+      "knee-lateral": "Knee lateral"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -705,6 +707,62 @@
           "desc": "The projection you selected is not simulated in this exam. The AP medial oblique foot reference appearance is shown for layout only."
         }
       }
+    },
+    "knee-ap": {
+      "alt": "Simulated educational AP knee radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The AP knee reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the AP knee reference appearance.",
+      "altFindings": {
+        "rotation": "the condyles and the joint space no longer symmetric and the fibular head covered by the tibia more or less than about half from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the femoral condyles and the tibial plateau) and bone detail",
+        "projection": "the selected projection is not simulated; the AP knee appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference AP knee appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult right knee (a 31-year-old male, per the file description), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → condyles asymmetric, fibular head more or less covered",
+          "desc": "In a true AP knee the femoral condyles and the joint space are symmetric, about the medial half of the fibular head is superimposed by the tibia and the intercondylar eminence is centred in the fossa (Bontrager p.246). With rotation the condyle edges and the eminence move by different amounts, and the fibula and the tibia move as two layers so the fibular head is covered more or less. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the whole leg plus two layers below the joint), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the femoral condyles and the tibial plateau) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The AP knee reference appearance is shown for layout only."
+        }
+      }
+    },
+    "knee-lateral": {
+      "alt": "Simulated educational lateral knee radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The lateral knee reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the lateral knee reference appearance.",
+      "altFindings": {
+        "rotation": "the posterior borders of the femoral condyles no longer superimposed (a double outline) and the fibular head overlap changed from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the femoral condyles and the tibial plateau) and bone detail",
+        "projection": "the selected projection is not simulated; the lateral knee appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference lateral knee appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult right knee (a 31-year-old male, per the file description), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → condyle borders not superimposed",
+          "desc": "In a true lateral knee the posterior borders of the femoral condyles are superimposed; with over-rotation less of the fibular head is covered by the tibia and with under-rotation more (Bontrager p.249). With rotation the condyle outline and the fibular head region are drawn twice, a far-side copy and a near-side copy, so the outline is doubled. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (whole windows drawn twice, not occlusion), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the femoral condyles and the tibial plateau) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The lateral knee reference appearance is shown for layout only."
+        }
+      }
     }
   },
   "modality": {
@@ -799,7 +857,10 @@
     "altElbowSide": "Side view of the set-up: the patient seated at the end of the table, the arm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm.",
     "altFootAp": "The right foot is drawn on the detector as for an AP (dorsoplantar) projection, toes toward the top and the big toe side on the viewer's left. Rotation is set to {deg}°.",
     "altFootOblique": "The right foot is drawn on the detector as for an AP medial oblique projection, toes toward the top and the big toe side on the viewer's left. The plantar surface angle is set to {deg}°.",
-    "altFootSide": "Side view of the set-up: the patient lying on the table with the knee bent and the sole on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm."
+    "altFootSide": "Side view of the set-up: the patient lying on the table with the knee bent and the sole on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm.",
+    "altKneeAp": "The right knee is drawn on the detector as for an AP projection with the leg extended, the femur toward the top and the lateral side (the fibula) on the viewer's left. Rotation is set to {deg}°.",
+    "altKneeLateral": "The right knee is drawn on the detector as for a lateral (mediolateral) projection with the knee flexed, the femur toward the top and the front of the knee on the viewer's left. Rotation is set to {deg}°.",
+    "altKneeSide": "Side view of the set-up: the patient lying on the table, the knee on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm."
   },
   "sceneWrist": {
     "ulna": "Ulna",
@@ -902,6 +963,34 @@
     "obliqueName": "AP medial oblique",
     "endView": "End view",
     "endAngleSole": "Sole {deg}° to the detector",
+    "endAngleTurn": "Turn {deg}°"
+  },
+  "positioningKnee": {
+    "alt": "Interactive schematic of the detector with the right knee, the collimated field, the central-ray target and the side marker.",
+    "midline": "Long axis of the leg",
+    "midlineLateral": "Mid-knee line",
+    "detectorCaptionAp": "Detector view as displayed: right knee, AP, leg extended (femur toward the top, the lateral side — the fibula — on the viewer's left)",
+    "detectorCaptionLateral": "Detector view as displayed: right knee, lateral (mediolateral), knee flexed (femur toward the top, the front of the knee on the viewer's left)",
+    "sideViewCaption": "Side view of the table set-up",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The leg position, the flexion of the lateral knee, the grid, shielding and the patient's build are shown as context only: they are not scored in this version.",
+    "rotationHelpAp": "Rotation of the leg about its long axis (0 = the interepicondylar line parallel to the detector). Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-AP cues (symmetric condyles, the fibular head about half covered by the tibia).",
+    "rotationHelpLateral": "Rotation of the leg about its long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-lateral cues (the posterior borders of the femoral condyles superimposed, the fibular head overlap).",
+    "markerConvention": "Marker: choose the letter of the patient's side (this is the RIGHT knee) and place it on the margin of the field, clear of the knee. No left/right half of the image is checked for a single limb.",
+    "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the knee.",
+    "rotationAp": "Knee rotation (turn of the leg)",
+    "rotationLateral": "Knee rotation (turn of the leg)"
+  },
+  "sceneKnee": {
+    "lateralSide": "Lateral side",
+    "medialSide": "Medial side",
+    "front": "Front of the knee",
+    "back": "Back of the knee",
+    "femur": "Femur",
+    "tibia": "Tibia / fibula",
+    "target": "Knee joint",
+    "apName": "AP",
+    "lateralName": "lateral",
+    "endView": "End view",
     "endAngleTurn": "Turn {deg}°"
   }
 }

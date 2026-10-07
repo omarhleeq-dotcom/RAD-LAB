@@ -18,7 +18,7 @@ import type { FigureProps } from "./detector-figures";
  *    deviation of the plantar angle from 40°.
  * The outlines are illustrative (read by eye from the baselines). Anatomy is an image convention and is never mirrored by RTL.
  */
-export function LowerLimbDrawing({ radCase, settings, showGuides }: FigureProps) {
+export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: FigureProps) {
   const kind = (["knee-ap", "knee-lateral", "foot-ap", "foot-oblique"].includes(settings.projection) ? settings.projection : radCase.requiredProjection) as LowerLimbKind;
   const im = lowerLimbImage(kind);
   const a = radCase.requiredAnatomy;
@@ -29,9 +29,20 @@ export function LowerLimbDrawing({ radCase, settings, showGuides }: FigureProps)
   const X = (px: number) => a.xCm * U + (px - x0) * k;
   const Y = (py: number) => a.yCm * U + (py - y0) * k;
   const rot = settings.rotationDeg;
-  if (kind === "knee-ap") return <KneeAp X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />;
-  if (kind === "knee-lateral") return <KneeLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />;
-  return <Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} bands={radCase.radiograph.limbRotation && "bands" in radCase.radiograph.limbRotation ? radCase.radiograph.limbRotation.bands : []} />;
+  // The limb continues beyond the detector (the outlines run past the image): clip the drawing to the detector.
+  const clip = (node: ReactNode) => (
+    <>
+      <defs>
+        <clipPath id="lower-limb-detector-clip">
+          <rect x={0} y={0} width={W} height={H} />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#lower-limb-detector-clip)">{node}</g>
+    </>
+  );
+  if (kind === "knee-ap") return clip(<KneeAp X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
+  if (kind === "knee-lateral") return clip(<KneeLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
+  return clip(<Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} bands={radCase.radiograph.limbRotation && "bands" in radCase.radiograph.limbRotation ? radCase.radiograph.limbRotation.bands : []} />);
 }
 
 type Map = (v: number) => number;
