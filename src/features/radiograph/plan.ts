@@ -76,6 +76,12 @@ export interface LimbRotationPlan {
   degrees: number;
   shiftU: number;
   overlapShiftU: number;
+  /**
+   * Hand kinds only (S14.2b-FIX): the 2.5D hand model's result-image input (`features/hand-model`), one entry per landmark band in
+   * the band order of the asset. PA: displacement anchors (fraction of the image width, sorted by u) interpolated across the band;
+   * lateral: the shifts of the copies of the structures that must be superimposed (one copy per entry; all 0 at the base pose).
+   */
+  hand?: { anchors?: { u: number; du: number }[][]; shifts?: number[][] };
 }
 
 export interface RenderPlan {

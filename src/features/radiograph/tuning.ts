@@ -47,10 +47,11 @@ export const TUNING = {
     lateralShiftPerDeg: 0.012,
     /** Soft edge of every band, as a fraction of image height. */
     bandSoft: 0.03,
-    /** Hand PA (S14.2b): peak horizontal bump of the metacarpal / phalangeal bands, fraction of image width per degree (sign = the value's sign): the spaces between the shafts become unequal. */
-    handPaSpacingShiftPerDeg: 0.005,
-    /** Hand lateral (extension, S14.2b): offset of the second copy of the bands that must be superimposed, fraction of image width per degree (sign = the value's sign). */
-    handLateralShiftPerDeg: 0.012,
+    /**
+     * Hand (S14.2b-FIX): drawn degrees of the 2.5D hand model per degree of the internal rotation value (an illustrative gain so ±15°
+     * reads as a clear turn; scoring never uses it). The model itself is `features/hand-model/hand-model.ts`.
+     */
+    handModelGainPerDeg: 2.3,
   },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },

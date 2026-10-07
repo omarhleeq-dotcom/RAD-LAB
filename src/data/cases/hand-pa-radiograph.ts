@@ -38,10 +38,12 @@ export const handPaRadiograph: RadiographAssetSpec = {
   limbRotation: {
     kind: "hand-pa",
     bands: [
-      // Phalanges of digits 2–5 (rows ≈ 30–880 of 2082; columns ≈ 44–1100).
-      { v1: 0.01, v2: 0.42, u1: 0.03, u2: 0.75 },
-      // Metacarpal shafts 2–5 (rows ≈ 920–1480; columns ≈ 117–1056).
-      { v1: 0.44, v2: 0.71, u1: 0.08, u2: 0.72 },
+      // Phalanges of digits 2–5 (rows ≈ 30–880 of 2082; the whole width).
+      { v1: 0.01, v2: 0.42 },
+      // Metacarpal shafts 2–5 (rows ≈ 920–1480; columns up to ≈ 0.58 of the width, i.e. not the thumb).
+      { v1: 0.44, v2: 0.71, u1: -0.1, u2: 0.58 },
+      // The thumb (rows ≈ 900–1630; columns from ≈ 0.50): its own band so it moves as a unit and the palm is not sheared.
+      { v1: 0.43, v2: 0.78, u1: 0.5, u2: 1.1 },
     ],
   },
 };

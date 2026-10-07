@@ -177,11 +177,29 @@ export function wristPaSpacingShiftU(u: number, v: number, rot: NonNullable<Rend
   return rot.shiftU * Math.sin(Math.PI * clamp01((u - u1) / (u2 - u1))) * bandWeight(lm.spacing, v);
 }
 
-/** Hand PA (S14.2b): the same bump as the wrist PA, summed over the declared bands (each with its own horizontal extent). */
-export function handPaSpacingShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "hand-pa" }>): number {
+/** Piecewise-linear interpolation through anchors sorted by u (constant beyond the outer ones). */
+function anchorShift(anchors: { u: number; du: number }[], u: number): number {
+  const n = anchors.length;
+  if (n === 0) return 0;
+  if (u <= anchors[0]!.u) return anchors[0]!.du;
+  if (u >= anchors[n - 1]!.u) return anchors[n - 1]!.du;
+  for (let k = 0; k < n - 1; k++) {
+    const p = anchors[k]!, q = anchors[k + 1]!;
+    if (u <= q.u) return q.u === p.u ? p.du : p.du + ((u - p.u) / (q.u - p.u)) * (q.du - p.du);
+  }
+  return 0;
+}
+
+/** Hand PA (S14.2b-FIX): displacement (fraction of the image width) of the source content at (u, v): the band-weighted anchor interpolation of the 2.5D hand model. */
+export function handPaShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "hand-pa" }>): number {
   let shift = 0;
-  for (const b of lm.bands) shift = Math.max(shift, bandWeight(b, v) * Math.sin(Math.PI * clamp01((u - b.u1) / (b.u2 - b.u1))));
-  return rot.shiftU * shift;
+  lm.bands.forEach((b, i) => {
+    // A band may carry a horizontal window of the SOURCE content (soft edge 0.06 of the image width): the thumb band moves the thumb only.
+    const win = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.06, b.u1 + 0.06, u) * (1 - smoothstep(b.u2 - 0.06, b.u2 + 0.06, u));
+    const w = bandWeight(b, v) * win;
+    if (w > 0) shift += w * anchorShift(rot.hand?.anchors?.[i] ?? [], u);
+  });
+  return shift;
 }
 
 /**
@@ -212,19 +230,31 @@ export function limbRotationValue(
     return value;
   }
   if (lm.kind === "hand-pa" && rot.kind === "hand-pa") {
-    const first = u - handPaSpacingShiftU(u, v, rot, lm);
-    return sample(clamp01(u - handPaSpacingShiftU(first, v, rot, lm)), v);
+    // Backward map u_out → u_src by fixed-point iteration (the model's displacement field is smooth and slowly varying).
+    let us = u;
+    for (let k = 0; k < 4; k++) us = u - handPaShiftU(us, v, rot, lm);
+    return sample(clamp01(us), v);
   }
   if (lm.kind === "hand-lateral" && rot.kind === "hand-lateral") {
-    // As the wrist lateral, but a band may be limited to a horizontal window of the SOURCE content (the finger / metacarpal column).
+    // One copy per structure at its projected position, blended equally inside each band (the optional horizontal window limits the band
+    // to the finger / metacarpal column so the separated thumb is not copied). At the base pose every shift is 0: the picture is the baseline.
     const value = sample(clamp01(u), v);
-    const us = clamp01(u - rot.shiftU);
-    let w = 0;
-    for (const b of lm.bands) {
-      const win = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.02, b.u1 + 0.02, us) * (1 - smoothstep(b.u2 - 0.02, b.u2 + 0.02, us));
-      w = Math.max(w, bandWeight(b, v) * win);
-    }
-    return value + blend * w * (sample(us, v) - value);
+    let out = value;
+    lm.bands.forEach((b, i) => {
+      const shifts = rot.hand?.shifts?.[i];
+      if (!shifts || shifts.length === 0) return;
+      const wv = bandWeight(b, v);
+      if (wv <= 0) return;
+      let sum = 0, win = 0;
+      for (const sh of shifts) {
+        const us = clamp01(u - sh);
+        const w = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.02, b.u1 + 0.02, us) * (1 - smoothstep(b.u2 - 0.02, b.u2 + 0.02, us));
+        sum += sample(us, v) * w + value * (1 - w);
+        win += 1;
+      }
+      out += wv * (sum / win - value);
+    });
+    return out;
   }
   if (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") {
     const value = sample(clamp01(u), v);
