@@ -16,7 +16,7 @@ import {
   type FieldEdge,
 } from "@/features/simulation/coords";
 import { collimatedField } from "@/features/simulation/geometry";
-import { CHEST_PA_FIGURE, U, type DetectorFigure } from "./detector-figures";
+import { CHEST_PA_FIGURE, DETECTOR_FIGURES, U, type DetectorFigure } from "./detector-figures";
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, UNDER } from "./scene-style";
 
@@ -24,6 +24,8 @@ const KEY_STEP = 0.02;
 const KEY_STEP_LARGE = 0.1;
 const HANDLE = 14; // visible handle size
 const HIT = 44; // touch-friendly hit target
+/** Size of the midline / target-zone labels in the top margin band of the limb scenes (S-VIS-1b-6, O54: was 15; ≈ 11.9 px on a 390 px phone). */
+const MARGIN_LABEL_SIZE = 16.5;
 
 type DragTarget = { kind: "ray" } | { kind: "marker" } | { kind: "edge"; edge: FieldEdge };
 
@@ -75,7 +77,11 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
   const t = useTranslations("positioning");
   const tAny = useTranslations() as unknown as (key: string) => string;
   const ts = useTranslations("scene");
-  const { Drawing, Orientation } = figure;
+  const { Drawing } = figure;
+  // The side / axis / midline labels follow the SELECTED projection, not the exam (S-VIS-1b-4, O72): a limb figure (they all declare margin guide
+  // labels) is looked up by the projection id; the chest figures keep their own labels (byte-identical).
+  const labels: DetectorFigure = figure.marginGuideLabels ? (DETECTOR_FIGURES[settings.projection] ?? figure) : figure;
+  const { Orientation } = labels;
   const [drag, setDrag] = useState<{ target: DragTarget; grab: NormPoint } | null>(null);
 
   const { detector, positioning } = radCase;
@@ -84,7 +90,9 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
   const frame: DetectorFrame = { x: 0, y: 0, width: W, height: H };
   // A figure with margin guide labels (S-VIS-1-4) gets two more label rows above the orientation labels.
   const top = figure.marginGuideLabels ? 148 : 90;
-  const viewBox: Box = { x: -30, y: -top, width: W + 60, height: H + 30 + top };
+  // ... and the bottom axis label sits 5 units lower, so it clears the bottom collimation handle at the default field (S-VIS-1b-3, O53); the frame grows by 8.
+  const bottom = figure.marginGuideLabels ? 38 : 30;
+  const viewBox: Box = { x: -30, y: -top, width: W + 60, height: H + bottom + top };
 
   const field = collimatedField(settings, detector);
   const fx = field.x1 * U, fy = field.y1 * U, fw = (field.x2 - field.x1) * U, fh = (field.y2 - field.y1) * U;
@@ -204,12 +212,12 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
           </UnderStroked>
           {figure.marginGuideLabels ? (
             <>
-              <SceneLabel x={W - 4} y={-122} size={LABEL_SIZE.detector - 5} anchor="end" fill={SCENE.guide}>{tAny(figure.midlineKey)}</SceneLabel>
-              <SceneLabel x={W - 4} y={-92} size={LABEL_SIZE.detector - 5} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
+              <SceneLabel x={W - 4} y={-122} size={MARGIN_LABEL_SIZE} anchor="end" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
+              <SceneLabel x={W - 4} y={-92} size={MARGIN_LABEL_SIZE} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
             </>
           ) : (
             <>
-              <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{tAny(figure.midlineKey)}</SceneLabel>
+              <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
               <SceneLabel x={W - 8} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 16} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
             </>
           )}
@@ -248,9 +256,9 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       {/* orientation labels (image convention, never mirrored by RTL): Head at the top, Feet at the bottom edge; anterior / posterior (lateral) or the patient's sides (frontal, practice guides) */}
       <g aria-hidden style={{ pointerEvents: "none" }}>
         <SceneArrow x1={-20} y1={-48} x2={-20} y2={-80} />
-        <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{figure.axis ? tAny(figure.axis.top) : ts("head")}</SceneLabel>
+        <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
         <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
-        <SceneLabel x={44} y={H + 24} size={LABEL_SIZE.detector}>{figure.axis ? tAny(figure.axis.bottom) : ts("feet")}</SceneLabel>
+        <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 24)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
         <Orientation W={W} showGuides={showGuides} />
       </g>
 
