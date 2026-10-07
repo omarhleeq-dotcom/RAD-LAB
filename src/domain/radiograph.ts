@@ -107,4 +107,10 @@ export type LimbRotationLandmarks =
   // `u1`..`u2`); lateral (extension) = the bands that must be superimposed (metacarpals + phalanges,
   // distal radius / ulna). A band may carry a horizontal window `u1`..`u2` (the finger / metacarpal column, so the separated thumb is not duplicated).
   | { kind: "hand-pa"; bands: (ImageBand & { u1?: number; u2?: number })[] }
-  | { kind: "hand-lateral"; bands: (ImageBand & { u1?: number; u2?: number })[] };
+  | { kind: "hand-lateral"; bands: (ImageBand & { u1?: number; u2?: number })[] }
+  // Elbow (S14.3): AP = the forearm rows (`forearm`, from `v1` to the image bottom) where the ULNA layer (source u < `splitU`) and the RADIUS
+  // layer (u >= `splitU`) are displaced separately and may overlap, the contact line between the two bones at `splitU`; the whole image is
+  // also warped by the elbow model's column anchors. Lateral = the bands whose structures must be superimposed (distal humerus condyle
+  // outlines; radial head / coronoid), each limited to a horizontal window `u1`..`u2` of the source.
+  | { kind: "elbow-ap"; forearm: ImageBand & { splitU: number } }
+  | { kind: "elbow-lateral"; bands: (ImageBand & { u1: number; u2: number })[] };

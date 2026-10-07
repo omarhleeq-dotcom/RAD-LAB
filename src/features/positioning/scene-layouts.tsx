@@ -11,7 +11,8 @@ import type { ComponentType } from "react";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { ApSupineView } from "./ApSupineView";
-import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
+import { ElbowSideView } from "./ElbowSideView";
+import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, ELBOW_AP_FIGURE, ELBOW_LATERAL_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
 import { HandSideView } from "./HandSideView";
 import { ApPatientCues, LateralPatientCues, PatientCues, type CuesProps } from "./PatientCues";
 import { PlanView } from "./PlanView";
@@ -121,3 +122,21 @@ const handLayout = (figure: DetectorFigure, kind: "Pa" | "Lateral"): SceneLayout
 
 export const HAND_PA_LAYOUT: SceneLayout = handLayout(HAND_PA_FIGURE, "Pa");
 export const HAND_LATERAL_LAYOUT: SceneLayout = handLayout(HAND_LATERAL_FIGURE, "Lateral");
+
+/** Elbow (S14.3): as the wrist and hand, the detector view draws the elbow and the second view is a SIDE view of the table set-up (no chest plan view, no patient-cue panel). */
+const elbowLayout = (figure: DetectorFigure, kind: "Ap" | "Lateral"): SceneLayout => ({
+  figure,
+  SecondView: ElbowSideView,
+  texts: {
+    detectorCaption: `positioningElbow.detectorCaption${kind}`,
+    secondViewCaption: "positioningElbow.sideViewCaption",
+    schematicNote: "positioningElbow.schematicNote",
+    rotationHelp: `positioningElbow.rotationHelp${kind}`,
+    markerConvention: "positioningElbow.markerConvention",
+    markerHint: "positioningElbow.markerHint",
+    rotationLabel: "positioningElbow.rotation",
+  },
+});
+
+export const ELBOW_AP_LAYOUT: SceneLayout = elbowLayout(ELBOW_AP_FIGURE, "Ap");
+export const ELBOW_LATERAL_LAYOUT: SceneLayout = elbowLayout(ELBOW_LATERAL_FIGURE, "Lateral");

@@ -117,7 +117,9 @@
       "wrist-pa": "Wrist PA",
       "wrist-lateral": "Wrist lateral",
       "hand-pa": "Hand PA",
-      "hand-lateral": "Hand lateral (extension)"
+      "hand-lateral": "Hand lateral (extension)",
+      "elbow-ap": "Elbow AP (extended)",
+      "elbow-lateral": "Elbow lateral (flexed 90°)"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -589,6 +591,62 @@
           "desc": "The projection you selected is not simulated in this exam. The lateral (extension) hand reference appearance is shown for layout only."
         }
       }
+    },
+    "elbow-ap": {
+      "alt": "Simulated educational AP (extended) elbow radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The AP (extended) elbow reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the AP (extended) elbow reference appearance.",
+      "altFindings": {
+        "rotation": "the epicondyles no longer in profile and the radius drawn apart from, or over, the ulna from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the condyles and the proximal ulna) and bone detail",
+        "projection": "the selected projection is not simulated; the AP (extended) elbow appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference AP (extended) elbow appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult left elbow (a 31-year-old male, as described by its author), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → epicondyles not in profile, radial head and ulna apart or superimposed",
+          "desc": "In a true AP elbow the epicondyles are in profile and the radial head, neck and tubercle are separated from the ulna or only slightly superimposed by it (Bontrager p.166). With rotation the epicondyles move toward each other (the interepicondylar distance narrows) and the radius is drawn apart from, or over, the ulna. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the whole arm plus two forearm layers that may overlap, the superimposition drawn as an average), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the condyles and the proximal ulna) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The AP (extended) elbow reference appearance is shown for layout only."
+        }
+      }
+    },
+    "elbow-lateral": {
+      "alt": "Simulated educational lateral (flexed 90°) elbow radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The lateral (flexed 90°) elbow reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the lateral (flexed 90°) elbow reference appearance.",
+      "altFindings": {
+        "rotation": "the condyle outlines and the radial head / coronoid drawn apart (a double outline) from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the condyles and the proximal ulna / olecranon) and bone detail",
+        "projection": "the selected projection is not simulated; the lateral (flexed 90°) elbow appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference lateral (flexed 90°) elbow appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult left elbow (a 31-year-old male, as described by its author), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → condyle outlines not superimposed",
+          "desc": "In a true lateral elbow (90° flexion) the epicondyles / condyle outlines are superimposed and about half of the radial head is covered by the coronoid process (Bontrager p.172). With rotation the condyle outlines and the radial head / coronoid region are drawn twice, apart: a stronger copy for the side nearer the detector and a weaker one for the side farther from it. Only the amount of rotation is scored, not its direction. The concentric arcs of the trochlear sulcus and the double ridges of the capitulum and trochlea (other Bontrager criteria) are not drawn: one baseline image cannot show them honestly. The amount drawn is an educational approximation (two blended copies, not a model of structures covering one another), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the condyles and the proximal ulna / olecranon) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The lateral (flexed 90°) elbow reference appearance is shown for layout only."
+        }
+      }
     }
   },
   "modality": {
@@ -677,7 +735,10 @@
     "altWristSide": "Side view of the set-up: the patient seated at the end of the table, the forearm and hand lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm.",
     "altHandPa": "The left hand and forearm are drawn on the detector as for a PA (palm down), fingers toward the top and the thumb on the viewer's right. Rotation is set to {deg}°.",
     "altHandLateral": "The left hand and forearm are drawn on the detector as for a lateral with the fingers extended (thumb side up), fingers toward the top. Rotation is set to {deg}°.",
-    "altHandSide": "Side view of the set-up: the patient seated at the end of the table, the hand and forearm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm."
+    "altHandSide": "Side view of the set-up: the patient seated at the end of the table, the hand and forearm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm.",
+    "altElbowAp": "The left elbow is drawn on the detector as for an AP (fully extended, hand supinated), the upper arm toward the top and the medial side on the viewer's left. Rotation is set to {deg}°.",
+    "altElbowLateral": "The left elbow is drawn on the detector as for a lateral, flexed 90° with the thumb side up, the upper arm toward the top and the forearm toward the viewer's left. Rotation is set to {deg}°.",
+    "altElbowSide": "Side view of the set-up: the patient seated at the end of the table, the arm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm."
   },
   "sceneWrist": {
     "ulna": "Ulna",
@@ -728,5 +789,32 @@
     "markerConvention": "Marker: choose the letter of the patient's side (this is the LEFT hand) and place it inside the edge of the field, clear of the hand anatomy. No left/right half of the image is required for a single limb.",
     "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the hand.",
     "rotation": "Hand rotation (forearm turn)"
+  },
+  "positioningElbow": {
+    "alt": "Interactive schematic of the detector with the left elbow, the collimated field, the central-ray target and the side marker.",
+    "midline": "Long axis",
+    "midlineLateral": "Mid-elbow line",
+    "detectorCaptionAp": "Detector view as displayed: left elbow, AP, fully extended and supinated (upper arm toward the top, medial side on the viewer's left)",
+    "detectorCaptionLateral": "Detector view as displayed: left elbow, lateral, flexed 90° with the thumb side up (upper arm toward the top, forearm toward the viewer's left)",
+    "sideViewCaption": "Side view of the table set-up",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The arm resting on the detector, the supination of the hand, the flexion angle, the shoulder position, shielding and the anode-heel placement are shown as context only: they are not scored in this version.",
+    "rotationHelpAp": "Rotation of the arm and forearm about their long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-AP cues (the epicondyles in profile, the radial head, neck and tubercle separated from the ulna).",
+    "rotationHelpLateral": "Rotation of the arm about its long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-lateral cues (the epicondyles / condyle outlines superimposed, the radial head about half covered by the coronoid process).",
+    "markerConvention": "Marker: choose the letter of the patient's side (this is the LEFT elbow) and place it inside the edge of the field, clear of the elbow anatomy. No left/right half of the image is required for a single limb.",
+    "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the elbow.",
+    "rotation": "Elbow rotation (arm turn)"
+  },
+  "sceneElbow": {
+    "medialSide": "Medial side",
+    "lateralSide": "Lateral side",
+    "forearmSide": "Forearm",
+    "upperArm": "Upper arm",
+    "forearm": "Forearm",
+    "elbowPoint": "Point of the elbow",
+    "midElbow": "Mid-elbow joint",
+    "seated": "Patient seated",
+    "apName": "AP (fully extended)",
+    "lateralName": "lateral (flexed 90°, thumb side up)",
+    "upperArmTowardViewer": "Upper arm (toward you)"
   }
 }

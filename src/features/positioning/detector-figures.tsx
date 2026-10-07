@@ -12,6 +12,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { FrontalFigure } from "./FrontalFigure";
 import { LateralFigure } from "./LateralFigure";
+import { ElbowDrawing } from "./ElbowFigure";
 import { HandDrawing } from "./HandFigure";
 import { WristDrawing } from "./WristFigure";
 import { SceneLabel } from "./SceneParts";
@@ -189,6 +190,51 @@ export const HAND_LATERAL_FIGURE: DetectorFigure = {
   axis: { top: "sceneHand.fingers", bottom: "sceneHand.forearm" },
 };
 
+// Elbow (S14.3): the figure draws the left elbow; the AP labels the medial and lateral sides (guides ON), the lateral labels the forearm side (guides ON).
+function ElbowApOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneElbow");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("medialSide")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("lateralSide")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+function ElbowLateralOrientation({ showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneElbow");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("forearmSide")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+const elbowAlt = (ts: (key: string, values?: Record<string, string>) => string, s: SimulationSettings) =>
+  ts(s.projection === "elbow-lateral" ? "altElbowLateral" : "altElbowAp", { deg: String(s.rotationDeg) });
+
+export const ELBOW_AP_FIGURE: DetectorFigure = {
+  altKey: "positioningElbow.alt",
+  midlineKey: "positioningElbow.midline",
+  alt: elbowAlt,
+  Drawing: ElbowDrawing,
+  Orientation: ElbowApOrientation,
+  axis: { top: "sceneElbow.upperArm", bottom: "sceneElbow.forearm" },
+};
+
+export const ELBOW_LATERAL_FIGURE: DetectorFigure = {
+  altKey: "positioningElbow.alt",
+  midlineKey: "positioningElbow.midlineLateral",
+  alt: elbowAlt,
+  Drawing: ElbowDrawing,
+  Orientation: ElbowLateralOrientation,
+  axis: { top: "sceneElbow.upperArm", bottom: "sceneElbow.elbowPoint" },
+};
+
 /** The registry. The AP supine scene draws the PA frontal figure on the detector view (its own part is the side view). */
 export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "chest-pa": CHEST_PA_FIGURE,
@@ -197,4 +243,6 @@ export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "wrist-lateral": WRIST_LATERAL_FIGURE,
   "hand-pa": HAND_PA_FIGURE,
   "hand-lateral": HAND_LATERAL_FIGURE,
+  "elbow-ap": ELBOW_AP_FIGURE,
+  "elbow-lateral": ELBOW_LATERAL_FIGURE,
 };
