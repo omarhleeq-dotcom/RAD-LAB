@@ -31,7 +31,6 @@ const PER = {
   pa: {
     id: "wrist-pa",
     page: "p.156",
-    pageAr: "ص.156",
     projection: "wrist-pa",
     other: "wrist-lateral",
     title: T("Adult Wrist X-ray — PA", "أشعة الرسغ للبالغ — PA"),
@@ -72,7 +71,6 @@ const PER = {
   lateral: {
     id: "wrist-lateral",
     page: "p.158",
-    pageAr: "ص.158",
     projection: "wrist-lateral",
     other: "wrist-pa",
     title: T("Adult Wrist X-ray — Lateral", "أشعة الرسغ للبالغ — جانبي"),
@@ -154,7 +152,7 @@ const criticalFindings = (k: WristKind): CriticalFindingRule[] => [
 
 const rules = (k: WristKind): CheckRule[] => {
   const p = PER[k];
-  const pg = p.page, pgAr = p.pageAr;
+  const pg = p.page;
   const [kvLo, kvHi] = p.kv.full;
   const [pLo, pHi] = p.kv.partial;
   return [

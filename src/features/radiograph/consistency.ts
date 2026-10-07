@@ -10,7 +10,7 @@
  *
  * Pure data + pure functions: no scoring, no pixels, no React.
  */
-import type { ExamDefinition } from "@/domain/exam";
+import type { AnyExamDefinition } from "@/domain/exam";
 import type { CoreImageVariantId, ImageVariantId } from "@/domain/simulation";
 import type { EffectId, RenderPlan } from "./plan";
 
@@ -107,7 +107,7 @@ export function needsNotDrawnLabel(ruleId: string, outcome: "pass" | "partial" |
  * the renderer cannot say anything about. Empty for a well-formed exam (S11: checked by test, kept out of
  * `validateExam` because logic modules must not depend on the renderer, see the architecture test).
  */
-export function unregisteredVariants(exam: Pick<ExamDefinition, "rules" | "possibleErrors">): string[] {
+export function unregisteredVariants(exam: Pick<AnyExamDefinition, "rules" | "possibleErrors">): string[] {
   const named = new Set<string>(exam.possibleErrors.map((e) => e.variant));
   for (const r of exam.rules) {
     for (const k of ["variantOnFail", "variantOnLow", "variantOnHigh", "variantOnClipped"] as const) {

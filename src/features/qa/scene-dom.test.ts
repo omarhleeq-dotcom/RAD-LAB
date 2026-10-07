@@ -49,7 +49,8 @@ function variants(c: RadCase): Record<string, Partial<SimulationSettings>> {
 
 it("the rendered scenes and result panels of PA, Lateral and AP are unchanged (S14-0)", () => {
   const out: Record<string, string> = {};
-  for (const c of CASES) {
+  // The wrist exams (S14.1c) have their own guard (`scene-dom-wrist.test.ts`); this one stays the chest set captured before S14-0.
+  for (const c of CASES.filter((x) => x.bodyPart === "chest")) {
     for (const [vn, patch] of Object.entries(variants(c))) {
       const settings = { ...c.initialSettings, ...patch } as SimulationSettings;
       for (const locale of ["en", "ar"] as const) {
