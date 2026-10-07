@@ -71,7 +71,9 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
       .then((src) => {
         const canvas = ref.current;
         if (cancelled || !canvas) return;
-        const out = renderRadiograph(plan, spec, src, resultPxPerCm(spec, plan.detector.widthCm * plan.detector.heightCm));
+        const viewW = plan.view ? plan.view.x2 - plan.view.x1 : plan.detector.widthCm;
+        const viewH = plan.view ? plan.view.y2 - plan.view.y1 : plan.detector.heightCm;
+        const out = renderRadiograph(plan, spec, src, resultPxPerCm(spec, viewW * viewH));
         canvas.width = out.width;
         canvas.height = out.height;
         const ctx = canvas.getContext("2d");
@@ -98,7 +100,7 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.font = `700 ${Math.round(m.sizeCm * out.pxPerCm * 0.95)}px ui-sans-serif, "Segoe UI", Arial, sans-serif`;
-          const x = m.centerCm.x * out.pxPerCm, y = m.centerCm.y * out.pxPerCm;
+          const x = (m.centerCm.x - out.originCm.x) * out.pxPerCm, y = (m.centerCm.y - out.originCm.y) * out.pxPerCm;
           ctx.lineWidth = (4 * out.pxPerCm) / PX_PER_CM;
           ctx.strokeStyle = "rgba(0,0,0,0.65)";
           ctx.strokeText(m.side, x, y);
@@ -116,7 +118,7 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
     };
   }, [plan, spec]);
 
-  const aspect = `${plan.detector.widthCm} / ${plan.detector.heightCm}`;
+  const aspect = plan.view ? `${plan.view.x2 - plan.view.x1} / ${plan.view.y2 - plan.view.y1}` : `${plan.detector.widthCm} / ${plan.detector.heightCm}`;
   return (
     <div className="relative" style={{ aspectRatio: aspect }} data-testid="radiograph" data-status={status}>
       <canvas

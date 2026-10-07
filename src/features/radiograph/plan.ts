@@ -132,6 +132,11 @@ export interface RenderPlan {
   effects: PlanEffect[];
   /** Present only when a registered limb effect is active (S14.1c); absent for every chest plan. */
   limb?: { rotation: LimbRotationPlan };
+  /**
+   * Present only for an asset that declares `render.viewMarginCm` (S14.2b-FIX): the part of the detector the result canvas draws
+   * (required anatomy + marker + margin, clipped to the detector). Display only; absent = the whole detector.
+   */
+  view?: CmRect;
 }
 
 const REF = "Image-quality ref";
@@ -312,6 +317,20 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
       })()
     : null;
 
+  // Optional result view (hand lateral): the required region and the learner's marker, padded, clipped to the detector.
+  const view: CmRect | undefined = (() => {
+    const pad = spec.render?.viewMarginCm;
+    if (pad === undefined) return undefined;
+    let x1 = req.xCm, y1 = req.yCm, x2 = req.xCm + req.widthCm, y2 = req.yCm + req.heightCm;
+    if (marker) {
+      const h = marker.sizeCm / 2;
+      x1 = Math.min(x1, marker.centerCm.x - h); x2 = Math.max(x2, marker.centerCm.x + h);
+      y1 = Math.min(y1, marker.centerCm.y - h); y2 = Math.max(y2, marker.centerCm.y + h);
+    }
+    const r = (v: number) => Math.round(v * 1000) / 1000;
+    return { x1: r(Math.max(0, x1 - pad)), y1: r(Math.max(0, y1 - pad)), x2: r(Math.min(detector.widthCm, x2 + pad)), y2: r(Math.min(detector.heightCm, y2 + pad)) };
+  })();
+
   const active: [CoreEffectId, boolean, string[], boolean][] = [
     ["projection", !representative, ["geometry.projection"], false],
     ["rotation", rotation !== null, ["geometry.rotationDeg"], true],
@@ -369,5 +388,6 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
     marker,
     effects,
     ...(limb ? { limb } : {}),
+    ...(view ? { view } : {}),
   };
 }

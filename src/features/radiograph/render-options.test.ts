@@ -28,3 +28,33 @@ describe("result resolution", () => {
     expect(resultPxPerCm({ ...spec, render: { pxPerCm: 10 } }, 720)).toBe(24);
   });
 });
+
+describe("result view (hand lateral)", () => {
+  it("is absent for every other asset and for the hand PA", async () => {
+    const { buildRenderPlan } = await import("./plan");
+    const { evaluate } = await import("@/features/evaluation/engine");
+    for (const c of [chestPaErect, wristPa, handPa]) expect(buildRenderPlan(evaluate(c, c.initialSettings).resultState, c).view).toBeUndefined();
+  });
+  it("the lateral view follows the required region and the marker, padded by 3 cm and clipped to the detector (field and scoring untouched)", async () => {
+    const { buildRenderPlan } = await import("./plan");
+    const { evaluate } = await import("@/features/evaluation/engine");
+    const r = evaluate(handLateral, { ...handLateral.initialSettings, sideMarker: "L", markerPosition: { x: -0.55, y: 0 }, collimation: { width: 0.66, height: 1 } });
+    const plan = buildRenderPlan(r.resultState, handLateral);
+    const req = handLateral.requiredAnatomy;
+    expect(plan.view).toBeDefined();
+    const v = plan.view!;
+    expect(v.x1).toBeLessThanOrEqual(req.xCm - 3 + 1e-6);
+    expect(v.x2).toBeGreaterThanOrEqual(req.xCm + req.widthCm + 3 - 1e-6);
+    expect(v.y1).toBeGreaterThanOrEqual(0);
+    expect(v.y2).toBeLessThanOrEqual(handLateral.detector.heightCm);
+    // narrower than the detector: aspect well above the 0.8 of the whole 24 × 30 cm
+    expect((v.x2 - v.x1) / (v.y2 - v.y1)).toBeLessThan(0.65);
+    expect(plan.detector).toEqual({ widthCm: 24, heightCm: 30 });
+  });
+  it("a marker far outside the region widens the view so it is still drawn", async () => {
+    const { buildRenderPlan } = await import("./plan");
+    const { evaluate } = await import("@/features/evaluation/engine");
+    const r = evaluate(handLateral, { ...handLateral.initialSettings, sideMarker: "L", markerPosition: { x: 0.9, y: 0 }, collimation: { width: 1, height: 1 } });
+    expect(buildRenderPlan(r.resultState, handLateral).view!.x2).toBeGreaterThan(21);
+  });
+});

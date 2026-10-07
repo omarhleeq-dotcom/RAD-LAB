@@ -36,6 +36,8 @@ export interface RenderedRadiograph {
   height: number;
   pxPerCm: number;
   luma: Uint8ClampedArray;
+  /** Detector cm of the canvas's top-left corner (0, 0 unless the plan has a `view`). */
+  originCm: { x: number; y: number };
   /** Field in output pixels (for the annotation layer's clip). */
   fieldPx: { x1: number; y1: number; x2: number; y2: number };
   /** Mean of the displayed luma inside the exposed image area (display-processing diagnostics only). */
@@ -283,8 +285,9 @@ export function renderRadiograph(
   src: LumaImage,
   pxPerCm: number,
 ): RenderedRadiograph {
-  const W = Math.round(plan.detector.widthCm * pxPerCm);
-  const H = Math.round(plan.detector.heightCm * pxPerCm);
+  const ox = plan.view?.x1 ?? 0, oy = plan.view?.y1 ?? 0;
+  const W = Math.round((plan.view ? plan.view.x2 - plan.view.x1 : plan.detector.widthCm) * pxPerCm);
+  const H = Math.round((plan.view ? plan.view.y2 - plan.view.y1 : plan.detector.heightCm) * pxPerCm);
   const N = W * H;
   const sw = src.width, sh = src.height;
   const feather = TUNING.featherCm;
@@ -312,12 +315,12 @@ export function renderRadiograph(
   };
 
   for (let y = 0; y < H; y++) {
-    const cy = (y + 0.5) / pxPerCm;
+    const cy = oy + (y + 0.5) / pxPerCm;
     const fRow = edge(cy, f.y1, f.y2), dRow = edge(cy, im.y1, im.y1 + im.heightCm);
     const vOut = (cy - im.y1) / im.heightCm;
     const vSrc = lut ? lut[Math.round(clamp01(vOut) * (lut.length - 1))]! : vOut;
     for (let x = 0; x < W; x++) {
-      const cx = (x + 0.5) / pxPerCm;
+      const cx = ox + (x + 0.5) / pxPerCm;
       const i = y * W + x;
       const fm = fRow * edge(cx, f.x1, f.x2), dm = dRow * edge(cx, im.x1, im.x1 + im.widthCm);
       fieldMask[i] = fm;
@@ -418,7 +421,8 @@ export function renderRadiograph(
     height: H,
     pxPerCm,
     luma: outLuma,
-    fieldPx: { x1: f.x1 * pxPerCm, y1: f.y1 * pxPerCm, x2: f.x2 * pxPerCm, y2: f.y2 * pxPerCm },
+    originCm: { x: ox, y: oy },
+    fieldPx: { x1: (f.x1 - ox) * pxPerCm, y1: (f.y1 - oy) * pxPerCm, x2: (f.x2 - ox) * pxPerCm, y2: (f.y2 - oy) * pxPerCm },
     meanInField: n ? sum / n : 0,
   };
 }
