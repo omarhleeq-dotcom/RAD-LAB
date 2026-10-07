@@ -52,7 +52,6 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
   }, value);
   const radio = (text) => page.locator("label", { hasText: text }).filter({ has: page.locator('input[type="radio"]') }).first();
   const click = (loc2) => (opts.hasTouch ? loc2.tap() : loc2.click());
-  const group = (legend) => page.locator("fieldset", { has: page.locator("legend", { hasText: legend }) });
 
   async function attempt(name, u) {
     await page.goto(`${BASE}/${loc}/xray/${EXAM}/practice`, { waitUntil: "networkidle" });
