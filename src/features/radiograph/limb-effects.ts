@@ -7,11 +7,10 @@
  * for an asset that declares `limbRotation` (see `buildRenderPlan`).
  *
  * WHAT IS DRAWN (EDUCATIONAL VISUAL APPROXIMATION, not a kinematic model; BONTRAGER-9 p.156 / p.158 criteria):
- *  - wrist PA: the spaces between the proximal metacarpal shafts become unequal (a smooth horizontal bump over the band, sign =
- *    the sign of the value), and an offset copy of the ulna is blended over the radius so the distal radius and ulna are no longer
- *    separated (grows with |value|; no direction of turn is claimed).
- *  - wrist lateral: the bands that must be superimposed (proximal metacarpals, ulnar head over the distal radius) are drawn twice,
- *    the second copy offset by an amount that grows with the value (sign = the sign of the value): "not superimposed".
+ *  - wrist PA / lateral (S-VIS-1b, closes O45): the displacements come from the 2.5D wrist model (`features/wrist-model`), also drawn by the
+ *    scene, through the elbow's pixel steps: PA = the metacarpal column anchors warp the whole image (the spaces between the proximal shafts
+ *    become unequal) and the ulna and radius layers of the forearm rows move separately; lateral = a far-side and a near-side copy of the
+ *    structures that must be superimposed (proximal metacarpals, ulnar head over the radius), one outline at the base pose.
  *  - elbow AP / lateral (S14.3): the displacements come from the elbow model (`features/elbow-model`, also drawn by the scene): AP = the
  *    column anchors warp the whole image (the epicondyles narrow for either sign) and the ulna and radius layers of the forearm rows move
  *    separately (apart, or toward each other until superimposed); lateral = a lateral-side copy and a medial-side copy of the condyle outlines
@@ -20,8 +19,8 @@
  *    draws: PA = a smooth piecewise-linear warp of the phalangeal and metacarpal bands through the digits' projected positions; lateral
  *    (extension) = one copy per digit (and per forearm bone) of the structures that must be superimposed, drawn at their projected
  *    positions (all coincide at the base pose, so the picture changes continuously).
- * SIGN (S14.1c-2): defined by the RESULT IMAGE, as for the chest exams (S11c-1, S13-6): a positive value displaces the second
- * copy / the metacarpal bump toward the viewer's RIGHT in the displayed image (never mirrored by RTL); a negative value to the left.
+ * SIGN (S14.1c-2, refined per model, S-VIS-1b-2): defined by the RESULT IMAGE, as for the chest exams (S11c-1, S13-6) and never mirrored by RTL;
+ * each model's header says what a positive value does (wrist: PA = ulna toward the left and radius toward the right; lateral = the far-side copy toward the right).
  * Feedback is magnitude-only. Pinned by a renderer test (a synthetic stripe moves right for +θ, left for −θ).
  */
 import type { LimbRotationLandmarks, LowerLimbModelId } from "@/domain/radiograph";
@@ -30,6 +29,7 @@ import type { EffectDefinition, LimbRotationPlan } from "./plan";
 import { elbowApShifts, elbowLateralCopies } from "@/features/elbow-model/elbow-model";
 import { handLateralShifts, handPaAnchors, oddPart } from "@/features/hand-model/hand-model";
 import { footAnchors, footValue, kneeApShifts, kneeLateralCopies, oddPart as lowerOddPart } from "@/features/lower-limb-model/lower-limb-model";
+import { wristLateralCopies, wristPaShifts } from "@/features/wrist-model/wrist-model";
 import { TUNING } from "./tuning";
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
@@ -149,9 +149,14 @@ export function limbRotationPlan(
     const c = kneeLateralCopies(d);
     return { kind: "limb-copies", degrees: d, shiftU: c.condyles[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.condyles, c.head] } };
   }
-  return landmarks.kind === "wrist-pa"
-    ? { kind: "wrist-pa", degrees: d, shiftU: d * TUNING.limbRotation.paSpacingShiftPerDeg, overlapShiftU: Math.abs(d) * TUNING.limbRotation.paRadioulnarShiftPerDeg }
-    : { kind: "wrist-lateral", degrees: d, shiftU: d * TUNING.limbRotation.lateralShiftPerDeg, overlapShiftU: 0 };
+  if (landmarks.kind === "wrist-pa") {
+    // The wrist model (S-VIS-1b): the metacarpal column anchors warp the whole image; the ulna and radius layers of the forearm rows move separately. shiftU = the odd part of the relative shift (radius − ulna), the sign carrier.
+    const a = wristPaShifts(d);
+    return { kind: "wrist-pa", degrees: d, shiftU: oddPart((r) => wristPaShifts(r).radius - wristPaShifts(r).ulna, d), overlapShiftU: 0, elbow: { anchors: a.anchors, layers: { ulna: a.ulnaAnchors, radius: a.radiusAnchors } } };
+  }
+  // Wrist lateral: bands in the order of the asset's landmarks [proximal metacarpals, ulnar head / distal radius]. shiftU = the far-side copy's shift (sign).
+  const c = wristLateralCopies(d);
+  return { kind: "wrist-lateral", degrees: d, shiftU: c.metacarpals[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.metacarpals, c.head] } };
 }
 
 const failedRotation = (findings: { ruleId: string }[]) => findings.some((f) => f.ruleId === "rotation");

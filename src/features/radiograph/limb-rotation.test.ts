@@ -1,20 +1,18 @@
 /**
- * Wrist rotation effect (S14.1c): the pure pieces — the plan input and the pixel step — on synthetic stripes (no wrist data
- * needed). Pins the SIGN (S14.1c-2: defined by the result image; positive = toward the viewer's right), the magnitude-only
- * radioulnar overlap, determinism, and that an asset without `limbRotation` is untouched.
+ * Wrist rotation effect (S14.1c, rebuilt on the 2.5D wrist model in S-VIS-1b): the pure pieces — the plan input and the pixel step — on
+ * synthetic stripes (no wrist data needed). Pins the SIGN (defined by the result image, never mirrored by RTL), that the displacement comes
+ * from `features/wrist-model` (the same functions the scene draws), determinism, and that a mismatching asset is untouched.
  */
 import { describe, expect, it } from "vitest";
 import type { LimbRotationLandmarks } from "@/domain/radiograph";
+import { PA_COLUMNS, WRIST_MODEL, wristLateralCopies, wristPaShifts } from "@/features/wrist-model/wrist-model";
 import { limbRotationPlan } from "./limb-effects";
 import { bandWeight, limbRotationValue } from "./pipeline";
 import { TUNING } from "./tuning";
 
-const PA: LimbRotationLandmarks = {
-  kind: "wrist-pa",
-  spacing: { v1: 0, v2: 0.2, u1: 0.1, u2: 0.9 },
-  radioulnar: { v1: 0.5, v2: 0.95, ulnaU1: 0.2, ulnaU2: 0.4 },
-};
-const LAT: LimbRotationLandmarks = { kind: "wrist-lateral", bands: [{ v1: 0, v2: 0.2 }, { v1: 0.45, v2: 0.6 }] };
+const PA: LimbRotationLandmarks = { kind: "wrist-pa", forearm: { v1: 0.52, v2: 1, splitU: 0.457 } };
+const LAT: LimbRotationLandmarks = { kind: "wrist-lateral", bands: [{ v1: 0, v2: 0.19, u1: 0.2, u2: 1 }, { v1: 0.42, v2: 0.57, u1: 0.33, u2: 0.79 }] };
+const W = WRIST_MODEL.pa.widthPx;
 
 /** A bright vertical stripe at u0 (width 0.01) on a dark image, for every v. */
 const stripe = (u0: number) => (u: number) => (Math.abs(u - u0) < 0.006 ? 200 : 0);
@@ -37,76 +35,99 @@ describe("limbRotationPlan (pure)", () => {
     expect(limbRotationPlan(6, false, PA)).toBeNull();
     expect(limbRotationPlan(0, true, PA)).toBeNull();
   });
-  it("PA: signed spacing shift and a magnitude-only overlap, clamped to the control range", () => {
+  it("PA: the plan carries the wrist model's anchors and layers; the sign carrier is odd, the clamp is the control range", () => {
     const a = limbRotationPlan(6, true, PA)!, b = limbRotationPlan(-6, true, PA)!;
-    expect(a.shiftU).toBeCloseTo(6 * TUNING.limbRotation.paSpacingShiftPerDeg);
+    const m = wristPaShifts(6);
+    expect(a.elbow?.anchors).toEqual(m.anchors);
+    expect(a.elbow?.layers).toEqual({ ulna: m.ulnaAnchors, radius: m.radiusAnchors });
+    expect(a.shiftU).toBeGreaterThan(0);
     expect(b.shiftU).toBeCloseTo(-a.shiftU);
-    expect(a.overlapShiftU).toBeCloseTo(b.overlapShiftU);
-    expect(a.overlapShiftU).toBeGreaterThan(0);
     expect(limbRotationPlan(99, true, PA)!.degrees).toBe(TUNING.limbRotation.maxDeg);
+    expect(limbRotationPlan(99, true, PA)!.elbow).toEqual(limbRotationPlan(15, true, PA)!.elbow);
   });
-  it("lateral: signed offset, no overlap term", () => {
+  it("lateral: the plan carries the model's copies, signed by the far-side copy", () => {
     const a = limbRotationPlan(6, true, LAT)!;
-    expect(a.shiftU).toBeCloseTo(6 * TUNING.limbRotation.lateralShiftPerDeg);
-    expect(a.overlapShiftU).toBe(0);
+    const m = wristLateralCopies(6);
+    expect(a.elbow?.copies).toEqual([m.metacarpals, m.head]);
+    expect(a.shiftU).toBeGreaterThan(0);
     expect(limbRotationPlan(-6, true, LAT)!.shiftU).toBeCloseTo(-a.shiftU);
   });
 });
 
+describe("wrist model (pure)", () => {
+  it("is the identity at the base pose", () => {
+    const m = wristPaShifts(0);
+    expect(m.anchors.every((x) => x.du === 0)).toBe(true);
+    expect(m.ulna).toBeCloseTo(0, 12);
+    expect(m.radius).toBeCloseTo(0, 12);
+    expect(wristLateralCopies(0).metacarpals.every((c) => c.du === 0)).toBe(true);
+  });
+  it("PA sign: + opens the radioulnar space (ulna left, radius right), − closes it; the spacing of the metacarpals becomes unequal", () => {
+    const p = wristPaShifts(8), n = wristPaShifts(-8);
+    expect(p.radius - p.ulna).toBeGreaterThan(0);
+    expect(n.radius - n.ulna).toBeLessThan(0);
+    const gaps = (s: ReturnType<typeof wristPaShifts>) => s.anchors.slice(1).map((a, i) => a.u + a.du - (s.anchors[i]!.u + s.anchors[i]!.du));
+    const base = gaps(wristPaShifts(0)), g = gaps(p);
+    expect(g.some((x, i) => Math.abs(x - base[i]!) > 0.005)).toBe(true);
+    // not equal changes in every gap: the spaces become unequal relative to each other
+    const rel = g.map((x, i) => x / base[i]!);
+    expect(Math.max(...rel) - Math.min(...rel)).toBeGreaterThan(0.05);
+    expect(PA_COLUMNS.metacarpals.length).toBe(p.anchors.length);
+  });
+  it("PA: the anchors never fold (kept in order)", () => {
+    for (const d of [-15, -8, 8, 15]) {
+      const a = wristPaShifts(d).anchors;
+      for (let k = 1; k < a.length; k++) expect(a[k]!.u + a[k]!.du).toBeGreaterThan(a[k - 1]!.u + a[k - 1]!.du);
+    }
+  });
+});
+
 describe("limbRotationValue (pixel step)", () => {
-  const at = (rot: ReturnType<typeof limbRotationPlan>, lm: LimbRotationLandmarks, src: (u: number) => number, v: number) =>
-    argmaxU((u) => limbRotationValue(rot!, lm, (uu) => src(uu), u, v));
+  const at = (rot: ReturnType<typeof limbRotationPlan>, lm: LimbRotationLandmarks, src: (u: number) => number, v: number, win?: (u: number) => boolean) =>
+    argmaxU((u) => (win && !win(u) ? 0 : limbRotationValue(rot!, lm, (uu) => src(uu), u, v)));
 
-  it("PA: a metacarpal-band stripe moves RIGHT for +θ and LEFT for −θ (sign pinned: the result image defines it)", () => {
-    const base = 0.3;
-    const plus = at(limbRotationPlan(8, true, PA), PA, stripe(base), 0.1);
-    const minus = at(limbRotationPlan(-8, true, PA), PA, stripe(base), 0.1);
-    expect(plus.u).toBeGreaterThan(base + 0.005);
-    expect(minus.u).toBeLessThan(base - 0.005);
-    // outside the band nothing moves
-    expect(at(limbRotationPlan(8, true, PA), PA, stripe(base), 0.35).u).toBeCloseTo(base, 2);
+  it("PA forearm rows: with +θ the ulna stripe moves LEFT and the radius stripe RIGHT; with −θ they move toward each other (sign pinned)", () => {
+    const ulna = PA_COLUMNS.ulna.x / W, radius = PA_COLUMNS.radius.x / W;
+    const plus = limbRotationPlan(8, true, PA), minus = limbRotationPlan(-8, true, PA);
+    const left = (u: number) => u < 0.45, right = (u: number) => u > 0.46;
+    expect(at(plus, PA, stripe(ulna), 0.8, left).u).toBeLessThan(ulna - 0.005);
+    expect(at(plus, PA, stripe(radius), 0.8, right).u).toBeGreaterThan(radius + 0.005);
+    expect(at(minus, PA, stripe(ulna), 0.8, left).u).toBeGreaterThan(ulna + 0.005);
+    expect(at(minus, PA, stripe(radius), 0.8, right).u).toBeLessThan(radius - 0.005);
   });
 
-  it("PA: the spacing bump squeezes one side and widens the other (the spaces become unequal)", () => {
-    const rot = limbRotationPlan(8, true, PA)!;
-    const pos = (u0: number) => at(rot, PA, stripe(u0), 0.1).u;
-    const gapLeft = pos(0.4) - pos(0.2), gapRight = pos(0.8) - pos(0.6);
-    expect(Math.abs(gapLeft - gapRight)).toBeGreaterThan(0.01);
+  it("PA metacarpal rows: the middle metacarpals (dorsal) move RIGHT for +θ, the thumb-side one LEFT", () => {
+    const mc3 = PA_COLUMNS.metacarpals[2]!.x / W, thumb = PA_COLUMNS.metacarpals[4]!.x / W;
+    const plus = limbRotationPlan(8, true, PA);
+    expect(at(plus, PA, stripe(mc3), 0.1).u).toBeGreaterThan(mc3 + 0.005);
+    expect(at(plus, PA, stripe(thumb), 0.1).u).toBeLessThan(thumb - 0.005);
   });
 
-  it("PA: the ulna copy lands on the radius side by the overlap amount for either sign (magnitude only)", () => {
-    const ulna = 0.3;
-    for (const deg of [8, -8]) {
-      const rot = limbRotationPlan(deg, true, PA)!;
-      // look only to the right of the original ulna, where the copy is the only bright pixel
-      const copy = argmaxU((u) => (u > ulna + 0.03 ? limbRotationValue(rot, PA, stripe(ulna), u, 0.7) : 0));
-      expect(copy.u).toBeCloseTo(ulna + rot.overlapShiftU, 2);
-      expect(copy.value).toBeCloseTo(200 * TUNING.limbRotation.blend, 0);
-    }
-  });
-
-  it("lateral: the second copy of a band stripe is RIGHT of it for +θ and LEFT for −θ; the first copy stays", () => {
-    const base = 0.5;
-    for (const [deg, sgn] of [[8, 1], [-8, -1]] as const) {
-      const rot = limbRotationPlan(deg, true, LAT)!;
-      const away = (u: number) => (sgn > 0 ? u > base + 0.02 : u < base - 0.02);
-      const second = argmaxU((u) => (away(u) ? limbRotationValue(rot, LAT, stripe(base), u, 0.1) : 0));
-      expect(Math.sign(second.u - base)).toBe(sgn);
-      expect(Math.abs(second.u - base)).toBeCloseTo(Math.abs(rot.shiftU), 2);
-      expect(limbRotationValue(rot, LAT, stripe(base), base, 0.1)).toBeCloseTo(200 * (1 - TUNING.limbRotation.blend), 0);
-    }
-  });
-
-  it("lateral: outside the bands the image is unchanged", () => {
-    const rot = limbRotationPlan(8, true, LAT)!;
-    expect(limbRotationValue(rot, LAT, stripe(0.5), 0.5, 0.3)).toBe(200);
-  });
-
-  it("is deterministic and a no-op for a mismatching kind", () => {
+  it("PA: at the base pose the image is unchanged (no plan) and the displacement is deterministic", () => {
+    expect(limbRotationPlan(0, true, PA)).toBeNull();
     const rot = limbRotationPlan(8, true, PA)!;
     const a = limbRotationValue(rot, PA, stripe(0.3), 0.33, 0.1), b = limbRotationValue(rot, PA, stripe(0.3), 0.33, 0.1);
     expect(a).toBe(b);
-    expect(limbRotationValue(rot, LAT, stripe(0.3), 0.3, 0.1)).toBe(200);
+  });
+
+  it("lateral: the far-side copy of a band stripe is RIGHT of it for +θ and LEFT for −θ, the near-side copy on the other side (stronger)", () => {
+    const base = 0.5;
+    for (const [deg, sgn] of [[8, 1], [-8, -1]] as const) {
+      const rot = limbRotationPlan(deg, true, LAT)!;
+      const m = wristLateralCopies(deg).metacarpals;
+      expect(Math.sign(m[0]!.du)).toBe(sgn);
+      const far = argmaxU((u) => (sgn > 0 ? (u > base + 0.01 ? limbRotationValue(rot, LAT, stripe(base), u, 0.1) : 0) : u < base - 0.01 ? limbRotationValue(rot, LAT, stripe(base), u, 0.1) : 0));
+      expect(far.u).toBeCloseTo(base + m[0]!.du, 2);
+      const near = argmaxU((u) => (sgn > 0 ? (u < base - 0.01 ? limbRotationValue(rot, LAT, stripe(base), u, 0.1) : 0) : u > base + 0.01 ? limbRotationValue(rot, LAT, stripe(base), u, 0.1) : 0));
+      expect(near.u).toBeCloseTo(base + m[1]!.du, 2);
+      expect(near.value).toBeGreaterThan(far.value); // 60 % vs 40 %
+    }
+  });
+
+  it("lateral: outside the bands the image is unchanged; a mismatching kind is a no-op", () => {
+    const rot = limbRotationPlan(8, true, LAT)!;
+    expect(limbRotationValue(rot, LAT, stripe(0.5), 0.5, 0.3)).toBe(200);
+    expect(limbRotationValue(rot, PA, stripe(0.3), 0.3, 0.1)).toBe(200);
   });
 
   it("band weights are 0–1 with a soft edge", () => {

@@ -32,7 +32,9 @@ export const wristLateralRadiograph: RadiographAssetSpec = {
   denseZones: [{ cu: 0.5, cv: 0.33, ru: 0.4, rv: 0.13 }],
   limbRotation: {
     kind: "wrist-lateral",
-    // The bands that must be superimposed in a true lateral: the proximal metacarpals (rows 0–270) and the ulnar head over the distal radius (rows ≈ 590–800).
-    bands: [{ v1: 0, v2: 0.19 }, { v1: 0.42, v2: 0.57 }],
+    // The bands that must be superimposed in a true lateral: the proximal metacarpals (rows 0–270, columns ≈ 110–559) and the ulnar head over the distal radius (rows ≈ 590–800, columns ≈ 185–440). 2.5D wrist model (S-VIS-1b).
+    bands: [{ v1: 0, v2: 0.19, u1: 0.2, u2: 1 }, { v1: 0.42, v2: 0.57, u1: 0.33, u2: 0.79 }],
   },
+  // Result canvas at 48 px/cm (the baseline has 80 px/cm at the assumed 0.0125 cm/px: no upscaling; S-VIS-1b-5). Capped by the canvas.
+  render: { pxPerCm: 48 },
 };
