@@ -178,13 +178,14 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
 
         <p className="text-xs text-console-text/60">{t("adjustHint")}</p>
 
-        <ReadinessPanel readiness={readiness} id={readinessId} />
+        {/* After the exposure the readiness box only repeats "not ready"; the result panel offers Retry / Restart (S-VIS-1-3). */}
+        {!locked && <ReadinessPanel readiness={readiness} id={readinessId} />}
 
         <button
           type="button"
           onClick={onExpose}
           disabled={!canExpose}
-          aria-describedby={readinessId}
+          aria-describedby={locked ? undefined : readinessId}
           className="min-h-12 w-full rounded-md bg-signal px-4 py-3 text-lg font-bold tracking-widest text-ink hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text"
         >
           {locked ? t("locked") : t("expose")}

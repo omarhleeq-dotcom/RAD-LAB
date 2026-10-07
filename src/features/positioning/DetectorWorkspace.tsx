@@ -208,10 +208,21 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       {marker && (
         <g {...dragProps({ kind: "marker" })} {...keyProps(settings.markerPosition, "markerPosition")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("markerHandle", { side: marker })} style={{ cursor: disabled ? "default" : "grab" }}>
           <rect x={mv.x - HIT / 2} y={mv.y - HIT / 2} width={HIT} height={HIT} fill="transparent" />
-          <rect x={mv.x - mSize / 2} y={mv.y - mSize / 2} width={mSize} height={mSize} rx={4} fill="#e8edf1" stroke="#0b141b" strokeWidth={1.5} />
-          <text x={mv.x} y={mv.y + 10} textAnchor="middle" fontSize={28} fontWeight={800} fill={SCENE.bg}>
-            {marker}
-          </text>
+          {figure.crispMarker ? (
+            <>
+              <rect x={mv.x - mSize / 2} y={mv.y - mSize / 2} width={mSize} height={mSize} rx={2} fill="#e8edf1" stroke="#0b141b" strokeWidth={1} shapeRendering="crispEdges" />
+              <text x={mv.x} y={mv.y + 7} textAnchor="middle" fontSize={20} fontWeight={800} fill={SCENE.bg}>
+                {marker}
+              </text>
+            </>
+          ) : (
+            <>
+              <rect x={mv.x - mSize / 2} y={mv.y - mSize / 2} width={mSize} height={mSize} rx={4} fill="#e8edf1" stroke="#0b141b" strokeWidth={1.5} />
+              <text x={mv.x} y={mv.y + 10} textAnchor="middle" fontSize={28} fontWeight={800} fill={SCENE.bg}>
+                {marker}
+              </text>
+            </>
+          )}
         </g>
       )}
 

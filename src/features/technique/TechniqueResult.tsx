@@ -1,5 +1,6 @@
 "use client";
 
+import { publicReference } from "@/features/evidence/public-text";
 import clsx from "clsx";
 import { useLocale, useTranslations } from "next-intl";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
@@ -167,9 +168,11 @@ export function TechniqueResult({ radCase, kvp, manualMas, exposure: x }: Props)
                   <EvidenceBadge status={a.evidence.status} />
                 </div>
                 <p className="text-xs text-muted">{localize(a.value, locale)}</p>
-                <p className="text-[0.7rem] text-muted">
-                  <bdi dir="ltr">{a.evidence.reference}</bdi>
-                </p>
+                {publicReference(a.evidence.reference) && (
+                  <p className="text-[0.7rem] text-muted">
+                    <bdi dir="ltr">{publicReference(a.evidence.reference)}</bdi>
+                  </p>
+                )}
               </li>
             ))}
           </ul>

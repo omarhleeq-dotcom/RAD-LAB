@@ -1,5 +1,6 @@
 "use client";
 
+import { publicText } from "@/features/evidence/public-text";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 import type { RadCase } from "@/domain/case";
@@ -63,7 +64,7 @@ export function ResultImage({ radCase, plan }: Props) {
         <p className="font-medium text-ink">{t("educationalNote")}</p>
         <p>{t("margins")}</p>
         <p>{tr("imageBrightnessNote")}</p>
-        <p lang={locale}>{localize(radCase.radiograph.credit, locale)}</p>
+        <p lang={locale}>{publicText(localize(radCase.radiograph.credit, locale))}</p>
       </figcaption>
     </figure>
   );
