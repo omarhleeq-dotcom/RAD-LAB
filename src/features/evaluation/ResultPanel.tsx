@@ -1,5 +1,6 @@
 "use client";
 
+import { publicReference, publicText } from "@/features/evidence/public-text";
 import { useMemo } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import clsx from "clsx";
@@ -133,14 +134,16 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                     <details className="mt-1 text-xs text-muted">
                       <summary className="cursor-pointer">{t("criticalEvidence")}</summary>
                       <p className="mt-1">
-                        <span className="font-semibold">{t("criticalConcept")}:</span> <EvidenceBadge status={f.concept.status} /> {f.concept.note}
+                        <span className="font-semibold">{t("criticalConcept")}:</span> <EvidenceBadge status={f.concept.status} /> {f.concept.note && publicText(f.concept.note)}
                       </p>
                       <p className="mt-1">
-                        <span className="font-semibold">{t("criticalImplementation")}:</span> <EvidenceBadge status={f.evidence.status} /> {f.evidence.note}
+                        <span className="font-semibold">{t("criticalImplementation")}:</span> <EvidenceBadge status={f.evidence.status} /> {f.evidence.note && publicText(f.evidence.note)}
                       </p>
-                      <p className="mt-1">
-                        {tEv("reference")}: <bdi dir="ltr">{f.concept.reference}</bdi>
-                      </p>
+                      {publicReference(f.concept.reference) && (
+                        <p className="mt-1">
+                          {tEv("reference")}: <bdi dir="ltr">{publicReference(f.concept.reference)}</bdi>
+                        </p>
+                      )}
                     </details>
                   </li>
                 ))}
@@ -196,10 +199,12 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
                     <summary className="min-h-6 cursor-pointer py-0.5">
                       {t("evidenceToggle")} <EvidenceBadge status={k.evidence.status} />
                     </summary>
-                    <p className="mt-1">
-                      {tEv("reference")}: <bdi dir="ltr">{k.evidence.reference}</bdi>
-                    </p>
-                    {k.evidence.note && <p className="mt-0.5">{k.evidence.note}</p>}
+                    {publicReference(k.evidence.reference) && (
+                      <p className="mt-1">
+                        {tEv("reference")}: <bdi dir="ltr">{publicReference(k.evidence.reference)}</bdi>
+                      </p>
+                    )}
+                    {k.evidence.note && <p className="mt-0.5">{publicText(k.evidence.note)}</p>}
                   </details>
                 </li>
               ))}
