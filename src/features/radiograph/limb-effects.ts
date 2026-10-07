@@ -24,17 +24,46 @@
  * copy / the metacarpal bump toward the viewer's RIGHT in the displayed image (never mirrored by RTL); a negative value to the left.
  * Feedback is magnitude-only. Pinned by a renderer test (a synthetic stripe moves right for +θ, left for −θ).
  */
-import type { LimbRotationLandmarks } from "@/domain/radiograph";
+import type { LimbRotationLandmarks, LowerLimbModelId } from "@/domain/radiograph";
 import type { Evidence } from "@/domain/technique";
 import type { EffectDefinition, LimbRotationPlan } from "./plan";
 import { elbowApShifts, elbowLateralCopies } from "@/features/elbow-model/elbow-model";
 import { handLateralShifts, handPaAnchors, oddPart } from "@/features/hand-model/hand-model";
+import { footAnchors, footValue, kneeApShifts, kneeLateralCopies, oddPart as lowerOddPart } from "@/features/lower-limb-model/lower-limb-model";
 import { TUNING } from "./tuning";
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-export const limbRotationConcept = (kind: LimbRotationLandmarks["kind"]): Evidence =>
-  kind === "hand-pa"
+/** Concept records of the four lower-limb models (S14.4). */
+const lowerLimbConcept = (model: LowerLimbModelId): Evidence =>
+  model === "foot-ap"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.232 (true AP foot)",
+        note: "No rotation = nearly equal spacing of metatarsals 2–5; the bases of the 1st and 2nd metatarsals are generally separated and the bases of 2–5 overlap. Provisional until the educator review (O5).",
+      }
+    : model === "foot-oblique"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.233 (AP medial oblique foot)",
+        note: "Plantar surface 30°–40° to the detector (40° recommended): metatarsals 3–5 free of superimposition, the 5th metatarsal tuberosity in profile. Provisional until the educator review (O5).",
+      }
+    : model === "knee-ap"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.246 (true AP knee)",
+        note: "No rotation = symmetric femoral condyles and joint space, about the medial half of the fibular head superimposed by the tibia, intercondylar eminence centred in the fossa. Provisional until the educator review (O5).",
+      }
+    : {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.249 (true lateral knee)",
+        note: "True lateral: the posterior borders of the femoral condyles superimposed; over-rotation = less fibular-head superimposition by the tibia, under-rotation = more. Provisional until the educator review (O5).",
+      };
+
+export const limbRotationConcept = (kind: LimbRotationLandmarks["kind"], model?: LowerLimbModelId): Evidence =>
+  model !== undefined && (kind === "limb-warp" || kind === "limb-layers" || kind === "limb-copies")
+    ? lowerLimbConcept(model)
+    : kind === "hand-pa"
     ? {
         status: "common-reference",
         reference: "BONTRAGER-9 p.150 (true PA hand)",
@@ -76,8 +105,10 @@ export function limbRotationPlan(
   failed: boolean,
   landmarks: LimbRotationLandmarks | undefined,
 ): LimbRotationPlan | null {
-  if (!landmarks || !failed || deg === 0) return null;
-  const d = clamp(deg, -TUNING.limbRotation.maxDeg, TUNING.limbRotation.maxDeg);
+  // The foot oblique's console value is the absolute plantar angle; its model value is the deviation from the 40° reference (S14.4).
+  const value = landmarks && "model" in landmarks && landmarks.model === "foot-oblique" ? footValue("oblique", deg) : deg;
+  if (!landmarks || !failed || value === 0) return null;
+  const d = clamp(value, -TUNING.limbRotation.maxDeg, TUNING.limbRotation.maxDeg);
   if (landmarks.kind === "hand-pa") {
     // The 2.5D hand model (S14.2b-FIX): bands in the order of the asset's landmarks [phalanges, metacarpals, thumb]. shiftU = minus the ODD part of the thumb's shift (the sign carrier: rotating narrows the hand for either sign, only the depth term Z·sinθ is odd).
     const a = handPaAnchors(d);
@@ -98,6 +129,26 @@ export function limbRotationPlan(
     const c = elbowLateralCopies(d);
     return { kind: "elbow-lateral", degrees: d, shiftU: c.condyles[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.condyles, c.head] } };
   }
+  if (landmarks.kind === "limb-warp") {
+    // Foot (S14.4): bands in the order of the asset's landmarks [toes, metatarsals]. shiftU = the odd part of (metatarsal 5 − metatarsal 1) shift, the sign carrier.
+    const kind = landmarks.model === "foot-oblique" ? "oblique" : "ap";
+    const a = footAnchors(kind, d);
+    const rel = (r: number) => {
+      const m = footAnchors(kind, r).metatarsal;
+      return (m[m.length - 1]?.du ?? 0) - (m[0]?.du ?? 0);
+    };
+    return { kind: "limb-warp", degrees: d, shiftU: lowerOddPart(rel, d), overlapShiftU: 0, hand: { anchors: [a.toes, a.metatarsal] } };
+  }
+  if (landmarks.kind === "limb-layers") {
+    // AP knee (S14.4): the whole-image anchors warp the image; the fibula layer and the tibia layer of the rows below the joint move separately. shiftU = the odd part of (tibia - fibula) shift.
+    const a = kneeApShifts(d);
+    return { kind: "limb-layers", degrees: d, shiftU: lowerOddPart((r) => kneeApShifts(r).tibia - kneeApShifts(r).fibula, d), overlapShiftU: 0, elbow: { anchors: a.anchors, layers: { ulna: a.fibulaAnchors, radius: a.tibiaAnchors } } };
+  }
+  if (landmarks.kind === "limb-copies") {
+    // Lateral knee (S14.4): bands in the order of the asset's landmarks [condyle outlines, fibular head / tibia]. shiftU = the far-side copy's shift (sign).
+    const c = kneeLateralCopies(d);
+    return { kind: "limb-copies", degrees: d, shiftU: c.condyles[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.condyles, c.head] } };
+  }
   return landmarks.kind === "wrist-pa"
     ? { kind: "wrist-pa", degrees: d, shiftU: d * TUNING.limbRotation.paSpacingShiftPerDeg, overlapShiftU: Math.abs(d) * TUNING.limbRotation.paRadioulnarShiftPerDeg }
     : { kind: "wrist-lateral", degrees: d, shiftU: d * TUNING.limbRotation.lateralShiftPerDeg, overlapShiftU: 0 };
@@ -111,7 +162,10 @@ export const LIMB_ROTATION_EFFECT: EffectDefinition = {
   drivers: ["geometry.rotationDeg"],
   // The concept record shown on the effect card follows the asset, so it is resolved in `buildRenderPlan` through `conceptOf`.
   concept: limbRotationConcept("wrist-pa"),
-  conceptOf: (radCase) => limbRotationConcept(radCase.radiograph.limbRotation?.kind ?? "wrist-pa"),
+  conceptOf: (radCase) => {
+    const lm = radCase.radiograph.limbRotation;
+    return limbRotationConcept(lm?.kind ?? "wrist-pa", lm && "model" in lm ? lm.model : undefined);
+  },
   magnitude: {
     kind: "educational-visual-approximation",
     note: "Limb rotation cues are drawn from one baseline image by shifting / doubling image bands by an amount that grows with the internal value; not a kinematic model and not a measurement of degrees.",

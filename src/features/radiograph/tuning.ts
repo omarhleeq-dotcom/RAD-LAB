@@ -54,6 +54,8 @@ export const TUNING = {
     handModelGainPerDeg: 2.3,
     /** Elbow (S14.3): as the hand's gain, for the elbow rotation model (`features/elbow-model`); illustrative, scoring never uses it. */
     elbowModelGainPerDeg: 2.3,
+    /** Knee / foot (S14.4): as the hand's gain, for the lower-limb rotation models (`features/lower-limb-model`); illustrative, scoring never uses it. */
+    lowerLimbModelGainPerDeg: 2.3,
   },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },

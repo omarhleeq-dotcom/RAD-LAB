@@ -12,8 +12,9 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { ApSupineView } from "./ApSupineView";
 import { ElbowSideView } from "./ElbowSideView";
-import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, ELBOW_AP_FIGURE, ELBOW_LATERAL_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
+import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, ELBOW_AP_FIGURE, ELBOW_LATERAL_FIGURE, FOOT_AP_FIGURE, FOOT_OBLIQUE_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, KNEE_AP_FIGURE, KNEE_LATERAL_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
 import { HandSideView } from "./HandSideView";
+import { LowerLimbSideView } from "./LowerLimbSideView";
 import { ApPatientCues, LateralPatientCues, PatientCues, type CuesProps } from "./PatientCues";
 import { PlanView } from "./PlanView";
 import { WristSideView } from "./WristSideView";
@@ -140,3 +141,23 @@ const elbowLayout = (figure: DetectorFigure, kind: "Ap" | "Lateral"): SceneLayou
 
 export const ELBOW_AP_LAYOUT: SceneLayout = elbowLayout(ELBOW_AP_FIGURE, "Ap");
 export const ELBOW_LATERAL_LAYOUT: SceneLayout = elbowLayout(ELBOW_LATERAL_FIGURE, "Lateral");
+
+/** Knee and foot (S14.4): the detector view draws the right limb and the second view is a SIDE view of the table set-up with the tilted tube (no chest plan view, no patient-cue panel). */
+const lowerLimbLayout = (figure: DetectorFigure, ns: "Knee" | "Foot", kind: "Ap" | "Lateral" | "Oblique"): SceneLayout => ({
+  figure,
+  SecondView: LowerLimbSideView,
+  texts: {
+    detectorCaption: `positioning${ns}.detectorCaption${kind}`,
+    secondViewCaption: `positioning${ns}.sideViewCaption`,
+    schematicNote: `positioning${ns}.schematicNote`,
+    rotationHelp: `positioning${ns}.rotationHelp${kind}`,
+    markerConvention: `positioning${ns}.markerConvention`,
+    markerHint: `positioning${ns}.markerHint`,
+    rotationLabel: `positioning${ns}.rotation${kind}`,
+  },
+});
+
+export const KNEE_AP_LAYOUT: SceneLayout = lowerLimbLayout(KNEE_AP_FIGURE, "Knee", "Ap");
+export const KNEE_LATERAL_LAYOUT: SceneLayout = lowerLimbLayout(KNEE_LATERAL_FIGURE, "Knee", "Lateral");
+export const FOOT_AP_LAYOUT: SceneLayout = lowerLimbLayout(FOOT_AP_FIGURE, "Foot", "Ap");
+export const FOOT_OBLIQUE_LAYOUT: SceneLayout = lowerLimbLayout(FOOT_OBLIQUE_FIGURE, "Foot", "Oblique");

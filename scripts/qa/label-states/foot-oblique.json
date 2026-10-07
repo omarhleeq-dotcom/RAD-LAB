@@ -1,0 +1,7 @@
+{
+  "radios": ["console.projection"],
+  "sliders": {
+    "positioningFoot.rotationOblique": ["min", 0, "max"],
+    "console.tubeAngulation": ["min", 0, "max"]
+  }
+}

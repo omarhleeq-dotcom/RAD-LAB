@@ -12,6 +12,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { FrontalFigure } from "./FrontalFigure";
 import { LateralFigure } from "./LateralFigure";
+import { LowerLimbDrawing } from "./LowerLimbFigure";
 import { ElbowDrawing } from "./ElbowFigure";
 import { HandDrawing } from "./HandFigure";
 import { WristDrawing } from "./WristFigure";
@@ -259,6 +260,84 @@ export const ELBOW_LATERAL_FIGURE: DetectorFigure = {
   marginGuideLabels: true,
 };
 
+// Knee and foot (S14.4): the figure draws the RIGHT limb. Knee AP labels the lateral side (the fibula, the viewer's left) and the medial side; the knee lateral
+// labels the front and the back of the knee; the foot labels the medial (big toe) and lateral sides (all guides ON).
+function KneeApOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneKnee");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("lateralSide")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("medialSide")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+function KneeLateralOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneKnee");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("front")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("back")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+function FootOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneFoot");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("medialSide")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("lateralSide")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+const kneeAlt = (ts: (key: string, values?: Record<string, string>) => string, s: SimulationSettings) =>
+  ts(s.projection === "knee-lateral" ? "altKneeLateral" : "altKneeAp", { deg: String(s.rotationDeg) });
+const footAlt = (ts: (key: string, values?: Record<string, string>) => string, s: SimulationSettings) =>
+  ts(s.projection === "foot-oblique" ? "altFootOblique" : "altFootAp", { deg: String(s.rotationDeg) });
+
+export const KNEE_AP_FIGURE: DetectorFigure = {
+  altKey: "positioningKnee.alt",
+  midlineKey: "positioningKnee.midline",
+  alt: kneeAlt,
+  Drawing: LowerLimbDrawing,
+  Orientation: KneeApOrientation,
+  axis: { top: "sceneKnee.femur", bottom: "sceneKnee.tibia" },
+  crispMarker: true,
+  marginGuideLabels: true,
+};
+
+export const KNEE_LATERAL_FIGURE: DetectorFigure = {
+  altKey: "positioningKnee.alt",
+  midlineKey: "positioningKnee.midlineLateral",
+  alt: kneeAlt,
+  Drawing: LowerLimbDrawing,
+  Orientation: KneeLateralOrientation,
+  axis: { top: "sceneKnee.femur", bottom: "sceneKnee.tibia" },
+  crispMarker: true,
+  marginGuideLabels: true,
+};
+
+export const FOOT_AP_FIGURE: DetectorFigure = {
+  altKey: "positioningFoot.alt",
+  midlineKey: "positioningFoot.midline",
+  alt: footAlt,
+  Drawing: LowerLimbDrawing,
+  Orientation: FootOrientation,
+  axis: { top: "sceneFoot.toes", bottom: "sceneFoot.heel" },
+  crispMarker: true,
+  marginGuideLabels: true,
+};
+
+export const FOOT_OBLIQUE_FIGURE: DetectorFigure = { ...FOOT_AP_FIGURE };
+
 /** The registry. The AP supine scene draws the PA frontal figure on the detector view (its own part is the side view). */
 export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "chest-pa": CHEST_PA_FIGURE,
@@ -269,4 +348,8 @@ export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "hand-lateral": HAND_LATERAL_FIGURE,
   "elbow-ap": ELBOW_AP_FIGURE,
   "elbow-lateral": ELBOW_LATERAL_FIGURE,
+  "foot-ap": FOOT_AP_FIGURE,
+  "foot-oblique": FOOT_OBLIQUE_FIGURE,
+  "knee-ap": KNEE_AP_FIGURE,
+  "knee-lateral": KNEE_LATERAL_FIGURE,
 };

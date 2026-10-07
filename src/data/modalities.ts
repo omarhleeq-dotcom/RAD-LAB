@@ -40,7 +40,7 @@ export const MODALITIES: readonly ModalityEntry[] = [
  * Body-part registry (S14.1b). `BodyPartId` is an open string; an exam names one of these (`validateExam` rejects an
  * unregistered id). A new body part is one entry here, added in the session that adds its first exam.
  */
-export const BODY_PART_IDS: readonly string[] = ["chest", "wrist", "hand", "elbow"];
+export const BODY_PART_IDS: readonly string[] = ["chest", "wrist", "hand", "elbow", "foot", "knee"];
 export const isRegisteredBodyPart = (id: string): boolean => BODY_PART_IDS.includes(id);
 
 export type ModeId = "practice";
