@@ -39,7 +39,10 @@ export function WristSideView({ radCase, settings, showGuides }: Props) {
   const sidPx = settings.sidCm * WRIST_SIDE.sidPxPerCm;
   const tubeY = S - sidPx;
   const refPx = SID_REFERENCE_CM * WRIST_SIDE.sidPxPerCm;
-  const dimX = rayX + DIM_OFFSET;
+  // The dimension line sits on the side of the ray with room for the reference label (left when the ray is far right).
+  const side = rayX > 250 ? -1 : 1;
+  const dimX = rayX + side * DIM_OFFSET;
+  const anchor = side > 0 ? "start" : "end";
   const fA = slabX(field.y2); // forearm end of the field (left)
   const fB = slabX(field.y1); // fingers end of the field (right)
   const slabL = slabX(detector.heightCm);
@@ -103,11 +106,11 @@ export function WristSideView({ radCase, settings, showGuides }: Props) {
             <UnderStroked stroke={SCENE.good} width={3}>
               {(p) => <line x1={dimX - 8} y1={S - refPx} x2={dimX + 8} y2={S - refPx} {...p} />}
             </UnderStroked>
-            <SceneLabel x={dimX + 14} y={S - refPx + 5} size={LABEL_SIZE.view - 2} fill={SCENE.good}>{t("sidTarget", { sid: SID_REFERENCE_CM })}</SceneLabel>
+            <SceneLabel x={dimX + side * 14} y={S - refPx + 5} size={LABEL_SIZE.view - 2} anchor={anchor} fill={SCENE.good}>{t("sidTarget", { sid: SID_REFERENCE_CM })}</SceneLabel>
           </>
         )}
       </g>
-      <SceneLabel x={dimX + 14} y={(tubeY + S) / 2 - 18} size={LABEL_SIZE.view}>{ts("sidValue", { value: settings.sidCm })}</SceneLabel>
+      <SceneLabel x={rayX} y={tubeY - 68} size={LABEL_SIZE.view} anchor="middle">{ts("sidValue", { value: settings.sidCm })}</SceneLabel>
       {showGuides && (
         <g aria-hidden>
           {/* the centring target: the midcarpal area of the drawn wrist (green = target) and the "same level" reference (sky, context only) */}
@@ -117,13 +120,13 @@ export function WristSideView({ radCase, settings, showGuides }: Props) {
           <UnderStroked stroke={SCENE.guide} width={1.5} dash="3 5">
             {(p) => <line x1={70} y1={level} x2={wristX} y2={level} {...p} />}
           </UnderStroked>
-          <SceneLabel x={150} y={level - 22} size={LABEL_SIZE.view - 2} fill={SCENE.guide}>{tw("sameLevel")}</SceneLabel>
-          <SceneLabel x={wristX} y={S + 42} size={LABEL_SIZE.view - 2} anchor="middle" fill={SCENE.good}>{tw("midcarpal")}</SceneLabel>
+          <SceneLabel x={104} y={level - 30} size={LABEL_SIZE.view - 2} fill={SCENE.guide}>{tw("sameLevel")}</SceneLabel>
+          <SceneLabel x={slabL} y={S + 46} size={LABEL_SIZE.view - 2} fill={SCENE.good}>{tw("midcarpal")}</SceneLabel>
         </g>
       )}
-      <SceneLabel x={54} y={S + 80} size={LABEL_SIZE.view} anchor="middle">{tw("seated")}</SceneLabel>
+      <SceneLabel x={14} y={S + 46} size={LABEL_SIZE.view}>{tw("seated")}</SceneLabel>
       <SceneLabel x={slabX(0) - 4} y={S - 36} size={LABEL_SIZE.view} anchor="end">{tw("fingers")}</SceneLabel>
-      <SceneLabel x={(slabL + slabX(0)) / 2} y={S + 60} size={LABEL_SIZE.view} anchor="middle">{ts("detector")}</SceneLabel>
+      <SceneLabel x={430} y={S + 46} size={LABEL_SIZE.view} anchor="end">{ts("detector")}</SceneLabel>
     </svg>
   );
 }

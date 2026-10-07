@@ -47,9 +47,9 @@ export const WRIST_SIDE = {
   /** The detector's long axis laid along the table: the fingers' end (detector y = 0) is at the RIGHT, the body end at the left. */
   slabRight: 396,
   pxPerCm: 8.5,
-  surfaceY: 292,
+  surfaceY: 282,
   /** SID is drawn at this scale along the beam. */
-  sidPxPerCm: 1.2,
+  sidPxPerCm: 1,
 } as const;
 
 /** x of a detector long-axis position (cm from the top = fingers' end) on the slab. */

@@ -254,7 +254,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       </g>
 
-      <SceneLabel x={mid} y={H + 24} size={LABEL_SIZE.detector + 2} anchor="middle">{ts("detector")}</SceneLabel>
+      <SceneLabel x={figure.axis ? W + 18 : mid} y={H + 24} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>
     </svg>
   );
 }
