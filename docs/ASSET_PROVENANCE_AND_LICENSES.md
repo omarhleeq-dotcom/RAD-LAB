@@ -465,6 +465,133 @@ Rules for entries:
 | File facts | `image/jpeg`, 1086 × 1103 px, 82,969 bytes |
 | Notes | Landmarks (`src/data/cases/elbow-lateral-radiograph.ts`) were read by eye. The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
 
+### H. Knee and foot baselines (S14.4, 2026-10-07)
+Four images of **right** limbs were attached by the owner (A-022, A-024, A-026, A-028): CC0 **as seen by the owner on the file pages**, author Mikael Häggström, M.D. The Commons `imageinfo` request was **HTTP 429 twice** (one retry), so they are recorded as **owner-verified** and **not** compared with the Commons SHA-1 (open item O56). A `list=search` request (HTTP 200) listed the two knee titles; nothing else was fetched. All four carry a burned-in "Dx" (Swedish *dexter* = right); the handling (crop where possible, otherwise a documented fill; EXIF stripped) is done in Phase B and recorded in the web-copy records A-023, A-025, A-027, A-029. Commercial-compatible (CC0, S10-3): yes, if the owner's statement holds. Not registered: any overlay art, scene image or font.
+
+### A-022 — Normal knee, AP, right knee: unmodified master (S14.4)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal knee, AP, right knee: unmodified master |
+| Asset type | Radiograph (adult right knee, AP, extended), JPEG |
+| Original filename | `File:X-ray of a normal knee by anteroposterior projection.jpg` (**title from a Commons search, HTTP 200; match with the attached file NOT confirmed**). The master is stored under the descriptive name `knee-ap-owner-attached.jpg` |
+| Creator / author | Mikael Häggström, M.D. (per the owner: own work, Uddevalla Hospital). **Not verified through Commons** |
+| Original organization / source | Wikimedia Commons; 5 Jan 2018 (per the owner) |
+| Original source URL | **Not read** (O56) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner saw CC0 on the file page). Not confirmed through the Commons API (HTTP 429 twice) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/knee/knee-ap-owner-attached.jpg` (provenance master; **not** served; added in Phase B) |
+| RAD-LAB modifications | **None** to the master (byte-identical to the file attached to the S14.4 session) |
+| Date / method of verification | 2026-10-07. The owner attached the original; checksums computed locally. Commons API: `imageinfo` HTTP 429 twice. Re-verification = O56 |
+| Checksum | SHA-1 `14c693482a6a103d5e47b6924536da6104be995c`; SHA-256 `12c6ea7926ce2b064208dfbb3dfa0b32212e3b966eb63b6166f5b4a210106400` |
+| File facts | `image/jpeg`, 1067 × 1913 px, 250,133 bytes, JFIF only (no EXIF) |
+| De-identification evidence | Burned-in text found: a mirrored **"Dx"** at the left edge in the dark background (≈ x 55–105, y 885–930). No ruler, device or other identifier seen on the full image. Removal is planned for Phase B (S14.2-7 policy, O60). No name or date stamp seen; no device, implant or cast. |
+| Notes | Distal femur, femorotibial joint and proximal tibia / fibula are inside the image; the fibula is at the viewer's left (a right knee). Right knee of a 31-year-old male per the Commons search snippet. Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-023 — RAD-LAB knee-ap educational baseline: web copy (derived from A-022)
+
+| Field | Value |
+|---|---|
+| License | CC0 1.0 Universal (inherited from A-022; owner-verified) |
+| Local project path | `public/images/knee/knee-ap-baseline.jpg` (**to be created in Phase B**) |
+| RAD-LAB modifications | **Planned (Phase B):** burned-in text removal (S14.2-7 policy), EXIF stripped, 8-bit greyscale, JPEG quality 88. This record is completed (checksum, file facts, exact crop / fill boxes) when the file exists. |
+| Notes | The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
+### A-024 — Normal knee, lateral, right knee: unmodified master (S14.4)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal knee, lateral, right knee: unmodified master |
+| Asset type | Radiograph (adult right knee, lateral, flexed), JPEG |
+| Original filename | `File:X-ray of a normal knee by lateral projection.jpg` (**title from a Commons search, HTTP 200; match NOT confirmed**). The master is stored under the descriptive name `knee-lateral-owner-attached.jpg` |
+| Creator / author | Mikael Häggström, M.D. (per the owner: own work, Uddevalla Hospital). **Not verified through Commons** |
+| Original organization / source | Wikimedia Commons; 5 Jan 2018 (per the owner) |
+| Original source URL | **Not read** (O56) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner saw CC0 on the file page). Not confirmed through the Commons API (HTTP 429 twice) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/knee/knee-lateral-owner-attached.jpg` (provenance master; **not** served; added in Phase B) |
+| RAD-LAB modifications | **None** to the master (byte-identical to the file attached to the S14.4 session) |
+| Date / method of verification | 2026-10-07. The owner attached the original; checksums computed locally. Commons API: `imageinfo` HTTP 429 twice. Re-verification = O56 |
+| Checksum | SHA-1 `9351b3c446919ce164ba85cc32595aa7a43f24a2`; SHA-256 `47d94c6770b3dfe1eef7553e8723e829dfb1b4d7e92b425c366f064d2936d64f` |
+| File facts | `image/jpeg`, 1133 × 1939 px, 292,935 bytes, JFIF only (no EXIF) |
+| De-identification evidence | Burned-in text found: **"Dx"** (mirrored) in the dark background left of the knee (≈ x 150–230, y 1185–1240). No ruler or device seen. Removal planned for Phase B (O60). No name or date stamp seen; no device, implant or cast. |
+| Notes | **Per its Commons description the image shows a minimal osteophyte at the superior rim of the patellofemoral joint; the owner accepted it as a near-normal teaching image (S14.4-4, O57). No pathology is mentioned in student-facing text.** Flexion read by eye ≈ 45° (femur and tibia axes ≈ 23–24° each from vertical) versus Bontrager 20–30° (O58). Patella, distal femur, joint, proximal tibia and fibula inside the image. Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-025 — RAD-LAB knee-lateral educational baseline: web copy (derived from A-024)
+
+| Field | Value |
+|---|---|
+| License | CC0 1.0 Universal (inherited from A-024; owner-verified) |
+| Local project path | `public/images/knee/knee-lateral-baseline.jpg` (**to be created in Phase B**) |
+| RAD-LAB modifications | **Planned (Phase B):** burned-in text removal (S14.2-7 policy), EXIF stripped, 8-bit greyscale, JPEG quality 88. This record is completed (checksum, file facts, exact crop / fill boxes) when the file exists. |
+| Notes | The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
+### A-026 — Normal foot, DP (AP), right foot: unmodified master (S14.4)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal foot, DP (AP), right foot: unmodified master |
+| Asset type | Radiograph (adult right foot, dorsoplantar), JPEG |
+| Original filename | **Unknown** (the one Commons search made did not list a foot file). The master is stored under the descriptive name `foot-ap-owner-attached.jpg` |
+| Creator / author | Mikael Häggström, M.D. (per the owner: own work, Uddevalla Hospital). **Not verified through Commons** |
+| Original organization / source | Wikimedia Commons; 28 Jul 2017 (per the owner) |
+| Original source URL | **Not read** (O56) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner saw CC0 on the file page). Not confirmed through the Commons API (HTTP 429 twice) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/foot/foot-ap-owner-attached.jpg` (provenance master; **not** served; added in Phase B) |
+| RAD-LAB modifications | **None** to the master (byte-identical to the file attached to the S14.4 session) |
+| Date / method of verification | 2026-10-07. The owner attached the original; checksums computed locally. Commons API: `imageinfo` HTTP 429 twice. Re-verification = O56 |
+| Checksum | SHA-1 `ab0e4059fa4f264461c397cba90f5429b9a90ce5`; SHA-256 `51b2160fe2b827d1e96b63baaf87ee51f892926da1a9ac725ffa86dd1c372801` |
+| File facts | `image/jpeg`, 1061 × 2431 px, 836,201 bytes, JFIF **plus an EXIF block** (to be stripped). **The owner stated 1067 × 1913 px; the attached file differs (O59)** |
+| De-identification evidence | Burned-in text found: **"Dx"** in an angled label box, top right corner. No ruler or device seen. Removal planned for Phase B (O60). No name or date stamp seen; no device, implant or cast. |
+| Notes | All phalanges, metatarsals, cuneiforms, navicular and cuboid inside the image; talus and calcaneus partly at the bottom edge; sesamoids visible under the 1st metatarsal head; hallux at the viewer's left (a right foot). Patient description for the foot not verified (O65). Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-027 — RAD-LAB foot-ap educational baseline: web copy (derived from A-026)
+
+| Field | Value |
+|---|---|
+| License | CC0 1.0 Universal (inherited from A-026; owner-verified) |
+| Local project path | `public/images/foot/foot-ap-baseline.jpg` (**to be created in Phase B**) |
+| RAD-LAB modifications | **Planned (Phase B):** burned-in text removal (S14.2-7 policy), EXIF stripped, 8-bit greyscale, JPEG quality 88. This record is completed (checksum, file facts, exact crop / fill boxes) when the file exists. |
+| Notes | The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
+### A-028 — Normal foot, AP medial oblique, right foot: unmodified master (S14.4)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal foot, AP medial oblique, right foot: unmodified master |
+| Asset type | Radiograph (adult right foot, medial oblique), JPEG |
+| Original filename | **Unknown** (not listed by the one Commons search). The master is stored under the descriptive name `foot-oblique-owner-attached.jpg` |
+| Creator / author | Mikael Häggström, M.D. (per the owner: own work, Uddevalla Hospital). **Not verified through Commons** |
+| Original organization / source | Wikimedia Commons; 28 Jul 2017 (per the owner) |
+| Original source URL | **Not read** (O56) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner saw CC0 on the file page). Not confirmed through the Commons API (HTTP 429 twice) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/foot/foot-oblique-owner-attached.jpg` (provenance master; **not** served; added in Phase B) |
+| RAD-LAB modifications | **None** to the master (byte-identical to the file attached to the S14.4 session) |
+| Date / method of verification | 2026-10-07. The owner attached the original; checksums computed locally. Commons API: `imageinfo` HTTP 429 twice. Re-verification = O56 |
+| Checksum | SHA-1 `100926d407da2b21953d91a7a4d0e203d825a376`; SHA-256 `fad6242e57c74133c4915601d3eb12c1fc6ad0e9a58c38ca8901d24de6c38d56` |
+| File facts | `image/jpeg`, 1077 × 2029 px, 571,297 bytes, JFIF **plus an EXIF block** (to be stripped) |
+| De-identification evidence | Burned-in marks found: **"Dx"** in an angled label box (top right), **a small rectangular mark** near the middle of the forefoot (≈ x 640, y 908) and **a bright frame line along the bottom edge**. Removal planned for Phase B (crop of the bottom rows where possible, fill otherwise; O60). No name or date stamp seen; no device, implant or cast. |
+| Notes | Obliquity read by eye only (O63). The bottom edge ends at the proximal tarsals: **the posterior calcaneus is not inside the image** (O61). Metatarsals 3–5 appear free of superimposition; the 5th metatarsal tuberosity is in profile. Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-029 — RAD-LAB foot-oblique educational baseline: web copy (derived from A-028)
+
+| Field | Value |
+|---|---|
+| License | CC0 1.0 Universal (inherited from A-028; owner-verified) |
+| Local project path | `public/images/foot/foot-oblique-baseline.jpg` (**to be created in Phase B**) |
+| RAD-LAB modifications | **Planned (Phase B):** burned-in text removal (S14.2-7 policy), EXIF stripped, 8-bit greyscale, JPEG quality 88. This record is completed (checksum, file facts, exact crop / fill boxes) when the file exists. |
+| Notes | The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.

@@ -157,6 +157,18 @@ Reference: [`RAD-LAB_Medical_Reference_Wrist.md`](RAD-LAB_Medical_Reference_Wris
 | S14.3-R11 | Arabic elbow terms and sentences (DRAFT) | `ARABIC_TERMINOLOGY.md` Session 14.3 | Confirm or correct. | AR |
 | S14.3-R12 | Result render options: 48 px/cm (cap 1.8 Mpx), view = region + marker + 0.5 cm; image scale 0.0155 cm / px assumed (O49) | none | — | E |
 
+### 2d. Session 14.4 additions (knee AP / lateral, foot AP / oblique, right side; Phase A rows — the build rows are added with the code; all provisional)
+| ID | Item | Source / basis | Question for the reviewer | Who |
+|---|---|---|---|---|
+| **S14.4-R1** | **Classification.** SOURCE-BACKED (Bontrager, as supplied by the owner): foot AP CR 10° toward the heel (high arch 15°, low arch 5°) at the base of the 3rd metatarsal; foot oblique CR perpendicular, plantar surface 30°–40° (40° recommended); knee AP CR parallel to the tibial plateau (perpendicular for ASIS-to-table 19–24 cm, 3–5° caudad < 19 cm, 3–5° cephalad > 24 cm), 1.25 cm distal to the patellar apex; knee lateral flexion 20°–30°, CR 5°–7° cephalad, 2.5 cm distal to the medial epicondyle; receptors, SID minimum 102 cm, non-grid distal to the knee and grid > 10 cm; digital 65 ± 5 kV (foot) / 75 ± 5 kV (knee); true-position criteria | BONTRAGER-9 p.224–225, 232, 233, 246, 249 | Confirm the criteria, angles and kV bands for digital use | E |
+| **S14.4-R2** | **Knee lateral baseline contains a minimal osteophyte at the superior patellofemoral rim** (per its Commons description) — accepted by the owner as a near-normal teaching image; no pathology wording in the product | Commons description via the owner (A-024, O57) | Is the image acceptable as a normal baseline? | E |
+| **S14.4-R3** | **Knee lateral baseline flexion ≈ 45° by eye vs Bontrager 20°–30°**; no medical value changed | A-024, O58 | Is a flatter image needed? | E |
+| **S14.4-R4** | kV partial bands, SID full / partial bands, centring and tube-angle tolerance bands, excess-collimation margins, required regions, rotation ±2° / ±5°, manual reference point: **teaching choices** (values fixed in the build, to be added here with the code) | none (class B) | Acceptable? | E / P |
+| **S14.4-R5** | Case choices (class C): average patient (knee AP 0°, knee lateral 6° cephalad target) and average arch (foot AP 10°); knee lateral on 24 × 30 cm; weights 28 / 22 / 17 / 22 / 11; critical findings = missing / wrong-side marker; right-side letter-only `fixed-side` marker | S14.4-3 | Weights, gate list, case choices? | E |
+| **S14.4-R6** | Grid rule (> 10 cm) is stated but not a control; shielding, posture, arch height as a patient attribute are not scored | reference §3, §8 (O64) | Which should become scored? | E |
+| **S14.4-R7** | Images: four right-limb CC0 originals, owner-verified (Commons `imageinfo` 429), burned-in "Dx" handled in Phase B; foot oblique stops at the proximal tarsals (O61); scale and landmarks by eye (O62); foot DP file size differs from the owner's statement (O59) | A-022 … A-029 | Acceptable teaching images? | E / O |
+| **S14.4-R8** | Arabic knee / foot terms and sentences (DRAFT; added to `ARABIC_TERMINOLOGY.md` with the UI strings in the build) | reference §11 | Confirm or correct | AR |
+
 ## 3. PA discrepancies (O11)
 Provisional decisions S10b-1…3: kV range (EC / WHO / ACR vs the repo's 100–150 band), AEC chamber mapping (EC right lateral chamber vs the repo's detector-view left/right), rotation sign (WHO p.28 direction not interpreted). Questions are in rows S10b-1, S10b-2, S10b-3 above.
 
