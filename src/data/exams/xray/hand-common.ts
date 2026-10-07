@@ -125,7 +125,7 @@ const positioning = (k: HandKind): PositioningSpec => ({
   // Display halves are NOT part of the single-limb rule (O21 option A, S14.1c-4, S14.2-2): the letter alone is judged. `markerSide` only
   // places the default marker of each letter at the edge of the field, clear of the hand (the L on the viewer's left).
   markerSide: { L: "viewer-left", R: "viewer-right" },
-  defaultMarkerPosition: k === "pa" ? { L: { x: -0.68, y: 0 }, R: { x: 0.8, y: 0 } } : { L: { x: -0.55, y: 0 }, R: { x: 0.55, y: 0 } },
+  defaultMarkerPosition: k === "pa" ? { L: { x: -0.68, y: 0 }, R: { x: 0.8, y: 0 } } : { L: { x: -0.49, y: 0 }, R: { x: 0.49, y: 0 } },
   // Left hand in v1 (S14.2-8): the letter must be L. A right-hand case needs the side on the case (O29).
   markerRule: { kind: "fixed-side", side: "L" },
 });
