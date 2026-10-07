@@ -48,7 +48,7 @@ export type SceneId = string;
  * Scene ids registered so far (the pure half of the registry: `validateExam` is logic and must not import the React
  * scene components). A new scene is added here AND in `SCENES`; `features/exam/registries.test.ts` checks both lists agree.
  */
-export const SCENE_IDS: readonly SceneId[] = ["chest-pa-frontal", "chest-lateral", "chest-ap-supine", "wrist-pa", "wrist-lateral", "hand-pa", "hand-lateral", "elbow-ap", "elbow-lateral", "foot-ap"];
+export const SCENE_IDS: readonly SceneId[] = ["chest-pa-frontal", "chest-lateral", "chest-ap-supine", "wrist-pa", "wrist-lateral", "hand-pa", "hand-lateral", "elbow-ap", "elbow-lateral", "foot-ap", "foot-oblique"];
 
 /** Result renderers that exist today (`features/radiograph`: plan → pure pipeline → canvas). */
 export const RENDERER_IDS = ["radiograph-2d"] as const;

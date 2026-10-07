@@ -326,12 +326,12 @@ const PER = {
       "الأخمص خارج الزاوية 30°–40° التي يذكرها Bontrager (ص.233) فلا تكون عظام مشط القدم 3–5 غير متراكبة كما هو مطلوب. نطاق الدرجة الجزئية 25°–45° اختيار تعليمي في المحاكي.",
     ),
     rotationLow: T(
-      "The foot is turned less than the 30°–40° Bontrager gives (p.233): the plantar surface is too close to the detector. Turn the foot further medially (40° is recommended).",
-      "القدم مدارة أقل من 30°–40° التي يذكرها Bontrager (ص.233): الأخمص قريب جدًّا من الكاشف. أدِر القدم إنسيًّا أكثر (يوصى بـ40°).",
+      "The foot is turned less than the 30°–40° Bontrager gives (p.233): the plantar surface is too close to the detector. Turn the foot further medially (40° is recommended). The 25°–45° partial-credit band is an engine teaching choice.",
+      "القدم مدارة أقل من 30°–40° التي يذكرها Bontrager (ص.233): الأخمص قريب جدًّا من الكاشف. أدِر القدم إنسيًّا أكثر (يوصى بـ40°). نطاق الدرجة الجزئية 25°–45° اختيار تعليمي في المحاكي.",
     ),
     rotationHigh: T(
-      "The foot is turned more than the 30°–40° Bontrager gives (p.233). Turn the foot back toward 40°.",
-      "القدم مدارة أكثر من 30°–40° التي يذكرها Bontrager (ص.233). أعد القدم نحو 40°.",
+      "The foot is turned more than the 30°–40° Bontrager gives (p.233). Turn the foot back toward 40°. The 25°–45° partial-credit band is an engine teaching choice.",
+      "القدم مدارة أكثر من 30°–40° التي يذكرها Bontrager (ص.233). أعد القدم نحو 40°. نطاق الدرجة الجزئية 25°–45° اختيار تعليمي في المحاكي.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the toes.", "الحافة العلوية للمجال تقطع أصابع القدم."),
