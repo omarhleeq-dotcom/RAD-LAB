@@ -72,7 +72,7 @@ export interface PlanEffect {
  * right in the displayed image); `overlapShiftU` is a magnitude (wrist PA: the ulna copy blended toward the radius).
  */
 export interface LimbRotationPlan {
-  kind: "wrist-pa" | "wrist-lateral" | "hand-pa" | "hand-lateral" | "elbow-ap" | "elbow-lateral";
+  kind: "wrist-pa" | "wrist-lateral" | "hand-pa" | "hand-lateral" | "elbow-ap" | "elbow-lateral" | "limb-warp" | "limb-layers" | "limb-copies";
   degrees: number;
   shiftU: number;
   overlapShiftU: number;
@@ -82,6 +82,8 @@ export interface LimbRotationPlan {
    * lateral: the shifts of the copies of the structures that must be superimposed (one copy per entry; all 0 at the base pose).
    */
   hand?: { anchors?: { u: number; du: number }[][]; shifts?: number[][] };
+  // The three lower-limb kinds (S14.4) reuse these fields: `limb-warp` fills `hand.anchors` (one anchor list per band), `limb-layers` fills
+  // `elbow.anchors` + `elbow.layers` (first layer = the structure on the viewer's left of the contact line), `limb-copies` fills `elbow.copies`.
   /**
    * Elbow kinds only (S14.3): the elbow rotation model's result-image input (`features/elbow-model`). AP: the displacement anchors of the whole
    * image (`anchors`, sorted by u) and the anchors of the ulna and radius layers of the forearm rows (`layers`); lateral: per landmark band

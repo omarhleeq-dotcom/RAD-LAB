@@ -20,7 +20,7 @@
  *
  * Every effect size is an EDUCATIONAL VISUAL APPROXIMATION (see tuning.ts).
  */
-import type { ImageEllipse, RadiographAssetSpec } from "@/domain/radiograph";
+import type { ImageBand, ImageEllipse, RadiographAssetSpec } from "@/domain/radiograph";
 import type { RenderPlan } from "./plan";
 import { TUNING } from "./tuning";
 
@@ -191,7 +191,7 @@ export function anchorShift(anchors: { u: number; du: number }[], u: number): nu
 }
 
 /** Hand PA (S14.2b-FIX): displacement (fraction of the image width) of the source content at (u, v): the band-weighted anchor interpolation of the 2.5D hand model. */
-export function handPaShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "hand-pa" }>): number {
+export function handPaShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: { bands: (ImageBand & { u1?: number; u2?: number })[] }): number {
   let shift = 0;
   lm.bands.forEach((b, i) => {
     // A band may carry a horizontal window of the SOURCE content (soft edge 0.06 of the image width): the thumb band moves the thumb only.
@@ -212,7 +212,7 @@ export function handPaShiftU(u: number, v: number, rot: NonNullable<RenderPlan["
 export function elbowApValue(
   anchors: { u: number; du: number }[],
   layers: { ulna: { u: number; du: number }[]; radius: { u: number; du: number }[] },
-  lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "elbow-ap" }>,
+  lm: { forearm: ImageBand & { splitU: number } },
   sample: (u: number, v: number) => number,
   u: number,
   v: number,
@@ -268,7 +268,8 @@ export function limbRotationValue(
     }
     return value;
   }
-  if (lm.kind === "hand-pa" && rot.kind === "hand-pa") {
+  if ((lm.kind === "hand-pa" && rot.kind === "hand-pa") || (lm.kind === "limb-warp" && rot.kind === "limb-warp")) {
+    // (limb-warp = the foot exams, S14.4: the same band-weighted anchor warp)
     // Backward map u_out → u_src by fixed-point iteration (the model's displacement field is smooth and slowly varying).
     let us = u;
     for (let k = 0; k < 4; k++) us = u - handPaShiftU(us, v, rot, lm);
@@ -295,10 +296,10 @@ export function limbRotationValue(
     });
     return out;
   }
-  if (lm.kind === "elbow-ap" && rot.kind === "elbow-ap" && rot.elbow?.anchors && rot.elbow.layers) {
+  if (((lm.kind === "elbow-ap" && rot.kind === "elbow-ap") || (lm.kind === "limb-layers" && rot.kind === "limb-layers")) && rot.elbow?.anchors && rot.elbow.layers) {
     return elbowApValue(rot.elbow.anchors, rot.elbow.layers, lm, sample, u, v);
   }
-  if (lm.kind === "elbow-lateral" && rot.kind === "elbow-lateral") {
+  if ((lm.kind === "elbow-lateral" && rot.kind === "elbow-lateral") || (lm.kind === "limb-copies" && rot.kind === "limb-copies")) {
     // Per band: the lateral-side and the medial-side copy of the structures (window of the SOURCE content), weighted; at the base pose every shift is 0 and the picture is the baseline.
     const value = sample(clamp01(u), v);
     let out = value;

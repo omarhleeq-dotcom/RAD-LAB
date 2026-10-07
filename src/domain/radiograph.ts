@@ -113,4 +113,13 @@ export type LimbRotationLandmarks =
   // also warped by the elbow model's column anchors. Lateral = the bands whose structures must be superimposed (distal humerus condyle
   // outlines; radial head / coronoid), each limited to a horizontal window `u1`..`u2` of the source.
   | { kind: "elbow-ap"; forearm: ImageBand & { splitU: number } }
-  | { kind: "elbow-lateral"; bands: (ImageBand & { u1: number; u2: number })[] };
+  | { kind: "elbow-lateral"; bands: (ImageBand & { u1: number; u2: number })[] }
+  // Lower limb (S14.4): three GENERIC drawings that reuse the hand / elbow pixel steps (`limb-warp` = the hand PA band warp, `limb-layers` = the
+  // elbow AP two-layer forearm rows, `limb-copies` = the elbow lateral copies of the structures that must be superimposed). `model` names the exam
+  // whose model (`features/lower-limb-model`) supplies the displacements, and selects the Bontrager criterion shown on the effect card.
+  | { kind: "limb-warp"; model: LowerLimbModelId; bands: (ImageBand & { u1?: number; u2?: number })[] }
+  | { kind: "limb-layers"; model: LowerLimbModelId; forearm: ImageBand & { splitU: number } }
+  | { kind: "limb-copies"; model: LowerLimbModelId; bands: (ImageBand & { u1: number; u2: number })[] };
+
+/** The four lower-limb rotation models (S14.4). */
+export type LowerLimbModelId = "foot-ap" | "foot-oblique" | "knee-ap" | "knee-lateral";
