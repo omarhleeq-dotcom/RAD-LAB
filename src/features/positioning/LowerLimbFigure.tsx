@@ -46,7 +46,7 @@ export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: Figure
 }
 
 type Map = (v: number) => number;
-const softStyle = { fill: SCENE.limbFar, stroke: SCENE.edge, strokeWidth: STROKE.thin, strokeLinejoin: "round" } as const;
+const softStyle = { fill: SCENE.lung, stroke: SCENE.edge, strokeWidth: STROKE.thin, strokeLinejoin: "round" } as const;
 const boneStyle = { fill: SCENE.trunk, stroke: SCENE.bone, strokeWidth: STROKE.thin, strokeOpacity: 0.85, strokeLinejoin: "round" } as const;
 
 function KneeAp({ X, Y, rotationDeg, showGuides }: { X: Map; Y: Map; rotationDeg: number; showGuides: boolean }): ReactNode {
@@ -134,7 +134,7 @@ function Foot({ kind, X, Y, k, rotationDeg, bands }: { kind: "ap" | "oblique"; X
     return (
       <g key={`soft-${r.id}`}>
         <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.edge} strokeOpacity={0.7} strokeWidth={w + 2 * STROKE.thin} strokeLinecap="round" />
-        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.limbFar} strokeWidth={w} strokeLinecap="round" />
+        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.lung} strokeWidth={w} strokeLinecap="round" />
       </g>
     );
   };

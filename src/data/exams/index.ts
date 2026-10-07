@@ -4,6 +4,7 @@ import { chestLateralErectExam } from "./xray/chest-lateral-erect";
 import { chestPaErectExam } from "./xray/chest-pa-erect";
 import { elbowApExam } from "./xray/elbow-ap";
 import { elbowLateralExam } from "./xray/elbow-lateral";
+import { kneeLateralExam } from "./xray/knee-lateral";
 import { kneeApExam } from "./xray/knee-ap";
 import { footObliqueExam } from "./xray/foot-oblique";
 import { footApExam } from "./xray/foot-ap";
@@ -13,7 +14,7 @@ import { wristLateralExam } from "./xray/wrist-lateral";
 import { wristPaExam } from "./xray/wrist-pa";
 
 /** Registry of exam definitions. Add a new exam here (data only, if it fits the existing vocabulary). */
-export const EXAMS: readonly AnyExamDefinition[] = [chestPaErectExam, chestLateralErectExam, chestApSupineExam, wristPaExam, wristLateralExam, handPaExam, handLateralExam, elbowApExam, elbowLateralExam, footApExam, footObliqueExam, kneeApExam];
+export const EXAMS: readonly AnyExamDefinition[] = [chestPaErectExam, chestLateralErectExam, chestApSupineExam, wristPaExam, wristLateralExam, handPaExam, handLateralExam, elbowApExam, elbowLateralExam, footApExam, footObliqueExam, kneeApExam, kneeLateralExam];
 
 export function getExam(id: string): AnyExamDefinition | undefined {
   return EXAMS.find((e) => e.id === id);

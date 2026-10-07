@@ -983,8 +983,8 @@
   "sceneKnee": {
     "lateralSide": "Lateral side",
     "medialSide": "Medial side",
-    "front": "Front of the knee",
-    "back": "Back of the knee",
+    "front": "Front",
+    "back": "Back",
     "femur": "Femur",
     "tibia": "Tibia / fibula",
     "target": "Knee joint",
