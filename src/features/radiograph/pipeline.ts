@@ -168,15 +168,6 @@ export function bandWeight(band: { v1: number; v2: number }, v: number): number 
   return smoothstep(band.v1 - s, band.v1 + s, v) * (1 - smoothstep(band.v2 - s, band.v2 + s, v));
 }
 
-/**
- * Wrist PA: horizontal displacement (fraction of image width) of the SOURCE content at (u, v): a smooth bump over the proximal
- * metacarpal band, so the spaces between the shafts become unequal (stretched on one side of the bump, squeezed on the other).
- */
-export function wristPaSpacingShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "wrist-pa" }>): number {
-  const { u1, u2 } = lm.spacing;
-  return rot.shiftU * Math.sin(Math.PI * clamp01((u - u1) / (u2 - u1))) * bandWeight(lm.spacing, v);
-}
-
 /** Piecewise-linear interpolation through anchors sorted by u (constant beyond the outer ones). */
 export function anchorShift(anchors: { u: number; du: number }[], u: number): number {
   const n = anchors.length;
@@ -243,9 +234,7 @@ export function elbowApValue(
 
 /**
  * Value of one output pixel under a limb rotation effect, from the backward-mapped sample function. Pure and deterministic.
- *  - wrist PA: backward map for the metacarpal-spacing bump (one refinement step, as the chest rotation), then an offset copy of
- *    the ulna blended toward the radius over the distal radioulnar band.
- *  - wrist lateral: the bands that must be superimposed are blended with a second copy offset by the signed shift.
+ *  - wrist PA / lateral (S-VIS-1b): the elbow AP / lateral steps, driven by the wrist model.
  */
 export function limbRotationValue(
   rot: NonNullable<RenderPlan["limb"]>["rotation"],
@@ -254,20 +243,6 @@ export function limbRotationValue(
   u: number,
   v: number,
 ): number {
-  const blend = TUNING.limbRotation.blend;
-  if (lm.kind === "wrist-pa" && rot.kind === "wrist-pa") {
-    const first = u - wristPaSpacingShiftU(u, v, rot, lm);
-    const uSrc = clamp01(u - wristPaSpacingShiftU(first, v, rot, lm));
-    let value = sample(uSrc, v);
-    // The ulna copy: shown where the ulna, moved toward the radius by the overlap amount, would lie.
-    const w = bandWeight(lm.radioulnar, v);
-    if (w > 0 && rot.overlapShiftU > 0) {
-      const uu = u - rot.overlapShiftU;
-      const inUlna = smoothstep(lm.radioulnar.ulnaU1 - 0.02, lm.radioulnar.ulnaU1 + 0.02, uu) * (1 - smoothstep(lm.radioulnar.ulnaU2 - 0.02, lm.radioulnar.ulnaU2 + 0.02, uu));
-      value += blend * w * inUlna * (sample(clamp01(uu), v) - value);
-    }
-    return value;
-  }
   if ((lm.kind === "hand-pa" && rot.kind === "hand-pa") || (lm.kind === "limb-warp" && rot.kind === "limb-warp")) {
     // (limb-warp = the foot exams, S14.4: the same band-weighted anchor warp)
     // Backward map u_out → u_src by fixed-point iteration (the model's displacement field is smooth and slowly varying).
@@ -296,14 +271,15 @@ export function limbRotationValue(
     });
     return out;
   }
-  if (((lm.kind === "elbow-ap" && rot.kind === "elbow-ap") || (lm.kind === "limb-layers" && rot.kind === "limb-layers")) && rot.elbow?.anchors && rot.elbow.layers) {
+  if (((lm.kind === "elbow-ap" && rot.kind === "elbow-ap") || (lm.kind === "wrist-pa" && rot.kind === "wrist-pa") || (lm.kind === "limb-layers" && rot.kind === "limb-layers")) && rot.elbow?.anchors && rot.elbow.layers) {
     return elbowApValue(rot.elbow.anchors, rot.elbow.layers, lm, sample, u, v);
   }
-  if ((lm.kind === "elbow-lateral" && rot.kind === "elbow-lateral") || (lm.kind === "limb-copies" && rot.kind === "limb-copies")) {
+  if ((lm.kind === "elbow-lateral" && rot.kind === "elbow-lateral") || (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") || (lm.kind === "limb-copies" && rot.kind === "limb-copies")) {
     // Per band: the lateral-side and the medial-side copy of the structures (window of the SOURCE content), weighted; at the base pose every shift is 0 and the picture is the baseline.
     const value = sample(clamp01(u), v);
     let out = value;
-    lm.bands.forEach((b, i) => {
+    lm.bands.forEach((band, i) => {
+      const b = { u1: 0, u2: 1, ...band }; // (the wrist's windows are optional: default the whole width)
       const copies = rot.elbow?.copies?.[i];
       if (!copies || copies.length === 0) return;
       const wv = bandWeight(b, v);
@@ -318,12 +294,6 @@ export function limbRotationValue(
       out += wv * (sum / wsum - value);
     });
     return out;
-  }
-  if (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") {
-    const value = sample(clamp01(u), v);
-    let w = 0;
-    for (const b of lm.bands) w = Math.max(w, bandWeight(b, v));
-    return value + blend * w * (sample(clamp01(u - rot.shiftU), v) - value);
   }
   return sample(u, v);
 }

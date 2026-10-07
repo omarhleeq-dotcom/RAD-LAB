@@ -37,14 +37,6 @@ export const TUNING = {
   limbRotation: {
     /** Console range of the wrist rotation control; larger magnitudes are clamped. */
     maxDeg: 15,
-    /** PA: horizontal bump (fraction of image width per degree, sign = the value's sign) applied to the proximal metacarpal band: the spaces between the shafts become unequal. */
-    paSpacingShiftPerDeg: 0.006,
-    /** PA: a second, offset copy of the ulna is blended over the radius by this fraction of image width per degree of |value| (no direction claimed): the distal radius and ulna stop being separated. */
-    paRadioulnarShiftPerDeg: 0.012,
-    /** PA / lateral: weight of the offset copy (0.5 = equal blend). */
-    blend: 0.5,
-    /** Lateral: offset of the second copy, fraction of image width per degree (sign = the value's sign): the bands that must be superimposed are drawn apart. */
-    lateralShiftPerDeg: 0.012,
     /** Soft edge of every band, as a fraction of image height. */
     bandSoft: 0.03,
     /**
@@ -56,6 +48,8 @@ export const TUNING = {
     elbowModelGainPerDeg: 2.3,
     /** Knee / foot (S14.4): as the hand's gain, for the lower-limb rotation models (`features/lower-limb-model`); illustrative, scoring never uses it. */
     lowerLimbModelGainPerDeg: 2.3,
+    /** Wrist (S-VIS-1b): as the hand's gain, for the wrist rotation model (`features/wrist-model`); a labelled teaching exaggeration, scoring never uses it. */
+    wristModelGainPerDeg: 2.3,
   },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },

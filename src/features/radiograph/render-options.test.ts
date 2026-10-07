@@ -8,8 +8,8 @@ import { wristPa } from "@/data/cases/wrist-pa";
 import { resultPxPerCm } from "./RadiographCanvas";
 
 describe("result resolution", () => {
-  it("chest and wrist keep the shared 24 px/cm", () => {
-    for (const c of [chestPaErect, chestLateralErect, wristPa]) {
+  it("chest keeps the shared 24 px/cm", () => {
+    for (const c of [chestPaErect, chestLateralErect]) {
       expect(c.radiograph.render).toBeUndefined();
       expect(resultPxPerCm(c.radiograph, c.detector.widthCm * c.detector.heightCm)).toBe(24);
     }

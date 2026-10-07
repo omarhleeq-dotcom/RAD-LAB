@@ -15,6 +15,9 @@ const credit = (en: string, ar: string): { en: string; ar: string } => ({ en, ar
 
 const common = (k: LowerLimbKind) => ({
   anatomyBox: { ...lowerLimbImage(k).box },
+  // Result canvas at 48 px/cm (S-VIS-1b-5): the masters have 80 (knees) / 100 (foot AP) / 111 (foot oblique) px/cm at the assumed scales (no upscaling);
+  // the canvas caps it at 1.8 Mpx (24 × 30 cm -> 48 px/cm fits). The shared 24 px/cm default softened the trabecular detail (O68).
+  render: { pxPerCm: 48 },
   evidence: {
     status: "educational-simplification" as const,
     reference: "S14.4-3…10; docs/ASSET_PROVENANCE_AND_LICENSES.md (A-022 … A-029)",

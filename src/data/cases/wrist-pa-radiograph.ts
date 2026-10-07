@@ -31,11 +31,9 @@ export const wristPaRadiograph: RadiographAssetSpec = {
   anatomyBox: { u1: 0, v1: 0, u2: 1, v2: 1 },
   // The carpal bones: the dense zone that low penetration makes less visible.
   denseZones: [{ cu: 0.5, cv: 0.36, ru: 0.36, rv: 0.2 }],
-  limbRotation: {
-    kind: "wrist-pa",
-    // Proximal metacarpal bases (rows 0–185 of 980; columns ≈ 80–690).
-    spacing: { v1: 0, v2: 0.19, u1: 0.12, u2: 0.98 },
-    // Distal radius and ulna (rows ≈ 510–950): the ulna lies at columns ≈ 105–310.
-    radioulnar: { v1: 0.52, v2: 0.97, ulnaU1: 0.15, ulnaU2: 0.45 },
-  },
+  // 2.5D wrist model (S-VIS-1b, features/wrist-model): the forearm rows start at the radiocarpal joint (row ≈ 510 of 980); the contact line between
+  // the ulna (columns ≈ 105–310) and the radius (≈ 320–600) is at column ≈ 315. Read by eye, approximate.
+  limbRotation: { kind: "wrist-pa", forearm: { v1: 0.52, v2: 1, splitU: 0.457 } },
+  // Result canvas at 48 px/cm (the baseline has ≈ 80 px/cm at the assumed 0.01245 cm/px: no upscaling; S-VIS-1b-5). Capped by the canvas.
+  render: { pxPerCm: 48 },
 };
