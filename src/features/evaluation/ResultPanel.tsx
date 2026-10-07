@@ -10,6 +10,8 @@ import { localize } from "@/lib/localized";
 import { buildRenderPlan } from "@/features/radiograph/plan";
 import { needsNotDrawnLabel, variantIsDrawn } from "@/features/radiograph/consistency";
 import { RadiographEffects } from "@/features/radiograph/RadiographEffects";
+import { projectionLabelOf } from "@/features/simulation/projection-label";
+import { wordingNsOf } from "@/features/radiograph/wording";
 import { TechniqueResult } from "@/features/technique/TechniqueResult";
 import { ResultImage } from "./ResultImage";
 import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
@@ -51,8 +53,10 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
       return label ? localize(label, locale) : value;
     }
     switch (kind) {
-      case "projection":
-        return tCon(`projections.${value as "pa-erect"}`);
+      case "projection": {
+        const own = projectionLabelOf(radCase.choiceControls, result.resultState.patient.choices, value as "pa-erect");
+        return own ? localize(own, locale) : tCon(`projections.${value as "pa-erect"}`);
+      }
       case "breathing":
         return tPat(`breathingOptions.${value as "no-instruction"}`);
       case "motionInstruction":
@@ -214,7 +218,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
         </div>
       </div>
     </section>
-    <RadiographEffects plan={plan} sex={radCase.patient.sex} lateral={radCase.radiograph.projection === "lateral-left"} />
+    <RadiographEffects plan={plan} sex={radCase.patient.sex} wording={wordingNsOf(radCase.radiograph.projection)} />
     <TechniqueResult radCase={radCase} kvp={settings.kvp} manualMas={settings.mas} exposure={result.exposure} />
     </div>
   );

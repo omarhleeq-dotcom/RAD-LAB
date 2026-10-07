@@ -194,6 +194,43 @@ Rules for entries:
 | File facts | `image/jpeg`, 1000 × 1387 px, 194,965 bytes |
 | Notes | The renderer decodes this file in the browser and applies the same deterministic educational effects at display time (runtime transformations, not new assets). Landmarks (`src/data/cases/chest-lateral-radiograph.ts`) were read by eye. No jaw / arm / scapula overlay exists for the lateral. |
 
+### A-008 — NIH ChestX-ray14 image 00023616_000: AP chest radiograph, unmodified master (S13)
+
+| Field | Value |
+|---|---|
+| Asset name | NIH ChestX-ray14 image `00023616_000.png` |
+| Asset type | Radiograph (adult AP chest), PNG, 8-bit greyscale |
+| Creator / author | NIH Clinical Center (data provider); dataset paper: Xiaosong Wang, Yifan Peng, Le Lu, Zhiyong Lu, Mohammadhadi Bagheri, Ronald Summers, *ChestX-ray8: Hospital-scale Chest X-ray Database and Benchmarks on Weakly-Supervised Classification and Localization of Common Thorax Diseases*, IEEE CVPR, pp. 3462-3471, 2017 |
+| Original source | NIH download site <https://nihcc.app.box.com/v/ChestXray-NIHCC> (the page loaded, HTTP 200, but is a JavaScript app: **no terms text was readable**) |
+| **Terms (SECONDARY source — re-verify at the official NIH page, O16)** | Google Cloud documentation "NIH Chest X-ray dataset", <https://docs.cloud.google.com/healthcare-api/docs/resources/public-datasets/nih-chest> (page "Last updated 2026-10-05 UTC", read 2026-10-06). Section "License and attribution", exact wording: **"There are no restrictions on the use of the NIH chest x-ray images. However, the dataset has the following attribution requirements:"** (1) "Provide a link to the NIH download site: https://nihcc.app.box.com/v/ChestXray-NIHCC" (2) "Include a citation to the CVPR 2017 paper: Xiaosong Wang, Yifan Peng, Le Lu, Zhiyong Lu, Mohammadhadi Bagheri, Ronald Summers, ChestX-ray8: Hospital-scale Chest X-ray Database and Benchmarks on Weakly-Supervised Classification and Localization of Common Thorax Diseases, IEEE CVPR, pp. 3462-3471, 2017" (3) "Acknowledge that the NIH Clinical Center is the data provider". |
+| Official NIH wording | **Not read.** One attempt per host (2026-10-06): `nihcc.app.box.com` HTTP 200 but no terms text (JS app, 119 characters of text); `www.nih.gov` news release HTTP 403 (Cloudflare "Attention Required"); `clinicalcenter.nih.gov` not retried after the allowlist change. The owner approved using the dataset on the secondary wording (S13-1). |
+| Licence class | NIH statement "no restrictions on use" + three attribution conditions (not a CC licence). Commercial use: the wording imposes no restriction; owner-approved basis, **pending re-verification at the NIH page (O16)**. |
+| Transport route (mirror, NOT the licence source) | Hugging Face dataset `alkzar90/NIH-Chest-X-ray-dataset` (its card says licence "unknown"; irrelevant here): one PNG extracted with HTTP range requests from `data/images/images_010.zip` (no archive downloaded), metadata from `data/Data_Entry_2017_v2020.csv` (SHA-256 `dc1d2df67fdc1c5a7601d48699cda2b13dc2c4841488b4183dcf04884dbaca11`). The mirrored bytes were **not compared with the NIH original** (NIH unreachable). The Google Cloud bucket `gcs-public-data--healthcare-nih-chest-xray` is "Requester Pays" (needs credentials): **not used**. |
+| Dataset metadata for the image | `Finding Labels` = No Finding; `Follow-up #` 0; `Patient Age` 31; `Patient Gender` M; `View Position` AP; original 2500 × 2048 px at 0.168 mm (the dataset PNG is 1024 × 1024). |
+| Selection | From the CSV: View Position AP, No Finding, age 25–60, follow-up 0 (1366 candidates); 24 randomly chosen candidates were viewed; on the contact sheets (thumbnails) nearly all of the others showed burned-in text (side markers, "PORTABLE" / "AP"), lines / leads / devices, or were cropped / rotated; this one was inspected at full size: no text, no tubes / leads / devices, whole lungs with both costophrenic angles, clavicles roughly horizontal, spine roughly central, adequate quality. Borderline remarks: the lower diaphragm is cropped, the shoulders are slightly asymmetric. |
+| Local project path | `assets/source/chest-ap/NIH-ChestXray14_00023616_000.png` (provenance master; **not** served by the app) |
+| RAD-LAB modifications | **None** (byte-identical to the file fetched). |
+| Checksum | SHA-256 `c85b227f5154d8f5248551b8f93e6ee43803652027167c969c6c5f31eea1f3b5` |
+| File facts | `image/png`, 1024 × 1024 px, 8-bit greyscale, 348 / 383 KB; chunks IHDR, one `tIME` (2016-09-19 19:05:49, a file timestamp), IDAT, IEND. No text chunks. |
+| De-identification evidence | Visual inspection of the full image (no text in any corner or margin), PNG chunk scan (only `tIME`), no DICOM tags. The file name is the dataset's pseudonymous index; it is recorded here but not shown in the product. |
+| Date verified | 2026-10-06 (terms read, image fetched, SHA-256 computed, image inspected) |
+| Notes | **S12-4 / S13:** a representative normal adult AP chest of a **different person** from the PA and lateral baselines. **The patient position of the original exposure (supine, semi-erect, erect) is not known and not claimed**; the supine state of the exam is a teaching approximation of the exam variant. |
+
+### A-009 — Chest AP educational baseline: web copy (derived from A-008)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Chest AP educational baseline, 1024 px |
+| Asset type | Radiograph, derived PNG (8-bit greyscale) |
+| Creator / author | As A-008. Derivation: RAD-LAB (`scripts/derive-chest-ap-baseline.py`). |
+| Licence | As A-008 (NIH terms, secondary source, O16). Attribution **required** (link to the NIH download site, the CVPR 2017 citation, NIH Clinical Center acknowledged as data provider): shown as the credit line under the result image (`RadiographAssetSpec.credit`, EN + AR draft). **No separate sources / credits page exists in the app**; a page is open item O18. |
+| RAD-LAB modifications | Lossless re-encode without the `tIME` chunk. **No pixel change** (the script asserts pixel equality), no crop, no resize (the owner accepts 1024 px as the minimum for this asset), no tone change, nothing painted over. |
+| Local project path | `public/images/chest-ap/chest-ap-baseline-1024.png` (the file the app loads) |
+| Date / method of verification | 2026-10-06. Reproducible: `python3 -I scripts/derive-chest-ap-baseline.py` (checks the A-008 SHA-256 first). Output re-read: chunks IHDR / IDAT / IEND only. |
+| Checksum | SHA-256 `dff1f737cfcccc3e4728a9314c5c49787c48ceb9508997ad701bd42dc4d84f1a` |
+| File facts | `image/png`, 1024 × 1024 px, 404,226 bytes |
+| Notes | Landmarks (`src/data/cases/chest-ap-radiograph.ts`) were read by eye. No scapula / jaw overlay exists for the AP. |
+
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.

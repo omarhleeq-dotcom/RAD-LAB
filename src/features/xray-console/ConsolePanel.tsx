@@ -6,6 +6,7 @@ import clsx from "clsx";
 import type { RadCase } from "@/domain/case";
 import type { ExposureMode, SimulationMode, SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
+import { projectionLabelOf } from "@/features/simulation/projection-label";
 import { assessReadiness } from "@/features/technique/readiness";
 import { AecPanel } from "./AecPanel";
 import { ReadinessPanel } from "./ReadinessPanel";
@@ -100,7 +101,10 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           value={settings.projection}
           disabled={locked}
           onSelect={(v) => onChange("projection", v)}
-          label={(v) => t(`projections.${v}`)}
+          label={(v) => {
+            const own = projectionLabelOf(radCase.choiceControls, settings.choices, v);
+            return own ? localize(own, locale) : t(`projections.${v}`);
+          }}
         />
         {/* Optional controls an exam declares (S11): absent for Chest PA, so its console is unchanged. */}
         {radCase.choiceControls?.map((cc) => (

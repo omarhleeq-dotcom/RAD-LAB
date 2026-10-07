@@ -7,6 +7,7 @@ import { localize } from "@/lib/localized";
 import type { RenderPlan } from "@/features/radiograph/plan";
 import { RadiographCanvas } from "@/features/radiograph/RadiographCanvas";
 import { describeRadiograph } from "@/features/radiograph/alt";
+import { wordingNsOf } from "@/features/radiograph/wording";
 
 interface Props {
   radCase: RadCase;
@@ -21,12 +22,12 @@ export function ResultImage({ radCase, plan }: Props) {
   const t = useTranslations("radiograph");
   const tr = useTranslations("result");
   const locale = useLocale();
-  // Chest Lateral baseline (S12): lateral wording where a `radiograph.lateral.*` message exists, else the common one.
-  const lateral = radCase.radiograph.projection === "lateral-left";
-  const key = (path: string) => (lateral && t.has(`lateral.${path}`) ? `lateral.${path}` : path) as never;
+  // Lateral (S12) / AP (S13) baselines: their wording where a `radiograph.<ns>.*` message exists, else the common one.
+  const ns = wordingNsOf(radCase.radiograph.projection);
+  const key = (path: string) => (ns && t.has(`${ns}.${path}`) ? `${ns}.${path}` : path) as never;
   // Text alternative: the visible findings, derived from the plan (same source as the effect cards and the score).
   const alt = useMemo(() => {
-    const key = (path: string) => (lateral && t.has(`lateral.${path}`) ? `lateral.${path}` : path) as never;
+    const key = (path: string) => (ns && t.has(`${ns}.${path}`) ? `${ns}.${path}` : path) as never;
     const d = describeRadiograph(plan);
     const list = new Intl.ListFormat(locale, { style: "long", type: "conjunction" });
     const parts = [t(key("alt"))];
@@ -47,7 +48,7 @@ export function ResultImage({ radCase, plan }: Props) {
       if (m.partlyCut) parts.push(t("altMarkerPartial"));
     }
     return parts.join(" ");
-  }, [plan, t, locale, lateral]);
+  }, [plan, t, locale, ns]);
   return (
     <figure className="m-0">
       <div className="relative">

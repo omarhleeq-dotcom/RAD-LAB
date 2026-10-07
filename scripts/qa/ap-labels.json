@@ -1,0 +1,12 @@
+{
+  "en": {
+    "stateLegend": "Patient position",
+    "apSupine": "AP supine",
+    "apSemierect": "AP semi-erect"
+  },
+  "ar": {
+    "stateLegend": "وضعية المريض",
+    "apSupine": "AP مستلقيًا",
+    "apSemierect": "AP شبه جالس"
+  }
+}

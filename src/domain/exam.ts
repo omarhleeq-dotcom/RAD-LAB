@@ -41,7 +41,7 @@ import type {
  * Positioning scenes the UI can draw (hand-drawn SVG in `features/positioning`). The ids are resolved through the scene
  * registry (`features/positioning/scenes.tsx`, S11): one id per hand-drawn scene (PA now; Lateral and AP add theirs).
  */
-export const SCENE_IDS = ["chest-pa-frontal", "chest-lateral"] as const;
+export const SCENE_IDS = ["chest-pa-frontal", "chest-lateral", "chest-ap-supine"] as const;
 export type SceneId = (typeof SCENE_IDS)[number];
 
 /** Result renderers that exist today (`features/radiograph`: plan → pure pipeline → canvas). */

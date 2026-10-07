@@ -69,6 +69,18 @@ Reviewer key: **E** = radiography educator · **P** = medical physicist · **AR*
 | S12-11 | Chin and arms are scored but not drawn on the lateral image; `arms-over-lungs` is a critical finding; the final list of lateral critical findings (cut-off, gross exposure) is open | BONTRAGER-9 p.84–85, 94; S10b-13 | Confirm the list of critical findings. | E |
 | S12 asset | The Lateral baseline is a normal adult lateral of a **different person** from the PA case; labelled a teaching approximation; landmarks read by eye; arms / chin overlays absent | A-006 / A-007 | Confirm the landmark placement and that the mismatch is acceptable. | E |
 
+### 1c. Session 13 additions (Chest AP supine; all provisional)
+
+| ID | Provisional item | Source / basis | Question for the reviewer | Who |
+|---|---|---|---|---|
+| S13-3 | **Tube-angle bands are an engine teaching choice:** full credit 3–7°, partial 1–10°, around Bontrager's "about 5° caudad" (perpendicular to the sternum) | BONTRAGER-9 p.96–97 (the 5° only) | Are the bands acceptable? Is 0° (clavicles over the apices) rightly only partial / fail? | E, P |
+| S13-3 | AP rotation ±2° / ±5° (the PA numbers) | BONTRAGER-9 p.96 (equal distances; no angle) | Acceptable for the AP? | E, P |
+| S13-3 | AP SID: full 180–185 cm, partial 102–200 cm (183 minimum where possible is Bontrager; the label requirement when shorter is not modelled) | BONTRAGER-9 p.96; ACR-PORTABLE Sec IV (102 cm) | Confirm the bands and whether the SID label should be scored. | E, P |
+| S13-4 / S13-6 | AP rotation: magnitude only; the p.83 direction rule is not applied to the AP; the sign is defined by the result image (positive = spine to the viewer's right), which is the opposite physical turn to the PA | BONTRAGER-9 p.83, 96 | What is the AP direction rule (source needed)? | E |
+| S13-2 | Weights = PA; critical findings = PA four; marker scored (weight 1, anatomical side, PA display); `state` supine expected; chin not scored | S10b-13, S10b-14, S10b-22 | Confirm. | E |
+| S13-1 | Baseline = NIH ChestX-ray14 AP of a different person; position of the original exposure unknown; supine is a teaching approximation; landmarks read by eye; lower diaphragm cropped | A-008 / A-009 | Confirm the landmarks and that the mismatch with the patient and the position is acceptable. | E |
+| S13 | AP attenuation 1 (AP path = PA reference); lateral selected by mistake uses the provisional 2× | S10b-9 | Acceptable? | P |
+
 ## 3. PA discrepancies (O11)
 Provisional decisions S10b-1…3: kV range (EC / WHO / ACR vs the repo's 100–150 band), AEC chamber mapping (EC right lateral chamber vs the repo's detector-view left/right), rotation sign (WHO p.28 direction not interpreted). Questions are in rows S10b-1, S10b-2, S10b-3 above.
 

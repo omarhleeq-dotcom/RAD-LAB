@@ -3,16 +3,17 @@
 import { useTranslations } from "next-intl";
 import { EvidenceBadge } from "@/components/EvidenceBadge";
 import type { RenderPlan } from "./plan";
+import type { WordingNs } from "./wording";
 
 /**
  * Post-exposure explanation: which learner action / simulated state produced which visible effect, with the
  * two separate evidence records — the clinical CONCEPT and the RENDERED MAGNITUDE. Shown only with the result, so Practice Mode reveals nothing earlier.
  */
-export function RadiographEffects({ plan, sex, lateral = false }: { plan: RenderPlan; sex: "female" | "male"; lateral?: boolean }) {
+export function RadiographEffects({ plan, sex, wording }: { plan: RenderPlan; sex: "female" | "male"; wording?: WordingNs }) {
   const t = useTranslations("radiograph");
-  // Chest Lateral (S12): lateral wording where `radiograph.lateral.effects.<id>` exists, else the common effect text.
+  // Lateral (S12) / AP (S13): their wording where `radiograph.<ns>.effects.<id>` exists, else the common effect text.
   const tt = t as unknown as (key: string, values?: Record<string, unknown>) => string;
-  const base = (id: string) => (lateral && t.has(`lateral.effects.${id}.title`) ? `lateral.effects.${id}` : `effects.${id}`);
+  const base = (id: string) => (wording && t.has(`${wording}.effects.${id}.title`) ? `${wording}.effects.${id}` : `effects.${id}`);
   return (
     <section aria-labelledby="effects-heading" className="rounded-lg border border-line bg-panel">
       <div className="border-b border-line px-4 py-3">

@@ -63,6 +63,11 @@ export function validateExam(exam: ExamDefinition): string[] {
     need(filled(cc.label) && (!cc.hint || filled(cc.hint)), `choice control ${cc.id}: label (and hint) need EN and AR text`);
     need(cc.options.length >= 2 && new Set(cc.options.map((o) => o.id)).size === cc.options.length, `choice control ${cc.id}: needs at least two options with unique ids`);
     for (const o of cc.options) need(filled(o.label), `choice control ${cc.id}.${o.id}: label needs EN and AR text`);
+    if (cc.projectionLabels) {
+      const { projection, byOption } = cc.projectionLabels;
+      need(exam.availableProjections.includes(projection), `choice control ${cc.id}: projectionLabels.projection "${projection}" is not an available projection`);
+      for (const o of cc.options) need(filled(byOption[o.id]), `choice control ${cc.id}: projectionLabels needs EN and AR text for option "${o.id}"`);
+    }
   }
   const choiceOptions = (id: string) => choices.find((x) => x.id === id)?.options.map((o) => o.id);
 
