@@ -10,7 +10,8 @@ import { getExam } from "@/data/exams";
 import type { RadCase } from "@/domain/case";
 import type { SceneId } from "@/domain/exam";
 import type { SimulationMode, SimulationSettings } from "@/domain/simulation";
-import { PositioningView as ChestPaFrontalScene } from "./PositioningView";
+import { PositioningView } from "./PositioningView";
+import { CHEST_AP_SUPINE_LAYOUT, CHEST_LATERAL_LAYOUT, CHEST_PA_LAYOUT, type SceneLayout } from "./scene-layouts";
 
 export interface SceneProps {
   radCase: RadCase;
@@ -20,16 +21,21 @@ export interface SceneProps {
   disabled: boolean;
 }
 
-/** The Chest Lateral scene (S12): the same interactive view with the lateral figure, cues and texts. */
-const ChestLateralScene = (props: SceneProps) => <ChestPaFrontalScene {...props} variant="lateral" />;
+/**
+ * A scene built on the shared interactive positioning view: the exam's `SceneLayout` (S14-0, `scene-layouts.tsx`) names its
+ * detector figure, second view, cues panel and texts. An exam whose scene is not a variation of it registers its own
+ * component in `SCENES` instead.
+ */
+const layoutScene = (layout: SceneLayout) => {
+  const Scene = (props: SceneProps) => <PositioningView {...props} layout={layout} />;
+  return Scene;
+};
 
-/** The Chest AP supine scene (S13): the frontal detector view with a side view of the supine patient and the tube angle. */
-const ChestApSupineScene = (props: SceneProps) => <ChestPaFrontalScene {...props} variant="ap" />;
-
+/** Chest PA (frontal view + plan view), Chest Lateral (S12: lateral figure) and Chest AP supine (S13: side view of the supine patient and the tube angle). */
 export const SCENES: Record<SceneId, ComponentType<SceneProps>> = {
-  "chest-pa-frontal": ChestPaFrontalScene,
-  "chest-lateral": ChestLateralScene,
-  "chest-ap-supine": ChestApSupineScene,
+  "chest-pa-frontal": layoutScene(CHEST_PA_LAYOUT),
+  "chest-lateral": layoutScene(CHEST_LATERAL_LAYOUT),
+  "chest-ap-supine": layoutScene(CHEST_AP_SUPINE_LAYOUT),
 };
 
 /** The scene an (composed) case draws: its exam's `scene.id`. The exam id is the part of the public case id before "/". */

@@ -16,14 +16,10 @@ import {
   type FieldEdge,
 } from "@/features/simulation/coords";
 import { collimatedField } from "@/features/simulation/geometry";
-import { FrontalFigure } from "./FrontalFigure";
-import { LateralFigure } from "./LateralFigure";
+import { CHEST_PA_FIGURE, U, type DetectorFigure } from "./detector-figures";
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, UNDER } from "./scene-style";
-import { rotationVisual, scapulaOffset } from "./visual-model";
 
-/** Drawing scale: SVG units per detector cm. Only the drawing depends on it; state is normalized. */
-const U = 10;
 const KEY_STEP = 0.02;
 const KEY_STEP_LARGE = 0.1;
 const HANDLE = 14; // visible handle size
@@ -37,8 +33,8 @@ interface Props {
   onChange: <K extends keyof SimulationSettings>(key: K, value: SimulationSettings[K]) => void;
   disabled: boolean;
   showGuides: boolean;
-  /** Which hand-drawn patient figure to draw (S12). Default: the Chest PA frontal figure. */
-  figure?: "chest-pa" | "chest-lateral";
+  /** Which hand-drawn patient figure to draw: an entry of the figure registry (`detector-figures.tsx`, S14-0). Default: the Chest PA frontal figure. */
+  figure?: DetectorFigure;
 }
 
 const EDGE_CURSOR: Record<FieldEdge, string> = {
@@ -75,33 +71,28 @@ function keyDelta(e: KeyboardEvent): [number, number] | null {
  * Touch: Chromium only honours `touch-action` on the root <svg>, not on SVG children, so the workspace
  * suppresses touch panning while editable (and releases it once locked); the surrounding gutter still scrolls.
  */
-export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = "chest-pa" }: Props) {
+export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = CHEST_PA_FIGURE }: Props) {
   const t = useTranslations("positioning");
-  const tl = useTranslations("positioningLateral");
+  const tAny = useTranslations() as unknown as (key: string) => string;
   const ts = useTranslations("scene");
-  const lateralFigure = figure === "chest-lateral";
+  const { Drawing, Orientation } = figure;
   const [drag, setDrag] = useState<{ target: DragTarget; grab: NormPoint } | null>(null);
 
-  const { detector, requiredAnatomy: a, positioning } = radCase;
+  const { detector, positioning } = radCase;
   const W = detector.widthCm * U;
   const H = detector.heightCm * U;
   const frame: DetectorFrame = { x: 0, y: 0, width: W, height: H };
   const viewBox: Box = { x: -30, y: -90, width: W + 60, height: H + 120 };
-  const lateral = settings.projection === "lateral-left";
 
-  const rv = rotationVisual(settings.rotationDeg);
-  const thoraxScale = lateral ? 0.45 : rv.thoraxScale;
   const field = collimatedField(settings, detector);
   const fx = field.x1 * U, fy = field.y1 * U, fw = (field.x2 - field.x1) * U, fh = (field.y2 - field.y1) * U;
   const ray = normToView(settings.centralRay, frame);
-  const lungY = a.yCm * U, lungH = a.heightCm * U, lungW = (a.widthCm * U) / 2 - 8;
   const mid = W / 2;
   const status = centeringStatus(settings.centralRay, positioning.centering);
   const rayOk = status.x.state === "ideal" && status.y.state === "ideal";
   const rayColor = !showGuides ? SCENE.beam : rayOk ? SCENE.good : SCENE.beam;
   const tgt = positioning.centering;
   const tgtView = normToView(tgt.target, frame);
-  const sc = scapulaOffset(settings.shoulderPosition);
 
   const toNorm = (e: PointerEvent<SVGElement>): NormPoint => {
     const svg = e.currentTarget.ownerSVGElement;
@@ -169,7 +160,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
     <svg
       viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
       role="group"
-      aria-label={lateralFigure ? tl("alt") : t("alt")}
+      aria-label={tAny(figure.altKey)}
       className="h-auto w-full select-none"
       style={{ direction: "ltr", touchAction: disabled ? "auto" : "none" }}
     >
@@ -177,20 +168,8 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       <rect x={0} y={0} width={W} height={H} fill={SCENE.detectorFill} stroke={SCENE.detectorEdge} strokeWidth={2} />
 
       {/* Patient. Anatomy is drawn in detector space; it is never mirrored by RTL. The drawing has a text alternative (scene.alt*). */}
-      <g role="img" aria-label={lateralFigure ? ts("altLateral", { arms: ts(settings.choices?.arms === "raised" ? "armsRaised" : "armsLowered"), chin: ts(settings.chinPosition === "tucked" ? "chinTucked" : "chinLifted") }) : ts("altFrontal", { chin: ts(settings.chinPosition === "tucked" ? "chinTucked" : "chinLifted"), shoulders: ts(settings.shoulderPosition === "rolled-forward" ? "shouldersRolled" : "shouldersRelaxed") })}>
-        {lateralFigure ? (
-          <LateralFigure
-            W={W}
-            H={H}
-            region={{ x: a.xCm * U, y: lungY, w: a.widthCm * U, h: lungH }}
-            rotationDeg={settings.rotationDeg}
-            chin={settings.chinPosition}
-            armsRaised={settings.choices?.arms === "raised"}
-            showGuides={showGuides}
-          />
-        ) : (
-          <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={sc} chin={settings.chinPosition} />
-        )}
+      <g role="img" aria-label={figure.alt(ts as unknown as (key: string, values?: Record<string, string>) => string, settings)}>
+        <Drawing radCase={radCase} settings={settings} showGuides={showGuides} W={W} H={H} />
       </g>
 
       {showGuides && (
@@ -221,7 +200,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
               />
             )}
           </UnderStroked>
-          <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{lateralFigure ? tl("midline") : t("midline")}</SceneLabel>
+          <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{tAny(figure.midlineKey)}</SceneLabel>
           <SceneLabel x={W - 8} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 16} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
         </g>
       )}
@@ -250,19 +229,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{ts("head")}</SceneLabel>
         <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
         <SceneLabel x={44} y={H + 24} size={LABEL_SIZE.detector}>{ts("feet")}</SceneLabel>
-        {lateralFigure ? (
-          <>
-            <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("anterior")}</SceneLabel>
-            <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("posterior")}</SceneLabel>
-          </>
-        ) : (
-          showGuides && (
-            <>
-              <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("patientRight")}</SceneLabel>
-              <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("patientLeft")}</SceneLabel>
-            </>
-          )
-        )}
+        <Orientation W={W} showGuides={showGuides} />
       </g>
 
       {edges.map(({ edge, x, y }) => (

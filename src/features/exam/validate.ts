@@ -7,6 +7,7 @@
  * It never decides whether a clinical value is right — that is the evidence classes and the review checklist.
  * Used by the data tests, and by any future authoring / import path before a definition reaches a learner.
  */
+import { isRegisteredProjection } from "@/data/projections";
 import type { CheckRule } from "@/domain/case";
 import { RENDERER_IDS, SCENE_IDS, type CaseDefinition, type ExamDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
@@ -40,6 +41,8 @@ export function validateExam(exam: ExamDefinition): string[] {
   need((SCENE_IDS as readonly string[]).includes(exam.scene.id), `unknown scene "${exam.scene.id}"`);
   need((RENDERER_IDS as readonly string[]).includes(exam.render.renderer), `unknown renderer "${exam.render.renderer}"`);
   need(exam.availableProjections.includes(exam.requiredProjection), "requiredProjection must be one of availableProjections");
+  // ProjectionId is open (S14-0): every projection an exam names must be registered in `src/data/projections.ts`.
+  for (const id of exam.availableProjections) need(isRegisteredProjection(id), `unknown projection "${id}" (register it in src/data/projections.ts)`);
 
   // detector / region / controls
   const { widthCm: W, heightCm: H } = exam.detector;

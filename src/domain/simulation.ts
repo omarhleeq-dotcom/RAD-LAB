@@ -8,7 +8,11 @@ export type { ExposureMode };
  * supplying their own settings keys and rules.
  */
 
-export type ProjectionId = "pa-erect" | "ap-erect" | "lateral-left";
+/**
+ * Open id of a projection (S14-0). Known ids are registered in `src/data/projections.ts` (validated by `validateExam`);
+ * the engine never switches exhaustively on it. Chest: "pa-erect" | "ap-erect" | "lateral-left".
+ */
+export type ProjectionId = string;
 export type BreathingId =
   | "deep-inspiration-hold"
   | "expiration-hold"

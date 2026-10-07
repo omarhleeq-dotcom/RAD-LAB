@@ -8,10 +8,8 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationMode, SimulationSettings, SideMarkerId } from "@/domain/simulation";
 import { centeringStatus } from "@/features/evaluation/centering";
 import { roundTo } from "@/features/simulation/coords";
-import { ApSupineView } from "./ApSupineView";
 import { DetectorWorkspace } from "./DetectorWorkspace";
-import { PatientCues } from "./PatientCues";
-import { PlanView } from "./PlanView";
+import { CHEST_PA_LAYOUT, type SceneLayout } from "./scene-layouts";
 
 interface Props {
   radCase: RadCase;
@@ -19,16 +17,14 @@ interface Props {
   mode: SimulationMode;
   onChange: <K extends keyof SimulationSettings>(key: K, value: SimulationSettings[K]) => void;
   disabled: boolean;
-  /** Chest Lateral (S12) and Chest AP supine (S13) scenes reuse this view with their own figure, cues and texts. Default: Chest PA. */
-  variant?: "pa" | "lateral" | "ap";
+  /** What differs per exam: detector figure, second view, cues panel and texts (registry: `scene-layouts.tsx`, S14-0). Default: Chest PA. */
+  layout?: SceneLayout;
 }
 
-export function PositioningView({ radCase, settings, mode, onChange, disabled, variant = "pa" }: Props) {
+export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT }: Props) {
   const t = useTranslations("positioning");
-  const tl = useTranslations("positioningLateral");
-  const ta = useTranslations("positioningAp");
-  const lateral = variant === "lateral";
-  const ap = variant === "ap";
+  const tAny = useTranslations() as unknown as (key: string) => string;
+  const { figure, SecondView, Cues, texts } = layout;
   const [guidesOn, setGuidesOn] = useState(true);
   // Assessment mode (not built yet) must never show guides, whatever the toggle says.
   const showGuides = mode === "practice" && guidesOn;
@@ -68,8 +64,8 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, v
 
       <div className="grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <figure className="m-0">
-          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={lateral ? "chest-lateral" : "chest-pa"} />
-          <figcaption className="mt-1 text-center text-xs text-console-text/80">{lateral ? tl("sideView") : ap ? ta("frontView") : t("frontView")}</figcaption>
+          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} />
+          <figcaption className="mt-1 text-center text-xs text-console-text/80">{tAny(texts.detectorCaption)}</figcaption>
           <p className="mt-1 text-center text-xs text-console-text/80">{t("workspaceHint")}</p>
           <p
             id="ray-status"
@@ -80,27 +76,25 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, v
         </figure>
         <div className="space-y-4">
           <figure className="m-0">
-            {ap ? <ApSupineView radCase={radCase} settings={settings} showGuides={showGuides} /> : <PlanView radCase={radCase} settings={settings} showGuides={showGuides} />}
-            <figcaption className="mt-1 text-center text-xs text-console-text/80">{ap ? ta("sideViewCaption") : t("topView")}</figcaption>
+            <SecondView radCase={radCase} settings={settings} showGuides={showGuides} />
+            <figcaption className="mt-1 text-center text-xs text-console-text/80">{tAny(texts.secondViewCaption)}</figcaption>
           </figure>
-          <PatientCues
+          <Cues
             chin={settings.chinPosition}
             shoulders={settings.shoulderPosition}
             onChin={(v) => onChange("chinPosition", v)}
             onShoulders={(v) => onChange("shoulderPosition", v)}
             disabled={disabled}
             showGuides={showGuides}
-            lateral={lateral}
-            ap={ap}
           />
         </div>
       </div>
-      <p className="px-4 pt-2 text-xs text-muted">{lateral ? tl("schematicNote") : ap ? ta("schematicNote") : t("schematicNote")}</p>
+      <p className="px-4 pt-2 text-xs text-muted">{tAny(texts.schematicNote)}</p>
 
       <div className="grid gap-4 p-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <RangeField label={t("rotation")} unit="°" {...controls.rotationDeg} value={settings.rotationDeg} disabled={disabled} onChange={(v) => onChange("rotationDeg", v)} />
-          <p className="mt-1 text-xs text-muted">{lateral ? tl("rotationHelp") : ap ? ta("rotationHelp") : t("rotationHelp")}</p>
+          <p className="mt-1 text-xs text-muted">{tAny(texts.rotationHelp)}</p>
         </div>
 
         <fieldset disabled={disabled} className="sm:col-span-2">
@@ -121,7 +115,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, v
             ))}
           </div>
           <p className="mt-1 text-xs text-muted">{t("markerHint")}</p>
-          {showGuides && <p className="mt-1 text-xs text-muted">{lateral ? tl("markerConvention") : ap ? ta("markerConvention") : t("markerConvention")}</p>}
+          {showGuides && <p className="mt-1 text-xs text-muted">{tAny(texts.markerConvention)}</p>}
         </fieldset>
 
         <details className="sm:col-span-2" open>

@@ -81,6 +81,8 @@ Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M
 - **Risks:** more variants → more matrix scenarios; supine/portable realism claims easy to overstate; projection-specific marker/laterality issues.
 - **Size:** **L–XL**.
 
+> **Alignment note (S14-0, 2026-10-07):** the order in force is S12-12 (`DECISIONS.md`): X-ray v1 first (Chest AP → S13b scene design → exam recipe → **S14-0 generalisation for limbs** → limbs → abdomen & pelvis → head → spine → Assess → Release); CT / MRI / US are v2; ribs / sternum are out of v1; limbs = 2 basic projections each. Where the sections below disagree, `DECISIONS.md` and `exam-recipe.md` win. S14-0 delivered: `session-14-limbs-generalisation.md`.
+
 ## Session 14 — More X-ray exams (batch of 2–3, one at a time)
 - **Scope:** candidates in priority order from spec §18/§22: abdomen, upper extremity (e.g. hand/wrist), lower extremity (e.g. knee/ankle); each = reference doc + exam definition + case + baseline + matrix. Choose by **available openly licensed baselines and reference sources**, not by clinical importance alone.
 - **Prerequisites:** Sessions 7–13 stable; educator input on priority.

@@ -1,0 +1,10 @@
+{
+  "radios": [
+    { "en": "Patient position", "ar": "وضعية المريض" },
+    "positioning.shoulderLegend"
+  ],
+  "sliders": {
+    "positioning.rotation": ["min", 0, "max"],
+    "console.tubeAngulation": ["min", 0, "max"]
+  }
+}
