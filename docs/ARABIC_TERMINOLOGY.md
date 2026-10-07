@@ -248,7 +248,8 @@ Keys: `messages/ar.json` → `scene.altElbow*`, `sceneElbow.*`, `positioningElbo
 | Upper arm / humerus | العضد | scene labels, clipping text |
 | Forearm | الساعد | scene labels |
 | Epicondyle (medial / lateral) | اللقيمة (الإنسية / الوحشية) | rotation text, clipping text |
-| Olecranon (the point of the elbow) | الزج (رأس المرفق) | lateral text, scene label «رأس المرفق» |
+| Olecranon (the point of the elbow) | الزج (رأس المرفق) | lateral text |
+| Posterior | الخلف | lateral scene label (bottom of the detector view) |
 | Radial head / neck / tubercle | رأس الكعبرة / عنقها / حدبتها | AP rotation text |
 | Coronoid process | النتوء الإكليلي | lateral rotation text |
 | Condyle outline | حدود اللقيمتين | lateral effect text |
