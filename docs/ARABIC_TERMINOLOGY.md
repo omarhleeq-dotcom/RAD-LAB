@@ -221,3 +221,20 @@ Keys: `messages/ar.json` → `scene.altWrist*`, `sceneWrist.*`, `positioningWris
 | Wrist rotation (forearm turn) | دوران الرسغ (دوران الساعد) | rotation control |
 | Wrist PA / Wrist lateral | الرسغ PA / الرسغ جانبي | projection buttons |
 Questions for the AR reviewer: «مشط اليد» vs «مشط»; «الكعبرة والزند»; the unit-isolated numbers (‎LRM‎) in the alt texts; «نموذج بصري تعليمي».
+
+## Session 14.2b — hand exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
+Keys: `messages/ar.json` → `scene.altHand*`, `sceneHand.*`, `positioningHand.*`, `console.projections.hand-*`, `radiograph.hand-pa.*`, `radiograph.hand-lateral.*`; exam / case text in `src/data/exams/xray/hand-common.ts`, `src/data/cases/hand-*.ts`. Male forms for the male patient (ذكر، جالس، قادر، حالته مستقرة ومتعاون). Detector = «الكاشف».
+| EN | Draft Arabic | Where |
+|---|---|---|
+| Hand | اليد | titles, request, labels |
+| Fingertips | أطراف الأصابع | clipping feedback |
+| Phalanges | السلاميات | rotation text |
+| Metacarpal shafts | أجسام عظام مشط اليد | rotation text |
+| Metacarpophalangeal (MCP) joint | المفصل السلامي المشطي | centring text, scene (abbreviated «MCP») |
+| Third MCP joint / MCP joints 2–5 | المفصل السلامي المشطي الثالث / المفاصل السلامية المشطية من الثاني إلى الخامس | centring labels; scene «مفصل MCP الثالث» / «مفاصل MCP 2–5» |
+| Distal forearm | الساعد السفلي | coverage text |
+| Lateral (extension) | جانبي (بسط) | titles, projection button |
+| Superimposed | متراكبة | lateral criteria |
+| Soft tissue on each side of the phalanges | الأنسجة الرخوة على جانبي السلاميات | PA rotation text |
+| Hand rotation (forearm turn) | دوران اليد (دوران الساعد) | rotation control |
+Questions for the AR reviewer: «السلاميات» vs «عظام الأصابع»; «بسط» for extension; the mixed «MCP» in scene labels (full term too long for the label); «مشط اليد».
