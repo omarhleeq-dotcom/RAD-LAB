@@ -20,6 +20,9 @@ export const PROJECTIONS: Readonly<Record<string, ProjectionSpec>> = {
   // Hand (S14.2b): same pattern (`radiograph.hand-pa.*` / `radiograph.hand-lateral.*`); the lateral is the extension variant (S14.2-6).
   "hand-pa": { wordingNs: "hand-pa" },
   "hand-lateral": { wordingNs: "hand-lateral" },
+  // Elbow (S14.3): same pattern (`radiograph.elbow-ap.*` / `radiograph.elbow-lateral.*`); the AP is fully extended, the lateral flexed 90° (S14.3-5).
+  "elbow-ap": { wordingNs: "elbow-ap" },
+  "elbow-lateral": { wordingNs: "elbow-lateral" },
 };
 
 export const isRegisteredProjection = (id: string): boolean => Object.hasOwn(PROJECTIONS, id);

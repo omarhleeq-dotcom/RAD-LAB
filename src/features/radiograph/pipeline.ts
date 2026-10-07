@@ -178,7 +178,7 @@ export function wristPaSpacingShiftU(u: number, v: number, rot: NonNullable<Rend
 }
 
 /** Piecewise-linear interpolation through anchors sorted by u (constant beyond the outer ones). */
-function anchorShift(anchors: { u: number; du: number }[], u: number): number {
+export function anchorShift(anchors: { u: number; du: number }[], u: number): number {
   const n = anchors.length;
   if (n === 0) return 0;
   if (u <= anchors[0]!.u) return anchors[0]!.du;
@@ -200,6 +200,45 @@ export function handPaShiftU(u: number, v: number, rot: NonNullable<RenderPlan["
     if (w > 0) shift += w * anchorShift(rot.hand?.anchors?.[i] ?? [], u);
   });
   return shift;
+}
+
+/**
+ * Elbow AP (S14.3) output pixel. The whole image is warped by the elbow model's column anchors (backward map by fixed-point iteration, as the
+ * hand PA); in the forearm rows (from `forearm.v1`, soft edge) the ULNA layer (source u below the contact line `splitU`) and the RADIUS layer
+ * (above it) are instead displaced by their own anchors (each bone rigid, the soft tissue beside it following the warp): where they overlap both are drawn (equal blend: a superimposition drawn as an
+ * average, not an additive density), where they part the gap is filled with the mean of the baseline row around the contact line. At the base
+ * pose every shift is 0 and the result is the baseline pixel.
+ */
+export function elbowApValue(
+  anchors: { u: number; du: number }[],
+  layers: { ulna: { u: number; du: number }[]; radius: { u: number; du: number }[] },
+  lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "elbow-ap" }>,
+  sample: (u: number, v: number) => number,
+  u: number,
+  v: number,
+): number {
+  let us = u;
+  for (let k = 0; k < 4; k++) us = u - anchorShift(anchors, us);
+  const warped = sample(clamp01(us), v);
+  const s = TUNING.limbRotation.bandSoft;
+  const wf = smoothstep(lm.forearm.v1 - s, lm.forearm.v1 + s, v);
+  if (wf <= 0) return warped;
+  const e = 0.02, sp = lm.forearm.splitU;
+  let su = u, sr = u;
+  for (let k = 0; k < 4; k++) { su = u - anchorShift(layers.ulna, su); sr = u - anchorShift(layers.radius, sr); }
+  const wU = 1 - smoothstep(sp - e, sp + e, su);
+  const wR = smoothstep(sp - e, sp + e, sr);
+  const tot = wU + wR;
+  let fv = 0;
+  if (wU > 0) fv += wU * sample(clamp01(su), v);
+  if (wR > 0) fv += wR * sample(clamp01(sr), v);
+  if (tot < 1) {
+    let gap = 0;
+    for (let k = -2; k <= 2; k++) gap += sample(clamp01(sp + k * 0.02), v);
+    fv += (1 - tot) * (gap / 5);
+  }
+  fv /= Math.max(1, tot);
+  return warped + wf * (fv - warped);
 }
 
 /**
@@ -253,6 +292,29 @@ export function limbRotationValue(
         win += 1;
       }
       out += wv * (sum / win - value);
+    });
+    return out;
+  }
+  if (lm.kind === "elbow-ap" && rot.kind === "elbow-ap" && rot.elbow?.anchors && rot.elbow.layers) {
+    return elbowApValue(rot.elbow.anchors, rot.elbow.layers, lm, sample, u, v);
+  }
+  if (lm.kind === "elbow-lateral" && rot.kind === "elbow-lateral") {
+    // Per band: the lateral-side and the medial-side copy of the structures (window of the SOURCE content), weighted; at the base pose every shift is 0 and the picture is the baseline.
+    const value = sample(clamp01(u), v);
+    let out = value;
+    lm.bands.forEach((b, i) => {
+      const copies = rot.elbow?.copies?.[i];
+      if (!copies || copies.length === 0) return;
+      const wv = bandWeight(b, v);
+      if (wv <= 0) return;
+      let sum = 0, wsum = 0;
+      for (const c of copies) {
+        const us = clamp01(u - c.du);
+        const w = smoothstep(b.u1 - 0.02, b.u1 + 0.02, us) * (1 - smoothstep(b.u2 - 0.02, b.u2 + 0.02, us));
+        sum += c.w * (sample(us, v) * w + value * (1 - w));
+        wsum += c.w;
+      }
+      out += wv * (sum / wsum - value);
     });
     return out;
   }

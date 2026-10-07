@@ -141,6 +141,22 @@ Reference: [`RAD-LAB_Medical_Reference_Wrist.md`](RAD-LAB_Medical_Reference_Wris
 | S14.2b-R14 | **Hand 2.5D rotation model** (all numbers illustrative, read by eye): tube cross-sections (bone widths 54–80 px, palm 860 × 310 px, forearm 580 × 340 px), digit depth arch (Z −40…+25 px), thumb Z −310…−368 px (from the lateral baseline), digit X-spread factor 0.3 / 0.6 in the lateral pose, drawn gain 2.3° per degree, rotation axis (forearm) at x 490 (PA) / 460 (lateral) px | none (engine / teaching choice) | Is this an acceptable teaching illustration of the turn about the forearm axis? | E |
 | S14.2b-R15 | Result render options: hand result at 48 px/cm (cap 1.8 Mpx), hand-lateral view = region + marker + 3 cm; thumb cap 0.06 of the width in the PA picture; picture limits of O46 | none | — | E |
 
+### 2c. Session 14.3 additions (elbow AP and elbow lateral; all provisional)
+| ID | Item | Source / basis | Question for the reviewer | Who |
+|---|---|---|---|---|
+| S14.3-R1 | **Classification.** SOURCE-BACKED (Bontrager p.166 / 172, as supplied by the advisor): AP CR perpendicular at the mid-elbow joint ≈ 2 cm distal to the epicondylar midpoint; lateral CR perpendicular at the mid-elbow; SID minimum 102 cm; 24 × 30 cm receptor, four-sided collimation; non-grid; digital 70 ± 5 kV; true-AP / true-lateral criteria | BONTRAGER-9 p.166, 172 | Confirm the criteria and the kV band for digital use | E |
+| S14.3-R2 | kV: **partial 60–80 kV (both) is a teaching choice** | none | Partial band? | E |
+| S14.3-R3 | SID: **102–110 cm full, 95–130 cm partial are teaching choices** (only the 102 cm minimum is Bontrager) | none | Band? | E |
+| S14.3-R4 | Centring tolerances (≈ ±0.7 / ±0.75 cm full, ≈ ±1.8 cm half), collimation excess margins (AP 3 cm, lateral 4.5 cm), the extent of both required regions | none (engine teaching choices; O40-like one-sided margin in the lateral) | Acceptable? | E |
+| S14.3-R5 | Rotation tolerance ±2° full / ±5° partial, magnitude only, no direction text | none | Acceptable for the elbow? | E |
+| S14.3-R6 | **Elbow rotation drawings = educational approximations from ONE image each** (AP: epicondyles narrow, radius / ulna apart or superimposed; lateral: doubled condyle outline and radial head / coronoid, 60 % / 40 %); the concentric arcs and double ridges are NOT drawn; all numbers illustrative (gain 2.3, columns, Z offsets, half-distances 95 / 75 px) | criteria BONTRAGER-9 p.166 / 172; magnitudes `elbow-model.ts`, `tuning.ts` (O49, O50) | Acceptable teaching images? | E / P |
+| S14.3-R7 | Manual exposure reference (70 kV, 2.5 mAs, 102 cm → DI 0; attenuation 1): a model anchor, no clinical claim, no AEC. No exposure-appearance wording (no elbow source, O35) | none | As R5 of the wrist | P |
+| S14.3-R8 | Weights 28 / 22 / 17 / 22 / 11; critical findings = missing / wrong-side marker; letter-only `fixed-side` marker (L) | S14.3-5 | Weights, gate list? | E |
+| S14.3-R9 | Not scored (context only): shielding, anode-heel placement, fat-pad visibility, arm / shoulder position, flexion-angle exceptions, support under the hand, grid | reference §5; S14.3-5 | Which should become scored? | E |
+| S14.3-R10 | Case patient 31-year-old male, the same real left elbow in both exams (per the author; CC0 as seen by the owner, Commons API HTTP 429, O47); AP: "Sin" filled, "F" and a frame line cropped (O48); lateral: no text | S14.3-5…7 | Is using the image's description acceptable? | O |
+| S14.3-R11 | Arabic elbow terms and sentences (DRAFT) | `ARABIC_TERMINOLOGY.md` Session 14.3 | Confirm or correct. | AR |
+| S14.3-R12 | Result render options: 48 px/cm (cap 1.8 Mpx), view = region + marker + 0.5 cm; image scale 0.0155 cm / px assumed (O49) | none | — | E |
+
 ## 3. PA discrepancies (O11)
 Provisional decisions S10b-1…3: kV range (EC / WHO / ACR vs the repo's 100–150 band), AEC chamber mapping (EC right lateral chamber vs the repo's detector-view left/right), rotation sign (WHO p.28 direction not interpreted). Questions are in rows S10b-1, S10b-2, S10b-3 above.
 

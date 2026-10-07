@@ -387,6 +387,84 @@ Rules for entries:
 | File facts | `image/jpeg`, 686 × 2123 px, 180,645 bytes |
 | Notes | Landmarks (`src/data/cases/hand-lateral-radiograph.ts`) were read by eye. |
 
+### A-018 — Normal elbow, AP (fully extended), left elbow: unmodified master (S14.3)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal elbow, AP (fully extended), left elbow |
+| Asset type | Radiograph (adult left elbow, AP, extended, supinated), JPEG |
+| Original filename | **Unknown.** The Commons file title was not read (HTTP 429 twice, S14.3-6). The master is stored as `elbow-ap-extended-owner-attached.jpg` (a descriptive name given by RAD-LAB) |
+| Creator / author | Mikael Häggström, M.D. (per the owner's description: own work, self-exam). **Not verified through Commons** |
+| Original organization / source | Wikimedia Commons; taken at Uddevalla Hospital, 29 Oct 2017 (per the owner) |
+| Original source URL | **Not known / not read** (O47) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner saw CC0 on the file page). Not confirmed through the Commons API |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/elbow/elbow-ap-extended-owner-attached.jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None.** Byte-identical to the file the owner attached to the S14.3 session |
+| Date / method of verification | 2026-10-07. The owner attached the original. Commons API request: **HTTP 429 twice** (one retry), nothing else tried. Dimensions and size match the owner's description. Re-verification = **O47** |
+| Checksum | SHA-1 `2d2a1e9d6e051df58f9b05d1dca717f2b71867cf`; SHA-256 `89cd1ca067ecfc2bf52f7b015b563043938b7801194df6cb993279ffae9dee38` |
+| File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 849 × 1138 px, 100160 bytes |
+| De-identification evidence | **Burned-in text found: a mirrored "Sin" (mid-right, master rows 977–1023, columns 691–763, in the dark background) and a small "F" (bottom centre, rows ≈ 1105–1120, columns ≈ 454–464).** A 1-px frame line (rows 0–1) is also present. All three are removed in A-019. Visual inspection of the full image and a contrast-stretched view: no other text, ruler, date or identifier. No metadata beyond JFIF. No device, cast, implant or pathology. The description gives age and sex only (31, male); no name is recorded anywhere in RAD-LAB. |
+| Notes | Both epicondyles are inside the image (the medial one at the viewer's left); the distal humerus shows ≈ 8 cm above the joint line and ≈ 9 cm of forearm below it (at the **assumed** scale 0.0155 cm / px, S14.3-9); the radial head, neck and tuberosity are separated from the ulna or only slightly superimposed (a near-true AP). The same person as the wrist, hand and elbow-lateral images (per the author). **Not** the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-019 — RAD-LAB Elbow AP educational baseline: web copy (derived from A-018)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Elbow AP educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-018. Derivation: RAD-LAB (`scripts/derive-elbow-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-018; owner-verified) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
+| Local project path | `public/images/elbow/elbow-ap-baseline.jpg` (the file the app loads) |
+| RAD-LAB modifications | **Burned-in text removed (S14.3-7): crop of the lowest 38 rows (rows ≥ 1100, the "F") and the top 3 rows (frame line) → 849 × 1097 px; fill of the "Sin"** (pixels brighter than 40 inside the master box left 685, top 965, right 775, bottom 1032, grown by 9 px, replaced row by row by the straight line between the mean of 3 clean pixels on each side, then smoothed over 13 rows inside the mask). 8-bit greyscale, no resampling, JPEG quality 88, no metadata. |
+| Date / method of verification | 2026-10-07. Reproducible: `python3 -I scripts/derive-elbow-baselines.py` (checks the master's SHA-1 first and refuses a master with metadata). Output re-read: no EXIF, JFIF only; after the fill no pixel above 46 grey remains in x ≥ 600, y 920–1060 other than the soft-tissue edge, and no text is visible at 5× contrast (a faint smooth patch remains, O48). |
+| Checksum | SHA-1 `a6b616982087217bfa0880883a931066a1d7406e`; SHA-256 `a41f8d7006dc153116f135f1b49e62f4f0cfa77362eb311dceeb45f70c8fd878` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 849 × 1097 px, 61,862 bytes |
+| Notes | Landmarks (`src/data/cases/elbow-ap-radiograph.ts`) were read by eye. The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
+### A-020 — Normal elbow, lateral (flexed 90°), left elbow: unmodified master (S14.3)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal elbow, lateral (flexed 90°), left elbow |
+| Asset type | Radiograph (adult left elbow, lateral, flexed ≈ 90°, thumb side up), JPEG |
+| Original filename | **Unknown.** The Commons file title was not read (HTTP 429 twice, S14.3-6). The master is stored as `elbow-lateral-flexed-owner-attached.jpg` (a descriptive name given by RAD-LAB) |
+| Creator / author | Mikael Häggström, M.D. (per the owner's description: own work, self-exam). **Not verified through Commons** |
+| Original organization / source | Wikimedia Commons; taken at Uddevalla Hospital, 29 Oct 2017 (per the owner) |
+| Original source URL | **Not known / not read** (O47) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner saw CC0 on the file page). Not confirmed through the Commons API |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/elbow/elbow-lateral-flexed-owner-attached.jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None.** Byte-identical to the file the owner attached to the S14.3 session |
+| Date / method of verification | 2026-10-07. The owner attached the original. Commons API request: **HTTP 429 twice** (one retry), nothing else tried. Dimensions and size match the owner's description. Re-verification = **O47** |
+| Checksum | SHA-1 `0beb1fc74b207e8617d52b906087e921567f9da1`; SHA-256 `00f9e12ee716e59c709bd6beaf1a91ba52c6ea315394256979b65e40e7b35b63` |
+| File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 1086 × 1103 px, 117916 bytes |
+| De-identification evidence | **No burned-in text found** (full-image view and a 5× contrast stretch of the whole image; the image edges carry only bone and soft tissue). No ruler, marker, date or identifier. No metadata beyond JFIF. No device, cast, implant or pathology. Age and sex only (31, male); no name. |
+| Notes | Humerus vertical (cut by the top edge), forearm horizontal toward the viewer's left, radius on top (thumb side up), the olecranon at the lower right; the distal humerus outline is close to a single circle (near-true lateral). The same person as A-018. A teaching approximation. Which side is medial / lateral is not read from the image. |
+
+### A-021 — RAD-LAB Elbow lateral educational baseline: web copy (derived from A-020)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Elbow lateral educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-020. Derivation: RAD-LAB (`scripts/derive-elbow-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-020; owner-verified) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
+| Local project path | `public/images/elbow/elbow-lateral-baseline.jpg` (the file the app loads) |
+| RAD-LAB modifications | **None except the re-encode:** no text was found, so no crop and no fill. 8-bit greyscale, native size (1086 × 1103 px, no resampling), JPEG quality 88, no metadata. |
+| Date / method of verification | 2026-10-07. Reproducible: `python3 -I scripts/derive-elbow-baselines.py` (checks the master's SHA-1 first and refuses a master with metadata). Output re-read: no EXIF, JFIF only. |
+| Checksum | SHA-1 `59b2c7b20761aae300499212ba7ae3c5155b4d0e`; SHA-256 `3ebc6207178816723a115e8b8822bd0fb504f6a115621049262332f95c73f474` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 1086 × 1103 px, 82,969 bytes |
+| Notes | Landmarks (`src/data/cases/elbow-lateral-radiograph.ts`) were read by eye. The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.

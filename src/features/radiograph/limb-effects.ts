@@ -12,6 +12,10 @@
  *    separated (grows with |value|; no direction of turn is claimed).
  *  - wrist lateral: the bands that must be superimposed (proximal metacarpals, ulnar head over the distal radius) are drawn twice,
  *    the second copy offset by an amount that grows with the value (sign = the sign of the value): "not superimposed".
+ *  - elbow AP / lateral (S14.3): the displacements come from the elbow model (`features/elbow-model`, also drawn by the scene): AP = the
+ *    column anchors warp the whole image (the epicondyles narrow for either sign) and the ulna and radius layers of the forearm rows move
+ *    separately (apart, or toward each other until superimposed); lateral = a lateral-side copy and a medial-side copy of the condyle outlines
+ *    and of the radial head / coronoid region (one at the base pose; 40 % / 60 % so the picture carries a sign). Educational approximations.
  *  - hand PA / lateral (S14.2b-FIX): the displacements come from the 2.5D hand model (`features/hand-model`), the same one the scene
  *    draws: PA = a smooth piecewise-linear warp of the phalangeal and metacarpal bands through the digits' projected positions; lateral
  *    (extension) = one copy per digit (and per forearm bone) of the structures that must be superimposed, drawn at their projected
@@ -23,6 +27,7 @@
 import type { LimbRotationLandmarks } from "@/domain/radiograph";
 import type { Evidence } from "@/domain/technique";
 import type { EffectDefinition, LimbRotationPlan } from "./plan";
+import { elbowApShifts, elbowLateralCopies } from "@/features/elbow-model/elbow-model";
 import { handLateralShifts, handPaAnchors, oddPart } from "@/features/hand-model/hand-model";
 import { TUNING } from "./tuning";
 
@@ -40,6 +45,18 @@ export const limbRotationConcept = (kind: LimbRotationLandmarks["kind"]): Eviden
         status: "common-reference",
         reference: "BONTRAGER-9 p.153 (true lateral hand, extension)",
         note: "True lateral (extension): metacarpals and phalanges superimposed and the distal radius and ulna superimposed. Provisional until the educator review (O5).",
+      }
+    : kind === "elbow-ap"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.166 (true AP elbow)",
+        note: "True AP: the epicondyles in profile; the radial head, neck and tubercle separated from, or only slightly superimposed by, the ulna. Provisional until the educator review (O5).",
+      }
+    : kind === "elbow-lateral"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.172 (true lateral elbow, 90° flexion)",
+        note: "True lateral: the epicondyles superimposed and about half of the radial head covered by the coronoid process (the concentric arcs of the trochlear sulcus are not drawn). Provisional until the educator review (O5).",
       }
     : kind === "wrist-pa"
     ? {
@@ -70,6 +87,16 @@ export function limbRotationPlan(
     // Bands in the order of the asset's landmarks [finger / metacarpal column, distal forearm]. shiftU = the odd part of digit 5's shift (sign).
     const s = handLateralShifts(d);
     return { kind: "hand-lateral", degrees: d, shiftU: oddPart((r) => handLateralShifts(r).column[0] ?? 0, d), overlapShiftU: 0, hand: { shifts: [s.column, s.forearm] } };
+  }
+  if (landmarks.kind === "elbow-ap") {
+    // The elbow model (S14.3): the column anchors warp the whole image; the ulna and radius layers of the forearm rows move separately (each with its own anchors). shiftU = the odd part of the relative shift (radius − ulna), the sign carrier.
+    const a = elbowApShifts(d);
+    return { kind: "elbow-ap", degrees: d, shiftU: oddPart((r) => elbowApShifts(r).radius - elbowApShifts(r).ulna, d), overlapShiftU: 0, elbow: { anchors: a.anchors, layers: { ulna: a.ulnaAnchors, radius: a.radiusAnchors } } };
+  }
+  if (landmarks.kind === "elbow-lateral") {
+    // Bands in the order of the asset's landmarks [distal humerus condyle outlines, radial head / coronoid]. shiftU = the lateral-side copy's shift (sign).
+    const c = elbowLateralCopies(d);
+    return { kind: "elbow-lateral", degrees: d, shiftU: c.condyles[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.condyles, c.head] } };
   }
   return landmarks.kind === "wrist-pa"
     ? { kind: "wrist-pa", degrees: d, shiftU: d * TUNING.limbRotation.paSpacingShiftPerDeg, overlapShiftU: Math.abs(d) * TUNING.limbRotation.paRadioulnarShiftPerDeg }

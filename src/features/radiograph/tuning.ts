@@ -52,6 +52,8 @@ export const TUNING = {
      * reads as a clear turn; scoring never uses it). The model itself is `features/hand-model/hand-model.ts`.
      */
     handModelGainPerDeg: 2.3,
+    /** Elbow (S14.3): as the hand's gain, for the elbow rotation model (`features/elbow-model`); illustrative, scoring never uses it. */
+    elbowModelGainPerDeg: 2.3,
   },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },

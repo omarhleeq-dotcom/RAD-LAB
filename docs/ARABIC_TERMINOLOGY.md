@@ -238,3 +238,24 @@ Keys: `messages/ar.json` → `scene.altHand*`, `sceneHand.*`, `positioningHand.*
 | Soft tissue on each side of the phalanges | الأنسجة الرخوة على جانبي السلاميات | PA rotation text |
 | Hand rotation (forearm turn) | دوران اليد (دوران الساعد) | rotation control |
 Questions for the AR reviewer: «السلاميات» vs «عظام الأصابع»; «بسط» for extension; the mixed «MCP» in scene labels (full term too long for the label); «مشط اليد».
+
+
+## Session 14.3 — elbow exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
+Keys: `messages/ar.json` → `scene.altElbow*`, `sceneElbow.*`, `positioningElbow.*`, `console.projections.elbow-*`, `radiograph.elbow-ap.*`, `radiograph.elbow-lateral.*`; exam / case text in `src/data/exams/xray/elbow-common.ts`, `src/data/cases/elbow-*.ts`. Receptor = «الكاشف»; male forms for the male patient.
+| EN | Draft Arabic | Where |
+|---|---|---|
+| Elbow | المرفق | titles, request, labels |
+| Upper arm / humerus | العضد | scene labels, clipping text |
+| Forearm | الساعد | scene labels |
+| Epicondyle (medial / lateral) | اللقيمة (الإنسية / الوحشية) | rotation text, clipping text |
+| Olecranon (the point of the elbow) | الزج (رأس المرفق) | lateral text |
+| Posterior | الخلف | lateral scene label (bottom of the detector view) |
+| Radial head / neck / tubercle | رأس الكعبرة / عنقها / حدبتها | AP rotation text |
+| Coronoid process | النتوء الإكليلي | lateral rotation text |
+| Condyle outline | حدود اللقيمتين | lateral effect text |
+| Trochlear sulcus (concentric arcs) | أخدود البكرة (الأقواس المتحدة المركز) | lateral text |
+| Extended / flexed 90° | ممدود / مثني 90° | titles, projection buttons |
+| Medial / lateral side | الجهة الإنسية / الجهة الوحشية | scene labels |
+| Palm up (supinated) | راحة اليد للأعلى | AP text (instead of a supination term) |
+| Elbow rotation (arm turn) | دوران المرفق (دوران الذراع) | rotation control |
+Questions for the AR reviewer: «اللقيمة» for epicondyle; «الزج» vs «رأس الزند / المرفق» for olecranon; «النتوء الإكليلي» for coronoid; the phrase for supinated.
