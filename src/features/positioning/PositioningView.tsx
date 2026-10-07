@@ -80,7 +80,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, v
         </figure>
         <div className="space-y-4">
           <figure className="m-0">
-            {ap ? <ApSupineView settings={settings} showGuides={showGuides} /> : <PlanView radCase={radCase} settings={settings} showGuides={showGuides} />}
+            {ap ? <ApSupineView radCase={radCase} settings={settings} showGuides={showGuides} /> : <PlanView radCase={radCase} settings={settings} showGuides={showGuides} />}
             <figcaption className="mt-1 text-center text-xs text-console-text/80">{ap ? ta("sideViewCaption") : t("topView")}</figcaption>
           </figure>
           <PatientCues

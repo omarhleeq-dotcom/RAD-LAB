@@ -81,6 +81,16 @@ Reviewer key: **E** = radiography educator · **P** = medical physicist · **AR*
 | S13-1 | Baseline = NIH ChestX-ray14 AP of a different person; position of the original exposure unknown; supine is a teaching approximation; landmarks read by eye; lower diaphragm cropped | A-008 / A-009 | Confirm the landmarks and that the mismatch with the patient and the position is acceptable. | E |
 | S13 | AP attenuation 1 (AP path = PA reference); lateral selected by mistake uses the provisional 2× | S10b-9 | Acceptable? | P |
 
+### 1d. Session 13b additions (scene drawings; no clinical value changed)
+
+| ID | Provisional item | Basis | Question for the reviewer | Who |
+|---|---|---|---|---|
+| S13b-1 | **Semi-erect AP drawing:** the head end is raised by 30° (a drawing value, never scored); patient and detector rise together; the tube angle is drawn from the VERTICAL, not from the perpendicular to the raised detector | none (no source gives a semi-erect angle or reference) | What is the usual head-end elevation, and is the tube angle measured from the vertical or from the detector perpendicular in a semi-erect AP? | E |
+| S13b-1 | AP shoulders "rolled forward" is drawn as the shoulder lifting off the bed (side view) and the scapulae moving out of the lung field (detector view); arms are drawn at the sides, no hand / forearm rotation is shown | BONTRAGER-9 p.96 (shoulders rolled forward) | Is that an acceptable depiction of "arms rotated medially"? Should the hands be drawn? | E |
+| S13b-1 | Lateral arms raised: both arms up beside the head with the hands resting near the top of the head; lowered: arms hanging over the lung field | BONTRAGER-9 p.84, 94 (arms raised) | Is the raised-arm posture drawn acceptably (support, crossed arms)? | E |
+| S13b-1 | Frontal arms hang at the sides for the PA and AP; no hands-on-hips or elbow position is drawn | none in the repo notes | Should the PA show the hand / elbow position? | E |
+| S13b-1 | Detector / tube drawings are not to scale (SID is drawn at 0.95 px per cm along the beam, the detector at 4.4 px per cm) | schematic | Acceptable as a schematic? | E |
+
 ## 3. PA discrepancies (O11)
 Provisional decisions S10b-1…3: kV range (EC / WHO / ACR vs the repo's 100–150 band), AEC chamber mapping (EC right lateral chamber vs the repo's detector-view left/right), rotation sign (WHO p.28 direction not interpreted). Questions are in rows S10b-1, S10b-2, S10b-3 above.
 

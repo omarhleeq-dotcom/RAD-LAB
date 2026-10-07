@@ -171,3 +171,21 @@ Questions for the reviewer: «مستلقيًا / شبه جالس» (supine / sem
 | Where | Data | Draft Arabic |
 |---|---|---|
 | AP exam projection button + result "Your setting" | `chest-ap-supine.ts` → `choiceControls[state].projectionLabels` | «AP مستلقيًا» (AP supine), «AP شبه جالس» (AP semi-erect) |
+
+## Session 13b — scene labels (S13b-1) (**DRAFT, pending owner / educator review; machine-assisted**)
+Keys: `messages/ar.json` → `scene.*`. Rule followed: «الكاشف» for the detector; anatomical directions are image conventions and are not mirrored in RTL.
+| EN | Draft Arabic | Key |
+|---|---|---|
+| Anterior / Posterior | أمامي / خلفي | `anterior`, `posterior` |
+| Head / Feet | الرأس / القدمان | `head`, `feet` |
+| Tube | الأنبوب | `tube` |
+| Detector | الكاشف | `detector` |
+| Bed | السرير | `bed` |
+| Heart | القلب | `heart` |
+| Patient's right / left | يمين المريض / يسار المريض | `patientRight`, `patientLeft` |
+| Central ray | الشعاع المركزي | `centralRay` |
+| Arms over the lungs | الذراعان فوق الرئتين | `armsOverLungs` |
+| Chin tucked / lifted; shoulders rolled / relaxed; arms raised / lowered; lying supine / head end raised (alt-text parts) | مخفوضة / مرفوعة؛ مدورتان إلى الأمام / مسترخيتان؛ مرفوعتان فوق الرأس / منخفضتان فوق الحقلين الرئويين؛ مستلقيًا على الظهر / جهة الرأس مرفوعة | `chinTucked` … `stateSemierect` |
+| Text alternatives of the three drawings | see `altFrontal`, `altLateral`, `altSide` | `alt*` |
+
+Questions for the AR reviewer: «أمامي / خلفي» as anatomical directions; «الشاقول» (vertical) in the AP side alt text; «القدمان» for Feet. `positioning.detector` («الكاسيت / البكي») is no longer used by the scenes.

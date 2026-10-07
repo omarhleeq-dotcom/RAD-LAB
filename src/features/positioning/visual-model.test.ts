@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chinOverlapsApices, planRotationDeg, rotationVisual, scapulaOffset } from "./visual-model";
+import { AP_SIDE, apSideLayout, chinOverlapsApices, planRotationDeg, rotationVisual, scapulaOffset } from "./visual-model";
 
 describe("rotationVisual (educational drawing model)", () => {
   it("is symmetric and neutral at 0°", () => {
@@ -78,5 +78,30 @@ describe("S12-2: the lateral turn is the same physical turn as the PA's (positiv
   it("uses the same sign flip as the PA, so one positive value is one physical turn in both projections", () => {
     expect(planRotationDeg("lateral-left", 7)).toBe(planRotationDeg("pa-erect", 7));
     expect(planRotationDeg("lateral-left", 7)).toBe(-7);
+  });
+});
+
+describe("apSideLayout (AP side-view drawing model, S13b)", () => {
+  const base = { tubeAngleDeg: 0, sidCm: 120, semiErect: false, detectorHeightCm: 43, rayCm: 20, fieldFromCm: 4, fieldToCm: 35 };
+  it("draws a caudad tube toward the head end of the central ray, with its housing turned to lie along the beam", () => {
+    const l = apSideLayout({ ...base, tubeAngleDeg: 10 });
+    expect(l.tube.x).toBeLessThan(l.target.x); // head end is the viewer's left
+    expect(l.tubeRotDeg).toBe(-10);
+    // the beam direction (tube -> target) equals the housing axis rotated by tubeRotDeg from straight down
+    const ang = (Math.atan2(l.target.x - l.tube.x, l.target.y - l.tube.y) * 180) / Math.PI;
+    expect(ang).toBeCloseTo(10);
+    expect(Math.hypot(l.target.x - l.tube.x, l.target.y - l.tube.y)).toBeCloseTo(120 * AP_SIDE.sidPxPerCm);
+  });
+  it("is symmetric for a cephalad angle and vertical at 0°", () => {
+    expect(apSideLayout(base).tube.x).toBeCloseTo(apSideLayout(base).target.x);
+    expect(apSideLayout({ ...base, tubeAngleDeg: -10 }).tube.x).toBeGreaterThan(apSideLayout({ ...base, tubeAngleDeg: -10 }).target.x);
+  });
+  it("raises the head end (the viewer's left) when semi-erect, and leaves the supine layout flat", () => {
+    const flat = apSideLayout(base);
+    const semi = apSideLayout({ ...base, semiErect: true });
+    expect(flat.raiseDeg).toBe(0);
+    expect(flat.fieldA.y).toBe(AP_SIDE.surfaceY);
+    expect(semi.fieldA.y).toBeLessThan(AP_SIDE.surfaceY); // field start (head end side) lifted
+    expect(semi.fieldA.y).toBeLessThan(semi.fieldB.y);
   });
 });
