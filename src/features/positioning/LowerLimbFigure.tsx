@@ -31,7 +31,7 @@ export function LowerLimbDrawing({ radCase, settings, showGuides }: FigureProps)
   const rot = settings.rotationDeg;
   if (kind === "knee-ap") return <KneeAp X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />;
   if (kind === "knee-lateral") return <KneeLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />;
-  return <Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} showGuides={showGuides} bands={radCase.radiograph.limbRotation && "bands" in radCase.radiograph.limbRotation ? radCase.radiograph.limbRotation.bands : []} />;
+  return <Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} bands={radCase.radiograph.limbRotation && "bands" in radCase.radiograph.limbRotation ? radCase.radiograph.limbRotation.bands : []} />;
 }
 
 type Map = (v: number) => number;
@@ -94,7 +94,7 @@ function KneeLateral({ X, Y, rotationDeg, showGuides }: { X: Map; Y: Map; rotati
   );
 }
 
-function Foot({ kind, X, Y, k, rotationDeg, showGuides, bands }: { kind: "ap" | "oblique"; X: Map; Y: Map; k: number; rotationDeg: number; showGuides: boolean; bands: { v1: number; v2: number }[] }): ReactNode {
+function Foot({ kind, X, Y, k, rotationDeg, bands }: { kind: "ap" | "oblique"; X: Map; Y: Map; k: number; rotationDeg: number; bands: { v1: number; v2: number }[] }): ReactNode {
   const O: FootOutline = kind === "ap" ? OUTLINES.footAp : OUTLINES.footOblique;
   const M = FOOT_MODEL[kind];
   const anchors = footAnchors(kind, footValue(kind, rotationDeg));
@@ -116,29 +116,25 @@ function Foot({ kind, X, Y, k, rotationDeg, showGuides, bands }: { kind: "ap" | 
     return <ellipse key={b.id} cx={c[0]} cy={c[1]} rx={b.rx * k} ry={b.ry * k} {...boneStyle} />;
   };
   const soft = O.soft.map(([x, y]) => P(x, y));
-  // the five metatarsal axes (guides ON): they show the spacing the rotation cue is about (a reference line: sky)
-  const axes = O.rays.filter((r) => r.band === "metatarsal");
+  // the soft tissue of a toe: a wider rounded stroke under its bones (the toes have no silhouette of their own in the foot body)
+  const softToe = (r: FootOutline["rays"][number]) => {
+    const [a, b] = [P(r.pts[0][0], r.pts[0][1]), P(r.pts[1][0], r.pts[1][1])];
+    const w = r.w * k + 7;
+    return (
+      <g key={`soft-${r.id}`}>
+        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.edge} strokeOpacity={0.7} strokeWidth={w + 2 * STROKE.thin} strokeLinecap="round" />
+        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.limbFar} strokeWidth={w} strokeLinecap="round" />
+      </g>
+    );
+  };
   return (
     <>
       <path d={smoothClosedPath(soft)} {...softStyle} />
+      {O.rays.filter((r) => r.band === "toes").map(softToe)}
       {O.blobs.filter((b) => b.band === "tarsal").map(blob)}
       {O.rays.filter((r) => r.band === "metatarsal").map(rayLine)}
       {O.blobs.filter((b) => b.band === "metatarsal").map(blob)}
       {O.rays.filter((r) => r.band === "toes").map(rayLine)}
-      {showGuides && (
-        <g aria-hidden>
-          {axes.map((r) => {
-            const a = P(r.pts[0][0], r.pts[0][1]);
-            const b = P(r.pts[1][0], r.pts[1][1]);
-            return (
-              <g key={`g-${r.id}`}>
-                <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.underStroke} strokeWidth={2 + 3} strokeLinecap="round" />
-                <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.guide} strokeWidth={2} strokeDasharray="3 5" strokeLinecap="round" />
-              </g>
-            );
-          })}
-        </g>
-      )}
     </>
   );
 }

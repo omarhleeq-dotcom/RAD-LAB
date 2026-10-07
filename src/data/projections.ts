@@ -23,6 +23,9 @@ export const PROJECTIONS: Readonly<Record<string, ProjectionSpec>> = {
   // Elbow (S14.3): same pattern (`radiograph.elbow-ap.*` / `radiograph.elbow-lateral.*`); the AP is fully extended, the lateral flexed 90° (S14.3-5).
   "elbow-ap": { wordingNs: "elbow-ap" },
   "elbow-lateral": { wordingNs: "elbow-lateral" },
+  // Foot (S14.4, right side): the wording namespace is the projection id itself (`radiograph.foot-ap.*` / `radiograph.foot-oblique.*`).
+  "foot-ap": { wordingNs: "foot-ap" },
+  "foot-oblique": { wordingNs: "foot-oblique" },
 };
 
 export const isRegisteredProjection = (id: string): boolean => Object.hasOwn(PROJECTIONS, id);

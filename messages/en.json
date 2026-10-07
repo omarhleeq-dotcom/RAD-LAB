@@ -119,7 +119,9 @@
       "hand-pa": "Hand PA",
       "hand-lateral": "Hand lateral (extension)",
       "elbow-ap": "Elbow AP (extended)",
-      "elbow-lateral": "Elbow lateral (flexed 90°)"
+      "elbow-lateral": "Elbow lateral (flexed 90°)",
+      "foot-ap": "Foot AP (dorsoplantar)",
+      "foot-oblique": "Foot AP medial oblique"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -647,6 +649,62 @@
           "desc": "The projection you selected is not simulated in this exam. The lateral (flexed 90°) elbow reference appearance is shown for layout only."
         }
       }
+    },
+    "foot-ap": {
+      "alt": "Simulated educational AP (dorsoplantar) foot radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The AP (dorsoplantar) foot reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the AP (dorsoplantar) foot reference appearance.",
+      "altFindings": {
+        "rotation": "the spacing of metatarsals 2–5 no longer nearly equal from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the tarsal bones) and bone detail",
+        "projection": "the selected projection is not simulated; the AP (dorsoplantar) foot appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference AP (dorsoplantar) foot appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult right foot, not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → unequal spacing of metatarsals 2–5",
+          "desc": "In a true AP foot the spacing of metatarsals 2–5 is nearly equal; the bases of the 1st and 2nd metatarsals are generally separated and the bases of 2–5 overlap (Bontrager p.232). With rotation the toes and metatarsals shift sideways by different amounts, so the spaces between them become unequal. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the toes and the metatarsals column by column), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the tarsal bones) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The AP (dorsoplantar) foot reference appearance is shown for layout only."
+        }
+      }
+    },
+    "foot-oblique": {
+      "alt": "Simulated educational AP medial oblique foot radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The AP medial oblique foot reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the AP medial oblique foot reference appearance.",
+      "altFindings": {
+        "rotation": "metatarsals 3–5 drawn closer together or further apart because the plantar angle is not 30°–40°",
+        "low-penetration": "reduced visibility of the dense bones (the tarsal bones) and bone detail",
+        "projection": "the selected projection is not simulated; the AP medial oblique foot appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference AP medial oblique foot appearance is shown with no simulated faults (the plantar surface within 30°–40°). It is a teaching approximation: a real normal adult right foot, not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Plantar angle → metatarsals 3–5 closer together or further apart",
+          "desc": "In a medial oblique foot the plantar surface is 30°–40° to the detector (40° recommended) and metatarsals 3–5 are free of superimposition (Bontrager p.233). As the angle moves away from 40° the toes and metatarsals are drawn displaced sideways by different amounts, so metatarsals 3–5 move closer together or further apart. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the toes and the metatarsals column by column, taking the picture as 40°), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the tarsal bones) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The AP medial oblique foot reference appearance is shown for layout only."
+        }
+      }
     }
   },
   "modality": {
@@ -738,7 +796,10 @@
     "altHandSide": "Side view of the set-up: the patient seated at the end of the table, the hand and forearm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm.",
     "altElbowAp": "The left elbow is drawn on the detector as for an AP (fully extended, hand supinated), the upper arm toward the top and the medial side on the viewer's left. Rotation is set to {deg}°.",
     "altElbowLateral": "The left elbow is drawn on the detector as for a lateral, flexed 90° with the thumb side up, the upper arm toward the top and the forearm toward the viewer's left. Rotation is set to {deg}°.",
-    "altElbowSide": "Side view of the set-up: the patient seated at the end of the table, the arm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm."
+    "altElbowSide": "Side view of the set-up: the patient seated at the end of the table, the arm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm.",
+    "altFootAp": "The right foot is drawn on the detector as for an AP (dorsoplantar) projection, toes toward the top and the big toe side on the viewer's left. Rotation is set to {deg}°.",
+    "altFootOblique": "The right foot is drawn on the detector as for an AP medial oblique projection, toes toward the top and the big toe side on the viewer's left. The plantar surface angle is set to {deg}°.",
+    "altFootSide": "Side view of the set-up: the patient lying on the table with the knee bent and the sole on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm."
   },
   "sceneWrist": {
     "ulna": "Ulna",
@@ -816,5 +877,31 @@
     "apName": "AP (fully extended)",
     "lateralName": "lateral (flexed 90°, thumb side up)",
     "upperArmTowardViewer": "Upper arm (toward you)"
+  },
+  "positioningFoot": {
+    "alt": "Interactive schematic of the detector with the right foot, the collimated field, the central-ray target and the side marker.",
+    "midline": "Long axis of the foot",
+    "detectorCaptionAp": "Detector view as displayed: right foot, AP (dorsoplantar), toes toward the top, the big toe (medial) side on the viewer's left",
+    "detectorCaptionOblique": "Detector view as displayed: right foot, AP medial oblique, toes toward the top, the big toe (medial) side on the viewer's left",
+    "sideViewCaption": "Side view of the table set-up",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The bent knee, the arch height, shielding and the grid are shown as context only: they are not scored in this version.",
+    "rotationHelpAp": "Turn of the foot about its long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-AP cue (nearly equal spacing of metatarsals 2–5).",
+    "rotationHelpOblique": "Angle of the plantar surface to the detector (Bontrager p.233: 30°–40°, 40° recommended). Educational visual model: metatarsals 3–5 are drawn closer together or further apart as the angle moves away from 40°.",
+    "markerConvention": "Marker: choose the letter of the patient's side (this is the RIGHT foot) and place it on the lateral margin of the field, clear of the foot. No left/right half of the image is checked for a single limb.",
+    "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the foot.",
+    "rotationAp": "Foot rotation (turn about the long axis)",
+    "rotationOblique": "Foot obliquity (plantar surface to the detector)"
+  },
+  "sceneFoot": {
+    "medialSide": "Medial side",
+    "lateralSide": "Lateral side",
+    "toes": "Toes",
+    "heel": "Heel",
+    "target": "Base of the 3rd metatarsal",
+    "apName": "AP (dorsoplantar)",
+    "obliqueName": "AP medial oblique",
+    "endView": "End view",
+    "endAngleSole": "Sole {deg}° to the detector",
+    "endAngleTurn": "Turn {deg}°"
   }
 }
