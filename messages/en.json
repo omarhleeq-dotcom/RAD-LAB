@@ -962,7 +962,7 @@
     "apName": "AP (dorsoplantar)",
     "obliqueName": "AP medial oblique",
     "endView": "End view",
-    "endAngleSole": "Sole {deg}° to the detector",
+    "endAngleSole": "Sole {deg}°",
     "endAngleTurn": "Turn {deg}°"
   },
   "positioningKnee": {
@@ -986,7 +986,7 @@
     "front": "Front",
     "back": "Back",
     "femur": "Femur",
-    "tibia": "Tibia / fibula",
+    "tibia": "Tibia",
     "target": "Knee joint",
     "apName": "AP",
     "lateralName": "lateral",

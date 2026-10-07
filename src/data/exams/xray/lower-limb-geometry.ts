@@ -23,8 +23,8 @@ const IMAGE = {
   "knee-ap": { cmPerPx: 0.0125, widthPx: 1067, heightPx: 1913, box: { u1: 60 / 1067, u2: 980 / 1067, v1: 370 / 1913, v2: 1520 / 1913 }, targetPx: { x: 545, y: 945 } },
   // Knee lateral: 1133 × 1939 px. Box x 60–1100, y 335–1455 (±560 px about the target at y 895).
   "knee-lateral": { cmPerPx: 0.0125, widthPx: 1133, heightPx: 1939, box: { u1: 60 / 1133, u2: 1100 / 1133, v1: 335 / 1939, v2: 1455 / 1939 }, targetPx: { x: 590, y: 895 } },
-  // Foot AP: 1061 × 2431 px. Box x 60–1010, y 20–1900 (toes to navicular / cuboid); the target (base of the 3rd metatarsal) is at (598, 1235).
-  "foot-ap": { cmPerPx: 0.01, widthPx: 1061, heightPx: 2431, box: { u1: 60 / 1061, u2: 1010 / 1061, v1: 20 / 2431, v2: 1900 / 2431 }, targetPx: { x: 598, y: 1235 } },
+  // Foot AP: 1061 × 2405 px (the web copy: the master's bottom frame line was cropped). Box x 60–1010, y 20–1900 (toes to navicular / cuboid); the target (base of the 3rd metatarsal) is at (598, 1235).
+  "foot-ap": { cmPerPx: 0.01, widthPx: 1061, heightPx: 2405, box: { u1: 60 / 1061, u2: 1010 / 1061, v1: 20 / 2405, v2: 1900 / 2405 }, targetPx: { x: 598, y: 1235 } },
   // Foot oblique: 1077 × 1960 px. Box x 100–1050, y 80–1960 (distal phalanges to the bottom edge of the image, O61); the target (base of the 3rd metatarsal) is at (565, 1335).
   "foot-oblique": { cmPerPx: 0.009, widthPx: 1077, heightPx: 1960, box: { u1: 100 / 1077, u2: 1050 / 1077, v1: 80 / 1960, v2: 1 }, targetPx: { x: 565, y: 1335 } },
 } as const;

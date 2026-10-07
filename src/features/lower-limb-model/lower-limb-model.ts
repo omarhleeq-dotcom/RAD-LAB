@@ -82,7 +82,7 @@ export type FootKind = "ap" | "oblique";
 export const FOOT_MODEL = {
   ap: {
     widthPx: 1061,
-    heightPx: 2431,
+    heightPx: 2405,
     axis: 560,
     metatarsal: [{ x: 290, Z: 60 }, { x: 460, Z: 120 }, { x: 596, Z: 100 }, { x: 715, Z: 50 }, { x: 860, Z: -40 }] as Column[],
     toes: [{ x: 235, Z: 40 }, { x: 445, Z: 70 }, { x: 595, Z: 60 }, { x: 722, Z: 30 }, { x: 890, Z: -10 }] as Column[],

@@ -13,6 +13,9 @@ What it does (and nothing else; docs/ASSET_PROVENANCE_AND_LICENSES.md A-022 … 
      grown by a few px, are replaced by the least-squares PLANE fitted to the clean pixels of the same box plus residuals resampled (fixed
      seed) from those clean pixels (the air background is nearly flat, sigma 1-2 grey levels), so no smooth patch is left. The foot oblique additionally has a slanted bright frame line along the bottom edge (white below it):
      the bottom rows from FOOT_OBLIQUE_BOTTOM down are CROPPED (a straight crop; the line slants from row ~1975 at the left to ~2025 at the right);
+  3b. repairs the EDGE ARTEFACT of the screenshot-style masters (a bright, ringing 10-24 px strip along some edges, mean grey well above the
+     neighbouring interior): the strip is overwritten by the nearest clean column / row (`edge` = columns from the left, rows from the top), outside
+     every required region; the foot AP's bottom strip (a bright frame line, rows >= 2405) is CROPPED instead (a bottom crop keeps every coordinate);
   4. 8-bit greyscale, native size otherwise (no resampling), JPEG quality 88, no metadata.
 Deterministic (no timestamps; the RNG is seeded).
 """
@@ -33,6 +36,7 @@ ASSETS = [
         "sha1": "14c693482a6a103d5e47b6924536da6104be995c",
         "web": ROOT / "public/images/knee/knee-ap-baseline.jpg",
         "fills": [{"box": (45, 855, 112, 937), "thr": 6, "grow": 4}],
+        "edge": {"left": 20, "top": 12},
         "crop": None,
     },
     {  # right knee lateral: "Dx" in the dark background left of the knee
@@ -40,6 +44,7 @@ ASSETS = [
         "sha1": "9351b3c446919ce164ba85cc32595aa7a43f24a2",
         "web": ROOT / "public/images/knee/knee-lateral-baseline.jpg",
         "fills": [{"box": (145, 1170, 235, 1245), "thr": 6, "grow": 4}],
+        "edge": {"left": 20, "top": 12},
         "crop": None,
     },
     {  # right foot DP: "Dx" in an angled label card at the top right (the card's own lighter edge is an edge, not text, and is left)
@@ -47,7 +52,8 @@ ASSETS = [
         "sha1": "ab0e4059fa4f264461c397cba90f5429b9a90ce5",
         "web": ROOT / "public/images/foot/foot-ap-baseline.jpg",
         "fills": [{"box": (815, 78, 915, 168), "thr": 8, "grow": 4}],
-        "crop": None,
+        "edge": {"left": 24, "top": 3},
+        "crop": (0, 0, 1061, 2405),  # the bright bottom frame line and its ringing (rows >= 2405)
     },
     {  # right foot oblique: "Dx" (top right card), a small mark in the forefoot background, a slanted bright frame line along the bottom
         "master": ROOT / "assets/source/foot/foot-oblique-owner-attached.jpg",
@@ -109,6 +115,12 @@ def main() -> int:
         g = np.array(im.convert("L"))
         for j, f in enumerate(a["fills"]):
             g = plane_fill(g, f["box"], f.get("abs", f.get("thr")), f["grow"], seed=10 * k + j, absolute="abs" in f)
+        e = a.get("edge")
+        if e:
+            if e.get("left"):
+                g[:, : e["left"]] = g[:, e["left"] : e["left"] + 1]
+            if e.get("top"):
+                g[: e["top"], :] = g[e["top"] : e["top"] + 1, :]
         if a["crop"]:
             l, t, r, b = a["crop"]
             g = g[t:b, l:r]

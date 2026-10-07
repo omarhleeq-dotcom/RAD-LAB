@@ -75,7 +75,7 @@ export const FOOT_AP_RADIOGRAPH: RadiographAssetSpec = {
   id: "foot-ap-baseline",
   src: "/images/foot/foot-ap-baseline.jpg",
   widthPx: 1061,
-  heightPx: 2431,
+  heightPx: 2405,
   projection: "foot-ap",
   registryIds: ["A-026", "A-027"],
   credit: credit(
@@ -83,15 +83,15 @@ export const FOOT_AP_RADIOGRAPH: RadiographAssetSpec = {
     "الصورة المرجعية: قدم يمنى طبيعية لشخص بالغ، إسقاط AP (ظهري أخمصي)، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية المطبوعة على الصورة الأصلية (بملء). قدم يمنى حقيقية تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
   ),
   ...common("foot-ap"),
-  // the tarsal bones (rows ≈ 1500–2300 of 2431).
-  denseZones: [zone(0.45, 0.78, 0.35, 0.15)],
+  // the tarsal bones (rows ≈ 1500–2300 of 2405).
+  denseZones: [zone(0.45, 0.79, 0.35, 0.15)],
   limbRotation: {
     kind: "limb-warp",
     model: "foot-ap",
     bands: [
-      // The toes (rows 0–640 of 2431) and the metatarsals (rows ≈ 640–1330): adjacent bands, so their weights add up to 1 at the boundary.
-      { v1: -0.05, v2: 0.263 },
-      { v1: 0.263, v2: 0.547 },
+      // The toes (rows 0–640 of 2405) and the metatarsals (rows ≈ 640–1330): adjacent bands, so their weights add up to 1 at the boundary.
+      { v1: -0.05, v2: 0.266 },
+      { v1: 0.266, v2: 0.553 },
     ],
   },
 };

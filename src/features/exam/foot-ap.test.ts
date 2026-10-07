@@ -174,7 +174,7 @@ describe("result image", () => {
   });
   it("renders deterministically on a synthetic baseline and the rotation changes the pixels", () => {
     const spec = footAp.radiograph;
-    const src: LumaImage = { width: 106, height: 243, data: Float32Array.from({ length: 106 * 243 }, (_, i) => 40 + ((i * 7) % 120)) };
+    const src: LumaImage = { width: 106, height: 240, data: Float32Array.from({ length: 106 * 240 }, (_, i) => 40 + ((i * 7) % 120)) };
     const draw = (patch: Partial<SimulationSettings>) => renderRadiograph(buildRenderPlan(run(patch).resultState, footAp), spec, src, 6).luma;
     const a = draw({ rotationDeg: 8 }), b = draw({ rotationDeg: 8 }), c = draw({ rotationDeg: 0 });
     expect(Buffer.from(a).equals(Buffer.from(b))).toBe(true);

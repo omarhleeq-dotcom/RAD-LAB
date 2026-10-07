@@ -63,7 +63,7 @@ export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
   const dr = alongBeam(refPx, DIM_OFFSET);
   const tick = (p: { x: number; y: number }, len = 8) => ({ x1: p.x - nrm.x * len, y1: p.y - nrm.y * len, x2: p.x + nrm.x * len, y2: p.y + nrm.y * len });
   return (
-    <svg viewBox="0 -8 450 346" role="img" aria-label={ts(part === "knee" ? "altKneeSide" : "altFootSide", { projection: tp(kind === "knee-ap" ? "apName" : kind === "knee-lateral" ? "lateralName" : kind === "foot-ap" ? "apName" : "obliqueName"), sid: settings.sidCm, angle })} className="h-auto w-full" style={{ direction: "ltr" }}>
+    <svg viewBox="0 -8 450 368" role="img" aria-label={ts(part === "knee" ? "altKneeSide" : "altFootSide", { projection: tp(kind === "knee-ap" ? "apName" : kind === "knee-lateral" ? "lateralName" : kind === "foot-ap" ? "apName" : "obliqueName"), sid: settings.sidCm, angle })} className="h-auto w-full" style={{ direction: "ltr" }}>
       {/* table (fixed) and the detector on it */}
       <rect x={20} y={S + 10} width={410} height={12} rx={3} fill={SCENE.bed} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeOpacity={0.5} />
       <rect x={slabA} y={S - 1} width={slabB - slabA} height={11} rx={2} fill={SCENE.detector} stroke={SCENE.edge} strokeWidth={STROKE.thin} />

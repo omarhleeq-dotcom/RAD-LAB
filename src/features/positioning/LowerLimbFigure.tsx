@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { LOWER_LIMB_RADIOGRAPHS } from "@/data/cases/lower-limb-radiographs";
 import { lowerLimbImage, type LowerLimbKind } from "@/data/exams/xray/lower-limb-geometry";
 import { footAnchors, kneeApShifts, kneeLateralCopies, interpolateAnchors, KNEE_AP_MODEL, KNEE_LATERAL_COPY_WEIGHTS, footValue, FOOT_MODEL } from "@/features/lower-limb-model/lower-limb-model";
 import { SCENE, STROKE } from "./scene-style";
@@ -42,8 +43,14 @@ export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: Figure
   );
   if (kind === "knee-ap") return clip(<KneeAp X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
   if (kind === "knee-lateral") return clip(<KneeLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
-  return clip(<Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} bands={radCase.radiograph.limbRotation && "bands" in radCase.radiograph.limbRotation ? radCase.radiograph.limbRotation.bands : []} />);
+  return clip(<Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} bands={footBands(kind)} />);
 }
+
+/** The toe / metatarsal bands of the drawn foot projection (the same bands the result image uses for that projection, whatever the exam). */
+const footBands = (kind: LowerLimbKind) => {
+  const lm = LOWER_LIMB_RADIOGRAPHS[kind].limbRotation;
+  return lm && "bands" in lm ? lm.bands : [];
+};
 
 type Map = (v: number) => number;
 const softStyle = { fill: SCENE.lung, stroke: SCENE.edge, strokeWidth: STROKE.thin, strokeLinejoin: "round" } as const;

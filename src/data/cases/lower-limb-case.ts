@@ -86,7 +86,7 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
 // kV above the band, a wrong tube angle.
 const INITIAL: Record<LowerLimbKind, Pick<SimulationSettings, "projection" | "rotationDeg" | "centralRay" | "tubeAngulationDeg">> = {
   "knee-ap": { projection: "knee-lateral", rotationDeg: 7, centralRay: { x: 0.28, y: 0.3 }, tubeAngulationDeg: 8 },
-  "knee-lateral": { projection: "knee-ap", rotationDeg: -7, centralRay: { x: -0.28, y: 0.3 }, tubeAngulationDeg: 0 },
+  "knee-lateral": { projection: "knee-ap", rotationDeg: -7, centralRay: { x: 0.28, y: 0.3 }, tubeAngulationDeg: 0 },
   "foot-ap": { projection: "foot-oblique", rotationDeg: 7, centralRay: { x: 0.28, y: -0.3 }, tubeAngulationDeg: 0 },
   "foot-oblique": { projection: "foot-ap", rotationDeg: 12, centralRay: { x: -0.28, y: -0.3 }, tubeAngulationDeg: 10 },
 };

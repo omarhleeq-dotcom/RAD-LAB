@@ -962,7 +962,7 @@
     "apName": "AP (ظهري أخمصي)",
     "obliqueName": "AP المائل الإنسي",
     "endView": "منظر من الطرف",
-    "endAngleSole": "الأخمص {deg}° مع الكاشف",
+    "endAngleSole": "الأخمص {deg}°",
     "endAngleTurn": "دوران {deg}°"
   },
   "positioningKnee": {
@@ -986,7 +986,7 @@
     "front": "الأمام",
     "back": "الخلف",
     "femur": "عظم الفخذ",
-    "tibia": "الظنبوب / الشظية",
+    "tibia": "الساق",
     "target": "مفصل الركبة",
     "apName": "AP",
     "lateralName": "الجانبي",
