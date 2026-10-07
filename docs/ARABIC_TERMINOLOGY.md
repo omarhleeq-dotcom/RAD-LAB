@@ -203,3 +203,21 @@ Only the word / phrase below was replaced; no other Arabic string was touched. �
 | `positioning.cueSideAlt` | … ووجهه نحو الكاسيت … | … ووجهه نحو الكاشف … |
 | `positioning.detector` (no longer shown) | الكاسيت / البكي | الكاشف / البكي |
 New draft strings (`scene.*`): `sidValue` «SID {value} سم», `tubeAngle` «زاوية الأنبوب: {angle}° (+ = نحو القدمين)» (numbers isolated with LRM), `rotationReadout` «دوران المريض: {deg}°», `rotationArc` «{deg}°». The old `positioningAp.angleReadout` is no longer used by the scene.
+
+## Session 14.1c — wrist exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
+Keys: `messages/ar.json` → `scene.altWrist*`, `sceneWrist.*`, `positioningWrist.*`, `console.projections.wrist-*`, `radiograph.wrist-pa.*`, `radiograph.wrist-lateral.*`; exam / case text in `src/data/exams/xray/wrist-common.ts`, `src/data/cases/wrist-*.ts`. Rule followed: «الكاشف» for the detector (never «الكاسيت»); left / right of a drawing means the viewer's side; the wrist case patient is male (masculine forms).
+| EN | Draft Arabic | Where |
+|---|---|---|
+| Wrist | الرسغ | titles, request, labels |
+| Carpals / metacarpals | عظام الرسغ / عظام مشط اليد | feedback, effect cards |
+| Distal radius and ulna | الطرف السفلي للكعبرة والزند | coverage / rotation feedback |
+| Ulnar head | رأس الزند | lateral rotation text |
+| Midcarpal area | وسط الرسغ | centring, scene |
+| Pronated (palm down) / thumb up | راحة اليد للأسفل / الإبهام لأعلى | projection names, captions |
+| Ulna / Radius / Fingers / Arm (forearm) | الزند / الكعبرة / الأصابع / الساعد | scene labels |
+| Ulnar side / Thumb side | جهة الزند / جهة الإبهام | PA orientation labels (guides) |
+| Patient seated | المريض جالس | side view |
+| One level (not scored) | على مستوى واحد (غير محسوب) | side view guide |
+| Wrist rotation (forearm turn) | دوران الرسغ (دوران الساعد) | rotation control |
+| Wrist PA / Wrist lateral | الرسغ PA / الرسغ جانبي | projection buttons |
+Questions for the AR reviewer: «مشط اليد» vs «مشط»; «الكعبرة والزند»; the unit-isolated numbers (‎LRM‎) in the alt texts; «نموذج بصري تعليمي».

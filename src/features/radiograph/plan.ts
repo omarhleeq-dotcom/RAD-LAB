@@ -13,6 +13,7 @@ import type { ViewerSide } from "@/domain/simulation";
 import type { Evidence } from "@/domain/technique";
 import { viewerSideOf } from "@/features/simulation/geometry";
 import { expectedViewerSide as expectedViewerSideOf, isMarkerWrongSide } from "@/features/simulation/marker-rule";
+import { LIMB_ROTATION_EFFECT } from "./limb-effects";
 import { TUNING } from "./tuning";
 
 export interface CmRect {
@@ -64,6 +65,17 @@ export interface PlanEffect {
   magnitude: VisualMagnitude;
   /** False for effects that intentionally change nothing in the picture (excess exposure). */
   changesPixels: boolean;
+}
+
+/**
+ * Pixel-step input of a limb rotation effect (S14.1c). `shiftU` is signed (fraction of image width, + = toward the viewer's
+ * right in the displayed image); `overlapShiftU` is a magnitude (wrist PA: the ulna copy blended toward the radius).
+ */
+export interface LimbRotationPlan {
+  kind: "wrist-pa" | "wrist-lateral";
+  degrees: number;
+  shiftU: number;
+  overlapShiftU: number;
 }
 
 export interface RenderPlan {
@@ -118,6 +130,8 @@ export interface RenderPlan {
     wrongSide: boolean;
   } | null;
   effects: PlanEffect[];
+  /** Present only when a registered limb effect is active (S14.1c); absent for every chest plan. */
+  limb?: { rotation: LimbRotationPlan };
 }
 
 const REF = "Image-quality ref";
@@ -187,10 +201,14 @@ export interface EffectDefinition {
   fault: boolean;
   /** Pure: is the effect present for this result state, case and baseline asset? */
   active: (state: RadiographResultState, radCase: RadCase) => boolean;
+  /** Optional: the concept record of THIS case's asset (overrides `concept`), for an effect whose concept follows the baseline. */
+  conceptOf?: (radCase: RadCase) => Evidence;
+  /** Optional (S14.1c): the limb-rotation input of the pixel step, present exactly when the effect is active. */
+  limb?: (state: RadiographResultState, radCase: RadCase) => LimbRotationPlan | null;
 }
 
-/** Effects registered by exams beyond the core ones. Empty until a limb exam registers its own (S14.1c). */
-export const EXTRA_EFFECTS: readonly EffectDefinition[] = [];
+/** Effects registered by exams beyond the core ones: the wrist rotation effect (S14.1c, `limb-effects.ts`). Inactive for any asset without `limbRotation`. */
+export const EXTRA_EFFECTS: readonly EffectDefinition[] = [LIMB_ROTATION_EFFECT];
 
 /** Stable seed from the case id (FNV-1a), so the noise pattern is fixed per case and never random. */
 export function noiseSeedFor(caseId: string): number {
@@ -250,7 +268,7 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
   // "no meaningful rotation" tolerance the thorax is drawn symmetric, so the picture, the score and the feedback
   // always describe the same finding (the tolerance band itself is provisional case data).
   const rotation =
-    deg === 0 || !has("rotation")
+    deg === 0 || !has("rotation") || spec.limbRotation !== undefined // a limb asset draws its own rotation effect (limb-effects.ts)
       ? null
       : {
           degrees: deg,
@@ -314,9 +332,12 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
     .filter(([, on]) => on)
     .map(([id, , drivers, changesPixels]) => ({ id, drivers, concept: EFFECT_CONCEPTS[id], magnitude: EFFECT_MAGNITUDES[id], changesPixels }));
   const registered = extraEffects.filter((x) => x.active(state, radCase));
+  let limb: RenderPlan["limb"];
   for (const x of registered) {
-    effects.push({ id: x.id, drivers: x.drivers, concept: x.concept, magnitude: x.magnitude, changesPixels: x.changesPixels });
+    effects.push({ id: x.id, drivers: x.drivers, concept: x.conceptOf?.(radCase) ?? x.concept, magnitude: x.magnitude, changesPixels: x.changesPixels });
     if (x.fault) faults.add(x.id);
+    const lr = x.limb?.(state, radCase);
+    if (lr) limb = { rotation: lr };
   }
   if (!effects.some((e) => faults.has(e.id))) {
     effects.unshift({ id: "baseline", drivers: [], concept: EFFECT_CONCEPTS.baseline, magnitude: EFFECT_MAGNITUDES.baseline, changesPixels: false });
@@ -347,5 +368,6 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
     },
     marker,
     effects,
+    ...(limb ? { limb } : {}),
   };
 }

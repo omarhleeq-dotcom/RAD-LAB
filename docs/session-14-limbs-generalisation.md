@@ -68,3 +68,19 @@ The two wrist exams as data; registrations (`EXAMS`, `CASE_DEFINITIONS`, `SCENE_
 ## 6.4 Existing-test edits (type-only, reported)
 
 Six lines in three existing test files gained a non-null assertion (`!`) because the fields they read became optional: `patient/response.test.ts` (3 lines: `availableBreathing`, `inspirationResponse`), `radiograph/pipeline.test.ts` (2: `lungApexV`, `diaphragmDomeV`), `i18n/messages.test.ts` (1: `availableBreathing`). No expectation, value or behaviour changed; `npm run typecheck` includes test files, so the assertions are required for it to pass.
+
+---
+
+# S14.1c — the two wrist exams (decisions `DECISIONS.md` S14.1c-1 … 8)
+
+**Built:** `wrist-pa` and `wrist-lateral` (left wrist, 31-year-old male per the baseline's Commons description; same wrist in both). One builder (`src/data/exams/xray/wrist-common.ts`, per-projection facts in `PER`), manual-only technique (`wrist-technique.ts`), cases + asset specs (`src/data/cases/wrist-*.ts`), registrations (`EXAMS`, `CASE_DEFINITIONS`, `SCENE_IDS` + `SCENES`, `PROJECTIONS`, `BODY_PART_IDS`), own-work scene (`WristFigure.tsx` detector drawing, `WristSideView.tsx` side view of the table set-up, `wrist-visual.ts`), the rotation effect (`features/radiograph/limb-effects.ts`, pixel step in `pipeline.ts`, `tuning.ts` `limbRotation`, `RadiographAssetSpec.limbRotation`), EN + AR strings, REVIEW_PACKAGE §2b, provenance A-010…A-013.
+
+**Shared-code changes and why (all optional, absent = old output):** marker rule kind `fixed-side` (O21 option A could not be expressed otherwise, S14.1c-4); `RenderPlan.limb` + `EffectDefinition.conceptOf` / `limb` and the core rotation effect staying off for an asset with `limbRotation` (S14.1c-5); `DetectorFigure.axis` (fingers / forearm instead of Head / Feet) with the Detector label moved right for such a figure; `SceneTexts.markerHint` / `rotationLabel`; `AnyExamDefinition` in `platform/resolve.ts`, `routes.ts`, `consistency.ts` (type-only widening; no chest test needed narrowing).
+
+**Existing-test edits (reported):** `limb-generalisation.test.ts` effect-hook expectation "nothing registered" → exactly the wrist rotation effect; `generalisation.test.ts` scene list (recipe §3B); `scene-dom.test.ts` iterates the chest cases only (same keys; hashes untouched).
+
+**Proof of byte-identity:** `git diff origin/main --stat` over `scripts/qa/characterisation`, `scripts/qa/golden`, `scripts/qa/scene-dom/hashes.json`, the chest `public/images`, `assets/source`, `src/data/exams|cases/chest-*` is empty; `characterisation.test.ts`, the chest scene-dom hashes (408 renderings) and all goldens pass unchanged; `a11y-audit`, `lateral-audit`, `ap-audit` pass (EN / AR × 1440 / 390).
+
+**QA:** `npm run build`; `wrist-audit.mjs` for both exams (EN / AR × 1440 / 390: axe WCAG 2 A/AA, no overflow, a correct attempt scores 100 through the real UI with no critical finding, a wrong one shows `missing-marker`); `label-collisions.mjs` for both (rotation min / 0 / max × guides ON / OFF × EN / AR × 390 / 1440 = 24 measurements per exam group: 0 overlaps, 0 outside the frame, smallest label 10.6 px). Not covered by the label script: states that move the central ray, SID or projection (the side view's labels depend on them). The scene was eye-checked on screenshots at 700 px only (EN PA, AR lateral).
+
+**Not done:** oblique wrist, other joints, O19, O20, plan view for the wrist, any new dependency. Open items O27–O31.

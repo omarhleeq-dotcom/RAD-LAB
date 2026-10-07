@@ -211,8 +211,11 @@ export interface ChoiceControlSpec {
  *  - "detector-side": the letter is the side of the patient against the detector (Lateral, S10b-21), read from the
  *    exam's choice control `choiceId`. Wrong when the letter differs from that side, or the half disagrees with
  *    `markerSide` (the display orientation stays exam data, ADR-0010).
+ *  - "fixed-side" (S14.1c, single limb, O21 option A): the letter must be the side the exam / case examines (`side`); there is
+ *    NO viewer-half check, because the source gives no display convention for one limb. Presence and "inside the field, not over
+ *    the required anatomy" are still checked by `evalMarker`.
  */
-export type MarkerRuleSpec = { kind: "anatomical-side" } | { kind: "detector-side"; choiceId: string };
+export type MarkerRuleSpec = { kind: "anatomical-side" } | { kind: "detector-side"; choiceId: string } | { kind: "fixed-side"; side: SideMarkerId };
 
 /** Critical findings: each one, when present, forces "below the educational pass mark" whatever the number is. */
 export type CoreCriticalFindingId = "wrong-projection" | "patient-motion" | "wrong-side-marker";

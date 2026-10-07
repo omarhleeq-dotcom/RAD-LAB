@@ -148,8 +148,8 @@ describe("synthetic limb fixture: renderer", () => {
     expect(buildRenderPlan(forced, limb).anatomy.inspiration).toBeNull();
   });
 
-  it("effect registry hook: nothing is registered today; a registered effect joins the plan and a fault drops the baseline card", () => {
-    expect(EXTRA_EFFECTS).toHaveLength(0);
+  it("effect registry hook: only the wrist rotation effect (S14.1c) is registered, and it is inactive for this fixture; a registered effect joins the plan and a fault drops the baseline card", () => {
+    expect(EXTRA_EFFECTS.map((e) => e.id)).toEqual(["rotation"]);
     expect(draw().plan.effects.map((e) => e.id)).toEqual(["baseline", "marker"]);
     const fault: EffectDefinition = {
       id: "synthetic-effect",

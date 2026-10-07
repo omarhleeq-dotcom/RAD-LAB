@@ -146,6 +146,7 @@ export function validateExam(exam: AnyExamDefinition, registered: ExamRegistries
     need(!!opts, `markerRule: choice control "${mr.choiceId}" is not declared`);
     if (opts) need(opts.includes("L") && opts.includes("R"), `markerRule: choice control "${mr.choiceId}" must offer the options "L" and "R"`);
   }
+  if (mr?.kind === "fixed-side") need(mr.side === "L" || mr.side === "R", 'markerRule: fixed-side needs the side "L" or "R"');
   need(exam.positioning.minCollimation > 0 && exam.positioning.minCollimation <= 1, "minCollimation must be in (0, 1]");
   return p;
 }

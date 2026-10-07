@@ -95,7 +95,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
 
       <div className="grid gap-4 p-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
-          <RangeField label={t("rotation")} unit="°" {...controls.rotationDeg} value={settings.rotationDeg} disabled={disabled} onChange={(v) => onChange("rotationDeg", v)} />
+          <RangeField label={texts.rotationLabel ? tAny(texts.rotationLabel) : t("rotation")} unit="°" {...controls.rotationDeg} value={settings.rotationDeg} disabled={disabled} onChange={(v) => onChange("rotationDeg", v)} />
           <p className="mt-1 text-xs text-muted">{tAny(texts.rotationHelp)}</p>
         </div>
 
@@ -116,7 +116,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
               </label>
             ))}
           </div>
-          <p className="mt-1 text-xs text-muted">{t("markerHint")}</p>
+          <p className="mt-1 text-xs text-muted">{texts.markerHint ? tAny(texts.markerHint) : t("markerHint")}</p>
           {showGuides && <p className="mt-1 text-xs text-muted">{tAny(texts.markerConvention)}</p>}
         </fieldset>
 

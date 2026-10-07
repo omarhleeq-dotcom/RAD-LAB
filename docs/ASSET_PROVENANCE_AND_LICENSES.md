@@ -231,6 +231,84 @@ Rules for entries:
 | File facts | `image/png`, 1024 × 1024 px, 404,226 bytes |
 | Notes | Landmarks (`src/data/cases/chest-ap-radiograph.ts`) were read by eye. No scapula / jaw overlay exists for the AP. |
 
+### A-010 — Normal wrist, PA (dorsoplantar) projection, left wrist: unmodified master (S14.1c)
+
+| Field | Value |
+|---|---|
+| Asset name | X-ray of normal wrist by dorsoplantar projection (crop) |
+| Asset type | Radiograph (adult left wrist, PA), JPEG |
+| Original filename | `X-ray of normal wrist by dorsoplantar projection (crop).jpg` |
+| Creator / author | Mikael Häggström, M.D. (Commons user *Mikael Häggström*), own work (self-exam) — per the Commons API record (`Artist`, `Credit`) |
+| Original organization / source | Wikimedia Commons; taken at Uddevalla Hospital |
+| Original source URL | <https://commons.wikimedia.org/wiki/File:X-ray_of_normal_wrist_by_dorsoplantar_projection_(crop).jpg> |
+| License | **CC0 1.0 Universal** (`LicenseShortName` CC0, `UsageTerms` "Creative Commons Zero, Public Domain Dedication", `AttributionRequired` false) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/wrist/X-ray_of_normal_wrist_by_dorsoplantar_projection_(crop).jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None.** Byte-identical to the file the owner attached and to the Commons file (same SHA-1). |
+| Date / method of verification | 2026-10-07, through the **Wikimedia Commons API** (`action=query&prop=imageinfo`; HTTP 200 on the first request): uploader, upload time 2018-11-02 10:25 UTC, size 209,131 bytes, 690 × 980 px, SHA-1, licence fields, categories "CC-Zero", "X-rays of normal wrists"; description "X-ray on the left side of a 31 year old male, showing normal anatomy and no injuries. Taken at Uddevalla Hospital." Date taken 2017-10-29. The HTML file page was not read (O27). The owner's screenshots agree. |
+| Checksum | SHA-1 `d58697fe9e74a208c00d1b92a61ab3d7dd0efd7a` (equals the Commons SHA-1); SHA-256 `dde7c775544535845aa6195b0419150187e5b79520b4ff5df818f1f8aab2e029` |
+| File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 690 × 980 px, 209,131 bytes, RGB-encoded greyscale content |
+| De-identification evidence | Visual inspection of the full image and its four edges (no burned-in text, no markers, no ruler, no date), pixel scan of the dark margins (no text-like bright blobs), no metadata beyond JFIF. No device, cast, implant or pathology. The author's description gives age and sex only (31, male); no name is recorded anywhere in RAD-LAB. |
+| Notes | **A crop by its author** (the proximal metacarpals are cut by the top edge; the thumb side is cut by the right edge). Shows the distal radius and ulna, the carpals and the proximal metacarpals; the **mid-metacarpal area Bontrager names is not in the image** (S14.1c-7, O28). Left wrist (thumb on the viewer's right). Same person as the lateral A-012. **Not** the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-011 — Wrist PA educational baseline: web copy (derived from A-010)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Wrist PA educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-010. Derivation: RAD-LAB (`scripts/derive-wrist-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-010; RAD-LAB asserts no additional rights) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR), which also says it is a real adult left wrist used as a teaching approximation. |
+| Local project path | `public/images/wrist/wrist-pa-baseline.jpg` (the file the app loads) |
+| RAD-LAB modifications | Converted to 8-bit greyscale, **no crop, no resampling** (native 690 × 980 px), JPEG quality 88, saved without any metadata. The script refuses to run if the master carries EXIF / ICC / comments or if its SHA-1 differs. |
+| Date / method of verification | 2026-10-07. Reproducible: `python3 -I scripts/derive-wrist-baselines.py`. Output re-read: no EXIF, JFIF only. |
+| Checksum | SHA-1 `1f43e5db59ce3ed6b94a7a3b093cf69bd0609726` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 690 × 980 px, 133,941 bytes |
+| Notes | Landmarks (`src/data/cases/wrist-pa-radiograph.ts`) were read by eye. The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
+### A-012 — Normal wrist, lateral projection, left wrist: unmodified master (S14.1c)
+
+| Field | Value |
+|---|---|
+| Asset name | X-ray of normal wrist by lateral projection |
+| Asset type | Radiograph (adult left wrist, lateral), JPEG |
+| Original filename | `X-ray of normal wrist by lateral projection.jpg` |
+| Creator / author | Mikael Häggström (Commons user), own work — per the Commons API record |
+| Original organization / source | Wikimedia Commons; taken at Uddevalla Hospital |
+| Original source URL | <https://commons.wikimedia.org/wiki/File:X-ray_of_normal_wrist_by_lateral_projection.jpg> |
+| License | **CC0 1.0 Universal** (`LicenseShortName` CC0, `AttributionRequired` false) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No (voluntary credit under the result image) |
+| Local project path | `assets/source/wrist/X-ray_of_normal_wrist_by_lateral_projection.jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None.** Byte-identical to the file the owner attached and to the Commons file. |
+| Date / method of verification | 2026-10-07 through the Commons API (as A-010): uploaded 2017-10-29 17:18 UTC, 199,006 bytes, 559 × 1756 px, SHA-1; description "X-ray on the left side of a 31 year old male, showing normal anatomy and no injuries. Taken at Uddevalla Hospital."; date taken 2017-10-29. |
+| Checksum | SHA-1 `209c218e704562042150b2b58205564a0c327820` (equals the Commons SHA-1); SHA-256 `41350729d8c3f1bb7c680dce7cba58152cfc6cb4b1c65d38a7bbacad3c594dc0` |
+| File facts | `image/jpeg`, JFIF only, 559 × 1756 px, 199,006 bytes |
+| De-identification evidence | **Burned-in text found: "Sin" (bottom right; rows 1411–1492, columns 507–555)** — a side annotation. It is removed by the crop recorded in A-013. After the crop a pixel scan of the remaining margins finds no text-like bright pixels. No metadata beyond JFIF. No device, cast, implant or pathology. |
+| Notes | The master still contains the burned-in text (a provenance copy, not served). Shows the carpals, distal radius / ulna and proximal metacarpals; the mid-metacarpal area is not in the image (O28). Which side is dorsal is **not** claimed. Same person as A-010. A teaching approximation. |
+
+### A-013 — Wrist lateral educational baseline: web copy (derived from A-012)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB Wrist lateral educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-012. Derivation: RAD-LAB (`scripts/derive-wrist-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-012) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
+| Local project path | `public/images/wrist/wrist-lateral-baseline.jpg` |
+| RAD-LAB modifications | **Cropped to remove the burned-in side text "Sin": crop box (left 0, top 0, right 559, bottom 1400) of the 559 × 1756 master** (i.e. the lower 356 rows, which carry the text and only distal forearm, are removed); 8-bit greyscale, no resampling, JPEG quality 88, no metadata. |
+| Date / method of verification | 2026-10-07. Reproducible with the same script; after the crop no pixel above 110 grey remains in x ≥ 460, y ≥ 800. Output re-read: no EXIF. |
+| Checksum | SHA-1 `5471cadf7381303422e5f49c248b0f3856ef45aa` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 559 × 1400 px, 115,640 bytes |
+| Notes | Landmarks (`src/data/cases/wrist-lateral-radiograph.ts`) were read by eye. |
+
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.
@@ -287,3 +365,6 @@ Per the S12 rule, no implementation starts until an image is licence-verified.
 ### E. Outcome (2026-10-07)
 
 The owner supplied the lateral image (owner-verified CC0, attached file); the one allowed Commons retry was again HTTP 429, so it is recorded as **"owner-verified, attached file, re-verify later"** (A-006). Content, burned-in text and metadata checks passed (A-006); a metadata-free web copy is A-007. **No other asset was added** (no overlay art, no scene image: the Lateral positioning scene is hand-drawn SVG code). CDC PHIL and datasets were not used. **O10 (audit of A-001 … A-005): all pass.** Open: re-verify A-006 on Commons (licence, author, upload date, SHA-1) and amend the entry.
+
+### F. Wrist baselines (S14.1c, 2026-10-07)
+Two images of the same person's left wrist were supplied by the owner and verified through the **Commons API** (HTTP 200, one attempt): author Mikael Häggström, M.D., CC0 1.0, no attribution required, SHA-1 identical to the owner's downloads (A-010, A-012). The lateral carried a burned-in side text and was **cropped** (A-013); the PA is the author's own crop and needed none (A-011). Web copies carry no metadata. Open: the Commons file pages (HTML) were not read, only their API record (O27). Commercial-compatible (CC0, S10-3): yes. Not registered: any overlay art, scene image or font (the wrist scene is hand-drawn SVG code).
