@@ -47,6 +47,10 @@ export const TUNING = {
     lateralShiftPerDeg: 0.012,
     /** Soft edge of every band, as a fraction of image height. */
     bandSoft: 0.03,
+    /** Hand PA (S14.2b): peak horizontal bump of the metacarpal / phalangeal bands, fraction of image width per degree (sign = the value's sign): the spaces between the shafts become unequal. */
+    handPaSpacingShiftPerDeg: 0.005,
+    /** Hand lateral (extension, S14.2b): offset of the second copy of the bands that must be superimposed, fraction of image width per degree (sign = the value's sign). */
+    handLateralShiftPerDeg: 0.012,
   },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },

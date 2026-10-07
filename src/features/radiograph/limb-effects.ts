@@ -12,6 +12,9 @@
  *    separated (grows with |value|; no direction of turn is claimed).
  *  - wrist lateral: the bands that must be superimposed (proximal metacarpals, ulnar head over the distal radius) are drawn twice,
  *    the second copy offset by an amount that grows with the value (sign = the sign of the value): "not superimposed".
+ *  - hand PA (S14.2b): the same smooth horizontal bump as the wrist PA, over the metacarpal and phalangeal bands (the spaces between
+ *    the digits become unequal; bone and soft tissue move together); no radioulnar term (not a hand criterion).
+ *  - hand lateral, extension (S14.2b): as the wrist lateral over the bands that must be superimposed in Bontrager p.153.
  * SIGN (S14.1c-2): defined by the RESULT IMAGE, as for the chest exams (S11c-1, S13-6): a positive value displaces the second
  * copy / the metacarpal bump toward the viewer's RIGHT in the displayed image (never mirrored by RTL); a negative value to the left.
  * Feedback is magnitude-only. Pinned by a renderer test (a synthetic stripe moves right for +θ, left for −θ).
@@ -24,7 +27,19 @@ import { TUNING } from "./tuning";
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 export const limbRotationConcept = (kind: LimbRotationLandmarks["kind"]): Evidence =>
-  kind === "wrist-pa"
+  kind === "hand-pa"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.150 (true PA hand)",
+        note: "True PA: symmetric concavities of the metacarpal shafts and phalanges of digits 2–5 and equal soft tissue on each side of the phalanges. Provisional until the educator review (O5).",
+      }
+    : kind === "hand-lateral"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.153 (true lateral hand, extension)",
+        note: "True lateral (extension): metacarpals and phalanges superimposed and the distal radius and ulna superimposed. Provisional until the educator review (O5).",
+      }
+    : kind === "wrist-pa"
     ? {
         status: "common-reference",
         reference: "BONTRAGER-9 p.156 (true PA wrist)",
@@ -44,6 +59,8 @@ export function limbRotationPlan(
 ): LimbRotationPlan | null {
   if (!landmarks || !failed || deg === 0) return null;
   const d = clamp(deg, -TUNING.limbRotation.maxDeg, TUNING.limbRotation.maxDeg);
+  if (landmarks.kind === "hand-pa") return { kind: "hand-pa", degrees: d, shiftU: d * TUNING.limbRotation.handPaSpacingShiftPerDeg, overlapShiftU: 0 };
+  if (landmarks.kind === "hand-lateral") return { kind: "hand-lateral", degrees: d, shiftU: d * TUNING.limbRotation.handLateralShiftPerDeg, overlapShiftU: 0 };
   return landmarks.kind === "wrist-pa"
     ? { kind: "wrist-pa", degrees: d, shiftU: d * TUNING.limbRotation.paSpacingShiftPerDeg, overlapShiftU: Math.abs(d) * TUNING.limbRotation.paRadioulnarShiftPerDeg }
     : { kind: "wrist-lateral", degrees: d, shiftU: d * TUNING.limbRotation.lateralShiftPerDeg, overlapShiftU: 0 };
@@ -51,7 +68,7 @@ export function limbRotationPlan(
 
 const failedRotation = (findings: { ruleId: string }[]) => findings.some((f) => f.ruleId === "rotation");
 
-/** One definition for both wrist exams: the asset's landmark group says which drawing applies. */
+/** One definition for the wrist and hand exams: the asset's landmark group says which drawing applies. */
 export const LIMB_ROTATION_EFFECT: EffectDefinition = {
   id: "rotation",
   drivers: ["geometry.rotationDeg"],

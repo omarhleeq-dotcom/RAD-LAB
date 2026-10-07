@@ -93,4 +93,9 @@ export interface ImageBand {
  */
 export type LimbRotationLandmarks =
   | { kind: "wrist-pa"; spacing: ImageBand & { u1: number; u2: number }; radioulnar: ImageBand & { ulnaU1: number; ulnaU2: number } }
-  | { kind: "wrist-lateral"; bands: ImageBand[] };
+  | { kind: "wrist-lateral"; bands: ImageBand[] }
+  // Hand (S14.2b): PA = the bands over which the spaces between the metacarpal shafts / phalanges are made unequal (each with the
+  // horizontal extent `u1`..`u2` of the bump); lateral (extension) = the bands that must be superimposed (metacarpals + phalanges,
+  // distal radius / ulna).
+  | { kind: "hand-pa"; bands: (ImageBand & { u1: number; u2: number })[] }
+  | { kind: "hand-lateral"; bands: ImageBand[] };

@@ -72,7 +72,7 @@ export interface PlanEffect {
  * right in the displayed image); `overlapShiftU` is a magnitude (wrist PA: the ulna copy blended toward the radius).
  */
 export interface LimbRotationPlan {
-  kind: "wrist-pa" | "wrist-lateral";
+  kind: "wrist-pa" | "wrist-lateral" | "hand-pa" | "hand-lateral";
   degrees: number;
   shiftU: number;
   overlapShiftU: number;

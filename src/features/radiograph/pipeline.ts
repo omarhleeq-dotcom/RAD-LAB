@@ -175,6 +175,13 @@ export function wristPaSpacingShiftU(u: number, v: number, rot: NonNullable<Rend
   return rot.shiftU * Math.sin(Math.PI * clamp01((u - u1) / (u2 - u1))) * bandWeight(lm.spacing, v);
 }
 
+/** Hand PA (S14.2b): the same bump as the wrist PA, summed over the declared bands (each with its own horizontal extent). */
+export function handPaSpacingShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "hand-pa" }>): number {
+  let shift = 0;
+  for (const b of lm.bands) shift = Math.max(shift, bandWeight(b, v) * Math.sin(Math.PI * clamp01((u - b.u1) / (b.u2 - b.u1))));
+  return rot.shiftU * shift;
+}
+
 /**
  * Value of one output pixel under a limb rotation effect, from the backward-mapped sample function. Pure and deterministic.
  *  - wrist PA: backward map for the metacarpal-spacing bump (one refinement step, as the chest rotation), then an offset copy of
@@ -202,7 +209,11 @@ export function limbRotationValue(
     }
     return value;
   }
-  if (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") {
+  if (lm.kind === "hand-pa" && rot.kind === "hand-pa") {
+    const first = u - handPaSpacingShiftU(u, v, rot, lm);
+    return sample(clamp01(u - handPaSpacingShiftU(first, v, rot, lm)), v);
+  }
+  if ((lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") || (lm.kind === "hand-lateral" && rot.kind === "hand-lateral")) {
     const value = sample(clamp01(u), v);
     let w = 0;
     for (const b of lm.bands) w = Math.max(w, bandWeight(b, v));
