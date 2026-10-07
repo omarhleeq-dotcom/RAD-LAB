@@ -100,7 +100,8 @@ export function computeDetectorExposure(
   settings: SimulationSettings,
   detector: DetectorSpec,
 ): DetectorExposureResult {
-  const mode = settings.exposureMode;
+  // A protocol without AEC (S14.1b) is manual-only whatever the settings say.
+  const mode = settings.exposureMode === "aec" && !profile.aec ? "manual" : settings.exposureMode;
   const tMas = targetMas(profile, settings);
   let ratio: number;
   let deliveredMas: number;
@@ -112,7 +113,7 @@ export function computeDetectorExposure(
     // remains is the error from WHERE it senses. With nothing to sense it runs to its backup limit.
     ratio = aec.terminatedOnChambers
       ? (aec.chamberRelativeExposure as number)
-      : profile.aec.backupRelativeExposure;
+      : profile.aec!.backupRelativeExposure;
     deliveredMas = tMas * ratio;
   } else {
     ratio = manualExposureRatio(profile, settings);

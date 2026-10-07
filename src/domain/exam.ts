@@ -15,6 +15,7 @@ import type { LocalizedText } from "./localized";
 import type { PatientCooperationProfile } from "./patient";
 import type { RadiographAssetSpec } from "./radiograph";
 import type {
+  BodyPartId,
   BreathingId,
   MotionInstructionId,
   ProjectionId,
@@ -38,11 +39,16 @@ import type {
  */
 
 /**
- * Positioning scenes the UI can draw (hand-drawn SVG in `features/positioning`). The ids are resolved through the scene
- * registry (`features/positioning/scenes.tsx`, S11): one id per hand-drawn scene (PA now; Lateral and AP add theirs).
+ * Open id of a positioning scene (S14.1b, same pattern as `ProjectionId`). Scenes are hand-drawn SVG in
+ * `features/positioning` and registered in `SCENES` (`features/positioning/scenes.tsx`); `validateExam` rejects an id
+ * that is not registered there.
  */
-export const SCENE_IDS = ["chest-pa-frontal", "chest-lateral", "chest-ap-supine"] as const;
-export type SceneId = (typeof SCENE_IDS)[number];
+export type SceneId = string;
+/**
+ * Scene ids registered so far (the pure half of the registry: `validateExam` is logic and must not import the React
+ * scene components). A new scene is added here AND in `SCENES`; `features/exam/registries.test.ts` checks both lists agree.
+ */
+export const SCENE_IDS: readonly SceneId[] = ["chest-pa-frontal", "chest-lateral", "chest-ap-supine"];
 
 /** Result renderers that exist today (`features/radiograph`: plan → pure pipeline → canvas). */
 export const RENDERER_IDS = ["radiograph-2d"] as const;
@@ -52,17 +58,24 @@ export type RendererId = (typeof RENDERER_IDS)[number];
  * The exam's technique PROTOCOL: a `TechniqueProfile` without the simulated patient's attenuation, which belongs
  * to the case (a larger patient absorbs more at the same technique).
  */
-export type ExamTechniqueProfile = Omit<TechniqueProfile, "patient">;
+export type AnyExamTechniqueProfile = Omit<TechniqueProfile, "patient">;
+/**
+ * The chest-shaped protocol (AEC declared). It stays the DEFAULT type argument of `ExamDefinition` so the chest exams, their
+ * data and their tests are typed exactly as before; a manual-only limb exam is an `ExamDefinition<AnyExamTechniqueProfile>`
+ * whose `technique` has no `aec` (S14.1b).
+ */
+export type ExamTechniqueProfile = AnyExamTechniqueProfile & { aec: NonNullable<TechniqueProfile["aec"]> };
 
 /** The case's contribution to the technique model: how strongly THIS simulated patient attenuates. */
 export type PatientTechniqueModel = TechniqueProfile["patient"];
 
-export interface ExamDefinition {
+export interface ExamDefinition<T extends AnyExamTechniqueProfile = ExamTechniqueProfile> {
   schemaVersion: 1;
   /** Stable exam id, e.g. "chest-pa-erect". Also the public id of the exam's default case (routes, noise seed). */
   id: string;
   modality: "general-radiography";
-  bodyPart: "chest";
+  /** Open id of the examined body part (S14.1b); registered in `src/data/modalities.ts` (`validateExam` checks it). Chest exams: "chest". */
+  bodyPart: BodyPartId;
   title: LocalizedText;
   /** True while any clinical value of the exam has not been validated by a subject expert. */
   provisional: boolean;
@@ -75,7 +88,8 @@ export interface ExamDefinition {
   requiredProjection: ProjectionId;
   /** Projections / instructions the learner may choose from (the control option lists). */
   availableProjections: ProjectionId[];
-  availableBreathing: BreathingId[];
+  /** Breathing instructions the learner may give. Absent (S14.1b) = the exam has no breathing control / rule / category. */
+  availableBreathing?: BreathingId[];
   availableMotionInstructions: MotionInstructionId[];
 
   detector: DetectorSpec;
@@ -86,7 +100,7 @@ export interface ExamDefinition {
   /** Extra enum controls (side against the detector, arm position, patient state …). Absent for Chest PA. */
   choiceControls?: ChoiceControlSpec[];
   /** Protocol for the technique / exposure model (target, tolerance, evidence class kept separate). */
-  technique: ExamTechniqueProfile;
+  technique: T;
   /** Centering target and tolerances, collimation limit, marker size and laterality convention (`markerSide`). */
   positioning: PositioningSpec;
 
@@ -103,6 +117,9 @@ export interface ExamDefinition {
   scene: { id: SceneId };
   render: { renderer: RendererId };
 }
+
+/** Any exam, with or without AEC in its protocol: what the platform-level code (compose, validate, registries) accepts. */
+export type AnyExamDefinition = ExamDefinition<AnyExamTechniqueProfile>;
 
 export interface CaseDefinition {
   schemaVersion: 1;

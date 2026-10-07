@@ -12,8 +12,9 @@ export function derivePatientResponse(
 ): PatientResponse {
   return {
     profileId: profile.id,
-    instructions: { breathing: settings.breathing, motion: settings.motionInstruction },
-    inspiration: profile.inspirationResponse[settings.breathing],
+    instructions: { ...(settings.breathing !== undefined ? { breathing: settings.breathing } : {}), motion: settings.motionInstruction },
+    // No breathing instruction (an exam without the control) = nothing to answer: neutral "adequate", never drawn or scored.
+    inspiration: settings.breathing !== undefined ? (profile.inspirationResponse?.[settings.breathing] ?? "adequate") : "adequate",
     motion: profile.motionResponse[settings.motionInstruction],
   };
 }

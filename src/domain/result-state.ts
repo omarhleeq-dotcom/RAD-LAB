@@ -34,9 +34,10 @@ export interface RadiographResultState {
     anatomyFullyIncluded: boolean;
   };
   patient: {
-    chin: ChinPositionId;
-    shoulders: ShoulderPositionId;
-    breathing: BreathingId;
+    /** Chin / shoulders / breathing are present only when the exam declares them (S14.1b: a limb exam has none). */
+    chin?: ChinPositionId;
+    shoulders?: ShoulderPositionId;
+    breathing?: BreathingId;
     marker: { side: SideMarkerId; position: NormPoint } | null;
     /** The exam's extra enum control values (S11). Present only when the exam declares such controls. */
     choices?: Record<string, string>;

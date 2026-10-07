@@ -169,6 +169,29 @@ export const EFFECT_MAGNITUDES: Record<CoreEffectId, VisualMagnitude> = {
   projection: NO_MAGNITUDE("The PA appearance is shown for layout only."),
 };
 
+/**
+ * Effect registry HOOK (S14.1b, G6). An exam that needs an effect beyond the core ones (a limb's rotation cue …) registers
+ * an `EffectDefinition`: the same three records a core effect has (concept, magnitude, drivers) plus the pure predicate that
+ * says when it is active. `buildRenderPlan` adds the active ones after the core effects; a fault effect also suppresses the
+ * "baseline" card. The pixel step that draws it is NOT part of the hook yet: it is added with the first limb exam that
+ * needs one (S14.1c), together with its landmark group and its `tuning.ts` magnitudes. No effect is registered today, so
+ * every chest plan is unchanged.
+ */
+export interface EffectDefinition {
+  id: EffectId;
+  drivers: string[];
+  concept: Evidence;
+  magnitude: VisualMagnitude;
+  changesPixels: boolean;
+  /** True when the effect is an image fault (a plan with one has no "baseline" card). */
+  fault: boolean;
+  /** Pure: is the effect present for this result state, case and baseline asset? */
+  active: (state: RadiographResultState, radCase: RadCase) => boolean;
+}
+
+/** Effects registered by exams beyond the core ones. Empty until a limb exam registers its own (S14.1c). */
+export const EXTRA_EFFECTS: readonly EffectDefinition[] = [];
+
 /** Stable seed from the case id (FNV-1a), so the noise pattern is fixed per case and never random. */
 export function noiseSeedFor(caseId: string): number {
   let h = 0x811c9dc5;
@@ -187,7 +210,7 @@ export function markerVisibleFraction(center: { x: number; y: number }, sizeCm: 
   return Math.round(((w * h) / (sizeCm * sizeCm)) * 1e6) / 1e6;
 }
 
-export function buildRenderPlan(state: RadiographResultState, radCase: RadCase): RenderPlan {
+export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, extraEffects: readonly EffectDefinition[] = EXTRA_EFFECTS): RenderPlan {
   const { radiograph: spec, detector, requiredAnatomy: req, positioning } = radCase;
   const { geometry, patient, exposure, patientResponse } = state;
   const box = spec.anatomyBox;
@@ -237,13 +260,14 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
           transradiancy: deg * TUNING.rotation.transradiancyPerDeg,
         };
 
-  const reducedInspiration = patientResponse.inspiration === "reduced";
+  // The inspiration warp needs both vertical landmarks (S14.1b: optional on the asset spec; a limb baseline has none).
+  const reducedInspiration = patientResponse.inspiration === "reduced" && spec.lungApexV !== undefined && spec.diaphragmDomeV !== undefined;
   const moved = patientResponse.motion === "motion";
   const rel = exposure.quantumNoise.relative;
   const noisy = exposure.quantumNoise.level === "increased" || exposure.quantumNoise.level === "marked";
   const excessNoise = Math.sqrt(Math.max(0, rel * rel - 1));
   const lowPenetration = exposure.penetration === "low";
-  const scapulaeOverlap = patient.shoulders !== "rolled-forward" && spec.scapulae !== undefined;
+  const scapulaeOverlap = patient.shoulders !== undefined && patient.shoulders !== "rolled-forward" && spec.scapulae !== undefined;
   const jawOverlap = patient.chin === "tucked" && spec.jaw !== undefined;
   // S12: representative when the simulated projection is the one the baseline depicts (absent = the PA baseline).
   const representative = geometry.projection === (spec.projection ?? "pa-erect");
@@ -289,6 +313,11 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase):
   const effects: PlanEffect[] = active
     .filter(([, on]) => on)
     .map(([id, , drivers, changesPixels]) => ({ id, drivers, concept: EFFECT_CONCEPTS[id], magnitude: EFFECT_MAGNITUDES[id], changesPixels }));
+  const registered = extraEffects.filter((x) => x.active(state, radCase));
+  for (const x of registered) {
+    effects.push({ id: x.id, drivers: x.drivers, concept: x.concept, magnitude: x.magnitude, changesPixels: x.changesPixels });
+    if (x.fault) faults.add(x.id);
+  }
   if (!effects.some((e) => faults.has(e.id))) {
     effects.unshift({ id: "baseline", drivers: [], concept: EFFECT_CONCEPTS.baseline, magnitude: EFFECT_MAGNITUDES.baseline, changesPixels: false });
   }

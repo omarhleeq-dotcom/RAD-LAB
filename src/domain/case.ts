@@ -3,6 +3,7 @@ import type { PatientCooperationProfile } from "./patient";
 import type { RadiographAssetSpec } from "./radiograph";
 import type { Evidence, EvidenceClass, TechniqueProfile } from "./technique";
 import type {
+  BodyPartId,
   BreathingId,
   CategoryId,
   ChoiceSettingKey,
@@ -267,10 +268,10 @@ export interface ImageCriterion {
  * `ExamDefinition` (src/data/exams) and a `CaseDefinition` (src/data/cases); see `domain/exam.ts` for which fields
  * belong to which half. The rule / scoring / control TYPES in this file belong to the exam half.
  */
-export interface RadCase {
+export interface RadCase<T extends TechniqueProfile = TechniqueProfile> {
   id: string;
   modality: "general-radiography";
-  bodyPart: "chest";
+  bodyPart: BodyPartId;
   title: LocalizedText;
   patient: PatientProfile;
   clinicalScenario: LocalizedText;
@@ -289,14 +290,15 @@ export interface RadCase {
   /** Extra enum controls the exam declares (absent for Chest PA). */
   choiceControls?: ChoiceControlSpec[];
   /** Protocol profile for the technique/exposure model. A different case supplies a different profile. */
-  technique: TechniqueProfile;
+  technique: T;
   positioning: PositioningSpec;
   /** Educational baseline radiograph + asset-specific landmarks consumed by the Session 4 renderer. */
   radiograph: RadiographAssetSpec;
   /** Deterministic instruction → patient-response model (Session 4). Another case supplies another patient. */
   patientCooperation: PatientCooperationProfile;
   availableProjections: ProjectionId[];
-  availableBreathing: BreathingId[];
+  /** Absent (S14.1b) = the exam has no breathing control. */
+  availableBreathing?: BreathingId[];
   availableMotionInstructions: MotionInstructionId[];
   /** State when the case loads. Intentionally not the ideal answer. */
   initialSettings: SimulationSettings;

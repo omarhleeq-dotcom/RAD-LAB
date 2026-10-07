@@ -151,7 +151,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
 
         <Segmented<ExposureMode>
           legend={t("modeLegend")}
-          options={["manual", "aec"]}
+          options={radCase.technique.aec ? ["manual", "aec"] : ["manual"]}
           value={settings.exposureMode}
           disabled={locked}
           columns

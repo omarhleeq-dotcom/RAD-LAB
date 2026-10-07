@@ -47,13 +47,15 @@ export interface DetectorFigure {
 
 const chinKey = (s: SimulationSettings) => (s.chinPosition === "tucked" ? "chinTucked" : "chinLifted");
 
+// The chest drawings read the chin / shoulder cues, which every chest exam declares (S14.1b: optional in the settings for a
+// limb exam); the ideal values below are only the type-level fallback and never apply to a chest exam.
 function PaDrawing({ radCase, settings, H, W }: FigureProps) {
   const a = radCase.requiredAnatomy;
   const rv = rotationVisual(settings.rotationDeg);
   // A projection other than the PA drawn in the frontal figure keeps the narrowed thorax (as before the registry).
   const thoraxScale = settings.projection === "lateral-left" ? 0.45 : rv.thoraxScale;
   const lungY = a.yCm * U, lungH = a.heightCm * U, lungW = (a.widthCm * U) / 2 - 8;
-  return <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={scapulaOffset(settings.shoulderPosition)} chin={settings.chinPosition} />;
+  return <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={scapulaOffset(settings.shoulderPosition ?? "rolled-forward")} chin={settings.chinPosition ?? "elevated"} />;
 }
 
 function PaOrientation({ W, showGuides }: OrientationProps) {
@@ -77,7 +79,7 @@ function LateralDrawing({ radCase, settings, H, W, showGuides }: FigureProps) {
       H={H}
       region={{ x: a.xCm * U, y: lungY, w: a.widthCm * U, h: lungH }}
       rotationDeg={settings.rotationDeg}
-      chin={settings.chinPosition}
+      chin={settings.chinPosition ?? "elevated"}
       armsRaised={settings.choices?.arms === "raised"}
       showGuides={showGuides}
     />

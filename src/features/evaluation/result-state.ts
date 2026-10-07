@@ -34,9 +34,9 @@ export function buildResultState(
       anatomyFullyIncluded: clipped.length === 0,
     },
     patient: {
-      chin: s.chinPosition,
-      shoulders: s.shoulderPosition,
-      breathing: s.breathing,
+      ...(s.chinPosition !== undefined ? { chin: s.chinPosition } : {}),
+      ...(s.shoulderPosition !== undefined ? { shoulders: s.shoulderPosition } : {}),
+      ...(s.breathing !== undefined ? { breathing: s.breathing } : {}),
       marker: s.sideMarker ? { side: s.sideMarker, position: { ...s.markerPosition } } : null,
       ...(s.choices ? { choices: { ...s.choices } } : {}),
     },

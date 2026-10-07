@@ -54,10 +54,13 @@ export interface RadiographAssetSpec {
    * it the rotation effect has no spine / hemithorax cue and is not drawn.
    */
   midlineU?: number;
-  /** Vertical landmarks used by the reduced-inspiration warp. */
-  lungApexV: number;
-  /** Highest point of the diaphragmatic domes in the baseline. */
-  diaphragmDomeV: number;
+  /**
+   * Vertical landmarks used by the reduced-inspiration warp. Optional (S14.1b): a limb baseline has no lung fields; the
+   * warp runs only when both exist (and the exam declares breathing).
+   */
+  lungApexV?: number;
+  /** Highest point of the diaphragmatic domes in the baseline. Optional, see `lungApexV`. */
+  diaphragmDomeV?: number;
 
   /**
    * Landmark groups are OPTIONAL per asset (S11): an exam / baseline declares only the groups its projection has, and

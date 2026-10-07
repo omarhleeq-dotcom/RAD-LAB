@@ -50,10 +50,10 @@ export function assessReadiness(
   const techniqueOk =
     finiteIn(s.kvp, controls.kvp.min, controls.kvp.max) &&
     finiteIn(s.sidCm, controls.sidCm.min, controls.sidCm.max) &&
-    (s.exposureMode === "aec" || finiteIn(s.mas, controls.mas.min, controls.mas.max));
+    ((s.exposureMode === "aec" && !!radCase.technique.aec) || finiteIn(s.mas, controls.mas.min, controls.mas.max));
   if (!techniqueOk) items.push({ id: "technique-invalid", category: "technique", level: "blocked" });
 
-  if (s.exposureMode === "aec") {
+  if (s.exposureMode === "aec" && radCase.technique.aec) {
     if (s.aecChambers.length === 0) {
       items.push({ id: "aec-no-chamber", category: "aec", level: "blocked" });
     } else {

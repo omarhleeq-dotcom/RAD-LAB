@@ -111,7 +111,7 @@ describe("inspiration: reduced expansion → higher diaphragm and shorter lungs"
     expect(dFull).toBeGreaterThan(0);
     expect(dRed).toBeGreaterThan(0);
     expect(dFull - dRed).toBeGreaterThanOrEqual(Math.round(0.03 * full.plan.image.heightCm * PX_PER_CM));
-    const apexRow = px(0, spec.lungApexV + 0.04).y;
+    const apexRow = px(0, spec.lungApexV! + 0.04).y;
     expect(Math.abs(at(full.out, x, apexRow) - at(reduced.out, x, apexRow))).toBeLessThan(8);
   });
 
@@ -121,7 +121,7 @@ describe("inspiration: reduced expansion → higher diaphragm and shorter lungs"
     expect(lut[lut.length - 1]).toBe(1);
     for (let i = 1; i < lut.length; i++) expect(lut[i]!).toBeGreaterThanOrEqual(lut[i - 1]!);
     // Output rows above the dome map to source rows further down: the lungs are compressed.
-    const v = spec.diaphragmDomeV - 0.04;
+    const v = spec.diaphragmDomeV! - 0.04;
     expect(lut[Math.round(v * (lut.length - 1))]!).toBeGreaterThan(v);
   });
 });

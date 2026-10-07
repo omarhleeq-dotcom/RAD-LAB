@@ -57,7 +57,7 @@ describe("Session 4 text (patient instructions + radiograph effects)", () => {
   });
 
   it("every instruction the case offers is translated in EN and AR", () => {
-    for (const b of c.availableBreathing) {
+    for (const b of c.availableBreathing!) {
       expect(get(en as Tree, `patient.breathingOptions.${b}`), b).toBeTruthy();
       expect(get(ar as Tree, `patient.breathingOptions.${b}`), b).toMatch(arabic);
     }

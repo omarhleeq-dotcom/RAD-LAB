@@ -95,7 +95,7 @@ describe("patient response: learner instruction → assumed patient response →
     const hard: PatientCooperationProfile = {
       ...profile,
       id: "difficulty-following-breathing",
-      inspirationResponse: { ...profile.inspirationResponse, "deep-inspiration-hold": "reduced" },
+      inspirationResponse: { ...profile.inspirationResponse!, "deep-inspiration-hold": "reduced" },
     };
     expect(derivePatientResponse(hard, { breathing: "deep-inspiration-hold", motionInstruction: "remain-still" })).toMatchObject({ inspiration: "reduced", motion: "none", profileId: hard.id });
     const c = { ...chestPaErect, patientCooperation: hard };
@@ -103,7 +103,7 @@ describe("patient response: learner instruction → assumed patient response →
   });
 
   it("every instruction offered by the case is covered by the profile", () => {
-    for (const b of chestPaErect.availableBreathing) expect(profile.inspirationResponse[b]).toBeDefined();
+    for (const b of chestPaErect.availableBreathing!) expect(profile.inspirationResponse![b]).toBeDefined();
     for (const m of chestPaErect.availableMotionInstructions) expect(profile.motionResponse[m]).toBeDefined();
   });
 });
@@ -142,7 +142,7 @@ describe("scoring integration is conservative", () => {
   });
 
   it("variant list and simulated response never disagree about inspiration or motion", () => {
-    for (const b of chestPaErect.availableBreathing) for (const m of chestPaErect.availableMotionInstructions) {
+    for (const b of chestPaErect.availableBreathing!) for (const m of chestPaErect.availableMotionInstructions) {
       const r = evaluate(chestPaErect, { ...ideal, breathing: b, motionInstruction: m });
       expect(r.variants.includes("poor-inspiration"), `${b}`).toBe(r.resultState.patientResponse.inspiration === "reduced");
       expect(r.variants.includes("motion"), `${m}`).toBe(r.resultState.patientResponse.motion === "motion");

@@ -118,7 +118,11 @@ export interface TechniqueProfile {
   /** Deviation-Index scoring tolerances (dB-like). Never universal; educational/provisional. */
   deviation: { ideal: [number, number]; acceptable: [number, number]; evidence: Evidence };
 
-  aec: {
+  /**
+   * AEC layout and factors. Optional (S14.1b): absent = the exam is manual-technique only (the console offers no AEC mode,
+   * there is no chamber rule). Chest exams declare it, unchanged; a limb exam's absent AEC makes no clinical claim.
+   */
+  aec?: {
     chambers: AecChamberSpec[];
     /** A chamber counts as irradiated only if at least this fraction of its area is inside the light field. */
     minChamberCoverage: number;
