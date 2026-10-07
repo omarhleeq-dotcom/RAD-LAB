@@ -158,6 +158,59 @@ export function lateralSeparation(u: number, rot: NonNullable<RenderPlan["anatom
   return { shiftU: rot.thoraxShiftU, weight: TUNING.rotation.separationBlend * smoothstep(0.35, 0.95, x) };
 }
 
+// ───────────────────────── limb rotation (wrist, S14.1c) ─────────────────────────
+
+/** Weight (0–1) of a horizontal band of the image with a soft edge, v = fraction of the image height. */
+export function bandWeight(band: { v1: number; v2: number }, v: number): number {
+  const s = TUNING.limbRotation.bandSoft;
+  return smoothstep(band.v1 - s, band.v1 + s, v) * (1 - smoothstep(band.v2 - s, band.v2 + s, v));
+}
+
+/**
+ * Wrist PA: horizontal displacement (fraction of image width) of the SOURCE content at (u, v): a smooth bump over the proximal
+ * metacarpal band, so the spaces between the shafts become unequal (stretched on one side of the bump, squeezed on the other).
+ */
+export function wristPaSpacingShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "wrist-pa" }>): number {
+  const { u1, u2 } = lm.spacing;
+  return rot.shiftU * Math.sin(Math.PI * clamp01((u - u1) / (u2 - u1))) * bandWeight(lm.spacing, v);
+}
+
+/**
+ * Value of one output pixel under a limb rotation effect, from the backward-mapped sample function. Pure and deterministic.
+ *  - wrist PA: backward map for the metacarpal-spacing bump (one refinement step, as the chest rotation), then an offset copy of
+ *    the ulna blended toward the radius over the distal radioulnar band.
+ *  - wrist lateral: the bands that must be superimposed are blended with a second copy offset by the signed shift.
+ */
+export function limbRotationValue(
+  rot: NonNullable<RenderPlan["limb"]>["rotation"],
+  lm: NonNullable<RadiographAssetSpec["limbRotation"]>,
+  sample: (u: number, v: number) => number,
+  u: number,
+  v: number,
+): number {
+  const blend = TUNING.limbRotation.blend;
+  if (lm.kind === "wrist-pa" && rot.kind === "wrist-pa") {
+    const first = u - wristPaSpacingShiftU(u, v, rot, lm);
+    const uSrc = clamp01(u - wristPaSpacingShiftU(first, v, rot, lm));
+    let value = sample(uSrc, v);
+    // The ulna copy: shown where the ulna, moved toward the radius by the overlap amount, would lie.
+    const w = bandWeight(lm.radioulnar, v);
+    if (w > 0 && rot.overlapShiftU > 0) {
+      const uu = u - rot.overlapShiftU;
+      const inUlna = smoothstep(lm.radioulnar.ulnaU1 - 0.02, lm.radioulnar.ulnaU1 + 0.02, uu) * (1 - smoothstep(lm.radioulnar.ulnaU2 - 0.02, lm.radioulnar.ulnaU2 + 0.02, uu));
+      value += blend * w * inUlna * (sample(clamp01(uu), v) - value);
+    }
+    return value;
+  }
+  if (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") {
+    const value = sample(clamp01(u), v);
+    let w = 0;
+    for (const b of lm.bands) w = Math.max(w, bandWeight(b, v));
+    return value + blend * w * (sample(clamp01(u - rot.shiftU), v) - value);
+  }
+  return sample(u, v);
+}
+
 // ───────────────────────── schematic overlays / zones ─────────────────────────
 
 function ellipseR(e: ImageEllipse, u: number, v: number): number {
@@ -257,7 +310,7 @@ export function renderRadiograph(
         uSrc = uOut - rotationShiftU(first, rot, spec);
       }
       const uc = clamp01(uSrc), vc = clamp01(vSrc);
-      let value = sample(uc, vc);
+      let value = plan.limb && spec.limbRotation ? limbRotationValue(plan.limb.rotation, spec.limbRotation, sample, uOut, vc) : sample(uc, vc);
       if (separated) {
         const sep = lateralSeparation(uc, rot, spec);
         value += sep.weight * (sample(clamp01(uc - sep.shiftU), vc) - value);

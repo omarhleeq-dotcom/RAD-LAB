@@ -113,7 +113,9 @@
     "projections": {
       "pa-erect": "PA erect",
       "ap-erect": "AP erect",
-      "lateral-left": "Left lateral"
+      "lateral-left": "Left lateral",
+      "wrist-pa": "Wrist PA",
+      "wrist-lateral": "Wrist lateral"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -473,6 +475,62 @@
           "desc": "The projection you selected is not simulated in this exam. The AP reference appearance is shown for layout only."
         }
       }
+    },
+    "wrist-pa": {
+      "alt": "Simulated educational PA wrist radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The PA wrist reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the PA wrist reference appearance.",
+      "altFindings": {
+        "rotation": "unequal spaces between the metacarpals and the ulna drawn over the radius from rotation",
+        "low-penetration": "reduced visibility of the dense carpal bones and bone detail",
+        "projection": "the selected projection is not simulated; the PA wrist appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference PA wrist appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult left wrist (a 31-year-old male, as described by its author), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → unequal metacarpal spacing, radius and ulna overlap",
+          "desc": "In a true PA wrist the spaces between the proximal metacarpals are near-equal, their shafts show equal concavity on both sides, and the distal radius and ulna are separated (Bontrager p.156). With rotation the spaces become unequal and the ulna moves over the radius. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image, not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (carpals, bone ends) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The PA wrist reference appearance is shown for layout only."
+        }
+      }
+    },
+    "wrist-lateral": {
+      "alt": "Simulated educational lateral wrist radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The lateral wrist reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the lateral wrist reference appearance.",
+      "altFindings": {
+        "rotation": "bones that should overlap drawn apart from rotation",
+        "low-penetration": "reduced visibility of the dense carpal bones and bone detail",
+        "projection": "the selected projection is not simulated; the lateral wrist appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference lateral wrist appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult left wrist (a 31-year-old male, as described by its author), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → bones not superimposed",
+          "desc": "In a true lateral wrist the ulnar head lies over the distal radius and the proximal 2nd–5th metacarpals are superimposed (Bontrager p.158). With rotation they are drawn apart (a second, offset copy). Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image, not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (carpals, bone ends) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The lateral wrist reference appearance is shown for layout only."
+        }
+      }
     }
   },
   "modality": {
@@ -555,6 +613,35 @@
     "sidValue": "SID {value} cm",
     "tubeAngle": "Tube angle: {angle}° (+ = toward the feet)",
     "rotationArc": "{deg}°",
-    "rotationReadout": "Patient rotation: {deg}°"
+    "rotationReadout": "Patient rotation: {deg}°",
+    "altWristPa": "The left wrist and hand are drawn on the detector as for a PA (palm down), fingers toward the top and the thumb on the viewer's right. Rotation is set to {deg}°.",
+    "altWristLateral": "The left wrist and hand are drawn on the detector as for a lateral (thumb up), fingers toward the top. Rotation is set to {deg}°.",
+    "altWristSide": "Side view of the set-up: the patient seated at the end of the table, the forearm and hand lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm."
+  },
+  "sceneWrist": {
+    "ulna": "Ulna",
+    "radius": "Radius",
+    "ulnarSide": "Ulnar side",
+    "thumbSide": "Thumb side",
+    "fingers": "Fingers",
+    "forearm": "Forearm",
+    "sameLevel": "Shoulder, elbow, wrist: one level",
+    "midcarpal": "Midcarpal area",
+    "seated": "Patient seated",
+    "paName": "PA (palm down)",
+    "lateralName": "lateral (thumb up)"
+  },
+  "positioningWrist": {
+    "alt": "Interactive schematic of the detector with the left wrist and hand, the collimated field, the central-ray target and the side marker.",
+    "midline": "Forearm long axis",
+    "detectorCaptionPa": "Detector view as displayed: left wrist, PA (fingers toward the top, thumb on the viewer's right)",
+    "detectorCaptionLateral": "Detector view as displayed: left wrist, lateral (fingers toward the top)",
+    "sideViewCaption": "Side view of the table set-up",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The shoulder, elbow and wrist being on one level, the hand arch and shielding are shown as context only: they are not scored in this version.",
+    "rotationHelpPa": "Rotation of the forearm and wrist about their long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-PA cues (metacarpal spacing, radius and ulna).",
+    "rotationHelpLateral": "Rotation of the forearm and wrist about their long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-lateral cues (ulnar head over the radius, metacarpals superimposed).",
+    "markerConvention": "Marker: choose the letter of the patient's side (this is the LEFT wrist) and place it inside the edge of the field, clear of the wrist anatomy. No left/right half of the image is required for a single limb.",
+    "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the wrist and hand.",
+    "rotation": "Wrist rotation (forearm turn)"
   }
 }

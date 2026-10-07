@@ -11,9 +11,10 @@ import type { ComponentType } from "react";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { ApSupineView } from "./ApSupineView";
-import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
+import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
 import { ApPatientCues, LateralPatientCues, PatientCues, type CuesProps } from "./PatientCues";
 import { PlanView } from "./PlanView";
+import { WristSideView } from "./WristSideView";
 
 /** The second view beside the detector view (plan view from above, or a side view of the set-up). */
 export interface SecondViewProps {
@@ -32,6 +33,9 @@ export interface SceneTexts {
   rotationHelp: string;
   /** Marker-convention note (shown with the guides ON). */
   markerConvention: string;
+  /** Optional (S14.1c): the marker hint and the rotation label when the common (chest-worded) ones do not fit, e.g. a limb. Absent = `positioning.markerHint` / `positioning.rotation`. */
+  markerHint?: string;
+  rotationLabel?: string;
 }
 
 export interface SceneLayout {
@@ -80,3 +84,21 @@ export const CHEST_AP_SUPINE_LAYOUT: SceneLayout = {
     markerConvention: "positioningAp.markerConvention",
   },
 };
+
+/** Wrist (S14.1c): the detector view draws the wrist; the second view is a SIDE view of the table set-up (not the chest plan view); no patient-cue panel. */
+const wristLayout = (figure: DetectorFigure, kind: "Pa" | "Lateral"): SceneLayout => ({
+  figure,
+  SecondView: WristSideView,
+  texts: {
+    detectorCaption: `positioningWrist.detectorCaption${kind}`,
+    secondViewCaption: "positioningWrist.sideViewCaption",
+    schematicNote: "positioningWrist.schematicNote",
+    rotationHelp: `positioningWrist.rotationHelp${kind}`,
+    markerConvention: "positioningWrist.markerConvention",
+    markerHint: "positioningWrist.markerHint",
+    rotationLabel: "positioningWrist.rotation",
+  },
+});
+
+export const WRIST_PA_LAYOUT: SceneLayout = wristLayout(WRIST_PA_FIGURE, "Pa");
+export const WRIST_LATERAL_LAYOUT: SceneLayout = wristLayout(WRIST_LATERAL_FIGURE, "Lateral");

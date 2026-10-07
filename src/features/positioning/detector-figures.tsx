@@ -12,6 +12,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { FrontalFigure } from "./FrontalFigure";
 import { LateralFigure } from "./LateralFigure";
+import { WristDrawing } from "./WristFigure";
 import { SceneLabel } from "./SceneParts";
 import { LABEL_SIZE } from "./scene-style";
 import { rotationVisual, scapulaOffset } from "./visual-model";
@@ -41,8 +42,13 @@ export interface DetectorFigure {
   alt: (ts: (key: string, values?: Record<string, string>) => string, settings: SimulationSettings) => string;
   /** The patient drawing, in detector space (never mirrored by RTL). */
   Drawing: ComponentType<FigureProps>;
-  /** The side labels of the orientation row (Head / Feet are drawn by the workspace for every figure). */
+  /** The side labels of the orientation row (Head / Feet are drawn by the workspace for every figure unless `axis` replaces them). */
   Orientation: ComponentType<OrientationProps>;
+  /**
+   * Optional (S14.1c): full message paths of the labels at the TOP and the BOTTOM of the detector view when "Head / Feet" is not the
+   * patient's axis along it (a wrist: fingers toward the top, forearm toward the bottom). Absent = Head / Feet, as before.
+   */
+  axis?: { top: string; bottom: string };
 }
 
 const chinKey = (s: SimulationSettings) => (s.chinPosition === "tucked" ? "chinTucked" : "chinLifted");
@@ -113,8 +119,45 @@ export const CHEST_LATERAL_FIGURE: DetectorFigure = {
   Orientation: LateralOrientation,
 };
 
+function WristPaOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneWrist");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("ulnarSide")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("thumbSide")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+const NoOrientation = () => null;
+
+const wristAlt = (ts: (key: string, values?: Record<string, string>) => string, s: SimulationSettings) =>
+  ts(s.projection === "wrist-lateral" ? "altWristLateral" : "altWristPa", { deg: String(s.rotationDeg) });
+
+export const WRIST_PA_FIGURE: DetectorFigure = {
+  altKey: "positioningWrist.alt",
+  midlineKey: "positioningWrist.midline",
+  alt: wristAlt,
+  Drawing: WristDrawing,
+  Orientation: WristPaOrientation,
+  axis: { top: "sceneWrist.fingers", bottom: "sceneWrist.forearm" },
+};
+
+export const WRIST_LATERAL_FIGURE: DetectorFigure = {
+  altKey: "positioningWrist.alt",
+  midlineKey: "positioningWrist.midline",
+  alt: wristAlt,
+  Drawing: WristDrawing,
+  Orientation: NoOrientation,
+  axis: { top: "sceneWrist.fingers", bottom: "sceneWrist.forearm" },
+};
+
 /** The registry. The AP supine scene draws the PA frontal figure on the detector view (its own part is the side view). */
 export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "chest-pa": CHEST_PA_FIGURE,
   "chest-lateral": CHEST_LATERAL_FIGURE,
+  "wrist-pa": WRIST_PA_FIGURE,
+  "wrist-lateral": WRIST_LATERAL_FIGURE,
 };

@@ -72,4 +72,25 @@ export interface RadiographAssetSpec {
   jaw?: { border: { u: number; v: number }[]; softTissueRect: ImageRect };
   /** Dense / mediastinal / retrocardiac regions that low penetration makes less visible. */
   denseZones?: ImageEllipse[];
+  /**
+   * Landmark group of a limb's rotation effect (S14.1c). Optional: only a limb baseline declares it; chest assets do not (the
+   * core chest rotation effect is then unchanged). The asset's `kind` names which drawing the pipeline applies.
+   */
+  limbRotation?: LimbRotationLandmarks;
 }
+
+/** Horizontal band of the image, as fractions of its height (v: 0 = top). */
+export interface ImageBand {
+  v1: number;
+  v2: number;
+}
+
+/**
+ * Rotation cues of a wrist baseline, read from the image by eye (approximate; TODO(medical-review)).
+ *  - "wrist-pa": the proximal metacarpal band (spacing / concavity cue; `u1`..`u2` = the metacarpal bases' extent) and the
+ *    distal radioulnar band (the ulna lies at `ulnaU1`..`ulnaU2`, the radius to its right in the displayed PA).
+ *  - "wrist-lateral": the bands that must be superimposed in a true lateral (proximal metacarpals, ulnar head over the radius).
+ */
+export type LimbRotationLandmarks =
+  | { kind: "wrist-pa"; spacing: ImageBand & { u1: number; u2: number }; radioulnar: ImageBand & { ulnaU1: number; ulnaU2: number } }
+  | { kind: "wrist-lateral"; bands: ImageBand[] };

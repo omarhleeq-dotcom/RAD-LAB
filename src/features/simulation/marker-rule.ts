@@ -7,6 +7,7 @@
  *    the viewer half that `markerSide` does not assign to that letter.
  *  - detector-side (later Lateral): the letter is the side of the patient against the detector, read from the exam's
  *    choice control. Wrong when the letter differs from that side, or the half disagrees with `markerSide`.
+ *  - fixed-side (single limb, S14.1c): the letter must be the side the exam examines; no viewer-half check.
  * Display orientation (which half a letter belongs to) is always `markerSide` data, never mirrored by UI direction.
  */
 import type { PositioningSpec } from "@/domain/case";
@@ -39,6 +40,8 @@ export function isMarkerWrongSide(
   marker: PlacedMarker,
   choices: Record<string, string> | undefined,
 ): boolean {
+  // S14.1c (single limb, O21 option A): only the letter is judged; the source gives no viewer-half convention for one limb.
+  if (positioning.markerRule?.kind === "fixed-side") return marker.side !== positioning.markerRule.side;
   if (viewerSideOf(marker.position) !== expectedViewerSide(positioning, marker.side)) return true;
   const required = requiredMarkerLetter(positioning, choices);
   return required !== undefined && marker.side !== required;

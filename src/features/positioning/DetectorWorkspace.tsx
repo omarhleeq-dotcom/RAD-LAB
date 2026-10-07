@@ -226,9 +226,9 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       {/* orientation labels (image convention, never mirrored by RTL): Head at the top, Feet at the bottom edge; anterior / posterior (lateral) or the patient's sides (frontal, practice guides) */}
       <g aria-hidden style={{ pointerEvents: "none" }}>
         <SceneArrow x1={-20} y1={-48} x2={-20} y2={-80} />
-        <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{ts("head")}</SceneLabel>
+        <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{figure.axis ? tAny(figure.axis.top) : ts("head")}</SceneLabel>
         <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
-        <SceneLabel x={44} y={H + 24} size={LABEL_SIZE.detector}>{ts("feet")}</SceneLabel>
+        <SceneLabel x={44} y={H + 24} size={LABEL_SIZE.detector}>{figure.axis ? tAny(figure.axis.bottom) : ts("feet")}</SceneLabel>
         <Orientation W={W} showGuides={showGuides} />
       </g>
 

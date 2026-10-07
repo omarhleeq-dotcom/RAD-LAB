@@ -30,6 +30,24 @@ export const TUNING = {
     /** Weight of the offset copy at the posterior chest wall (0.5 = equal blend of the two copies). */
     separationBlend: 0.5,
   },
+  /**
+   * Limb rotation (S14.1c, wrist). EDUCATIONAL VISUAL APPROXIMATIONS drawn from ONE baseline image: none of these is a
+   * model of forearm / carpal kinematics, and none maps pixels to degrees. Each size grows with the internal value only.
+   */
+  limbRotation: {
+    /** Console range of the wrist rotation control; larger magnitudes are clamped. */
+    maxDeg: 15,
+    /** PA: horizontal bump (fraction of image width per degree, sign = the value's sign) applied to the proximal metacarpal band: the spaces between the shafts become unequal. */
+    paSpacingShiftPerDeg: 0.006,
+    /** PA: a second, offset copy of the ulna is blended over the radius by this fraction of image width per degree of |value| (no direction claimed): the distal radius and ulna stop being separated. */
+    paRadioulnarShiftPerDeg: 0.012,
+    /** PA / lateral: weight of the offset copy (0.5 = equal blend). */
+    blend: 0.5,
+    /** Lateral: offset of the second copy, fraction of image width per degree (sign = the value's sign): the bands that must be superimposed are drawn apart. */
+    lateralShiftPerDeg: 0.012,
+    /** Soft edge of every band, as a fraction of image height. */
+    bandSoft: 0.03,
+  },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },
   /** Schematic overlays, in display grey levels added where the overlay lies (dense = brighter). */
