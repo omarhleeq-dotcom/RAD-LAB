@@ -11,7 +11,8 @@ import type { ComponentType } from "react";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { ApSupineView } from "./ApSupineView";
-import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
+import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
+import { HandSideView } from "./HandSideView";
 import { ApPatientCues, LateralPatientCues, PatientCues, type CuesProps } from "./PatientCues";
 import { PlanView } from "./PlanView";
 import { WristSideView } from "./WristSideView";
@@ -102,3 +103,21 @@ const wristLayout = (figure: DetectorFigure, kind: "Pa" | "Lateral"): SceneLayou
 
 export const WRIST_PA_LAYOUT: SceneLayout = wristLayout(WRIST_PA_FIGURE, "Pa");
 export const WRIST_LATERAL_LAYOUT: SceneLayout = wristLayout(WRIST_LATERAL_FIGURE, "Lateral");
+
+/** Hand (S14.2b): as the wrist, the detector view draws the hand and the second view is a SIDE view of the table set-up (no chest plan view, no patient-cue panel). */
+const handLayout = (figure: DetectorFigure, kind: "Pa" | "Lateral"): SceneLayout => ({
+  figure,
+  SecondView: HandSideView,
+  texts: {
+    detectorCaption: `positioningHand.detectorCaption${kind}`,
+    secondViewCaption: "positioningHand.sideViewCaption",
+    schematicNote: "positioningHand.schematicNote",
+    rotationHelp: `positioningHand.rotationHelp${kind}`,
+    markerConvention: "positioningHand.markerConvention",
+    markerHint: "positioningHand.markerHint",
+    rotationLabel: "positioningHand.rotation",
+  },
+});
+
+export const HAND_PA_LAYOUT: SceneLayout = handLayout(HAND_PA_FIGURE, "Pa");
+export const HAND_LATERAL_LAYOUT: SceneLayout = handLayout(HAND_LATERAL_FIGURE, "Lateral");

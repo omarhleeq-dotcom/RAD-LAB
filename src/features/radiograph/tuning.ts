@@ -47,6 +47,11 @@ export const TUNING = {
     lateralShiftPerDeg: 0.012,
     /** Soft edge of every band, as a fraction of image height. */
     bandSoft: 0.03,
+    /**
+     * Hand (S14.2b-FIX): drawn degrees of the 2.5D hand model per degree of the internal rotation value (an illustrative gain so ±15°
+     * reads as a clear turn; scoring never uses it). The model itself is `features/hand-model/hand-model.ts`.
+     */
+    handModelGainPerDeg: 2.3,
   },
   /** Reduced inspiration: shorter lung fields and a higher diaphragm (fraction of the apex→dome distance). */
   inspiration: { extentReduction: 0.12 },

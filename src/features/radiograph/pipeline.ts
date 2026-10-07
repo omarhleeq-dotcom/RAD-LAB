@@ -36,6 +36,8 @@ export interface RenderedRadiograph {
   height: number;
   pxPerCm: number;
   luma: Uint8ClampedArray;
+  /** Detector cm of the canvas's top-left corner (0, 0 unless the plan has a `view`). */
+  originCm: { x: number; y: number };
   /** Field in output pixels (for the annotation layer's clip). */
   fieldPx: { x1: number; y1: number; x2: number; y2: number };
   /** Mean of the displayed luma inside the exposed image area (display-processing diagnostics only). */
@@ -175,6 +177,31 @@ export function wristPaSpacingShiftU(u: number, v: number, rot: NonNullable<Rend
   return rot.shiftU * Math.sin(Math.PI * clamp01((u - u1) / (u2 - u1))) * bandWeight(lm.spacing, v);
 }
 
+/** Piecewise-linear interpolation through anchors sorted by u (constant beyond the outer ones). */
+function anchorShift(anchors: { u: number; du: number }[], u: number): number {
+  const n = anchors.length;
+  if (n === 0) return 0;
+  if (u <= anchors[0]!.u) return anchors[0]!.du;
+  if (u >= anchors[n - 1]!.u) return anchors[n - 1]!.du;
+  for (let k = 0; k < n - 1; k++) {
+    const p = anchors[k]!, q = anchors[k + 1]!;
+    if (u <= q.u) return q.u === p.u ? p.du : p.du + ((u - p.u) / (q.u - p.u)) * (q.du - p.du);
+  }
+  return 0;
+}
+
+/** Hand PA (S14.2b-FIX): displacement (fraction of the image width) of the source content at (u, v): the band-weighted anchor interpolation of the 2.5D hand model. */
+export function handPaShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: Extract<NonNullable<RadiographAssetSpec["limbRotation"]>, { kind: "hand-pa" }>): number {
+  let shift = 0;
+  lm.bands.forEach((b, i) => {
+    // A band may carry a horizontal window of the SOURCE content (soft edge 0.06 of the image width): the thumb band moves the thumb only.
+    const win = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.06, b.u1 + 0.06, u) * (1 - smoothstep(b.u2 - 0.06, b.u2 + 0.06, u));
+    const w = bandWeight(b, v) * win;
+    if (w > 0) shift += w * anchorShift(rot.hand?.anchors?.[i] ?? [], u);
+  });
+  return shift;
+}
+
 /**
  * Value of one output pixel under a limb rotation effect, from the backward-mapped sample function. Pure and deterministic.
  *  - wrist PA: backward map for the metacarpal-spacing bump (one refinement step, as the chest rotation), then an offset copy of
@@ -201,6 +228,33 @@ export function limbRotationValue(
       value += blend * w * inUlna * (sample(clamp01(uu), v) - value);
     }
     return value;
+  }
+  if (lm.kind === "hand-pa" && rot.kind === "hand-pa") {
+    // Backward map u_out → u_src by fixed-point iteration (the model's displacement field is smooth and slowly varying).
+    let us = u;
+    for (let k = 0; k < 4; k++) us = u - handPaShiftU(us, v, rot, lm);
+    return sample(clamp01(us), v);
+  }
+  if (lm.kind === "hand-lateral" && rot.kind === "hand-lateral") {
+    // One copy per structure at its projected position, blended equally inside each band (the optional horizontal window limits the band
+    // to the finger / metacarpal column so the separated thumb is not copied). At the base pose every shift is 0: the picture is the baseline.
+    const value = sample(clamp01(u), v);
+    let out = value;
+    lm.bands.forEach((b, i) => {
+      const shifts = rot.hand?.shifts?.[i];
+      if (!shifts || shifts.length === 0) return;
+      const wv = bandWeight(b, v);
+      if (wv <= 0) return;
+      let sum = 0, win = 0;
+      for (const sh of shifts) {
+        const us = clamp01(u - sh);
+        const w = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.02, b.u1 + 0.02, us) * (1 - smoothstep(b.u2 - 0.02, b.u2 + 0.02, us));
+        sum += sample(us, v) * w + value * (1 - w);
+        win += 1;
+      }
+      out += wv * (sum / win - value);
+    });
+    return out;
   }
   if (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") {
     const value = sample(clamp01(u), v);
@@ -261,8 +315,9 @@ export function renderRadiograph(
   src: LumaImage,
   pxPerCm: number,
 ): RenderedRadiograph {
-  const W = Math.round(plan.detector.widthCm * pxPerCm);
-  const H = Math.round(plan.detector.heightCm * pxPerCm);
+  const ox = plan.view?.x1 ?? 0, oy = plan.view?.y1 ?? 0;
+  const W = Math.round((plan.view ? plan.view.x2 - plan.view.x1 : plan.detector.widthCm) * pxPerCm);
+  const H = Math.round((plan.view ? plan.view.y2 - plan.view.y1 : plan.detector.heightCm) * pxPerCm);
   const N = W * H;
   const sw = src.width, sh = src.height;
   const feather = TUNING.featherCm;
@@ -290,12 +345,12 @@ export function renderRadiograph(
   };
 
   for (let y = 0; y < H; y++) {
-    const cy = (y + 0.5) / pxPerCm;
+    const cy = oy + (y + 0.5) / pxPerCm;
     const fRow = edge(cy, f.y1, f.y2), dRow = edge(cy, im.y1, im.y1 + im.heightCm);
     const vOut = (cy - im.y1) / im.heightCm;
     const vSrc = lut ? lut[Math.round(clamp01(vOut) * (lut.length - 1))]! : vOut;
     for (let x = 0; x < W; x++) {
-      const cx = (x + 0.5) / pxPerCm;
+      const cx = ox + (x + 0.5) / pxPerCm;
       const i = y * W + x;
       const fm = fRow * edge(cx, f.x1, f.x2), dm = dRow * edge(cx, im.x1, im.x1 + im.widthCm);
       fieldMask[i] = fm;
@@ -396,7 +451,8 @@ export function renderRadiograph(
     height: H,
     pxPerCm,
     luma: outLuma,
-    fieldPx: { x1: f.x1 * pxPerCm, y1: f.y1 * pxPerCm, x2: f.x2 * pxPerCm, y2: f.y2 * pxPerCm },
+    originCm: { x: ox, y: oy },
+    fieldPx: { x1: (f.x1 - ox) * pxPerCm, y1: (f.y1 - oy) * pxPerCm, x2: (f.x2 - ox) * pxPerCm, y2: (f.y2 - oy) * pxPerCm },
     meanInField: n ? sum / n : 0,
   };
 }

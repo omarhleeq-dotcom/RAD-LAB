@@ -12,6 +12,10 @@
  *    separated (grows with |value|; no direction of turn is claimed).
  *  - wrist lateral: the bands that must be superimposed (proximal metacarpals, ulnar head over the distal radius) are drawn twice,
  *    the second copy offset by an amount that grows with the value (sign = the sign of the value): "not superimposed".
+ *  - hand PA / lateral (S14.2b-FIX): the displacements come from the 2.5D hand model (`features/hand-model`), the same one the scene
+ *    draws: PA = a smooth piecewise-linear warp of the phalangeal and metacarpal bands through the digits' projected positions; lateral
+ *    (extension) = one copy per digit (and per forearm bone) of the structures that must be superimposed, drawn at their projected
+ *    positions (all coincide at the base pose, so the picture changes continuously).
  * SIGN (S14.1c-2): defined by the RESULT IMAGE, as for the chest exams (S11c-1, S13-6): a positive value displaces the second
  * copy / the metacarpal bump toward the viewer's RIGHT in the displayed image (never mirrored by RTL); a negative value to the left.
  * Feedback is magnitude-only. Pinned by a renderer test (a synthetic stripe moves right for +θ, left for −θ).
@@ -19,12 +23,25 @@
 import type { LimbRotationLandmarks } from "@/domain/radiograph";
 import type { Evidence } from "@/domain/technique";
 import type { EffectDefinition, LimbRotationPlan } from "./plan";
+import { handLateralShifts, handPaAnchors, oddPart } from "@/features/hand-model/hand-model";
 import { TUNING } from "./tuning";
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
 export const limbRotationConcept = (kind: LimbRotationLandmarks["kind"]): Evidence =>
-  kind === "wrist-pa"
+  kind === "hand-pa"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.150 (true PA hand)",
+        note: "True PA: symmetric concavities of the metacarpal shafts and phalanges of digits 2–5 and equal soft tissue on each side of the phalanges. Provisional until the educator review (O5).",
+      }
+    : kind === "hand-lateral"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.153 (true lateral hand, extension)",
+        note: "True lateral (extension): metacarpals and phalanges superimposed and the distal radius and ulna superimposed. Provisional until the educator review (O5).",
+      }
+    : kind === "wrist-pa"
     ? {
         status: "common-reference",
         reference: "BONTRAGER-9 p.156 (true PA wrist)",
@@ -44,6 +61,16 @@ export function limbRotationPlan(
 ): LimbRotationPlan | null {
   if (!landmarks || !failed || deg === 0) return null;
   const d = clamp(deg, -TUNING.limbRotation.maxDeg, TUNING.limbRotation.maxDeg);
+  if (landmarks.kind === "hand-pa") {
+    // The 2.5D hand model (S14.2b-FIX): bands in the order of the asset's landmarks [phalanges, metacarpals, thumb]. shiftU = minus the ODD part of the thumb's shift (the sign carrier: rotating narrows the hand for either sign, only the depth term Z·sinθ is odd).
+    const a = handPaAnchors(d);
+    return { kind: "hand-pa", degrees: d, shiftU: -oddPart((r) => handPaAnchors(r).thumb[0]?.du ?? 0, d), overlapShiftU: 0, hand: { anchors: [a.phalanx, a.metacarpal, a.thumb] } };
+  }
+  if (landmarks.kind === "hand-lateral") {
+    // Bands in the order of the asset's landmarks [finger / metacarpal column, distal forearm]. shiftU = the odd part of digit 5's shift (sign).
+    const s = handLateralShifts(d);
+    return { kind: "hand-lateral", degrees: d, shiftU: oddPart((r) => handLateralShifts(r).column[0] ?? 0, d), overlapShiftU: 0, hand: { shifts: [s.column, s.forearm] } };
+  }
   return landmarks.kind === "wrist-pa"
     ? { kind: "wrist-pa", degrees: d, shiftU: d * TUNING.limbRotation.paSpacingShiftPerDeg, overlapShiftU: Math.abs(d) * TUNING.limbRotation.paRadioulnarShiftPerDeg }
     : { kind: "wrist-lateral", degrees: d, shiftU: d * TUNING.limbRotation.lateralShiftPerDeg, overlapShiftU: 0 };
@@ -51,7 +78,7 @@ export function limbRotationPlan(
 
 const failedRotation = (findings: { ruleId: string }[]) => findings.some((f) => f.ruleId === "rotation");
 
-/** One definition for both wrist exams: the asset's landmark group says which drawing applies. */
+/** One definition for the wrist and hand exams: the asset's landmark group says which drawing applies. */
 export const LIMB_ROTATION_EFFECT: EffectDefinition = {
   id: "rotation",
   drivers: ["geometry.rotationDeg"],

@@ -105,7 +105,7 @@ describe("fixture exam / case validate with the new optional data", () => {
     expect(unregisteredVariants(chestPaErectExam)).toEqual([]);
     expect(unregisteredVariants({ rules: [], possibleErrors: [{ id: "x", variant: "never-registered", description: t("x") }] })).toEqual(["never-registered"]);
     // S12: the Chest Lateral scene and its `arms-over-lungs` detector are registered (the PA declares neither).
-    expect(Object.keys(SCENES).sort()).toEqual(["chest-ap-supine", "chest-lateral", "chest-pa-frontal", "wrist-lateral", "wrist-pa"]);
+    expect(Object.keys(SCENES).sort()).toEqual(["chest-ap-supine", "chest-lateral", "chest-pa-frontal", "hand-lateral", "hand-pa", "wrist-lateral", "wrist-pa"]);
     expect(Object.keys(CRITICAL_DETECTORS).sort()).toEqual(["arms-over-lungs", "missing-marker", "patient-motion", "wrong-projection", "wrong-side-marker"]);
     expect(unregisteredVariants(chestLateralErectExam)).toEqual([]);
   });

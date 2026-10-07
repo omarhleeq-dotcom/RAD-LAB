@@ -12,6 +12,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { FrontalFigure } from "./FrontalFigure";
 import { LateralFigure } from "./LateralFigure";
+import { HandDrawing } from "./HandFigure";
 import { WristDrawing } from "./WristFigure";
 import { SceneLabel } from "./SceneParts";
 import { LABEL_SIZE } from "./scene-style";
@@ -154,10 +155,46 @@ export const WRIST_LATERAL_FIGURE: DetectorFigure = {
   axis: { top: "sceneWrist.fingers", bottom: "sceneWrist.forearm" },
 };
 
+// Hand (S14.2b): the figure draws the left hand; the PA labels the ulnar and thumb sides (guides ON), the lateral labels nothing at the sides.
+function HandPaOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneHand");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("ulnarSide")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("thumbSide")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+const handAlt = (ts: (key: string, values?: Record<string, string>) => string, s: SimulationSettings) =>
+  ts(s.projection === "hand-lateral" ? "altHandLateral" : "altHandPa", { deg: String(s.rotationDeg) });
+
+export const HAND_PA_FIGURE: DetectorFigure = {
+  altKey: "positioningHand.alt",
+  midlineKey: "positioningHand.midline",
+  alt: handAlt,
+  Drawing: HandDrawing,
+  Orientation: HandPaOrientation,
+  axis: { top: "sceneHand.fingers", bottom: "sceneHand.forearm" },
+};
+
+export const HAND_LATERAL_FIGURE: DetectorFigure = {
+  altKey: "positioningHand.alt",
+  midlineKey: "positioningHand.midline",
+  alt: handAlt,
+  Drawing: HandDrawing,
+  Orientation: NoOrientation,
+  axis: { top: "sceneHand.fingers", bottom: "sceneHand.forearm" },
+};
+
 /** The registry. The AP supine scene draws the PA frontal figure on the detector view (its own part is the side view). */
 export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "chest-pa": CHEST_PA_FIGURE,
   "chest-lateral": CHEST_LATERAL_FIGURE,
   "wrist-pa": WRIST_PA_FIGURE,
   "wrist-lateral": WRIST_LATERAL_FIGURE,
+  "hand-pa": HAND_PA_FIGURE,
+  "hand-lateral": HAND_LATERAL_FIGURE,
 };

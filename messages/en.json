@@ -115,7 +115,9 @@
       "ap-erect": "AP erect",
       "lateral-left": "Left lateral",
       "wrist-pa": "Wrist PA",
-      "wrist-lateral": "Wrist lateral"
+      "wrist-lateral": "Wrist lateral",
+      "hand-pa": "Hand PA",
+      "hand-lateral": "Hand lateral (extension)"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -531,6 +533,62 @@
           "desc": "The projection you selected is not simulated in this exam. The lateral wrist reference appearance is shown for layout only."
         }
       }
+    },
+    "hand-pa": {
+      "alt": "Simulated educational PA hand radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The PA hand reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the PA hand reference appearance.",
+      "altFindings": {
+        "rotation": "unequal spaces between the metacarpal shafts and the digits from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the carpals and the bone ends) and bone detail",
+        "projection": "the selected projection is not simulated; the PA hand appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference PA hand appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult left hand (a 31-year-old male, as described by its author), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → unequal spacing of the metacarpals and digits",
+          "desc": "In a true PA hand the concavities of the metacarpal shafts and phalanges of digits 2–5 are symmetric and the soft tissue on each side of the phalanges is equal (Bontrager p.150). With rotation the spaces between the shafts and the digits become unequal and the soft tissue on the two sides is no longer equal. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp that moves bone and soft tissue together, so the change in concavity itself is not drawn), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the carpals and the bone ends) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The PA hand reference appearance is shown for layout only."
+        }
+      }
+    },
+    "hand-lateral": {
+      "alt": "Simulated educational lateral (extension) hand radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The lateral (extension) hand reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the lateral (extension) hand reference appearance.",
+      "altFindings": {
+        "rotation": "bones that should overlap drawn apart from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the carpals and the bone ends) and bone detail",
+        "projection": "the selected projection is not simulated; the lateral (extension) hand appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference lateral (extension) hand appearance is shown with no simulated faults. It is a teaching approximation: a real normal adult left hand (a 31-year-old male, as described by its author), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → bones not superimposed",
+          "desc": "In a true lateral hand (fingers extended) the metacarpals and phalanges are superimposed and the distal radius and ulna are superimposed (Bontrager p.153). With rotation the bones that should overlap are drawn apart. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image, not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the carpals and the bone ends) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The lateral (extension) hand reference appearance is shown for layout only."
+        }
+      }
     }
   },
   "modality": {
@@ -616,7 +674,10 @@
     "rotationReadout": "Patient rotation: {deg}°",
     "altWristPa": "The left wrist and hand are drawn on the detector as for a PA (palm down), fingers toward the top and the thumb on the viewer's right. Rotation is set to {deg}°.",
     "altWristLateral": "The left wrist and hand are drawn on the detector as for a lateral (thumb up), fingers toward the top. Rotation is set to {deg}°.",
-    "altWristSide": "Side view of the set-up: the patient seated at the end of the table, the forearm and hand lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm."
+    "altWristSide": "Side view of the set-up: the patient seated at the end of the table, the forearm and hand lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm.",
+    "altHandPa": "The left hand and forearm are drawn on the detector as for a PA (palm down), fingers toward the top and the thumb on the viewer's right. Rotation is set to {deg}°.",
+    "altHandLateral": "The left hand and forearm are drawn on the detector as for a lateral with the fingers extended (thumb side up), fingers toward the top. Rotation is set to {deg}°.",
+    "altHandSide": "Side view of the set-up: the patient seated at the end of the table, the hand and forearm lying on the detector, the tube above with the central ray perpendicular to the detector. Projection: {projection}. SID {sid} cm."
   },
   "sceneWrist": {
     "ulna": "Ulna",
@@ -643,5 +704,29 @@
     "markerConvention": "Marker: choose the letter of the patient's side (this is the LEFT wrist) and place it inside the edge of the field, clear of the wrist anatomy. No left/right half of the image is required for a single limb.",
     "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the wrist and hand.",
     "rotation": "Wrist rotation (forearm turn)"
+  },
+  "sceneHand": {
+    "ulnarSide": "Ulnar side",
+    "thumbSide": "Thumb side",
+    "fingers": "Fingers",
+    "forearm": "Arm",
+    "mcpPa": "Third MCP joint",
+    "mcpLateral": "MCP joints 2–5",
+    "seated": "Patient seated",
+    "paName": "PA (palm down)",
+    "lateralName": "lateral (extension, thumb side up)"
+  },
+  "positioningHand": {
+    "alt": "Interactive schematic of the detector with the left hand and forearm, the collimated field, the central-ray target and the side marker.",
+    "midline": "Long axis",
+    "detectorCaptionPa": "Detector view as displayed: left hand, PA (fingers toward the top, thumb on the viewer's right)",
+    "detectorCaptionLateral": "Detector view as displayed: left hand, lateral with the fingers extended (fingers toward the top)",
+    "sideViewCaption": "Side view of the table set-up",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The hand and forearm resting on the detector, the spread or extension of the fingers, the thumb obliquity, shielding and the compensation filter are shown as context only: they are not scored in this version.",
+    "rotationHelpPa": "Rotation of the forearm and hand about their long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-PA cues (spacing of the metacarpal shafts and phalanges).",
+    "rotationHelpLateral": "Rotation of the forearm and hand about their long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-lateral cues (metacarpals and phalanges superimposed, distal radius and ulna superimposed).",
+    "markerConvention": "Marker: choose the letter of the patient's side (this is the LEFT hand) and place it inside the edge of the field, clear of the hand anatomy. No left/right half of the image is required for a single limb.",
+    "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the hand.",
+    "rotation": "Hand rotation (forearm turn)"
   }
 }

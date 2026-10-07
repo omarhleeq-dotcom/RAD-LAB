@@ -1,0 +1,6 @@
+{
+  "radios": ["console.projection"],
+  "sliders": {
+    "positioningHand.rotation": ["min", 0, "max"]
+  }
+}
