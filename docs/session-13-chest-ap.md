@@ -23,4 +23,7 @@ Positioning 25: projection ×2, position (supine) ×1, coverage ×2, excess ×1,
 `scripts/qa/ap-audit.mjs` (Playwright + axe, EN / AR × 1440 / 390): setup and result pages (axe WCAG 2 A / AA: no violations), no horizontal overflow, a fully correct attempt through the real UI scores 100 with no critical finding, a wrong attempt shows `missing-marker`.
 
 ## Not done (S13-5)
-SID / position label on the image, landscape detector, manual-exposure enforcement, chin check, scapula / jaw overlays, semi-erect variant, credits page, AP direction rule and picture sign (O17), AP-specific projection button label.
+SID / position label on the image, landscape detector, manual-exposure enforcement, chin check, scapula / jaw overlays, semi-erect variant, credits page, AP direction rule (source needed); O19 (PA / Lateral plan view of a wrong AP choice).
+
+## Fix round (S13-6, S13-7)
+Rotation sign defined by the result image (checked, AP consistent, nothing changed; O17 closed, O19 opened); projection button labelled by the patient position through the optional `ChoiceControlSpec.projectionLabels` (data) — see `DECISIONS.md`.

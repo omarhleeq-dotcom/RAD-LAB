@@ -206,3 +206,59 @@ describe("result image (S13): deterministic, driven by the result state only", (
     expect(plan({ collimation: { width: 0.6, height: 0.5 } }).effects.some((e) => e.id === "collimation-clipping")).toBe(true);
   });
 });
+
+describe("S13-6: the rotation sign is defined by the result image (positive = the spine shifts to the viewer's right)", () => {
+  const W = 256, H = 256;
+  // A bright vertical stripe at the baseline's midline: where it lands in the rendered image shows the spine shift.
+  const midU = chestApSupine.radiograph.midlineU!;
+  const stripe: LumaImage = {
+    width: W,
+    height: H,
+    data: Float32Array.from({ length: W * H }, (_, i) => (Math.abs((i % W) - midU * W) <= 1.5 ? 220 : 60)),
+  };
+  const peakColumn = (patch: Partial<SimulationSettings>) => {
+    const p = buildRenderPlan(run(patch).resultState, chestApSupine);
+    const out = renderRadiograph(p, chestApSupine.radiograph, stripe, 2);
+    const sums = new Float64Array(out.width);
+    for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) sums[x]! += out.luma[y * out.width + x]!;
+    let best = 0;
+    for (let x = 1; x < out.width; x++) if (sums[x]! > sums[best]!) best = x;
+    return best;
+  };
+  it("the AP renderer moves the spine to the viewer's right for a positive value, left for a negative one", () => {
+    const [neg, zero, pos] = [peakColumn({ rotationDeg: -12 }), peakColumn({ rotationDeg: 0 }), peakColumn({ rotationDeg: 12 })];
+    expect(pos).toBeGreaterThan(zero);
+    expect(neg).toBeLessThan(zero);
+  });
+  it("the plan carries a positive thorax shift for a positive value, like the PA (same renderer, same sign)", () => {
+    const ap = buildRenderPlan(run({ rotationDeg: 10 }).resultState, chestApSupine).anatomy.rotation!;
+    const pa = buildRenderPlan(evaluate(chestPaErect, { ...ok, projection: "pa-erect", rotationDeg: 10, choices: undefined, tubeAngulationDeg: undefined }).resultState, chestPaErect).anatomy.rotation!;
+    expect(ap.thoraxShiftU).toBeGreaterThan(0);
+    expect(Math.sign(ap.thoraxShiftU)).toBe(Math.sign(pa.thoraxShiftU));
+  });
+  it("the AP exam shows no plan-view turn (its scene is the side view) and the AP wording names no direction of turn", async () => {
+    const { rotationVisual } = await import("@/features/positioning/visual-model");
+    expect(rotationVisual(10).spineShift).toBeGreaterThan(0); // the frontal figure draws the same sign
+    const rule = chestApSupineExam.rules.find((r) => r.id === "rotation")!;
+    const all = JSON.stringify([rule.feedback, chestApSupineExam.rules.find((r) => r.id === "rotation")]);
+    expect(all).not.toMatch(/toward the detector|towards the detector|left side|right side|باتجاه الكاشف|الجانب الأيسر|الجانب الأيمن/i);
+  });
+});
+
+describe("S13-6: the projection button is labelled by the patient position, never 'AP erect' next to the supine control", () => {
+  it("AP supine / AP semi-erect by the state choice (EN + AR); other exams keep the generic label", async () => {
+    const { projectionLabelOf } = await import("@/features/simulation/projection-label");
+    const { chestLateralErect } = await import("@/data/cases/chest-lateral-erect");
+    const c = chestApSupine.choiceControls;
+    expect(projectionLabelOf(c, { state: "supine" }, "ap-erect")).toEqual({ en: "AP supine", ar: "AP مستلقيًا" });
+    expect(projectionLabelOf(c, { state: "semierect" }, "ap-erect")).toEqual({ en: "AP semi-erect", ar: "AP شبه جالس" });
+    expect(projectionLabelOf(c, { state: "supine" }, "pa-erect")).toBeUndefined();
+    expect(projectionLabelOf(chestLateralErect.choiceControls, { side: "L" }, "ap-erect")).toBeUndefined();
+    expect(projectionLabelOf(chestPaErect.choiceControls, undefined, "ap-erect")).toBeUndefined();
+  });
+  it("validateExam requires both languages for every option and an available projection", () => {
+    const cc = chestApSupineExam.choiceControls![0]!;
+    const bad = { ...chestApSupineExam, choiceControls: [{ ...cc, projectionLabels: { projection: "ap-erect" as const, byOption: { supine: cc.projectionLabels!.byOption.supine! } } }] };
+    expect(validateExam(bad).join()).toMatch(/projectionLabels needs EN and AR text for option "semierect"/);
+  });
+});

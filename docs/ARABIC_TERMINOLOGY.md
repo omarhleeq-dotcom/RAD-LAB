@@ -166,3 +166,8 @@ Rules followed: "الكاشف" (not "الكاسيت"); phone-short wording; left
 | AP exam data (case text, rules, critical findings, `state` choice control, AEC labels, baseline credit line with the NIH attribution) | `src/data/exams/xray/chest-ap-supine.ts`, `chest-ap-technique.ts`, `src/data/cases/chest-ap-supine.ts`, `chest-ap-radiograph.ts` | «AP مستلقيًا»، «وضعية المريض»، «شبه جالس»، «ميل الأنبوب (نحو القدمين)»، «علامة الجانب (جانب المريض)» |
 
 Questions for the reviewer: «مستلقيًا / شبه جالس» (supine / semi-erect); «ميل الأنبوب نحو القدمين» (caudad); «الشق الوداجي» (jugular notch); «المفصلان القصّيان الترقويان» (sternoclavicular joints); the NIH credit line (Latin citation inside Arabic text).
+
+## Session 13 fix (S13-7) — AP projection labels (**DRAFT, pending owner / educator review**)
+| Where | Data | Draft Arabic |
+|---|---|---|
+| AP exam projection button + result "Your setting" | `chest-ap-supine.ts` → `choiceControls[state].projectionLabels` | «AP مستلقيًا» (AP supine), «AP شبه جالس» (AP semi-erect) |

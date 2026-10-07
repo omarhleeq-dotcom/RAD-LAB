@@ -51,8 +51,10 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
 
   async function attempt(name, u) {
     await page.goto(`${BASE}/${loc}/xray/chest-ap-supine/practice`, { waitUntil: "networkidle" });
-    await click(radio(m.console.projections["ap-erect"]));
     await click(group(exam.stateLegend).locator("label").nth(u.state === "supine" ? 0 : 1));
+    // S13-6: the AP button is labelled by the selected position, never "AP erect"
+    ok(`${tag} ${name}: no "${m.console.projections["ap-erect"]}" button in the AP exam`, (await page.locator("label", { hasText: new RegExp(`^\\s*${m.console.projections["ap-erect"]}\\s*$`) }).count()) === 0);
+    await click(radio(u.state === "supine" ? exam.apSupine : exam.apSemierect));
     await setRange(m.console.tubeAngulation, u.angle);
     await click(radio(m.positioning.shoulderOptions["rolled-forward"]));
     await setRange(m.positioning.rotation, u.rotation);

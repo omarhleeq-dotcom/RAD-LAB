@@ -72,6 +72,14 @@ export const chestApSupineExam: ExamDefinition = {
         { id: "supine", label: { en: "Supine", ar: "مستلقيًا" } },
         { id: "semierect", label: { en: "Semi-erect", ar: "شبه جالس" } },
       ],
+      // S13-6: the AP projection button reads by patient position, never "AP erect" next to the supine control.
+      projectionLabels: {
+        projection: "ap-erect",
+        byOption: {
+          supine: { en: "AP supine", ar: "AP مستلقيًا" },
+          semierect: { en: "AP semi-erect", ar: "AP شبه جالس" },
+        },
+      },
     },
   ],
   technique: chestApTechnique,
@@ -282,7 +290,7 @@ export const chestApSupineExam: ExamDefinition = {
       variantOnLow: "rotated",
       variantOnHigh: "rotated",
       label: { en: "Patient rotation", ar: "دوران المريض" },
-      // MAGNITUDE-ONLY (S13): the p.83 direction rule is the PA geometry; no source gives the AP direction, so no `low` / `high` text.
+      // MAGNITUDE-ONLY (S13 / S13-6): the p.83 direction rule is the PA geometry; no source gives the AP direction, so no `low` / `high` text.
       feedback: {
         pass: {
           en: "The patient is square to the detector: the spine is midway between the lateral rib borders and the sternoclavicular joints are equally far from it.",
@@ -296,7 +304,7 @@ export const chestApSupineExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.83, 96; S10b-3; S13",
-        note: "Criterion = the PA's (equal spine-to-rib-border and sternoclavicular distances, p.96). The ±2° / ±5° bands are an ENGINE TEACHING CHOICE (the same numbers as the PA; Bontrager gives no angle). Magnitude only: the sternal-clavicle-end rule (p.83) is the PA geometry and the renderer's spine shift keeps the PA sense, so no direction text for the AP (open item).",
+        note: "Criterion = the PA's (equal spine-to-rib-border and sternoclavicular distances, p.96). The ±2° / ±5° bands are an ENGINE TEACHING CHOICE (the same numbers as the PA; Bontrager gives no angle). Magnitude only (S13-6): no direction text. The sign of the value is defined by the RESULT IMAGE (positive = the spine shifts to the viewer's right in the frontal image, as for the PA, S11c-1); the sternal-clavicle-end rule (p.83) is the PA geometry and is not applied to the AP.",
       },
     },
     {

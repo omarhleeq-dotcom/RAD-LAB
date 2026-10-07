@@ -196,6 +196,11 @@ export interface ChoiceControlSpec {
   label: LocalizedText;
   hint?: LocalizedText;
   options: { id: string; label: LocalizedText }[];
+  /**
+   * Optional (S13-6): the label the console and the result show for `projection`, chosen by this control's value (e.g. the
+   * AP button reads "AP supine" / "AP semi-erect" by patient position). Absent = the generic projection label.
+   */
+  projectionLabels?: { projection: ProjectionId; byOption: Record<string, LocalizedText> };
 }
 
 /**
