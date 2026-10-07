@@ -57,6 +57,12 @@ export interface DetectorFigure {
    * shared marker of the chest scenes (byte-identical).
    */
   crispMarker?: boolean;
+  /**
+   * Optional (S-VIS-1-4): draw the midline and target-region guide labels small, in the free top margin band (right-aligned),
+   * instead of inside the detector where they can sit on the anatomy, the crosshair or the field edge. Absent = the shared
+   * placement of the chest scenes (byte-identical).
+   */
+  marginGuideLabels?: boolean;
 }
 
 const chinKey = (s: SimulationSettings) => (s.chinPosition === "tucked" ? "chinTucked" : "chinLifted");
@@ -152,6 +158,7 @@ export const WRIST_PA_FIGURE: DetectorFigure = {
   Orientation: WristPaOrientation,
   axis: { top: "sceneWrist.fingers", bottom: "sceneWrist.forearm" },
   crispMarker: true,
+  marginGuideLabels: true,
 };
 
 export const WRIST_LATERAL_FIGURE: DetectorFigure = {
@@ -162,6 +169,7 @@ export const WRIST_LATERAL_FIGURE: DetectorFigure = {
   Orientation: NoOrientation,
   axis: { top: "sceneWrist.fingers", bottom: "sceneWrist.forearm" },
   crispMarker: true,
+  marginGuideLabels: true,
 };
 
 // Hand (S14.2b): the figure draws the left hand; the PA labels the ulnar and thumb sides (guides ON), the lateral labels nothing at the sides.
@@ -188,6 +196,7 @@ export const HAND_PA_FIGURE: DetectorFigure = {
   Orientation: HandPaOrientation,
   axis: { top: "sceneHand.fingers", bottom: "sceneHand.forearm" },
   crispMarker: true,
+  marginGuideLabels: true,
 };
 
 export const HAND_LATERAL_FIGURE: DetectorFigure = {
@@ -198,6 +207,7 @@ export const HAND_LATERAL_FIGURE: DetectorFigure = {
   Orientation: NoOrientation,
   axis: { top: "sceneHand.fingers", bottom: "sceneHand.forearm" },
   crispMarker: true,
+  marginGuideLabels: true,
 };
 
 // Elbow (S14.3): the figure draws the left elbow; the AP labels the medial and lateral sides (guides ON), the lateral labels the forearm side (guides ON).
@@ -235,6 +245,7 @@ export const ELBOW_AP_FIGURE: DetectorFigure = {
   Orientation: ElbowApOrientation,
   axis: { top: "sceneElbow.upperArm", bottom: "sceneElbow.forearm" },
   crispMarker: true,
+  marginGuideLabels: true,
 };
 
 export const ELBOW_LATERAL_FIGURE: DetectorFigure = {
@@ -245,6 +256,7 @@ export const ELBOW_LATERAL_FIGURE: DetectorFigure = {
   Orientation: ElbowLateralOrientation,
   axis: { top: "sceneElbow.upperArm", bottom: "sceneElbow.elbowPoint" },
   crispMarker: true,
+  marginGuideLabels: true,
 };
 
 /** The registry. The AP supine scene draws the PA frontal figure on the detector view (its own part is the side view). */

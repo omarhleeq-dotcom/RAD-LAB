@@ -8,14 +8,16 @@
 // S10b-9 · S14.2-10 · S14.1c-4 · S14.2-6…11 · S14.2a · S11b · S-STD-1 · S-VIS-1 · O26
 const CODE = String.raw`(?:S-(?:STD|VIS|DOCS)-\d+|S\d+[a-z]?(?:\.\d+[a-z]?)?(?:-\d+(?:…\d+)?|[a-z])?|O\d{1,2})(?:\s+(?:option\s+[A-Z]|phase\s+\d))?`;
 const CODE_RE = new RegExp(`(?<![\\w.])${CODE}(?![\\w])`, "g");
-/** A segment that still names a source with a page, or a known source id, after the codes are removed. */
-const CITATION_RE = /\bp{1,2}\.\s?\d|\b(?:BONTRAGER|EC16260|WHO|ACR|STATPEARLS|CLARK)\b/;
 /** "Technique ref §8", "AP ref §3", "§2 Head and shoulders", "docs/…": pointers into the repo's own documents. */
 const INTERNAL_POINTER_RE = /§|\bref\b|\bdocs\//i;
 
 /** Remove internal codes from running text and tidy the punctuation they leave behind. Textbook citations are untouched. */
 export function stripInternalCodes(text: string): string {
   return text
+    // "(O7 closed by S10b-4)": a parenthetical that is only codes and linking words
+    .replace(new RegExp(`\\s*\\(\\s*${CODE}(?:\\s*(?:closed by|see|per|and|from|[,;]))*\\s*(?:${CODE}\\s*)?(?:(?:closed by|see|per|and|from|[,;])\\s*)*\\)`, "g"), "")
+    .replace(new RegExp(`(\\()\\s*${CODE}\\s*:\\s*`, "g"), "$1") // "(S10b-8: presence required)" -> "(presence required)"
+    .replace(new RegExp(`\\s+(?:is|are|see|per|in)\\s+${CODE}(?=[.)\\s]|$)`, "g"), "") // "variant is O9." -> "variant."
     .replace(CODE_RE, "")
     .replace(/\(\s*[,;:\s]*\)/g, "") // "(S10b-9)" -> "()"
     .replace(/\s*\(\s*[,;]\s*/g, " (") // "(, x)"
@@ -29,8 +31,9 @@ export function stripInternalCodes(text: string): string {
 }
 
 /**
- * The student-visible form of an evidence `reference`: only the textbook / guideline citations (with a page or a source id) remain.
- * `null` = nothing citable is left, so the "Reference:" line is not drawn at all.
+ * The student-visible form of an evidence `reference`: segments (split at ";") that point into the repo's own documents, and
+ * segments that are nothing but internal codes, are dropped; textbook / guideline citations and any other plain text remain.
+ * `null` = nothing is left, so the "Reference:" line is not drawn at all.
  */
 export function publicReference(reference: string): string | null {
   const kept = reference
@@ -38,7 +41,7 @@ export function publicReference(reference: string): string | null {
     .map((seg) => seg.trim())
     .filter((seg) => seg && !INTERNAL_POINTER_RE.test(seg))
     .map(stripInternalCodes)
-    .filter((seg) => CITATION_RE.test(seg));
+    .filter(Boolean);
   return kept.length ? kept.join("; ") : null;
 }
 

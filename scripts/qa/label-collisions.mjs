@@ -12,6 +12,8 @@
 //   default axes: every radio group (fieldset legend) inside the positioning section + the rotation slider at min / 0 / max.
 //   --spec <json>: replaces the defaults. {"radios": [<text>...], "sliders": {<text>: [values...]}}, where <text> is a message path
 //   ("positioning.chinLegend", "console.tubeAngulation") or {"en": "...", "ar": "..."} (an exam's own choice-control legend).
+//   --obstacles (S-VIS-1-4): also reports guide labels that touch the crosshair, a collimation handle or the collimated-field edge of the
+//   detector drawing (anatomy is not measured). Off by default so the chest scenes keep their recorded results.
 //   A radio axis iterates the options of the group; a slider axis sets each value. More states than --max-states (default 200)
 //   aborts before measuring: narrow the axes instead of raising the limit casually.
 import { chromium } from "playwright";
@@ -23,6 +25,7 @@ const opt = (name) => (args.includes(name) ? args[args.indexOf(name) + 1] : unde
 if (!exam) { console.error("usage: node scripts/qa/label-collisions.mjs <exam-id> [--spec file.json] [--max-states N] [--modality xray]"); process.exit(2); }
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const OUT = process.env.OUT ?? `/tmp/rad-lab-qa-labels-${exam}`;
+const OBSTACLES = args.includes("--obstacles");
 const MODALITY = opt("--modality") ?? "xray";
 const MAX_STATES = Number(opt("--max-states") ?? 200);
 const spec = opt("--spec") ? JSON.parse(readFileSync(opt("--spec"), "utf8")) : null;
@@ -74,7 +77,7 @@ for (const loc of ["en", "ar"]) for (const [vw, opts] of Object.entries(VIEWPORT
   }, v);
   const guides = page.locator(`${POS} input[type="checkbox"]`).first();
 
-  const measure = () => page.evaluate((POS) => {
+  const measure = () => page.evaluate(([POS, OBSTACLES]) => {
     const out = { labels: 0, overlaps: [], outside: [], minPx: Infinity };
     for (const svg of document.querySelectorAll(`${POS} svg`)) {
       const vb = svg.viewBox.baseVal;
@@ -90,6 +93,27 @@ for (const loc of ["en", "ar"]) for (const [vw, opts] of Object.entries(VIEWPORT
         out.minPx = Math.min(out.minPx, parseFloat(t.getAttribute("font-size") ?? "0") * scale);
       }
       out.labels += boxes.length;
+      if (OBSTACLES) {
+        const ray = svg.querySelector('[aria-describedby="ray-status"]');
+        if (ray) {
+          const obstacles = [];
+          const cross = ray.querySelector("g[stroke]");
+          if (cross) { const b = cross.getBBox(); obstacles.push({ n: "crosshair", x1: b.x, y1: b.y, x2: b.x + b.width, y2: b.y + b.height }); }
+          for (const r of svg.querySelectorAll('g[aria-hidden] > rect[width="14"]')) { const b = r.getBBox(); obstacles.push({ n: "handle", x1: b.x, y1: b.y, x2: b.x + b.width, y2: b.y + b.height }); }
+          const beam = [...svg.querySelectorAll("rect")].find((r) => r.getAttribute("fill") === "none" && r.getAttribute("stroke-dasharray")?.startsWith("14"));
+          // 2 units: the label pill's own padding (1) plus the handle's 2-unit stroke are not a visible overlap
+          const hit = (a, o) => Math.min(a.x2, o.x2) - Math.max(a.x1, o.x1) > 2 && Math.min(a.y2, o.y2) - Math.max(a.y1, o.y1) > 2;
+          for (const a of boxes) {
+            for (const o of obstacles) if (hit(a, o)) out.overlaps.push(`${a.s} × ${o.n}`);
+            if (beam) {
+              const b = beam.getBBox(), m = 3;
+              const outer = { x1: b.x - m, y1: b.y - m, x2: b.x + b.width + m, y2: b.y + b.height + m };
+              const inside = a.x1 >= b.x + m && a.y1 >= b.y + m && a.x2 <= b.x + b.width - m && a.y2 <= b.y + b.height - m;
+              if (hit(a, outer) && !inside) out.overlaps.push(`${a.s} × field edge`);
+            }
+          }
+        }
+      }
       boxes.forEach((a, i) => {
         if (a.x1 < vb.x - 0.5 || a.y1 < vb.y - 0.5 || a.x2 > vb.x + vb.width + 0.5 || a.y2 > vb.y + vb.height + 0.5) out.outside.push(a.s);
         for (const b of boxes.slice(i + 1)) {
@@ -99,7 +123,7 @@ for (const loc of ["en", "ar"]) for (const [vw, opts] of Object.entries(VIEWPORT
       });
     }
     return out;
-  }, POS);
+  }, [POS, OBSTACLES]);
   const settle = () => page.evaluate(() => document.fonts.ready.then(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))));
 
   // --- iterate the product (odometer; only axes that changed are touched)

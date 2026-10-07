@@ -82,7 +82,9 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
   const W = detector.widthCm * U;
   const H = detector.heightCm * U;
   const frame: DetectorFrame = { x: 0, y: 0, width: W, height: H };
-  const viewBox: Box = { x: -30, y: -90, width: W + 60, height: H + 120 };
+  // A figure with margin guide labels (S-VIS-1-4) gets two more label rows above the orientation labels.
+  const top = figure.marginGuideLabels ? 148 : 90;
+  const viewBox: Box = { x: -30, y: -top, width: W + 60, height: H + 30 + top };
 
   const field = collimatedField(settings, detector);
   const fx = field.x1 * U, fy = field.y1 * U, fw = (field.x2 - field.x1) * U, fh = (field.y2 - field.y1) * U;
@@ -200,8 +202,17 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
               />
             )}
           </UnderStroked>
-          <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{tAny(figure.midlineKey)}</SceneLabel>
-          <SceneLabel x={W - 8} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 16} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
+          {figure.marginGuideLabels ? (
+            <>
+              <SceneLabel x={W - 4} y={-122} size={LABEL_SIZE.detector - 5} anchor="end" fill={SCENE.guide}>{tAny(figure.midlineKey)}</SceneLabel>
+              <SceneLabel x={W - 4} y={-92} size={LABEL_SIZE.detector - 5} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
+            </>
+          ) : (
+            <>
+              <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{tAny(figure.midlineKey)}</SceneLabel>
+              <SceneLabel x={W - 8} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 16} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
+            </>
+          )}
         </g>
       )}
 

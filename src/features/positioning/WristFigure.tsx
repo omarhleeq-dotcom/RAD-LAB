@@ -73,8 +73,8 @@ function PaDrawing({ X, Y, H, a, U, rotationDeg, showGuides }: DrawProps & { sho
       </g>
       {showGuides && (
         <g aria-hidden style={{ pointerEvents: "none" }}>
-          <SceneLabel x={X(0.12)} y={H - 44} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{ts("ulna")}</SceneLabel>
-          <SceneLabel x={X(0.95)} y={H - 76} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.guide}>{ts("radius")}</SceneLabel>
+          <SceneLabel x={X(0.2)} y={H - 110} size={LABEL_SIZE.detector - 5} fill={SCENE.guide}>{ts("ulna")}</SceneLabel>
+          <SceneLabel x={X(0.95)} y={H - 76} size={LABEL_SIZE.detector - 5} anchor="end" fill={SCENE.guide}>{ts("radius")}</SceneLabel>
         </g>
       )}
     </>

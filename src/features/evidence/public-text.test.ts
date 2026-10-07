@@ -11,6 +11,10 @@ describe("publicReference", () => {
     expect(publicReference("S10b-9; WHO-TECH p.6-7; EC16260 p.21")).toBe("WHO-TECH p.6-7; EC16260 p.21");
     expect(publicReference("BONTRAGER-9 p.32-33, 36, p.156; S14.1b-1 (O21 option A), S14.1c-4")).toBe("BONTRAGER-9 p.32-33, 36, p.156");
   });
+  it("keeps plain text that is neither a code nor a pointer into the repo docs", () => {
+    expect(publicReference("BONTRAGER-9 p.94; the exam request")).toBe("BONTRAGER-9 p.94; the exam request");
+    expect(publicReference("Side marker and annotations — S10b-8; S11b-1")).toBe("Side marker and annotations");
+  });
   it("returns null when nothing citable is left (the line is not drawn)", () => {
     for (const r of ["S14.2-10; S10b-9; O26", "Technique ref §6.1, §6.3", "§2 Patient orientation; §3A", "Positioning ref §Image rejection", "S12-4; docs/ASSET_PROVENANCE_AND_LICENSES.md (A-006, A-007)"])
       expect(publicReference(r)).toBeNull();
@@ -25,6 +29,9 @@ describe("publicText", () => {
     expect(publicText("removed by a fill and a crop, S14.3-7).")).toBe("removed by a fill and a crop).");
     expect(publicText("(a fill and a crop, S14.3-7)")).toBe("(a fill and a crop)");
     expect(publicText("pending review (O5). Done")).toBe("pending review. Done");
+    expect(publicText("Pending educator confirmation (O7 closed by S10b-4).")).toBe("Pending educator confirmation.");
+    expect(publicText("must carry a side marker (S10b-8: presence required for PA).")).toBe("must carry a side marker (presence required for PA).");
+    expect(publicText("Semi-erect as its own variant is O9. Not drawn.")).toBe("Semi-erect as its own variant. Not drawn.");
     expect(publicText("Bontrager p.150 and 110–125 kV")).toBe("Bontrager p.150 and 110–125 kV");
   });
   it("leaves text without codes unchanged", () => {
