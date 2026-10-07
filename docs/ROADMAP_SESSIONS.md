@@ -152,3 +152,4 @@ Delivered: Chest Lateral exam, case, asset (A-006 / A-007), scene, tests and QA 
 - **S14.1a — docs only:** [`RAD-LAB_Medical_Reference_Wrist.md`](RAD-LAB_Medical_Reference_Wrist.md) (Wrist PA + Lateral, Bontrager p.156 / 158; Needs section with gaps G1–G10). The Commons image shortlist is outstanding (O25).
 - **S14.1b — byte-identical limb generalisation** (reference §9.3): optional chin / shoulder / breathing / lung fields / AEC, open scene id and `bodyPart`, an effect-registry hook, a test-only synthetic limb fixture. Starts after the reference is merged.
 - **S14.1c — the two wrist exams** (`wrist-pa`, `wrist-lateral`) under `exam-recipe.md` (reference §9.4); images approved by the owner; owner decisions O21–O24 answered first.
+- **S14.1c — delivered (draft PR #23):** `wrist-pa` and `wrist-lateral` (left wrist, CC0 baselines A-010…A-013, fixed-side marker rule, wrist rotation effect, own side-view scene). Open: O27–O31.

@@ -110,6 +110,22 @@ Reference: [`RAD-LAB_Medical_Reference_Wrist.md`](RAD-LAB_Medical_Reference_Wris
 | S14.1-4h | **Marker display on a single limb** (O21) and **unscored items** (shoulder-elbow-wrist plane, hand arch, shielding) | BONTRAGER-9 p.32–33, 36, 156, 158 | Is the unscored list acceptable for v1? | E |
 | S14.1-4i | Spot-check of the **advisor-supplied wrist claims** (p.156, 158, as in the reference §3–§4) against the printed pages | claims not re-verified by Claude Code | Confirm each claim and page number. | E |
 
+### 2b. Session 14.1c additions (wrist PA and wrist lateral; all provisional)
+| ID | Item | Source / basis | Question for the reviewer | Who |
+|---|---|---|---|---|
+| S14.1c-R1 | **Rotation effect drawn from ONE baseline image** (PA: unequal metacarpal spacing + an offset 50 % copy of the ulna over the radius; lateral: a second offset copy of the bands that must be superimposed). An EDUCATIONAL VISUAL APPROXIMATION; sign defined by the result image, no direction of turn claimed (S14.1c-2, S14.1c-5, O31) | Criteria: BONTRAGER-9 p.156 / 158; magnitudes: `tuning.ts` `limbRotation` (none sourced) | Do these cues read as the true-PA / true-lateral criteria, or are real rotated radiographs needed? | E, P |
+| S14.1c-R2 | Rotation tolerance ±2° full / ±5° partial (the chest numbers) | none (engine teaching choice) | Acceptable for the wrist? | E |
+| S14.1c-R3 | kV: full 55–65 (PA) / 60–70 (lateral) are Bontrager; **partial 50–70 (PA) / 55–75 (lateral) are teaching choices** | BONTRAGER-9 p.156 / 158; S14.1c-6 | Partial bands? | E |
+| S14.1c-R4 | SID: 102 cm minimum is Bontrager; **full band 102–110, partial 95–130 cm are teaching choices** | BONTRAGER-9 p.156 / 158 | Upper limit? | E |
+| S14.1c-R5 | **Manual exposure reference point** (60 / 65 kV, 2.5 mAs, 102 cm → DI 0; kV exponent 3; attenuation 1) — a model anchor with no clinical claim; no numeric mAs target, no AEC (O26) | none | Is a manual-only, anchor-based exposure check acceptable until a limb technique source is read? | P |
+| S14.1c-R6 | Centring tolerances (±0.7 / ±0.9 cm full, ±1.8 / ±2.2 cm half) and the midcarpal target read by eye on the baselines | BONTRAGER-9 p.156 / 158 (target); tolerances none | Tolerances and target position? | E |
+| S14.1c-R7 | **3.5 cm excess-collimation margin** (the field must also include the marker) | none | Margin? | E |
+| S14.1c-R8 | **Required region is limited by the baseline images**: they end at the proximal metacarpals, so the mid-metacarpal area Bontrager names cannot be shown (O28) | S14.1c-7 | Accept, or source better images? | E |
+| S14.1c-R9 | Category weights 28 / 22 / 17 / 22 / 11 (O22 option A); critical findings = missing and wrong-side marker only; marker rule `fixed-side` (letter only, no viewer half; side fixed in exam data, O29) | S14.1b-1, S14.1c-4 | Weights, gate list, single-limb marker convention? | E |
+| S14.1c-R10 | Unscored context in the scene (shoulder-elbow-wrist level, hand arch, shielding, grid) and the unscored keep-still check (weight 0) | reference §5; O30 | Which should become scored? | E |
+| S14.1c-R11 | Case patient 31-year-old male, same real left wrist in both exams (per the Commons description; CC0, A-010…A-013); lateral baseline cropped to remove a burned-in side text | S14.1c-1, S14.1c-3 | Is using the image's own description acceptable? | Owner |
+| S14.1c-R12 | Arabic wrist terms and sentences (DRAFT) | `ARABIC_TERMINOLOGY.md` Session 14.1c | Confirm or correct. | AR |
+
 ## 3. PA discrepancies (O11)
 Provisional decisions S10b-1…3: kV range (EC / WHO / ACR vs the repo's 100–150 band), AEC chamber mapping (EC right lateral chamber vs the repo's detector-view left/right), rotation sign (WHO p.28 direction not interpreted). Questions are in rows S10b-1, S10b-2, S10b-3 above.
 

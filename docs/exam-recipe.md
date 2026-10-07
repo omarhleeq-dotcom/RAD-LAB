@@ -232,3 +232,13 @@ FINAL REPORT (plain text): files changed per exam, DECISIONS / REVIEW_PACKAGE / 
 - **Image shortlist can be blocked** (Commons API HTTP 429 twice in S14.1a). §5 says "stop and report" but not whether the rest of a docs session proceeds; the wrist session completed the docs and recorded the shortlist as outstanding (O25). Add a fallback: the shortlist may be done in a short docs-only follow-up, and the exam session starts only with an owner-approved image.
 - **The prompt template (§8) has no slot for "reference merged?"** and no slot for the per-exam category list when categories differ from the PA six.
 - Template `EXAM_REFERENCE_TEMPLATE.md` §8.1 is chest-worded ("PA today"); for a limb the Needs rows were written against the engine's *settings fields* instead — the wrist reference's §8–§9 (gap ids G1…G10, proposed change, owning session, byte-identity proof) is a usable pattern for the next modality.
+
+**Found by the wrist exams (S14.1c, 2026-10-07):**
+- **A single-limb marker rule is not in §2:** the S11 kinds always check the viewer half. S14.1c added `markerRule: fixed-side` (letter only). Add it to §2 and to the §6 marker reminder; a right-wrist case needs the side on the case (O29).
+- **The detector view's "Head / Feet" labels are chest-only:** a limb declares `DetectorFigure.axis`. `positioning.markerHint` is chest-worded: a limb scene sets `SceneTexts.markerHint`.
+- **Hard-wired list update (§2):** a limb's rotation is an `EffectDefinition` with `limb` + a pixel step + a landmark group (`limbRotation`); the core chest rotation effect is skipped for such an asset.
+- **Required anatomy can be limited by the baseline image** (the wrist images stop at the proximal metacarpals): decide before data whether the exam's region follows Bontrager or the image (S14.1c-7, O28).
+- **The scene-dom guard is per exam family:** add a separate wrist file (`scene-dom-wrist.test.ts`) rather than editing the chest hashes; the wrist hashes are the new guard from the day they exist.
+- **Label script limits:** it varies only the axes named in `label-states/<exam>.json` (rotation here); a side view whose labels follow the ray, SID or projection needs those axes added (not done).
+- **`ExamDefinition<T>` widening needed no chest-test narrowing** in practice (platform code takes `AnyExamDefinition`).
+- Audit script for a limb: `scripts/qa/wrist-audit.mjs <exam-id>` (adapted from `ap-audit.mjs`; mAs station index and the male patient's instruction wording are exam-specific).
