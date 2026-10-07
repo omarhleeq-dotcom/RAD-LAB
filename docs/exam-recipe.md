@@ -36,13 +36,14 @@ Details and proof: [`session-11-generalisation.md`](session-11-generalisation.md
 | Extra enum controls | `choiceControls` (e.g. `side`, `arms`, `state`), validated EN+AR; button text by position via `ChoiceControlSpec.projectionLabels` (S13-7) | Lateral, AP |
 | Scoring categories | per-exam keys of `categoryWeights` (collimation is scored under `positioning`) | all |
 | Critical findings | id in `CriticalFindingId` + detector in `CRITICAL_DETECTORS` (`features/evaluation/critical.ts`) | Lateral `arms-over-lungs` |
-| Scene | `SCENE_IDS` + `SCENES` registry (`features/positioning/scenes.tsx`) | all |
+| Scene | `SCENE_IDS` + `SCENES` registry (`features/positioning/scenes.tsx`); a scene on the shared positioning view is a `SceneLayout` (`scene-layouts.tsx`: detector figure from `detector-figures.tsx`, second view, cues, texts) — S14-0 | all |
 | Optional landmark groups | on the asset spec (e.g. no scapula group → "not drawn") | AP |
 | Attenuation | `attenuationByProjection` (fallback 1 = PA reference, not measured) | Lateral 2× (provisional) |
 | Baseline projection | `RadiographAssetSpec.projection?` (absent = PA); `midlineU` or the lateral separation fallback | Lateral, AP |
-| Result wording | `radiograph.<ns>.*` via `wordingNsOf` (`features/radiograph/wording.ts`); falls back to common wording | Lateral, AP |
+| Projection | `PROJECTIONS` registry (`src/data/projections.ts`; `ProjectionId` is an open string, `validateExam` checks it) — S14-0 | all |
+| Result wording | `radiograph.<ns>.*`, the namespace declared on the projection in `PROJECTIONS`, read by `wordingNsOf`; falls back to common wording | Lateral, AP |
 
-**Hard-wired to Chest (rule of three; needs a generalisation session if the new exam needs more):** `SimulationSettings` shape, `CATEGORIES`, `ImageVariantId`, `EffectId`, `CriticalFindingId`, `ProjectionId` (`pa-erect | ap-erect | lateral-left`), `WordingNs` (`lateral | ap`), the console JSX, the positioning scene art, and the renderer's chest anatomy assumptions (lung / spine / rib effects). Limbs, abdomen, pelvis, head and spine will hit several of these (a new `ProjectionId`, new anatomy effects, a new scene family). **That is the first thing to check in step 0**: list the needs from the reference; if any is outside this table, stop and report (§9).
+**Hard-wired to Chest (rule of three; needs a generalisation session if the new exam needs more):** `SimulationSettings` shape, `CATEGORIES`, `ImageVariantId`, `EffectId`, `CriticalFindingId`, the console JSX, the positioning scene art, and the renderer's chest anatomy assumptions (lung / spine / rib effects). Limbs, abdomen, pelvis, head and spine will hit several of these (new anatomy effects, a new scene family; a new projection id is now only a registry entry, S14-0). **That is the first thing to check in step 0**: list the needs from the reference; if any is outside this table, stop and report (§9).
 
 ---
 
@@ -70,16 +71,17 @@ Details and proof: [`session-11-generalisation.md`](session-11-generalisation.md
 | Exams | `src/data/exams/index.ts` | import + append to `EXAMS` |
 | Cases | `src/data/cases/index.ts` | import + append to `CASE_DEFINITIONS` |
 | Scene id | `src/domain/exam.ts` | append to `SCENE_IDS` (validated by `validateExam`) |
-| Scene component | `src/features/positioning/scenes.tsx` | `SCENES["<scene-id>"]` |
+| Scene component | `src/features/positioning/scenes.tsx` (+ `scene-layouts.tsx` / `detector-figures.tsx` if it reuses the shared view) | `SCENES["<scene-id>"]` |
+| Projection (if new) | `src/data/projections.ts` | one entry in `PROJECTIONS` (+ `console.projections.<id>` messages) |
 | Critical detector (if new) | `src/features/evaluation/critical.ts` | `CriticalFindingId` + `CRITICAL_DETECTORS` entry |
 | Registry-list test | `src/features/exam/generalisation.test.ts` | extend the scene / detector lists and `unregisteredVariants(<exam>)` — **the only existing test an exam session may edit**, and only this list |
-| Wording namespace (if its result wording differs) | `features/radiograph/wording.ts` (`WordingNs`, `wordingNsOf`) + `messages/*.json` `radiograph.<ns>.*` | AP added `ap`; use the same helper |
+| Wording namespace (if its result wording differs) | `wordingNs` on the projection's entry in `src/data/projections.ts` + `messages/*.json` `radiograph.<ns>.*` | AP added `ap`; no code edit (S14-0) |
 
 Routing needs **no edit**: `/{locale}/{modality}/{exam}[/practice]` comes from `EXAMS` + `CASE_DEFINITIONS` through `features/platform/resolve.ts` (ADR-0011); no per-exam page. `src/data/modalities.ts` and `public/_redirects` were not touched by Lateral or AP.
 
 **C. Bespoke code that Lateral / AP still needed (a gap the recipe cannot remove — keep it minimal and optional, absent = old output):**
-- Scene drawing: `LateralFigure.tsx` / `ApSupineView.tsx` / `FrontalFigure.tsx`, optional props on `PositioningView`, `DetectorWorkspace`, `PatientCues`, `PlanView` (variant props; PA output unchanged when absent).
-- Result image: optional branches in `ResultImage.tsx`, `ResultPanel.tsx`, `RadiographEffects.tsx`; Lateral also `plan.ts`, `pipeline.ts`, `tuning.ts` (rotation drawn as doubled posterior wall) and `domain/radiograph.ts` (`projection?`).
+- Scene drawing: the figure / second view / cues components themselves (`LateralFigure.tsx` / `ApSupineView.tsx` / `FrontalFigure.tsx` pattern), registered as a `DetectorFigure` + `SceneLayout` (S14-0: no flags or branches in `PositioningView`, `DetectorWorkspace`, `PatientCues`).
+- Result image: the wording namespace comes from the projection registry (S14-0); no branch in `ResultImage.tsx`, `ResultPanel.tsx`, `RadiographEffects.tsx`. Lateral also `plan.ts`, `pipeline.ts`, `tuning.ts` (rotation drawn as doubled posterior wall) and `domain/radiograph.ts` (`projection?`).
 - Each such addition: every visual magnitude in `features/radiograph/tuning.ts` as an EDUCATIONAL approximation; no pixel read-back; no randomness.
 
 **D. Docs touched in every exam PR:** `DECISIONS.md`, `REVIEW_PACKAGE.md`, `ARABIC_TERMINOLOGY.md`, `ASSET_PROVENANCE_AND_LICENSES.md`, `sources/REGISTER.md` (+ `sources/<id>.md` for new claims), `CLAUDE.md` (one bullet), `ROADMAP_SESSIONS.md` (one "Delivered" line). `messages/en.json` + `messages/ar.json` always together.
@@ -104,6 +106,12 @@ Full rules and the shape audit: [`session-13b-scene-design.md`](session-13b-scen
 1. Orientation and direction labels. 2. Landmark lines that mark the field (sternum, spine, …) in the right place. 3. Joints / girdles the exam scores or must stay clear of. 4. Organs and the structures the beam / rules refer to, labelled if non-obvious. 5. Figure meets the detector edge, no overrun. 6. Proportions (head ≈ 0.3 chest depth, tapered limbs, no extra circles). 7. Each choice state (raised/lowered, supine/semi-erect…) visibly different. 8. **Scored and drawn** vs **scored but not drawn** vs **not modelled** — the last two are recorded as gaps (`REVIEW_PACKAGE` §1d, an O-item, and the "not drawn in this image" label), plus assumptions deliberately kept out of the drawing (exact heart outline, bone detail).
 
 Draw a shape audit (shape → what it represents → keep / fix / remove) for any scene you touch; unexplained shapes are bugs.
+
+### 4a. Label-collision measurement (reusable script, S14-0)
+
+`scripts/qa/label-collisions.mjs <exam-id> [--spec scripts/qa/label-states/<exam>.json] [--max-states 200]` — Playwright against a running build (`npm run build && npx next start -p 3100 &`, `npm i --no-save playwright axe-core`, `BASE=http://localhost:3100`). For the exam's practice page it measures, **EN + AR × 390 / 1440 px × guides ON / OFF × every state of the exam's axes**, each scene label box (the text box padded as the pill in `SceneLabel`) and reports labels that overlap another label of the same drawing or leave the drawing's `viewBox` (both in SVG user units), plus the smallest on-screen label size. Exit 1 on any collision, out-of-frame label or if no label was found; the JSON goes to `$OUT` (default `/tmp/rad-lab-qa-labels-<exam>`).
+
+States are the product of the axes: by default every radio group in the positioning section plus rotation at min / 0 / max; a `--spec` JSON names the axes explicitly (`radios`: message paths or `{en, ar}` legends, e.g. an exam's own choice-control legend; `sliders`: label → values, `"min"` / `"max"` allowed — include extremes such as the tube angle). It refuses to run above `--max-states`. **Run it once per scene change, over the full state set; do not rerun it for every small edit.** Add `scripts/qa/label-states/<exam>.json` with the exam. Example: `chest-ap-supine.json` (36 states).
 
 ---
 
@@ -141,7 +149,9 @@ Each shortlisted candidate must be verified and reported with: **canonical file-
 
 **Tests while working:** targeted only — `npx vitest run src/features/exam/<exam>.test.ts` plus the tests of files you touched (`scene-style.test.ts`, `visual-model.test.ts`, `characterisation.test.ts` after any shared-code edit). Per-exam tests (copy the shape of `chest-ap.test.ts`): `validateExam` / `validateCase` empty, weights sum to 100, only S11/S12 mechanisms, a fully correct attempt scores 100 with no critical finding, initial state is not the answer, each critical finding fires, every teaching-choice band labelled as such, rotation magnitude-only (±θ identical) and sign pinned, marker rule, result image deterministic and representative only for the baseline projection, wrong projection critical, EN + AR text complete (no «الكاسيت»).
 
-**Once at the end:** `npm run check` (typecheck + lint + all tests) and `npm run build`; then the exam's audit — `npm run build && npx next start -p 3100 &`, `BASE=http://localhost:3100 node scripts/qa/<exam>-audit.mjs` (Playwright + axe WCAG 2 A/AA, **EN/AR × 1440 / 390**, no horizontal overflow, a correct attempt through the real UI scores 100, a wrong one shows its critical findings). Also run the existing audits/matrix for earlier exams when shared UI code changed. Plus the scene label-collision measurement if a scene was drawn.
+**Once at the end:** `npm run check` (typecheck + lint + all tests) and `npm run build`; then the exam's audit — `npm run build && npx next start -p 3100 &`, `BASE=http://localhost:3100 node scripts/qa/<exam>-audit.mjs` (Playwright + axe WCAG 2 A/AA, **EN/AR × 1440 / 390**, no horizontal overflow, a correct attempt through the real UI scores 100, a wrong one shows its critical findings). Also run the existing audits/matrix for earlier exams when shared UI code changed. Plus the scene label-collision measurement if a scene was drawn (§4a).
+
+**Shared-UI changes:** run `npx vitest run src/features/qa/scene-dom.test.ts` — the S14-0 guard that the rendered scene and result panel of every earlier exam are hash-identical; a new exam's states are added to it only by extending it, never by regenerating the existing hashes.
 
 **Byte-identity proof (every exam PR):** `git diff main --stat -- scripts/qa/characterisation scripts/qa/golden public/images/<each earlier exam> assets/source/<each earlier exam> src/data/exams/xray/<earlier>* src/data/cases/<earlier>*` is empty; `characterisation.test.ts` passes unchanged. **Never run `npm run qa:characterise` to make something pass.**
 
@@ -198,10 +208,13 @@ FINAL REPORT (plain text): files changed per exam, DECISIONS / REVIEW_PACKAGE / 
 
 ---
 
-## 10. Known gaps in this recipe (what Lateral / AP did that no document yet generalises)
+## 10. Known gaps in this recipe
 
-- Scene and result-image code for a new exam is still bespoke (§3C); there is no scene-registry-driven figure API yet.
-- `ProjectionId` / `WordingNs` are closed unions; limbs will need a generalisation session (§2 "Hard-wired").
-- `ROADMAP_SESSIONS.md` is not yet aligned with the S12-12 order (S12-12 deferred this); until it is, this file and `DECISIONS.md` win.
+**Closed by S14-0** (byte-identical; [`session-14-limbs-generalisation.md`](session-14-limbs-generalisation.md)): scene / result-image code is registry-driven (`SceneLayout`, `DetectorFigure`, projection registry) rather than flags and branches; `ProjectionId` / `WordingNs` are open; the label-collision measurement is a committed script (§4a); the S12-12 order note is in `ROADMAP_SESSIONS.md`.
+
+**Still open:**
+- What a limb exam must still add (new anatomy effects / image variants, critical-finding ids, scene art and the second view, settings beyond the chest cues, console labels): `session-14-limbs-generalisation.md` §4. Each is generalised only against a merged limb reference (S10-2).
+- `SceneId` / `SCENE_IDS`, `CriticalFindingId`, `EffectId`, `ImageVariantId`, `CATEGORIES`, `SimulationSettings` (chin / shoulder fields) remain closed lists / shapes.
+- `planRotationDeg` (plan-view sign, O19) still switches on `"ap-erect"`; a new projection that needs a plan view must decide its sign first (§6).
 - No documented procedure yet for a *credits page* (O18) or for the SID / position image label (S10b-22, O18).
-- The 128-state label-collision measurement of S13b-2 was a throw-away script (`/tmp`, not committed); the recipe asks for the measurement but no reusable script exists.
+- The label script found, on the unchanged AP scene, an Arabic-only overlap at tube angle +15° with guides ON (O20, `DECISIONS.md`).
