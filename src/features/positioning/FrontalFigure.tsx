@@ -1,4 +1,5 @@
 import type { ChinPositionId } from "@/domain/simulation";
+import { Limb } from "./SceneParts";
 import { SCENE, STROKE } from "./scene-style";
 import { chinOverlapsApices, type RotationVisual } from "./visual-model";
 
@@ -25,21 +26,19 @@ export function FrontalFigure({ W, H, thoraxScale, rv, lungY, lungH, lungW, scap
   return (
     <>
       <g transform={`translate(${mid} 0) scale(${thoraxScale} 1) translate(${-mid} 0)`}>
-        {/* arms hanging at the sides, from the shoulder caps (they run off the detector: only the shoulder / upper arm is in the margin) */}
-        <g stroke={SCENE.limbFar} strokeWidth={30} strokeLinecap="round" fill="none">
-          <path d={`M 22 46 L -10 190 L -14 330`} />
-          <path d={`M ${W - 22} 46 L ${W + 10} 190 L ${W + 14} 330`} />
-        </g>
+        {/* arms hanging at the sides (outlined and tapered, separate from the trunk); they run off the detector, only the shoulder / upper arm is in the margin */}
+        <Limb fill={SCENE.limbFar} pts={[{ x: 22, y: 46, w: 32 }, { x: -8, y: 190, w: 26 }, { x: -12, y: 330, w: 22 }]} />
+        <Limb fill={SCENE.limbFar} pts={[{ x: W - 22, y: 46, w: 32 }, { x: W + 8, y: 190, w: 26 }, { x: W + 12, y: 330, w: 22 }]} />
         {/* head (oval with a jaw line) and neck */}
         <rect x={mid - 14} y={-6} width={28} height={34} fill={SCENE.head} />
-        <ellipse cx={mid} cy={-35} rx={30} ry={36} fill={SCENE.head} />
+        <ellipse cx={mid} cy={-35} rx={30} ry={36} fill={SCENE.head} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
         <path d={`M ${mid - 22} -20 Q ${mid} 12 ${mid + 22} -20`} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.thin} opacity={0.7} />
         {/* trunk: sloping shoulders, then the chest */}
-        <path d={`M 20 28 Q ${mid} -8 ${W - 20} 28 L ${W - 32} ${H} L 32 ${H} Z`} fill={SCENE.trunk} />
-        <circle cx={22} cy={46} r={26} fill={SCENE.limb} />
-        <circle cx={W - 22} cy={46} r={26} fill={SCENE.limb} />
-        <rect x={mid - 8 - lungW * rv.viewerLeftLungScale} y={lungY} width={lungW * rv.viewerLeftLungScale} height={lungH} rx={50} fill={SCENE.lung} />
-        <rect x={mid + 8} y={lungY} width={lungW * rv.viewerRightLungScale} height={lungH} rx={50} fill={SCENE.lung} />
+        <path d={`M 20 28 Q ${mid} -8 ${W - 20} 28 L ${W - 32} ${H} L 32 ${H} Z`} fill={SCENE.trunk} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round" />
+        <circle cx={22} cy={46} r={26} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+        <circle cx={W - 22} cy={46} r={26} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+        <rect x={mid - 8 - lungW * rv.viewerLeftLungScale} y={lungY} width={lungW * rv.viewerLeftLungScale} height={lungH} rx={50} fill={SCENE.lung} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeOpacity={0.6} />
+        <rect x={mid + 8} y={lungY} width={lungW * rv.viewerRightLungScale} height={lungH} rx={50} fill={SCENE.lung} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeOpacity={0.6} />
         {/* clavicles with medial (sternal) ends */}
         <g stroke={SCENE.bone} strokeWidth={STROKE.heavy} strokeLinecap="round" opacity={0.85}>
           <line x1={mid - 12} y1={lungY + 6} x2={mid - lungW - 20} y2={lungY - 4} />
@@ -48,7 +47,7 @@ export function FrontalFigure({ W, H, thoraxScale, rv, lungY, lungH, lungW, scap
         <circle cx={mid - 12} cy={lungY + 6} r={7} fill={SCENE.bone} />
         <circle cx={mid + 12} cy={lungY + 6} r={7} fill={SCENE.bone} />
         {/* scapulae: over the lung fields when shoulders are relaxed, laterally clear when rolled forward */}
-        <g fill={SCENE.limb} opacity={0.6} stroke={SCENE.bone} strokeWidth={STROKE.thin}>
+        <g fill={SCENE.limb} opacity={0.85} stroke={SCENE.edge} strokeWidth={STROKE.thin}>
           <ellipse cx={mid - lungW + 14 - scapula} cy={lungY + 110} rx={26} ry={72} />
           <ellipse cx={mid + lungW - 14 + scapula} cy={lungY + 110} rx={26} ry={72} />
         </g>

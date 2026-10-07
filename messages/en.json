@@ -551,6 +551,10 @@
     "armsRaised": "raised above the head",
     "armsLowered": "lowered, over the lung fields",
     "stateSupine": "lying supine",
-    "stateSemierect": "head end raised"
+    "stateSemierect": "head end raised",
+    "sidValue": "SID {value} cm",
+    "tubeAngle": "Tube angle: {angle}° (+ = toward the feet)",
+    "rotationArc": "{deg}°",
+    "rotationReadout": "Patient rotation: {deg}°"
   }
 }

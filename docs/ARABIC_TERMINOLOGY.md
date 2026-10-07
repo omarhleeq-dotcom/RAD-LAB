@@ -189,3 +189,17 @@ Keys: `messages/ar.json` → `scene.*`. Rule followed: «الكاشف» for the 
 | Text alternatives of the three drawings | see `altFrontal`, `altLateral`, `altSide` | `alt*` |
 
 Questions for the AR reviewer: «أمامي / خلفي» as anatomical directions; «الشاقول» (vertical) in the AP side alt text; «القدمان» for Feet. `positioning.detector` («الكاسيت / البكي») is no longer used by the scenes.
+
+## Session 13b-2 — «الكاسيت» → «الكاشف» in the positioning scenes (owner-approved correction, text only)
+Only the word / phrase below was replaced; no other Arabic string was touched. «الكاسيت» elsewhere (AEC console / technique texts, result panel, exam data) is outside the three positioning scenes and unchanged.
+| Key (`messages/ar.json`) | Before | After |
+|---|---|---|
+| `positioning.midline` | الخط المنتصف للكاسيت | خط منتصف الكاشف |
+| `positioning.rotationGuide` | عمودي على الكاسيت | عمودي على الكاشف |
+| `positioning.frontView` (detector caption) | عرض الكاسيت كما يظهر … | عرض الكاشف كما يظهر … |
+| `positioning.schematicNote` | … يسار ويمين عرض الكاسيت. | … يسار ويمين عرض الكاشف. |
+| `positioning.cueAnterior` | الصدر الأمامي باتجاه الكاسيت | الصدر الأمامي باتجاه الكاشف |
+| `positioning.cueDetector` (no longer shown) | الكاسيت | الكاشف |
+| `positioning.cueSideAlt` | … ووجهه نحو الكاسيت … | … ووجهه نحو الكاشف … |
+| `positioning.detector` (no longer shown) | الكاسيت / البكي | الكاشف / البكي |
+New draft strings (`scene.*`): `sidValue` «SID {value} سم», `tubeAngle` «زاوية الأنبوب: {angle}° (+ = نحو القدمين)» (numbers isolated with LRM), `rotationReadout` «دوران المريض: {deg}°», `rotationArc` «{deg}°». The old `positioningAp.angleReadout` is no longer used by the scene.

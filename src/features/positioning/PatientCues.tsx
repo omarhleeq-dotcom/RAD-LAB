@@ -40,7 +40,7 @@ function SideDiagram({ chin, shoulders }: Pick<Props, "chin" | "shoulders">) {
       <rect x={108} y={98} width={54} height={112} rx={20} fill={SCENE.trunk} />
       {/* neck + head in profile, chin tucked or lifted */}
       <rect x={126} y={78} width={16} height={26} fill={SCENE.head} />
-      <HeadProfile cx={135} cy={58} s={0.8} facing={1} chin={chin} />
+      <HeadProfile cx={135} cy={56} s={0.55} facing={1} chin={chin} />
       {/* near arm hanging; the shoulder moves toward the detector when rolled forward, the scapula stays behind */}
       <path d={`M ${shoulderX} 112 L ${shoulderX - 4} 168 L ${shoulderX + 6} 214`} fill="none" stroke={SCENE.limb} strokeWidth={13} strokeLinecap="round" strokeLinejoin="round" />
       <circle cx={shoulderX} cy={112} r={13} fill={SCENE.limb} stroke={SCENE.bone} strokeWidth={STROKE.thin} />
@@ -52,7 +52,7 @@ function SideDiagram({ chin, shoulders }: Pick<Props, "chin" | "shoulders">) {
       <SceneLabel x={100} y={206} size={LABEL_SIZE.view - 1} anchor="end">{ts("posterior")}</SceneLabel>
       {/* erect arrow (head up) */}
       <SceneArrow x1={52} y1={270} x2={52} y2={52} color={SCENE.good} width={2} dashed />
-      <SceneLabel x={46} y={160} size={LABEL_SIZE.view - 1} anchor="end" fill={SCENE.good}>{t("cueErect")}</SceneLabel>
+      <SceneLabel x={46} y={128} size={LABEL_SIZE.view - 1} anchor="end" fill={SCENE.good}>{t("cueErect")}</SceneLabel>
       <SceneLabel x={52} y={40} size={LABEL_SIZE.view - 1} anchor="middle">{ts("head")}</SceneLabel>
       <SceneLabel x={52} y={296} size={LABEL_SIZE.view - 1} anchor="middle">{ts("feet")}</SceneLabel>
     </svg>

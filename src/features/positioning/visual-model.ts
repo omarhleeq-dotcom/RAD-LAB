@@ -65,7 +65,7 @@ export const AP_SIDE = {
   /** Centre of the head, lying at the head end of the detector. */
   head: { x: 80, y: 210 },
   /** SID is drawn at this scale along the beam. */
-  sidPxPerCm: 0.95,
+  sidPxPerCm: 0.62,
 } as const;
 
 export interface ApSideLayout {
@@ -118,7 +118,7 @@ export function apSideLayout(a: {
     target,
     fieldA: onSlab(a.fieldFromCm),
     fieldB: onSlab(a.fieldToCm),
-    detectorLabel: rotateAbout({ x: AP_SIDE.slabX0 + (a.detectorHeightCm * AP_SIDE.pxPerCm) / 2, y: AP_SIDE.surfaceY + 27 }, AP_SIDE.pivot, raiseDeg),
+    detectorLabel: rotateAbout({ x: AP_SIDE.slabX0 + (a.detectorHeightCm * AP_SIDE.pxPerCm) / 2, y: AP_SIDE.surfaceY + 36 }, AP_SIDE.pivot, raiseDeg),
     head: rotateAbout(AP_SIDE.head, AP_SIDE.pivot, raiseDeg),
     tube: { x: target.x - Math.sin(rad) * sidPx, y: target.y - Math.cos(rad) * sidPx },
     tubeRotDeg: -a.tubeAngleDeg,

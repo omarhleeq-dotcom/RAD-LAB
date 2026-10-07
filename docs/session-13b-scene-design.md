@@ -44,3 +44,37 @@ Nothing interactive was removed: crosshair, 8 amber collimation handles, marker,
 ## Not done / reported
 - O19 (the PA / Lateral plan view of a wrongly chosen AP projection turns the opposite way) is untouched; the new head / arm shapes make the turn slightly more visible.
 - The PA `rotationGuide` Arabic still says «الكاسيت» (existing key, owner-proposed correction list).
+
+
+# S13b-2 — owner feedback round (colour code, labels, plan view, Lateral figure, AP figures)
+Visual only, same constraints as S13b-1 (no scoring / data / image / engine change; interactions unchanged; `planRotationDeg` and O19 untouched).
+
+## What changed (points A–D of the feedback)
+| Point | Change |
+|---|---|
+| A1 colour code | `scene-style.ts`: anatomy = muted cool greys / blues, every fill dark (luminance < 0.12), no accent hue; interactive elements and the beam = ONE accent (amber) on a dark under-stroke (`UnderStroked`, crosshair, collimation field); guides = two colours only: green = targets (centring zone, SID reference), sky = reference lines and the fault outline (midline, "square", arms over the lungs), always told apart by shape / label as well. Contrast is pinned by `scene-style.test.ts` (numbers below). |
+| A2 labels | `SceneLabel` = text on a measured semi-opaque dark pill (no stroke halo, so Arabic joins are not smeared). Arabic SID reads «SID 120 سم» (`scene.sidValue`), the tube angle and rotation readouts isolate their numbers (LRM) so the degree sign stays attached. |
+| A3 Head / Feet | Head ↑ at the top-left, Feet ↓ at the BOTTOM edge (detector views); Anterior / Posterior (lateral) or the patient's right / left (frontal, guides ON) on the second row. Never mirrored in RTL. |
+| A4 collisions | Every label has its own slot. `/tmp` script (not committed) measured every `<text>` box at 390 and 1440 px, EN and AR, guides ON / OFF, lateral arms raised / lowered, AP supine / semi-erect × tube angle 0 / 10 / −10 × SID 100 / 120 / 200: 128 states, 0 overlaps, 0 labels outside the viewBox. |
+| A5 Arabic | «الكاسيت» → «الكاشف» in the scene strings (list in `ARABIC_TERMINOLOGY.md`). |
+| B plan view | Redrawn larger: top-down head, shoulder / chest ellipse, arms, the detector as a thick labelled bar, tube + beam, rotation as an arc between the reference axis and the shoulder axis with its value outside the body, the SID on ONE axis with its reference tick (a dotted extension from the tube to the tick when the SID is shorter than the reference). |
+| C Lateral | New profile head (no ear / eye circle, one silhouette with the neck, chin tilt), profile thorax, shoulder girdle, tapered outlined arms; see the checklist. |
+| D1 AP frontal | Detector surface and edge differ from the body fill; body outline and the arms (tapered, outlined, separate from the trunk) stay readable; trunk continues to the detector edge; the collimation dim is lighter. |
+| D2 AP side | Profile silhouette (head with face up, chest, near arm, thigh / leg / foot), head end raised with the detector when semi-erect; all labels inside the viewBox with margin; the tube angle has its own slot; the SID is a dimension line parallel to the central ray from the tube to the detector with the reference tick on the same line. SID scale 0.62 px / cm so a long SID with a raised head end stays in the frame. |
+
+## Contrast (computed, WCAG relative luminance)
+Accent on each fill it can cross: amber 9.8 (bg) / 7.7 (bezel) / 8.7 (detector) / 5.0 (trunk) / 4.0 (head) / 3.5 (limb) / 4.4 (far limb) / 6.8 (lung); green 10.7 / 8.3 / 9.4 / 5.4 / 4.4 / 3.8 / 4.7 / 7.4; sky 11.2 / 8.7 / 9.8 / 5.6 / 4.6 / 3.9 / 4.9 / 7.7 — all ≥ 3:1 (minimum 3.46). Each accent on its dark under-stroke: 10.1 / 11.0 / 11.5. Anatomy outline on trunk / head / limb / far limb / lung: 4.8 / 3.9 / 3.3 / 4.2 / 6.6. Label text on its pill 16.3; on the pill composited over the lightest fill ≥ 7. Detector edge on the detector surface 3.7; the label on the detector bar 5.3.
+
+## Lateral figure — anatomical checklist (verified on the rendered screenshots, EN and AR, 390 px, guides ON / OFF, arms raised / lowered)
+1. Orientation: the patient looks to the viewer's LEFT, anterior left / posterior right (labels Anterior / Posterior), head at the top, feet off the lower edge (label Feet at the bottom edge); never mirrored in RTL. ✔
+2. Anterior chest wall / sternum is the line on the left of the lung field; the thoracic spine is the band on the right with a gentle kyphosis (convex posteriorly) and the posterior ribs behind it. ✔
+3. Shoulder girdle at the top (shoulder joint above the lung field); the lung apices are clear of it. In the tucked-chin state the jaw is drawn over the apices (scored fault, dashed). ✔
+4. Lung field between sternum and spine; heart anterior (left) and inferior, labelled; the two diaphragm domes drawn superimposed (two close arcs). ✔
+5. Trunk ends exactly at the detector's lower edge (no band below it, no overrun). ✔
+6. Proportions: head about 0.3 of the chest depth, neck short, head profile with forehead, nose, lips, chin and jaw in one silhouette; no extra circle. ✔
+7. Arms RAISED: both arms rise from the shoulder to elbows beside the head and the hands rest near the top of the head. Arms LOWERED: tapered arms hang from the shoulder over the lung field (outlined and labelled "Arms over the lungs" only with guides ON). Not tubes: the limbs taper shoulder → elbow → wrist → hand. ✔
+8. Scored and drawn: arms, chin (head tilt + jaw over the apices), rotation (posterior-rib separation). Not drawn: anything the result shows; lean / weight distribution (not modelled, O15). ✔
+Assumptions kept out of the drawing: the exact heart outline / position, the shoulder-girdle bones, the vertebral column detail (REVIEW_PACKAGE §1d).
+
+## Byte-identity proof (S13b-2)
+`git diff` against the S13b-1 head touches only `src/features/positioning/*`, `messages/*.json` (new `scene.*` keys; the Arabic «الكاسيت» → «الكاشف» replacements in `positioning.*`), docs and `CLAUDE.md`. No change in `scripts/qa/characterisation/*`, `scripts/qa/golden/*`, `public/images/*`, `assets/*`, `src/data/*`, scoring, evaluation, radiograph, simulation, exam. The full suite (905 tests incl. the 53-scenario characterisation and the golden checksums) passes unchanged; no snapshot changed.
