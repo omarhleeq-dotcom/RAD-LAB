@@ -24,3 +24,9 @@ Fan lateral, flexion lateral, PA oblique; forearm; O19 / O20; shared result reso
 
 ## 7. Phase 2 — Elbow reference (docs only)
 `RAD-LAB_Medical_Reference_Elbow.md`, the Elbow section of `sources/BONTRAGER-9.md`, REGISTER, S14.3-1…4, O42…O44. No code, scene or asset.
+
+## 8. S14.2b-FIX (phone-review fixes; DECISIONS S14.2b-FIX-1…4, O45, O46)
+1. **Sharpness:** cause = 24 px/cm shared canvas vs ≈ 88 px/cm baselines; fix = optional `render.pxPerCm` (hand 48, cap 1.8 Mpx).
+2. **Lateral layout:** optional `render.viewMarginCm` (3 cm) → `RenderPlan.view`.
+3. **Rotation:** one 2.5D model (`features/hand-model`) for the scene and the result warp; continuous over ±15°, one sign (odd part), tests in `hand-rotation.test.ts` (continuity, base-pose silhouettes, sign, no folding) and `render-options.test.ts`.
+Regression: chest and wrist untouched (`git diff origin/main` empty over characterisation, goldens, chest / wrist hashes, images, data, tests; the shared renderer paths are unchanged when `render` / `view` / hand kinds are absent).
