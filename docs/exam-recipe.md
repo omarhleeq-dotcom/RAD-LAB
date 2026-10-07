@@ -191,6 +191,26 @@ FINAL REPORT (plain text): files changed per exam, DECISIONS / REVIEW_PACKAGE / 
 
 ---
 
+## 8a. Session prompt skeleton (S-STD-1)
+
+Prompts follow the **Session prompt standard** ([`DECISIONS.md`](DECISIONS.md) **S-STD-1**: change budget, no opportunistic fixes, optional-field rule, effect honesty, test-edit rule, QA by session type, 8-section final report, usage guard). Generic rules (branch, draft PR, no polling, usage, stop conditions) are in `CLAUDE.md` and this recipe and are **not** repeated in prompts. Short skeleton:
+
+```text
+SESSION: [ID] — [ONE GOAL]
+Follow CLAUDE.md, docs/exam-recipe.md and S-STD-1. Start from updated main (predecessors merged: [..]) else STOP AND REPORT. New branch, DRAFT PR only, no subscribe/poll, never open or share preview URL.
+READ ONLY: [reference doc], [DECISIONS sections], [provenance if assets].
+OWNER DECISIONS (record first as [IDs]): [..]
+SCOPE: [numbered tasks]
+ALLOWED SHARED CHANGES: [list]
+CHANGE BUDGET: [expected files]
+OUT OF SCOPE: [list]
+SESSION TYPE: [DOCS | REFACTOR | EXAM] → QA accordingly.
+Conflict with repo docs/decisions, unsourced medical value, dishonest effect, or budget overflow → STOP AND REPORT, change nothing.
+Final report in the standard 8-section order.
+```
+
+---
+
 ## 9. Definition of done / Always stop and report
 
 **Definition of done (all):**
