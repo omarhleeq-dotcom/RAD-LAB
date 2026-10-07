@@ -259,3 +259,34 @@ Keys: `messages/ar.json` → `scene.altElbow*`, `sceneElbow.*`, `positioningElbo
 | Palm up (supinated) | راحة اليد للأعلى | AP text (instead of a supination term) |
 | Elbow rotation (arm turn) | دوران المرفق (دوران الذراع) | rotation control |
 Questions for the AR reviewer: «اللقيمة» for epicondyle; «الزج» vs «رأس الزند / المرفق» for olecranon; «النتوء الإكليلي» for coronoid; the phrase for supinated.
+
+
+## Session 14.4 — knee and foot exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
+Keys: `messages/ar.json` → `scene.altKnee*`, `scene.altFoot*`, `sceneKnee.*`, `sceneFoot.*`, `positioningKnee.*`, `positioningFoot.*`, `console.projections.knee-*` / `foot-*`, `radiograph.knee-*.*`, `radiograph.foot-*.*`; exam / case text in `src/data/exams/xray/lower-limb-common.ts`, `src/data/cases/lower-limb-case.ts`, `lower-limb-radiographs.ts`. Male forms for the patient; the receptor is «الكاشف».
+| EN | Draft Arabic | Where |
+|---|---|---|
+| Knee / foot | الركبة / القدم | titles, request, labels |
+| Femur | عظم الفخذ | scene label, clipping text |
+| Tibia / fibula | الظنبوب / الشظية | clipping text, rotation text |
+| Lower leg (bottom axis label of the knee view) | الساق | scene label (a term without descenders so that the label stays inside its frame) |
+| Patella | الرضفة | lateral coverage text |
+| Femoral condyles / epicondyle | لقمتا عظم الفخذ / اللقيمة | rotation text |
+| Fibular head | رأس الشظية | rotation text |
+| Intercondylar eminence | النتوء بين اللقمتين | AP knee rotation text |
+| Tibial plateau | الهضبة الظنبوبية | tube-angle text |
+| Metatarsals / phalanges | عظام مشط القدم / السلاميات | foot texts |
+| Navicular / cuboid / cuneiforms | الزورقي / النردي / الإسفينيات | foot coverage text |
+| Sesamoids | السمسمانيات | foot image criterion |
+| Calcaneus / talus | العقب / الكاحل | foot oblique criterion |
+| 5th metatarsal tuberosity | حدبة المشط الخامس | foot oblique criterion |
+| Sinus tarsi | جيب الرسغ | foot oblique criterion |
+| Dorsoplantar / medial oblique | ظهري أخمصي / المائل الإنسي | titles, projection buttons |
+| Plantar surface (sole) | الأخمص | oblique texts, end-view label |
+| Toward the heel (cephalad) | باتجاه العقب (نحو الرأس) | foot AP tube-angle text |
+| Cephalad / caudad | نحو الرأس / نحو القدمين | tube-angle texts |
+| Lateral recumbent | استلقاء جانبي | knee lateral text |
+| Medial / lateral side | الجهة الإنسية / الجهة الوحشية | scene labels |
+| Front / back (of the knee) | الأمام / الخلف | knee lateral scene labels |
+| ASIS-to-table distance | المسافة بين الشوكة الحرقفية الأمامية العليا والطاولة | knee AP case and tube-angle text |
+| End view | منظر من الطرف | side-view gauge |
+Questions for the AR reviewer: «الظنبوب» vs «القصبة»; «الكاحل» for talus; «السمسمانيات»; «جيب الرسغ» for sinus tarsi; «الأخمص» vs «باطن القدم»; the bottom knee label «الساق» (chosen for layout, not for exactness).

@@ -262,3 +262,11 @@ Final report in the standard 8-section order.
 - **Label script limits:** it varies only the axes named in `label-states/<exam>.json` (rotation here); a side view whose labels follow the ray, SID or projection needs those axes added (not done).
 - **`ExamDefinition<T>` widening needed no chest-test narrowing** in practice (platform code takes `AnyExamDefinition`).
 - Audit script for a limb: `scripts/qa/wrist-audit.mjs <exam-id>` (adapted from `ap-audit.mjs`; mAs station index and the male patient's instruction wording are exam-specific).
+
+**Found by the knee / foot exams (S14.4, 2026-10-07):**
+- **A side is not a new field:** `markerRule: fixed-side` already carries `side: "R"` (validated, judged, rendered); do not add a second "limb side" field. A right and a left case on the same exam would be the first real need for a case-level side (O29).
+- **Generic limb kinds exist:** `limb-warp` (band warp, hand pattern), `limb-layers` (two layers below a joint, elbow AP pattern), `limb-copies` (superimposition copies, elbow lateral pattern) take their displacements from a model named by `LowerLimbModelId`; a new limb exam of one of these shapes needs a model entry + concept record, not a new pixel step.
+- **A limb exam can use `tubeAngulationDeg`** (S11): list the target in the exam text with its direction (+ = caudad, "toward the heel" = cephalad = negative) and say that it is feedback only; draw the tilted tube in the side view.
+- **Source images can carry edge artefacts** (bright ringing strips, frame lines, EXIF) besides burned-in text: check the outer 30 px of every edge before deriving; repair by nearest-column fill, or crop only at the bottom / right (a top / left crop shifts every coordinate).
+- **A scene drawing must be clipped to the detector** (the limb outlines run past the image) and its soft-tissue fill must be darker than the bones, or the bones do not read; shorten axis / orientation labels (the label script finds the overlaps) and avoid Arabic words with descenders for labels at the frame edge.
+- **A scene-dom guard file must only render projections of its own family** (a projection of another family depends on that family's strings).
