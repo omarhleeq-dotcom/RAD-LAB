@@ -1,26 +1,30 @@
 import type { ReactNode } from "react";
 import { LOWER_LIMB_RADIOGRAPHS } from "@/data/cases/lower-limb-radiographs";
 import { lowerLimbImage, type LowerLimbKind } from "@/data/exams/xray/lower-limb-geometry";
-import { footAnchors, kneeApShifts, kneeLateralCopies, interpolateAnchors, KNEE_AP_MODEL, KNEE_LATERAL_COPY_WEIGHTS, footValue, FOOT_MODEL } from "@/features/lower-limb-model/lower-limb-model";
+import { ankleApAnchors, ankleLateralCopies, ANKLE_AP_MODEL, ANKLE_LATERAL_WIDTH_PX, footAnchors, kneeApShifts, kneeLateralCopies, interpolateAnchors, KNEE_AP_MODEL, KNEE_LATERAL_COPY_WEIGHTS, footValue, FOOT_MODEL } from "@/features/lower-limb-model/lower-limb-model";
 import { SCENE, STROKE } from "./scene-style";
 import { smoothClosedPath, smoothOpenPath } from "./elbow-visual";
 import { footShiftPx, OUTLINES, type FootOutline, type Pt } from "./lower-limb-visual";
+import { ANKLE_OUTLINES } from "./ankle-outlines";
 import type { FigureProps } from "./detector-figures";
 
 /**
- * Hand-drawn schematic of the KNEE and the FOOT in detector space (S14.4; scenes "knee-ap", "knee-lateral", "foot-ap" and "foot-oblique", own work,
+ * Hand-drawn schematic of the KNEE, the FOOT and (S14.5) the ANKLE in detector space (S14.4; scenes "knee-ap", "knee-lateral", "foot-ap", "foot-oblique", "ankle-ap" and "ankle-lateral", own work,
  * S13b visual language: dark muted anatomy, thin bone outlines, no accent hue, guides in the two guide colours). The rotation drawing is the PROJECTION
  * of the lower-limb model (`features/lower-limb-model`), the SAME functions that displace the result image, so the drawing and the picture turn in the
  * same direction:
  *  - knee AP: the whole leg is warped by the model's column anchors (the condyle edges and the intercondylar eminence move by depth); the fibula and the
  *    tibia move as two layers below the joint, so the fibular head is covered by the tibia more or less;
  *  - knee lateral: the femoral condyle outline and the fibular head are drawn twice, a far-side copy and a near-side copy (one outline at the base pose);
+ *  - ankle AP (S14.5): the whole leg and ankle are warped by the model's column anchors (the malleoli and the plafond edges move by depth), the tibia, fibula,
+ *    talus and heel outlines move together; the overlap of the distal fibula is not drawn;
+ *  - ankle lateral (S14.5): the fibula outline and the talar-dome arc are drawn twice, a far-side copy and a near-side copy (one outline at the base pose);
  *  - foot AP / oblique: the toes and the metatarsals are displaced column by column (band-weighted, as the result image); the oblique's value is the
  *    deviation of the plantar angle from 40°.
  * The outlines are illustrative (read by eye from the baselines). Anatomy is an image convention and is never mirrored by RTL.
  */
 export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: FigureProps) {
-  const kind = (["knee-ap", "knee-lateral", "foot-ap", "foot-oblique"].includes(settings.projection) ? settings.projection : radCase.requiredProjection) as LowerLimbKind;
+  const kind = (["knee-ap", "knee-lateral", "foot-ap", "foot-oblique", "ankle-ap", "ankle-lateral"].includes(settings.projection) ? settings.projection : radCase.requiredProjection) as LowerLimbKind;
   const im = lowerLimbImage(kind);
   const a = radCase.requiredAnatomy;
   const U = 10; // SVG units per detector cm (`detector-figures.tsx` U)
@@ -43,6 +47,8 @@ export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: Figure
   );
   if (kind === "knee-ap") return clip(<KneeAp X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
   if (kind === "knee-lateral") return clip(<KneeLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
+  if (kind === "ankle-ap") return clip(<AnkleAp X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
+  if (kind === "ankle-lateral") return clip(<AnkleLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
   return clip(<Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} bands={footBands(kind)} />);
 }
 
@@ -153,6 +159,62 @@ function Foot({ kind, X, Y, k, rotationDeg, bands }: { kind: "ap" | "oblique"; X
       {O.rays.filter((r) => r.band === "metatarsal").map(rayLine)}
       {O.blobs.filter((b) => b.band === "metatarsal").map(blob)}
       {O.rays.filter((r) => r.band === "toes").map(rayLine)}
+    </>
+  );
+}
+
+function AnkleAp({ X, Y, rotationDeg, showGuides }: { X: Map; Y: Map; rotationDeg: number; showGuides: boolean }): ReactNode {
+  const W = ANKLE_AP_MODEL.widthPx;
+  const anchors = ankleApAnchors(rotationDeg);
+  const warp = (pts: readonly Pt[]): Pt[] => pts.map(([x, y]) => [X(x + interpolateAnchors(anchors, x / W) * W), Y(y)] as Pt);
+  const O = ANKLE_OUTLINES.ap;
+  const [mm, lm] = warp(O.malleoli);
+  return (
+    <>
+      <path d={smoothClosedPath(warp(O.soft))} {...softStyle} />
+      <path d={smoothClosedPath(warp(O.heel))} {...boneStyle} fillOpacity={0.8} />
+      <path d={smoothClosedPath(warp(O.talus))} {...boneStyle} />
+      <path d={smoothClosedPath(warp(O.tibia))} {...boneStyle} fillOpacity={0.9} />
+      <path d={smoothClosedPath(warp(O.fibula))} {...boneStyle} fillOpacity={0.8} />
+      {showGuides && (
+        <g aria-hidden>
+          {/* the line between the tips of the malleoli (a reference line: sky) — it moves as the leg rotates */}
+          <line x1={mm![0]} y1={mm![1]} x2={lm![0]} y2={lm![1]} stroke={SCENE.underStroke} strokeWidth={2 + 3} strokeLinecap="round" />
+          <line x1={mm![0]} y1={mm![1]} x2={lm![0]} y2={lm![1]} stroke={SCENE.guide} strokeWidth={2} strokeDasharray="3 5" strokeLinecap="round" />
+        </g>
+      )}
+    </>
+  );
+}
+
+function AnkleLateral({ X, Y, rotationDeg, showGuides }: { X: Map; Y: Map; rotationDeg: number; showGuides: boolean }): ReactNode {
+  const c = ankleLateralCopies(rotationDeg);
+  const O = ANKLE_OUTLINES.lateral;
+  const W = ANKLE_LATERAL_WIDTH_PX;
+  const pts = (arr: readonly Pt[], dx = 0): Pt[] => arr.map(([x, y]) => [X(x + dx), Y(y)] as Pt);
+  const far = KNEE_LATERAL_COPY_WEIGHTS.far, near = KNEE_LATERAL_COPY_WEIGHTS.near;
+  const arc = (du: number, opacity: number, key: string) => (
+    <path key={key} d={smoothOpenPath(pts(O.domeArc, du * W))} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.medium} strokeLinecap="round" opacity={opacity} />
+  );
+  const fibula = (du: number, opacity: number, key: string) => <path key={key} d={smoothClosedPath(pts(O.fibula, du * W))} {...boneStyle} opacity={opacity} />;
+  return (
+    <>
+      <path d={smoothClosedPath(pts(O.soft))} {...softStyle} />
+      <path d={smoothClosedPath(pts(O.foot))} {...boneStyle} fillOpacity={0.8} />
+      <path d={smoothClosedPath(pts(O.calcaneus))} {...boneStyle} fillOpacity={0.85} />
+      <path d={smoothClosedPath(pts(O.talus))} {...boneStyle} />
+      <path d={smoothClosedPath(pts(O.tibia))} {...boneStyle} />
+      {/* near-side copy (nearer the detector: stronger) and far-side copy (weaker); one outline when they coincide */}
+      {fibula(c.malleolus[1]!.du, near + 0.25, "fn")}
+      {fibula(c.malleolus[0]!.du, far + 0.15, "ff")}
+      {arc(c.joint[1]!.du, near + 0.25, "an")}
+      {arc(c.joint[0]!.du, far + 0.15, "af")}
+      {showGuides && (
+        <g aria-hidden>
+          {/* the centre of the joint (a reference mark: sky) */}
+          <circle cx={X(O.centre[0])} cy={Y(O.centre[1])} r={3} fill={SCENE.guide} stroke={SCENE.underStroke} strokeWidth={1.5} />
+        </g>
+      )}
     </>
   );
 }

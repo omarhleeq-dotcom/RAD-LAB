@@ -28,7 +28,7 @@ import type { Evidence } from "@/domain/technique";
 import type { EffectDefinition, LimbRotationPlan } from "./plan";
 import { elbowApShifts, elbowLateralCopies } from "@/features/elbow-model/elbow-model";
 import { handLateralShifts, handPaAnchors, oddPart } from "@/features/hand-model/hand-model";
-import { footAnchors, footValue, kneeApShifts, kneeLateralCopies, oddPart as lowerOddPart } from "@/features/lower-limb-model/lower-limb-model";
+import { ankleApAnchors, ankleLateralCopies, footAnchors, footValue, kneeApShifts, kneeLateralCopies, oddPart as lowerOddPart } from "@/features/lower-limb-model/lower-limb-model";
 import { wristLateralCopies, wristPaShifts } from "@/features/wrist-model/wrist-model";
 import { TUNING } from "./tuning";
 
@@ -47,6 +47,18 @@ const lowerLimbConcept = (model: LowerLimbModelId): Evidence =>
         status: "common-reference",
         reference: "BONTRAGER-9 p.233 (AP medial oblique foot)",
         note: "Plantar surface 30°–40° to the detector (40° recommended): metatarsals 3–5 free of superimposition, the 5th metatarsal tuberosity in profile. Provisional until the educator review (O5).",
+      }
+    : model === "ankle-ap"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.239 (true AP ankle)",
+        note: "No rotation = medial mortise open, lateral mortise closed, some overlap of the distal fibula by the tibia and the talus. The effect is one smooth warp of the leg and ankle from one baseline image; the overlap of the distal fibula is not drawn. Provisional until the educator review (O5).",
+      }
+    : model === "ankle-lateral"
+    ? {
+        status: "common-reference",
+        reference: "BONTRAGER-9 p.242 (true lateral ankle)",
+        note: "True lateral: the distal fibula over the posterior half of the tibia, the lateral malleolus seen through the distal tibia and talus, the tibiotalar joint open with a uniform space. The effect is a ghosting of two windows from one baseline image. Provisional until the educator review (O5).",
       }
     : model === "knee-ap"
     ? {
@@ -131,6 +143,14 @@ export function limbRotationPlan(
   }
   if (landmarks.kind === "limb-warp") {
     // Foot (S14.4): bands in the order of the asset's landmarks [toes, metatarsals]. shiftU = the odd part of (metatarsal 5 − metatarsal 1) shift, the sign carrier.
+    if (landmarks.model === "ankle-ap") {
+      // AP ankle (S14.5): one band; shiftU = the odd part of (lateral malleolus − medial malleolus) shift, the sign carrier.
+      const rel = (r: number) => {
+        const m = ankleApAnchors(r);
+        return (m[m.length - 1]?.du ?? 0) - (m[0]?.du ?? 0);
+      };
+      return { kind: "limb-warp", degrees: d, shiftU: lowerOddPart(rel, d), overlapShiftU: 0, hand: { anchors: [ankleApAnchors(d)] } };
+    }
     const kind = landmarks.model === "foot-oblique" ? "oblique" : "ap";
     const a = footAnchors(kind, d);
     const rel = (r: number) => {
@@ -145,6 +165,11 @@ export function limbRotationPlan(
     return { kind: "limb-layers", degrees: d, shiftU: lowerOddPart((r) => kneeApShifts(r).tibia - kneeApShifts(r).fibula, d), overlapShiftU: 0, elbow: { anchors: a.anchors, layers: { ulna: a.fibulaAnchors, radius: a.tibiaAnchors } } };
   }
   if (landmarks.kind === "limb-copies") {
+    if (landmarks.model === "ankle-lateral") {
+      // Lateral ankle (S14.5): bands in the order of the asset's landmarks [distal fibula / posterior tibia, tibiotalar joint]. shiftU = the far-side copy's shift (sign).
+      const a = ankleLateralCopies(d);
+      return { kind: "limb-copies", degrees: d, shiftU: a.malleolus[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [a.malleolus, a.joint] } };
+    }
     // Lateral knee (S14.4): bands in the order of the asset's landmarks [condyle outlines, fibular head / tibia]. shiftU = the far-side copy's shift (sign).
     const c = kneeLateralCopies(d);
     return { kind: "limb-copies", degrees: d, shiftU: c.condyles[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.condyles, c.head] } };

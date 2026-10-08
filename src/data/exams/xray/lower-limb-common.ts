@@ -4,6 +4,7 @@ import type { LocalizedText } from "@/domain/localized";
 import type { Evidence } from "@/domain/technique";
 import { LOWER_LIMB_DETECTOR, lowerLimbRegion, type LowerLimbKind } from "./lower-limb-geometry";
 import { lowerLimbTechnique } from "./lower-limb-technique";
+import { ANKLE_PER } from "./lower-limb-ankle-texts";
 
 /**
  * The four KNEE / FOOT exams, `knee-ap`, `knee-lateral`, `foot-ap` (DP) and `foot-oblique` (medial oblique), all of the RIGHT side (S14.4; reference
@@ -21,6 +22,8 @@ import { lowerLimbTechnique } from "./lower-limb-technique";
  * no chin / shoulder / breathing. Shielding, grid, posture details and the arch height as a patient attribute are NOT scored in v1 (S14.4-3).
  * No exposure-appearance wording is used: the reference has no source for it (O35).
  * Side (S14.4-2): the RIGHT limb. The marker rule `fixed-side` carries the side (`side: "R"`): letter only, no viewer-half check.
+ * S14.5 adds the two ANKLE exams (`ankle-ap`, `ankle-lateral`, texts in `lower-limb-ankle-texts.ts`) of the LEFT side (inferred, O76): the side is read from `SIDE_OF` below,
+ * the only place that says which side an exam is; the side words of the feedback follow it and read exactly as before for the right-side exams.
  * Arabic text is DRAFT pending owner / educator review (use «الكاشف»; male forms for the male patient).
  * TODO(medical-review): validate with a radiography educator before release.
  */
@@ -30,6 +33,11 @@ const MAS_STATIONS = [0.5, 0.63, 0.8, 1, 1.25, 1.6, 2, 2.5, 3.2, 4, 5, 6.3, 8, 1
 
 const T = (en: string, ar: string): LocalizedText => ({ en, ar });
 const ev = (status: Evidence["status"], reference: string, note: string): Evidence => ({ status, reference, note });
+
+/** The side of each exam's limb (S14.4-2: knee / foot RIGHT; S14.5-2: ankle LEFT, inferred, O76). The marker rule and the side words of the feedback follow it. */
+const SIDE_OF: Record<LowerLimbKind, "L" | "R"> = { "knee-ap": "R", "knee-lateral": "R", "foot-ap": "R", "foot-oblique": "R", "ankle-ap": "L", "ankle-lateral": "L" };
+const SIDE_WORDS = { R: { up: "RIGHT", low: "right", ar: "اليمنى" }, L: { up: "LEFT", low: "left", ar: "اليسرى" } } as const;
+const sideWords = (k: LowerLimbKind) => SIDE_WORDS[SIDE_OF[k]];
 
 /** Per-exam facts: page, texts and numbers. */
 const PER = {
@@ -382,6 +390,7 @@ const PER = {
     rotationControl: { min: 0, max: 70, step: 1 },
     rotationUnit: "°",
   },
+  ...ANKLE_PER,
 } as const;
 
 const positioning = (k: LowerLimbKind): PositioningSpec => ({
@@ -398,8 +407,8 @@ const positioning = (k: LowerLimbKind): PositioningSpec => ({
   // default marker at the edge of the field, clear of the limb (the RIGHT limb: R = the letter of the patient's side).
   markerSide: { L: "viewer-left", R: "viewer-right" },
   defaultMarkerPosition: { L: { ...PER[k].marker }, R: { ...PER[k].marker } },
-  // RIGHT limb in v1 (S14.4-2): the letter must be R.
-  markerRule: { kind: "fixed-side", side: "R" },
+  // The limb's side (S14.4-2 right for the knee / foot, S14.5-2 left for the ankle): the letter must be the exam's side.
+  markerRule: { kind: "fixed-side", side: SIDE_OF[k] },
 });
 
 const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
@@ -407,8 +416,8 @@ const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
     id: "wrong-side-marker",
     label: T("Wrong-side marker", "علامة جانب خاطئة"),
     reason: T(
-      `Critical finding — wrong-side marker: the marker letter does not match the patient's side (this is the RIGHT ${PER[k].part.en}). A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.`,
-      `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (هذه ${PER[k].part.ar} اليمنى). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة تُعاد الصورة عادةً.`,
+      `Critical finding — wrong-side marker: the marker letter does not match the patient's side (this is the ${sideWords(k).up} ${PER[k].part.en}). A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.`,
+      `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (هذه ${PER[k].part.ar} ${sideWords(k).ar}). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة تُعاد الصورة عادةً.`,
     ),
     concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, p.224-225, ${PER[k].page}`, "COMMON QUALITY CRITERION: an anatomic side marker is required on every image and must name the side imaged. For a single limb Bontrager gives no viewer-half convention, so only the letter is judged (O21 option A, S14.1c-4, S14.4-2)."),
     evidence: ev("provisional", "S14.4-3, S14.1c-4", "PROVISIONAL / educational: the gate is a simulator rule (educator decision pending, O5). The numeric score is unchanged."),
@@ -508,17 +517,17 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
       label: T("Side marker (patient's side)", "علامة الجانب (جانب المريض)"),
       feedback: {
         pass: T(
-          `Marker placed inside the field, clear of the anatomy, with the letter of the patient's side (right). Bontrager asks for it on the lateral margin of the field without covering anatomy (p.224-225); for a single limb no left or right half of the image is checked in this simulator.`,
+          `Marker placed inside the field, clear of the anatomy, with the letter of the patient's side (${sideWords(k).low}). Bontrager asks for it on the lateral margin of the field without covering anatomy (p.224-225); for a single limb no left or right half of the image is checked in this simulator.`,
           `العلامة موضوعة داخل المجال بعيدًا عن التشريح وبحرف جانب المريض (الأيمن). يطلب Bontrager وضعها على الحافة الوحشية للمجال دون تغطية التشريح (ص.224-225)؛ ولا يُفحص في هذا المحاكي نصف أيسر أو أيمن من الصورة لطرف واحد.`,
         ),
         fail: T(
-          `No side marker placed. Choose the letter of the patient's side (this is the right ${partEn}) and place it inside the field.`,
-          `لم توضع علامة جانب. اختر حرف جانب المريض (هذه ${p.part.ar} اليمنى) وضعه داخل المجال.`,
+          `No side marker placed. Choose the letter of the patient's side (this is the ${sideWords(k).low} ${partEn}) and place it inside the field.`,
+          `لم توضع علامة جانب. اختر حرف جانب المريض (هذه ${p.part.ar} ${sideWords(k).ar}) وضعه داخل المجال.`,
         ),
         overlap: T(`The marker covers the anatomy. Move it to ${p.markerSideText}.`, "العلامة تغطي التشريح. انقلها إلى حافة المجال بعيدًا عن التشريح المطلوب."),
         wrongSide: T(
-          `The marker letter does not match the patient's side: this is the RIGHT ${partEn}. A wrong marker misidentifies the patient's side.`,
-          `حرف العلامة لا يطابق جانب المريض: هذه ${p.part.ar} اليمنى. العلامة الخاطئة تُحدِّد جانب المريض خطأً.`,
+          `The marker letter does not match the patient's side: this is the ${sideWords(k).up} ${partEn}. A wrong marker misidentifies the patient's side.`,
+          `حرف العلامة لا يطابق جانب المريض: هذه ${p.part.ar} ${sideWords(k).ar}. العلامة الخاطئة تُحدِّد جانب المريض خطأً.`,
         ),
         outsideField: T("The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field.", "العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال."),
       },
@@ -682,16 +691,17 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
 export function makeLowerLimbExam(k: LowerLimbKind): AnyExamDefinition {
   const p = PER[k];
   const knee = k.startsWith("knee");
-  const pair = knee ? (["knee-ap", "knee-lateral"] as const) : (["foot-ap", "foot-oblique"] as const);
+  const ankle = k.startsWith("ankle");
+  const pair = knee ? (["knee-ap", "knee-lateral"] as const) : ankle ? (["ankle-ap", "ankle-lateral"] as const) : (["foot-ap", "foot-oblique"] as const);
   return {
     schemaVersion: 1,
     id: p.id,
     modality: "general-radiography",
-    bodyPart: knee ? "knee" : "foot",
+    bodyPart: knee ? "knee" : ankle ? "ankle" : "foot",
     provisional: true,
     evidence: {
       status: "provisional",
-      reference: `docs/RAD-LAB_Medical_Reference_Knee_Foot.md; BONTRAGER-9 p.224-225, ${p.page}; docs/DECISIONS.md S14.4-*`,
+      reference: `${ankle ? "docs/RAD-LAB_Medical_Reference_Ankle.md" : "docs/RAD-LAB_Medical_Reference_Knee_Foot.md"}; BONTRAGER-9 p.224-225, ${p.page}; docs/DECISIONS.md ${ankle ? "S14.5-*" : "S14.4-*"}`,
       note: "Exam-level classification: provisional until the educator / medical-physicist review is signed off. Every rule, tolerance and feedback sentence carries its own evidence class.",
     },
     defaultCaseId: "adult-demo",
@@ -722,7 +732,7 @@ export function makeLowerLimbExam(k: LowerLimbKind): AnyExamDefinition {
       criticalFindings: criticalFindings(k),
     },
     possibleErrors: [
-      { id: "rotated", variant: "rotated", description: T(`${knee ? "Knee" : "Foot"} rotation`, knee ? "دوران الركبة" : "دوران القدم") },
+      { id: "rotated", variant: "rotated", description: T(`${knee ? "Knee" : ankle ? "Ankle" : "Foot"} rotation`, knee ? "دوران الركبة" : ankle ? "دوران الكاحل" : "دوران القدم") },
       { id: "clipped", variant: "clipped", description: T("Anatomy clipped by centering or collimation", "قطع التشريح بسبب التوسيط أو التحديد") },
       { id: "motion", variant: "motion", description: T("Patient motion (loss of sharpness)", "حركة المريض (فقدان الحدّة)") },
       { id: "low-exposure", variant: "low-exposure", description: T("Low detector exposure (increased quantum noise)", "تعريض كاشف منخفض (ضجيج كمّي متزايد)") },

@@ -24,6 +24,9 @@ const KEEP = ["di-equation", "brightness", "mas-physics", "kvp-physics", "kvp-ex
 const CFG: Record<LowerLimbKind, { page: string; part: { en: string; ar: string }; kv: [number, number]; partial: [number, number]; centre: number; grid: string }> = {
   "foot-ap": { page: "p.232", part: { en: "AP (DP) foot", ar: "القدم AP (ظهري أخمصي)" }, kv: [60, 70], partial: [55, 75], centre: 65, grid: "non-grid" },
   "foot-oblique": { page: "p.233", part: { en: "AP medial oblique foot", ar: "القدم AP المائل الإنسي" }, kv: [60, 70], partial: [55, 75], centre: 65, grid: "non-grid" },
+  // Ankle (S14.5): digital 70 ± 5 kV (analog 60 ± 5), non-grid; the 60–80 kV partial band is an ENGINE TEACHING CHOICE.
+  "ankle-ap": { page: "p.239", part: { en: "AP ankle", ar: "الكاحل AP" }, kv: [65, 75], partial: [60, 80], centre: 70, grid: "non-grid" },
+  "ankle-lateral": { page: "p.242", part: { en: "lateral ankle", ar: "الكاحل الجانبي" }, kv: [65, 75], partial: [60, 80], centre: 70, grid: "non-grid" },
   "knee-ap": { page: "p.246", part: { en: "AP knee", ar: "الركبة AP" }, kv: [70, 80], partial: [65, 85], centre: 75, grid: "non-grid (average knee; a grid is used above 10 cm)" },
   "knee-lateral": { page: "p.249", part: { en: "lateral knee", ar: "الركبة الجانبية" }, kv: [70, 80], partial: [65, 85], centre: 75, grid: "non-grid (average knee; a grid is used above 10 cm)" },
 };
@@ -119,4 +122,6 @@ export const lowerLimbTechnique: Record<LowerLimbKind, AnyExamTechniqueProfile> 
   "foot-oblique": lowerLimbProfile("foot-oblique"),
   "knee-ap": lowerLimbProfile("knee-ap"),
   "knee-lateral": lowerLimbProfile("knee-lateral"),
+  "ankle-ap": lowerLimbProfile("ankle-ap"),
+  "ankle-lateral": lowerLimbProfile("ankle-lateral"),
 };

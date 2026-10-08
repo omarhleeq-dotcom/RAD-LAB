@@ -338,6 +338,57 @@ export const FOOT_AP_FIGURE: DetectorFigure = {
 
 export const FOOT_OBLIQUE_FIGURE: DetectorFigure = { ...FOOT_AP_FIGURE };
 
+// Ankle (S14.5): the figure draws the LEFT ankle (inferred, O76). AP labels the lateral side (the fibula, the viewer's RIGHT for a left ankle) and the medial side; the lateral
+// labels the front of the foot (the viewer's left) and the back (the heel, the viewer's right) (all guides ON).
+function AnkleApOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneAnkle");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("medialSide")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("lateralSide")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+function AnkleLateralOrientation({ W, showGuides }: OrientationProps) {
+  const ts = useTranslations("sceneAnkle");
+  return (
+    showGuides && (
+      <>
+        <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("front")}</SceneLabel>
+        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("back")}</SceneLabel>
+      </>
+    )
+  );
+}
+
+const ankleAlt = (ts: (key: string, values?: Record<string, string>) => string, s: SimulationSettings) =>
+  ts(s.projection === "ankle-lateral" ? "altAnkleLateral" : "altAnkleAp", { deg: String(s.rotationDeg) });
+
+export const ANKLE_AP_FIGURE: DetectorFigure = {
+  altKey: "positioningAnkle.alt",
+  midlineKey: "positioningAnkle.midline",
+  alt: ankleAlt,
+  Drawing: LowerLimbDrawing,
+  Orientation: AnkleApOrientation,
+  axis: { top: "sceneAnkle.tibia", bottom: "sceneAnkle.foot" },
+  crispMarker: true,
+  marginGuideLabels: true,
+};
+
+export const ANKLE_LATERAL_FIGURE: DetectorFigure = {
+  altKey: "positioningAnkle.alt",
+  midlineKey: "positioningAnkle.midlineLateral",
+  alt: ankleAlt,
+  Drawing: LowerLimbDrawing,
+  Orientation: AnkleLateralOrientation,
+  axis: { top: "sceneAnkle.tibia", bottom: "sceneAnkle.foot" },
+  crispMarker: true,
+  marginGuideLabels: true,
+};
+
 /** The registry. The AP supine scene draws the PA frontal figure on the detector view (its own part is the side view). */
 export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "chest-pa": CHEST_PA_FIGURE,
@@ -352,4 +403,6 @@ export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "foot-oblique": FOOT_OBLIQUE_FIGURE,
   "knee-ap": KNEE_AP_FIGURE,
   "knee-lateral": KNEE_LATERAL_FIGURE,
+  "ankle-ap": ANKLE_AP_FIGURE,
+  "ankle-lateral": ANKLE_LATERAL_FIGURE,
 };

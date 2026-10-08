@@ -29,6 +29,9 @@ export const PROJECTIONS: Readonly<Record<string, ProjectionSpec>> = {
   // Knee (S14.4, right side): the wording namespace is the projection id itself (`radiograph.knee-ap.*` / `radiograph.knee-lateral.*`).
   "knee-ap": { wordingNs: "knee-ap" },
   "knee-lateral": { wordingNs: "knee-lateral" },
+  // Ankle (S14.5, left side inferred): the wording namespace is the projection id itself (`radiograph.ankle-ap.*` / `radiograph.ankle-lateral.*`).
+  "ankle-ap": { wordingNs: "ankle-ap" },
+  "ankle-lateral": { wordingNs: "ankle-lateral" },
 };
 
 export const isRegisteredProjection = (id: string): boolean => Object.hasOwn(PROJECTIONS, id);

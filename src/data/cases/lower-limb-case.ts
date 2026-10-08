@@ -12,6 +12,8 @@ import { LOWER_LIMB_RADIOGRAPHS } from "./lower-limb-radiographs";
  * case text calls the image a teaching approximation; none is a person from the chest cases (S12-4). The patient is an AVERAGE build (knee AP: ASIS-to-table
  * about 21 cm) with an AVERAGE arch (class C, S14.4-3), so the tube-angle targets are Bontrager's average-patient values. The attenuation is the reference
  * value 1 (not measured).
+ * S14.5: the two ANKLE cases are a LEFT ankle (the side is inferred, O76) of a 24-year-old male: age and sex come from the image descriptions only (S14.5-6), the
+ * text below adds no other patient data and no pathology wording.
  */
 type CaseText = { en: string; ar: string };
 
@@ -80,6 +82,38 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
     },
     attenuationLabel: { en: "Average adult foot (reference attenuation; provisional)", ar: "قدم بالغ متوسطة (توهين مرجعي؛ مؤقت)" },
   },
+  "ankle-ap": {
+    description: {
+      en: "24-year-old male, lying supine on the table with the legs extended.",
+      ar: "ذكر عمره ٢٤ عامًا، مستلقٍ على ظهره على الطاولة وساقاه ممدودتان.",
+    },
+    scenario: {
+      en: "Continuing pain in the left ankle. An AP ankle X-ray has been requested.",
+      ar: "ألم مستمر في الكاحل الأيسر. طُلبت أشعة للكاحل بإسقاط AP.",
+    },
+    request: { en: "Ankle X-ray, left, AP (leg extended).", ar: "أشعة الكاحل، اليسرى، إسقاط AP (الساق ممدودة)." },
+    condition: {
+      en: "Cooperative. The patient has arrived with the leg slightly turned.",
+      ar: "متعاون. وصل المريض وساقه مائلة قليلًا.",
+    },
+    attenuationLabel: { en: "Average adult ankle (reference attenuation; provisional)", ar: "كاحل بالغ متوسط (توهين مرجعي؛ مؤقت)" },
+  },
+  "ankle-lateral": {
+    description: {
+      en: "24-year-old male, lying on his left side on the table.",
+      ar: "ذكر عمره ٢٤ عامًا، مستلقٍ على جانبه الأيسر على الطاولة.",
+    },
+    scenario: {
+      en: "Continuing pain in the left ankle. A lateral ankle X-ray has been requested.",
+      ar: "ألم مستمر في الكاحل الأيسر. طُلبت أشعة للكاحل بالإسقاط الجانبي.",
+    },
+    request: { en: "Ankle X-ray, left, lateral (lateral recumbent, foot dorsiflexed).", ar: "أشعة الكاحل، اليسرى، إسقاط جانبي (استلقاء جانبي، القدم مثنية ظهريًّا)." },
+    condition: {
+      en: "Cooperative. The patient has arrived with the leg slightly turned.",
+      ar: "متعاون. وصل المريض وساقه مائلة قليلًا.",
+    },
+    attenuationLabel: { en: "Average adult ankle (reference attenuation; provisional)", ar: "كاحل بالغ متوسط (توهين مرجعي؛ مؤقت)" },
+  },
 };
 
 // Deliberately NOT the answer: the other projection of the pair, turned, off-centre, a fully open field, no marker, SID below the minimum,
@@ -89,6 +123,8 @@ const INITIAL: Record<LowerLimbKind, Pick<SimulationSettings, "projection" | "ro
   "knee-lateral": { projection: "knee-ap", rotationDeg: -7, centralRay: { x: 0.28, y: 0.3 }, tubeAngulationDeg: 0 },
   "foot-ap": { projection: "foot-oblique", rotationDeg: 7, centralRay: { x: 0.28, y: -0.3 }, tubeAngulationDeg: 0 },
   "foot-oblique": { projection: "foot-ap", rotationDeg: 12, centralRay: { x: -0.28, y: -0.3 }, tubeAngulationDeg: 10 },
+  "ankle-ap": { projection: "ankle-lateral", rotationDeg: 7, centralRay: { x: 0.28, y: 0.3 }, tubeAngulationDeg: 8 },
+  "ankle-lateral": { projection: "ankle-ap", rotationDeg: -7, centralRay: { x: 0.28, y: 0.3 }, tubeAngulationDeg: 0 },
 };
 
 export const makeLowerLimbCase = (k: LowerLimbKind): CaseDefinition => {
@@ -98,7 +134,7 @@ export const makeLowerLimbCase = (k: LowerLimbKind): CaseDefinition => {
     id: "adult-demo",
     examId: k,
     provisional: true,
-    patient: { age: 31, sex: "male", description: t.description },
+    patient: { age: k.startsWith("ankle") ? 24 : 31, sex: "male", description: t.description },
     clinicalScenario: t.scenario,
     requestedExamination: t.request,
     patientCondition: t.condition,
@@ -107,7 +143,7 @@ export const makeLowerLimbCase = (k: LowerLimbKind): CaseDefinition => {
       label: t.attenuationLabel,
       evidence: {
         status: "provisional",
-        reference: "S14.4-3; S10b-9; O26",
+        reference: k.startsWith("ankle") ? "S14.5-4; S10b-9; O26" : "S14.4-3; S10b-9; O26",
         note: "The reference attenuation 1 is the model's anchor, not a measured value; no mAs target is claimed.",
       },
     },

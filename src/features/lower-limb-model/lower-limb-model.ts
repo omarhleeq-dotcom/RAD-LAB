@@ -22,6 +22,12 @@
  * KNEE LATERAL (p.249: posterior borders of the femoral condyles superimposed; fibular head overlap): the condyle outline and the fibular-head
  * region are drawn as TWO copies, one for the structures farther from the detector and one for those nearer (x' = ±half·sinθ, 40 % / 60 %),
  * one outline at the base pose; ghosting of whole windows, not occlusion.
+ * ANKLE AP (S14.5, p.239: no rotation = medial mortise open, lateral mortise closed, some overlap of the distal fibula by the tibia and talus): the
+ * column anchors of the malleoli and the plafond edges move by depth (the lateral malleolus lies further back than the medial one, so the line between
+ * the malleoli is about 15° from parallel), ONE smooth warp of the leg and the ankle together: the clear spaces beside the talus open and close, but the
+ * talus and the tibia are not displaced independently and the overlap of the distal fibula is NOT drawn (limits named in the effect text; one baseline image).
+ * ANKLE LATERAL (p.242: distal fibula over the posterior half of the tibia; tibiotalar joint open with a uniform space): TWO copies (far side 40 % / near side
+ * 60 %) of the distal fibula / posterior tibia window and of the tibiotalar joint window, as the knee lateral; ghosting of whole windows, not occlusion.
  */
 import type { LowerLimbModelId } from "@/domain/radiograph";
 import { TUNING } from "@/features/radiograph/tuning";
@@ -158,6 +164,49 @@ export function kneeLateralCopies(value: number): { condyles: ModelCopy[]; head:
     { du: (-half * Math.sin(th)) / KNEE_LATERAL_WIDTH_PX, w: KNEE_LATERAL_COPY_WEIGHTS.near },
   ];
   return { condyles: pair(KNEE_LATERAL_HALF_PX.condyles), head: pair(KNEE_LATERAL_HALF_PX.fibularHead) };
+}
+
+// ───────────────────────── ankle AP (S14.5) ─────────────────────────
+
+/**
+ * Columns of the AP ankle baseline (A-031, 728 px wide) that the rotation displaces, read by eye (illustrative, O80): the medial malleolus (medial edge), the
+ * medial edge of the plafond / talar dome, the lateral edge of the plafond at the fibular notch, and the lateral malleolus (lateral edge). The depth Z is
+ * relative to the leg's long axis (+ toward the viewer): the lateral malleolus lies further back than the medial one (Bontrager p.239: about 15°).
+ * SIGN (defined by the RESULT IMAGE, never mirrored by RTL; feedback is magnitude-only): positive = the medial structures move toward the viewer's RIGHT and the
+ * lateral ones toward the LEFT (the two sides approach each other), negative = they part.
+ */
+export const ANKLE_AP_MODEL = {
+  widthPx: 728,
+  heightPx: 1631,
+  axis: 360,
+  columns: [
+    { x: 90, Z: 70 }, // medial malleolus (medial edge)
+    { x: 205, Z: 20 }, // medial plafond / talar dome edge
+    { x: 470, Z: -30 }, // lateral plafond edge at the fibular notch
+    { x: 640, Z: -75 }, // lateral malleolus (lateral edge)
+  ] as Column[],
+} as const;
+
+/** AP ankle result-image / scene input: the displacement anchors of the whole image (fractions of the image width, sorted by u). */
+export function ankleApAnchors(value: number): WarpAnchor[] {
+  const m = ANKLE_AP_MODEL;
+  return monotone(m.columns.map((c) => ({ u: c.x / m.widthPx, du: colShiftPx(m.axis, c, value) / m.widthPx })));
+}
+
+// ───────────────────────── ankle lateral (S14.5) ─────────────────────────
+
+/** Half-distances (image px of A-033) of the far-side and near-side structures from the rotation axis, read by eye (illustrative, O80). */
+export const ANKLE_LATERAL_HALF_PX = { malleolus: 130, joint: 70 } as const;
+export const ANKLE_LATERAL_WIDTH_PX = 932;
+
+/** Lateral ankle result-image input: per band [distal fibula / posterior tibia, tibiotalar joint] the copies to blend (fraction of the image width; all at 0 at the base pose). */
+export function ankleLateralCopies(value: number): { malleolus: ModelCopy[]; joint: ModelCopy[] } {
+  const th = lowerLimbDrawnRad(value);
+  const pair = (half: number): ModelCopy[] => [
+    { du: (half * Math.sin(th)) / ANKLE_LATERAL_WIDTH_PX, w: KNEE_LATERAL_COPY_WEIGHTS.far },
+    { du: (-half * Math.sin(th)) / ANKLE_LATERAL_WIDTH_PX, w: KNEE_LATERAL_COPY_WEIGHTS.near },
+  ];
+  return { malleolus: pair(ANKLE_LATERAL_HALF_PX.malleolus), joint: pair(ANKLE_LATERAL_HALF_PX.joint) };
 }
 
 /** True for the models whose console value is the absolute angle rather than a turn about 0 (the foot oblique). */

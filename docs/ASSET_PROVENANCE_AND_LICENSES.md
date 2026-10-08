@@ -624,6 +624,87 @@ Four images of **right** limbs were attached by the owner (A-022, A-024, A-026, 
 | File facts | `image/jpeg`, 1077 × 1960 px, 395,448 bytes |
 | Notes | Landmarks (`src/data/cases/lower-limb-radiographs.ts`, `src/features/positioning/lower-limb-outlines.json`) were read by eye (O62). The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
 
+### I. Ankle baselines (S14.5, 2026-10-08)
+Two images of the same patient's ankle (a 24-year-old male after a sprain, no injuries seen, 24 October 2017) were attached by the owner (A-030, A-032), with screenshots of both Commons file pages: author **Mikael Häggström**, source "Own work", **CC0 1.0 Universal**. The Commons API request was **HTTP 429 on the request and on its one retry**, so they are recorded as **owner-verified** and **not** compared with the Commons SHA-1 (open item O75). The side is **not stated** on the pages; **LEFT is inferred** from the fibula position on the AP image (O76). The lateral file's description calls it "somewhat suboptimal by not seeing straight through the ankle joint" (O78). Commercial-compatible (CC0, S10-3): yes, if the owner's statement holds. Not registered: any overlay art, scene image or font.
+
+### A-030 — Normal ankle, AP (frontal), left ankle (inferred): unmodified master (S14.5)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal ankle, AP (frontal), left ankle (inferred): unmodified master |
+| Asset type | Radiograph (adult ankle, AP / frontal), JPEG |
+| Original filename | **Not read** (the Commons page title was not retrieved: the API answered HTTP 429, O75). The master is stored under the descriptive name `ankle-ap-owner-attached.jpg` |
+| Creator / author | Mikael Häggström (as shown on the file page in the owner's screenshots: "Own work", author Mikael Häggström). **Not verified through Commons API** |
+| Original organization / source | Wikimedia Commons; 24 Oct 2017 (file page, via the owner) |
+| Original source URL | **Not read** (O75) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner's screenshots of the file page show the CC0 1.0 Universal Public Domain Dedication, "can copy, modify, distribute and perform the work, even for commercial purposes"). Not confirmed through the Commons API (HTTP 429 on the request and its one retry) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/ankle/ankle-ap-owner-attached.jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None** to the master (byte-identical to the file attached to the S14.5 session) |
+| Date / method of verification | 2026-10-08. The owner attached the original and screenshots of the Commons file page; checksums computed locally. Commons API: HTTP 429 on the one request and the one retry (no workaround). Re-verification = O75 |
+| Checksum | SHA-1 `798b5775be4e6683a82617423f531d94197ce23f`; SHA-256 `c386843f8d030d49c2d56f4f748dda97286293888bbff15a03fbc245e60a4fac` |
+| File facts | `image/jpeg`, 728 × 1631 px, 324,767 bytes, JFIF only (no EXIF) |
+| De-identification evidence | Full image reviewed at high contrast: no burned-in text, marker, ruler, device or identifier seen. A **bright ringing strip along the left edge** (≈ 8 columns in the lower half, 2 in the upper) and a **1-px bright last column at the right edge** (rows 759–1630) are edge artefacts, repaired in the web copy (O79). Description (file page): ankle of a 24-year-old male, frontal projection, continuing pain 3 weeks after a sprain, no injuries seen. |
+| Notes | Distal tibia-fibula (≈ 13 cm above the joint at the assumed scale), both malleoli, talus and the upper calcaneus are inside; the proximal half of the metatarsals is **not** shown (O77). Side inferred LEFT (fibula on the viewer's right, O76). Same author as the wrist, hand, elbow, knee and foot images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+
+### A-031 — RAD-LAB ankle-ap educational baseline: web copy (derived from A-030) (S14.5)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB ankle-ap educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-030. Derivation: RAD-LAB (`scripts/derive-ankle-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-030; owner-verified) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
+| Local project path | `public/images/ankle/ankle-ap-baseline.jpg` (the file the app loads; **created in Phase B**) |
+| RAD-LAB modifications | **Edge artefact repaired** (the master's left 8 columns overwritten by the nearest clean column, the 1-px bright last column overwritten by its neighbour; outside every required region). No fill, no crop. 8-bit greyscale, JPEG quality 88, no metadata. |
+| Date / method of verification | 2026-10-08. Reproducible: `python3 -I scripts/derive-ankle-baselines.py` (checks the master's SHA-1 first and refuses a master with ICC / XMP / comment data or any EXIF). Output re-read: no EXIF, JFIF only. |
+| Checksum | SHA-1 `9ab6577e7801b86328e893009001df634b922d38`; SHA-256 `b8fb5b74e3b39ba1c49a4a10e6bd8d3f664443910850e81786bbd39a4b156806` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 728 × 1631 px, 233,291 bytes |
+| Notes | Landmarks were read by eye (O80). The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
+### A-032 — Normal ankle, lateral, left ankle (inferred): unmodified master (S14.5)
+
+| Field | Value |
+|---|---|
+| Asset name | Normal ankle, lateral, left ankle (inferred): unmodified master |
+| Asset type | Radiograph (adult ankle, lateral), JPEG |
+| Original filename | **Not read** (the Commons page title was not retrieved: the API answered HTTP 429, O75). The master is stored under the descriptive name `ankle-lateral-owner-attached.jpg` |
+| Creator / author | Mikael Häggström (as shown on the file page in the owner's screenshots: "Own work", author Mikael Häggström). **Not verified through Commons API** |
+| Original organization / source | Wikimedia Commons; 24 Oct 2017 (file page, via the owner) |
+| Original source URL | **Not read** (O75) |
+| License | **CC0 1.0 Universal — OWNER-VERIFIED** (the owner's screenshots of the file page show the CC0 1.0 Universal Public Domain Dedication, "can copy, modify, distribute and perform the work, even for commercial purposes"). Not confirmed through the Commons API (HTTP 429 on the request and its one retry) |
+| License URL | <https://creativecommons.org/publicdomain/zero/1.0/> |
+| Modification / redistribution / commercial use | Permitted (CC0) if the owner's statement holds |
+| Attribution legally required | No. A voluntary credit line is shown under the result image (EN + AR) |
+| Local project path | `assets/source/ankle/ankle-lateral-owner-attached.jpg` (provenance master; **not** served) |
+| RAD-LAB modifications | **None** to the master (byte-identical to the file attached to the S14.5 session) |
+| Date / method of verification | 2026-10-08. The owner attached the original and screenshots of the Commons file page; checksums computed locally. Commons API: HTTP 429 on the one request and the one retry (no workaround). Re-verification = O75 |
+| Checksum | SHA-1 `566abbd5601cdfd3ba5ce7816b8754a3fc3d268f`; SHA-256 `21fe7a5e39ad71e37593d4b9ef522d844748bfde1ee55128b3db05aaae5336e0` |
+| File facts | `image/jpeg`, 932 × 1678 px, 394,422 bytes, JFIF only (no EXIF) |
+| De-identification evidence | Full image reviewed at high contrast: no burned-in text, marker, ruler, device or identifier seen. A smooth bright gradient at the left edge (≈ 10 columns, soft tissue) without a step and a slightly brighter top row were checked and judged natural: **not repaired** (O79). Description (file page): same patient and date as A-030; lateral projection, "albeit somewhat suboptimal by not seeing straight through the ankle joint"; no injuries seen. |
+| Notes | Distal tibia and fibula (the fibula overlapped by the tibia), talus, calcaneus and the heel soft tissue are inside; the navicular and cuboid are only partly at the left edge and the 5th metatarsal tuberosity is not shown (O77). The residual obliquity is a documented limit (O78). Same person as A-030 (per the file page). A teaching approximation, never ground truth. |
+
+### A-033 — RAD-LAB ankle-lateral educational baseline: web copy (derived from A-032) (S14.5)
+
+| Field | Value |
+|---|---|
+| Asset name | RAD-LAB ankle-lateral educational baseline |
+| Asset type | Radiograph, derived JPEG (8-bit greyscale) |
+| Creator / author | As A-032. Derivation: RAD-LAB (`scripts/derive-ankle-baselines.py`). |
+| License | CC0 1.0 Universal (inherited from A-032; owner-verified) |
+| Modification / redistribution / commercial use | Permitted (CC0) |
+| Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
+| Local project path | `public/images/ankle/ankle-lateral-baseline.jpg` (the file the app loads; **created in Phase B**) |
+| RAD-LAB modifications | **None to the pixels** (the master's smooth left-edge gradient has no step, so no repair was made); re-encoded as 8-bit greyscale JPEG quality 88, no metadata. |
+| Date / method of verification | 2026-10-08. Reproducible: `python3 -I scripts/derive-ankle-baselines.py`. Output re-read: no EXIF, JFIF only. |
+| Checksum | SHA-1 `2e971eced516de4fa54d5994de129170be4fdc62`; SHA-256 `db5c67ba2320a59d7ed0a9c43ab4ed1314b6faf9a5e4cd68e35339c85a6e6946` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 932 × 1678 px, 286,952 bytes |
+| Notes | Landmarks were read by eye (O80). The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
+
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.

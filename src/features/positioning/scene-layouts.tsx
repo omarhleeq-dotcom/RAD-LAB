@@ -12,7 +12,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { ApSupineView } from "./ApSupineView";
 import { ElbowSideView } from "./ElbowSideView";
-import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, ELBOW_AP_FIGURE, ELBOW_LATERAL_FIGURE, FOOT_AP_FIGURE, FOOT_OBLIQUE_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, KNEE_AP_FIGURE, KNEE_LATERAL_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
+import { ANKLE_AP_FIGURE, ANKLE_LATERAL_FIGURE, CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, ELBOW_AP_FIGURE, ELBOW_LATERAL_FIGURE, FOOT_AP_FIGURE, FOOT_OBLIQUE_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, KNEE_AP_FIGURE, KNEE_LATERAL_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
 import { HandSideView } from "./HandSideView";
 import { LowerLimbSideView } from "./LowerLimbSideView";
 import { ApPatientCues, LateralPatientCues, PatientCues, type CuesProps } from "./PatientCues";
@@ -143,7 +143,7 @@ export const ELBOW_AP_LAYOUT: SceneLayout = elbowLayout(ELBOW_AP_FIGURE, "Ap");
 export const ELBOW_LATERAL_LAYOUT: SceneLayout = elbowLayout(ELBOW_LATERAL_FIGURE, "Lateral");
 
 /** Knee and foot (S14.4): the detector view draws the right limb and the second view is a SIDE view of the table set-up with the tilted tube (no chest plan view, no patient-cue panel). */
-const lowerLimbLayout = (figure: DetectorFigure, ns: "Knee" | "Foot", kind: "Ap" | "Lateral" | "Oblique"): SceneLayout => ({
+const lowerLimbLayout = (figure: DetectorFigure, ns: "Knee" | "Foot" | "Ankle", kind: "Ap" | "Lateral" | "Oblique"): SceneLayout => ({
   figure,
   SecondView: LowerLimbSideView,
   texts: {
@@ -161,3 +161,6 @@ export const KNEE_AP_LAYOUT: SceneLayout = lowerLimbLayout(KNEE_AP_FIGURE, "Knee
 export const KNEE_LATERAL_LAYOUT: SceneLayout = lowerLimbLayout(KNEE_LATERAL_FIGURE, "Knee", "Lateral");
 export const FOOT_AP_LAYOUT: SceneLayout = lowerLimbLayout(FOOT_AP_FIGURE, "Foot", "Ap");
 export const FOOT_OBLIQUE_LAYOUT: SceneLayout = lowerLimbLayout(FOOT_OBLIQUE_FIGURE, "Foot", "Oblique");
+/** Ankle (S14.5): the same layout (detector view of the LEFT ankle + the side view of the table set-up). */
+export const ANKLE_AP_LAYOUT: SceneLayout = lowerLimbLayout(ANKLE_AP_FIGURE, "Ankle", "Ap");
+export const ANKLE_LATERAL_LAYOUT: SceneLayout = lowerLimbLayout(ANKLE_LATERAL_FIGURE, "Ankle", "Lateral");

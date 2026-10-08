@@ -123,7 +123,9 @@
       "foot-ap": "Foot AP (dorsoplantar)",
       "foot-oblique": "Foot AP medial oblique",
       "knee-ap": "Knee AP",
-      "knee-lateral": "Knee lateral"
+      "knee-lateral": "Knee lateral",
+      "ankle-ap": "Ankle AP",
+      "ankle-lateral": "Ankle lateral"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -763,6 +765,62 @@
           "desc": "The projection you selected is not simulated in this exam. The lateral knee reference appearance is shown for layout only."
         }
       }
+    },
+    "ankle-ap": {
+      "alt": "Simulated educational AP ankle radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The AP ankle reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the AP ankle reference appearance.",
+      "altFindings": {
+        "rotation": "the medial and lateral parts of the ankle mortise no longer as in a true AP, with the overlap of the distal fibula changed, from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the talus and the heel bone) and bone detail",
+        "projection": "the selected projection is not simulated; the AP ankle appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference AP ankle appearance is shown with no simulated faults. It is a teaching approximation: a real adult ankle (a 24-year-old male, per the file description), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → mortise spaces change",
+          "desc": "In a true AP ankle the medial part of the ankle mortise is open, the lateral part is closed and the distal fibula is partly overlapped by the tibia and the talus (Bontrager p.239). With rotation the columns of the malleoli and the plafond edges move by different amounts, so the clear spaces beside the talus open or close. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (one smooth horizontal warp of the leg and ankle together; the overlap of the distal fibula is not drawn), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the talus and the heel bone) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The AP ankle reference appearance is shown for layout only."
+        }
+      }
+    },
+    "ankle-lateral": {
+      "alt": "Simulated educational lateral ankle radiograph rendered from your settings; not a diagnostic image.",
+      "notRepresentative": "This projection is not simulated here. The lateral ankle reference appearance is shown for layout only and does not represent your selected projection.",
+      "altReference": "No simulated image-quality fault is visible: this is the lateral ankle reference appearance.",
+      "altFindings": {
+        "rotation": "the distal fibula no longer over the posterior half of the tibia and the outline of the tibiotalar joint doubled from rotation",
+        "low-penetration": "reduced visibility of the dense bones (the talus and the heel bone) and bone detail",
+        "projection": "the selected projection is not simulated; the lateral ankle appearance is shown for layout only"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "The reference lateral ankle appearance is shown with no simulated faults. It is a teaching approximation: a real adult ankle (a 24-year-old male, per the file description), not the chest cases' patient. It is not a standard every patient will match."
+        },
+        "rotation": {
+          "title": "Rotation → fibula and joint outlines doubled",
+          "desc": "In a true lateral ankle the distal fibula lies over the posterior half of the tibia, the lateral malleolus is seen through the distal tibia and the talus and the tibiotalar joint is open with a uniform space (Bontrager p.242). With rotation the fibula and the joint outline are drawn twice, a far-side copy and a near-side copy, so the outlines are doubled. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (whole windows drawn twice, not occlusion), not a measurement of degrees."
+        },
+        "low-penetration": {
+          "title": "Low penetration → less bone detail",
+          "desc": "With low kVp the dense bones (the talus and the heel bone) show less internal detail. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement."
+        },
+        "projection": {
+          "title": "Projection not simulated",
+          "desc": "The projection you selected is not simulated in this exam. The lateral ankle reference appearance is shown for layout only."
+        }
+      }
     }
   },
   "modality": {
@@ -860,7 +918,10 @@
     "altFootSide": "Side view of the set-up: the patient lying on the table with the knee bent and the sole on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm.",
     "altKneeAp": "The right knee is drawn on the detector as for an AP projection with the leg extended, the femur toward the top and the lateral side (the fibula) on the viewer's left. Rotation is set to {deg}°.",
     "altKneeLateral": "The right knee is drawn on the detector as for a lateral (mediolateral) projection with the knee flexed, the femur toward the top and the front of the knee on the viewer's left. Rotation is set to {deg}°.",
-    "altKneeSide": "Side view of the set-up: the patient lying on the table, the knee on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm."
+    "altKneeSide": "Side view of the set-up: the patient lying on the table, the knee on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm.",
+    "altAnkleAp": "The left ankle is drawn on the detector as for an AP projection with the leg extended, the leg toward the top and the lateral side (the fibula) on the viewer's right. Rotation is set to {deg}°.",
+    "altAnkleLateral": "The left ankle is drawn on the detector as for a lateral projection with the foot dorsiflexed, the leg toward the top, the front of the foot on the viewer's left and the heel on the right. Rotation is set to {deg}°.",
+    "altAnkleSide": "Side view of the set-up: the patient lying on the table, the ankle on the detector, the tube above with the central ray tilted {angle}° from the vertical (+ = toward the feet). Projection: {projection}. SID {sid} cm."
   },
   "sceneWrist": {
     "ulna": "Ulna",
@@ -988,6 +1049,34 @@
     "femur": "Femur",
     "tibia": "Tibia",
     "target": "Knee joint",
+    "apName": "AP",
+    "lateralName": "lateral",
+    "endView": "End view",
+    "endAngleTurn": "Turn {deg}°"
+  },
+  "positioningAnkle": {
+    "alt": "Interactive schematic of the detector with the left ankle, the collimated field, the central-ray target and the side marker.",
+    "midline": "Long axis of the leg",
+    "midlineLateral": "Mid-ankle line",
+    "detectorCaptionAp": "Detector view as displayed: left ankle, AP, leg extended (the leg toward the top, the lateral side — the fibula — on the viewer's right)",
+    "detectorCaptionLateral": "Detector view as displayed: left ankle, lateral, foot dorsiflexed (the leg toward the top, the front of the foot on the viewer's left and the heel on the right)",
+    "sideViewCaption": "Side view of the table set-up",
+    "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The leg position, the knee flexion and the foot dorsiflexion of the lateral ankle, the grid and shielding are shown as context only: they are not scored in this version.",
+    "rotationHelpAp": "Rotation of the leg about its long axis (0 = the leg not rotated, the line between the malleoli about 15° from parallel to the detector). Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-AP cues (the medial mortise open, the lateral mortise closed).",
+    "rotationHelpLateral": "Rotation of the leg about its long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-lateral cues (the distal fibula over the posterior half of the tibia, the tibiotalar joint open).",
+    "markerConvention": "Marker: choose the letter of the patient's side (this is the LEFT ankle) and place it on the margin of the field, clear of the ankle. No left/right half of the image is checked for a single limb.",
+    "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the ankle.",
+    "rotationAp": "Ankle rotation (turn of the leg)",
+    "rotationLateral": "Ankle rotation (turn of the leg)"
+  },
+  "sceneAnkle": {
+    "lateralSide": "Lateral side",
+    "medialSide": "Medial side",
+    "front": "Front",
+    "back": "Back",
+    "tibia": "Tibia",
+    "foot": "Foot",
+    "target": "Ankle joint",
     "apName": "AP",
     "lateralName": "lateral",
     "endView": "End view",
