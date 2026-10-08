@@ -174,6 +174,15 @@ Reference: [`RAD-LAB_Medical_Reference_Wrist.md`](RAD-LAB_Medical_Reference_Wris
 | **S14.4-R12** | **Case choices (class C):** 31-year-old male for the knees (Commons snippet), the foot cases the same adult description (unconfirmed, O65); average build (ASIS-to-table about 21 cm) and average arch; right limb; critical findings = missing / wrong-side marker (letter only); weights 28 / 22 / 17 / 22 / 11 | S14.4-3, S14.4-12 | Weights, case wording? | E / O |
 | **S14.4-R13** | **Images (S14.4-17):** masters carry a bright edge strip and burned-in text; web copies = fills / crops (foot AP 1061 × 2405, oblique 1077 × 1960); faint patches may remain at high contrast; the knee lateral shows a minimal osteophyte at the superior patellofemoral rim (per its Commons description) and a flexion of ≈ 45° vs Bontrager 20°–30° (O57, O58) | A-022 … A-029 | Acceptable baselines? | E |
 
+### 2e. Session 14.5 additions (ankle AP / lateral, left side inferred; Phase A rows — the build rows are added with the code; all provisional)
+| ID | Item | Source / basis | Question for the reviewer | Who |
+|---|---|---|---|---|
+| **S14.5-R1** | **Classification.** SOURCE-BACKED (Bontrager, as supplied by the owner): SID minimum 102 cm; 24 × 30 cm portrait, non-grid; digital 70 ± 5 kV; CR perpendicular (AP midway between the malleoli, lateral at the medial malleolus); AP true position = lower leg not rotated, intermalleolar line not parallel to the receptor (lateral malleolus about 15° more posterior); lateral knee flexion about 45°, foot dorsiflexed as tolerated; image criteria (medial mortise open / lateral closed; fibula over the posterior half of the tibia; tibiotalar joint open) | BONTRAGER-9 p.239, p.242 | Values match the book? | E |
+| **S14.5-R2** | **Side LEFT is inferred** from the fibula position on the AP image (the Commons pages do not state it) | A-030, O76 | Confirm the side. | E |
+| **S14.5-R3** | **Baselines: a 24-year-old male, 3 weeks after a sprain, no injuries seen; the lateral is \"somewhat suboptimal\" (not straight through the joint)** — accepted as documented limits; no pathology wording in the product | Commons descriptions via the owner (A-030, A-032, O78) | Acceptable as normal teaching images? | E |
+| **S14.5-R4** | **Coverage gaps:** the AP lacks the proximal half of the metatarsals; the lateral lacks a clear 5th metatarsal tuberosity (navicular / cuboid partial); the required regions are limited to what the images show | O77 | Acceptable? | E |
+| **S14.5-R5** | kV partial band 60–80, SID bands, centring and tube-angle tolerances, excess-collimation margins, required regions, rotation ±2° / ±5°, manual reference point: **teaching choices** (values fixed in the build, to be added here with the code) | none (class B) | Acceptable? | E / P |
+
 ## 3. PA discrepancies (O11)
 Provisional decisions S10b-1…3: kV range (EC / WHO / ACR vs the repo's 100–150 band), AEC chamber mapping (EC right lateral chamber vs the repo's detector-view left/right), rotation sign (WHO p.28 direction not interpreted). Questions are in rows S10b-1, S10b-2, S10b-3 above.
 
