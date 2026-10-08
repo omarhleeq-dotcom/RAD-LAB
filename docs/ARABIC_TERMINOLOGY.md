@@ -289,4 +289,18 @@ Keys: `messages/ar.json` → `scene.altKnee*`, `scene.altFoot*`, `sceneKnee.*`, 
 | Front / back (of the knee) | الأمام / الخلف | knee lateral scene labels |
 | ASIS-to-table distance | المسافة بين الشوكة الحرقفية الأمامية العليا والطاولة | knee AP case and tube-angle text |
 | End view | منظر من الطرف | side-view gauge |
+
+### S14.5 ankle terms (DRAFT, machine-assisted; not reviewed; receptor = «الكاشف»)
+| English | Arabic (draft) | Where |
+|---|---|---|
+| Ankle (joint / region) | مفصل الكاحل / الكاحل | titles, case text, scene labels |
+| Talus | عظم الكاحل | image and effect texts (the bone; the joint is «مفصل الكاحل») |
+| Medial / lateral malleolus | الكعب الإنسي / الكعب الوحشي | AP texts |
+| Ankle mortise | تجويف مفصل الكاحل | AP rotation text |
+| Tibiotalar joint | مفصل الظنبوب والكاحل | lateral rotation text |
+| Dorsiflexed foot | القدم مثنية ظهريًّا | lateral request, captions |
+| Heel bone | عظم العقب | effect texts |
+| Foot (bottom axis label) | القدم | detector axis |
+Question for the AR reviewer: «الكاحل» names both the joint and the talus in common usage; confirm the split «مفصل الكاحل» / «عظم الكاحل».
+
 Questions for the AR reviewer: «الظنبوب» vs «القصبة»; «الكاحل» for talus; «السمسمانيات»; «جيب الرسغ» for sinus tarsi; «الأخمص» vs «باطن القدم»; the bottom knee label «الساق» (chosen for layout, not for exactness).

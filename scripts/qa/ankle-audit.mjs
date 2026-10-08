@@ -12,7 +12,7 @@ const EXAM = process.argv[2] ?? "ankle-ap";
 // Settings of a fully correct attempt per exam (cm on the 24 x 30 cm detector; rotation = the exam's own rotation control value; tube = the control value, + = caudad).
 const CFG = {
   "ankle-ap": { projection: "ankle-ap", ns: "positioningAnkle", rotKey: "rotationAp", cx: 0, cy: 15, w: 14.9, h: 21, kvp: 70, rot: 0, badRot: 9, tube: 0, tag: "ankle" },
-  "ankle-lateral": { projection: "ankle-lateral", ns: "positioningAnkle", rotKey: "rotationLateral", cx: 0, cy: 15, w: 17.3, h: 21, kvp: 70, rot: 0, badRot: 9, tube: 0, tag: "ankle" },
+  "ankle-lateral": { projection: "ankle-lateral", ns: "positioningAnkle", rotKey: "rotationLateral", cx: 0, cy: 15, w: 17.8, h: 21, kvp: 70, rot: 0, badRot: 9, tube: 0, tag: "ankle" },
 };
 const C = CFG[EXAM];
 const OUT = process.env.OUT ?? `/tmp/rad-lab-qa-${EXAM}`;

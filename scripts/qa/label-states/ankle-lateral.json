@@ -1,0 +1,7 @@
+{
+  "radios": ["console.projection"],
+  "sliders": {
+    "positioningAnkle.rotationLateral": ["min", 0, "max"],
+    "console.tubeAngulation": ["min", 0, "max"]
+  }
+}

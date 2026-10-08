@@ -660,9 +660,10 @@ Two images of the same patient's ankle (a 24-year-old male after a sprain, no in
 | Modification / redistribution / commercial use | Permitted (CC0) |
 | Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
 | Local project path | `public/images/ankle/ankle-ap-baseline.jpg` (the file the app loads; **created in Phase B**) |
-| RAD-LAB modifications | **Recorded with the file in Phase B** (edge-artefact repair only; EXIF absent; 8-bit greyscale, JPEG quality 88, no metadata). |
-| Date / method of verification | Phase B (reproducible script; the master's SHA-1 is checked first). |
-| Checksum / file facts | Recorded in Phase B. |
+| RAD-LAB modifications | **Edge artefact repaired** (the master's left 8 columns overwritten by the nearest clean column, the 1-px bright last column overwritten by its neighbour; outside every required region). No fill, no crop. 8-bit greyscale, JPEG quality 88, no metadata. |
+| Date / method of verification | 2026-10-08. Reproducible: `python3 -I scripts/derive-ankle-baselines.py` (checks the master's SHA-1 first and refuses a master with ICC / XMP / comment data or any EXIF). Output re-read: no EXIF, JFIF only. |
+| Checksum | SHA-1 `9ab6577e7801b86328e893009001df634b922d38`; SHA-256 `b8fb5b74e3b39ba1c49a4a10e6bd8d3f664443910850e81786bbd39a4b156806` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 728 × 1631 px, 233,291 bytes |
 | Notes | Landmarks were read by eye (O80). The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
 
 ### A-032 — Normal ankle, lateral, left ankle (inferred): unmodified master (S14.5)
@@ -684,7 +685,7 @@ Two images of the same patient's ankle (a 24-year-old male after a sprain, no in
 | Date / method of verification | 2026-10-08. The owner attached the original and screenshots of the Commons file page; checksums computed locally. Commons API: HTTP 429 on the one request and the one retry (no workaround). Re-verification = O75 |
 | Checksum | SHA-1 `566abbd5601cdfd3ba5ce7816b8754a3fc3d268f`; SHA-256 `21fe7a5e39ad71e37593d4b9ef522d844748bfde1ee55128b3db05aaae5336e0` |
 | File facts | `image/jpeg`, 932 × 1678 px, 394,422 bytes, JFIF only (no EXIF) |
-| De-identification evidence | Full image reviewed at high contrast: no burned-in text, marker, ruler, device or identifier seen. A smooth bright gradient at the left edge (≈ 10 columns, soft tissue / ringing) and a bright top row are edge artefacts, repaired in the web copy (O79). Description (file page): same patient and date as A-030; lateral projection, "albeit somewhat suboptimal by not seeing straight through the ankle joint"; no injuries seen. |
+| De-identification evidence | Full image reviewed at high contrast: no burned-in text, marker, ruler, device or identifier seen. A smooth bright gradient at the left edge (≈ 10 columns, soft tissue) without a step and a slightly brighter top row were checked and judged natural: **not repaired** (O79). Description (file page): same patient and date as A-030; lateral projection, "albeit somewhat suboptimal by not seeing straight through the ankle joint"; no injuries seen. |
 | Notes | Distal tibia and fibula (the fibula overlapped by the tibia), talus, calcaneus and the heel soft tissue are inside; the navicular and cuboid are only partly at the left edge and the 5th metatarsal tuberosity is not shown (O77). The residual obliquity is a documented limit (O78). Same person as A-030 (per the file page). A teaching approximation, never ground truth. |
 
 ### A-033 — RAD-LAB ankle-lateral educational baseline: web copy (derived from A-032) (S14.5)
@@ -698,9 +699,10 @@ Two images of the same patient's ankle (a 24-year-old male after a sprain, no in
 | Modification / redistribution / commercial use | Permitted (CC0) |
 | Attribution legally required | No. Voluntary credit line in `RadCase.radiograph.credit` (EN + AR). |
 | Local project path | `public/images/ankle/ankle-lateral-baseline.jpg` (the file the app loads; **created in Phase B**) |
-| RAD-LAB modifications | **Recorded with the file in Phase B** (edge-artefact repair only; EXIF absent; 8-bit greyscale, JPEG quality 88, no metadata). |
-| Date / method of verification | Phase B (reproducible script; the master's SHA-1 is checked first). |
-| Checksum / file facts | Recorded in Phase B. |
+| RAD-LAB modifications | **None to the pixels** (the master's smooth left-edge gradient has no step, so no repair was made); re-encoded as 8-bit greyscale JPEG quality 88, no metadata. |
+| Date / method of verification | 2026-10-08. Reproducible: `python3 -I scripts/derive-ankle-baselines.py`. Output re-read: no EXIF, JFIF only. |
+| Checksum | SHA-1 `2e971eced516de4fa54d5994de129170be4fdc62`; SHA-256 `db5c67ba2320a59d7ed0a9c43ab4ed1314b6faf9a5e4cd68e35339c85a6e6946` (may vary with Pillow / libjpeg version) |
+| File facts | `image/jpeg`, 932 × 1678 px, 286,952 bytes |
 | Notes | Landmarks were read by eye (O80). The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
 
 ### Not external assets (for completeness)

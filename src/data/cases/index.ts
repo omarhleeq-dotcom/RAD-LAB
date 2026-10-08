@@ -8,6 +8,7 @@ import { chestPaAdultDemo } from "./chest-pa-erect";
 import { elbowApAdultDemo } from "./elbow-ap";
 import { elbowLateralAdultDemo } from "./elbow-lateral";
 import { ankleApAdultDemo } from "./ankle-ap";
+import { ankleLateralAdultDemo } from "./ankle-lateral";
 import { kneeLateralAdultDemo } from "./knee-lateral";
 import { kneeApAdultDemo } from "./knee-ap";
 import { footObliqueAdultDemo } from "./foot-oblique";
@@ -18,7 +19,7 @@ import { wristLateralAdultDemo } from "./wrist-lateral";
 import { wristPaAdultDemo } from "./wrist-pa";
 
 /** Registry of case definitions (patient scenarios). Each belongs to an exam in `src/data/exams`. */
-export const CASE_DEFINITIONS: readonly CaseDefinition[] = [chestPaAdultDemo, chestLateralAdultDemo, chestApAdultDemo, wristPaAdultDemo, wristLateralAdultDemo, handPaAdultDemo, handLateralAdultDemo, elbowApAdultDemo, elbowLateralAdultDemo, footApAdultDemo, footObliqueAdultDemo, kneeApAdultDemo, kneeLateralAdultDemo, ankleApAdultDemo];
+export const CASE_DEFINITIONS: readonly CaseDefinition[] = [chestPaAdultDemo, chestLateralAdultDemo, chestApAdultDemo, wristPaAdultDemo, wristLateralAdultDemo, handPaAdultDemo, handLateralAdultDemo, elbowApAdultDemo, elbowLateralAdultDemo, footApAdultDemo, footObliqueAdultDemo, kneeApAdultDemo, kneeLateralAdultDemo, ankleApAdultDemo, ankleLateralAdultDemo];
 
 /**
  * The compatibility view the engine, store and UI consume: every case composed with its exam (`composeCase`
