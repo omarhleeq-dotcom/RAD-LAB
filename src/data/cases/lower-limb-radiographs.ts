@@ -13,16 +13,24 @@ import { lowerLimbImage, type LowerLimbKind } from "../exams/xray/lower-limb-geo
  */
 const credit = (en: string, ar: string): { en: string; ar: string } => ({ en, ar });
 
+const ankle = (k: LowerLimbKind) => k.startsWith("ankle");
+
 const common = (k: LowerLimbKind) => ({
   anatomyBox: { ...lowerLimbImage(k).box },
   // Result canvas at 48 px/cm (S-VIS-1b-5): the masters have 80 (knees) / 100 (foot AP) / 111 (foot oblique) px/cm at the assumed scales (no upscaling);
   // the canvas caps it at 1.8 Mpx (24 × 30 cm -> 48 px/cm fits). The shared 24 px/cm default softened the trabecular detail (O68).
   render: { pxPerCm: 48 },
-  evidence: {
-    status: "educational-simplification" as const,
-    reference: "S14.4-3…10; docs/ASSET_PROVENANCE_AND_LICENSES.md (A-022 … A-029)",
-    note: "Educational appearance baseline of a real normal limb. Not clinical ground truth for any simulated error. Landmarks read by eye; scale assumed; licence owner-verified (O56, O62).",
-  },
+  evidence: ankle(k)
+    ? {
+        status: "educational-simplification" as const,
+        reference: "S14.5-3…6; docs/ASSET_PROVENANCE_AND_LICENSES.md (A-030 … A-033)",
+        note: "Educational appearance baseline of a real adult ankle (left side inferred). Not clinical ground truth for any simulated error. Landmarks read by eye; scale assumed; licence owner-verified (O75, O80).",
+      }
+    : {
+        status: "educational-simplification" as const,
+        reference: "S14.4-3…10; docs/ASSET_PROVENANCE_AND_LICENSES.md (A-022 … A-029)",
+        note: "Educational appearance baseline of a real normal limb. Not clinical ground truth for any simulated error. Landmarks read by eye; scale assumed; licence owner-verified (O56, O62).",
+      },
 });
 
 const zone = (cu: number, cv: number, ru: number, rv: number): ImageEllipse => ({ cu, cv, ru, rv });
@@ -123,9 +131,59 @@ export const FOOT_OBLIQUE_RADIOGRAPH: RadiographAssetSpec = {
   },
 };
 
+export const ANKLE_AP_RADIOGRAPH: RadiographAssetSpec = {
+  id: "ankle-ap-baseline",
+  src: "/images/ankle/ankle-ap-baseline.jpg",
+  widthPx: 728,
+  heightPx: 1631,
+  projection: "ankle-ap",
+  registryIds: ["A-030", "A-031"],
+  credit: credit(
+    "Reference radiograph: a normal adult ankle, AP (frontal), Mikael Häggström, Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The edge artefacts of the original were repaired. A real ankle (a 24-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: كاحل طبيعي لشخص بالغ، إسقاط AP (أمامي)، Mikael Häggström، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُصلحت عيوب الحواف في الصورة الأصلية. كاحل حقيقي (ذكر عمره 24 عامًا بحسب وصف الملف) يُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+  ),
+  ...common("ankle-ap"),
+  // the talus and the upper calcaneus (rows ≈ 1100–1631 of 1631): the dense zone that low penetration makes less visible.
+  denseZones: [zone(0.47, 0.82, 0.34, 0.15)],
+  limbRotation: {
+    kind: "limb-warp",
+    model: "ankle-ap",
+    // One band over the whole image: the 2.5D column anchors (the malleoli, the plafond edges) displace the leg and the ankle together.
+    bands: [{ v1: -0.05, v2: 1.05 }],
+  },
+};
+
+export const ANKLE_LATERAL_RADIOGRAPH: RadiographAssetSpec = {
+  id: "ankle-lateral-baseline",
+  src: "/images/ankle/ankle-lateral-baseline.jpg",
+  widthPx: 932,
+  heightPx: 1678,
+  projection: "ankle-lateral",
+  registryIds: ["A-032", "A-033"],
+  credit: credit(
+    "Reference radiograph: a normal adult ankle, lateral, Mikael Häggström, Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The edge artefacts of the original were repaired. A real ankle (a 24-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: كاحل طبيعي لشخص بالغ، إسقاط جانبي، Mikael Häggström، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُصلحت عيوب الحواف في الصورة الأصلية. كاحل حقيقي (ذكر عمره 24 عامًا بحسب وصف الملف) يُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+  ),
+  ...common("ankle-lateral"),
+  // the talus and the calcaneus (rows ≈ 900–1450 of 1678).
+  denseZones: [zone(0.54, 0.7, 0.36, 0.16)],
+  limbRotation: {
+    kind: "limb-copies",
+    model: "ankle-lateral",
+    bands: [
+      // The distal fibula and the posterior tibia above the plafond (rows ≈ 670–870 of 1678, columns ≈ 330–590 of 932).
+      { v1: 0.4, v2: 0.52, u1: 0.35, u2: 0.63 },
+      // The tibiotalar joint: the plafond and the talar dome (rows ≈ 840–975, columns ≈ 205–580).
+      { v1: 0.5, v2: 0.58, u1: 0.22, u2: 0.62 },
+    ],
+  },
+};
+
 export const LOWER_LIMB_RADIOGRAPHS: Record<LowerLimbKind, RadiographAssetSpec> = {
   "knee-ap": KNEE_AP_RADIOGRAPH,
   "knee-lateral": KNEE_LATERAL_RADIOGRAPH,
   "foot-ap": FOOT_AP_RADIOGRAPH,
   "foot-oblique": FOOT_OBLIQUE_RADIOGRAPH,
+  "ankle-ap": ANKLE_AP_RADIOGRAPH,
+  "ankle-lateral": ANKLE_LATERAL_RADIOGRAPH,
 };

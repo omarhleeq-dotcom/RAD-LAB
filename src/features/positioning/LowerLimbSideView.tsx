@@ -17,7 +17,7 @@ interface Props {
   showGuides: boolean;
 }
 
-type Part = "knee" | "foot";
+type Part = "knee" | "foot" | "ankle";
 
 /**
  * Hand-drawn schematic SIDE view of the knee / foot set-up (S14.4, own work, S13b language; the elbow's `ElbowSideView` pattern): the patient lying
@@ -30,9 +30,9 @@ type Part = "knee" | "foot";
 export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
   const t = useTranslations("positioning");
   const ts = useTranslations("scene");
-  const kind = (["knee-ap", "knee-lateral", "foot-ap", "foot-oblique"].includes(settings.projection) ? settings.projection : radCase.requiredProjection) as "knee-ap" | "knee-lateral" | "foot-ap" | "foot-oblique";
-  const part: Part = kind.startsWith("knee") ? "knee" : "foot";
-  const tp = useTranslations(part === "knee" ? "sceneKnee" : "sceneFoot");
+  const kind = (["knee-ap", "knee-lateral", "foot-ap", "foot-oblique", "ankle-ap", "ankle-lateral"].includes(settings.projection) ? settings.projection : radCase.requiredProjection) as "knee-ap" | "knee-lateral" | "foot-ap" | "foot-oblique" | "ankle-ap" | "ankle-lateral";
+  const part: Part = kind.startsWith("knee") ? "knee" : kind.startsWith("ankle") ? "ankle" : "foot";
+  const tp = useTranslations(part === "knee" ? "sceneKnee" : part === "ankle" ? "sceneAnkle" : "sceneFoot");
   const { detector } = radCase;
   const field = collimatedField(settings, detector);
   const toesAtTop = part === "foot";
@@ -63,7 +63,7 @@ export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
   const dr = alongBeam(refPx, DIM_OFFSET);
   const tick = (p: { x: number; y: number }, len = 8) => ({ x1: p.x - nrm.x * len, y1: p.y - nrm.y * len, x2: p.x + nrm.x * len, y2: p.y + nrm.y * len });
   return (
-    <svg viewBox="0 -8 450 368" role="img" aria-label={ts(part === "knee" ? "altKneeSide" : "altFootSide", { projection: tp(kind === "knee-ap" ? "apName" : kind === "knee-lateral" ? "lateralName" : kind === "foot-ap" ? "apName" : "obliqueName"), sid: settings.sidCm, angle })} className="h-auto w-full" style={{ direction: "ltr" }}>
+    <svg viewBox="0 -8 450 368" role="img" aria-label={ts(part === "knee" ? "altKneeSide" : part === "ankle" ? "altAnkleSide" : "altFootSide", { projection: tp(kind === "knee-ap" || kind === "ankle-ap" || kind === "foot-ap" ? "apName" : kind === "knee-lateral" || kind === "ankle-lateral" ? "lateralName" : "obliqueName"), sid: settings.sidCm, angle })} className="h-auto w-full" style={{ direction: "ltr" }}>
       {/* table (fixed) and the detector on it */}
       <rect x={20} y={S + 10} width={410} height={12} rx={3} fill={SCENE.bed} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeOpacity={0.5} />
       <rect x={slabA} y={S - 1} width={slabB - slabA} height={11} rx={2} fill={SCENE.detector} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
@@ -74,6 +74,20 @@ export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
       )}
       {kind === "knee-lateral" && (
         <Limb pts={[{ x: 120, y: S - 22, w: 38 }, { x: targetX, y: S - 19, w: 32 }, { x: targetX + 80, y: S - 56, w: 25 }]} />
+      )}
+      {kind === "ankle-ap" && (
+        <>
+          {/* the leg lies extended on the table; the foot stands up at the ankle (dorsiflexed, not forced), the sole facing the feet end */}
+          <Limb pts={[{ x: 120, y: S - 22, w: 38 }, { x: targetX, y: S - 17, w: 24 }]} />
+          <path d={`M ${targetX + 4} ${S - 5} L ${targetX + 10} ${S - 54} L ${targetX + 28} ${S - 56} L ${targetX + 34} ${S - 5} Z`} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round" />
+        </>
+      )}
+      {kind === "ankle-lateral" && (
+        <>
+          {/* lateral recumbent: the knee flexed (about 45°), the lower leg running down to the ankle on the detector, the foot at a right angle to the leg */}
+          <Limb pts={[{ x: 120, y: S - 22, w: 38 }, { x: targetX - 96, y: S - 62, w: 30 }, { x: targetX, y: S - 17, w: 22 }]} />
+          <path d={`M ${targetX - 8} ${S - 8} L ${targetX + 8} ${S - 14} L ${targetX + 48} ${S - 62} L ${targetX + 30} ${S - 74} Z`} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round" />
+        </>
       )}
       {(kind === "foot-ap" || kind === "foot-oblique") && (
         <>
