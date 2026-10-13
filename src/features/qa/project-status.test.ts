@@ -214,7 +214,8 @@ describe("status transition from git", () => {
     git(dir, "init", "-q", "-b", "main");
     mkdirSync(path.join(dir, "docs"));
     writeFileSync(path.join(dir, "README.md"), "x");
-    git(dir, "add", "."), git(dir, "commit", "-q", "-m", "init");
+    git(dir, "add", ".");
+    git(dir, "commit", "-q", "-m", "init");
     return dir;
   }
   const file = "docs/project-status.md";
@@ -232,7 +233,8 @@ describe("status transition from git", () => {
   it("compares with the status at the fork point, not with the latest target branch", () => {
     const dir = repo();
     writeFileSync(path.join(dir, file), wrap(base));
-    git(dir, "add", "."), git(dir, "commit", "-q", "-m", "status");
+    git(dir, "add", ".");
+    git(dir, "commit", "-q", "-m", "status");
     git(dir, "checkout", "-q", "-b", "feature");
     // the target branch moves on after the fork; that must not matter
     git(dir, "checkout", "-q", "main");
@@ -253,7 +255,8 @@ describe("status transition from git", () => {
   it("takes the fork point from an explicit head (CI tests a merge commit, not the PR head)", () => {
     const dir = repo();
     writeFileSync(path.join(dir, file), wrap(base));
-    git(dir, "add", "."), git(dir, "commit", "-q", "-m", "status");
+    git(dir, "add", ".");
+    git(dir, "commit", "-q", "-m", "status");
     const forkSha = git(dir, "rev-parse", "HEAD").trim();
     git(dir, "checkout", "-q", "-b", "feature");
     writeFileSync(path.join(dir, file), wrap({ ...base, revision: 2, updated_at: "2026-10-14T09:00:00Z", tasks: [{ ...task, status: "in_progress" }] }));
@@ -261,7 +264,8 @@ describe("status transition from git", () => {
     const headSha = git(dir, "rev-parse", "HEAD").trim();
     git(dir, "checkout", "-q", "main");
     writeFileSync(path.join(dir, "other.md"), "y");
-    git(dir, "add", "."), git(dir, "commit", "-q", "-m", "main moves");
+    git(dir, "add", ".");
+    git(dir, "commit", "-q", "-m", "main moves");
     git(dir, "merge", "-q", "--no-ff", "-m", "merge ref", "feature"); // HEAD = merge commit, like Actions
     expect(readPreviousFromGit("main~1", file, dir, headSha).base).toBe(forkSha);
     expect(readPreviousFromGit("main~1", file, dir).base).not.toBe(forkSha); // HEAD = merge commit: wrong without --head
