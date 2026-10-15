@@ -7,6 +7,8 @@ import { ResultPanel } from "@/features/evaluation/ResultPanel";
 import { PatientInstructionsPanel } from "@/features/patient/PatientInstructionsPanel";
 import { PositioningScene } from "@/features/positioning/scenes";
 import { AttemptRecorder } from "@/features/pilot/AttemptRecorder";
+import { FeedbackBox } from "@/features/pilot/FeedbackBox";
+import { splitCaseId } from "@/features/pilot/attempt-record";
 import { ConsolePanel } from "@/features/xray-console/ConsolePanel";
 import { useSimulationStore } from "@/stores/simulation-store";
 
@@ -78,6 +80,7 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
         {result && (
           <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
         )}
+        {result && <FeedbackBox examId={splitCaseId(c.id).examId} />}
       </div>
     </div>
   );

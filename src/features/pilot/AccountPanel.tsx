@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { type AuthErrorKey, passwordProblem } from "./account-state";
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
+import { SURVEY_URL, surveyHref } from "./survey";
 import { useAccount } from "./useAccount";
 
 type Mode = "signIn" | "signUp";
@@ -17,7 +18,7 @@ export function AccountPanel() {
   const t = useTranslations("account");
   const locale = useLocale();
   const redirectTo = typeof window === "undefined" ? "" : `${window.location.origin}/${locale}/account`;
-  const { state, signIn, signUp, signOut, retry, acceptTerms } = useAccount(redirectTo);
+  const { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened } = useAccount(redirectTo);
   const [mode, setMode] = useState<Mode>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,6 +80,22 @@ export function AccountPanel() {
           </label>
           {acceptFailed && <p role="alert" className="mt-2 text-bad">{t("consent.failed")}</p>}
           <button type="button" disabled={!agreed} className={`mt-3 ${primary}`} onClick={() => void acceptTerms().then((ok) => setAcceptFailed(!ok))}>{t("consent.accept")}</button>
+        </section>
+      )}
+      {SURVEY_URL && status === "approved" && (
+        <section className="mb-4 rounded-lg border border-line bg-panel p-5" data-testid="survey-card" aria-labelledby="survey-title">
+          <h2 id="survey-title" className="text-lg font-semibold">{t("survey.title")}</h2>
+          <p className="mt-2">{t("survey.body")}</p>
+          <a
+            href={surveyHref(SURVEY_URL, code)}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="survey-link"
+            className={`mt-3 inline-block ${primary}`}
+            onClick={() => void surveyOpened()}
+          >
+            {t("survey.open")}
+          </a>
         </section>
       )}
       <section className="rounded-lg border border-line bg-panel p-5" data-testid={`account-${status}`} aria-labelledby="acct-status">
