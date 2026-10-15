@@ -213,6 +213,7 @@ Owner direction: the pilot needs invited accounts (owner invites, e-mail + own p
 - **RAD-042 (S-PILOT-9):** saved Practice attempts (`attempts` table, third migration applied by hand) + events `exam_opened` / `attempt_started` / `attempt_submitted` / `attempt_retry`; engine untouched. Consent screen (RAD-043) must precede inviting others.
 - **RAD-043a (S-PILOT-10):** consent = tick "I agree to Terms and Privacy" at sign-up + `/{locale}/terms` draft page; nothing saved without consent (app + DB, fourth migration). RAD-043b (feedback note, survey link) still open.
 - **RAD-044a (S-PILOT-8):** owner page `/{locale}/owner` (participant list, approve / suspend from the app; second migration `20261016000100_owner_list_participants.sql` applied by the owner by hand). Remaining RAD-044: attempts / notes views and CSV export, after RAD-042 / RAD-043.
+- **RAD-044b (S-PILOT-12):** attempts + notes per participant code on the owner page and two CSV downloads (no e-mail); no migration (RLS already lets the owner read). Closes RAD-044.
 
 **RAD-040 done as DOCS (2026-10-15, status `review`):** provider comparison from official documentation in [`PILOT_PROVIDER_COMPARISON_2026-10-15.md`](PILOT_PROVIDER_COMPARISON_2026-10-15.md); proposed Supabase Free (Frankfurt) pending the owner's S-PILOT-2 acceptance (DECISIONS S-PILOT-3); Q1–Q4 proposed; Cloudflare Access + D1 unevaluated (host blocked). (RAD-041 itself moved to `in_progress` with 041a below.)
 

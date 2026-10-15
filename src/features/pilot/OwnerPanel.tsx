@@ -3,13 +3,16 @@
 // The owner's participant list with approve / suspend buttons (RAD-044a). Visible content depends on RLS + the database functions, not on
 // this component: a non-owner who opens the page just gets "not allowed" because `owner_list_participants()` refuses them.
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import type { ProfileStatus } from "./account-state";
 import { getPilotClient } from "./client";
 import { PILOT } from "./config";
+import { CsvBar, ParticipantActivity } from "./OwnerActivity";
+import { groupByUser } from "./owner-data";
 import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, type Participant, parseParticipants } from "./owner-state";
 import { useAccount } from "./useAccount";
+import { useOwnerData } from "./useOwnerData";
 
 const badge: Record<ProfileStatus, string> = { pending: "bg-signal/30 text-ink", approved: "bg-ok/20 text-ink", suspended: "bg-bad/20 text-ink" };
 const btn = "rounded-md border border-line px-3 py-1.5 text-sm font-medium hover:bg-paper disabled:opacity-60";
@@ -43,6 +46,12 @@ export function OwnerPanel() {
       cancelled = true;
     };
   }, [isOwner, version]);
+
+  // Attempts and notes (RAD-044b): read-only, loaded together with the list, keyed by participant code in the UI and the CSV.
+  const data = useOwnerData(isOwner, version);
+  const ready = data.kind === "ready" ? data : null;
+  const byUser = useMemo(() => (ready ? groupByUser(ready.attempts, ready.notes) : null), [ready]);
+  const codes = useMemo(() => new Map((rows ?? []).map((p) => [p.userId, p.code])), [rows]);
 
   // Fixed numeric form (YYYY-MM-DD HH:mm, the owner's local time): Intl's Arabic output carries bidi marks that scramble the order.
   const when = (iso: string | null) => (iso === null ? t("never") : formatStamp(new Date(iso)));
@@ -78,6 +87,18 @@ export function OwnerPanel() {
       </div>
       {rows && <p className="mt-2 text-sm text-muted" data-testid="owner-summary">{t("summary", { total: rows.length, pending })}</p>}
       {error && <p role="alert" data-testid="owner-error" className="mt-3 rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t(`errors.${error}`)}</p>}
+      {data.kind === "error" && <p role="alert" data-testid="owner-data-error" className="mt-3 rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t("errors.data")}</p>}
+      {ready && (
+        <>
+          <p className="mt-1 text-sm text-muted" data-testid="owner-data-summary">{t("activity.total", { attempts: ready.attempts.length, notes: ready.notes.length })}</p>
+          {(ready.truncated || ready.skipped > 0) && (
+            <p role="status" data-testid="owner-data-partial" className="mt-2 rounded-md border border-warn/40 bg-warn/10 px-3 py-2 text-sm text-ink">
+              {ready.truncated && t("activity.truncated")} {ready.skipped > 0 && t("activity.skipped", { count: ready.skipped })}
+            </p>
+          )}
+          <CsvBar attempts={ready.attempts} notes={ready.notes} codes={codes} />
+        </>
+      )}
       {rows?.length === 0 && <p className="mt-4 text-muted">{t("empty")}</p>}
       <ul className="mt-4 space-y-3">
         {(rows ?? []).map((p) => {
@@ -95,6 +116,7 @@ export function OwnerPanel() {
                 <div><dt className="inline">{t("registered")}: </dt><dd dir="ltr" className="inline">{when(p.createdAt)}</dd></div>
                 <div><dt className="inline">{t("lastActivity")}: </dt><dd dir="ltr" className="inline">{when(lastActivity(p))}</dd></div>
               </dl>
+              {byUser && <ParticipantActivity code={p.code} activity={byUser.get(p.userId)} />}
               {actions.length > 0 && (
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {actions.map((a) => (
