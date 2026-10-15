@@ -30,9 +30,9 @@ export function ShoulderDrawing({ radCase, settings, W, H, showGuides }: FigureP
   const glenoid = [[820, 330], [810, 420], [830, 520], [850, 620], [860, 700]];
   return <>
     <defs><clipPath id="shoulder-detector-clip"><rect width={W} height={H} /></clipPath></defs>
-    <g clipPath="url(#shoulder-detector-clip)" stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round">
-      <path d={path(soft)} fill={SCENE.trunk} stroke="none" />
-      <path d={path(clavicle)} fill={SCENE.limbFar} /><path d={path(acromion)} fill={SCENE.limbFar} /><path d={path(coracoid)} fill={SCENE.limbFar} /><path d={path(neck)} fill={SCENE.limbFar} />
+    <g clipPath="url(#shoulder-detector-clip)" stroke={SCENE.bone} strokeOpacity={0.85} strokeWidth={STROKE.thin * Math.max(1, W / 240)} strokeLinejoin="round">
+      <path d={path(soft)} fill={SCENE.lung} stroke="none" />
+      <path d={path(clavicle)} fill={SCENE.head} /><path d={path(acromion)} fill={SCENE.head} /><path d={path(coracoid)} fill={SCENE.head} /><path d={path(neck)} fill={SCENE.head} />
       <path d={path(shaft)} fill={SCENE.limb} /><path d={path(tuberosity)} fill={SCENE.limb} /><path d={circle(590, 560, 215)} fill={SCENE.limb} />
       <path d={path(glenoid, false)} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.medium} strokeLinecap="round" />
       {showGuides && <path d={path([[830, 330], [810, 420], [830, 520], [850, 620]], false)} fill="none" stroke={SCENE.guide} strokeWidth={STROKE.thin} strokeDasharray="4 4" transform="translate(-22 0)" />}

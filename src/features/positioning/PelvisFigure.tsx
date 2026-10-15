@@ -24,6 +24,8 @@ export function PelvisDrawing({ radCase, settings, W, H }: FigureProps) {
   const ringR = [[640,1450],[700,1650],[780,1880],[900,1960],[1100,1960],[1250,1880],[1335,1760],[1330,1690],[1050,1610],[880,1500]];
   const sacrum = [[1150,300],[1525,300],[1590,560],[1480,900],[1380,1140],[1295,1140],[1195,900],[1085,560]];
   const lumbar = [[1190,10],[1490,10],[1500,260],[1180,260]];
+  const sw = STROKE.thin * Math.max(1, W / 240);
+  const arc = (cx: number, cy: number, r: number, from: number, to: number) => path(Array.from({ length: 24 }, (_, i) => { const q = (from + (to - from) * i / 23) * Math.PI / 180; return [cx + r * Math.cos(q), cy + r * Math.sin(q)]; })).replace(/ Z$/, "");
   const stance = settings.choices?.legPosition;
   const spread = stance === "external" ? 145 : stance === "neutral" ? 80 : 25;
   // Schematic stance cue only: a more externally rotated limb shows the trochanter profile further out.
@@ -32,15 +34,19 @@ export function PelvisDrawing({ radCase, settings, W, H }: FigureProps) {
   const shift = (spread - 25) * 0.5;
   return <>
     <defs><clipPath id="pelvis-detector-clip"><rect width={W} height={H} /></clipPath></defs>
-    <g clipPath="url(#pelvis-detector-clip)" stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round">
-      <path d={path([[110,0],[2520,0],[2675,2084],[0,2084]])} fill={SCENE.trunk} stroke="none" />
+    {/* Same look as the ankle scene (dark soft tissue, lighter bones, bright thin outlines). The detector is drawn in mm, so the
+        outline is scaled to keep the same on-screen weight as on the 24 cm detectors. */}
+    <g clipPath="url(#pelvis-detector-clip)" stroke={SCENE.bone} strokeOpacity={0.85} strokeWidth={sw} strokeLinejoin="round">
+      <path d={path([[110,0],[2520,0],[2675,2084],[0,2084]])} fill={SCENE.lung} stroke="none" />
       <path d={path(wingR)} fill={SCENE.limb} /><path d={path(wingL)} fill={SCENE.limbFar} />
       <path d={path(sacrum)} fill={SCENE.head} />
       <path d={path(lumbar)} fill={SCENE.head} />
       <path d={path(ringR)} fill={SCENE.limb} /><path d={path(mirror(ringR))} fill={SCENE.limbFar} />
-      <path d={ellipse(1100,1780,150,95)} fill={SCENE.trunk} /><path d={ellipse(1660,1825,140,85)} fill={SCENE.trunk} />
+      <path d={ellipse(1100,1780,150,95)} fill={SCENE.lung} /><path d={ellipse(1660,1825,140,85)} fill={SCENE.lung} />
       <path d={path(femurR(shift))} fill={SCENE.limb} /><path d={path(mirror(femurR(shift)))} fill={SCENE.limbFar} />
       <path d={ellipse(600,1420,160,160)} fill={SCENE.head} /><path d={ellipse(2075,1400,160,160)} fill={SCENE.head} />
+      {/* Acetabular roofs: thin arcs above each femoral head (detail line only). */}
+      <path d={arc(600,1420,215,200,340)} fill="none" strokeWidth={sw * 1.4} /><path d={arc(2075,1400,215,200,340)} fill="none" strokeWidth={sw * 1.4} />
     </g>
   </>;
 }
