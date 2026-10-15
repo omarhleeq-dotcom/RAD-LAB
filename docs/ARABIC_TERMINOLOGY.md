@@ -331,3 +331,7 @@ UI additions: أشعة الحوض للبالغ — AP مستلقٍ؛ دوران 
 ## Shoulder Grashey reference — 2026-10-15 (DRAFT, pending educator/Arabic review)
 
 Documentation only; machine-assisted, no UI strings changed. الكتف (shoulder)؛ الإسقاط الأمامي الخلفي المائل للكتف، غراشي (AP oblique shoulder, Grashey)؛ الجوف الحقاني (glenoid cavity)؛ حافة الجوف الحقاني (glenoid rim)؛ المفصل الكتفي العضدي (scapulohumeral joint)؛ رأس العضد (humeral head)؛ جسم لوح الكتف (scapular body)؛ دوران محايد للذراع (neutral arm rotation)؛ حبس النَّفَس أثناء التعريض (suspend respiration). «الكاشف» remains the detector term. Body obliquity and arm rotation must not be conflated.
+
+## Shoulder Y reference — 2026-10-15 (DRAFT, pending educator/Arabic review)
+
+Documentation only, machine-assisted; no UI strings changed. الإسقاط الجانبي للوح الكتف على شكلY (scapularY lateral)؛ إسقاط خلفي أمامي مائل (PA oblique)؛ الأخرم (acromion)؛ الناتئ الغرابي (coracoid process)؛ الزاوية العلوية/السفلية للوح الكتف (superior/inferior scapular angle)؛ المفصل الأخرمي الترقوي (AC joint)؛ المفصل الكتفي العضدي (scapulohumeral joint). Keep body obliquity separate from arm rotation and preserve the source warning; الكاشف remains detector.
