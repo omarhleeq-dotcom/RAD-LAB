@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 26,
-  "updated_at": "2026-10-15T23:00:00Z",
+  "revision": 27,
+  "updated_at": "2026-10-16T01:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -380,10 +380,10 @@
     {
       "id": "RAD-041",
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
-      "status": "in_progress",
+      "status": "review",
       "priority": "high",
-      "description": "شريحة 2 على جلستين وفق S-PILOT-4/5 (تسجيل ذاتي، كل حساب جديد pending حتى يوافق المالك، Supabase Free/Frankfurt). 041a نُفّذ (PR #50، للمراجعة): مخطط profiles/events وRLS واختبارات العزل وCSP وقت البناء وتعديل preview:smoke وADR-0002 وCLAUDE.md ودليل المالك. 041b لم يبدأ: عميل Supabase وصفحات التسجيل والدخول والانتظار وتسجيل الأحداث وفحص المتصفح على مشروع حي. المتبقي: مراجعة المالك لـ041a، مشروع Supabase، وخدمة SMTP مخصصة (O103) لتأكيد البريد لغير أعضاء المؤسسة. كود L.",
-      "source_ref": "docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
+      "description": "041a مدموج (PR #50) و041b منفَّذ للمراجعة: عميل Supabase وصفحة الحساب وتسجيل النشاط وحارس المفتاح السري، متحقَّق منه بمتصفح مع Supabase مُحاكى وaxe. المتبقي: دمج المالك، ضبط متغيري GitHub (العنوان والمفتاح العام) ونشر المعاينة، فحص المالك الحي بقائمة docs/session-rad-041b-account-ui-2026-10-15.md، ثم النسخ/الاستعادة (O105) قبل أول مشارك. كود L.",
+      "source_ref": "docs/session-rad-041b-account-ui-2026-10-15.md؛ docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5/7؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
     },
     {
       "id": "RAD-042",

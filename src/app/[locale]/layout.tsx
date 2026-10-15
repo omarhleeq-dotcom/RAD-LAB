@@ -4,6 +4,8 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { RouteFocus } from "@/components/shell/RouteFocus";
+import { PILOT } from "@/features/pilot/config";
+import { PilotSessionKeeper } from "@/features/pilot/PilotSessionKeeper";
 import { Link } from "@/i18n/navigation";
 import { dirFor, routing } from "@/i18n/routing";
 import "../globals.css";
@@ -25,6 +27,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const t = await getTranslations("common");
+  const ta = PILOT ? await getTranslations("account") : null;
 
   return (
     <html lang={locale} dir={dirFor(locale)}>
@@ -51,10 +54,20 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
                 </span>
                 <span className="hidden text-sm text-muted sm:inline">{t("tagline")}</span>
               </Link>
-              <LanguageSwitcher />
+              {ta ? (
+                <div className="flex items-center gap-4">
+                  <Link href="/account" data-testid="account-link" className="text-sm font-medium text-brand hover:underline">
+                    {ta("nav")}
+                  </Link>
+                  <LanguageSwitcher />
+                </div>
+              ) : (
+                <LanguageSwitcher />
+              )}
             </div>
           </header>
           <RouteFocus />
+          {PILOT && <PilotSessionKeeper />}
           <main id="main-content" tabIndex={-1} className="outline-none">
             {children}
           </main>

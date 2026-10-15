@@ -23,3 +23,23 @@ export function withConnectSrc(headersText, origin) {
   if (parts.length !== 2) throw new Error(`expected exactly one "${needle}" in _headers, found ${parts.length - 1}`);
   return `${parts[0]}connect-src 'self' ${origin};${parts[1]}`;
 }
+
+/**
+ * Guard for NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (RAD-041b): everything NEXT_PUBLIC_* is shipped to every visitor's browser,
+ * so a SECRET key put there by mistake must stop the build. Returns the trimmed key, or null when empty / unset.
+ * Accepts the new `sb_publishable_…` keys and the legacy `anon` JWT; refuses `sb_secret_…` and any JWT whose role is not `anon`.
+ */
+export function assertPublishableKey(raw) {
+  const key = (raw ?? "").trim();
+  if (key === "") return null;
+  if (key.startsWith("sb_secret_")) throw new Error("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY holds a SECRET key (sb_secret_…). Never publish it; use the publishable key (sb_publishable_…).");
+  if (key.startsWith("sb_publishable_")) return key;
+  const parts = key.split(".");
+  if (parts.length === 3) {
+    let role;
+    try { role = JSON.parse(atob(parts[1].replace(/-/g, "+").replace(/_/g, "/"))).role; } catch { role = undefined; }
+    if (role === "anon") return key;
+    throw new Error(`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is a JWT with role ${JSON.stringify(role)}; only the publishable / anon key may be public.`);
+  }
+  throw new Error("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is not a recognised publishable key (expected sb_publishable_…).");
+}

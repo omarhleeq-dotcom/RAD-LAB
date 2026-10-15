@@ -1186,5 +1186,64 @@
     "neutral": "slightly abducted, elbow flexed, neutral rotation",
     "internal": "at the side, internally rotated",
     "external": "at the side, externally rotated"
+  },
+  "account": {
+    "nav": "Account",
+    "title": "Your account",
+    "intro": "Create an account to take part in the pilot. The owner approves each new account before it can be used.",
+    "notEnabled": "Accounts are not enabled in this preview.",
+    "loading": "Loading…",
+    "tabs": {
+      "signIn": "Sign in",
+      "signUp": "Create account"
+    },
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordHint": "At least 8 characters, with a lower-case letter, an upper-case letter, a digit and a symbol.",
+    "privacyNote": "During the pilot the owner can see your sign-ins and your activity on this site. Never enter real patient data.",
+    "submit": {
+      "signIn": "Sign in",
+      "signUp": "Create account"
+    },
+    "working": "Please wait…",
+    "signOut": "Sign out",
+    "retry": "Try again",
+    "signedInAs": "Signed in as",
+    "codeLabel": "Your participant code:",
+    "status": {
+      "pending": {
+        "title": "Your account is waiting for approval",
+        "body": "Thank you for registering. The owner must approve your account before you can use the pilot features. Check back later."
+      },
+      "approved": {
+        "title": "Your account is approved",
+        "body": "Your account is active. Features for saving attempts will be added during the pilot."
+      },
+      "suspended": {
+        "title": "Your account is suspended",
+        "body": "Please contact the owner."
+      }
+    },
+    "checkEmail": {
+      "title": "Check your email",
+      "body": "We sent a confirmation link to {email}. Open it to confirm your address, then sign in. The owner still has to approve your account.",
+      "spam": "If you do not see it within a few minutes, check your spam folder.",
+      "back": "Back to sign in"
+    },
+    "profileError": "Your profile could not be loaded. This can happen when the network is down.",
+    "errors": {
+      "invalidCredentials": "The email or password is incorrect.",
+      "emailNotConfirmed": "Please confirm your email first: open the link we sent you.",
+      "rateLimited": "Too many attempts. Please wait a few minutes and try again.",
+      "weakPassword": "That password is too weak. Use at least 8 characters with lower-case and upper-case letters, a digit and a symbol.",
+      "signupDisabled": "New registrations are currently closed.",
+      "invalidEmail": "That email address is not valid.",
+      "network": "Could not reach the server. Check your connection and try again.",
+      "generic": "Something went wrong. Please try again.",
+      "passwordShort": "The password must be at least 8 characters.",
+      "passwordClasses": "The password needs a lower-case letter, an upper-case letter, a digit and a symbol.",
+      "passwordMismatch": "The two passwords do not match."
+    }
   }
 }
