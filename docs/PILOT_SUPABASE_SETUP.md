@@ -87,6 +87,8 @@ S-PILOT-4 يفوض المالك بالنسخ المشفر وتجربة الاس�
 
 #### سجل تحقق RAD-047b.1 (محلي فقط)
 
+التسليم: [Draft PR #62](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/62)، commit التنفيذ `17bceef`؛ فرع مدفوع للمراجعة، لا دمج أو تطبيق حي.
+
 - الاختباران الجديدان: `migration-chain.test.ts` (اكتشاف/ترتيب/بصمات fixture الخمسة، بناء كامل، ترقية، grants/FKs/functions/data ثابتة، فشل transaction وإعادة تطبيق مرفوضة) و`scale-foundation.test.ts` (مصفوفة قبل/بعد للعزل وRPCs/الحذف/consent، رموز قديمة/جديدة وتصادم مصطنع وإلغاء ذرّي). نجحا: **9 اختبارات**؛ أول محاولة لم تبدأ لأن PGlite غائب محلياً، ثم `npm ci` من lockfile دون تغيير الحزم ونجح التشغيل بعاملين. لا اختبار قديم عُدّل.
 - تجربة **EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON)** اصطناعية فقط، PGlite0.5.10؛ ملفات ومخرجات `/tmp/rad-047b1/explain.mjs`, `results.json`, `run.log` غير مودعة. لكل حجم قاعدة جديدة: shim auth/roles فقط ثم ملفات الخمسة، seed ثم ANALYZE، قراءات كـauthenticated owner ثم تطبيق **الملف السادس الفعلي** في transaction وإعادة ANALYZE ونفس القراءات. لم تُفرَض خطة فهرس ولم تُغير إعدادات planner. seed:500/5,000 ملف،25k/250k محاولة،200k/2m حدث،5k/50k ملاحظة؛ توزيع50 محاولة لكل مشارك، ids=md5('u'||i)/md5('a'||i)، بريدexample.test، timestamps=2026-01-01+i seconds، JSON صغير اصطناعي (settings مع200 حرف padding ونتيجة بمعيار اصطناعي واحد)، ونصSynthetic note. ليست بيانات حقيقية أو حمولة طبية نموذجية، ولا اختبار حمل شبكي/متزامن.
 
