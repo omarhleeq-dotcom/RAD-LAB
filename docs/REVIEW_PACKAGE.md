@@ -225,7 +225,7 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | Item | Basis | Question / limitation |
 |---|---|---|
 | Clinical setup / technique | BONTRAGER-9 p.271–272,279 | Confirm non-trauma supine scope, ≥102cm, grid, digital80–90kV, perpendicular CR and phase-neutral breath suspension. Trauma warning retained. |
-| Numerical grading | Explicit engine teaching choices, same previous-exam pattern (S-PELVIS-1-3) | rotation ±2°/±5°; SID102–110/95–130; kV partial75–95; centering1/2.5cm; max excess3cm (was 2.6; raised so the 2.8 cm marker fits, S-PELVIS-2-3); weights25/20/15/20/10/10, pass70, marker-only critical gate. None is a clinical tolerance/rubric. |
+| Numerical grading | Explicit engine teaching choices, same previous-exam pattern (S-PELVIS-1-3) | rotation ±2°/±5°; SID102–110/95–130; kV partial75–95; centering1/2.5cm; max excess2.6cm (restored by S-PELVIS-3-1); weights25/20/15/20/10/10, pass70, marker-only critical gate. None is a clinical tolerance/rubric. |
 | Exposure model | Anchor85kV/2.5mAs/102cm, exponent3, attenuation1, inherited generic DI bands | Not a clinical mAs prescription, calibrated device or universal EI/DI standard. Manual-only is a v1 simplification. |
 | Geometry and resolution | Box100…2640/30…2070 of2675×2084, scale0.015cm/px, CR(1337.5,1042); render48px/cm | All by-eye/assumed, not measured patient dimensions; below original pixel resolution. O84. |
 | Pelvic rotation | Existing generic `limb-warp`, authored monotone anchors, gain2.3 | One-image asymmetry, not measured projection; no independent occlusion reconstruction. Scene/result share anchors. O85. |

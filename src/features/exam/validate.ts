@@ -66,6 +66,7 @@ export function validateExam(exam: AnyExamDefinition, registered: ExamRegistries
   const r = exam.requiredAnatomy;
   need(W > 0 && H > 0, "detector size must be positive");
   need(r.xCm >= 0 && r.yCm >= 0 && r.xCm + r.widthCm <= W && r.yCm + r.heightCm <= H, "requiredAnatomy must lie inside the detector");
+  for (const z of exam.positioning.markerKeepOut ?? []) need(z.xCm >= 0 && z.yCm >= 0 && z.xCm + z.widthCm <= W && z.yCm + z.heightCm <= H, "markerKeepOut zones must lie inside the detector");
   // The four required controls, then any optional numeric control the exam declares (tube angulation, S11-2).
   for (const k of RULE_NUMERIC_KEYS) {
     const c = exam.controls[k];

@@ -201,3 +201,7 @@ Shoulder Y reference/Needs merged by owner in [PR #38](https://github.com/omarhl
 Both gates failed to pass: the candidate image is not settled (burned-in markers, not a clean symmetrical Y, "slightly skewed") and a prototype found no honest single image cue (O94). No `shoulder-y-erect` was built; no asset imported. Options and recommendation (defer unless a clean licensed Y exists) in [reference §12](RAD-LAB_Medical_Reference_Shoulder_Y.md); decisions S-SHOULDER-Y-1…5, open O92 / O94 / O97. Record: [session-shoulder-y-gates-2026-10-15.md](session-shoulder-y-gates-2026-10-15.md). Grashey (RAD-033) merged via PR #40.
 
 **Owner decision (2026-10-15): Shoulder Y deferred; new images and exams frozen** (S-SHOULDER-Y-6). Next work = non-exam aspects of the project, chosen by the owner.
+
+### Asset licence audit — RAD-018, 2026-10-15 (docs only)
+
+Local integrity of all registered assets confirmed; five CC0 masters re-verified at Commons with byte identity, others by page or candidate title (Commons API / downloads rate-limited, stopped). **Release blocker: NIH terms for A-008 unread (O101).** Record: [ASSET_LICENCE_AUDIT_2026-10-15.md](ASSET_LICENCE_AUDIT_2026-10-15.md); open items O100–O102. Release (RAD-023) still waits on the owner's banner decision and the credits-page session.

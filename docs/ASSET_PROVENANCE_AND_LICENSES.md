@@ -72,6 +72,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF, 1929 × 2207 px, 906,335 bytes (Commons "885 KB"), 8-bit RGB-encoded greyscale content, 96 dpi |
 | File history (Commons) | One revision: 2017-08-17 10:59:27 UTC, user Mikael Häggström, comment "User created page with UploadWizard". Work dated 2017-06-28. Categories: CC-Zero · Self-published work · X-rays of normal chest. |
 | Notes | Author's description: a posteroanterior chest radiograph of a **21-year-old woman** who presented with pain on the left side of the thorax after colliding with another player during a soccer game; the author states it "shows a normal chest without any signs of injury". "Dx" and "Sin" in the image stand for "right" and "left" respectively (per the Commons description). The imaged patient therefore differs from the case patient in the simulation (45-year-old male); the image is an educational baseline for *appearance*, not a depiction of the case patient. The image is not a validated reference for any simulated error. See also A-002 for the annotation handling. |
+| Re-verification (RAD-018) | **Re-verified 2026-10-15 (RAD-018):** file page HTTP 200, CC0 template + `CC-Zero`, author and date as registered; downloaded original SHA-1 equals the registered SHA-1. Full detail: `docs/ASSET_LICENCE_AUDIT_2026-10-15.md`. |
 
 ### A-002 — Chest PA educational baseline: derived, annotations neutralised
 
@@ -176,6 +177,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF, 1769 × 2453 px, 1,114,909 bytes, RGB-encoded greyscale content |
 | De-identification evidence | Visual inspection of the full image and the four corners (no text), metadata scan (nothing beyond JFIF), no DICOM tags. The image shows an anonymous chest only. |
 | Notes | **S12-4:** a representative normal adult lateral of a **different person** from the PA case baseline (A-001); D7 applies to the PA baseline only. A teaching approximation. Which side of the patient was against the detector cannot be read from the image and is not claimed (the anterior chest is on the viewer's left). |
+| Re-verification (RAD-018) | **Re-verified 2026-10-15 (RAD-018):** file page HTTP 200, CC0 template + `CC-Zero`, Mikael Häggström, 28 Jun 2017; downloaded original SHA-1 equals the registered SHA-1 (closes the S12 re-verify note). Detail in the audit file. |
 
 ### A-007 — Chest Lateral educational baseline: web-resolution copy (derived from A-006)
 
@@ -215,6 +217,7 @@ Rules for entries:
 | De-identification evidence | Visual inspection of the full image (no text in any corner or margin), PNG chunk scan (only `tIME`), no DICOM tags. The file name is the dataset's pseudonymous index; it is recorded here but not shown in the product. |
 | Date verified | 2026-10-06 (terms read, image fetched, SHA-256 computed, image inspected) |
 | Notes | **S12-4 / S13:** a representative normal adult AP chest of a **different person** from the PA and lateral baselines. **The patient position of the original exposure (supine, semi-erect, erect) is not known and not claimed**; the supine state of the exam is a teaching approximation of the exam variant. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** NIH terms still NOT readable (the Box download page is a JavaScript app, ~119 characters of text); commercial status NOT established. See O101. **Owner decision 2026-10-15: kept as "owner-verified" for now (terms not read by Claude Code, no screenshot); revisit before release (O101 deferred, RAD-038).** |
 
 ### A-009 — Chest AP educational baseline: web copy (derived from A-008)
 
@@ -252,6 +255,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 690 × 980 px, 209,131 bytes, RGB-encoded greyscale content |
 | De-identification evidence | Visual inspection of the full image and its four edges (no burned-in text, no markers, no ruler, no date), pixel scan of the dark margins (no text-like bright blobs), no metadata beyond JFIF. No device, cast, implant or pathology. The author's description gives age and sex only (31, male); no name is recorded anywhere in RAD-LAB. |
 | Notes | **A crop by its author** (the proximal metacarpals are cut by the top edge; the thumb side is cut by the right edge). Shows the distal radius and ulna, the carpals and the proximal metacarpals; the **mid-metacarpal area Bontrager names is not in the image** (S14.1c-7, O28). Left wrist (thumb on the viewer's right). Same person as the lateral A-012. **Not** the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** file page read (CC0, Häggström, 29 Oct 2017); original download answered HTTP 429, so bytes are NOT re-verified. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-011 — Wrist PA educational baseline: web copy (derived from A-010)
 
@@ -291,6 +295,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF only, 559 × 1756 px, 199,006 bytes |
 | De-identification evidence | **Burned-in text found: "Sin" (bottom right; rows 1411–1492, columns 507–555)** — a side annotation. It is removed by the crop recorded in A-013. After the crop a pixel scan of the remaining margins finds no text-like bright pixels. No metadata beyond JFIF. No device, cast, implant or pathology. |
 | Notes | The master still contains the burned-in text (a provenance copy, not served). Shows the carpals, distal radius / ulna and proximal metacarpals; the mid-metacarpal area is not in the image (O28). Which side is dorsal is **not** claimed. Same person as A-010. A teaching approximation. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** file page read (CC0, Häggström, 29 Oct 2017); original download answered HTTP 429, so bytes are NOT re-verified. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-013 — Wrist lateral educational baseline: web copy (derived from A-012)
 
@@ -330,6 +335,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 1466 × 2082 px, 505,312 bytes, RGB-encoded greyscale content |
 | De-identification evidence | **Burned-in text found: a mirrored "Sin" (top left, rows 79–158, columns 64–148)** on a slightly lighter label card above the little finger. Removed in A-015. After the fill no pixel above 90 grey remains in the top-left 300 × 260 px. Visual inspection of the full image: no other text, ruler, date or marker. No metadata beyond JFIF. No device, cast, implant or pathology. The description gives age and sex only (31, male); no name is recorded anywhere in RAD-LAB. |
 | Notes | Shows the whole left hand (thumb on the viewer's right, fingers spread slightly), the carpals and the distal radius and ulna (≈ 3 cm of forearm beyond the 2.5 cm line, S14.2-10). The same person as the wrist images A-010 … A-013 and the hand lateral A-016 (per the author). **Not** the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **Re-verified 2026-10-15 (RAD-018):** file page HTTP 200, CC0, Häggström, 29 Oct 2017; downloaded original SHA-1 equals the registered SHA-1 (no longer owner-verified only). |
 
 ### A-015 — Hand PA educational baseline: web copy (derived from A-014)
 
@@ -369,6 +375,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF only, 686 × 2123 px, 252,377 bytes |
 | De-identification evidence | **Burned-in text found: "SIDA" (bottom right, rows ≈ 2083–2113, from column 604 to the right edge)** over the soft-tissue edge and the black background. Removed in A-017. Visual inspection of the full image: no other text, ruler, date or marker. No metadata beyond JFIF. No device, cast, implant or pathology. |
 | Notes | Fingers extended and superimposed, thumb separated (the extension variant, Bontrager p.153, S14.2-6). Shows the carpals and ≈ 4 cm of distal radius / ulna beyond the 2.5 cm line (S14.2-10). Which side is dorsal / palmar is **not** claimed. The same person as A-014. A teaching approximation. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** file page read (CC0, Häggström, 29 Oct 2017); original download answered HTTP 429, so bytes are NOT re-verified. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-017 — Hand lateral educational baseline: web copy (derived from A-016)
 
@@ -408,6 +415,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 849 × 1138 px, 100160 bytes |
 | De-identification evidence | **Burned-in text found: a mirrored "Sin" (mid-right, master rows 977–1023, columns 691–763, in the dark background) and a small "F" (bottom centre, rows ≈ 1105–1120, columns ≈ 454–464).** A 1-px frame line (rows 0–1) is also present. All three are removed in A-019. Visual inspection of the full image and a contrast-stretched view: no other text, ruler, date or identifier. No metadata beyond JFIF. No device, cast, implant or pathology. The description gives age and sex only (31, male); no name is recorded anywhere in RAD-LAB. |
 | Notes | Both epicondyles are inside the image (the medial one at the viewer's left); the distal humerus shows ≈ 8 cm above the joint line and ≈ 9 cm of forearm below it (at the **assumed** scale 0.0155 cm / px, S14.3-9); the radial head, neck and tuberosity are separated from the ulna or only slightly superimposed (a near-true AP). The same person as the wrist, hand and elbow-lateral images (per the author). **Not** the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** candidate source `File:X-ray_of_normal_elbow_by_anteroposterior_projection.jpg` (page read: CC0, Häggström, 29 Oct 2017 = registry date); download 429, so identity is NOT proven. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-019 — RAD-LAB Elbow AP educational baseline: web copy (derived from A-018)
 
@@ -447,6 +455,7 @@ Rules for entries:
 | File facts | `image/jpeg`, JFIF only (no EXIF / ICC / XMP / comment), 1086 × 1103 px, 117916 bytes |
 | De-identification evidence | **No burned-in text found** (full-image view and a 5× contrast stretch of the whole image; the image edges carry only bone and soft tissue). No ruler, marker, date or identifier. No metadata beyond JFIF. No device, cast, implant or pathology. Age and sex only (31, male); no name. |
 | Notes | Humerus vertical (cut by the top edge), forearm horizontal toward the viewer's left, radius on top (thumb side up), the olecranon at the lower right; the distal humerus outline is close to a single circle (near-true lateral). The same person as A-018. A teaching approximation. Which side is medial / lateral is not read from the image. |
+| Re-verification (RAD-018) | **Re-verified 2026-10-15 (RAD-018):** source identified as `File:X-ray_of_normal_elbow_by_lateral_projection.jpg` (CC0, Häggström, 29 Oct 2017); downloaded original SHA-1 equals the registered SHA-1. |
 
 ### A-021 — RAD-LAB Elbow lateral educational baseline: web copy (derived from A-020)
 
@@ -489,6 +498,7 @@ Four images of **right** limbs were attached by the owner (A-022, A-024, A-026, 
 | File facts | `image/jpeg`, 1067 × 1913 px, 250,133 bytes, JFIF only (no EXIF) |
 | De-identification evidence | Burned-in text found: a mirrored **"Dx"** at the left edge in the dark background (≈ x 55–105, y 885–930). No ruler, device or other identifier seen on the full image. Removed in the web copy (S14.2-7 policy, O60). No name or date stamp seen; no device, implant or cast. |
 | Notes | Distal femur, femorotibial joint and proximal tibia / fibula are inside the image; the fibula is at the viewer's left (a right knee). Right knee of a 31-year-old male per the Commons search snippet. Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** candidate source `File:X-ray_of_a_normal_knee_by_anteroposterior_projection.jpg` (page read: CC0, Häggström, 5 Jan 2018 = registry date); download 429, so identity is NOT proven. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-023 — RAD-LAB knee-ap educational baseline: web copy (derived from A-022) (S14.4)
 
@@ -528,6 +538,7 @@ Four images of **right** limbs were attached by the owner (A-022, A-024, A-026, 
 | File facts | `image/jpeg`, 1133 × 1939 px, 292,935 bytes, JFIF only (no EXIF) |
 | De-identification evidence | Burned-in text found: **"Dx"** (mirrored) in the dark background left of the knee (≈ x 150–230, y 1185–1240). No ruler or device seen. Removed in the web copy (O60). No name or date stamp seen; no device, implant or cast. |
 | Notes | **Per its Commons description the image shows a minimal osteophyte at the superior rim of the patellofemoral joint; the owner accepted it as a near-normal teaching image (S14.4-4, O57). No pathology is mentioned in student-facing text.** Flexion read by eye ≈ 45° (femur and tibia axes ≈ 23–24° each from vertical) versus Bontrager 20–30° (O58). Patella, distal femur, joint, proximal tibia and fibula inside the image. Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **Re-verified 2026-10-15 (RAD-018):** source identified as `File:X-ray_of_a_normal_knee_by_lateral_projection.jpg` (CC0, Häggström, 5 Jan 2018); downloaded original SHA-1 equals the registered SHA-1. |
 
 ### A-025 — RAD-LAB knee-lateral educational baseline: web copy (derived from A-024) (S14.4)
 
@@ -567,6 +578,7 @@ Four images of **right** limbs were attached by the owner (A-022, A-024, A-026, 
 | File facts | `image/jpeg`, 1061 × 2431 px, 836,201 bytes, JFIF **plus an EXIF block** (to be stripped). **The owner stated 1067 × 1913 px; the attached file differs (O59)** |
 | De-identification evidence | Burned-in text found: **"Dx"** in an angled label box, top right corner; also a **bright frame line along the bottom edge** (rows >= ~2405) and a bright ringing strip at the left / top edges. No ruler or device seen. Removed in the web copy (O60). No name or date stamp seen; no device, implant or cast. |
 | Notes | All phalanges, metatarsals, cuneiforms, navicular and cuboid inside the image; talus and calcaneus partly at the bottom edge; sesamoids visible under the 1st metatarsal head; hallux at the viewer's left (a right foot). Patient description for the foot not verified (O65). Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** candidate source `File:X-ray_of_normal_right_foot_by_dorsoplantar_projection.jpg` (page read: CC0, Häggström, 28 Jul 2017 = registry date); download 403, so identity is NOT proven. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-027 — RAD-LAB foot-ap educational baseline: web copy (derived from A-026) (S14.4)
 
@@ -606,6 +618,7 @@ Four images of **right** limbs were attached by the owner (A-022, A-024, A-026, 
 | File facts | `image/jpeg`, 1077 × 2029 px, 571,297 bytes, JFIF **plus an EXIF block** (to be stripped) |
 | De-identification evidence | Burned-in marks found: **"Dx"** in an angled label box (top right), **a small rectangular mark** near the middle of the forefoot (≈ x 640, y 908) and **a bright frame line along the bottom edge**. Removed in the web copy (a fill and a bottom crop; O60). No name or date stamp seen; no device, implant or cast. |
 | Notes | Obliquity read by eye only (O63). The bottom edge ends at the proximal tarsals: **the posterior calcaneus is not inside the image** (O61). Metatarsals 3–5 appear free of superimposition; the 5th metatarsal tuberosity is in profile. Same author as the wrist, hand and elbow images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** candidate source `File:X-ray_of_normal_right_foot_by_oblique_projection.jpg` from a Commons search listing; page request 403; NOT verified. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-029 — RAD-LAB foot-oblique educational baseline: web copy (derived from A-028) (S14.4)
 
@@ -648,6 +661,7 @@ Two images of the same patient's ankle (a 24-year-old male after a sprain, no in
 | File facts | `image/jpeg`, 728 × 1631 px, 324,767 bytes, JFIF only (no EXIF) |
 | De-identification evidence | Full image reviewed at high contrast: no burned-in text, marker, ruler, device or identifier seen. A **bright ringing strip along the left edge** (≈ 8 columns in the lower half, 2 in the upper) and a **1-px bright last column at the right edge** (rows 759–1630) are edge artefacts, repaired in the web copy (O79). Description (file page): ankle of a 24-year-old male, frontal projection, continuing pain 3 weeks after a sprain, no injuries seen. |
 | Notes | Distal tibia-fibula (≈ 13 cm above the joint at the assumed scale), both malleoli, talus and the upper calcaneus are inside; the proximal half of the metatarsals is **not** shown (O77). Side inferred LEFT (fibula on the viewer's right, O76). Same author as the wrist, hand, elbow, knee and foot images; not the person of any chest case (S12-4). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** candidate source `File:X-ray_of_normal_ankle_-_frontal.jpg` from a Commons search listing only; page not read; NOT verified. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-031 — RAD-LAB ankle-ap educational baseline: web copy (derived from A-030) (S14.5)
 
@@ -687,6 +701,7 @@ Two images of the same patient's ankle (a 24-year-old male after a sprain, no in
 | File facts | `image/jpeg`, 932 × 1678 px, 394,422 bytes, JFIF only (no EXIF) |
 | De-identification evidence | Full image reviewed at high contrast: no burned-in text, marker, ruler, device or identifier seen. A smooth bright gradient at the left edge (≈ 10 columns, soft tissue) without a step and a slightly brighter top row were checked and judged natural: **not repaired** (O79). Description (file page): same patient and date as A-030; lateral projection, "albeit somewhat suboptimal by not seeing straight through the ankle joint"; no injuries seen. |
 | Notes | Distal tibia and fibula (the fibula overlapped by the tibia), talus, calcaneus and the heel soft tissue are inside; the navicular and cuboid are only partly at the left edge and the 5th metatarsal tuberosity is not shown (O77). The residual obliquity is a documented limit (O78). Same person as A-030 (per the file page). A teaching approximation, never ground truth. |
+| Re-verification (RAD-018) | **RAD-018, 2026-10-15:** candidate source `File:X-ray_of_normal_ankle_-_lateral.jpg` from a Commons search listing only; page not read; NOT verified. **Owner decision 2026-10-15: the owner's screenshots of the Commons page are accepted as licence evidence (O100 closed).** |
 
 ### A-033 — RAD-LAB ankle-lateral educational baseline: web copy (derived from A-032) (S14.5)
 

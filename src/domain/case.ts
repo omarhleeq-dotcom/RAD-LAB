@@ -185,6 +185,12 @@ export interface PositioningSpec {
   defaultMarkerPosition: Record<SideMarkerId, NormPoint>;
   /** How the marker letter is judged (S11-1). Absent = anatomical side, the Chest PA rule. */
   markerRule?: MarkerRuleSpec;
+  /**
+   * Optional (S-PELVIS-3-1): the areas the marker must keep clear of (detector cm). Absent = the whole `requiredAnatomy` box, the
+   * original rule. An exam whose anatomy box is much larger than the bones (the pelvis) lists tighter zones so the marker can sit
+   * in an empty corner of the box instead of on the detector edge.
+   */
+  markerKeepOut?: DetectorRegion[];
 }
 
 /**

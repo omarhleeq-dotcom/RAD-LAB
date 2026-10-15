@@ -9,8 +9,8 @@ import { needsNotDrawnLabel, unregisteredVariants } from "@/features/radiograph/
 import { validateExam, validateCase } from "./validate";
 
 export const PELVIS_OK: SimulationSettings = {
-  projection: "pelvis-ap", rotationDeg: 0, centralRay: { x: 0, y: 0 }, collimation: { width: 1, height: 0.95 },
-  sideMarker: "R", markerPosition: { x: -0.93, y: -0.6 }, sidCm: 102, kvp: 85, mas: 2.5,
+  projection: "pelvis-ap", rotationDeg: 0, centralRay: { x: 0, y: 0 }, collimation: { width: 0.98, height: 0.95 },
+  sideMarker: "R", markerPosition: { x: -0.86, y: -0.743 }, sidCm: 102, kvp: 85, mas: 2.5,
   exposureMode: "manual", aecChambers: [], motionInstruction: "remain-still", tubeAngulationDeg: 0,
   choices: { legPosition: "internal", respiration: "suspend" },
 };
@@ -59,8 +59,19 @@ describe("Pelvis AP reference and existing optional mechanisms", () => {
     expect(run({sideMarker:"L"}).criticalFindings.map(f=>f.id)).toContain("wrong-side-marker");
     expect(run({sideMarker:"L",markerPosition:{x:0.93,y:-0.6}}).criticalFindings.map(f=>f.id)).toContain("wrong-side-marker");
     expect(run({sideMarker:"L"}).score.passed).toBe(false);
+    // S-PELVIS-3-1: the keep-out zones cover the bones only; the empty top-left corner is a valid place, the rest of the old box is not.
+    expect(check({markerPosition:{x:-0.86,y:-0.743}},"side-marker").outcome).toBe("pass");
+    expect(check({markerPosition:{x:-0.93,y:-0.6}},"side-marker").outcome).toBe("partial");
+    expect(check({markerPosition:{x:0.93,y:-0.794}},"side-marker").outcome).toBe("partial");
+    expect(check({markerPosition:{x:-0.86,y:-0.743},collimation:{width:0.8,height:0.8}},"side-marker").outcome).toBe("partial");
     expect(check({markerPosition:{x:0.5,y:0}},"side-marker").outcome).toBe("partial");
     expect(check({markerPosition:{x:-1,y:-1}},"side-marker").outcome).toBe("partial");
+  });
+  it("validates the optional marker keep-out zones and keeps the old box rule when they are absent", () => {
+    const bad = { ...pelvisApSupineExam, positioning: { ...pelvisApSupineExam.positioning, markerKeepOut: [{ xCm: 40, yCm: 0, widthCm: 10, heightCm: 5 }] } };
+    expect(validateExam(bad).join(" ")).toMatch(/markerKeepOut/);
+    const plain = { ...pelvisApSupineExam, positioning: { ...pelvisApSupineExam.positioning, markerKeepOut: undefined } };
+    expect(validateExam(plain)).toEqual([]);
   });
   it("clips anatomy visibly, records explicit educational bands, and keeps source-based kV", () => {
     expect(check({collimation:{width:0.5,height:0.5}},"collimation-clipping").outcome).toBe("fail");
