@@ -7,7 +7,7 @@
 ## ملخص الحالة الحالية (سرد، لا يُقرأ آلياً)
 
 - **المنفّذ والمدموج في `main`** (آخر مراجعة: `8ba2876`، دمج PR #34): محاكي Chest PA، تقسيم الفحص/الحالة، منصة التصفح، المراجع المكتوبة ومكتبة المصادر، آليات التعميم (S11)، فحوص الصدر الثلاثة (PA وLateral وAP supine)، وفحوص الأطراف: wrist وhand وelbow وknee وfoot وankle (12 فحصاً أطراف + 3 صدر)، وPelvis AP (المجموع 16)، مع جولتي تحسين بصري (S-VIS-1a/1b).
-- **الاتجاه الحالي (المالك، 2026-10-15):** Pelvis AP: المرجع وNeeds مدموجان (RAD-028)، والتنفيذ مدموج بعد مراجعة المالك (RAD-030)، والصورة المنظفة محفوظة (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
+- **الاتجاه الحالي (المالك، 2026-10-15):** الكتف Grashey: مرجع وNeeds للمراجعة (RAD-031)، مطابقة الصورة وملاءمتها للمراجعة (RAD-032)، والتنفيذ لم يبدأ (RAD-033). الحوض مدموج (RAD-028/RAD-030)، ومراجعته الطبية باقية (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
 - **ما يحتاج المالك أو المراجع البشري:** مراجعة المعلّم/الفيزيائي (O5، ليست بوابة)، إعادة التحقق من رخص الصور على Commons قبل الإصدار، وقرارات بيانات صغيرة (O55/O74 وO52 وO59)، وتأكيد حالة نشر المعاينة (RAD-024).
 - **تعارضات بين المصادر:** مسجّلة في حقل `conflict` داخل المهام المعنيّة (RAD-024 وRAD-025) ولا تُكرَّر هنا.
 - **لا تُحسب نسبة إنجاز للمشروع**: عدد المهام لا يعكس حجم العمل ولا المخاطر.
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 6,
-  "updated_at": "2026-10-15T07:46:28Z",
+  "revision": 7,
+  "updated_at": "2026-10-15T08:12:57Z",
   "timezone": "UTC",
-  "next_id": "RAD-031",
+  "next_id": "RAD-034",
   "tasks": [
     {
       "id": "RAD-001",
@@ -286,6 +286,30 @@
       "description": "تنفيذ Pelvis AP مستلقٍ مدموج في main بعد مراجعة المالك؛ وضع الطرفين وحبس النفس مستقلان، علامة تشريحية وتعريض يدوي ودوران تعليمي من صورة واحدة. لا يتضمن ذلك إثبات النشر أو اعتمادًا طبيًا.",
       "source_ref": "DECISIONS.md S-PELVIS-1-1…5؛ docs/session-pelvis-ap-implementation.md؛ PR #34",
       "completion_evidence": "راجع المالك الفرع وأعلن دمجه؛ GitHub يؤكد دمج PR #34 في 2026-10-15T07:43:19Z بالـcommit 8ba28769a9b870cef9f7cab835af8cafd1b4083a على main. QA التنفيذ الموثقة: typecheck/lint (O38 فقط)، 63 ملفًا/1629 اختبارًا، build، حارس scene-dom للحوض، 84 فحص متصفح/axe EN/AR و648 حالة تسميات ناجحة. الفحوص الـ15 السابقة دون تغيير. لم تُعد اختبارات التطبيق في تحديث التوثيق."
+    },
+    {
+      "id": "RAD-031",
+      "title": "مرجع الكتف Grashey وNeeds قبل الكود",
+      "status": "review",
+      "priority": "high",
+      "description": "أُعد مرجع AP oblique glenoid/Grashey وNeeds بقراءة Bontrager ص196 مباشرة؛ ينتظر مراجعة ودمج المرجع. لا يشمل Shoulder AP العادي أو Y أو axillary. القيم الطبية مؤقتة تحت O5.",
+      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-SHOULDER-REF-1؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md؛ docs/session-shoulder-grashey-reference-2026-10-15.md"
+    },
+    {
+      "id": "RAD-032",
+      "title": "مطابقة صورة الكتف وترخيصها وملاءمتها",
+      "status": "review",
+      "priority": "high",
+      "description": "مرفق واحد وصورتا وصف/CC0؛ وصل رابط Commons الدقيق، لكن API وصفحة الملف أعادا HTTP403. يلزم مطابقة الأصل والترخيص والجانب والتغطية ومراجعة ملاءمة تاريخ الخلع المتكرر. لا استيراد أو تعديل أو خدمة للصورة بعد.",
+      "source_ref": "DECISIONS.md O87/O91؛ مرجع Shoulder Grashey §8.8؛ مرفقات المالك 1000170774/1000170773/1000170771"
+    },
+    {
+      "id": "RAD-033",
+      "title": "تنفيذ Shoulder Grashey بعد دمج المرجع وحسم النطاق",
+      "status": "planned",
+      "priority": "medium",
+      "description": "لم يبدأ. بعد دمج RAD-031 وحسم الصورة/القرارات، تحديد وضعية الحالة وتحكم الذراع المنفصل وزاوية الجسم وrubric والمعايرة، ثم بوابة صدق المحاكاة من صورة واحدة. لا تنفيذ لسلسلة كتف كاملة تلقائيًا.",
+      "source_ref": "DECISIONS.md S-SHOULDER-REF-1/O88/O89/O90؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md §9–11"
     }
   ]
 }

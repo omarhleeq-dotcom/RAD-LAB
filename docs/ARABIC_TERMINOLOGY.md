@@ -327,3 +327,7 @@ Machine-assisted proposed terms only. Distinguish pelvic rotation from leg rotat
 ## Pelvis AP implementation — S-PELVIS-1 (DRAFT, machine-assisted, pending owner/educator review)
 
 UI additions: أشعة الحوض للبالغ — AP مستلقٍ؛ دوران الحوض؛ وضع الطرفين السفليين؛ دوران داخلي/خارجي/محايد؛ تعليمات التنفس؛ احبس نَفَسك أثناء التعريض؛ المستوى الناصف؛ جناحا الحرقفة؛ الثقبتان السداديتان؛ الارتفاق العاني؛ الكاشف؛ علامة الجانب التشريحي. All keys under positioningPelvis/scenePelvis and radiograph.pelvis-ap, the pelvis projection label and scene alternatives are new. Exam/case/rule/technique prose is bilingual data. Distinguish pelvis turn from leg positioning; no instruction forces inspiration or expiration. Receptor remains «الكاشف». Numerical values explicitly labelled «اختيار تعليمي في المحاكي» where applicable. No existing Arabic string changed.
+
+## Shoulder Grashey reference — 2026-10-15 (DRAFT, pending educator/Arabic review)
+
+Documentation only; machine-assisted, no UI strings changed. الكتف (shoulder)؛ الإسقاط الأمامي الخلفي المائل للكتف، غراشي (AP oblique shoulder, Grashey)؛ الجوف الحقاني (glenoid cavity)؛ حافة الجوف الحقاني (glenoid rim)؛ المفصل الكتفي العضدي (scapulohumeral joint)؛ رأس العضد (humeral head)؛ جسم لوح الكتف (scapular body)؛ دوران محايد للذراع (neutral arm rotation)؛ حبس النَّفَس أثناء التعريض (suspend respiration). «الكاشف» remains the detector term. Body obliquity and arm rotation must not be conflated.
