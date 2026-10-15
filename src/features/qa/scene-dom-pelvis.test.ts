@@ -22,7 +22,7 @@ const STATES: Record<string, Partial<SimulationSettings>> = {
   legsInternal: { choices: { legPosition: "internal", respiration: "suspend" } },
   legsExternal: { choices: { legPosition: "external", respiration: "normal" } },
   tubeM15: { tubeAngulationDeg: -15 }, tubeP15: { tubeAngulationDeg: 15 },
-  markerR: { sideMarker: "R", markerPosition: { x: -0.93, y: -0.6 } },
+  markerR: { sideMarker: "R", markerPosition: { x: -0.92, y: -0.6 } },
   markerL: { sideMarker: "L", markerPosition: { x: 0.93, y: -0.6 } },
   sid200: { sidCm: 200 }, tight: { collimation: { width: 0.4, height: 0.4 } },
 };

@@ -10,7 +10,7 @@ import { validateExam, validateCase } from "./validate";
 
 export const PELVIS_OK: SimulationSettings = {
   projection: "pelvis-ap", rotationDeg: 0, centralRay: { x: 0, y: 0 }, collimation: { width: 0.98, height: 0.95 },
-  sideMarker: "R", markerPosition: { x: -0.93, y: -0.6 }, sidCm: 102, kvp: 85, mas: 2.5,
+  sideMarker: "R", markerPosition: { x: -0.92, y: -0.6 }, sidCm: 102, kvp: 85, mas: 2.5,
   exposureMode: "manual", aecChambers: [], motionInstruction: "remain-still", tubeAngulationDeg: 0,
   choices: { legPosition: "internal", respiration: "suspend" },
 };
