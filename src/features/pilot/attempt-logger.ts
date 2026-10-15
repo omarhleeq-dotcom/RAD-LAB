@@ -7,6 +7,7 @@ import type { SimulationPhase, SimulationSettings } from "@/domain/simulation";
 import type { EvaluationResult } from "@/features/evaluation/types";
 import type { ProfileStatus } from "./account-state";
 import { buildAttemptRow, definitionVersion, splitCaseId, type Device } from "./attempt-record";
+import type { SavedAttempt } from "./saved-attempt";
 
 export type Snapshot = {
   activeCase: RadCase | null;
@@ -23,6 +24,8 @@ export type LoggerDeps = {
   device: () => Device;
   now?: () => Date;
   uuid?: () => string;
+  /** Tells the feedback box which attempt the result shows and whether its row was saved (RAD-043b). */
+  report?: (a: SavedAttempt) => void;
 };
 
 export function createAttemptLogger(deps: LoggerDeps) {
@@ -34,19 +37,23 @@ export function createAttemptLogger(deps: LoggerDeps) {
   let started = false;
   let chain: Promise<void> = Promise.resolve();
 
-  /** Serialised so events keep their order; never rejects. */
-  const run = (job: (client: SupabaseClient) => Promise<void>) => {
-    chain = chain.then(async () => {
+  const report = deps.report ?? (() => undefined);
+
+  /** Serialised so events keep their order; never rejects. Resolves true only when the job ran without an error. */
+  const run = (job: (client: SupabaseClient) => Promise<void>): Promise<boolean> => {
+    const done = chain.then(async () => {
       try {
         const client = await deps.getClient();
-        if (!client) return;
-        if ((await deps.getStatus(client)) !== "approved") return;
+        if (!client) return false;
+        if ((await deps.getStatus(client)) !== "approved") return false;
         await job(client);
+        return true;
       } catch {
-        /* best effort */
+        return false; /* best effort */
       }
     });
-    return chain;
+    chain = done.then(() => undefined);
+    return done;
   };
 
   const event = (type: string, payload: Record<string, unknown>) =>
@@ -69,6 +76,7 @@ export function createAttemptLogger(deps: LoggerDeps) {
       attemptId = uuid();
       startedAt = now();
       started = false;
+      report(null);
       void event("exam_opened", { ...ids(c), attempt_id: attemptId });
       return;
     }
@@ -76,6 +84,7 @@ export function createAttemptLogger(deps: LoggerDeps) {
       attemptId = uuid();
       startedAt = now();
       started = false;
+      report(null);
       if (s.attempt > p.attempt) void event("attempt_retry", { ...ids(c), attempt_no: s.attempt, attempt_id: attemptId });
       return;
     }
@@ -91,8 +100,12 @@ export function createAttemptLogger(deps: LoggerDeps) {
       const row = definitionVersion(c).then((version) =>
         buildAttemptRow({ id, radCase: c, version, attemptNo: s.attempt, settings, result, locale: deps.locale(), device: deps.device(), startedAt, finishedAt }),
       );
+      report({ id, status: "pending" });
       void run(async (client) => {
-        await client.from("attempts").insert(await row);
+        const { error } = await client.from("attempts").insert(await row);
+        if (error) throw new Error("attempt not saved");
+      }).then((saved) => {
+        if (attemptId === id) report({ id, status: saved ? "saved" : "unavailable" });
       });
       void event("attempt_submitted", { ...ids(c), attempt_no: s.attempt, attempt_id: id, score: result.score.total });
     }

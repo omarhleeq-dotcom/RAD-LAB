@@ -10,6 +10,7 @@ import { createAttemptLogger } from "./attempt-logger";
 import { needsConsent, parseConsentVersion } from "./consent";
 import { getPilotClient } from "./client";
 import { PILOT, sessionStorageKey } from "./config";
+import { savedAttempt } from "./saved-attempt";
 
 function hasSavedSession(): boolean {
   if (!PILOT) return false;
@@ -38,11 +39,16 @@ export function AttemptRecorder() {
         })().catch(() => null);
         return status;
       },
+      report: (a) => savedAttempt.set(a),
       locale: () => locale,
       device: () => ({ w: window.innerWidth, h: window.innerHeight, touch: window.matchMedia("(pointer: coarse)").matches }),
     });
     logger.onState(useSimulationStore.getState());
-    return useSimulationStore.subscribe((state) => logger.onState(state));
+    const off = useSimulationStore.subscribe((state) => logger.onState(state));
+    return () => {
+      off();
+      savedAttempt.set(null);
+    };
   }, [locale]);
   return null;
 }

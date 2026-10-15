@@ -99,6 +99,13 @@ export function useAccount(redirectTo: string) {
     }
   }, [state]);
 
+  /** Survey link clicked: one event, ids-free (the code is already the user). Only for an approved, consenting account; never blocks the link. */
+  const surveyOpened = useCallback(async () => {
+    if (state.kind !== "signedIn" || state.profile.status !== "approved" || state.consentVersion !== CONSENT_VERSION) return;
+    const client = await getPilotClient();
+    if (client) await recordActivity(client, state.profile.status, "survey_opened");
+  }, [state]);
+
   const signOut = useCallback(async () => {
     const client = await getPilotClient();
     if (!client) return;
@@ -113,5 +120,5 @@ export function useAccount(redirectTo: string) {
     await load(data.session, false);
   }, [load]);
 
-  return { state, signIn, signUp, signOut, retry, acceptTerms };
+  return { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened };
 }

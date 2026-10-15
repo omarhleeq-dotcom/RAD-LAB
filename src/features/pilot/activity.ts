@@ -3,7 +3,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { ProfileStatus } from "./account-state";
 
-export type ActivityType = "signed_in" | "heartbeat" | "logout";
+export type ActivityType = "signed_in" | "heartbeat" | "logout" | "survey_opened";
 
 export async function recordActivity(client: SupabaseClient, status: ProfileStatus | null, type: ActivityType): Promise<void> {
   try {

@@ -1253,7 +1253,24 @@
       "agree": "I have read and agree to the Terms and Privacy.",
       "accept": "Agree and continue",
       "failed": "Could not save your agreement. Please try again."
+    },
+    "survey": {
+      "title": "Survey",
+      "body": "Please answer a short survey about your experience. It opens in a new tab and carries your participant code, not your email address.",
+      "open": "Open the survey"
     }
+  },
+  "feedback": {
+    "title": "Notes on this attempt",
+    "hint": "Optional. Tell us what was confusing, wrong or missing. Your note is saved with this attempt.",
+    "warning": "Do not write personal data: no names, contacts, or anything about real patients.",
+    "label": "Your note",
+    "counter": "{n} of {max} characters",
+    "send": "Send note",
+    "sending": "Sending…",
+    "sent": "Thank you. Your note was saved.",
+    "another": "Write another note",
+    "failed": "Could not send your note. Please try again."
   },
   "owner": {
     "title": "Owner dashboard",
@@ -1298,7 +1315,9 @@
       "title": "What we keep",
       "p1": "Your email address and a password. The password is stored only as a scrambled value that nobody, including us, can read.",
       "p2": "For each practice attempt: the settings you chose, your score and which checks you passed or missed, the exam, the language and your screen size.",
-      "p3": "When you signed in, signed out or were last active, and the steps you take in an exam (open it, start, submit, try again)."
+      "p3": "When you signed in, signed out or were last active, and the steps you take in an exam (open it, start, submit, try again).",
+      "p4": "If you choose to write a short note about an attempt, the note (up to 1,000 characters) and the attempt it refers to. Please never put your name, contact details or anything about real people in it.",
+      "p5": "If you open the survey from your account page, the survey tool receives your participant code (never your email) so answers can be matched to you; the tool has its own privacy terms."
     },
     "notKeep": {
       "title": "What we do not do",
