@@ -32,6 +32,7 @@ export function withConnectSrc(headersText, origin) {
 export function assertPublishableKey(raw) {
   const key = (raw ?? "").trim();
   if (key === "") return null;
+  if (/^[A-Z_]+=/.test(key)) throw new Error("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY must hold only the key, not a `NAME=value` line: remove the leading `NEXT_PUBLIC_…=` so it starts with sb_publishable_.");
   if (key.startsWith("sb_secret_")) throw new Error("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY holds a SECRET key (sb_secret_…). Never publish it; use the publishable key (sb_publishable_…).");
   if (key.startsWith("sb_publishable_")) {
     // A real key is `sb_publishable_` + a long random token. Refuse a placeholder such as "sb_publishable_…" or "sb_publishable_xxx".

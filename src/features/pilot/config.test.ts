@@ -39,7 +39,7 @@ describe("assertPublishableKey (the build guard)", () => {
     expect(assertPublishableKey(undefined)).toBeNull();
     expect(assertPublishableKey("")).toBeNull();
   });
-  it.each(["sb_secret_abc", jwt("service_role"), jwt(""), "not-a-key", "a.b.c", "sb_publishable_…", "sb_publishable_...", "sb_publishable_xxx", "sb_publishable_abc"])("throws for %s", (bad) => {
+  it.each(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_AbCdEfGhIjKlMnOp-123456", "sb_secret_abc", jwt("service_role"), jwt(""), "not-a-key", "a.b.c", "sb_publishable_…", "sb_publishable_...", "sb_publishable_xxx", "sb_publishable_abc"])("throws for %s", (bad) => {
     expect(() => assertPublishableKey(bad)).toThrow();
   });
   it("passes publishable keys", () => {
