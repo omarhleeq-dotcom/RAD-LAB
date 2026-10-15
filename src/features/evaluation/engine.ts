@@ -115,7 +115,7 @@ function evalMarker(rule: MarkerRule, s: SimulationSettings, c: RadCase): Partia
   if (isMarkerWrongSide(c.positioning, { side: s.sideMarker, position: s.markerPosition }, s.choices)) issues.push(rule.feedback.wrongSide);
   if (!rectInside(rect, detectorRect) || !rectInside(rect, collimatedField(s, c.detector))) {
     issues.push(rule.feedback.outsideField);
-  } else if (rectsOverlap(rect, regionToRect(c.requiredAnatomy))) {
+  } else if ((c.positioning.markerKeepOut ?? [c.requiredAnatomy]).some((zone) => rectsOverlap(rect, regionToRect(zone)))) {
     issues.push(rule.feedback.overlap);
   }
   if (issues.length === 0) return { outcome: "pass", observed, feedback: rule.feedback.pass };
