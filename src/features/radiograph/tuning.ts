@@ -50,6 +50,8 @@ export const TUNING = {
     elbowModelGainPerDeg: 2.3,
     /** Knee / foot (S14.4): as the hand's gain, for the lower-limb rotation models (`features/lower-limb-model`); illustrative, scoring never uses it. */
     lowerLimbModelGainPerDeg: 2.3,
+    /** Shoulder Grashey (S-SHOULDER-3): closure of the joint space, as a fraction of the image width per degree of deviation from the 35°–45° band (capped at `maxDeg`); illustrative, scoring never uses it. */
+    shoulderClosurePerDeg: 0.0033,
     /** Wrist (S-VIS-1b): as the hand's gain, for the wrist rotation model (`features/wrist-model`); a labelled teaching exaggeration, scoring never uses it. */
     wristModelGainPerDeg: 2.3,
   },

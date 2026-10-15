@@ -190,3 +190,8 @@ Owner selected shoulder next. One candidate is described as **AP glenoid/Grashey
 Owner explicitly selected docs/Bontrager work only and suppliedY link. [Reference/complete Needs](RAD-LAB_Medical_Reference_Shoulder_Y.md), printedp.201/PDF221 directly text/visual checked. OfficialY page/API verifyCC0; source says slightly skewed. Attached radiograph/licence are previousGrashey; no asset import/correction. O92–O94 open, clinical reviewO5/O86. GrasheyPR#36/#37 remains merged; no implementation of either shoulder view. Session: [Y reference](session-shoulder-y-reference-2026-10-15.md).
 
 Shoulder Y reference/Needs merged by owner in [PR #38](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/38), commit `5821c4ec31a231529eb230d26f9f7e7b219fb0db`; RAD-034 done as documentation only. RAD-035/O92 and O93/O94 remain; no implementation authorized by the merge.
+
+### Shoulder Grashey implementation — S-SHOULDER-3, 2026-10-15 (review, not merged)
+
+- Reference merged via PR #36, settlement via PR #37 (`b8d870f`). Implemented `shoulder-grashey-erect` only: erect, 24×30 cm landscape, fixed marker letter R, absolute-angle body turn with the 35°–45° plateau, arm choice without image effect, one joint-space cue through the generic `limb-warp`; A-037/A-038 (CC0, SHA-1 verified).
+- QA: `npm run check` (66 files / 1644 tests), build, browser/axe 84 checks EN/AR × 1440/390, label matrix 648 states clean; the 16 earlier exams byte-identical. Record: [session-shoulder-grashey-implementation-2026-10-15.md](session-shoulder-grashey-implementation-2026-10-15.md). Open: O95, O96, O88, O89, O91, O5, O86.

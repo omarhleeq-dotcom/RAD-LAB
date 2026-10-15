@@ -253,3 +253,16 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | Y-R3 image |Y page/API independentlyCC0; says slightly skewed/recurrent dislocation. New image/licence attachments areGrashey | Educator/ownerO92: assess actualY original and suitability; no ideal-baseline claim or guessed correction |
 | Y-R4 model/rubric | No implementation;Y symmetry/head alignment conditional on no dislocation | Educator/ownerO93/O94: distinguish pathological alignment from positioning and assess honest one-image effects; no borrowedGrashey model or3D engine |
 | Y-R5 Arabic | DRAFT terms inARABIC_TERMINOLOGY | Arabic reviewer/educatorO5; no new UI |
+
+## Shoulder Grashey implementation — S-SHOULDER-3, pending educator/physicist/Arabic review
+
+| Item | Source/basis | Review question / owner |
+|---|---|---|
+| SHOULDER-I1 rotation | p.196 band 35°–45° as an equal-credit plateau; **30°–50° partial band and 0–60° control range are engine teaching choices (B)** | Educator: acceptable plateau for an average patient given that the needed angle varies with build? Partial margins? |
+| SHOULDER-I2 cue | Joint-space closure only, same for either side, baseline unchanged inside the band (educational simplification), gain 0.0033 / ° capped at 15° | Educator: is one cue enough? Physicist: is the closure a fair proxy of head–glenoid superimposition? |
+| SHOULDER-I3 arm | Neutral = p.196; internal / external rotation are teaching distractors; setup drawing and feedback only, no image effect | Educator: confirm the distractors and that the radiograph does not change |
+| SHOULDER-I4 technique | Source: 75–85 kV, SID ≥ 102, grid. **B:** kV partial 70–90, SID 102–110 / 95–130, tube ±2° / ±5°, centring ±1 / ±2.5 cm, anchor 80 kV / 2 mAs / 102 cm, attenuation 1, manual-only | Physicist: values and the manual-only choice (no AEC) |
+| SHOULDER-I5 geometry | Scale 0.011 cm / px, target (815, 515), region box, excess margin 4.5 cm, default marker on the medial side (field centred on the central ray, frame cut medially) — all by eye (O95) | Educator / physicist: realistic coverage and margins |
+| SHOULDER-I6 scoring | Six categories 25/20/15/20/10/10, pass 70, critical = missing / wrong-side marker (pelvis pattern) | Educator: weights and critical list (O89) |
+| SHOULDER-I7 image | A-037 / A-038: rotated / cropped frame, ends mid-humerus, recurrent-dislocation history, not a normal shoulder | Educator: suitability of the image (O91) |
+| SHOULDER-I8 Arabic | New AR strings are machine-assisted DRAFT (see ARABIC_TERMINOLOGY) | Arabic reviewer |

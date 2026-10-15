@@ -1,0 +1,10 @@
+{
+  "radios": [
+    { "en": "Arm position", "ar": "وضع الذراع" },
+    { "en": "Breathing instruction", "ar": "تعليمات التنفس" }
+  ],
+  "sliders": {
+    "positioningShoulder.rotation": ["min", 20, 35, 40, 45, "max"],
+    "console.tubeAngulation": ["min", 0, "max"]
+  }
+}

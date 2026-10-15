@@ -11,6 +11,7 @@ export interface ProjectionSpec {
 }
 
 export const PROJECTIONS: Readonly<Record<string, ProjectionSpec>> = {
+  "shoulder-grashey": { wordingNs: "shoulder-grashey" },
   "pelvis-ap": { wordingNs: "pelvis-ap" },
   "pa-erect": {},
   "ap-erect": { wordingNs: "ap" },

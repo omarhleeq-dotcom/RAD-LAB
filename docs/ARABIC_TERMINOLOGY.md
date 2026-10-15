@@ -335,3 +335,7 @@ Documentation only; machine-assisted, no UI strings changed. الكتف (shoulde
 ## Shoulder Y reference — 2026-10-15 (DRAFT, pending educator/Arabic review)
 
 Documentation only, machine-assisted; no UI strings changed. الإسقاط الجانبي للوح الكتف على شكلY (scapularY lateral)؛ إسقاط خلفي أمامي مائل (PA oblique)؛ الأخرم (acromion)؛ الناتئ الغرابي (coracoid process)؛ الزاوية العلوية/السفلية للوح الكتف (superior/inferior scapular angle)؛ المفصل الأخرمي الترقوي (AC joint)؛ المفصل الكتفي العضدي (scapulohumeral joint). Keep body obliquity separate from arm rotation and preserve the source warning; الكاشف remains detector.
+
+## Shoulder Grashey implementation — S-SHOULDER-3 (DRAFT, machine-assisted, pending owner/educator review)
+
+UI additions: أشعة الكتف للبالغ — الجوف الحقاني المائل (غراشي)، واقف؛ الكتف — الإسقاط المائل (غراشي)؛ ميل الجسم نحو الكتف الأيمن / إدارة الجسم نحو الكتف الأيمن؛ وضع الذراع؛ مبعدة قليلًا، المرفق مثني، دوران محايد؛ إلى الجانب، دوران داخلي / خارجي؛ المفصل الكتفي العضدي؛ نطاق المصدر ‏35°–45°؛ الحيّز المفصلي (joint space)؛ انغلاق الحيّز المفصلي؛ رأس العضد؛ الجوف الحقاني؛ الأخرم (acromion)؛ الناتئ الغرابي (coracoid); طرف الترقوة الوحشي؛ منظر علوي؛ العلامة R (يمين المريض). Reuses «الكاشف» (never «الكاسيت»), «حبس النَّفَس».

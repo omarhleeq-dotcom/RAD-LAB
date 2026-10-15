@@ -1,6 +1,8 @@
 "use client";
 import { PELVIS_FIGURE } from "./PelvisFigure";
 import { PelvisSideView } from "./PelvisSideView";
+import { SHOULDER_FIGURE } from "./ShoulderFigure";
+import { ShoulderSideView } from "./ShoulderSideView";
 
 /**
  * Scene layouts (S14-0). `PositioningView` is the shared interactive positioning view (detector view + side/plan view +
@@ -168,3 +170,6 @@ export const ANKLE_AP_LAYOUT: SceneLayout = lowerLimbLayout(ANKLE_AP_FIGURE, "An
 export const ANKLE_LATERAL_LAYOUT: SceneLayout = lowerLimbLayout(ANKLE_LATERAL_FIGURE, "Ankle", "Lateral");
 
 export const PELVIS_LAYOUT: SceneLayout = { figure: PELVIS_FIGURE, SecondView: PelvisSideView, texts: { detectorCaption: "positioningPelvis.detectorCaption", secondViewCaption: "positioningPelvis.sideViewCaption", schematicNote: "positioningPelvis.schematicNote", rotationHelp: "positioningPelvis.rotationHelp", markerConvention: "positioningPelvis.markerConvention", markerHint: "positioningPelvis.markerHint", rotationLabel: "positioningPelvis.rotation" } };
+
+/** Shoulder Grashey (S-SHOULDER-3): detector view of the right shoulder + a plan view of the erect set-up (body turn and the arm choice). */
+export const SHOULDER_LAYOUT: SceneLayout = { figure: SHOULDER_FIGURE, SecondView: ShoulderSideView, texts: { detectorCaption: "positioningShoulder.detectorCaption", secondViewCaption: "positioningShoulder.sideViewCaption", schematicNote: "positioningShoulder.schematicNote", rotationHelp: "positioningShoulder.rotationHelp", markerConvention: "positioningShoulder.markerConvention", markerHint: "positioningShoulder.markerHint", rotationLabel: "positioningShoulder.rotation" } };

@@ -1,4 +1,5 @@
 import { pelvisAnchors } from "@/features/pelvis-model/pelvis-model";
+import { shoulderAnchors, shoulderValue } from "@/features/shoulder-model/shoulder-model";
 /**
  * Limb rotation effect (S14.1c, the first registered `EffectDefinition`): the wrist's true-PA / true-lateral criteria drawn from
  * ONE baseline image. Pure: it only reads the result state and the case; the pixel step lives in `pipeline.ts`, every size in
@@ -37,7 +38,9 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 
 /** Concept records of the four lower-limb models (S14.4). */
 const lowerLimbConcept = (model: LowerLimbModelId): Evidence =>
-  model === "pelvis-ap"
+  model === "shoulder-grashey"
+    ? { status: "common-reference", reference: "BONTRAGER-9 p.196 (AP oblique glenoid, Grashey)", note: "Glenoid in profile without humeral-head superimposition and an open joint space; the body is turned 35°–45° toward the affected side. One-image educational cue only: the joint space closes outside the 35°–45° band; the glenoid rims, head overlap and arm posture are not drawn. Provisional pending O5." }
+    : model === "pelvis-ap"
     ? { status: "common-reference", reference: "BONTRAGER-9 p.279; docs/DECISIONS.md S-PELVIS-1-1/4", note: "Pelvic rotation changes the symmetry of iliac wings and obturator foramina. One-image educational warp only; femoral-neck foreshortening and hidden lesser trochanters are not synthesized. Provisional pending O5." }
     : model === "foot-ap"
     ? {
@@ -121,7 +124,8 @@ export function limbRotationPlan(
   landmarks: LimbRotationLandmarks | undefined,
 ): LimbRotationPlan | null {
   // The foot oblique's console value is the absolute plantar angle; its model value is the deviation from the 40° reference (S14.4).
-  const value = landmarks && "model" in landmarks && landmarks.model === "foot-oblique" ? footValue("oblique", deg) : deg;
+  // The shoulder Grashey console value is the absolute body obliquity; its model value is the distance to the 35°–45° band (S-SHOULDER-2-6).
+  const value = landmarks && "model" in landmarks && landmarks.model === "foot-oblique" ? footValue("oblique", deg) : landmarks && "model" in landmarks && landmarks.model === "shoulder-grashey" ? shoulderValue(deg) : deg;
   if (!landmarks || !failed || value === 0) return null;
   const d = clamp(value, -TUNING.limbRotation.maxDeg, TUNING.limbRotation.maxDeg);
   if (landmarks.kind === "hand-pa") {
@@ -145,6 +149,11 @@ export function limbRotationPlan(
     return { kind: "elbow-lateral", degrees: d, shiftU: c.condyles[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.condyles, c.head] } };
   }
   if (landmarks.kind === "limb-warp") {
+    if (landmarks.model === "shoulder-grashey") {
+      // One closing warp, the same for either sign of the deviation (S-SHOULDER-2-6); shiftU = the closure of the head side (never negative).
+      const anchors = shoulderAnchors(d);
+      return { kind: "limb-warp", degrees: d, shiftU: anchors[3]!.du, overlapShiftU: 0, hand: { anchors: [anchors] } };
+    }
     if (landmarks.model === "pelvis-ap") {
       const anchors = pelvisAnchors(d);
       return { kind: "limb-warp", degrees: d, shiftU: anchors[3]!.du, overlapShiftU: 0, hand: { anchors: [anchors] } };

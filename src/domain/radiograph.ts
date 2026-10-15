@@ -123,5 +123,5 @@ export type LimbRotationLandmarks =
   | { kind: "limb-layers"; model: LowerLimbModelId; forearm: ImageBand & { splitU: number } }
   | { kind: "limb-copies"; model: LowerLimbModelId; bands: (ImageBand & { u1: number; u2: number })[] };
 
-/** The lower-limb rotation models (S14.4 knee / foot, S14.5 ankle). */
-export type LowerLimbModelId = "pelvis-ap" | "foot-ap" | "foot-oblique" | "knee-ap" | "knee-lateral" | "ankle-ap" | "ankle-lateral";
+/** The generic limb-warp / layers / copies models (S14.4 knee / foot, S14.5 ankle, pelvis, S-SHOULDER-3 shoulder Grashey). */
+export type LowerLimbModelId = "shoulder-grashey" | "pelvis-ap" | "foot-ap" | "foot-oblique" | "knee-ap" | "knee-lateral" | "ankle-ap" | "ankle-lateral";

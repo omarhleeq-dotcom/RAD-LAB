@@ -813,3 +813,32 @@ Two images of the same person's left hand were attached by the owner (A-014, A-0
 | Facts | PNG RGB, 2675 × 2084, 2,686,371 B, no EXIF. SHA-256 `5337360693c4939cee02f0225cd0e082fcf55dd7a5f09bd02658dcdc2297c7d9` equals A-035. |
 | De-identification / attribution | A-034/A-035 visual/EXIF review; no remaining burned-in text/marker seen. Voluntary bilingual credit under result image identifies source, cleanup and single-image approximation. |
 | Limits | Owner selected the image and requested the existing exam approach. Clinical normality/coverage, assumed scale/landmarks and model remain provisional O5/O84/O85. No hidden anatomy is reconstructed. |
+
+---
+
+## A-037 — Shoulder AP oblique glenoid (Grashey) original (S-SHOULDER-3; not served)
+
+| Field | Value |
+|---|---|
+| Type / file | External radiograph master; `assets/source/shoulder/shoulder-grashey-original.jpg` (not served) |
+| Author / source / date | Mikael Häggström, own work; 27 August 2017 (creation); single version uploaded to Commons 21 December 2017 09:54 UTC |
+| Canonical source | https://commons.wikimedia.org/wiki/File:Anteroposterior_glenoid_(Grashey_view)_X-ray_of_a_normal_shoulder.jpg |
+| Licence | CC0 1.0 Universal Public Domain Dedication, https://creativecommons.org/publicdomain/zero/1.0/ ; Commons page carries the CC0 template and the category `CC-Zero`; owner screenshot agrees |
+| Commercial use / attribution | Compatible; no attribution required; voluntary credit shown under the result image |
+| Verification | 2026-10-15: file page read (HTTP 200) and official API `prop=imageinfo` read; the downloaded original's SHA-1 equals the API-declared SHA-1 (S-SHOULDER-2-1) |
+| Checksums | SHA-1 `74f436796ab839c9edd89ebbebfd08598c5e8337`; SHA-256 `16927a1303eca61691e1048c3c2545bd4bd44df2060f11fd04b7315658d4c9d4` |
+| File facts | JPEG (JFIF, 96 dpi), 1193 × 1800 px, 641,341 bytes; three equal colour channels; no EXIF |
+| Modifications | None; immutable source of A-038 |
+| De-identification / limits | No name, date, ID or marker found (visual review of the full frame and the four corners). Uploader describes a 31-year-old man, right shoulder, recurrent dislocation, no visible abnormality; the file name says "normal": it is NOT presented as a normal or asymptomatic shoulder. The frame is a rotated / cropped copy (right margin straight at about 11–13° from vertical) and ends in mid-humerus. Educator review of suitability: O91 / O5. |
+
+## A-038 — Shoulder Grashey product copy (S-SHOULDER-3)
+
+| Field | Value |
+|---|---|
+| Type / file | Educational result baseline; `public/images/shoulder/shoulder-grashey-baseline.png` |
+| Source | Lossless greyscale copy of A-037 (same decoded pixels, 8-bit `L`, no EXIF); same author and licence |
+| Reproduce | `python3 -I scripts/derive-shoulder-baseline.py` (checks the master's SHA-1 first; asserts equal channels and a pixel-exact read-back) |
+| Facts | PNG greyscale, 1193 × 1800, 1,105,329 bytes; SHA-256 `b254bec66a36b304bd8a683c7e7480cf23db1008778efcb68b722730755d7bc2` |
+| Modification | None to the pixels: no crop, resize, retouch or contrast change. Runtime joint-space closure is a labelled educational warp, never written back to this file. |
+| Attribution | Voluntary bilingual credit under the result image names the author and licence, the clinical context of the source and the single-image approximation. |
+| Limits | Scale (0.011 cm / px), region box and landmarks are read by eye (S-SHOULDER-3-4); clinical suitability pending O91 / O5. |
