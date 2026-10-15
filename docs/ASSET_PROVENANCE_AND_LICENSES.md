@@ -799,3 +799,17 @@ Two images of the same person's left wrist were supplied by the owner and verifi
 
 ### G. Hand baselines (S14.2b, 2026-10-07)
 Two images of the same person's left hand were attached by the owner (A-014, A-016): CC0 **as seen by the owner on the file pages**. The Commons API request was **HTTP 429 twice**, so they are recorded as **owner-verified** and **not** compared with the Commons SHA-1 (open item O39). Both carried a burned-in text ("Sin" mirrored on the PA, "SIDA" on the lateral); it was removed by a documented **fill** (no crop, S14.2-7) in the derive script (A-015, A-017). Web copies carry no metadata. Commercial-compatible (CC0, S10-3): yes, if the owner's statement holds. Not registered: any overlay art, scene image or font (the hand scene is hand-drawn SVG code).
+
+## A-036 — Pelvis AP product copy (S-PELVIS-1)
+
+| Field | Value |
+|---|---|
+| Type / file | Educational result baseline; `public/images/pelvis/pelvis-ap-baseline.png` |
+| Source / author / date | Exact copy of A-035, derived from A-034; UC San Diego Health radiology staff / bonepit.com; 14 March 2018 |
+| Canonical source | https://commons.wikimedia.org/wiki/File:X-ray_of_the_pelvis_of_an_18_year_old_male_-_case_1_-_anteroposterior.jpg |
+| Licence/commercial use | Public domain / Public Domain Mark 1.0, https://creativecommons.org/publicdomain/mark/1.0/ ; source page verified 2026-10-15 and original SHA-1 matched. Commercial-compatible; retain voluntary credit. |
+| Modification | None after A-035: the source marker/graphics had already been removed from background only; no crop/resize or re-encoding. Runtime rotation is a labelled educational warp, never written back to this file. |
+| Reproduce | `python scripts/derive-pelvis-baseline.py --output public/images/pelvis/pelvis-ap-baseline.png` |
+| Facts | PNG RGB, 2675 × 2084, 2,686,371 B, no EXIF. SHA-256 `5337360693c4939cee02f0225cd0e082fcf55dd7a5f09bd02658dcdc2297c7d9` equals A-035. |
+| De-identification / attribution | A-034/A-035 visual/EXIF review; no remaining burned-in text/marker seen. Voluntary bilingual credit under result image identifies source, cleanup and single-image approximation. |
+| Limits | Owner selected the image and requested the existing exam approach. Clinical normality/coverage, assumed scale/landmarks and model remain provisional O5/O84/O85. No hidden anatomy is reconstructed. |

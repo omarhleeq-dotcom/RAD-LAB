@@ -323,3 +323,7 @@ Questions for the AR reviewer: «الظنبوب» vs «القصبة»; «الك�
 | Image receptor | الكاشف |
 
 Machine-assisted proposed terms only. Distinguish pelvic rotation from leg rotation and avoid adding inspiration/expiration to a phase-neutral source instruction.
+
+## Pelvis AP implementation — S-PELVIS-1 (DRAFT, machine-assisted, pending owner/educator review)
+
+UI additions: أشعة الحوض للبالغ — AP مستلقٍ؛ دوران الحوض؛ وضع الطرفين السفليين؛ دوران داخلي/خارجي/محايد؛ تعليمات التنفس؛ احبس نَفَسك أثناء التعريض؛ المستوى الناصف؛ جناحا الحرقفة؛ الثقبتان السداديتان؛ الارتفاق العاني؛ الكاشف؛ علامة الجانب التشريحي. All keys under positioningPelvis/scenePelvis and radiograph.pelvis-ap, the pelvis projection label and scene alternatives are new. Exam/case/rule/technique prose is bilingual data. Distinguish pelvis turn from leg positioning; no instruction forces inspiration or expiration. Receptor remains «الكاشف». Numerical values explicitly labelled «اختيار تعليمي في المحاكي» where applicable. No existing Arabic string changed.

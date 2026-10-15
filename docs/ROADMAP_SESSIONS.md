@@ -173,3 +173,10 @@ Delivered: Chest Lateral exam, case, asset (A-006 / A-007), scene, tests and QA 
 - [Pelvis AP reference](RAD-LAB_Medical_Reference_Pelvis_AP.md) + complete Needs assessment written from direct BONTRAGER-9 p.271–272, 279 reading. Draft PR #33, not merged; no exam/generalisation code. O81–O86 await review. Status RAD-028 is review, not done.
 - Owner-requested background-only marker removal: original/derivative A-034/A-035 + reproducible pixel script, not served to the product. Clinical suitability remains O84/RAD-029.
 - Next: owner review/decisions and reference merge, then scope the next phase; current choice controls may suffice for independent leg position and phase-neutral breath suspension, so no speculative generalisation. [Session record](session-pelvis-ap-reference-2026-10-15.md).
+
+### Pelvis AP implementation — S-PELVIS-1, 2026-10-15 (review, not merged)
+
+- Reference merged via PR #33 at `f531a660c3a184677bb82807e6e06158a3a48857`; owner then requested the existing exam approach after reviewing rotation on previous images.
+- Implemented `pelvis-ap-supine` only: independent pelvic rotation, bilateral leg stance and phase-neutral respiration; manual DR/grid context, anatomical marker; A-036 copy of cleaned A-035, pelvis model reusing existing `limb-warp`, own scene and new guard.
+- QA: typecheck/lint (existing O38 warning only), 63 files/1629 tests, production build, EN/AR ×1440/390 browser/axe 84 checks, label/obstacle matrix648 states with no overlaps/out-of-frame labels. Earlier15 composed cases byte-identical; old images/data/hash/golden/characterisation files unchanged. No deployment/merge by agent.
+- RAD-030 review; O5/O81 calibration, O84/O85 suitability/approximation and O86 remain. Record: [session-pelvis-ap-implementation.md](session-pelvis-ap-implementation.md).

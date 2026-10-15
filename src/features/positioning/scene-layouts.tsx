@@ -1,4 +1,6 @@
 "use client";
+import { PELVIS_FIGURE } from "./PelvisFigure";
+import { PelvisSideView } from "./PelvisSideView";
 
 /**
  * Scene layouts (S14-0). `PositioningView` is the shared interactive positioning view (detector view + side/plan view +
@@ -164,3 +166,5 @@ export const FOOT_OBLIQUE_LAYOUT: SceneLayout = lowerLimbLayout(FOOT_OBLIQUE_FIG
 /** Ankle (S14.5): the same layout (detector view of the LEFT ankle + the side view of the table set-up). */
 export const ANKLE_AP_LAYOUT: SceneLayout = lowerLimbLayout(ANKLE_AP_FIGURE, "Ankle", "Ap");
 export const ANKLE_LATERAL_LAYOUT: SceneLayout = lowerLimbLayout(ANKLE_LATERAL_FIGURE, "Ankle", "Lateral");
+
+export const PELVIS_LAYOUT: SceneLayout = { figure: PELVIS_FIGURE, SecondView: PelvisSideView, texts: { detectorCaption: "positioningPelvis.detectorCaption", secondViewCaption: "positioningPelvis.sideViewCaption", schematicNote: "positioningPelvis.schematicNote", rotationHelp: "positioningPelvis.rotationHelp", markerConvention: "positioningPelvis.markerConvention", markerHint: "positioningPelvis.markerHint", rotationLabel: "positioningPelvis.rotation" } };

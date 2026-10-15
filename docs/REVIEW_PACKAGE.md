@@ -219,3 +219,16 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | PELVIS-R6: owner-supplied image, public-domain page | Commons case-1 page read 2026-10-15; candidate not clinical ground truth | Confirm coverage and suitability; burned-in marker/edge graphics require documented treatment before adoption | Educator/owner, O84 |
 | PELVIS-R7: historical shielding content | 2018 book, not adopted | Review contemporary authoritative practice before product wording; not scored in this phase | Physicist, O86 |
 | PELVIS-R8: Arabic proposed terms | Machine-assisted draft in ARABIC_TERMINOLOGY | Review anatomy and phase-neutral breath-hold wording | Arabic reviewer/educator |
+
+## Pelvis AP implementation — S-PELVIS-1, pending educator/physicist/Arabic review
+
+| Item | Basis | Question / limitation |
+|---|---|---|
+| Clinical setup / technique | BONTRAGER-9 p.271–272,279 | Confirm non-trauma supine scope, ≥102cm, grid, digital80–90kV, perpendicular CR and phase-neutral breath suspension. Trauma warning retained. |
+| Numerical grading | Explicit engine teaching choices, same previous-exam pattern (S-PELVIS-1-3) | rotation ±2°/±5°; SID102–110/95–130; kV partial75–95; centering1/2.5cm; max excess2.6cm; weights25/20/15/20/10/10, pass70, marker-only critical gate. None is a clinical tolerance/rubric. |
+| Exposure model | Anchor85kV/2.5mAs/102cm, exponent3, attenuation1, inherited generic DI bands | Not a clinical mAs prescription, calibrated device or universal EI/DI standard. Manual-only is a v1 simplification. |
+| Geometry and resolution | Box100…2640/30…2070 of2675×2084, scale0.015cm/px, CR(1337.5,1042); render48px/cm | All by-eye/assumed, not measured patient dimensions; below original pixel resolution. O84. |
+| Pelvic rotation | Existing generic `limb-warp`, authored monotone anchors, gain2.3 | One-image asymmetry, not measured projection; no independent occlusion reconstruction. Scene/result share anchors. O85. |
+| Leg position | Internal15°–20° source-backed; neutral/external choices separate | Position shown schematically; hidden trochanters and femoral-neck foreshortening NOT synthesized. Failed rule explicitly labelled not drawn. |
+| Respiration and motion | Phase-neutral choice, no chest inspiration model | Breath instruction assessed without deforming lungs/pelvis; keep-still drives visible motion blur but has no separate scored/observed-instruction row. No change to the prior ResultPanel translation issue. |
+| Image/Arabic | A-034/A-035/A-036; machine-assisted bilingual additions | Confirm source description/coverage/normality, new Arabic wording and anatomy. Historical shielding is not a new product protocol. |

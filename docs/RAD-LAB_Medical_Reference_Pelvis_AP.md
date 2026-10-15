@@ -192,3 +192,9 @@ O81 numerical model/tolerances/protocol; O82 independent pelvis/leg controls; O8
 ## 11. Development rules
 
 Reference must be merged into main before generalisation/implementation. Every future value needs a source or explicit teaching/owner label and review entry. No old test, golden, characterisation, hash, image or exam data changed in this phase. The only non-document additions are the owner-requested image review pair and its deterministic derivation script. Never reuse textbook images in the product. Existing exams must retain their outputs in any later refactor. No unrelated translation/UI fixes.
+
+## 12. Implementation mapping after owner review of the previous exams (S-PELVIS-1)
+
+Reference merged in PR #33 at `f531a660c3a184677bb82807e6e06158a3a48857`. Owner then requested the same approach as existing exams. The source facts above remain unchanged. Implementation choices are recorded in S-PELVIS-1-1…5: one supine exam, existing per-exam choices for legs/respiration, manual profile and anatomical marker, generic `limb-warp` driven by a new authored pelvis model. No new numeric settings or pixel algorithm. No clinical value inferred from neighboring exams.
+
+The pelvic warp depicts asymmetry as an educational approximation; femoral-neck foreshortening/hidden lesser trochanters remain explicitly undrawn and the leg-position failure is labelled accordingly. Phase-neutral breath suspension uses an exam-specific category, not the chest breathing model. Keep-still instructions affect motion blur; no separate zero-weight observed-motion-instruction row is added. O82/O83 have implementation choices, while O81 clinical calibration/O84 suitability/O85 approximation review remain under O5. O86 remains outside scoring. Full teaching-number list and QA are in the implementation session and review package.
