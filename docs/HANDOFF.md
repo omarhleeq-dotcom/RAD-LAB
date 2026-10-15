@@ -3,7 +3,7 @@
 ملخص ≤80 سطراً؛ القرارات في [DECISIONS.md](DECISIONS.md)، الحالة في [project-status.md](project-status.md). افحص Git عند البداية.
 
 ## 1. نقطة البداية
-- RAD-047b.1 مدموجة في [PR #62](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/62). أساس .2 هو main `5e7207484d52fe4df6e70dd805ad4ee808d82e72`؛ فرع `feat/rad-047b2-owner-paging`، Draft PR فقط، لا دمج/نشر.
+- RAD-047b.1 مدموجة في [PR #62](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/62). أساس .2 هو main `5e7207484d52fe4df6e70dd805ad4ee808d82e72`؛ فرع `feat/rad-047b2-owner-paging`، [Draft PR #63](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/63)، commit التنفيذ `65d03ad`؛ لا دمج/نشر.
 - نسخة البيئة كانت `cfe8615`؛ حُدّث origin/main ثم أُنشئ الفرع من #62؛ لم توجد تغييرات .2 محلية/فرع بعيد محفوظ، فأُكملت من الخطة المدموجة وتوجيه المالك الحالي.
 - تاريخ التنفيذ الحقيقي 2026-10-15 UTC. updated_at الموروث متقدم؛ زيد منطقياً إلى2026-10-16T14:00:04Z للاستمرارية، وليس وقت رصد.
 
