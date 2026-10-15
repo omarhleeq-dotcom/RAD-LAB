@@ -51,3 +51,9 @@ Derived / served copies (A-002, 003, 007, 009, 011, 013, 015, 017, 019, 021, 023
 ## 5. Proposed spec for the bilingual sources and credits page (docs only, not built)
 
 Content from the registry only; one row per exam baseline: image thumbnail is NOT repeated; text = exam name, source title + link, author, licence name + link, date, "modified: crop / web copy / marker removal" in plain words, and a line "educational appearance reference, not a diagnostic image". Section "Textbook and guideline sources" from `docs/sources/REGISTER.md` (title, edition, page cited, nothing quoted). Section "Not external": own drawings. Both languages, logical CSS, no internal ids (S-VIS-1-2), reachable from the footer on every page, static (no runtime third-party requests). Implementation is a separate code session after O100–O102.
+
+## 6. Owner decisions (2026-10-15, after this audit)
+
+- **O100 closed:** the owner's screenshots of the Commons file pages (taken from the site) are accepted as licence evidence for A-010, A-012, A-016, A-018, A-022, A-026, A-028, A-030, A-032. The "owner-verified" label stays on them; nothing more is asked of the web.
+- **O101 deferred:** A-008 (Chest AP, NIH) stays "owner-verified" for now and is revisited later. Claude Code has **not** read the NIH terms and no screenshot of them exists, so the commercial-use status is still not established by evidence; it remains a pre-release item (RAD-038).
+- **O102** (credit wording) unchanged: handled in the credits-page session.
