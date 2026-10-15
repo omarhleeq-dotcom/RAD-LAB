@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 4,
-  "updated_at": "2026-10-15T07:35:49Z",
+  "revision": 5,
+  "updated_at": "2026-10-15T07:38:04Z",
   "timezone": "UTC",
   "next_id": "RAD-031",
   "tasks": [
@@ -284,7 +284,7 @@
       "status": "review",
       "priority": "high",
       "description": "اكتمل تنفيذ Pelvis AP على المرجع المدموج، مع تحكم مستقل بوضع الطرفين وحبس النفس وعلامة تشريحية وتعريض يدوي ومؤثر دوران من صورة واحدة. نجحت 1629 تجربة وbuild و84 فحص متصفح/axe ومصفوفة 648 حالة تسميات؛ ينتظر Draft PR مراجعة ودمج المالك. لم يُنشر ولم يتغير أي فحص سابق.",
-      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-PELVIS-1-1…5؛ docs/session-pelvis-ap-implementation.md"
+      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-PELVIS-1-1…5؛ docs/session-pelvis-ap-implementation.md؛ Draft PR #34 (de582c2)"
     }
   ]
 }
