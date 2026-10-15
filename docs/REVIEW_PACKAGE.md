@@ -266,3 +266,11 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | SHOULDER-I6 scoring | Six categories 25/20/15/20/10/10, pass 70, critical = missing / wrong-side marker (pelvis pattern) | Educator: weights and critical list (O89) |
 | SHOULDER-I7 image | A-037 / A-038: rotated / cropped frame, ends mid-humerus, recurrent-dislocation history, not a normal shoulder | Educator: suitability of the image (O91) |
 | SHOULDER-I8 Arabic | New AR strings are machine-assisted DRAFT (see ARABIC_TERMINOLOGY) | Arabic reviewer |
+
+## Shoulder Y — RAD-036 gates (no implementation; for the educator when Y is revisited)
+
+| Item | Basis | Review question |
+|---|---|---|
+| SHOULDER-Y-I1 image | Commons CC0 candidate (SHA-1 `3c14918e…`) is "slightly skewed", burned-in "Dx", wide scapular blade with rib overlap, recurrent-dislocation history | Educator: is it acceptable at all as a Y baseline, or must another image be found? |
+| SHOULDER-Y-I2 model | No honest single image cue for Y symmetry / head alignment from one image (prototype: shaft / rib distortion, head shift = dislocation look) | Educator / physicist: is a feedback-and-scene-only Y acceptable teaching? |
+| SHOULDER-Y-I3 range | p.201 45°–60° is patient variation, not an equal-credit plateau and no 52.5° optimum | Educator: how should absolute angle be graded? |

@@ -20,10 +20,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 11,
-  "updated_at": "2026-10-15T09:03:31Z",
+  "revision": 12,
+  "updated_at": "2026-10-15T09:40:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-036",
+  "next_id": "RAD-037",
   "tasks": [
     {
       "id": "RAD-001",
@@ -307,10 +307,11 @@
     },
     {
       "id": "RAD-033",
-      "title": "تنفيذ Shoulder Grashey (قائم) — للمراجعة",
-      "status": "review",
+      "title": "تنفيذ Shoulder Grashey (قائم)",
+      "status": "done",
       "priority": "medium",
-      "description": "تنفيذ `shoulder-grashey-erect` جاهز للمراجعة في Draft PR ولم يُدمج: قائم فقط، كاشف 24×30 أفقي، علامة R ثابتة، زاوية جسم مطلقة بهضبة 35°–45°، ذراع بلا أثر على الصورة، وإشارة واحدة هي انغلاق الحيّز المفصلي. تنتظر مراجعة المالك وتأكيد S-SHOULDER-2-3…6 (O96) وهندسة O95؛ الاختيارات التعليمية B غير محققة (O5). لا تنفيذ لسلسلة كتف كاملة تلقائيًا.",
+      "description": "تنفيذ `shoulder-grashey-erect` مدموج في main (PR #40): قائم فقط، كاشف 24×30 أفقي، علامة R ثابتة، زاوية جسم مطلقة بهضبة 35°–45°، ذراع بلا أثر على الصورة، وإشارة واحدة هي انغلاق الحيّز المفصلي. يبقى تأكيد المالك لـS-SHOULDER-2-3…6 (O96) وهندسة O95؛ الاختيارات التعليمية B غير محققة (O5). لا تنفيذ لسلسلة كتف كاملة تلقائيًا.",
+      "completion_evidence": "دمج PR #40 في main (commit e7cbc85)؛ QA التنفيذ في docs/session-shoulder-grashey-implementation-2026-10-15.md (محفوظ في 154ab42؛ الملف فارغ على main). لا يثبت الصحة الطبية.",
       "source_ref": "DECISIONS.md S-SHOULDER-3-1…5/O88/O95/O96؛ docs/session-shoulder-grashey-implementation-2026-10-15.md؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md §12"
     },
     {
@@ -327,8 +328,16 @@
       "title": "ملاءمة صورة Shoulder Y ومطابقة الأصل قبل اعتماده",
       "status": "review",
       "priority": "high",
-      "description": "تحقق ترخيص CC0 على صفحة Y وAPI؛ الوصف يذكر انحرافًا بسيطًا وخلعًا متكررًا. صورة الأشعة المرفقة مطابقة بالبصمة لـGrashey السابق ولقطة الترخيص تخصه. يلزم فحص أصل Y وتغطيته وعلاماته وبصمته وقرار ملاءمته قبل الاستيراد؛ لم ينزّل أو يعدّل أو يخدم.",
-      "source_ref": "DECISIONS.md S-SHOULDER-Y-REF-2/O92؛ مرجع Shoulder Y §8.8؛ رابط Commons المرسل من المالك"
+      "description": "نُزّل أصل Y وفُحص (SHA-1 مطابق، SHA-256 87bc9e6e…)، وفيه علامة Dx محروقة وشظية حرف، وليس Y متماثلة نظيفة، ولا إشارة نموذج صادقة (RAD-036). لم يُستورد. المتبقي: قرار المالك (قبول بحدود / صورة أخرى / تأجيل) وملاءمة المعلّم.",
+      "source_ref": "DECISIONS.md S-SHOULDER-Y-2/Y-3/O92؛ S-SHOULDER-Y-REF-2؛ مرجع Shoulder Y §8.8؛ رابط Commons المرسل من المالك"
+    }
+    ,{
+      "id": "RAD-036",
+      "title": "Shoulder Y — بوابتا الصورة والنموذج (توقف قبل الكود)",
+      "status": "review",
+      "priority": "medium",
+      "description": "البوابتان لم تُجتازا: الصورة غير محسومة والنموذج بلا إشارة صادقة. لم يُبنَ شيء. ينتظر قرار المالك بين: Y بالتغذية الراجعة والمشهد فقط / صورة أخرى نظيفة مرخّصة / تأجيل (توصية: تأجيل ما لم تتوفر صورة نظيفة)، وإجابة العلامة (O97).",
+      "source_ref": "docs/RAD-LAB_Medical_Reference_Shoulder_Y.md §12؛ DECISIONS.md S-SHOULDER-Y-1…5، O92/O94/O97؛ docs/session-shoulder-y-gates-2026-10-15.md"
     }
   ]
 }

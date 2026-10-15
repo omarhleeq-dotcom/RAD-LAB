@@ -347,3 +347,19 @@ None of these blocks Sessions 8–9. Until decided, each stays labelled provisio
 | **S-SHOULDER-3-5** | **Shared-code edits (all optional; absent = old output):** `LowerLimbModelId` + `"shoulder-grashey"`; `limb-effects.ts` (concept record, model value, plan branch); `tuning.ts` (`shoulderClosurePerDeg`); registries (EXAMS, CASE_DEFINITIONS, `SCENE_IDS`, `BODY_PART_IDS`, `PROJECTIONS`, `SCENES`, layout). Existing test edited: the scene-id list in `generalisation.test.ts` only (S-STD-2). New own guard `scripts/qa/scene-dom/shoulder-grashey-erect-hashes.json`. Earlier 16 exams byte-identical; characterisation untouched. | S-STD-1/2; recipe §3. |
 
 Open: **O95** — shoulder scale / region / target / marker position and the 4.5 cm margin are by-eye (educator / physicist, with O88). **O96** — owner to confirm erect-only, the arm distractors (internal / external) and the dead band over 35°–45°. O88 numbers above are teaching choices, not validated; O89 weights are the pelvis pattern; O91, O5, O86 unchanged.
+
+## Shoulder Y — RAD-036 gates (2026-10-15, docs only, stopped before code)
+
+| ID | Decision | Basis |
+|---|---|---|
+| **S-SHOULDER-Y-1** | Owner scope for RAD-036 recorded: erect and PA oblique only (supine AP oblique out of scope); detector 24×30 cm portrait (p.201); phase-neutral respiration; arm = slight abduction if possible with **no rotation** (a rotation option would only be a labelled safety distractor with no image effect); weights 25/20/15/20/10/10, pass 70, critical = missing / wrong-side marker. **Not supplied by the owner (prompt placeholders unfilled), therefore not assumed:** marker policy, image choice A/B, confirmation of Grashey S-SHOULDER-2-3…6. Nothing implemented. | Owner prompt RAD-036. |
+| **S-SHOULDER-Y-2** | **Gate 1 (image, O92): not settled.** Original downloaded (API and `Special:FilePath` 429 twice, direct upload URL succeeded); SHA-1 `3c14918e…4d3b7` equals the previously API-reported value, SHA-256 `87bc9e6e…d761d051`. Burned-in "Dx" (air) and an edge letter fragment; not a clean symmetrical Y; "slightly skewed" confirmed by eye; not claimed as correct baseline. No import, no A-id, no pixel edit, no rotation. | Reference §12.1. |
+| **S-SHOULDER-Y-3** | **Gate 2 (model, O94): NOT passed.** Prototype cues (blade width, arm spread) distort the shaft / ribs or fabricate hidden anatomy; moving the head mimics dislocation (forbidden). No single truthful cue from one image. | Reference §12.2. |
+| **S-SHOULDER-Y-4** | **STOP AND REPORT:** no code, no data, no asset, no test; session type DOCS. Options (feedback-and-scene only / other image / defer) in reference §12.3; recommendation: defer unless a clean licensed Y exists. | S-STD-1 (4). |
+| **S-SHOULDER-Y-5** | Lessons carried to any later Y build: symmetric field about the central ray (measure anatomy asymmetry before margins / marker), declare `axis` in the detector figure, check free O / A / RAD / S ids against latest main, shell hygiene (no `pkill -f` / `pgrep -f`), stale `next start` on port 3100. Found: `docs/session-shoulder-grashey-implementation-2026-10-15.md` is **empty on main** (emptied by merge `f7b36fd`; full text at `154ab42`); not repaired here (outside budget) — owner to authorise a restore. | Prompt lessons; git history. |
+
+| Open item | Update | Next action |
+|---|---|---|
+| **O92** | Original inspected and hash-checked (S-SHOULDER-Y-2); **still open**: owner choice of image (accept as non-ideal / other) and educator suitability | Owner chooses option §12.3 |
+| **O94** | Gate not passed (S-SHOULDER-Y-3); absolute-angle convention still undefined | Only meaningful if option 1 or a new image |
+| **O97** | Marker policy for Y and confirmation of Grashey S-SHOULDER-2-3…6 not supplied | Owner answers when a Y build is chosen |

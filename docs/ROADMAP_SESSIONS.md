@@ -195,3 +195,7 @@ Shoulder Y reference/Needs merged by owner in [PR #38](https://github.com/omarhl
 
 - Reference merged via PR #36, settlement via PR #37 (`b8d870f`). Implemented `shoulder-grashey-erect` only: erect, 24×30 cm landscape, fixed marker letter R, absolute-angle body turn with the 35°–45° plateau, arm choice without image effect, one joint-space cue through the generic `limb-warp`; A-037/A-038 (CC0, SHA-1 verified).
 - QA: `npm run check` (66 files / 1644 tests), build, browser/axe 84 checks EN/AR × 1440/390, label matrix 648 states clean; the 16 earlier exams byte-identical. Record: [session-shoulder-grashey-implementation-2026-10-15.md](session-shoulder-grashey-implementation-2026-10-15.md). Open: O95, O96, O88, O89, O91, O5, O86.
+
+### Shoulder Y gates — RAD-036, 2026-10-15 (docs only, stopped before code)
+
+Both gates failed to pass: the candidate image is not settled (burned-in markers, not a clean symmetrical Y, "slightly skewed") and a prototype found no honest single image cue (O94). No `shoulder-y-erect` was built; no asset imported. Options and recommendation (defer unless a clean licensed Y exists) in [reference §12](RAD-LAB_Medical_Reference_Shoulder_Y.md); decisions S-SHOULDER-Y-1…5, open O92 / O94 / O97. Record: [session-shoulder-y-gates-2026-10-15.md](session-shoulder-y-gates-2026-10-15.md). Grashey (RAD-033) merged via PR #40.

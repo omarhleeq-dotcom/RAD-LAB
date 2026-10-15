@@ -195,3 +195,34 @@ O92 Y-image/skew/suitability/master and mismatched attachments; O93 scenario/pro
 ## 11. Development rules
 
 Docs only per current owner request. Reference must merge before later implementation; even after merge, no code without new owner direction. No automatic shoulder series or shared3D engine. Never invent medical facts/targets, reuse textbook figures, relabel Grashey asY, or correct skew by guessing. Keep existing exams/images/tests untouched.
+
+## 12. Settlement before code — RAD-036 gates (2026-10-15, docs only; **result: STOPPED, nothing built**)
+
+Two gates were required before any code. Neither passed; no exam, asset, model or test was added. Decisions: S-SHOULDER-Y-1…5; open items O92 (updated), O94 (updated), O97 (new) in [DECISIONS.md](DECISIONS.md).
+
+### 12.1 Gate 1 — image (O92): NOT settled
+
+- Original downloaded from the official upload URL (`upload.wikimedia.org`, after the Commons API and `Special:FilePath` returned HTTP 429 twice; one pause and a direct retry, then stop). Computed **SHA-1 `3c14918e35e543793853568a9b92484f4e0d03b7`** (equals the value the API reported on the earlier read, §8.8; the API itself could not be re-queried today), **SHA-256 `87bc9e6e5c65f5b39e3b98a233e9d0e9808205c812b2e2a4d5897081c761d051`**, 645,433 bytes, 1546×2269 px, JPEG. Kept in a scratch directory only; **nothing imported, no A-id**.
+- Visual observations (not a clinical assessment; educator must judge): a burned-in marker **"Dx"** in the dark air region at the upper left (≈ x 240–320, y 215–300 px) and a **tiny letter fragment at the right edge over the thorax** (≈ x 1536–1546, y ≈ 1240). Frame covers clavicle, acromion, humeral head and shaft, scapular blade and ribs. The picture does **not** read as a clean, symmetrical Y: the clavicle runs across the top almost en face, the scapular blade is wide and overlapped medially by ribs, and the humeral head lies lateral to the blade rather than clearly at a Y fork. This agrees with the uploader's "slightly skewed". The file name says "normal" while the description gives recurrent dislocation.
+- Consequence: the unchanged image cannot be presented as "correct Y", and a result image that never shows a Y error cannot be claimed to teach one. Removing "Dx" from air is possible by the pelvis A-035 precedent (pixel edit confined to a uniform region, documented); the edge fragment lies on soft-tissue texture and would be retouching over anatomy-like pixels. **No pixel rotation to correct the skew.**
+- The owner's prompt left the image choice (A = use this candidate as a documented non-ideal baseline / B = propose alternatives) and the marker choice unfilled, so neither was assumed. A single standard web search found no CC0 / public-domain / CC BY clean Y radiograph (Netter images are all-rights-reserved, Radiopaedia is excluded by S10-3); Commons itself could not be searched because of the rate limit.
+
+### 12.2 Gate 2 — model honesty (O94): NOT passed
+
+Throw-away prototype outside the repository (numpy band warps on the original; nothing committed):
+
+| Candidate cue | Result | Verdict |
+|---|---|---|
+| Widen / narrow the scapular blade (horizontal stretch of a band around the blade) ×1.3 / ×0.75 | The band necessarily contains the humeral shaft and the rib overlap, which are the very structures superimposed on the blade: the shaft kinks, ribs stretch or squash. Narrowing below the baseline would fabricate an on-end (thin) scapula that the picture does not contain | Not honest |
+| Spread / squeeze the Y arms (acromion vs coracoid) | Arms are superimposed on the clavicle and ribs; moving them changes clavicle length and bends the Y, not a rotation effect | Not honest |
+| Shift the humeral head off the Y base | Reads immediately as a subluxation / dislocation; source says head alignment is conditional on "not dislocated" and may not be treated as a positioning error | Forbidden (O94, §6) |
+
+The starting rotation of the baseline is unknown and its direction of error unknown, so even a monotone cue would be relative to an unknown zero. **No single truthful cue exists from this one image.** The inherited Grashey joint-closure idea does not apply (different anatomy).
+
+### 12.3 Options for the owner (nothing implemented until chosen)
+
+1. **Feedback-and-scene only (image never changes).** Build `shoulder-y-erect` with the body angle scored by feedback and the setup drawing, the radiograph identical for every angle (arm precedent: S-SHOULDER-2-5), baseline accepted explicitly as non-ideal with labelled limits, "Dx" removed from air. Feasible, but it departs from the product rule that results show the error and teaches little on the image side. Requires the owner to answer the marker and image questions and to accept that departure.
+2. **Another image.** Owner supplies, or approves a candidate for, a clean CC0 / public-domain / CC BY Y radiograph (recipe §5: no markers, devices or disease), then Gate 1 and Gate 2 repeat on it. A cleaner Y might still fail Gate 2.
+3. **Defer Y** and continue with another exam.
+
+**Recommendation: option 3 unless the owner can supply a clean licensed Y; if the owner wants progress now, option 1 with the limits above.**
