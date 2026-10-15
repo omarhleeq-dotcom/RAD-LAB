@@ -64,7 +64,7 @@
 
 ## 5. المشاكل والقرارات المعلقة
 
-- **خلل ترجمة عربي مؤكد:** `src/features/evaluation/ResultPanel.tsx` يستدعي نصوص التنفس والثبات دون `{ sex: radCase.patient.sex }`، بينما `messages/ar.json` يحتاج قيمة `sex`. ظهر في development smoke كفشل عدم ظهور مفاتيح خام وفشل خلو console من الأخطاء. `PatientInstructionsPanel.tsx` يمرر القيمة أصلًا. الإصلاح مهمة منفصلة؛ لا تغير snapshots أو توقعات الاختبارات ضمن جلسة الأطراف لإخفائه.
+- **خلل ترجمة عربي في ResultPanel: أُصلح (حزمة 2).** `observedLabel` يمرّر الآن `{ sex: radCase.patient.sex }`؛ حارس انحدار في `src/i18n/patient-options-sex.test.ts`. تحقق متصفح عربي: لا مفاتيح خام ولا أخطاء console. **O38 أُغلق** (سطر `group` غير المستخدم حُذف؛ lint نظيف).
 - **O37:** الساعد AP/Lateral مؤجل لغياب صورة مرخصة مناسبة تظهر المفصلين. المرشح السابق رُفض لأسباب موثقة: CC BY-SA، علامة R ومسطرة مطبوعتان، غياب المرفق، وحالة أطفال.
 - **إنشاء PR:** عائق API المؤرخ 2026-10-11 تاريخي؛ نجحت قراءة GitHub API عبر الموصل وclone/fetch عبر Git في 2026-10-15. لا توجد ملفات تجهيز محلية سابقة في هذه البيئة؛ أُنشئ checkout في `/workspace/RAD-LAB`. لا تفترض وجود `/workspace/.radlab-tools/env.sh` أو نتائج QA جديدة للتطبيق.
 - بقية البنود المفتوحة للمراجعة والتراخيص في [DECISIONS.md](DECISIONS.md). اقرأ ما يتعلق بالمهمة فقط، ولا تعالجها كلها في جلسة واحدة.

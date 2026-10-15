@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 14,
-  "updated_at": "2026-10-15T11:30:00Z",
+  "revision": 15,
+  "updated_at": "2026-10-15T12:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-037",
   "tasks": [
@@ -249,9 +249,10 @@
     {
       "id": "RAD-026",
       "title": "فحص تحذير lint غير المتحقَّق منه في scripts/qa/wrist-audit.mjs (O38)",
-      "status": "planned",
+      "status": "done",
       "priority": "low",
-      "description": "ظهر التحذير فعلاً عند تشغيل npm run lint على 4118326: 'group' is assigned a value but never used (wrist-audit.mjs:55). لم يُصلَح هنا (S-STD-1: لا إصلاحات انتهازية). يُصلح في جلسة كود قادمة بموافقة المالك.",
+      "description": "التحذير 'group' غير مستخدم في wrist-audit.mjs:55 تأكد أصله (سطر معرّف لا يُستدعى) وأُزيل بموافقة المالك على حزمة 2؛ lint بلا تحذيرات.",
+      "completion_evidence": "npm run lint نظيف (0 تحذير) بعد حذف السطر؛ npm run check: 67 ملفًا/1646 اختبارًا ناجحًا؛ لا يثبت أي شيء عن صحة تدقيق wrist-audit في المتصفح (لم يُعد تشغيله).",
       "source_ref": "DECISIONS.md O38؛ ناتج npm run lint في جلسة RAD-STATUS"
     },
     {
