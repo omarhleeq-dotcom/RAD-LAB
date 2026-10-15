@@ -244,6 +244,16 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | SHOULDER-R6 scope choices | **Erect only**, absolute-angle control, arm posture as a no-image-effect choice with teaching distractors, phase-neutral respiration (S-SHOULDER-2-3…5) | Educator / owner: confirm erect-only v1, the arm distractors and that supine stays deferred until a source gives the extra rotation |
 | SHOULDER-R5 Arabic/shielding | Draft terms; historical2018 shielding not adopted | Arabic/educator and physicist reviews O5/O86; no new UI or shielding scoring |
 
+## Shoulder scapular Y reference — S-SHOULDER-Y-REF, pending review
+
+| Item | Basis | Reviewer question |
+|---|---|---|
+| Y-R1 positioning/safety | BONTRAGER-9p.201, directly read | Educator: confirm anterior obliquity45°–60° varies by patient, anatomical alignment, slight abduction if possible, no forced arm rotation; choose scenario/postureO93 |
+| Y-R2 technique |p.201:24×30portrait, verticalgrid, SID≥102, digital75–85kV, perpendicular jointCR5cm belowAC, breath suspension | Physicist: local protocol; no invented mAs/EI/error bands/weights. Historical shielding not adoptedO86 |
+| Y-R3 image |Y page/API independentlyCC0; says slightly skewed/recurrent dislocation. New image/licence attachments areGrashey | Educator/ownerO92: assess actualY original and suitability; no ideal-baseline claim or guessed correction |
+| Y-R4 model/rubric | No implementation;Y symmetry/head alignment conditional on no dislocation | Educator/ownerO93/O94: distinguish pathological alignment from positioning and assess honest one-image effects; no borrowedGrashey model or3D engine |
+| Y-R5 Arabic | DRAFT terms inARABIC_TERMINOLOGY | Arabic reviewer/educatorO5; no new UI |
+
 ## Shoulder Grashey implementation — S-SHOULDER-3, pending educator/physicist/Arabic review
 
 | Item | Source/basis | Review question / owner |
@@ -252,7 +262,7 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | SHOULDER-I2 cue | Joint-space closure only, same for either side, baseline unchanged inside the band (educational simplification), gain 0.0033 / ° capped at 15° | Educator: is one cue enough? Physicist: is the closure a fair proxy of head–glenoid superimposition? |
 | SHOULDER-I3 arm | Neutral = p.196; internal / external rotation are teaching distractors; setup drawing and feedback only, no image effect | Educator: confirm the distractors and that the radiograph does not change |
 | SHOULDER-I4 technique | Source: 75–85 kV, SID ≥ 102, grid. **B:** kV partial 70–90, SID 102–110 / 95–130, tube ±2° / ±5°, centring ±1 / ±2.5 cm, anchor 80 kV / 2 mAs / 102 cm, attenuation 1, manual-only | Physicist: values and the manual-only choice (no AEC) |
-| SHOULDER-I5 geometry | Scale 0.011 cm / px, target (815, 515), region box, excess margin 4.5 cm, default marker on the medial side (field centred on the central ray, frame cut medially) — all by eye (O92) | Educator / physicist: realistic coverage and margins |
+| SHOULDER-I5 geometry | Scale 0.011 cm / px, target (815, 515), region box, excess margin 4.5 cm, default marker on the medial side (field centred on the central ray, frame cut medially) — all by eye (O95) | Educator / physicist: realistic coverage and margins |
 | SHOULDER-I6 scoring | Six categories 25/20/15/20/10/10, pass 70, critical = missing / wrong-side marker (pelvis pattern) | Educator: weights and critical list (O89) |
 | SHOULDER-I7 image | A-037 / A-038: rotated / cropped frame, ends mid-humerus, recurrent-dislocation history, not a normal shoulder | Educator: suitability of the image (O91) |
 | SHOULDER-I8 Arabic | New AR strings are machine-assisted DRAFT (see ARABIC_TERMINOLOGY) | Arabic reviewer |

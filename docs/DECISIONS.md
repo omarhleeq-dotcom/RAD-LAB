@@ -323,6 +323,19 @@ None of these blocks Sessions 8–9. Until decided, each stays labelled provisio
 | **O90** | Gate **passed with labelled limits** (S-SHOULDER-2-6); absolute-angle representation settled (S-SHOULDER-2-4). **Open:** numeric margins, gain / cap | p.196 body 35°–45° is distinct from arm rotation; no universal 40° optimum; one cue only; no fabricated hidden anatomy. |
 | **O91** | Observations recorded (S-SHOULDER-2-2); **open:** educator review of clinical context (recurrent dislocation, file name says normal), coverage (frame ends mid-humerus), rotated / cropped frame | Uploader reports right shoulder, man 31 with recurrent dislocation, no visible abnormalities; not an asymptomatic-normal claim. |
 
+## Shoulder Y reference — owner request 2026-10-15 (docs only)
+
+| ID | Decision/scope | Basis |
+|---|---|---|
+| **S-SHOULDER-Y-REF-1** | Owner suppliedY page and explicitly requested **docs and Bontrager data only, no code**. Add independent adultPA oblique scapularY reference/Needs from printedp.201/PDF221; no ordinaryAP/Neer/axillary, asset import, numerical rubric,3D core or implementation. ExistingGrashey decisions remain specific toGrashey. | Current owner request;S10-2; governing sourcep.201 directly read/text+visual |
+| **S-SHOULDER-Y-REF-2** | Y canonical page/API readHTTP200: CC0 independently verified. Description explicitly “slightly skewed” with recurrent-dislocation history. Attached radiograph is byte-identical to earlierGrashey, and licence screenshot bearsGrashey title. Do not relabel attachment or silently adoptY as ideal. Published master metadata is not a downloaded checksum match. | OfficialY page/API and computed attachmentSHA-256;O92 |
+
+| Open item | Missing evidence/decision | Next action |
+|---|---|---|
+| **O92** | Y master/suitability: original not downloaded/inspected or hash-matched; source says slightly skewed; attached radiograph/licence areGrashey | Retain verifiedY licence separately; later inspect original/coverage/marker/side and clinical context with educator. Decide suitable baseline versus another image; no guessed correction or asset import in docs phase |
+| **O93** | Y scenario/posture, arm/respiration/marker/manual-AEC scope, local calibration, geometry/error bands, rubric/critical list | Sourcep.201 supplies clinical facts, not grading policy. NoGrashey/pelvis defaults adopted; remain docs-only until owner selects next phase |
+| **O94** | Y absolute body-angle convention and truthful single-image model |45°–60° reflects patient variation, not guaranteed equal correctness for one patient. AssessY symmetry/scapular-body/humeral-rib overlap independently; no borrowedGrashey joint closure,3D authorization or fabricated dislocation |
+
 ## Shoulder Grashey implementation — S-SHOULDER-3 (2026-10-15)
 
 | ID | Decision | Basis |
@@ -333,4 +346,4 @@ None of these blocks Sessions 8–9. Until decided, each stays labelled provisio
 | **S-SHOULDER-3-4** | **Geometry is by eye, not measured:** scale 0.011 cm/px (humeral head ≈ 5.5 cm, an assumption), target pixel (815, 515) at the detector centre, region box u 120–1193 × v 0–1350 px (11.8 × 14.85 cm), rotation band rows v 0.12–0.46. Because the collimated field is centred on the central ray and the baseline frame is cut on the medial side (7.6 cm lateral vs 4.2 cm medial of the target), the **default marker lies on the medial side inside the field** and the excess margin is 4.5 cm. Image: A-037 master + A-038 lossless greyscale PNG (`scripts/derive-shoulder-baseline.py`). | `shoulder-geometry.ts`; ASSET_PROVENANCE A-037/A-038. |
 | **S-SHOULDER-3-5** | **Shared-code edits (all optional; absent = old output):** `LowerLimbModelId` + `"shoulder-grashey"`; `limb-effects.ts` (concept record, model value, plan branch); `tuning.ts` (`shoulderClosurePerDeg`); registries (EXAMS, CASE_DEFINITIONS, `SCENE_IDS`, `BODY_PART_IDS`, `PROJECTIONS`, `SCENES`, layout). Existing test edited: the scene-id list in `generalisation.test.ts` only (S-STD-2). New own guard `scripts/qa/scene-dom/shoulder-grashey-erect-hashes.json`. Earlier 16 exams byte-identical; characterisation untouched. | S-STD-1/2; recipe §3. |
 
-Open: **O92** — shoulder scale / region / target / marker position and the 4.5 cm margin are by-eye (educator / physicist, with O88). **O93** — owner to confirm erect-only, the arm distractors (internal / external) and the dead band over 35°–45°. O88 numbers above are teaching choices, not validated; O89 weights are the pelvis pattern; O91, O5, O86 unchanged.
+Open: **O95** — shoulder scale / region / target / marker position and the 4.5 cm margin are by-eye (educator / physicist, with O88). **O96** — owner to confirm erect-only, the arm distractors (internal / external) and the dead band over 35°–45°. O88 numbers above are teaching choices, not validated; O89 weights are the pelvis pattern; O91, O5, O86 unchanged.
