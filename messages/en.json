@@ -1201,7 +1201,6 @@
     "password": "Password",
     "confirmPassword": "Confirm password",
     "passwordHint": "At least 8 characters, with a lower-case letter, an upper-case letter, a digit and a symbol.",
-    "privacyNote": "During the pilot the owner can see your sign-ins and your activity on this site. Never enter real patient data.",
     "submit": {
       "signIn": "Sign in",
       "signUp": "Create account"
@@ -1245,7 +1244,16 @@
       "passwordClasses": "The password needs a lower-case letter, an upper-case letter, a digit and a symbol.",
       "passwordMismatch": "The two passwords do not match."
     },
-    "ownerLink": "Owner dashboard"
+    "ownerLink": "Owner dashboard",
+    "agreePrefix": "I agree to the",
+    "termsLink": "Terms and Privacy",
+    "consent": {
+      "title": "Please review the Terms and Privacy",
+      "body": "To save your practice attempts we need your agreement to the Terms and Privacy page. Until then nothing from your practice is saved.",
+      "agree": "I have read and agree to the Terms and Privacy.",
+      "accept": "Agree and continue",
+      "failed": "Could not save your agreement. Please try again."
+    }
   },
   "owner": {
     "title": "Owner dashboard",
@@ -1281,5 +1289,50 @@
       "load": "Could not load the list. Check your connection and try again.",
       "action": "The change was refused or failed. Refresh and try again."
     }
+  },
+  "terms": {
+    "title": "Terms and Privacy",
+    "draft": "Draft, pending the project owner's review. If the meaning changes you will be asked to agree again.",
+    "lead": "RAD-LAB is a practice space for radiography students. We want to make it better, and we take the confidentiality of your data seriously. This page says in plain words what we keep, why, and what we never do.",
+    "keep": {
+      "title": "What we keep",
+      "p1": "Your email address and a password. The password is stored only as a scrambled value that nobody, including us, can read.",
+      "p2": "For each practice attempt: the settings you chose, your score and which checks you passed or missed, the exam, the language and your screen size.",
+      "p3": "When you signed in, signed out or were last active, and the steps you take in an exam (open it, start, submit, try again)."
+    },
+    "notKeep": {
+      "title": "What we do not do",
+      "p1": "In the saved results you appear only under a code such as P-ab12cd34, never under your name. The project owner can match a code to an email address when needed, for example to approve your account or to delete your data.",
+      "p2": "No advertising, no third-party analytics or trackers, and we never sell or share your data with anyone.",
+      "p3": "We do not ask for your location, contacts, camera or microphone."
+    },
+    "why": {
+      "title": "Why we keep it",
+      "p1": "Only to learn where students get stuck, fix confusing parts and make practice better.",
+      "p2": "Nothing here is used to grade you in any course."
+    },
+    "who": {
+      "title": "Who can see it",
+      "p1": "Only the project owner. Every participant can read only their own data."
+    },
+    "protect": {
+      "title": "How it is protected",
+      "p1": "The data is stored in a database in Frankfurt (EU) that lets each account read only its own rows, and your connection to it is encrypted.",
+      "p2": "The confirmation email is sent through an email service (Brevo), which may record whether you opened it."
+    },
+    "howLong": {
+      "title": "How long we keep it",
+      "p1": "We plan to delete the data within six months after the pilot ends."
+    },
+    "rights": {
+      "title": "Your rights",
+      "p1": "You can ask to see or delete your data at any time by writing to radlab.pilot@gmail.com. We will delete your account and all its attempts.",
+      "p2": "You can stop taking part whenever you like."
+    },
+    "patients": {
+      "title": "Never real patients",
+      "p1": "Never enter real patient data or images. RAD-LAB is an educational simulator, not for clinical use."
+    },
+    "closing": "By ticking \"I agree\" you confirm that you have read this page."
   }
 }

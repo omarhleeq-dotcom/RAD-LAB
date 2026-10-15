@@ -7,6 +7,7 @@ import { useLocale } from "next-intl";
 import { useSimulationStore } from "@/stores/simulation-store";
 import { parseProfile, type ProfileStatus } from "./account-state";
 import { createAttemptLogger } from "./attempt-logger";
+import { needsConsent, parseConsentVersion } from "./consent";
 import { getPilotClient } from "./client";
 import { PILOT, sessionStorageKey } from "./config";
 
@@ -30,8 +31,10 @@ export function AttemptRecorder() {
         status ??= (async () => {
           const { data: s } = await client.auth.getSession();
           if (!s.session) return null;
-          const { data } = await client.from("profiles").select("status, role, participant_code").eq("user_id", s.session.user.id).maybeSingle();
-          return parseProfile(data)?.status ?? null;
+          const { data } = await client.from("profiles").select("status, role, participant_code, consent_version").eq("user_id", s.session.user.id).maybeSingle();
+          const profile = parseProfile(data);
+          // Nothing is saved until the participant accepted the current Terms and Privacy page (the database enforces it for attempts too).
+          return profile && !needsConsent(parseConsentVersion(data)) ? profile.status : null;
         })().catch(() => null);
         return status;
       },
