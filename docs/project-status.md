@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 18,
-  "updated_at": "2026-10-15T14:30:00Z",
+  "revision": 19,
+  "updated_at": "2026-10-15T15:30:00Z",
   "timezone": "UTC",
   "next_id": "RAD-038",
   "tasks": [
@@ -181,9 +181,9 @@
     {
       "id": "RAD-018",
       "title": "إعادة التحقق من رخص ومصادر الصور على Commons وNIH قبل الإصدار",
-      "status": "planned",
+      "status": "review",
       "priority": "high",
-      "description": "إعادة التحقق عند المصدر (المؤلف، سطر الرخصة، التاريخ، SHA-1) للصور المسجّلة 'owner-verified' بعد فشل واجهة Commons (HTTP 429)، وهي المذكورة في O14 وO27 وO39 وO47 وO56 وO75 داخل docs/ASSET_PROVENANCE_AND_LICENSES.md، وشروط NIH لـ A-008 (O16)، ووصف مريض القدم (O65). لم تُعد المحاولة في هذه الجلسة.",
+      "description": "تدقيق 2026-10-15 (docs/ASSET_LICENCE_AUDIT_2026-10-15.md): سلامة الملفات المحلية 100% (كل أصول public/images مسجّلة وSHA مطابق)؛ إعادة تحقق عند المصدر مع البايتات لخمسة أصول (A-001, A-006, A-014, A-020, A-024) وصفحات المصدر لأربعة (A-010, A-012, A-016 + مرشحات A-018/022/026)؛ واجهة Commons 429 وتنزيلات 429/403 فتوقفت. المتبقي: O100 (تسعة أصول بلا مقارنة بايتات) وO101 (شروط NIH لـ A-008 غير مقروءة: عائق إصدار) وO102 (صياغة الاعتمادات).",
       "source_ref": "DECISIONS.md O14، O16، O27، O39، O47، O56، O65، O75؛ docs/ASSET_PROVENANCE_AND_LICENSES.md"
     },
     {
