@@ -24,7 +24,7 @@ for(const locale of ["en","ar"])for(const width of [1440,390]){
   await page.goto(`${BASE}/${locale}/xray/pelvis-ap-supine/practice`,{waitUntil:"networkidle"});
   await set(m.positioningPelvis.rotation,rotation);
   await set(m.console.tubeAngulation,0);await set(m.positioning.centerX,0);await set(m.positioning.centerY,17.5);
-  await set(m.positioning.collWidth,42);await set(m.positioning.collHeight,33.5);
+  await set(m.positioning.collWidth,43);await set(m.positioning.collHeight,33.5);
   await set(m.console.sid,102);await set(m.console.kvp,85);await set(m.console.mas,7);
   await choice("legPosition",legs);await choice("respiration",respiration);
   await page.locator('label:has(input[name="side-marker"])').nth(marker?2:0).click();
