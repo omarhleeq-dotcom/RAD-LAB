@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 23,
-  "updated_at": "2026-10-15T19:15:00Z",
+  "revision": 24,
+  "updated_at": "2026-10-15T21:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -371,18 +371,17 @@
     {
       "id": "RAD-040",
       "title": "جلسة التحقق من مزوّد الهوية وقاعدة البيانات للإطلاق التجريبي",
-      "status": "blocked",
+      "status": "review",
       "priority": "high",
-      "description": "قراءة وثائق المزوّدين الرسمية (المنطقة، السعر، الدعوة، سياسة كلمة المرور، السجلات، النسخ الاحتياطي) وحسم Q1–Q4. DOCS. تبدأ بعد قبول المالك للخطة.",
-      "blocker": "سياسة شبكة جلسة Claude Code تحجب مواقع المزوّدين (supabase.com، firebase.google.com، neon.com: 403 على CONNECT). يرفعها المالك بتوسيع Network access أو بلصق الصفحات الرسمية في المحادثة. قائمة الأسئلة جاهزة في docs/PILOT_PROVIDER_VERIFICATION_CHECKLIST.md.",
-      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 1"
+      "description": "نُفّذت القراءة من الوثائق الرسمية (2026-10-15) وكُتبت مقارنة وتوصية (Supabase Free، Frankfurt، مشروطة) وحُسمت Q1–Q4 كمقترحات. المتبقي: قبول المالك لـS-PILOT-2 وللتوصية، وحسم خدمة SMTP، ووثائق Cloudflare لم تُقرأ (محجوبة)، وأسئلة Q5–Q7. DOCS؛ لا حسابات ولا كود.",
+      "source_ref": "docs/PILOT_PROVIDER_COMPARISON_2026-10-15.md؛ DECISIONS S-PILOT-3؛ docs/PILOT_PLATFORM_PLAN.md §4, §9"
     },
     {
       "id": "RAD-041",
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
       "status": "planned",
       "priority": "high",
-      "description": "شريحة 2: دعوة من المالك، كلمة مرور، تأكيد بريد، سجل دخول، سياسات صفوف، تعديل ADR-0002 وCLAUDE.md. كود L. بعد RAD-040 وS-PILOT-2.",
+      "description": "شريحة 2: دعوة من المالك، كلمة مرور، تأكيد بريد، سجل دخول، سياسات صفوف، تعديل ADR-0002 وCLAUDE.md وCSP وpreview:smoke. كود L. لا تبدأ قبل قبول المالك لـS-PILOT-2 وللتوصية (Supabase Free) وحسم خدمة SMTP.",
       "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
     },
     {
