@@ -1,3 +1,4 @@
+import { pelvisApAdultDemo } from "./pelvis-ap-supine";
 import type { RadCase } from "@/domain/case";
 import type { CaseDefinition } from "@/domain/exam";
 import { composeCase } from "@/features/exam/compose";
@@ -19,7 +20,7 @@ import { wristLateralAdultDemo } from "./wrist-lateral";
 import { wristPaAdultDemo } from "./wrist-pa";
 
 /** Registry of case definitions (patient scenarios). Each belongs to an exam in `src/data/exams`. */
-export const CASE_DEFINITIONS: readonly CaseDefinition[] = [chestPaAdultDemo, chestLateralAdultDemo, chestApAdultDemo, wristPaAdultDemo, wristLateralAdultDemo, handPaAdultDemo, handLateralAdultDemo, elbowApAdultDemo, elbowLateralAdultDemo, footApAdultDemo, footObliqueAdultDemo, kneeApAdultDemo, kneeLateralAdultDemo, ankleApAdultDemo, ankleLateralAdultDemo];
+export const CASE_DEFINITIONS: readonly CaseDefinition[] = [chestPaAdultDemo, chestLateralAdultDemo, chestApAdultDemo, wristPaAdultDemo, wristLateralAdultDemo, handPaAdultDemo, handLateralAdultDemo, elbowApAdultDemo, elbowLateralAdultDemo, footApAdultDemo, footObliqueAdultDemo, kneeApAdultDemo, kneeLateralAdultDemo, ankleApAdultDemo, ankleLateralAdultDemo, pelvisApAdultDemo];
 
 /**
  * The compatibility view the engine, store and UI consume: every case composed with its exam (`composeCase`

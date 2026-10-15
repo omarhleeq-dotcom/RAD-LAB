@@ -124,4 +124,4 @@ export type LimbRotationLandmarks =
   | { kind: "limb-copies"; model: LowerLimbModelId; bands: (ImageBand & { u1: number; u2: number })[] };
 
 /** The lower-limb rotation models (S14.4 knee / foot, S14.5 ankle). */
-export type LowerLimbModelId = "foot-ap" | "foot-oblique" | "knee-ap" | "knee-lateral" | "ankle-ap" | "ankle-lateral";
+export type LowerLimbModelId = "pelvis-ap" | "foot-ap" | "foot-oblique" | "knee-ap" | "knee-lateral" | "ankle-ap" | "ankle-lateral";

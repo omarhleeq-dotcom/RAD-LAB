@@ -7,7 +7,7 @@
 ## ملخص الحالة الحالية (سرد، لا يُقرأ آلياً)
 
 - **المنفّذ والمدموج في `main`** (آخر مراجعة: `4118326`، دمج PR #31): محاكي Chest PA، تقسيم الفحص/الحالة، منصة التصفح، المراجع المكتوبة ومكتبة المصادر، آليات التعميم (S11)، فحوص الصدر الثلاثة (PA وLateral وAP supine)، وفحوص الأطراف: wrist وhand وelbow وknee وfoot وankle (12 فحصاً أطراف + 3 صدر)، مع جولتي تحسين بصري (S-VIS-1a/1b).
-- **الاتجاه الحالي (المالك، 2026-10-15):** Pelvis AP، مرجع وNeeds فقط (RAD-028)، مع إزالة علامة الصورة بالبكسلات للمراجعة (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
+- **الاتجاه الحالي (المالك، 2026-10-15):** Pelvis AP: المرجع وNeeds مدموجان (RAD-028)، والتنفيذ جارٍ (RAD-030)، والصورة المنظفة محفوظة (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
 - **ما يحتاج المالك أو المراجع البشري:** مراجعة المعلّم/الفيزيائي (O5، ليست بوابة)، إعادة التحقق من رخص الصور على Commons قبل الإصدار، وقرارات بيانات صغيرة (O55/O74 وO52 وO59)، وتأكيد حالة نشر المعاينة (RAD-024).
 - **تعارضات بين المصادر:** مسجّلة في حقل `conflict` داخل المهام المعنيّة (RAD-024 وRAD-025) ولا تُكرَّر هنا.
 - **لا تُحسب نسبة إنجاز للمشروع**: عدد المهام لا يعكس حجم العمل ولا المخاطر.
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 3,
-  "updated_at": "2026-10-15T06:53:50Z",
+  "revision": 5,
+  "updated_at": "2026-10-15T07:38:04Z",
   "timezone": "UTC",
-  "next_id": "RAD-030",
+  "next_id": "RAD-031",
   "tasks": [
     {
       "id": "RAD-001",
@@ -264,18 +264,27 @@
     {
       "id": "RAD-028",
       "title": "مرجع Pelvis AP وقسم Needs",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "مرجع مكتوب من قراءة مباشرة لـBontrager 9 p.271–272، 279؛ Needs موثق، والقرارات O81–O86 تنتظر الحسم قبل أي كود. ينتظر مراجعة ودمج Draft PR #33؛ لا فحص مسجل.",
-      "source_ref": "docs/RAD-LAB_Medical_Reference_Pelvis_AP.md؛ docs/session-pelvis-ap-reference-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1/2؛ PR #33"
+      "description": "مرجع Pelvis AP وNeeds مدموجان في PR #33. لا يثبت إنجاز المرجع صحة المحتوى الطبي؛ التنفيذ منفصل في RAD-030.",
+      "source_ref": "docs/RAD-LAB_Medical_Reference_Pelvis_AP.md؛ docs/session-pelvis-ap-reference-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1/2؛ PR #33",
+      "completion_evidence": "PR #33 مدموج في main عند f531a660c3a184677bb82807e6e06158a3a48857؛ المرجع وNeeds وقرارات S-PELVIS-REF-1/2؛ تحقق Git/API 2026-10-15."
     },
     {
       "id": "RAD-029",
       "title": "صورة Pelvis AP المنظفة من marker — مادة مراجعة",
       "status": "review",
       "priority": "high",
-      "description": "حُفظ الأصل والاشتقاق A-034/A-035 خارج public. أزيلت علامة R والنص والشكل الدائري بتعديل الخلفية فقط؛ تحقق 0 بكسل متغير خارج المستطيل المحدد. تنتظر ملاءمة الصورة والتغطية مراجعة O84 قبل استخدامها في المنتج.",
+      "description": "A-034/A-035 مدموجان في #33؛ حُفظ الأصل والاشتقاق بلا علامة، وتحقق صفر بكسل متغير خارج خلفية التنظيف. اعتمد المالك متابعة الحوض بنهج الفحوص السابقة؛ أُضيفت نسخة منتج A-036 ضمن RAD-030. تبقى ملاءمة/تغطية الصورة للمراجعة الطبية O84/O5.",
       "source_ref": "docs/ASSET_PROVENANCE_AND_LICENSES.md A-034/A-035؛ scripts/derive-pelvis-baseline.py؛ DECISIONS.md O84؛ PR #33"
+    },
+    {
+      "id": "RAD-030",
+      "title": "تنفيذ Pelvis AP مستلقٍ بنهج الفحوص السابقة",
+      "status": "review",
+      "priority": "high",
+      "description": "اكتمل تنفيذ Pelvis AP على المرجع المدموج، مع تحكم مستقل بوضع الطرفين وحبس النفس وعلامة تشريحية وتعريض يدوي ومؤثر دوران من صورة واحدة. نجحت 1629 تجربة وbuild و84 فحص متصفح/axe ومصفوفة 648 حالة تسميات؛ ينتظر Draft PR مراجعة ودمج المالك. لم يُنشر ولم يتغير أي فحص سابق.",
+      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-PELVIS-1-1…5؛ docs/session-pelvis-ap-implementation.md؛ Draft PR #34 (de582c2)"
     }
   ]
 }

@@ -35,6 +35,8 @@ export const TUNING = {
    * model of forearm / carpal kinematics, and none maps pixels to degrees. Each size grows with the internal value only.
    */
   limbRotation: {
+    /** Pelvis one-image asymmetry gain: illustrative only, S-PELVIS-1-4. */
+    pelvisGainPerDeg: 2.3,
     /** Console range of the wrist rotation control; larger magnitudes are clamped. */
     maxDeg: 15,
     /** Soft edge of every band, as a fraction of image height. */

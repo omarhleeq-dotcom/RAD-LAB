@@ -1,3 +1,4 @@
+import { pelvisAnchors } from "@/features/pelvis-model/pelvis-model";
 /**
  * Limb rotation effect (S14.1c, the first registered `EffectDefinition`): the wrist's true-PA / true-lateral criteria drawn from
  * ONE baseline image. Pure: it only reads the result state and the case; the pixel step lives in `pipeline.ts`, every size in
@@ -36,7 +37,9 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 
 /** Concept records of the four lower-limb models (S14.4). */
 const lowerLimbConcept = (model: LowerLimbModelId): Evidence =>
-  model === "foot-ap"
+  model === "pelvis-ap"
+    ? { status: "common-reference", reference: "BONTRAGER-9 p.279; docs/DECISIONS.md S-PELVIS-1-1/4", note: "Pelvic rotation changes the symmetry of iliac wings and obturator foramina. One-image educational warp only; femoral-neck foreshortening and hidden lesser trochanters are not synthesized. Provisional pending O5." }
+    : model === "foot-ap"
     ? {
         status: "common-reference",
         reference: "BONTRAGER-9 p.232 (true AP foot)",
@@ -142,6 +145,10 @@ export function limbRotationPlan(
     return { kind: "elbow-lateral", degrees: d, shiftU: c.condyles[0]?.du ?? 0, overlapShiftU: 0, elbow: { copies: [c.condyles, c.head] } };
   }
   if (landmarks.kind === "limb-warp") {
+    if (landmarks.model === "pelvis-ap") {
+      const anchors = pelvisAnchors(d);
+      return { kind: "limb-warp", degrees: d, shiftU: anchors[3]!.du, overlapShiftU: 0, hand: { anchors: [anchors] } };
+    }
     // Foot (S14.4): bands in the order of the asset's landmarks [toes, metatarsals]. shiftU = the odd part of (metatarsal 5 − metatarsal 1) shift, the sign carrier.
     if (landmarks.model === "ankle-ap") {
       // AP ankle (S14.5): one band; shiftU = the odd part of (lateral malleolus − medial malleolus) shift, the sign carrier.

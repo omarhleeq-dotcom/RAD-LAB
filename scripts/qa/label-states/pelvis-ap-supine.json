@@ -1,0 +1,10 @@
+{
+  "radios": [
+    { "en": "Position of both legs", "ar": "وضع الطرفين السفليين" },
+    { "en": "Breathing instruction", "ar": "تعليمات التنفس" }
+  ],
+  "sliders": {
+    "positioningPelvis.rotation": ["min", 0, "max"],
+    "console.tubeAngulation": ["min", 0, "max"]
+  }
+}
