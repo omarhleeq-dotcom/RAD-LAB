@@ -205,3 +205,7 @@ Both gates failed to pass: the candidate image is not settled (burned-in markers
 ### Asset licence audit — RAD-018, 2026-10-15 (docs only)
 
 Local integrity of all registered assets confirmed; five CC0 masters re-verified at Commons with byte identity, others by page or candidate title (Commons API / downloads rate-limited, stopped). **Release blocker: NIH terms for A-008 unread (O101).** Record: [ASSET_LICENCE_AUDIT_2026-10-15.md](ASSET_LICENCE_AUDIT_2026-10-15.md); open items O100–O102. Release (RAD-023) still waits on the owner's banner decision and the credits-page session.
+
+### Pilot platform slice — plan 2026-10-15 (docs only)
+
+Owner direction: the pilot needs invited accounts (owner invites, e-mail + own password) to evaluate the testers' experience (attempts, usage errors, notes, survey). Plan, alignment with this roadmap and conflicts (CLAUDE.md "no auth / DB", ADR-0002, the same-origin preview rule): [`PILOT_PLATFORM_PLAN.md`](PILOT_PLATFORM_PLAN.md). Order: RAD-040 provider verification (docs) → RAD-041 accounts → RAD-042 attempts / events → RAD-043 consent / notes / survey → RAD-044 owner dashboard; credits page (RAD-045) in parallel. Learn / Reference, Assess (server-side scoring), organisations, subscriptions and payment stay after the pilot (ADR-0009 unchanged).
