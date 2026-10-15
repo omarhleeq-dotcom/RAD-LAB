@@ -6,7 +6,7 @@
 
 - آخر مرحلة برمجية مدموجة: **Pelvis AP — S-PELVIS-1** في [PR #34](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/34)، بعد مراجعة المالك وإعلانه الدمج. تحقق GitHub: 2026-10-15T07:43:19Z.
 - أحدث main متحقق منه: **`8ba28769a9b870cef9f7cab835af8cafd1b4083a`**؛ يتضمن مرجع PR #33 وتنفيذ PR #34. الكاحل S14.5 مدموج سابقًا في PR #31.
-- فرع تحديث التسليم **`docs/shoulder-grashey-reference`**، أساسه main أعلاه؛ مرجع الكتف وNeeds وتوثيق فقط. يتضمن تحديث التسليم من الفرع السابق (PR #35 مفتوح عند التحقق؛ هذه الدفعة تشمل تحديثاته). افحص HEAD وحالة PR عند البداية. الدمج لا يثبت نشر الموقع.
+- فرع تحديث التسليم **`docs/shoulder-grashey-reference`**، أساسه main أعلاه؛ مرجع الكتف وNeeds وتوثيق فقط، مرفوع في [Draft PR #36](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/36). يتضمن تحديث التسليم من الفرع السابق (PR #35 مفتوح عند التحقق؛ هذه الدفعة تشمل تحديثاته). افحص HEAD وحالة PR عند البداية. الدمج لا يثبت نشر الموقع.
 - سجل المرحلة السابقة: [session-14.5-ankle.md](session-14.5-ankle.md). سجل التحقق الحالي: [session-continuity-2026-10-15.md](session-continuity-2026-10-15.md). سجل استعادة السياق: [session-continuity-2026-10-11.md](session-continuity-2026-10-11.md).
 - يوجد على main الآن 16 فحصًا مسجلًا، بما فيها Pelvis AP؛ الفحوص الـ15 السابقة لم تتغير. الفحوص السابقة: Chest PA/Lateral/AP، وPA/Lateral للرسغ واليد، وAP/Lateral للمرفق والركبة والكاحل، وAP/Oblique للقدم. لا توجد حسابات أو قاعدة بيانات؛ الوضع المتاح هو Practice.
 
@@ -81,7 +81,7 @@
 
 ```text
 اقرأ CLAUDE.md وAGENTS.md وdocs/HANDOFF.md وdocs/project-status.md، ثم docs/session-shoulder-grashey-reference-2026-10-15.md ومرجع Shoulder_Grashey والملفات المرتبطة فقط.
-تحقق من أحدث main وحالة فرع docs/shoulder-grashey-reference وPR المرجع. الأساس البرمجي المتحقق منه 8ba28769a9b870cef9f7cab835af8cafd1b4083a (Pelvis AP مدموج PR #34، 16 فحصًا). تحديث PR #35 السابق متضمن في هذه الدفعة؛ تحقق من حالته ولا تدمجه تلقائيًا.
+تحقق من أحدث main وحالة فرع docs/shoulder-grashey-reference وDraft PR #36 للمرجع. الأساس البرمجي المتحقق منه 8ba28769a9b870cef9f7cab835af8cafd1b4083a (Pelvis AP مدموج PR #34، 16 فحصًا). تحديث PR #35 السابق متضمن في هذه الدفعة؛ تحقق من حالته ولا تدمجه تلقائيًا.
 الهدف الحالي كتف AP oblique glenoid/Grashey فقط؛ مرجع Bontrager ص196 وNeeds أُعدّا، ولم يبدأ الكود. يجب دمج المرجع إلى main أولًا. لا تبدأ AP عادي أو Y أو axillary أو الساعد تلقائيًا.
 رابط Commons بالمرجع؛ لقطات المالك CC0، لكن API والصفحة HTTP403، لا مطابقة للأصل أو ترخيص مستقل بعد O87. لا رفع/تعديل للصورة حتى استيفاء توثيقها. راجع سياق الخلع المتكرر/الجانب/التغطية O91.
 بعد الدمج حدد erect/supine والكاشف والتحكم المستقل بالذراع والمعايرة/rubric/marker O88/O89، وافحص صدق الدوران وزاويته المطلقة35°–45° O90 قبل الكود. لا تخمن قيمًا طبية أو تنقل تسامحات الحوض. O5 وO86 باقية.
