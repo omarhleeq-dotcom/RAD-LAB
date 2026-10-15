@@ -202,6 +202,7 @@ READ ONLY: [reference doc], [DECISIONS sections], [provenance if assets].
 OWNER DECISIONS (record first as [IDs]): [..]
 SCOPE: [numbered tasks]
 ALLOWED SHARED CHANGES: [list]
+SCALE CHECK (S-STD-3): [what ceiling could this create — volume, hard-coded sets / ids / locales / roles, unversioned shapes, unbounded reads, hand-only changes — and how it is avoided]
 CHANGE BUDGET: [expected files]
 OUT OF SCOPE: [list]
 SESSION TYPE: [DOCS | REFACTOR | EXAM] → QA accordingly.

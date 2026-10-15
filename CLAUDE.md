@@ -11,6 +11,7 @@ RAD-LAB is a bilingual (AR/EN) educational radiography simulator. Source of trut
 6. Prefer reusable components; avoid unnecessary dependencies and global state.
 7. Practice mode exists; keep the design Assessment-ready (no help/answers leaked in assessment) and instructor-ready.
 8. Document significant architectural decisions in README or `docs/`.
+9. **Scale-ready by default (S-STD-3, owner 2026-10-16, binding).** Build nothing without a proven need, but every feature or addition must leave room to grow and must not create a ceiling: before adding it, state in the PR what limit it could create (data volume, hard-coded value sets / ids / locales / roles in code or schema, schema or payload shape without a version, unindexed or unbounded reads, per-user write limits, a change that can only be applied by hand) and how it avoids it. Prefer data and configuration over hard-coded sets, versioned shapes, bounded + paged reads (keyset, server-side) and an additive path for the next exam / modality / mode / language / role / organisation. This is not licence for speculative features (rule of three still applies): it means the foundation never blocks the next one. A needed ceiling is allowed only if recorded as an open decision with the trigger that lifts it.
 
 ## Before finishing a task
 `npm run check` (typecheck + lint + tests) and `npm run build` must pass; exercise the flow in a browser in both `/en` and `/ar`.
