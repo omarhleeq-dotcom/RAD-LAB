@@ -363,3 +363,5 @@ Open: **O95** — shoulder scale / region / target / marker position and the 4.5
 | **O92** | Original inspected and hash-checked (S-SHOULDER-Y-2); **still open**: owner choice of image (accept as non-ideal / other) and educator suitability | Owner chooses option §12.3 |
 | **O94** | Gate not passed (S-SHOULDER-Y-3); absolute-angle convention still undefined | Only meaningful if option 1 or a new image |
 | **O97** | Marker policy for Y and confirmation of Grashey S-SHOULDER-2-3…6 not supplied | Owner answers when a Y build is chosen |
+
+| **S-SHOULDER-Y-6** | **Owner decision 2026-10-15: option 3, Shoulder Y deferred** because the image is not approved. **Freeze:** no new image imports and no new exams for now; work continues on the project's other aspects. RAD-035 / RAD-036 become `deferred`; O92 / O94 / O97 stay open and are revisited only if the owner supplies a clean licensed Y. | Owner message after PR #41. |
