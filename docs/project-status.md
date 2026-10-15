@@ -373,7 +373,7 @@
       "title": "جلسة التحقق من مزوّد الهوية وقاعدة البيانات للإطلاق التجريبي",
       "status": "review",
       "priority": "high",
-      "description": "نُفّذت القراءة من الوثائق الرسمية (2026-10-15) وكُتبت مقارنة وتوصية (Supabase Free، Frankfurt، مشروطة) وحُسمت Q1–Q4 كمقترحات. المتبقي: قبول المالك لـS-PILOT-2 وللتوصية، وحسم خدمة SMTP، ووثائق Cloudflare لم تُقرأ (محجوبة)، وأسئلة Q5–Q7. DOCS؛ لا حسابات ولا كود.",
+      "description": "نُفّذت القراءة من الوثائق الرسمية (2026-10-15) وكُتبت مقارنة وتوصية (Supabase Free، Frankfurt، مشروطة) وحُسمت Q1–Q4 كمقترحات. المتبقي: دمج الـPR، وحسم خدمة SMTP، ووثائق Cloudflare لم تُقرأ (محجوبة)، وأسئلة Q5–Q7. DOCS؛ لا حسابات ولا كود.",
       "source_ref": "docs/PILOT_PROVIDER_COMPARISON_2026-10-15.md؛ DECISIONS S-PILOT-3؛ docs/PILOT_PLATFORM_PLAN.md §4, §9"
     },
     {
@@ -381,7 +381,7 @@
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
       "status": "planned",
       "priority": "high",
-      "description": "شريحة 2: دعوة من المالك، كلمة مرور، تأكيد بريد، سجل دخول، سياسات صفوف، تعديل ADR-0002 وCLAUDE.md وCSP وpreview:smoke. كود L. لا تبدأ قبل قبول المالك لـS-PILOT-2 وللتوصية (Supabase Free) وحسم خدمة SMTP.",
+      "description": "شريحة 2: دعوة من المالك، كلمة مرور، تأكيد بريد، سجل دخول، سياسات صفوف، تعديل ADR-0002 وCLAUDE.md وCSP وpreview:smoke. كود L. قبل المالك Supabase Free وS-PILOT-2 (S-PILOT-4)؛ لا تبدأ قبل دمج PR الخاص بـRAD-040 وحسم خدمة SMTP.",
       "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
     },
     {
