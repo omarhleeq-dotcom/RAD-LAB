@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 25,
-  "updated_at": "2026-10-15T22:00:00Z",
+  "revision": 26,
+  "updated_at": "2026-10-15T23:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -371,9 +371,10 @@
     {
       "id": "RAD-040",
       "title": "جلسة التحقق من مزوّد الهوية وقاعدة البيانات للإطلاق التجريبي",
-      "status": "review",
+      "status": "done",
       "priority": "high",
       "description": "نُفّذت القراءة من الوثائق الرسمية (2026-10-15) وكُتبت مقارنة وتوصية (Supabase Free، Frankfurt، مشروطة) وحُسمت Q1–Q4 كمقترحات. المتبقي: دمج الـPR، وحسم خدمة SMTP، ووثائق Cloudflare لم تُقرأ (محجوبة)، وأسئلة Q5–Q7. DOCS؛ لا حسابات ولا كود.",
+      "completion_evidence": "PR #49 مدموج في main بيد المالك (commit a66bf5a)؛ docs/PILOT_PROVIDER_COMPARISON_2026-10-15.md من الوثائق الرسمية؛ قرارات S-PILOT-3 وS-PILOT-4. لا يثبت صحة التوصية عمليًا: لا حساب ولا مشروع عند المزوّد أُنشئ؛ المتبقي (SMTP، وثائق Cloudflare، Q5–Q7) في O103 وRAD-041.",
       "source_ref": "docs/PILOT_PROVIDER_COMPARISON_2026-10-15.md؛ DECISIONS S-PILOT-3؛ docs/PILOT_PLATFORM_PLAN.md §4, §9"
     },
     {
@@ -381,7 +382,7 @@
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
       "status": "in_progress",
       "priority": "high",
-      "description": "تُقسَّم إلى 041a (مخطط profiles/events وسياسات RLS واختبارات العزل وCSP وقت البناء ودليل المالك: نُفّذ في فرع feat/rad-041-accounts) و041b (عميل Supabase وصفحات التسجيل والدخول والانتظار وتسجيل الأحداث وفحص المتصفح على مشروع حي: لم يبدأ). المتبقي: مراجعة المالك لـ041a، تجهيز مشروع Supabase وSMTP بدليل docs/PILOT_SUPABASE_SETUP.md، ثم 041b.",
+      "description": "شريحة 2 على جلستين وفق S-PILOT-4/5 (تسجيل ذاتي، كل حساب جديد pending حتى يوافق المالك، Supabase Free/Frankfurt). 041a نُفّذ (PR #50، للمراجعة): مخطط profiles/events وRLS واختبارات العزل وCSP وقت البناء وتعديل preview:smoke وADR-0002 وCLAUDE.md ودليل المالك. 041b لم يبدأ: عميل Supabase وصفحات التسجيل والدخول والانتظار وتسجيل الأحداث وفحص المتصفح على مشروع حي. المتبقي: مراجعة المالك لـ041a، مشروع Supabase، وخدمة SMTP مخصصة (O103) لتأكيد البريد لغير أعضاء المؤسسة. كود L.",
       "source_ref": "docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
     },
     {
