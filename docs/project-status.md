@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 24,
-  "updated_at": "2026-10-15T21:00:00Z",
+  "revision": 25,
+  "updated_at": "2026-10-15T22:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -379,10 +379,10 @@
     {
       "id": "RAD-041",
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "شريحة 2: دعوة من المالك، كلمة مرور، تأكيد بريد، سجل دخول، سياسات صفوف، تعديل ADR-0002 وCLAUDE.md وCSP وpreview:smoke. كود L. قبل المالك Supabase Free وS-PILOT-2 (S-PILOT-4)؛ لا تبدأ قبل دمج PR الخاص بـRAD-040 وحسم خدمة SMTP.",
-      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
+      "description": "تُقسَّم إلى 041a (مخطط profiles/events وسياسات RLS واختبارات العزل وCSP وقت البناء ودليل المالك: نُفّذ في فرع feat/rad-041-accounts) و041b (عميل Supabase وصفحات التسجيل والدخول والانتظار وتسجيل الأحداث وفحص المتصفح على مشروع حي: لم يبدأ). المتبقي: مراجعة المالك لـ041a، تجهيز مشروع Supabase وSMTP بدليل docs/PILOT_SUPABASE_SETUP.md، ثم 041b.",
+      "source_ref": "docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
     },
     {
       "id": "RAD-042",

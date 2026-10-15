@@ -14,10 +14,13 @@ import { cpSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { startServer } from "./serve-out.mjs";
+import { supabaseOrigin } from "../pages/headers.mjs";
 
 const msgs = { en: JSON.parse(readFileSync("messages/en.json", "utf8")), ar: JSON.parse(readFileSync("messages/ar.json", "utf8")) };
 const { server, port } = await startServer("out", Number(process.env.PORT ?? 0));
 const BASE = `http://127.0.0.1:${port}`;
+// Pilot accounts (RAD-041a): the ONLY non-same-origin request allowed is the configured Supabase project (same validation as the CSP step).
+const ALLOWED_ORIGIN = supabaseOrigin(process.env.NEXT_PUBLIC_SUPABASE_URL);
 let failed = 0;
 const ok = (name, cond, extra = "") => { if (!cond) failed++; console.log(`${cond ? "ok  " : "FAIL"} ${name}${cond ? "" : ` ${extra}`}`); };
 
@@ -50,7 +53,7 @@ for (const loc of ["en", "ar"]) {
   const external = [];
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
   page.on("pageerror", (e) => errors.push(String(e)));
-  page.on("request", (q) => { if (!q.url().startsWith(BASE) && !q.url().startsWith("data:") && !q.url().startsWith("blob:")) external.push(q.url()); });
+  page.on("request", (q) => { if (!q.url().startsWith(BASE) && !q.url().startsWith("data:") && !q.url().startsWith("blob:") && !(ALLOWED_ORIGIN && new URL(q.url()).origin === ALLOWED_ORIGIN)) external.push(q.url()); });
   for (const path of ROUTES(loc)) {
     await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
     const banner = page.locator('[data-testid="preview-banner"]');

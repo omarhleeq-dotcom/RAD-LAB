@@ -1,5 +1,6 @@
 # Cloudflare Pages response headers (applies to every path).
 # Pilot preview: private, no analytics, no tracking, no third-party requests.
+# The ONLY exception (RAD-041a): `npm run build:pages` adds the pilot's Supabase project origin to connect-src in out/_headers when NEXT_PUBLIC_SUPABASE_URL is set (scripts/pages/finalize-headers.mjs).
 /*
   X-Robots-Tag: noindex, nofollow, noarchive
   X-Content-Type-Options: nosniff

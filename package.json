@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:pages": "RADLAB_STATIC_EXPORT=1 next build",
+    "build:pages": "RADLAB_STATIC_EXPORT=1 next build && node scripts/pages/finalize-headers.mjs",
     "preview:smoke": "node scripts/preview/smoke.mjs",
     "start": "next start",
     "lint": "eslint .",
@@ -28,6 +28,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
