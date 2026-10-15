@@ -13,6 +13,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the status transition check needs the fork point from the target branch
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -21,5 +23,12 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
+      # Status file: structure + id/revision continuity against the fork point from the target branch (docs/status-format.md §6)
+      # (CI tests the PR merge commit, so the fork point is taken from the PR head sha, not from HEAD)
+      - if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: origin/${{ github.base_ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: npm run status:check -- --base "$BASE_REF" --head "$HEAD_SHA"
       - run: npm run build
       - run: npm run build:pages   # the static export used by the pilot preview (out/)

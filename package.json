@@ -15,6 +15,7 @@
     "check": "npm run typecheck && npm run lint && npm run test",
     "qa:golden": "UPDATE_GOLDEN=1 vitest run src/features/qa",
     "qa:characterise": "UPDATE_CHARACTERISATION=1 vitest run src/features/qa/characterisation.test.ts",
+    "status:check": "node scripts/status/check-status.mjs",
     "qa:visual": "node scripts/qa/run-matrix.mjs",
     "qa:a11y": "node scripts/qa/a11y-audit.mjs"
   },
