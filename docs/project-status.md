@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد، لا يُقرأ آلياً)
 
-- **المنفّذ والمدموج في `main`** (آخر مراجعة: `8ba2876`، دمج PR #34): محاكي Chest PA، تقسيم الفحص/الحالة، منصة التصفح، المراجع المكتوبة ومكتبة المصادر، آليات التعميم (S11)، فحوص الصدر الثلاثة (PA وLateral وAP supine)، وفحوص الأطراف: wrist وhand وelbow وknee وfoot وankle (12 فحصاً أطراف + 3 صدر)، وPelvis AP (المجموع 16)، مع جولتي تحسين بصري (S-VIS-1a/1b).
-- **الاتجاه الحالي (المالك، 2026-10-15):** الكتف Grashey: مرجع وNeeds للمراجعة (RAD-031)، مطابقة الصورة وملاءمتها للمراجعة (RAD-032)، والتنفيذ لم يبدأ (RAD-033). الحوض مدموج (RAD-028/RAD-030)، ومراجعته الطبية باقية (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
+- **المنفّذ والمدموج في `main`** (آخر مراجعة: `91f0bc4`، دمج PR #36؛ الأساس البرمجي `8ba2876` دمج PR #34): محاكي Chest PA، تقسيم الفحص/الحالة، منصة التصفح، المراجع المكتوبة ومكتبة المصادر، آليات التعميم (S11)، فحوص الصدر الثلاثة (PA وLateral وAP supine)، وفحوص الأطراف: wrist وhand وelbow وknee وfoot وankle (12 فحصاً أطراف + 3 صدر)، وPelvis AP (المجموع 16)، مع جولتي تحسين بصري (S-VIS-1a/1b).
+- **الاتجاه الحالي (المالك، 2026-10-15):** الكتف Grashey: المرجع وNeeds مدموجان (RAD-031، PR #36)؛ هوية الصورة وترخيصها مطابقان (SHA-1)، وحُسمت وضعية الحالة (قائم فقط) وحدود المحاكاة قبل الكود، وتبقى ملاءمة الصورة للمراجعة (RAD-032)؛ التنفيذ لم يبدأ وينتظر تأكيد المالك (RAD-033). الحوض مدموج (RAD-028/RAD-030)، ومراجعته الطبية باقية (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
 - **ما يحتاج المالك أو المراجع البشري:** مراجعة المعلّم/الفيزيائي (O5، ليست بوابة)، إعادة التحقق من رخص الصور على Commons قبل الإصدار، وقرارات بيانات صغيرة (O55/O74 وO52 وO59)، وتأكيد حالة نشر المعاينة (RAD-024).
 - **تعارضات بين المصادر:** مسجّلة في حقل `conflict` داخل المهام المعنيّة (RAD-024 وRAD-025) ولا تُكرَّر هنا.
 - **لا تُحسب نسبة إنجاز للمشروع**: عدد المهام لا يعكس حجم العمل ولا المخاطر.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 7,
-  "updated_at": "2026-10-15T08:12:57Z",
+  "revision": 8,
+  "updated_at": "2026-10-15T08:26:03Z",
   "timezone": "UTC",
   "next_id": "RAD-034",
   "tasks": [
@@ -290,26 +290,27 @@
     {
       "id": "RAD-031",
       "title": "مرجع الكتف Grashey وNeeds قبل الكود",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "أُعد مرجع AP oblique glenoid/Grashey وNeeds بقراءة Bontrager ص196 مباشرة؛ ينتظر مراجعة ودمج المرجع. لا يشمل Shoulder AP العادي أو Y أو axillary. القيم الطبية مؤقتة تحت O5.",
-      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-SHOULDER-REF-1؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md؛ docs/session-shoulder-grashey-reference-2026-10-15.md"
+      "description": "مرجع AP oblique glenoid/Grashey وNeeds بقراءة Bontrager ص196 مباشرة، مدموج في main. لا يشمل Shoulder AP العادي أو Y أو axillary. القيم الطبية مؤقتة تحت O5؛ الدمج لا يثبت صحة المحتوى الطبي.",
+      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-SHOULDER-REF-1؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md؛ docs/session-shoulder-grashey-reference-2026-10-15.md؛ PR #36",
+      "completion_evidence": "PR #36 مدموج في main بيد المالك (merged_by omarhleeq-dotcom) في 2026-10-15T08:18:35Z عند الـcommit 91f0bc43247a2c955f1ff2c0c43e61b9707270ff؛ تحقق GitHub API وgit (HEAD = origin/main) في 2026-10-15. المرجع وNeeds وقرار S-SHOULDER-REF-1؛ توثيق فقط."
     },
     {
       "id": "RAD-032",
       "title": "مطابقة صورة الكتف وترخيصها وملاءمتها",
       "status": "review",
       "priority": "high",
-      "description": "مرفق واحد وصورتا وصف/CC0؛ وصل رابط Commons الدقيق، لكن API وصفحة الملف أعادا HTTP403. يلزم مطابقة الأصل والترخيص والجانب والتغطية ومراجعة ملاءمة تاريخ الخلع المتكرر. لا استيراد أو تعديل أو خدمة للصورة بعد.",
-      "source_ref": "DECISIONS.md O87/O91؛ مرجع Shoulder Grashey §8.8؛ مرفقات المالك 1000170774/1000170773/1000170771"
+      "description": "طُوبقت الهوية والترخيص في 2026-10-15: صفحة Commons وAPI، CC0 1.0، Häggström، SHA-1 للأصل المنزَّل يساوي المعلن (74f43679…8337)، 1193×1800؛ O87 مغلق للهوية/الترخيص. سُجلت ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مستقيم مائل، اسم الملف normal مقابل وصف الخلع المتكرر). تبقى ملاءمتها للمراجعة (O91/O5). لم تُستورد أو تُعدَّل أو تُخدم؛ الاستيراد مع A-id أول خطوة في RAD-033.",
+      "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2؛ O87/O91؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/session-shoulder-grashey-settlement-2026-10-15.md"
     },
     {
       "id": "RAD-033",
       "title": "تنفيذ Shoulder Grashey بعد دمج المرجع وحسم النطاق",
       "status": "planned",
       "priority": "medium",
-      "description": "لم يبدأ. بعد دمج RAD-031 وحسم الصورة/القرارات، تحديد وضعية الحالة وتحكم الذراع المنفصل وزاوية الجسم وrubric والمعايرة، ثم بوابة صدق المحاكاة من صورة واحدة. لا تنفيذ لسلسلة كتف كاملة تلقائيًا.",
-      "source_ref": "DECISIONS.md S-SHOULDER-REF-1/O88/O89/O90؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md §9–11"
+      "description": "لم يبدأ. المرجع مدموج وحُسمت قبل الكود: وضعية قائم فقط، تحكم زاوية مطلقة بهضبة 35°–45°، ذراع بلا أثر على الصورة، وإشارة دوران واحدة (انغلاق الحيّز المفصلي) بحدود موسومة. ينتظر تأكيد المالك لـS-SHOULDER-2-3…6 ثم قرار حجم الكاشف والعلامة والأوزان والأرقام (O88/O89). أول خطوة استيراد الأصل مع A-id. لا تنفيذ لسلسلة كتف كاملة تلقائيًا.",
+      "source_ref": "DECISIONS.md S-SHOULDER-2-1…7/O88/O89/O90؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md §12"
     }
   ]
 }
