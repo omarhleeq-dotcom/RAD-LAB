@@ -73,3 +73,13 @@ RAD-028 مرجع مدموج done، RAD-029 مراجعة ملاءمة الصور�
 راجع Draft PR الجديد، جرّب الحوض على الهاتف EN/AR: تغيير دوران الحوض والاختيار المنفصل للطرفين، وضع R/L وسحبها، التحديد والتمركز، نتيجة100 ومحاولة خاطئة. راجع مظهر الـwarp وحدوده وتعليمات عدم دوران الطرفين في الرضوض. لا إسقاط حوض آخر أو فحص آخر أضيف.
 
 الدمج والنشر بيد المالك؛ لم يدمج الوكيل أو يفعّل auto-merge. البرومبت الجاهز للمرحلة التالية في HANDOFF §8.
+
+
+## Addendum — owner review round (RAD-037, 2026-10-15)
+
+Owner said the implementation was poor and sent a phone screenshot. Changes (docs S-PELVIS-2-1/2-2):
+
+1. **Setup schematic redrawn** (`PelvisFigure.tsx`): the old drawing had narrow wings, boxy femora and no sacrum/pubic rings. New polygons were traced by eye over the A-036 baseline (overlay check against the picture before porting); one polygon per side. Not anatomically exact; labelled "schematic" as before.
+2. **Marker made fixed (R, letter only)** like the other exams: `pelvis-ap-supine.ts` (rule, default positions, wording), `positioningPelvis.markerConvention/markerHint` EN + AR, test section in `pelvis-ap.test.ts` (semantic edit: the old test asserted the anatomical-half rule this change removes; owner-directed), pelvis hash file `scripts/qa/scene-dom/pelvis-ap-supine-hashes.json` regenerated (the pelvis drawing changed; no other hash file touched).
+3. **Code review** (owner asked for errors not visible in the app). Read the exam, case, technique, geometry, model, scene files and the existing test; ran a throw-away fuzz of 1500 random settings through `evaluate` → `buildRenderPlan` → `renderRadiograph`: no exception, no NaN pixel, scores within 0–100, critical findings consistent with the marker rule (R never flagged, L / none always flagged, a passing attempt never carries a critical finding). **No logic defect found.** Observations, not fixed (S-STD-1 (2)): (a) the baseline itself is slightly asymmetric (spine and symphysis are not on one vertical, wings differ), so 0° is "the image unchanged", not a proven symmetric pelvis (known O85); (b) leg position is scored but has no radiograph effect (labelled "not drawn"); (c) a keep-still instruction changes the image (motion variant) but has no scored row; (d) the side-view figure is illustrative only.
+4. QA: `npm run check`, `npm run build`, pelvis browser audit 84 checks EN/AR × 1440/390 + axe, label/obstacle matrix 648 states, all clean; the other 16 exams' hashes untouched. Not run: phone check by a human, educator review (O5).
