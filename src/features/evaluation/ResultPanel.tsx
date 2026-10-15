@@ -59,9 +59,9 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
         return own ? localize(own, locale) : tCon(`projections.${value as "pa-erect"}`);
       }
       case "breathing":
-        return tPat(`breathingOptions.${value as "no-instruction"}`);
+        return tPat(`breathingOptions.${value as "no-instruction"}`, { sex: radCase.patient.sex });
       case "motionInstruction":
-        return tPat(`motionOptions.${value as "none"}`);
+        return tPat(`motionOptions.${value as "none"}`, { sex: radCase.patient.sex });
       case "chinPosition":
         return tPos(`chinOptions.${value as "tucked"}`);
       case "shoulderPosition":
