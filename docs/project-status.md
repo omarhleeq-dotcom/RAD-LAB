@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 23,
-  "updated_at": "2026-10-15T19:15:00Z",
+  "revision": 24,
+  "updated_at": "2026-10-15T20:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -371,10 +371,9 @@
     {
       "id": "RAD-040",
       "title": "جلسة التحقق من مزوّد الهوية وقاعدة البيانات للإطلاق التجريبي",
-      "status": "blocked",
+      "status": "planned",
       "priority": "high",
-      "description": "قراءة وثائق المزوّدين الرسمية (المنطقة، السعر، الدعوة، سياسة كلمة المرور، السجلات، النسخ الاحتياطي) وحسم Q1–Q4. DOCS. تبدأ بعد قبول المالك للخطة.",
-      "blocker": "سياسة شبكة جلسة Claude Code تحجب مواقع المزوّدين (supabase.com، firebase.google.com، neon.com: 403 على CONNECT). يرفعها المالك بتوسيع Network access أو بلصق الصفحات الرسمية في المحادثة. قائمة الأسئلة جاهزة في docs/PILOT_PROVIDER_VERIFICATION_CHECKLIST.md.",
+      "description": "قراءة وثائق المزوّدين الرسمية (المنطقة، السعر، الدعوة، سياسة كلمة المرور، السجلات، النسخ الاحتياطي) وحسم Q1–Q4. DOCS. الحجب رُفع (2026-10-15، المضيفون supabase.com وfirebase.google.com وcloud.google.com وneon.com تُجيب 200) والخطة مدموجة (PR #47)؛ تنتظر جلسة تنفيذ فقط. قائمة الأسئلة: docs/PILOT_PROVIDER_VERIFICATION_CHECKLIST.md.",
       "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 1"
     },
     {
