@@ -126,7 +126,8 @@
       "knee-lateral": "Knee lateral",
       "ankle-ap": "Ankle AP",
       "ankle-lateral": "Ankle lateral",
-      "pelvis-ap": "Pelvis AP"
+      "pelvis-ap": "Pelvis AP",
+      "shoulder-grashey": "Shoulder AP oblique (Grashey)"
     },
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
@@ -845,6 +846,29 @@
           "desc": "Low penetration reduces visibility of dense pelvic structures. Magnitudes are educational; brightness is not an exposure indicator."
         }
       }
+    },
+    "shoulder-grashey": {
+      "alt": "Simulated educational AP oblique glenoid (Grashey) shoulder radiograph from your settings; not a diagnostic image.",
+      "notRepresentative": "This selected projection is not represented by the Grashey shoulder baseline.",
+      "altReference": "Reference Grashey shoulder appearance with no simulated image-quality fault.",
+      "altFindings": {
+        "rotation": "a closed joint space from a one-image educational warp",
+        "low-penetration": "reduced visibility of dense shoulder structures"
+      },
+      "effects": {
+        "baseline": {
+          "title": "Reference appearance",
+          "desc": "Reference AP oblique glenoid (Grashey) appearance of a right shoulder from a real radiograph, used as an educational approximation and not clinical ground truth. The source describes recurrent dislocation with no visible abnormality; it is not a normal or asymptomatic shoulder. Your marker is interactive."
+        },
+        "rotation": {
+          "title": "Body turn outside 35°–45° → closed joint space",
+          "desc": "Outside the 35°–45° body turn (Bontrager p.196) the one-image teaching warp closes the joint space between the humeral head and the glenoid. The glenoid rims, true overlap of the head, the scapular body and arm posture are not reconstructed; the cue is the same for either side of the range. This is not a measured or diagnostic projection."
+        },
+        "low-penetration": {
+          "title": "Low penetration",
+          "desc": "Low penetration reduces visibility of dense shoulder structures. Magnitudes are educational; brightness is not an exposure indicator."
+        }
+      }
     }
   },
   "modality": {
@@ -952,7 +976,14 @@
     "pelvisLeg_external": "External rotation",
     "pelvisResp_suspend": "Suspended",
     "pelvisResp_normal": "Normal breathing",
-    "pelvisResp_none": "No instruction"
+    "pelvisResp_none": "No instruction",
+    "altShoulder": "Grashey shoulder: body turned {deg} degrees toward the right shoulder, arm {arm}, respiration {respiration}.",
+    "shoulderArm_neutral": "slightly abducted, elbow flexed, neutral rotation",
+    "shoulderArm_internal": "at the side, internally rotated",
+    "shoulderArm_external": "at the side, externally rotated",
+    "shoulderResp_suspend": "Suspended",
+    "shoulderResp_normal": "Normal breathing",
+    "shoulderResp_none": "No instruction"
   },
   "sceneWrist": {
     "ulna": "Ulna",
@@ -1133,5 +1164,27 @@
     "external": "External rotation",
     "head": "Head",
     "feet": "Feet"
+  },
+  "positioningShoulder": {
+    "alt": "Interactive detector schematic: right shoulder with humeral head, glenoid, acromion, clavicle and proximal humerus, collimation, central ray and side marker.",
+    "midline": "Scapulohumeral joint",
+    "detectorCaption": "Detector view: right shoulder, AP oblique glenoid (Grashey), patient right on viewer left",
+    "sideViewCaption": "Plan view from above: the erect patient, body turn and independent arm position",
+    "schematicNote": "Educational schematic, not anatomically exact. The same one-image model closes the joint space in the setup and in the result when the body turn is outside the 35°–45° source range. The arm position is drawn in the setup only and does not change the radiograph; the glenoid rims and head overlap are not reconstructed. Scale, region and tolerances are teaching assumptions.",
+    "rotationHelp": "Turn the body toward the affected (right) shoulder; the angle is the absolute turn from the detector. Bontrager gives 35°–45° and every angle in that range scores the same: there is no single ideal angle. The 30°–50° partial band is an engine teaching choice.",
+    "markerConvention": "Marker R (the patient's right) inside the field, clear of the anatomy; only the letter is judged. The baseline has no fixed marker. Never mirrored in Arabic.",
+    "markerHint": "Choose R, then place it inside the field and outside the shoulder.",
+    "rotation": "Body turn toward the right shoulder"
+  },
+  "sceneShoulder": {
+    "alt": "Plan view of the erect shoulder set-up: body turned {deg} degrees toward the right shoulder, tube angle {angle} degrees, arm {arm}, SID {sid} cm.",
+    "band": "Source range {lo}°–{hi}°",
+    "turn": "Body turn {deg}°",
+    "sid": "SID {sid} cm",
+    "detector": "Detector",
+    "rightShoulder": "Right shoulder",
+    "neutral": "slightly abducted, elbow flexed, neutral rotation",
+    "internal": "at the side, internally rotated",
+    "external": "at the side, externally rotated"
   }
 }

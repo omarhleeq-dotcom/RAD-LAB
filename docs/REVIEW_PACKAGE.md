@@ -243,3 +243,16 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | SHOULDER-R4 model | No implementation; source describes joint-space/rim overlap, not a pixel warp. **Gate passed with limits (S-SHOULDER-2-6):** one cue (joint-space closure), same for either side, baseline unchanged inside 35°–45° (**educational simplification, B**), rim superimposition / head overlap / arm-pose effects not drawn | Educator: is a dead band over the whole 35°–45° band acceptable for an average patient, given the source says the needed angle varies with build? Numeric margins and gain open (O88/O90) |
 | SHOULDER-R6 scope choices | **Erect only**, absolute-angle control, arm posture as a no-image-effect choice with teaching distractors, phase-neutral respiration (S-SHOULDER-2-3…5) | Educator / owner: confirm erect-only v1, the arm distractors and that supine stays deferred until a source gives the extra rotation |
 | SHOULDER-R5 Arabic/shielding | Draft terms; historical2018 shielding not adopted | Arabic/educator and physicist reviews O5/O86; no new UI or shielding scoring |
+
+## Shoulder Grashey implementation — S-SHOULDER-3, pending educator/physicist/Arabic review
+
+| Item | Source/basis | Review question / owner |
+|---|---|---|
+| SHOULDER-I1 rotation | p.196 band 35°–45° as an equal-credit plateau; **30°–50° partial band and 0–60° control range are engine teaching choices (B)** | Educator: acceptable plateau for an average patient given that the needed angle varies with build? Partial margins? |
+| SHOULDER-I2 cue | Joint-space closure only, same for either side, baseline unchanged inside the band (educational simplification), gain 0.0033 / ° capped at 15° | Educator: is one cue enough? Physicist: is the closure a fair proxy of head–glenoid superimposition? |
+| SHOULDER-I3 arm | Neutral = p.196; internal / external rotation are teaching distractors; setup drawing and feedback only, no image effect | Educator: confirm the distractors and that the radiograph does not change |
+| SHOULDER-I4 technique | Source: 75–85 kV, SID ≥ 102, grid. **B:** kV partial 70–90, SID 102–110 / 95–130, tube ±2° / ±5°, centring ±1 / ±2.5 cm, anchor 80 kV / 2 mAs / 102 cm, attenuation 1, manual-only | Physicist: values and the manual-only choice (no AEC) |
+| SHOULDER-I5 geometry | Scale 0.011 cm / px, target (815, 515), region box, excess margin 4.5 cm, default marker on the medial side (field centred on the central ray, frame cut medially) — all by eye (O92) | Educator / physicist: realistic coverage and margins |
+| SHOULDER-I6 scoring | Six categories 25/20/15/20/10/10, pass 70, critical = missing / wrong-side marker (pelvis pattern) | Educator: weights and critical list (O89) |
+| SHOULDER-I7 image | A-037 / A-038: rotated / cropped frame, ends mid-humerus, recurrent-dislocation history, not a normal shoulder | Educator: suitability of the image (O91) |
+| SHOULDER-I8 Arabic | New AR strings are machine-assisted DRAFT (see ARABIC_TERMINOLOGY) | Arabic reviewer |

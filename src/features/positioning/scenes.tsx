@@ -11,6 +11,7 @@ import type { RadCase } from "@/domain/case";
 import type { SceneId } from "@/domain/exam";
 import type { SimulationMode, SimulationSettings } from "@/domain/simulation";
 import { PelvisScene } from "./PelvisScene";
+import { ShoulderScene } from "./ShoulderScene";
 import { PositioningView } from "./PositioningView";
 import { ANKLE_AP_LAYOUT, ANKLE_LATERAL_LAYOUT, CHEST_AP_SUPINE_LAYOUT, CHEST_LATERAL_LAYOUT, CHEST_PA_LAYOUT, ELBOW_AP_LAYOUT, ELBOW_LATERAL_LAYOUT, HAND_LATERAL_LAYOUT, HAND_PA_LAYOUT, WRIST_LATERAL_LAYOUT, WRIST_PA_LAYOUT, FOOT_AP_LAYOUT, FOOT_OBLIQUE_LAYOUT, KNEE_AP_LAYOUT, KNEE_LATERAL_LAYOUT, type SceneLayout } from "./scene-layouts";
 
@@ -34,6 +35,7 @@ const layoutScene = (layout: SceneLayout) => {
 
 /** Chest PA (frontal view + plan view), Chest Lateral (S12: lateral figure) and Chest AP supine (S13: side view of the supine patient and the tube angle). */
 export const SCENES: Record<SceneId, ComponentType<SceneProps>> = {
+  "shoulder-grashey-erect": ShoulderScene,
   "pelvis-ap-supine": PelvisScene,
   "chest-pa-frontal": layoutScene(CHEST_PA_LAYOUT),
   "chest-lateral": layoutScene(CHEST_LATERAL_LAYOUT),
