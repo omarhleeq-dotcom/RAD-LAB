@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 29,
-  "updated_at": "2026-10-16T02:00:00Z",
+  "revision": 30,
+  "updated_at": "2026-10-16T03:30:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -388,9 +388,9 @@
     {
       "id": "RAD-042",
       "title": "حفظ المحاولات والأحداث (Practice محفوظ)",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "medium",
-      "description": "شريحة 3: ربط محرك التقييم الموجود بحفظ المحاولة مع إصدار التعريف وقائمة الأحداث الدنيا دون تغيير القواعد. كود M. بعد RAD-041.",
+      "description": "منفَّذ للمراجعة (فرع feat/rad-042-attempts): جدول attempts وRLS وتسجيل 4 أحداث بلا لمس المحرك، ولم يُجرَّب على المشروع الحي بعد (يتطلب تطبيق migration ثالث يدويًا). شريحة 3: ربط محرك التقييم الموجود بحفظ المحاولة مع إصدار التعريف وقائمة الأحداث الدنيا دون تغيير القواعد. كود M. بعد RAD-041.",
       "source_ref": "docs/PILOT_PLATFORM_PLAN.md §5, §8"
     },
     {
