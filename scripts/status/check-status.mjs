@@ -6,7 +6,7 @@
 //   previous status (ids never deleted or reused, next_id / revision never go back, data change bumps revision
 //   and time). The transition check protects id continuity only; it cannot prove a task description or its
 //   completion evidence is correct.
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -15,6 +15,14 @@ export const STATUSES = ["planned", "in_progress", "review", "blocked", "deferre
 export const PRIORITIES = ["high", "medium", "low"];
 const REQUIRED_TASK_FIELDS = ["id", "title", "status", "priority", "description", "source_ref"];
 const OPTIONAL_TASK_FIELDS = ["completion_evidence", "blocker", "defer_reason", "conflict"];
+// Format 1.1 (S-STD-4, docs/status-format.md §3.1): who the task waits for, and size caps so the live file stays short. Format 1.0 files are
+// still accepted unchanged (no waiting_on, no caps); the new rules apply only when format_version is "1.1".
+export const FORMAT_VERSIONS = ["1.0", "1.1"];
+export const WAITING_ON = ["owner", "reviewer", "code", "external"];
+export const NEEDS_WAITING_ON = ["planned", "in_progress", "review", "blocked"];
+export const DESCRIPTION_MAX = 350;
+export const EVIDENCE_MAX = 400;
+export const HANDOFF_MAX_LINES = 80;
 const META_FIELDS = ["project", "format_version", "revision", "updated_at", "timezone", "next_id", "tasks"];
 const BEGIN = "<!-- STATUS-DATA:BEGIN -->";
 const END = "<!-- STATUS-DATA:END -->";
@@ -23,6 +31,7 @@ const ID_RE = /^RAD-(\d{3,})$/;
 const TIME_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2})$/;
 
 const isText = (v) => typeof v === "string" && v.trim().length > 0;
+const charLength = (v) => [...v].length; // code points, so Arabic text and emoji count as written
 
 const countOf = (text, needle) => text.split(needle).length - 1;
 
@@ -74,6 +83,10 @@ export function validateStatus(markdown) {
   for (const key of ["project", "format_version", "timezone"]) {
     if (!isText(data[key])) errors.push(`"${key}" must be a non-empty string`);
   }
+  if (isText(data.format_version) && !FORMAT_VERSIONS.includes(data.format_version)) {
+    errors.push(`"format_version" "${data.format_version}" not in ${FORMAT_VERSIONS.join(", ")}`);
+  }
+  const v11 = data.format_version === "1.1";
   if (!Number.isInteger(data.revision) || data.revision < 1) errors.push('"revision" must be an integer >= 1');
   if (!isText(data.updated_at) || !TIME_RE.test(data.updated_at) || Number.isNaN(Date.parse(data.updated_at))) {
     errors.push('"updated_at" must be an ISO 8601 date-time with an offset (e.g. 2026-10-13T02:40:00Z)');
@@ -93,8 +106,9 @@ export function validateStatus(markdown) {
       errors.push(`${where}: not an object`);
       return;
     }
+    const allowed = [...REQUIRED_TASK_FIELDS, ...OPTIONAL_TASK_FIELDS, ...(v11 ? ["waiting_on"] : [])];
     for (const key of Object.keys(task)) {
-      if (![...REQUIRED_TASK_FIELDS, ...OPTIONAL_TASK_FIELDS].includes(key)) errors.push(`${where}: unknown field "${key}"`);
+      if (!allowed.includes(key)) errors.push(`${where}: unknown field "${key}"`);
     }
     for (const key of REQUIRED_TASK_FIELDS) if (!isText(task[key])) errors.push(`${where}: "${key}" is required (non-empty string)`);
     for (const key of OPTIONAL_TASK_FIELDS) {
@@ -114,6 +128,21 @@ export function validateStatus(markdown) {
     if (task.status === "blocked" && !isText(task.blocker)) errors.push(`${where}: blocked needs blocker`);
     if (task.status !== "done" && isText(task.completion_evidence)) {
       errors.push(`${where}: completion_evidence only belongs to done tasks`);
+    }
+    if (v11) {
+      if (NEEDS_WAITING_ON.includes(task.status) && !WAITING_ON.includes(task.waiting_on)) {
+        errors.push(`${where}: ${task.status} needs waiting_on (${WAITING_ON.join(" | ")})`);
+      }
+      if ("waiting_on" in task && task.status === "done") errors.push(`${where}: a done task does not wait for anyone (remove waiting_on)`);
+      if ("waiting_on" in task && !WAITING_ON.includes(task.waiting_on) && !NEEDS_WAITING_ON.includes(task.status)) {
+        errors.push(`${where}: waiting_on "${task.waiting_on}" not in ${WAITING_ON.join(", ")}`);
+      }
+      if (isText(task.description) && charLength(task.description) > DESCRIPTION_MAX) {
+        errors.push(`${where}: description is ${charLength(task.description)} characters (max ${DESCRIPTION_MAX}); keep the remaining work here and the story in the session record`);
+      }
+      if (isText(task.completion_evidence) && charLength(task.completion_evidence) > EVIDENCE_MAX) {
+        errors.push(`${where}: completion_evidence is ${charLength(task.completion_evidence)} characters (max ${EVIDENCE_MAX}); link the evidence instead of retelling it`);
+      }
     }
   });
   // Ids are never reused: every issued id is below next_id, so a new task always takes next_id.
@@ -212,6 +241,26 @@ export function readPreviousFromGit(ref, file, cwd = process.cwd(), head = "HEAD
   }
 }
 
+/** Ids of tasks that carry an unresolved `conflict` note (reported as a notice on every run, never an error). */
+export function openConflicts(markdown) {
+  const extracted = extractStatusJson(markdown);
+  if (extracted.error) return [];
+  try {
+    const data = JSON.parse(extracted.json);
+    return Array.isArray(data.tasks) ? data.tasks.filter((t) => t && isText(t.conflict) && t.status !== "done").map((t) => t.id) : [];
+  } catch {
+    return [];
+  }
+}
+
+/** The handoff summary next to the status file must stay a summary: more than HANDOFF_MAX_LINES lines is an error. */
+export function handoffProblem(statusFile) {
+  const handoff = path.join(path.dirname(path.resolve(statusFile)), "HANDOFF.md");
+  if (!existsSync(handoff)) return null;
+  const lines = readFileSync(handoff, "utf8").split(/\r?\n/).length;
+  return lines > HANDOFF_MAX_LINES ? `HANDOFF.md has ${lines} lines (max ${HANDOFF_MAX_LINES}); keep it a summary and move history to docs/archive/` : null;
+}
+
 /** Full check for the CLI / CI: structure, then (when a previous version is given) the transition. */
 export function checkStatusFile(file, { base, head, previousFile, requirePrevious = false, cwd = process.cwd() } = {}) {
   const errors = [];
@@ -223,6 +272,10 @@ export function checkStatusFile(file, { base, head, previousFile, requirePreviou
     return { errors: [`cannot read ${file}: ${e.message}`], notes };
   }
   errors.push(...validateStatus(markdown));
+  const tooLong = handoffProblem(file);
+  if (tooLong) errors.push(tooLong);
+  const conflicts = openConflicts(markdown);
+  if (conflicts.length > 0) notes.push(`open source conflicts to settle: ${conflicts.join(", ")}`);
 
   let previous;
   if (previousFile) {

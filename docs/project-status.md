@@ -4,15 +4,13 @@
 > التنسيق وقواعد التحديث: [`status-format.md`](status-format.md). الفحص: `npm run status:check`.
 > الحقول الثابتة (أسماء المفاتيح وقيم `status` و`priority`) بالإنجليزية لسهولة القراءة الآلية؛ العناوين والأوصاف بالعربية.
 
-## ملخص الحالة الحالية (سرد، لا يُقرأ آلياً)
+## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **المنفّذ والمدموج في `main`** (آخر مراجعة: `29630d9`، دمج PR #39؛ الأساس البرمجي `8ba2876` دمج PR #34): محاكي Chest PA، تقسيم الفحص/الحالة، منصة التصفح، المراجع المكتوبة ومكتبة المصادر، آليات التعميم (S11)، فحوص الصدر الثلاثة (PA وLateral وAP supine)، وفحوص الأطراف: wrist وhand وelbow وknee وfoot وankle (12 فحصاً أطراف + 3 صدر)، وPelvis AP (المجموع 16)، مع جولتي تحسين بصري (S-VIS-1a/1b).
-- **الاتجاه الحالي (المالك، 2026-10-15):** الكتف Grashey: المرجع وNeeds مدموجان (RAD-031، PR #36)؛ الصورة مستوردة (A-037/A-038، SHA-1 مطابق)، وحُسمت وضعية الحالة (قائم فقط) وحدود المحاكاة قبل الكود، وتبقى ملاءمة الصورة للمراجعة (RAD-032)؛ التنفيذ (RAD-033) مدموج في PR #40: فحص `shoulder-grashey-erect` قائم، كاشف 24×30، علامة R ثابتة، إشارة دوران واحدة. الحوض مدموج (RAD-028/RAD-030)، ومراجعته الطبية باقية (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
-- **قرار المالك 2026-10-15:** Shoulder Y مؤجل (الصورة غير معتمدة)؛ إيقاف رفع الصور والفحوص الجديدة والتركيز على بقية جوانب المشروع.
-- **إضافة النطاق السابقة (المالك):** مرجع Shoulder Y وNeeds مدموجان في PR #38 (RAD-034 منجز توثيقيًا)، وصورته للمراجعة (RAD-035). لا كود لأي كتف أو محاكي3D بموجب هذه الجلسة؛ Grashey المدموج وقراراته محفوظة.
-- **ما يحتاج المالك أو المراجع البشري:** مراجعة المعلّم/الفيزيائي (O5، ليست بوابة)، إعادة التحقق من رخص الصور على Commons قبل الإصدار، وقرارات بيانات صغيرة (O55/O74 وO52 وO59)، وتأكيد حالة نشر المعاينة (RAD-024).
-- **تعارضات بين المصادر:** مسجّلة في حقل `conflict` داخل المهام المعنيّة (RAD-024 وRAD-025) ولا تُكرَّر هنا.
-- **لا تُحسب نسبة إنجاز للمشروع**: عدد المهام لا يعكس حجم العمل ولا المخاطر.
+- **الاتجاه الحالي:** المنصة التجريبية (حسابات، محاولات، ملاحظات، لوحة المالك وCSV) كودها مدموج في `main` (RAD-041…044، حتى PR #58)، وقاعدة «جاهز للتوسع» نافذة (S-STD-3، PR #59). التالي: تدقيق قابلية التوسع RAD-047a.
+- **ينتظر المالك:** فحص المنصة على المشروع الحي (تطبيق migrations، متغيرات البيئة، النسخ/الاستعادة O105)، مراجعة نص الشروط، قرار بيانات الملاحظات الشخصية في CSV، قرارات بيانات صغيرة (RAD-017)، حالة النشر (RAD-024).
+- **ينتظر مراجِعًا بشريًا:** المعلّم والفيزيائي الطبي لكل القيم المؤقتة والنص العربي (RAD-019 / O5، ليست بوابة)، وملاءمة صور الحوض والكتف (RAD-029، RAD-032).
+- **آخر دمج:** PR #59 (2026-10-15). فحوص X-ray المنفَّذة تُعدّ من الكود (`EXAMS` في `src/data/exams`) لا من هذا النص.
+- **مخاطر معلنة:** لم يُجرَّب شيء من المنصة على المشروع الحي؛ تعارضات المصادر المفتوحة في RAD-024 وRAD-025 (حقل `conflict`)؛ الأرشيف التاريخي في [`status-archive.md`](status-archive.md).
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -20,11 +18,11 @@
 ```json
 {
   "project": "RAD-LAB",
-  "format_version": "1.0",
-  "revision": 33,
-  "updated_at": "2026-10-16T12:00:00Z",
+  "format_version": "1.1",
+  "revision": 34,
+  "updated_at": "2026-10-16T14:00:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-046",
+  "next_id": "RAD-049",
   "tasks": [
     {
       "id": "RAD-001",
@@ -175,24 +173,27 @@
       "title": "قرارات بيانات مفتوحة عند المالك: موضع علامة hand-PA (O55/O74)، اتجاه لوحة elbow-lateral (O52)، ملف foot (O59)",
       "status": "planned",
       "priority": "medium",
-      "description": "ثلاثة قرارات صغيرة: (1) موضع علامة hand-PA الافتراضي ثم إعادة براهين التسجيل (O55 وO74؛ يؤثر في فحص العلامة)؛ (2) تأكيد أو تغيير اتجاه كاسيت elbow-lateral (O52)؛ (3) تأكيد ملف القدم المقصود، فالمعلن 1067×1913 والمرفق 1061×2431 (O59). لا تعديل قبل قرار المالك (S-STD-1).",
-      "source_ref": "DECISIONS.md O55، O74، O52، O59 وS-VIS-1b-9"
+      "description": "ثلاثة قرارات صغيرة عند المالك: موضع علامة hand-PA (O55/O74)، اتجاه كاسيت elbow-lateral (O52)، ملف القدم المقصود (المعلن 1067×1913 والمرفق 1061×2431، O59). لا تعديل قبل القرار (S-STD-1).",
+      "source_ref": "DECISIONS.md O55، O74، O52، O59 وS-VIS-1b-9",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-018",
       "title": "إعادة التحقق من رخص ومصادر الصور على Commons وNIH قبل الإصدار",
       "status": "review",
       "priority": "high",
-      "description": "تدقيق 2026-10-15 (docs/ASSET_LICENCE_AUDIT_2026-10-15.md): سلامة الملفات المحلية 100% (كل أصول public/images مسجّلة وSHA مطابق)؛ إعادة تحقق عند المصدر مع البايتات لخمسة أصول (A-001, A-006, A-014, A-020, A-024) وصفحات المصدر لأربعة (A-010, A-012, A-016 + مرشحات A-018/022/026)؛ واجهة Commons 429 وتنزيلات 429/403 فتوقفت. قرار المالك: O100 مغلق (لقطات صفحات Commons مقبولة للأصول التسعة)؛ A-008 يبقى owner-verified مؤقتًا ويُؤجَّل (O101، RAD-038)؛ O102 (صياغة الاعتمادات) لجلسة الاعتمادات.",
-      "source_ref": "DECISIONS.md O14، O16، O27، O39، O47، O56، O65، O75؛ docs/ASSET_PROVENANCE_AND_LICENSES.md"
+      "description": "تدقيق رخص الصور 2026-10-15 (docs/ASSET_LICENCE_AUDIT_2026-10-15.md): الملفات المحلية سليمة 100% وO100 مغلق. المتبقي: إعادة التحقق عند المصدر حين تعمل واجهة Commons (كانت 429)؛ A-008 يبقى owner-verified مؤقتًا (O101، RAD-038).",
+      "source_ref": "DECISIONS.md O14، O16، O27، O39، O47، O56، O65، O75؛ docs/ASSET_PROVENANCE_AND_LICENSES.md",
+      "waiting_on": "external"
     },
     {
       "id": "RAD-019",
       "title": "مراجعة المعلّم والفيزيائي الطبي لكل القيم المؤقتة والنص العربي (O5)",
       "status": "review",
       "priority": "high",
-      "description": "حزمة المراجعة جاهزة وتنتظر مراجِعاً بشرياً: قيم Chest PA/Lateral/AP، فحوص الأطراف، النص العربي المساعَد آلياً، واقتراحات المصطلحات. ليست بوابة للجلسات (S10b-20) لكنها موصى بها قبل الإصدار أو التدريس. تشمل أيضاً حدود الصور وتقديرات المقياس والمعالم (O28، O31، O41، O49، O57، O58، O60، O62، O73، O76، O77، O78، O79، O80) وبنود O15 وO71.",
-      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20"
+      "description": "حزمة المراجعة (docs/REVIEW_PACKAGE.md) جاهزة وتنتظر معلّمًا وفيزيائيًا طبيًا: قيم Chest وفحوص الأطراف والحوض والكتف، النص العربي، وحدود الصور والمقياس (بنود O في DECISIONS). ليست بوابة للجلسات (S10b-20) لكنها موصى بها قبل الإصدار أو التدريس.",
+      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20",
+      "waiting_on": "reviewer"
     },
     {
       "id": "RAD-020",
@@ -217,34 +218,38 @@
       "title": "فحوص X-ray v1 المتبقية: abdomen & pelvis ثم head ثم spine (مرجع أولاً)",
       "status": "planned",
       "priority": "medium",
-      "description": "بدأ مرجع Pelvis AP فقط في RAD-028 بتوجيه المالك 2026-10-15؛ لا تنفيذ للحوض. بقية البطن والحوض ثم الرأس والعمود الفقري لم تبدأ، وتبقى خاضعة لقاعدة المرجع وNeeds ودمجهما قبل الكود (S10-2). لا يشمل ذلك CT/MRI/US في v2.",
-      "source_ref": "DECISIONS.md S12-12، S10-2؛ docs/exam-recipe.md؛ docs/ROADMAP_SESSIONS.md (ملاحظة S14-0 والجلسة 14)"
+      "description": "بقية X-ray v1: abdomen ثم head ثم spine، بشرط مرجع وNeeds مدموجين قبل الكود (S10-2). الحوض مكتمل (RAD-028/030) والباقي لم يبدأ؛ تركيز المالك الحالي على المنصة التجريبية. CT/MRI/US في v2.",
+      "source_ref": "DECISIONS.md S12-12، S10-2؛ docs/exam-recipe.md؛ docs/ROADMAP_SESSIONS.md (ملاحظة S14-0 والجلسة 14)",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-023",
       "title": "تحضير الإصدار: لافتة المعاينة، تدقيق الرخص التجاري، صفحة الاعتمادات، قراءة المصادر المتبقية",
       "status": "planned",
       "priority": "low",
-      "description": "آخر بند في ترتيب المالك (Release). يشمل قرار إزالة لافتة 'Educational prototype' (قرار المالك فقط)، إعادة تدقيق O10 بعد الأصول الجديدة (RAD-018)، صفحة المصادر/الاعتمادات، وقراءة المصادر غير المقروءة (ACR للتصوير الرقمي، IAEA، AIR/RCR، Fitzgerald 2025؛ O4) ومصدر تقنية الأطراف (O26: Clark قبل الإصدار). لا يبدأ قبل اكتمال فحوص X-ray v1.",
-      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ CLAUDE.md (Pilot preview — لا تُزل اللافتة دون قرار المالك)"
+      "description": "آخر بند قبل الإصدار: قرار إزالة لافتة المعاينة (للمالك فقط)، إعادة تدقيق O10 بعد الأصول الجديدة، قراءة المصادر المتبقية (O4) ومصدر تقنية الأطراف (O26). لا يبدأ قبل اكتمال X-ray v1؛ صفحة الاعتمادات في RAD-045.",
+      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ CLAUDE.md (Pilot preview — لا تُزل اللافتة دون قرار المالك)",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-024",
       "title": "حالة نشر المعاينة الخاصة (Cloudflare Pages وZero Trust Access)",
       "status": "review",
       "priority": "medium",
-      "description": "لا يوجد في المستودع دليل على أن النشر ربط فعلاً بـ Cloudflare أو أن الوصول مقيّد ببريد المراجعين. المطلوب إجابة من المالك: هل النشر يعمل ومن يملك الوصول؟ ثم إما تسجيل المهمة done بدليل (رابط النشر الناجح) أو تحديد المتبقي.",
+      "description": "نجح workflow النشر على PR (تعليق المعاينة)، لكن لا دليل في المستودع أن الوصول مقيّد بالمراجعين عبر Cloudflare Access. المطلوب من المالك: هل الوصول مقيّد ومن يملكه؟ ثم تسجيل done بدليل أو تحديد المتبقي.",
       "source_ref": "docs/DEPLOYMENT.md؛ .github/workflows/deploy-pages.yml؛ docs/ROADMAP_SESSIONS.md (Gate G0)",
-      "conflict": "G0 في ROADMAP_SESSIONS.md يعدّ ربط Cloudflare وتفعيل Access عملاً للمالك وملاحظاته 'partly resolved'؛ ولا يوجد سجل لنتيجته. وجود workflow النشر لا يثبت تنفيذه."
+      "conflict": "G0 في ROADMAP_SESSIONS.md يعدّ ربط Cloudflare وتفعيل Access عملاً للمالك وملاحظاته 'partly resolved'؛ ولا يوجد سجل لنتيجته. وجود workflow النشر لا يثبت تنفيذه.",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-025",
       "title": "مواءمة صياغة ROADMAP_SESSIONS.md وDECISIONS.md مع الحالة المدموجة",
       "status": "planned",
       "priority": "low",
-      "description": "تحديث نصوص قديمة دون تغيير القرارات: سطر الحالة العلوي في ROADMAP (يصف الجلسة 11+ كمقترح)، وسطر 'PARTLY DONE' للجلسة 11b مع أن S11c سجّلت إكمال اتجاه التدوير، وعبارة 'draft PR' لجلسات مدموجة، وبقاء ترقيم الجلسات 14–18 مقابل ترتيب S12-12 (v2 للـCT/MRI/US)، وتناقض O24 ('RIGHT') مع S14.1c-1 (اليسرى) في صفّ O24 نفسه. تُعدَّل بجلسة توثيق ولا تُعامَل كمهام منتجة.",
+      "description": "مواءمة نصوص قديمة في ROADMAP_SESSIONS وDECISIONS مع المدموج دون تغيير قرارات: سطر الحالة العلوي، «PARTLY DONE» للجلسة 11b، عبارة «draft PR»، ترقيم الجلسات 14–18 مقابل S12-12، وتناقض O24 مع S14.1c-1. جلسة توثيق.",
       "source_ref": "docs/ROADMAP_SESSIONS.md (سطر 3 وSession 11b وملاحظة S14-0)؛ DECISIONS.md O24، S14.1c-1",
-      "conflict": "المصدران يتعارضان صراحة؛ قاعدة الحسم المعلنة في ROADMAP نفسها: DECISIONS.md وexam-recipe.md هما الأعلى عند التعارض. لذلك اعتُمدت DECISIONS.md هنا ولم يُعدَّل أي مصدر."
+      "conflict": "المصدران يتعارضان صراحة؛ قاعدة الحسم المعلنة في ROADMAP نفسها: DECISIONS.md وexam-recipe.md هما الأعلى عند التعارض. لذلك اعتُمدت DECISIONS.md هنا ولم يُعدَّل أي مصدر.",
+      "waiting_on": "code"
     },
     {
       "id": "RAD-026",
@@ -278,8 +283,9 @@
       "title": "صورة Pelvis AP المنظفة من marker — مادة مراجعة",
       "status": "review",
       "priority": "high",
-      "description": "A-034/A-035 مدموجان في #33؛ حُفظ الأصل والاشتقاق بلا علامة، وتحقق صفر بكسل متغير خارج خلفية التنظيف. اعتمد المالك متابعة الحوض بنهج الفحوص السابقة؛ أُضيفت نسخة منتج A-036 ضمن RAD-030. تبقى ملاءمة/تغطية الصورة للمراجعة الطبية O84/O5.",
-      "source_ref": "docs/ASSET_PROVENANCE_AND_LICENSES.md A-034/A-035؛ scripts/derive-pelvis-baseline.py؛ DECISIONS.md O84؛ PR #33"
+      "description": "A-034/A-035 مدموجان (#33) وA-036 نسخة المنتج؛ التنظيف تحقق بصفر بكسل متغير خارج الخلفية. تبقى ملاءمة الصورة وتغطيتها للمراجعة الطبية (O84/O5).",
+      "source_ref": "docs/ASSET_PROVENANCE_AND_LICENSES.md A-034/A-035؛ scripts/derive-pelvis-baseline.py؛ DECISIONS.md O84؛ PR #33",
+      "waiting_on": "reviewer"
     },
     {
       "id": "RAD-030",
@@ -304,8 +310,9 @@
       "title": "مطابقة صورة الكتف وترخيصها وملاءمتها",
       "status": "review",
       "priority": "high",
-      "description": "طُوبقت الهوية والترخيص في 2026-10-15 (صفحة Commons وAPI، CC0 1.0، Häggström، SHA-1 للأصل يساوي المعلن 74f43679…8337؛ O87 مغلق للهوية/الترخيص). استُوردت في Draft PR الكتف: الأصل A-037 (غير مخدوم) ونسخة ويب رمادية بلا فقدان A-038، بلا أي تعديل للبكسلات. ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مستقيم مائل، اسم الملف normal مقابل وصف الخلع المتكرر) وملاءمتها للمراجعة (O91/O5).",
-      "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/session-shoulder-grashey-settlement-2026-10-15.md"
+      "description": "هوية صورة الكتف وترخيصها مطابقان (CC0، SHA-1 مطابق، O87 مغلق)؛ الأصل A-037 والويب A-038 بلا تعديل بكسلات. تبقى ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مائل، اسم الملف normal) وملاءمتها للمراجعة (O91/O5).",
+      "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/session-shoulder-grashey-settlement-2026-10-15.md",
+      "waiting_on": "reviewer"
     },
     {
       "id": "RAD-033",
@@ -333,8 +340,8 @@
       "description": "أصل Y فُحص ولم يُعتمد ولم يُستورد؛ لا عمل حتى يقدّم المالك صورة نظيفة مرخّصة.",
       "defer_reason": "قرار المالك 2026-10-15: تأجيل Shoulder Y لأن الصورة غير معتمدة؛ إيقاف رفع الصور والفحوص الجديدة والتركيز على بقية جوانب المشروع.",
       "source_ref": "DECISIONS.md S-SHOULDER-Y-2/Y-3/O92؛ S-SHOULDER-Y-REF-2؛ مرجع Shoulder Y §8.8؛ رابط Commons المرسل من المالك"
-    }
-    ,{
+    },
+    {
       "id": "RAD-036",
       "title": "Shoulder Y — بوابتا الصورة والنموذج (توقف قبل الكود)",
       "status": "deferred",
@@ -348,8 +355,9 @@
       "title": "مراجعة جودة تنفيذ فحص الحوض (pelvis-ap-supine)",
       "status": "review",
       "priority": "high",
-      "description": "جولة مراجعة المالك على Pelvis AP: أُعيد رسم مخطط الإعداد (S-PELVIS-2-2)، وصارت العلامة R ثابتة بنمط الفحوص الأخرى (S-PELVIS-2-1)، ومراجعة الكود لم تجد خللًا منطقيًا (إضافة في سجل التنفيذ). تبقى للمالك مراجعة الهاتف؛ أي قصور آخر يذكره يُسجَّل هنا. لا يلغي RAD-029/O84/O85/O5. O99 حُلَّت (S-PELVIS-3-1): منطقة منع للعلامة تغطي العظام فقط (حقل اختياري)، والعلامة 2.8 سم في الزاوية العليا اليسرى، وهامش التحديد الزائد عاد 2.6 سم.",
-      "source_ref": "DECISIONS.md O98؛ docs/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15"
+      "description": "مراجعة جودة تنفيذ الحوض: مخطط الإعداد أُعيد رسمه (S-PELVIS-2-2)، العلامة R ثابتة (S-PELVIS-2-1)، منطقة منع العلامة (S-PELVIS-3-1، O99 محلولة). تبقى مراجعة المالك على الهاتف؛ أي قصور يُسجَّل هنا. لا يلغي RAD-029/O84/O85/O5.",
+      "source_ref": "DECISIONS.md O98؛ docs/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-038",
@@ -363,10 +371,11 @@
     {
       "id": "RAD-039",
       "title": "خطة المنصة التجريبية ووثيقة القرار (حسابات، محاولات، ملاحظات)",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "docs/PILOT_PLATFORM_PLAN.md: قرارات المالك (دعوة من المالك فقط، بريد إلزامي، كلمة مرور، 20–100 مشارك)، مطابقة مع الخطة القائمة، شريحة تجريبية ومعايير قبول وأسئلة مفتوحة Q1–Q7. توثيق فقط؛ لا شيء منفَّذ.",
-      "source_ref": "docs/PILOT_PLATFORM_PLAN.md؛ DECISIONS S-PILOT-1/2"
+      "description": "خطة المنصة التجريبية ووثيقة القرار: docs/PILOT_PLATFORM_PLAN.md (حسابات، محاولات، ملاحظات، شريحة تجريبية ومعايير قبول). نُفِّذت في RAD-041…044؛ الأسئلة المفتوحة في O103.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md؛ DECISIONS S-PILOT-1/2",
+      "completion_evidence": "الخطة مدموجة (PR #49) وقبلها المالك في الجوهر (DECISIONS S-PILOT-4) ونُفِّذت في RAD-041…044 المدموجة. توثيق فقط؛ لا يثبت صحة افتراضاتها الخارجية."
     },
     {
       "id": "RAD-040",
@@ -382,56 +391,78 @@
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
       "status": "review",
       "priority": "high",
-      "description": "041a مدموج (PR #50) و041b منفَّذ للمراجعة: عميل Supabase وصفحة الحساب وتسجيل النشاط وحارس المفتاح السري، متحقَّق منه بمتصفح مع Supabase مُحاكى وaxe. المتبقي: دمج المالك، ضبط متغيري GitHub (العنوان والمفتاح العام) ونشر المعاينة، فحص المالك الحي بقائمة docs/session-rad-041b-account-ui-2026-10-15.md، ثم النسخ/الاستعادة (O105) قبل أول مشارك. كود L.",
-      "source_ref": "docs/session-rad-041b-account-ui-2026-10-15.md؛ docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5/7؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
+      "description": "الكود مدموج (PR #50 و#52 و#53). المتبقي عند المالك: فحص حي بقائمة docs/session-rad-041b-account-ui-2026-10-15.md، ضبط متغيري GitHub ونشر المعاينة إن لم يتما، ثم اختبار النسخ/الاستعادة (O105) قبل أول مشارك.",
+      "source_ref": "docs/session-rad-041b-account-ui-2026-10-15.md؛ docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5/7؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-042",
       "title": "حفظ المحاولات والأحداث (Practice محفوظ)",
-      "status": "in_progress",
+      "status": "review",
       "priority": "medium",
-      "description": "منفَّذ للمراجعة (فرع feat/rad-042-attempts): جدول attempts وRLS وتسجيل 4 أحداث بلا لمس المحرك، ولم يُجرَّب على المشروع الحي بعد (يتطلب تطبيق migration ثالث يدويًا). شريحة 3: ربط محرك التقييم الموجود بحفظ المحاولة مع إصدار التعريف وقائمة الأحداث الدنيا دون تغيير القواعد. كود M. بعد RAD-041.",
-      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §5, §8"
+      "description": "الكود مدموج (PR #55): جدول attempts وRLS وأربعة أحداث بلا لمس المحرك. المتبقي: تأكيد تطبيق migrations 3–5 على المشروع الحي وفحص حفظ المحاولات حيًّا (لم يُجرَّب).",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §5, §8",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-043",
       "title": "الموافقة وزر الملاحظات ورابط الاستبيان",
-      "status": "in_progress",
+      "status": "review",
       "priority": "medium",
-      "description": "043a منفَّذ للمراجعة (فرع feat/rad-043a-consent): موافقة بالتأشير عند التسجيل على صفحة الشروط والخصوصية (مسودة بانتظار مراجعة المالك)، بطاقة موافقة للحسابات القديمة، ولا حفظ بلا موافقة (تطبيق وقاعدة بيانات)؛ migration رابع يطبّقه المالك يدويًا. 043b منفَّذ للمراجعة (فرع feat/rad-043b-feedback): جدول feedback وRLS (migration خامس يطبّقه المالك يدويًا) وصندوق ملاحظة على لوحة النتيجة مرتبط بالمحاولة المحفوظة وتحذير «لا بيانات شخصية»، ورابط استبيان من NEXT_PUBLIC_SURVEY_URL برمز المشارك في صفحة الحساب، وحدثا feedback_sent وsurvey_opened؛ لم يُجرَّب على المشروع الحي، ورُفعت نسخة الموافقة إلى 2026-10-17 (DECISIONS S-PILOT-11). شريحة 4: شاشة موافقة، ملاحظة مرتبطة بالفحص، رابط استبيان برمز المشارك. كود M. بعد RAD-041.",
-      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §6, §8"
+      "description": "043a (PR #56) و043b (PR #57) مدموجان: موافقة بالتأشير، صندوق ملاحظة مرتبط بالمحاولة، رابط استبيان. المتبقي: مراجعة المالك لنص الشروط (مسودة)، تطبيق migrations 4–5، وفحص حي. لا تُدعَ أحدًا قبل مراجعة الشروط.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §6, §8",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-044",
       "title": "لوحة المالك وتصدير CSV",
-      "status": "in_progress",
+      "status": "review",
       "priority": "medium",
-      "description": "044a منفَّذ للمراجعة (صفحة المالك: قائمة المشاركين بالبريد وأزرار موافقة/إيقاف، migration ثانٍ يطبّقه المالك يدويًا). 044b منفَّذ للمراجعة (فرع feat/rad-044b-owner-attempts-csv، Draft PR): عرض المحاولات والملاحظات لكل رمز مشارك في صفحة المالك وتنزيل ملفَّي CSV (محاولات وملاحظات) بلا بريد إلكتروني؛ بلا migration (RLS يسمح للمالك بالقراءة)؛ DECISIONS S-PILOT-12؛ فحص متصفح مع Supabase مُحاكى؛ لم يُجرَّب حيًّا ولم يُدمج. كود M.",
-      "source_ref": "DECISIONS S-PILOT-8؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 5"
+      "description": "044a (PR #54) و044b (PR #58) مدموجان: قائمة المشاركين، محاولات وملاحظات لكل رمز، CSV بلا بريد، بلا migration جديد. المتبقي: فحص حي، وقرار المالك في بيانات الملاحظات الشخصية قبل مشاركة CSV (تنبيه آلي / تصدير بلا نصوص / حجب).",
+      "source_ref": "DECISIONS S-PILOT-8؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 5",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-045",
       "title": "صفحة المصادر والاعتمادات ثنائية اللغة",
       "status": "planned",
       "priority": "medium",
-      "description": "تنفيذ مواصفة docs/ASSET_LICENCE_AUDIT_2026-10-15.md §5 وصياغة O102؛ كود S، قبل توسيع الإطلاق. بالتوازي مع الشريحة.",
-      "source_ref": "docs/ASSET_LICENCE_AUDIT_2026-10-15.md §5؛ DECISIONS O102؛ RAD-023"
+      "description": "تنفيذ مواصفة docs/ASSET_LICENCE_AUDIT_2026-10-15.md §5 وصياغة O102: صفحة المصادر والاعتمادات ثنائية اللغة. كود S، قبل توسيع الإطلاق، بالتوازي مع الشريحة التجريبية.",
+      "source_ref": "docs/ASSET_LICENCE_AUDIT_2026-10-15.md §5؛ DECISIONS O102؛ RAD-023",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-046",
+      "title": "صفحة «نسيت كلمة المرور» لحسابات التجربة",
+      "status": "planned",
+      "priority": "medium",
+      "description": "لم تُنفَّذ في RAD-043b (S-PILOT-11 §6). تُبنى بقاعدة S-STD-3 (SCALE CHECK)، برسائل EN/AR واختبار متصفح بـSupabase مُحاكى. كود S.",
+      "source_ref": "DECISIONS S-PILOT-11، S-STD-3",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-047",
+      "title": "قابلية التوسع: تدقيق (047a) ثم تنفيذ (047b)",
+      "status": "planned",
+      "priority": "high",
+      "description": "047a توثيق فقط: تدقيق الأساس بمقياس 500 مشارك × 50 محاولة (تصميم لعشرة أضعافه)، وتصنيف كل سقف: الآن/تأجيل/غير لازم. أبرزها: تحميل 10,000 صف في المتصفح، قيد locale en/ar، لا احتفاظ للأحداث، migrations يدوية. 047b تنفيذ ما يقرره 047a.",
+      "source_ref": "DECISIONS S-STD-3؛ docs/prompts/rad-047a-scalability-audit.md",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-048",
+      "title": "تنظيم ملف الحالة وHANDOFF (صيغة 1.1)",
+      "status": "review",
+      "priority": "medium",
+      "description": "صيغة 1.1: waiting_on إلزامي للمفتوح، سقف وصف 350 ودليل 400 حرفًا، سقف HANDOFF 80 سطرًا، تنبيه تعارضات المصادر المفتوحة؛ أرشيف docs/status-archive.md وdocs/archive/. PR للمراجعة.",
+      "source_ref": "DECISIONS S-STD-4؛ docs/status-format.md",
+      "waiting_on": "owner"
     }
   ]
 }
 ```
 <!-- STATUS-DATA:END -->
 
-## سجل تاريخي مختصر (لا يُحدَّث آلياً؛ المرجع الكامل في ROADMAP_SESSIONS.md وDECISIONS.md)
+## سجل تاريخي
 
-| المرحلة | ما حدث | المرجع |
-|---|---|---|
-| الجلسات 1–6 | محاكي Chest PA، تقنية، مولّد الصورة، QA، معاينة ساكنة | `session-*.md`، `DEPLOYMENT.md` |
-| 7–9 | فصل الفحص/الحالة، محاذاة D7، هيكل المنصة | `ROADMAP_SESSIONS.md` |
-| 10–10b | مراجع الصدر ومكتبة المصادر (توثيق فقط) | `docs/sources/REGISTER.md` |
-| 11–13c | تعميم، Chest Lateral، Chest AP، تصميم المشاهد، وصفة الفحص | `session-11…13b`، `exam-recipe.md` |
-| 14-0 … 14.5 | تعميم الأطراف ثم wrist وhand وelbow وknee/foot وankle | `session-14*.md` |
-| S-VIS-1a/1b | جولتا وضوح بصري للأطراف | `DECISIONS.md` |
-| 2026-10-13 | إنشاء هذا الملف (مراجعة 1) | هذه الجلسة |
-
-> ملاحظة: التواريخ والقرارات الماضية تاريخ وليست مهاماً مفتوحة. وُسمت `done` فقط الأعمال المدموجة التي يوجد لها أثر قابل للفحص (اختبار/سجل git/مستند جلسة)، لا استناداً إلى العنوان وحده.
+التاريخ ليس مهاماً مفتوحة. السجل المرحلي الكامل والملخص القديم في [`status-archive.md`](status-archive.md)؛ التفاصيل في `ROADMAP_SESSIONS.md` وDECISIONS.md وسجلات الجلسات.
