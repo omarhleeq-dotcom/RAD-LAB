@@ -1273,6 +1273,25 @@
     "failed": "Could not send your note. Please try again."
   },
   "owner": {
+    "paging": {
+      "participant": "Participant (on this page)",
+      "allParticipants": "All participants",
+      "exam": "Exam ID (optional)",
+      "from": "From (UTC)",
+      "to": "Through (UTC)",
+      "first": "First page / refresh",
+      "next": "Next page",
+      "details": "Activity for {code}",
+      "total": "Matching rows: {total}",
+      "exportHint": "Export uses these filters independently of the displayed page. Save each numbered part. Rows read within the boundary during export are not a point-in-time snapshot. Note text is included as entered and may contain personal information; owner-only handling.",
+      "savePart": "Save part {part} and continue",
+      "resetExport": "End export / start again",
+      "report": "Download export report",
+      "exportError": "Export interrupted. Earlier saved parts are partial; download the report and restart.",
+      "exportStatus": "Saved rows: {count}. Omitted rows: {skipped}.",
+      "complete": "Read finished; check omissions in the report.",
+      "incomplete": "Partial export; more parts may remain."
+    },
     "title": "Owner dashboard",
     "intro": "Approve or suspend participants. Only an approved owner account can see this page; the database enforces it.",
     "notEnabled": "Accounts are not enabled in this preview.",
