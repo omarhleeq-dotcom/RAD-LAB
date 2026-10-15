@@ -322,3 +322,16 @@ None of these blocks Sessions 8–9. Until decided, each stays labelled provisio
 | **O89** | Posture **settled: erect only** (S-SHOULDER-2-3); arm = separate no-image-effect choice and respiration phase-neutral (S-SHOULDER-2-5). **Open:** detector size, marker policy / viewer-half, weights, critical list, manual vs AEC | Owner confirms S-SHOULDER-2-3…6 or revises; rest decided in RAD-033 with explicit classification; no automatic critical gates or rubric. |
 | **O90** | Gate **passed with labelled limits** (S-SHOULDER-2-6); absolute-angle representation settled (S-SHOULDER-2-4). **Open:** numeric margins, gain / cap | p.196 body 35°–45° is distinct from arm rotation; no universal 40° optimum; one cue only; no fabricated hidden anatomy. |
 | **O91** | Observations recorded (S-SHOULDER-2-2); **open:** educator review of clinical context (recurrent dislocation, file name says normal), coverage (frame ends mid-humerus), rotated / cropped frame | Uploader reports right shoulder, man 31 with recurrent dislocation, no visible abnormalities; not an asymptomatic-normal claim. |
+
+## Shoulder Y reference — owner request 2026-10-15 (docs only)
+
+| ID | Decision/scope | Basis |
+|---|---|---|
+| **S-SHOULDER-Y-REF-1** | Owner suppliedY page and explicitly requested **docs and Bontrager data only, no code**. Add independent adultPA oblique scapularY reference/Needs from printedp.201/PDF221; no ordinaryAP/Neer/axillary, asset import, numerical rubric,3D core or implementation. ExistingGrashey decisions remain specific toGrashey. | Current owner request;S10-2; governing sourcep.201 directly read/text+visual |
+| **S-SHOULDER-Y-REF-2** | Y canonical page/API readHTTP200: CC0 independently verified. Description explicitly “slightly skewed” with recurrent-dislocation history. Attached radiograph is byte-identical to earlierGrashey, and licence screenshot bearsGrashey title. Do not relabel attachment or silently adoptY as ideal. Published master metadata is not a downloaded checksum match. | OfficialY page/API and computed attachmentSHA-256;O92 |
+
+| Open item | Missing evidence/decision | Next action |
+|---|---|---|
+| **O92** | Y master/suitability: original not downloaded/inspected or hash-matched; source says slightly skewed; attached radiograph/licence areGrashey | Retain verifiedY licence separately; later inspect original/coverage/marker/side and clinical context with educator. Decide suitable baseline versus another image; no guessed correction or asset import in docs phase |
+| **O93** | Y scenario/posture, arm/respiration/marker/manual-AEC scope, local calibration, geometry/error bands, rubric/critical list | Sourcep.201 supplies clinical facts, not grading policy. NoGrashey/pelvis defaults adopted; remain docs-only until owner selects next phase |
+| **O94** | Y absolute body-angle convention and truthful single-image model |45°–60° reflects patient variation, not guaranteed equal correctness for one patient. AssessY symmetry/scapular-body/humeral-rib overlap independently; no borrowedGrashey joint closure,3D authorization or fabricated dislocation |

@@ -243,3 +243,13 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | SHOULDER-R4 model | No implementation; source describes joint-space/rim overlap, not a pixel warp. **Gate passed with limits (S-SHOULDER-2-6):** one cue (joint-space closure), same for either side, baseline unchanged inside 35°–45° (**educational simplification, B**), rim superimposition / head overlap / arm-pose effects not drawn | Educator: is a dead band over the whole 35°–45° band acceptable for an average patient, given the source says the needed angle varies with build? Numeric margins and gain open (O88/O90) |
 | SHOULDER-R6 scope choices | **Erect only**, absolute-angle control, arm posture as a no-image-effect choice with teaching distractors, phase-neutral respiration (S-SHOULDER-2-3…5) | Educator / owner: confirm erect-only v1, the arm distractors and that supine stays deferred until a source gives the extra rotation |
 | SHOULDER-R5 Arabic/shielding | Draft terms; historical2018 shielding not adopted | Arabic/educator and physicist reviews O5/O86; no new UI or shielding scoring |
+
+## Shoulder scapular Y reference — S-SHOULDER-Y-REF, pending review
+
+| Item | Basis | Reviewer question |
+|---|---|---|
+| Y-R1 positioning/safety | BONTRAGER-9p.201, directly read | Educator: confirm anterior obliquity45°–60° varies by patient, anatomical alignment, slight abduction if possible, no forced arm rotation; choose scenario/postureO93 |
+| Y-R2 technique |p.201:24×30portrait, verticalgrid, SID≥102, digital75–85kV, perpendicular jointCR5cm belowAC, breath suspension | Physicist: local protocol; no invented mAs/EI/error bands/weights. Historical shielding not adoptedO86 |
+| Y-R3 image |Y page/API independentlyCC0; says slightly skewed/recurrent dislocation. New image/licence attachments areGrashey | Educator/ownerO92: assess actualY original and suitability; no ideal-baseline claim or guessed correction |
+| Y-R4 model/rubric | No implementation;Y symmetry/head alignment conditional on no dislocation | Educator/ownerO93/O94: distinguish pathological alignment from positioning and assess honest one-image effects; no borrowedGrashey model or3D engine |
+| Y-R5 Arabic | DRAFT terms inARABIC_TERMINOLOGY | Arabic reviewer/educatorO5; no new UI |

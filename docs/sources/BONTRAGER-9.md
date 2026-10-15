@@ -88,3 +88,14 @@ Codex read printed **p.196 (PDF216)** from the owner-provided full PDF already r
 - No numeric error bands, weights, critical gates, universal40° optimum, pixel scale or one-image deformation model established. Historical shielding recommendation not adopted (O86). Clinical facts provisional pending O5.
 
 Full reference and Needs: [Shoulder Grashey](../RAD-LAB_Medical_Reference_Shoulder_Grashey.md). O87–O91 track image and implementation inputs.
+
+## Shoulder scapular Y — direct reading, 2026-10-15 (S-SHOULDER-Y-REF)
+
+Codex directly read text and visually checked **printed p.201/PDF221** in the owner-provided9th-edition2018 PDF (ISBN9780323399661, verified earlier). No book scans/figures/text copied to Git.
+
+- PA oblique scapularY lateral, in shoulder-trauma section. Erect or recumbent (erect usually more comfortable); patient faces detector in anterior obliquity. Align superior scapular angle–AC articulation line perpendicular to detector; patient variation gives45°–60° body obliquity. Center scapulohumeral joint. Slightly abduct arm if possible to avoid rib overlap; do not attempt arm rotation, especially suspected fracture/dislocation.
+- SID minimum102cm;24×30cm portrait; vertical grid, CR to centerline; digital80±5kV (75–85 arithmetic interval), analog75±5 context only. CR perpendicular to joint about5cm belowAC. Collimate four sides to region of interest. Suspend respiration, no phase specified.
+- True lateral scapula/proximal humerus/joint; scapular body on end without rib superimposition; acromion/coracoid nearly symmetricY limbs; humeral head atY base **if not dislocated**. Sharp borders/body outline visible through proximal humerus without motion. Anterior/posterior dislocation descriptions are clinical context only, not a synthetic diagnosis/positioning rule.
+- Recumbent oppositeAP oblique with injured shoulder elevated is a condition-dependent alternative, not automatically the selectedPA scope. No Neer angulation transferred. No numeric mAs/EI, grading bands, weights, scale or one-image model derived. Historical shielding not adoptedO86; clinical claims provisionalO5.
+
+[Reference/Needs](../RAD-LAB_Medical_Reference_Shoulder_Y.md);O92–O94. This reference is distinct fromGrasheyp.196.
