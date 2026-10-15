@@ -18,7 +18,7 @@
 | Allow new users to sign up | **مفعّل** (تسجيل ذاتي، S-PILOT-4) | صفحة general-configuration |
 | Confirm Email | **مفعّل** | نفس الصفحة |
 | Allow anonymous sign-ins | **معطّل** | نفس الصفحة |
-| أقل طول لكلمة المرور | **8 فأكثر (يوصى 10+)** مع اشتراط أنواع الأحرف | صفحة password-security: «Anything less than 8 characters is not recommended.» |
+| أقل طول لكلمة المرور | **8** (قرار المالك، مع اشتراط أحرف كبيرة وصغيرة وأرقام ورموز؛ 10+ أفضل) | صفحة password-security: «Anything less than 8 characters is not recommended.» |
 | Leaked password protection | غير متاح في Free (Pro) | نفس الصفحة |
 | CAPTCHA (hCaptcha أو Turnstile) | اختياري؛ يُفعَّل إن ظهرت تسجيلات وهمية | صفحة auth-captcha |
 | MFA (TOTP) | فعّله **لحساب المالك** | صفحة auth-mfa؛ «Basic Multi-Factor Auth: Included in free» |
@@ -26,7 +26,11 @@
 
 > **الموافقة اليدوية** لا تُضبط هنا: كل حساب جديد يُنشأ بحالة `pending` من الـtrigger في الـmigration، ولا يكتب شيئًا حتى توافق عليه (§5).
 
-## 3. بريد التأكيد (SMTP) — ما زال قرارًا مفتوحًا
+## 3. بريد التأكيد (SMTP) — نُفِّذ بـ Brevo (2026-10-15، المالك)
+
+**ما اعتُمد فعليًا (S-PILOT-6):** Brevo (باقة مجانية، 300 رسالة يوميًا بحسب لوحتهم) بمرسل `radlab.pilot@gmail.com`. خطواته كما جرت، لمن يعيدها: (1) تحقق الهاتف في Brevo (شرط منهم قبل مفتاح SMTP؛ تعثر مرات قبل أن ينجح)؛ (2) Senders ← إضافة المرسل (يحذّر Brevo من العناوين المجانية فاختر Add this sender anyway)؛ (3) SMTP & API ← Generate SMTP key؛ (4) **Security ← Authorized IPs ← Deactivate for SMTP keys** (الحجب الافتراضي يمنع عناوين Supabase)؛ (5) في Supabase: Authentication ← Emails ← SMTP Settings: Host `smtp-relay.brevo.com`، Port `587`، **Username = «Login» الظاهر في صفحة SMTP & API (مثل `be…@smtp-brevo.com`) وليس بريد الحساب**، Password = مفتاح SMTP، Sender = بريد المرسل. **جُرِّب بدعوة حقيقية: وصلت إلى Inbox.** يرسل Brevo من نطاق تابع له (`…brevosend.com`) ويجعل `radlab.pilot@gmail.com` عنوان الرد. مفتاح SMTP ينتهي بعد 90 يومًا بلا استخدام. SPF/DKIM/DMARC لم تُفحص بعد (اختياري). **أسلم للتوصيل لاحقًا: نطاق خاص موثّق** (مدفوع، مؤجل).
+
+> النص التالي كان قبل الاعتماد ويُترك للتوثيق: الخادم المدمج لا يصلح…
 
 الخادم المدمج **لا يصلح**: «Send messages only to pre-authorized addresses» (أعضاء مؤسستك فقط)، وحده 2 رسالة في الساعة. المشاركون الخارجيون لن يصلهم بريد التأكيد بدونه.
 المطلوب: خدمة إرسال بريد SMTP من اختيارك وإدخال بياناتها في Authentication → SMTP **(قد يختلف)**. لم أقرأ شروط أي خدمة بريد، فاقرأ حدودها المجانية بنفسك أو اطلب جلسة DOCS لمقارنتها. بعد الإدخال جرّب إرسال بريد تأكيد إلى عنوان **ليس عضوًا** في مؤسستك.
