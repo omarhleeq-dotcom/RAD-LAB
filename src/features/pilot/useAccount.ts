@@ -5,13 +5,14 @@ import type { Session } from "@supabase/supabase-js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type AuthErrorKey, authErrorKey, parseProfile, type Profile } from "./account-state";
 import { recordActivity } from "./activity";
+import { CONSENT_VERSION, parseConsentVersion } from "./consent";
 import { getPilotClient } from "./client";
 
 export type AccountState =
   | { kind: "loading" }
   | { kind: "signedOut" }
   | { kind: "profileError"; email: string }
-  | { kind: "signedIn"; email: string; userId: string; profile: Profile };
+  | { kind: "signedIn"; email: string; userId: string; profile: Profile; consentVersion: string | null };
 
 export type ActionResult = { ok: true } | { ok: false; error: AuthErrorKey };
 
@@ -28,13 +29,13 @@ export function useAccount(redirectTo: string) {
       return;
     }
     const email = session.user.email ?? "";
-    const { data } = await client.from("profiles").select("status, role, participant_code").eq("user_id", session.user.id).maybeSingle();
+    const { data } = await client.from("profiles").select("status, role, participant_code, consent_version").eq("user_id", session.user.id).maybeSingle();
     const profile = parseProfile(data);
     if (!profile) {
       setState({ kind: "profileError", email });
       return;
     }
-    setState({ kind: "signedIn", email, userId: session.user.id, profile });
+    setState({ kind: "signedIn", email, userId: session.user.id, profile, consentVersion: parseConsentVersion(data) });
     if (loaded.current !== session.user.id) {
       loaded.current = session.user.id;
       await recordActivity(client, profile.status, announce ? "signed_in" : "heartbeat");
@@ -77,12 +78,26 @@ export function useAccount(redirectTo: string) {
     const client = await getPilotClient();
     if (!client) return { ok: false, error: "generic" };
     try {
-      const { error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo } });
+      const { error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, data: { consent_version: CONSENT_VERSION } } });
       return error ? { ok: false, error: authErrorKey(error) } : { ok: true };
     } catch {
       return { ok: false, error: "network" };
     }
   }, [redirectTo]);
+
+  /** Existing accounts accept from the account page (a participant may update only the two consent columns of their own row). */
+  const acceptTerms = useCallback(async (): Promise<boolean> => {
+    const client = await getPilotClient();
+    if (!client || state.kind !== "signedIn") return false;
+    try {
+      const { error } = await client.from("profiles").update({ consent_version: CONSENT_VERSION, consented_at: new Date().toISOString() }).eq("user_id", state.userId);
+      if (error) return false;
+      setState({ ...state, consentVersion: CONSENT_VERSION });
+      return true;
+    } catch {
+      return false;
+    }
+  }, [state]);
 
   const signOut = useCallback(async () => {
     const client = await getPilotClient();
@@ -98,5 +113,5 @@ export function useAccount(redirectTo: string) {
     await load(data.session, false);
   }, [load]);
 
-  return { state, signIn, signUp, signOut, retry };
+  return { state, signIn, signUp, signOut, retry, acceptTerms };
 }
