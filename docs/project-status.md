@@ -22,7 +22,7 @@
   "project": "RAD-LAB",
   "format_version": "1.0",
   "revision": 25,
-  "updated_at": "2026-10-15T21:00:00Z",
+  "updated_at": "2026-10-15T22:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
