@@ -56,16 +56,16 @@
    (من SQL Editor. الدالة `public.set_participant_status` تعمل من تطبيق المالك لاحقًا لأنها تتحقق أن المستدعي مالك معتمد.)
 4. الإيقاف: نفس الأمر مع `'suspended'`. الحذف الكامل لمشارك (طلب حذف، Q7): احذفه من Authentication → Users؛ يُحذف ملفه وكل أحداثه تلقائيًا (مُختبَر).
 
-## 6. ربط الموقع (متغير عام فقط)
+## 6. ربط الموقع (متغيران عامان فقط)
 
 في GitHub: Settings → Secrets and variables → Actions → **Variables** → New repository variable:
 
 | الاسم | القيمة |
 |---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://<مرجع-المشروع>.supabase.co` (من Project Settings / Connect) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (041b) | `sb_publishable_…` (من Supabase: Connect ← API Keys) |
 
-هذا **متغير** لا سر. أثره الوحيد في 041a: إضافة هذا الأصل وحده إلى `connect-src` في ترويسات الموقع المنشور (`scripts/pages/finalize-headers.mjs`). بدونه لا شيء يتغير. المفتاح العام يضاف في 041b.
-**لا تضف** مفتاح `sb_secret_…` في أي مكان.
+كلاهما **متغير** لا سر. **لا تضع أبدًا `sb_secret_…` هناك:** البناء يفشل عمدًا إن وُجد (`scripts/pages/headers.mjs`)، لأن كل ما يبدأ بـ`NEXT_PUBLIC_` يُرسل لمتصفح كل زائر. بدون المتغيرين معًا تبقى الحسابات **مطفأة**: لا رابط في الترويسة ولا طلبات إلى Supabase. أثر العنوان في الترويسات: إضافة هذا الأصل وحده إلى `connect-src` (`scripts/pages/finalize-headers.mjs`).
 
 ## 7. مراجعة حماية المعاينة (Cloudflare Access)
 

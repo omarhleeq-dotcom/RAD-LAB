@@ -48,6 +48,8 @@ jobs:
         env:
           # Public project URL of the pilot's Supabase project (a repo *variable*, not a secret). Empty = no account backend, CSP unchanged.
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          # The PUBLISHABLE key only (sb_publishable_…), also a repo variable. A secret key here fails the build (scripts/pages/headers.mjs).
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build:pages
       - name: Ensure Pages project exists
         if: steps.gate.outputs.enabled == 'true'
