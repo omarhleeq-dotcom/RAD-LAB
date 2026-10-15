@@ -6,7 +6,12 @@ import { afterAll, describe, expect, it } from "vitest";
 import {
   checkStatusFile,
   compareStatus,
+  DESCRIPTION_MAX,
+  EVIDENCE_MAX,
   extractStatusJson,
+  HANDOFF_MAX_LINES,
+  handoffProblem,
+  openConflicts,
   readPreviousFromGit,
   validateStatus,
 } from "../../../scripts/status/check-status.mjs";
@@ -283,5 +288,83 @@ describe("status transition from git", () => {
     const dir = repo();
     writeFileSync(path.join(dir, file), wrap(base));
     expect(checkStatusFile(path.join(dir, file), { previousFile: path.join(dir, "missing.md") }).errors[0]).toMatch(/cannot read previous file/);
+  });
+});
+
+describe("format 1.1 (S-STD-4)", () => {
+  const v11 = { ...base, format_version: "1.1" };
+  const open = { ...task, waiting_on: "owner" };
+  const done = { ...task, status: "done", completion_evidence: "e" };
+  const errorsFor = (tasks: unknown[], extra: object = {}) => validateStatus(wrap({ ...v11, ...extra, tasks }));
+
+  it("accepts open tasks with waiting_on and a done task without it", () => {
+    expect(errorsFor([open, { ...done, id: "RAD-002" }], { next_id: "RAD-003" })).toEqual([]);
+  });
+
+  it("keeps accepting format 1.0 exactly as before (no waiting_on, no caps)", () => {
+    expect(validateStatus(wrap({ ...base, tasks: [{ ...task, description: "x".repeat(DESCRIPTION_MAX + 50) }] }))).toEqual([]);
+    expect(validateStatus(wrap({ ...base, tasks: [open] })).some((e) => e.includes('unknown field "waiting_on"'))).toBe(true);
+  });
+
+  it("rejects an unknown format version", () => {
+    expect(validateStatus(wrap({ ...base, format_version: "2.0" })).some((e) => e.includes("format_version"))).toBe(true);
+  });
+
+  it.each(["planned", "in_progress", "review"])("requires waiting_on on a %s task", (status) => {
+    expect(errorsFor([{ ...task, status }]).some((e) => e.includes("needs waiting_on"))).toBe(true);
+  });
+
+  it("requires waiting_on on a blocked task but not on a deferred one", () => {
+    expect(errorsFor([{ ...task, status: "blocked", blocker: "b" }]).some((e) => e.includes("needs waiting_on"))).toBe(true);
+    expect(errorsFor([{ ...task, status: "deferred", defer_reason: "r" }])).toEqual([]);
+  });
+
+  it("rejects a waiting_on value outside the set and waiting_on on a done task", () => {
+    expect(errorsFor([{ ...open, waiting_on: "someone" }]).some((e) => e.includes("waiting_on"))).toBe(true);
+    expect(errorsFor([{ ...done, waiting_on: "owner" }]).some((e) => e.includes("done task does not wait"))).toBe(true);
+  });
+
+  it("caps description and completion_evidence by characters (Arabic counts as written)", () => {
+    expect(errorsFor([{ ...open, description: "ا".repeat(DESCRIPTION_MAX) }])).toEqual([]);
+    expect(errorsFor([{ ...open, description: "ا".repeat(DESCRIPTION_MAX + 1) }]).some((e) => e.includes("description is"))).toBe(true);
+    expect(errorsFor([{ ...done, completion_evidence: "e".repeat(EVIDENCE_MAX) }])).toEqual([]);
+    expect(errorsFor([{ ...done, completion_evidence: "e".repeat(EVIDENCE_MAX + 1) }]).some((e) => e.includes("completion_evidence is"))).toBe(true);
+  });
+});
+
+describe("open conflicts and the HANDOFF cap", () => {
+  const dirs: string[] = [];
+  afterAll(() => {
+    for (const dir of dirs) rmSync(dir, { recursive: true, force: true });
+  });
+  function docs(handoffLines: number | null): string {
+    const dir = mkdtempSync(path.join(os.tmpdir(), "status-handoff-"));
+    dirs.push(dir);
+    writeFileSync(path.join(dir, "project-status.md"), wrap(base));
+    if (handoffLines !== null) writeFileSync(path.join(dir, "HANDOFF.md"), "line\n".repeat(handoffLines));
+    return path.join(dir, "project-status.md");
+  }
+
+  it("lists unresolved conflicts as a notice, not an error, and ignores done tasks", () => {
+    const md = wrap({ ...base, tasks: [{ ...task, conflict: "c" }, { ...task, id: "RAD-002", status: "done", completion_evidence: "e", conflict: "old" }], next_id: "RAD-003" });
+    expect(openConflicts(md)).toEqual(["RAD-001"]);
+    expect(openConflicts("not a status file")).toEqual([]);
+    const dir = mkdtempSync(path.join(os.tmpdir(), "status-conflict-"));
+    dirs.push(dir);
+    writeFileSync(path.join(dir, "project-status.md"), md);
+    const result = checkStatusFile(path.join(dir, "project-status.md"));
+    expect(result.errors).toEqual([]);
+    expect(result.notes.join(" ")).toMatch(/open source conflicts.*RAD-001/);
+  });
+
+  it("allows a HANDOFF at the cap, rejects one above it, and skips a missing one", () => {
+    expect(handoffProblem(docs(HANDOFF_MAX_LINES - 1))).toBeNull(); // a trailing newline adds one line
+    expect(handoffProblem(docs(HANDOFF_MAX_LINES + 1))).toMatch(/HANDOFF\.md has \d+ lines/);
+    expect(handoffProblem(docs(null))).toBeNull();
+    expect(checkStatusFile(docs(HANDOFF_MAX_LINES + 20)).errors.some((e) => e.includes("HANDOFF.md"))).toBe(true);
+  });
+
+  it("the repository's own HANDOFF.md respects the cap", () => {
+    expect(handoffProblem(STATUS_FILE)).toBeNull();
   });
 });
