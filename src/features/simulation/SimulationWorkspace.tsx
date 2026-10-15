@@ -6,6 +6,7 @@ import { localize } from "@/lib/localized";
 import { ResultPanel } from "@/features/evaluation/ResultPanel";
 import { PatientInstructionsPanel } from "@/features/patient/PatientInstructionsPanel";
 import { PositioningScene } from "@/features/positioning/scenes";
+import { AttemptRecorder } from "@/features/pilot/AttemptRecorder";
 import { ConsolePanel } from "@/features/xray-console/ConsolePanel";
 import { useSimulationStore } from "@/stores/simulation-store";
 
@@ -29,6 +30,7 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 px-4 py-6">
+      <AttemptRecorder />
       <div className="flex flex-wrap items-center justify-end gap-3">
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium">
           <span className="rounded bg-brand/10 px-2 py-1 text-brand-strong">{t("modePractice")}</span>
