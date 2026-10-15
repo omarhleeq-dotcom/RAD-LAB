@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 24,
-  "updated_at": "2026-10-15T20:00:00Z",
+  "revision": 25,
+  "updated_at": "2026-10-15T21:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -371,17 +371,18 @@
     {
       "id": "RAD-040",
       "title": "جلسة التحقق من مزوّد الهوية وقاعدة البيانات للإطلاق التجريبي",
-      "status": "planned",
+      "status": "done",
       "priority": "high",
-      "description": "قراءة وثائق المزوّدين الرسمية (المنطقة، السعر، الدعوة، سياسة كلمة المرور، السجلات، النسخ الاحتياطي) وحسم Q1–Q4. DOCS. الحجب رُفع (2026-10-15، المضيفون supabase.com وfirebase.google.com وcloud.google.com وneon.com تُجيب 200) والخطة مدموجة (PR #47)؛ تنتظر جلسة تنفيذ فقط. قائمة الأسئلة: docs/PILOT_PROVIDER_VERIFICATION_CHECKLIST.md.",
-      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 1"
+      "description": "نُفّذت القراءة من الوثائق الرسمية (2026-10-15) وكُتبت مقارنة وتوصية (Supabase Free، Frankfurt، مشروطة) وحُسمت Q1–Q4 كمقترحات. المتبقي: دمج الـPR، وحسم خدمة SMTP، ووثائق Cloudflare لم تُقرأ (محجوبة)، وأسئلة Q5–Q7. DOCS؛ لا حسابات ولا كود.",
+      "completion_evidence": "PR #49 مدموج في main بيد المالك (commit a66bf5a)؛ docs/PILOT_PROVIDER_COMPARISON_2026-10-15.md من الوثائق الرسمية؛ قرارات S-PILOT-3 وS-PILOT-4. لا يثبت صحة التوصية عمليًا: لا حساب ولا مشروع عند المزوّد أُنشئ؛ المتبقي (SMTP، وثائق Cloudflare، Q5–Q7) في O103 وRAD-041.",
+      "source_ref": "docs/PILOT_PROVIDER_COMPARISON_2026-10-15.md؛ DECISIONS S-PILOT-3؛ docs/PILOT_PLATFORM_PLAN.md §4, §9"
     },
     {
       "id": "RAD-041",
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
       "status": "planned",
       "priority": "high",
-      "description": "شريحة 2: دعوة من المالك، كلمة مرور، تأكيد بريد، سجل دخول، سياسات صفوف، تعديل ADR-0002 وCLAUDE.md. كود L. بعد RAD-040 وS-PILOT-2.",
+      "description": "شريحة 2 (تُنفَّذ على جلستين): 41a مخطط قاعدة Supabase وسياسات RLS واختبارات العزل (بلا واجهة)، 41b صفحات التسجيل والدخول والموافقة وتعديل CSP وpreview:smoke وADR-0002 وCLAUDE.md. وفق S-PILOT-4: تسجيل ذاتي، كل حساب جديد pending حتى يوافق المالك، بريد كلمة مرور، Supabase Free/Frankfurt. المانع المتبقي: خدمة SMTP مخصصة (O103) لتأكيد البريد لغير أعضاء المؤسسة. كود L.",
       "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
     },
     {
