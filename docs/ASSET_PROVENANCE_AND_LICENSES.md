@@ -705,6 +705,38 @@ Two images of the same patient's ankle (a 24-year-old male after a sprain, no in
 | File facts | `image/jpeg`, 932 × 1678 px, 286,952 bytes |
 | Notes | Landmarks were read by eye (O80). The renderer's rotation effect is a runtime transformation of this file, not a new asset. |
 
+## Pelvis AP review assets — 2026-10-15 (S-PELVIS-REF-2; not served)
+
+### A-034 — Pelvis AP original, review candidate
+
+| Field | Value |
+|---|---|
+| Type/name | External radiograph master; X-ray of the pelvis of an 18 year old male - case 1 - anteroposterior.jpg |
+| Author / source / date | Staff at Department of Radiology, UC San Diego Health; bonepit.com; 14 March 2018, per Commons |
+| Canonical source | https://commons.wikimedia.org/wiki/File:X-ray_of_the_pelvis_of_an_18_year_old_male_-_case_1_-_anteroposterior.jpg |
+| Licence | Public domain, https://creativecommons.org/publicdomain/mark/1.0/ ; file page states US medical-imaging basis and VRT ticket 2018030210000886 |
+| Commercial use / attribution | Compatible with declared public-domain status; no mandatory attribution stated; retain voluntary author/source credit if later used |
+| Local path | `assets/source/pelvis/pelvis-ap-original.jpg` (not served) |
+| Verification | 2026-10-15, canonical page read via web tool; original downloaded from linked upload.wikimedia.org URL; SHA-1 matched page: `0f895d77d5aef214ad0caaee13fbf0dafb11b5a0` |
+| SHA-256 | `d8236c03447a1aba6535f925ec1f95704a07616cb777e8649f96d137a1d07342` |
+| File facts | JPEG, 2675 × 2084 px, 493,556 bytes; no EXIF tags |
+| Modifications | None; immutable source for A-035 |
+| De-identification / limits | No patient name/date/ID visually seen; R, lettering and circular edge graphic present. Uploader describes normal male age 18; normality/coverage not independently clinically validated. O84 remains. |
+
+### A-035 — Pelvis AP marker-free review derivative
+
+| Field | Value |
+|---|---|
+| Type/source | Review derivative of A-034, same public-domain basis; **not yet a product baseline** |
+| Local path | `assets/source/pelvis/pelvis-ap-marker-removed.png` (not served; no public copy) |
+| Author / attribution | Original author as A-034; RAD-LAB background-only cleanup, owner request 2026-10-15 |
+| Modifications | Deterministic per-column background interpolation using median rows immediately above/below the marker, feathered within x=[0,96), y=[850,1300). Removes R, lettering and circular graphic. No generative fill, crop, resize, anatomy repaint or contrast change. Script: `scripts/derive-pelvis-baseline.py` (Pillow/numpy). |
+| Pixel verification | 27,522 pixels changed in the external-background rectangle; **0 changed outside**. Save/readback is exact; lossless RGB PNG, no EXIF. Full frame and edge comparison inspected visually. |
+| SHA-256 | `5337360693c4939cee02f0225cd0e082fcf55dd7a5f09bd02658dcdc2297c7d9` |
+| File facts | PNG, 2675 × 2084 px, 2,686,371 bytes |
+| Licence / commercial use | Inherited public-domain source status; commercial-compatible under A-034 declaration; voluntary credit retained in documentation |
+| Limits / next gate | Pixel cleanup is completed, not clinical validation. Educator/owner coverage/suitability review remains O84. No new exam or learner-visible radiograph registered. |
+
 ### Not external assets (for completeness)
 - `docs/RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md` and the other medical references in `docs/` are project documents supplied by the project owner, not binary assets.
 - No fonts, icons, audio or datasets were added in Session 4.

@@ -65,3 +65,14 @@
 - **Governing** `common-reference` for positioning and technique (S10b-25): kV, SID, centring, lateral posture and rotation, marker and display conventions, AP geometry.
 - Conversions (72 in = 183 cm; 40 in = 102 cm) are "conversion, not source".
 - Still subject to educator / physicist spot-check (O5); not a legal limit.
+
+## Pelvis AP — direct reading, 2026-10-15 (S-PELVIS-REF)
+
+This subsection has different provenance from the advisor extracts above: Codex read the owner's full PDF through Google Drive, checked title/copyright (9th ed., 2018, same ISBN), and read printed p.271–272 and p.279 directly; p.279 also visually checked. PDF page = printed page + 20 for these locators. The book stays outside Git. Facts paraphrased; no figures reused.
+
+- **p.279:** routine AP pelvis: SID at least 102 cm; landscape IR 35 × 43 cm; grid; digital 85 ± 5 kV (analog 80 ± 5 kV, context only). Supine; arms alongside or across upper chest; head/knee supports. Align midsagittal plane to table/CR; ASIS-to-table distances equal. Internally rotate both entire lower limbs 15°–20° **unless fracture/dislocation suspected**, when movement is minimized and rotation is not attempted. CR perpendicular, midway between ASIS level and pubic symphysis (about 5 cm below ASIS); four-sided collimation; suspend respiration without a specified respiratory phase. The lower hip-routine center is outside the selected routine-pelvis scope.
+- **p.279 criteria:** pelvic girdle, L5, sacrum/coccyx, femoral heads/necks and greater trochanters included; iliac wings/obturator foramina/visible ischial spines symmetric; narrowing of one obturator foramen indicates pelvic rotation toward that side. Lesser trochanters absent or tips only, greater trochanters comparable. L5/sacrum and hip borders visible through overlapping structures with pubic/ischial detail retained; sharp trabeculae/no motion. No numerical error tolerances, universal mAs or approved scoring weights derived.
+- **p.271–272:** internal rotation of the **whole legs** profiles femoral necks and reduces visible lesser trochanters. Neutral/external leg rotation changes these cues. This is a separate action from rotating the pelvis. p.271 also warns against internally rotating a leg with evidence of hip fracture.
+- **Shielding:** p.279 contains 2018 recommendations; recorded as source context only, not adopted as contemporary instruction or a scored rule (O86). No current shielding guidance was reviewed in this phase.
+
+Full reference/Needs: [Pelvis AP](../RAD-LAB_Medical_Reference_Pelvis_AP.md). Every clinical claim remains provisional pending O5; unknown model/rubric values are O81–O83, image/model feasibility O84–O85.

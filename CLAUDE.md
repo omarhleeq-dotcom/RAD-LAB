@@ -15,6 +15,14 @@ RAD-LAB is a bilingual (AR/EN) educational radiography simulator. Source of trut
 ## Before finishing a task
 `npm run check` (typecheck + lint + tests) and `npm run build` must pass; exercise the flow in a browser in both `/en` and `/ar`.
 
+## Session continuity (Codex, owner instructions 2026-10-11)
+- At the start of each new conversation, read `docs/HANDOFF.md` and the previous session record, then only the references and decisions needed for the selected goal. Verify the actual branch, HEAD and working tree; the handoff is a summary, not authority to override `DECISIONS.md` or the current owner prompt.
+- Keep one focused goal and an explicit change budget per session. Follow S-STD-1 QA by session type; a docs-only session needs Markdown checks, not an application build. Do not repeat successful QA without a relevant change or unresolved failure.
+- At each phase boundary, update `docs/HANDOFF.md` with completed and unfinished work, exact branch/base, QA run and not run, blockers and the next action. Keep detailed history in the session documents and update `ROADMAP_SESSIONS.md` when a phase's status changes.
+- Send owner-facing updates and final reports in Arabic. Use the S-STD-1 eight-section order for execution reports, and finish each phase with a ready-to-copy prompt for the next conversation.
+- Create a draft PR for review when changes are ready. Never merge it or enable auto-merge; the owner merges manually. Report a blocked or uncreated PR accurately. This supersedes the owner's earlier request not to create PRs.
+- Each Codex cloud task is already isolated: use its existing checkout; do not create a Git worktree unless the owner explicitly requests one.
+
 ## Notes
 - Next 16: routing middleware is `src/proxy.ts`; `LayoutProps`/`PageProps` types come from `next typegen` (part of `npm run typecheck`).
 - Image variants: `ImageVariantId` is produced by the engine from failed/partial checks; `ResultImage` is the single place to swap in validated imagery.
