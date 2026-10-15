@@ -76,3 +76,15 @@ This subsection has different provenance from the advisor extracts above: Codex 
 - **Shielding:** p.279 contains 2018 recommendations; recorded as source context only, not adopted as contemporary instruction or a scored rule (O86). No current shielding guidance was reviewed in this phase.
 
 Full reference/Needs: [Pelvis AP](../RAD-LAB_Medical_Reference_Pelvis_AP.md). Every clinical claim remains provisional pending O5; unknown model/rubric values are O81–O83, image/model feasibility O84–O85.
+
+## Shoulder Grashey — direct reading, 2026-10-15 (S-SHOULDER-REF)
+
+Codex read printed **p.196 (PDF216)** from the owner-provided full PDF already retrieved through Drive; text and page visually checked. Same verified9th edition2018 ISBN9780323399661. Book/scans stay outside Git; facts paraphrased only.
+
+- AP oblique for glenoid cavity (Grashey), in the nontrauma section. Erect or supine; erect may be less painful if feasible. Rotate body35°–45° toward affected side; more may be needed with rounded shoulders/recumbency to make scapula parallel to detector. Support raised shoulder/hip if recumbent. Slightly abduct flexed arm in neutral rotation; no numeric arm angles given.
+- Minimum SID102cm; receptor18×24 or24×30cm landscape; grid; digital80±5kV (75–85 arithmetic interval), analog75±5kV context only. No mAs/time/EI or AEC calibration derived.
+- CR perpendicular to scapulohumeral joint, about5cm inferior and5cm medial to superolateral shoulder border. Detector top about5cm above shoulder and side about5cm lateral to humerus. Upper/lateral collimation to soft-tissue margins. Suspend respiration, no phase specified.
+- Criteria: glenoid in profile without humeral-head superimposition; open joint space, anterior/posterior glenoid rims superimposed; area of interest collimated; sharp trabeculae without motion; soft tissues/joint/axilla detail visible.
+- No numeric error bands, weights, critical gates, universal40° optimum, pixel scale or one-image deformation model established. Historical shielding recommendation not adopted (O86). Clinical facts provisional pending O5.
+
+Full reference and Needs: [Shoulder Grashey](../RAD-LAB_Medical_Reference_Shoulder_Grashey.md). O87–O91 track image and implementation inputs.

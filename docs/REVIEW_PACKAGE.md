@@ -232,3 +232,13 @@ Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Own
 | Leg position | Internal15°–20° source-backed; neutral/external choices separate | Position shown schematically; hidden trochanters and femoral-neck foreshortening NOT synthesized. Failed rule explicitly labelled not drawn. |
 | Respiration and motion | Phase-neutral choice, no chest inspiration model | Breath instruction assessed without deforming lungs/pelvis; keep-still drives visible motion blur but has no separate scored/observed-instruction row. No change to the prior ResultPanel translation issue. |
 | Image/Arabic | A-034/A-035/A-036; machine-assisted bilingual additions | Confirm source description/coverage/normality, new Arabic wording and anatomy. Historical shielding is not a new product protocol. |
+
+## Shoulder Grashey reference — S-SHOULDER-REF, pending review
+
+| Item | Source/basis | Review question / owner |
+|---|---|---|
+| SHOULDER-R1 clinical setup | BONTRAGER-9 p.196, directly read | Educator: confirm adult non-acute-trauma Grashey scope, body35°–45° with habitus/posture variability, separate neutral arm posture, CR/joint and collimation criteria |
+| SHOULDER-R2 technique | p.196: SID≥102cm, landscape18×24 or24×30, grid, digital75–85kV, phase-neutral suspension | Physicist/educator: choose posture/detector/local protocol. No mAs/EI/error bands/rubric selected, O88/O89 |
+| SHOULDER-R3 image | Owner CC0/description screenshots; API403, exact link supplied; official page HTTP403 | Owner/educator: canonical match and original, coverage/side, recurrent-dislocation history suitability; not asymptomatic normal, O87/O91 |
+| SHOULDER-R4 model | No implementation; source describes joint-space/rim overlap, not a pixel warp | Educator/owner: feasibility/sign/absolute-versus-offset angle; no hidden-surface fabrication, O90 |
+| SHOULDER-R5 Arabic/shielding | Draft terms; historical2018 shielding not adopted | Arabic/educator and physicist reviews O5/O86; no new UI or shielding scoring |
