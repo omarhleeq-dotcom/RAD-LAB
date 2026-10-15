@@ -22,6 +22,8 @@ export function PelvisDrawing({ radCase, settings, W, H }: FigureProps) {
   const wingL = [[1700,700],[1690,480],[1760,330],[1980,235],[2250,215],[2470,260],[2590,420],[2420,880],[2270,1180],[2190,1290],[2040,1450],[1820,1360],[1900,1180],[1890,1000],[1790,830]];
   const mirror = (p: number[][]) => p.map(([x,y]) => [2675-x!, y!]);
   const ringR = [[640,1450],[700,1650],[780,1880],[900,1960],[1100,1960],[1250,1880],[1335,1760],[1330,1690],[1050,1610],[880,1500]];
+  // Body contour (soft tissue): narrower at the top, a notch between the thighs, so a dark surround shows around the body (as around the ankle).
+  const softTissue = [[330,0],[2345,0],[2640,340],[2640,520],[2480,900],[2400,1150],[2560,1380],[2675,1480],[2675,2084],[1960,2084],[1945,2000],[730,2000],[715,2084],[0,2084],[0,1480],[120,1380],[270,1150],[190,900],[80,520],[80,340]];
   const sacrum = [[1150,300],[1525,300],[1590,560],[1480,900],[1380,1140],[1295,1140],[1195,900],[1085,560]];
   const lumbar = [[1190,10],[1490,10],[1500,260],[1180,260]];
   const sw = STROKE.thin * 1.4 * Math.max(1, W / 240);
@@ -37,7 +39,7 @@ export function PelvisDrawing({ radCase, settings, W, H }: FigureProps) {
     {/* Same look as the ankle scene (dark soft tissue, lighter bones, bright outlines); the soft tissue is the darkest anatomy token (`bezel`) so bones stay separate even on screens that brighten dark tones. The detector is drawn in mm, so the
         outline is scaled to keep the same on-screen weight as on the 24 cm detectors. */}
     <g clipPath="url(#pelvis-detector-clip)" stroke={SCENE.bone} strokeOpacity={0.95} strokeWidth={sw} strokeLinejoin="round">
-      <path d={path([[110,0],[2520,0],[2675,2084],[0,2084]])} fill={SCENE.bezel} stroke="none" />
+      <path d={path(softTissue)} fill={SCENE.bezel} stroke="none" />
       <path d={path(wingR)} fill={SCENE.limb} /><path d={path(wingL)} fill={SCENE.limbFar} />
       <path d={path(sacrum)} fill={SCENE.head} />
       <path d={path(lumbar)} fill={SCENE.head} />
