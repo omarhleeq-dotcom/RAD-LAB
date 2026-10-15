@@ -9,7 +9,7 @@ import { needsNotDrawnLabel, unregisteredVariants } from "@/features/radiograph/
 import { validateExam, validateCase } from "./validate";
 
 export const PELVIS_OK: SimulationSettings = {
-  projection: "pelvis-ap", rotationDeg: 0, centralRay: { x: 0, y: 0 }, collimation: { width: 0.98, height: 0.95 },
+  projection: "pelvis-ap", rotationDeg: 0, centralRay: { x: 0, y: 0 }, collimation: { width: 1, height: 0.95 },
   sideMarker: "R", markerPosition: { x: -0.93, y: -0.6 }, sidCm: 102, kvp: 85, mas: 2.5,
   exposureMode: "manual", aecChambers: [], motionInstruction: "remain-still", tubeAngulationDeg: 0,
   choices: { legPosition: "internal", respiration: "suspend" },
@@ -50,11 +50,14 @@ describe("Pelvis AP reference and existing optional mechanisms", () => {
     expect(plan({rotationDeg:r}).anatomy.rotation).toBeNull();
     expect(plan({rotationDeg:r}).limb !== undefined).toBe(Math.abs(r)>2);
   });
-  it("uses anatomical marker half, gates missing/wrong side, and flags overlap/outside", () => {
+  it("uses the fixed R marker (letter only), gates missing/wrong letter, and flags overlap/outside", () => {
+    expect(pelvisApSupineExam.positioning.markerRule).toEqual({ kind: "fixed-side", side: "R" });
     expect(run().criticalFindings).toEqual([]);
-    expect(run({sideMarker:"L",markerPosition:{x:0.93,y:-0.6}}).criticalFindings).toEqual([]);
+    // Only the letter is judged: R is accepted on either viewer half, L is wrong wherever it is placed.
+    expect(run({sideMarker:"R",markerPosition:{x:0.93,y:-0.6}}).criticalFindings).toEqual([]);
     expect(run({sideMarker:null}).criticalFindings.map(f=>f.id)).toContain("missing-marker");
     expect(run({sideMarker:"L"}).criticalFindings.map(f=>f.id)).toContain("wrong-side-marker");
+    expect(run({sideMarker:"L",markerPosition:{x:0.93,y:-0.6}}).criticalFindings.map(f=>f.id)).toContain("wrong-side-marker");
     expect(run({sideMarker:"L"}).score.passed).toBe(false);
     expect(check({markerPosition:{x:0.5,y:0}},"side-marker").outcome).toBe("partial");
     expect(check({markerPosition:{x:-1,y:-1}},"side-marker").outcome).toBe("partial");
