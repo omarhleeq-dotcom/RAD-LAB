@@ -3,7 +3,7 @@
 ملخص قصير (≤80 سطرًا؛ يفرضه status:check). القرارات في [DECISIONS.md](DECISIONS.md)، الحالة الحية في [project-status.md](project-status.md)، التعليمات في CLAUDE.md وexam-recipe.md. التاريخ في archive/ وstatus-archive.md؛ افحص Git ولا تعتبر الملخص سلطة.
 
 ## 1. نقطة البداية
-- أساس RAD-047a: `origin/main` **1b0405f9de9947487ff36d0d069b94505de80016**، دمج #60 بعد #59 و#58؛ فرع `docs/rad-047a-scalability-audit`، توثيق فقط، Draft PR دون دمج أو auto-merge أو subscribe/poll أو فتح/مشاركة معاينة.
+- أساس RAD-047a: `origin/main` **1b0405f9de9947487ff36d0d069b94505de80016**، دمج #60 بعد #59 و#58؛ فرع `docs/rad-047a-scalability-audit`، توثيق فقط، [Draft PR #61](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/61) دون دمج أو auto-merge أو subscribe/poll أو فتح/مشاركة معاينة.
 - تاريخ التنفيذ الفعلي 2026-10-15 (Asia/Amman)؛ اسم سجل الجلسة 2026-10-16 بطلب المالك. updated_at السابق في الحالة متقدم؛ استُخدم زمن منطقي +ثانية للحفاظ على الاستمرارية، وليس تاريخ رصد جديدًا؛ التفاصيل في السجل §6.
 
 ## 2. أين وصلنا
