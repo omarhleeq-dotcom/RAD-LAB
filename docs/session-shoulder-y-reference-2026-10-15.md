@@ -1,6 +1,6 @@
 # Shoulder Y — المرجع وNeeds دون كود، 2026-10-15
 
-الفرع `docs/shoulder-y-reference`، أساس main `b8d870f1d3eed4cf475b450b96e8ca67c27689b8` (دمجPR#37). تحققت مراجعة GitHub من دمجPR#35/#36، وGit من#37؛ لا دمج أو auto-merge من الوكيل.
+الفرع `docs/shoulder-y-reference`، أساس main `b8d870f1d3eed4cf475b450b96e8ca67c27689b8` (دمجPR#37). تحققت مراجعة GitHub من دمجPR#35/#36، وGit من#37؛ المرجع في [Draft PR #38](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/38)، commit المرحلة `7d2c1db`. لا دمج أو auto-merge من الوكيل.
 
 ## 1. الانحرافات
 

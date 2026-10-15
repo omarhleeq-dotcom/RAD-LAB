@@ -5,7 +5,7 @@
 ## 1. نقطة البداية وحالة Git
 
 - آخر مرحلة برمجية مدموجة: **Pelvis AP — S-PELVIS-1** في [PR #34](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/34). **مرجع الكتف Grashey مدموج في [PR #36](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/36)** (المالك، 2026-10-15T08:18:35Z) ومعه [PR #35](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/35) التوثيقي. الدمج لا يثبت نشر الموقع.
-- أحدث main متحقق منه: **`b8d870f1d3eed4cf475b450b96e8ca67c27689b8`**، دمج [PR #37](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/37) لحسم Grashey بعد مرجعه PR #36. الأساس البرمجي `8ba28769…` (PR #34، الحوض). فرع هذه الدفعة `docs/shoulder-y-reference` مبني على main المذكور، **توثيق فقط**. سجل المرحلة الحالية [session-shoulder-y-reference-2026-10-15.md](session-shoulder-y-reference-2026-10-15.md)، والسابقة [session-shoulder-grashey-settlement-2026-10-15.md](session-shoulder-grashey-settlement-2026-10-15.md). افحص HEAD وحالة PR عند البداية.
+- أحدث main متحقق منه: **`b8d870f1d3eed4cf475b450b96e8ca67c27689b8`**، دمج [PR #37](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/37) لحسم Grashey بعد مرجعه PR #36. الأساس البرمجي `8ba28769…` (PR #34، الحوض). فرع هذه الدفعة `docs/shoulder-y-reference` مبني على main المذكور، **توثيق فقط**، مرفوع في [Draft PR #38](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/38). سجل المرحلة الحالية [session-shoulder-y-reference-2026-10-15.md](session-shoulder-y-reference-2026-10-15.md)، والسابقة [session-shoulder-grashey-settlement-2026-10-15.md](session-shoulder-grashey-settlement-2026-10-15.md). افحص HEAD وحالة PR عند البداية.
 - سجل المرحلة السابقة: [session-14.5-ankle.md](session-14.5-ankle.md). سجل التحقق الحالي: [session-continuity-2026-10-15.md](session-continuity-2026-10-15.md). سجل استعادة السياق: [session-continuity-2026-10-11.md](session-continuity-2026-10-11.md).
 - يوجد على main الآن 16 فحصًا مسجلًا، بما فيها Pelvis AP؛ الفحوص الـ15 السابقة لم تتغير. الفحوص السابقة: Chest PA/Lateral/AP، وPA/Lateral للرسغ واليد، وAP/Lateral للمرفق والركبة والكاحل، وAP/Oblique للقدم. لا توجد حسابات أو قاعدة بيانات؛ الوضع المتاح هو Practice.
 
@@ -81,7 +81,7 @@
 
 ```text
 اقرأ CLAUDE.md وAGENTS.md وdocs/HANDOFF.md وdocs/project-status.md، ثم docs/session-shoulder-y-reference-2026-10-15.md ومرجع Shoulder_Y والملفات المرتبطة فقط.
-تحقق من أحدث main وحالة فرع docs/shoulder-y-reference وPR المرجع. الأساس b8d870f1d3eed4cf475b450b96e8ca67c27689b8 (Grashey مرجع وحسم مدموجان PR #36/#37، لا كود؛ التطبيق16فحصًا بعد الحوضPR#34).
+تحقق من أحدث main وحالة فرع docs/shoulder-y-reference وDraft PR #38 للمرجع. الأساس b8d870f1d3eed4cf475b450b96e8ca67c27689b8 (Grashey مرجع وحسم مدموجان PR #36/#37، لا كود؛ التطبيق16فحصًا بعد الحوضPR#34).
 توجيه المالك الحالي: دوكس وبيانات Bontrager فقط؛ لا كود ولا محرك3D أو تنفيذ/تسجيل كتف. مرجعY من المطبوعةص201/PDF221 وNeeds أُعدا؛ يجب دمجه قبل أي مرحلة تنفيذ لاحقة تتطلب توجيهًا جديدًا.
 الرابط الرسميY بالمرجع؛ CC0 تحقق بالصفحة/API، لكن الوصفslightly skewed. المرفق الشعاعي ولقطة الترخيص هماGrashey، لاY. لا أصلY منزّل أو A-id أو تعديل. O92 للملاءمة/الأصل، O93 للنطاق/التقييم/المعايرة، O94 لصدق النموذج. لا تخمن قيمًا أو تصحح الميل اعتباطًا.
 حافظ على قراراتGrashey فيPR#37 دون نقلها إلىY، وعلى كل كود/صور/حراس الفحوص السابقة. QA توثيق فقط ما دام لا كود. تقرير عربي بالأقسام الثمانية، تحديث الحالة/التسليم، وبرومبت متابعة؛ Draft PR دون دمج أو auto-merge.
