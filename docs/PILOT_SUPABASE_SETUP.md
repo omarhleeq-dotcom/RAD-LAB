@@ -41,6 +41,9 @@
 2. الصق محتوى الملف [`supabase/migrations/20261015000100_pilot_accounts.sql`](../supabase/migrations/20261015000100_pilot_accounts.sql) كاملًا ونفّذه مرة واحدة.
 3. تحقق: الجدولان `profiles` و`events` ظاهران وRLS مفعّلة عليهما.
 
+### 4ب. المخطط الثاني: قائمة المشاركين للمالك (RAD-044a)
+بعد المخطط الأول نفّذ بنفس الطريقة (SQL Editor ← استعلام جديد ← Run) محتوى [`supabase/migrations/20261016000100_owner_list_participants.sql`](../supabase/migrations/20261016000100_owner_list_participants.sql) **مرة واحدة**. يضيف دالة `owner_list_participants()` تقرأ بريد كل مشارك **للمالك المعتمد فقط** (وإلا ترفض بالخطأ `owner only`)، دون نسخ البريد إلى أي جدول يقرؤه التطبيق. وبعدها تظهر صفحة **`/{locale}/owner`** («لوحة المالك») ورابطها في صفحة الحساب عندك، وفيها أزرار موافقة / إيقاف بدل SQL.
+
 ## 5. حساب المالك والموافقة على المشاركين
 
 1. أنشئ حسابك بأي طريقة متاحة (Authentication → Users → Add user **(قد يختلف)**، أو بعد 041b من صفحة التسجيل). أكّد بريدك.

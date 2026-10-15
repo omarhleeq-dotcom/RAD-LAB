@@ -3,6 +3,7 @@
 // The account page body (RAD-041b): sign in / create account, "waiting for approval", approved, suspended. Messages: namespace `account`.
 import { useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useState } from "react";
+import { Link } from "@/i18n/navigation";
 import { type AuthErrorKey, passwordProblem } from "./account-state";
 import { PILOT } from "./config";
 import { useAccount } from "./useAccount";
@@ -67,8 +68,11 @@ export function AccountPanel() {
         <h2 id="acct-status" className="mt-2 text-xl font-semibold">{t(`status.${status}.title`)}</h2>
         <p className="mt-2">{t(`status.${status}.body`)}</p>
         <p className="mt-3 text-sm">{t("codeLabel")} <span dir="ltr" className="rounded bg-paper px-2 py-0.5 font-mono">{code}</span></p>
-        <div className="mt-5">
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           <button type="button" className="rounded-md border border-line px-4 py-2" onClick={() => void signOut()}>{t("signOut")}</button>
+          {state.profile.role === "owner" && status === "approved" && (
+            <Link href="/owner" data-testid="owner-link" className="text-brand underline">{t("ownerLink")}</Link>
+          )}
         </div>
       </section>
     );

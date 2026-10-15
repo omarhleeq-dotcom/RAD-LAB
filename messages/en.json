@@ -1244,6 +1244,42 @@
       "passwordShort": "The password must be at least 8 characters.",
       "passwordClasses": "The password needs a lower-case letter, an upper-case letter, a digit and a symbol.",
       "passwordMismatch": "The two passwords do not match."
+    },
+    "ownerLink": "Owner dashboard"
+  },
+  "owner": {
+    "title": "Owner dashboard",
+    "intro": "Approve or suspend participants. Only an approved owner account can see this page; the database enforces it.",
+    "notEnabled": "Accounts are not enabled in this preview.",
+    "loading": "Loading…",
+    "signInFirst": "Please sign in first.",
+    "goAccount": "Go to the account page",
+    "denied": "This page is for the owner only.",
+    "participants": "Participants",
+    "refresh": "Refresh",
+    "summary": "{total} accounts, {pending} waiting for approval.",
+    "empty": "No participants yet.",
+    "never": "Never",
+    "ownerTag": "Owner",
+    "emailLabel": "Email",
+    "confirmed": "confirmed",
+    "unconfirmed": "not confirmed",
+    "registered": "Registered",
+    "lastActivity": "Last activity",
+    "status": {
+      "pending": "Waiting for approval",
+      "approved": "Approved",
+      "suspended": "Suspended"
+    },
+    "actions": {
+      "approved": "Approve",
+      "suspended": "Suspend"
+    },
+    "confirmApprove": "Approve anyway",
+    "warnUnconfirmed": "This email address has not been confirmed. Anyone can type any address; approve only if you know this person.",
+    "errors": {
+      "load": "Could not load the list. Check your connection and try again.",
+      "action": "The change was refused or failed. Refresh and try again."
     }
   }
 }

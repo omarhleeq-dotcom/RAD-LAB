@@ -11,7 +11,7 @@ export type AccountState =
   | { kind: "loading" }
   | { kind: "signedOut" }
   | { kind: "profileError"; email: string }
-  | { kind: "signedIn"; email: string; profile: Profile };
+  | { kind: "signedIn"; email: string; userId: string; profile: Profile };
 
 export type ActionResult = { ok: true } | { ok: false; error: AuthErrorKey };
 
@@ -34,7 +34,7 @@ export function useAccount(redirectTo: string) {
       setState({ kind: "profileError", email });
       return;
     }
-    setState({ kind: "signedIn", email, profile });
+    setState({ kind: "signedIn", email, userId: session.user.id, profile });
     if (loaded.current !== session.user.id) {
       loaded.current = session.user.id;
       await recordActivity(client, profile.status, announce ? "signed_in" : "heartbeat");
