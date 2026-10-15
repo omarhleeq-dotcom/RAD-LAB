@@ -126,6 +126,8 @@ npm run preview:smoke        # serves out/ like Cloudflare Pages, then drives it
 
 **Results (2026-10-06, Session 6, static export served by the stand-in server):** typecheck, lint, 662/662 unit tests (golden phantom hash unchanged), `npm run build`, `npm run build:pages` pass; `preview:smoke` 200/200 scenario checks + header/banner/same-origin/console checks; full EN/AR × desktop/tablet/mobile browser matrix **3159/3159** (identical to Session 5, so the banner changed no golden image — none was regenerated); axe audit 0 violations.
 
+**Re-run (2026-10-15, on main `28edfec`, 17 registered exams):** `npm run build:pages` then `CHROMIUM=/opt/pw-browsers/chromium npm run preview:smoke` (the script needs `CHROMIUM` when Playwright's own browser is not installed): 81 page / header / redirect / same-origin / console checks and the scenario runner 200/200 (4 scenarios, EN + AR, mobile) all passed. Scope note: the smoke script's route and scenario checks cover Chest PA only; the 16 later exams are not exercised by it. This does not prove the Cloudflare deployment itself (RAD-024).
+
 ## 5. Troubleshooting
 
 | Symptom | Likely cause / fix |
