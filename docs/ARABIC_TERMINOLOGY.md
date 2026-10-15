@@ -304,3 +304,22 @@ Keys: `messages/ar.json` → `scene.altKnee*`, `scene.altFoot*`, `sceneKnee.*`, 
 Question for the AR reviewer: «الكاحل» names both the joint and the talus in common usage; confirm the split «مفصل الكاحل» / «عظم الكاحل».
 
 Questions for the AR reviewer: «الظنبوب» vs «القصبة»; «الكاحل» for talus; «السمسمانيات»; «جيب الرسغ» for sinus tarsi; «الأخمص» vs «باطن القدم»; the bottom knee label «الساق» (chosen for layout, not for exactness).
+
+## Pelvis AP reference — 2026-10-15 (DRAFT, pending owner/educator review; not in UI)
+
+| English | Proposed Arabic |
+|---|---|
+| Pelvis / pelvic girdle | الحوض / الحزام الحوضي |
+| AP pelvis | إسقاط أمامي خلفي للحوض |
+| Anterior superior iliac spine (ASIS) | الشوكة الحرقفية الأمامية العلوية |
+| Pubic symphysis | الارتفاق العاني |
+| Obturator foramen | الثقبة السدادية |
+| Iliac wing / ischial spine | جناح الحرقفة / الشوكة الإسكية |
+| Femoral head / neck | رأس عظم الفخذ / عنق عظم الفخذ |
+| Greater / lesser trochanter | المدور الكبير / المدور الصغير |
+| Internal rotation of both legs | دوران الطرفين السفليين للداخل |
+| Pelvic rotation | دوران الحوض |
+| Suspend respiration during exposure | حبس النَّفَس أثناء التعريض |
+| Image receptor | الكاشف |
+
+Machine-assisted proposed terms only. Distinguish pelvic rotation from leg rotation and avoid adding inspiration/expiration to a phase-neutral source instruction.

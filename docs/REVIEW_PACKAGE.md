@@ -206,3 +206,16 @@ Question for the AR reviewer: confirm or correct each term in the final column o
 
 ## 6. Owner-proposed Arabic corrections (owner-approved, to apply in a UI text session; no UI string changed)
 Listed in full in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), section "Owner-proposed corrections". Question for the **AR** reviewer on each: accept, reject or reword. Covers: breath wording (نَفَس), "able to stand" wording, the age pattern (number agreement 3–10), "الكاشف" for detector throughout (keep "البكي" for Bucky), "لوحا الكتف", the posterior costophrenic angle term, "البقاء ساكنًا", preference for "الإسقاط", and three new terms (leaning slightly forwards, holding the support arm, patient-position label). Collimation and quantum-noise wording are left to the educator.
+
+## Pelvis AP reference — 2026-10-15 (docs only, no UI/code)
+
+| Item | Source/basis | Review question | Reviewer |
+|---|---|---|---|
+| PELVIS-R1: SID ≥102 cm, IR 35 × 43 cm landscape, grid, digital 85 ± 5 kV | BONTRAGER-9 p.279, direct reading | Confirm reference interpretation and local technique applicability; no mAs/EI/AEC calibration chosen | Educator/physicist, O5/O81/O83 |
+| PELVIS-R2: supine alignment, legs internally rotated 15°–20°, perpendicular CR about 5 cm below ASIS, four-sided coverage | p.271–272, 279 | Confirm non-trauma scope and strict separation of pelvic rotation from leg positioning; retain fracture/dislocation warning | Educator, O82 |
+| PELVIS-R3: pelvic symmetry, trochanter/neck criteria, exposure detail/no motion | p.279 | Which cues can be represented honestly from one radiograph? No pixel model or tolerances approved | Educator, O81/O85 |
+| PELVIS-R4: suspend respiration, no specified phase | p.279 | Agree instruction/assessment without reusing chest inspiration as a pelvis target | Educator/owner, O83 |
+| PELVIS-R5: rubric, marker, AEC/manual scope | No settled pelvis rubric/protocol | Choose weights/critical list/marker convention; do not copy single-limb defaults | Educator/owner/physicist, O83 |
+| PELVIS-R6: owner-supplied image, public-domain page | Commons case-1 page read 2026-10-15; candidate not clinical ground truth | Confirm coverage and suitability; burned-in marker/edge graphics require documented treatment before adoption | Educator/owner, O84 |
+| PELVIS-R7: historical shielding content | 2018 book, not adopted | Review contemporary authoritative practice before product wording; not scored in this phase | Physicist, O86 |
+| PELVIS-R8: Arabic proposed terms | Machine-assisted draft in ARABIC_TERMINOLOGY | Review anatomy and phase-neutral breath-hold wording | Arabic reviewer/educator |

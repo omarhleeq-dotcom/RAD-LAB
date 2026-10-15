@@ -175,6 +175,13 @@ Recorded in Session 7 (2026-10-06). The wording of D1–D6 follows the owner's i
 | **S14.5-12** | **Left side needed nothing beyond `markerRule.side` (side gate PASSED).** The shared builder's hard-wired RIGHT wording now reads the side from one table (`SIDE_OF` in `lower-limb-common.ts`: knee / foot R, ankle L; the words RIGHT / right / اليمنى or LEFT / left / اليسرى); **every existing exam, case definition and composed case was dumped before and after and is byte-identical** (39 files). No new exam / case field, no scene code that depends on the side (the detector drawings are image-space outlines; the ankle labels are written for the displayed left ankle). Existing-file edits are additive: `lower-limb-common.ts`, `lower-limb-geometry.ts`, `lower-limb-technique.ts` (the ankle entries and the side table), `lower-limb-case.ts`, `lower-limb-radiographs.ts`; the ankle texts live in the new `lower-limb-ankle-texts.ts`. | Owner prompt (side gate). | |
 | **S14.5-13** | **Shared-code changes of S14.5 (all optional, absent = old output; chest, wrist, hand, elbow, knee, foot byte-identical):** `LowerLimbKind` + `LowerLimbModelId` gain the ankle ids; `lower-limb-model.ts` (ankle AP anchors, ankle lateral copies); `limb-effects.ts` (concept records, two plan branches by model); `LowerLimbFigure` / `LowerLimbSideView` (ankle drawings, outlines in the new `ankle-outlines.ts`; the knee / foot outline file is untouched); `detector-figures`, `scene-layouts`, `scenes`, `SCENE_IDS`, `PROJECTIONS`, `BODY_PART_IDS`, `EXAMS`, `CASE_DEFINITIONS`; messages only gained keys (700 → 757 each; the 4 "deleted" diff lines are trailing commas). **Existing-test edit: the scene-id list in `generalisation.test.ts` (`ankle-ap`, `ankle-lateral` added, nothing else; S-STD-2).** New: `ankle-ap.test.ts`, `ankle-lateral.test.ts`, `ankle-rotation.test.ts`, `scene-dom-ankle.test.ts` + `scripts/qa/scene-dom/ankle-{ap,lateral}-hashes.json` (126 keys each), `scripts/qa/ankle-audit.mjs`, `label-states/ankle-*.json`. | S-STD-2; S14.5-8. | |
 
+## Pelvis reference scope — owner direction 2026-10-15
+
+| ID | Decision | Basis / impact |
+|---|---|---|
+| **S-PELVIS-REF-1** | Owner selected pelvis after supplying a radiograph and licence screenshots, replacing forearm as the current task. This phase covers **routine adult non-trauma supine Pelvis AP, reference + Needs only**. Other pelvic/hip views and implementation are excluded. O37 remains open. | Current owner messages; S10-2. Read BONTRAGER-9 p.271–272, 279 before code; clinical values provisional (O5). |
+| **S-PELVIS-REF-2** | Owner explicitly requested pixel editing to remove the burned-in marker because the application has its own interactive marker. Authorized scope: a documented non-anatomical edge cleanup for review before any upload; no anatomical reconstruction, no clinical validation inferred. | Owner message 2026-10-15; image derivation recorded in session/reference. O84 retains coverage/suitability review. No app implementation authorized. |
+
 ## Open decisions
 
 *Rows S10b-1 … S10b-26 above are provisional owner decisions recorded in the Session 10b follow-up (docs only; nothing in code, data or scoring changed). Each is pending educator / physicist review (O5) and is implemented only in the session named in its row.*
@@ -263,6 +270,17 @@ None of these blocks Sessions 8–9. Until decided, each stays labelled provisio
 | **O78** | **Ankle baseline limits:** the patient's sprain history (3 weeks, no injuries seen) and the lateral's "somewhat suboptimal" obliquity (not straight through the joint) are accepted as documented limits; the baseline is not edited to "fix" them. An educator should confirm both are acceptable as normal teaching images; no pathology wording in the product. | Educator (O5). | S14.5-3 |
 | **O79** | **Ankle AP master carries an edge artefact** (a bright ringing strip along the left edge, 8 columns, and a 1-px bright last column on the right); repaired in its web copy by overwriting with the nearest clean column (S14.4-17 precedent); faint patches may remain at high contrast. The lateral master has no step at its edges and is not repaired. | Educator (O5). | A-031, A-033 |
 | **O80** | **Ankle baselines: scale, landmarks, regions and the rotation models' numbers are by-eye estimates** (cm / px assumed, CR targets, required regions, band extents, depth offsets); none is measured (O62 class). | Educator (O5). | reference §11 |
+
+## Pelvis reference open items — 2026-10-15
+
+| ID | Open item | Required action |
+|---|---|---|
+| **O81** | Pelvis numerical teaching/protocol inputs are not fixed: error bands, centering/coverage margins, scale, SID upper bound, exposure reference and mAs/EI calibration. | Educator/physicist/owner classify and approve each future value; p.279 only supports the cited clinical targets. No copy from ankle/chest. |
+| **O82** | Whole-pelvis rotation and bilateral internal leg positioning are independent. | Agree discrete choices versus continuous/independent leg angles. Existing choice controls may suffice; any actual mechanism gap needs a separate phase after merged Needs. |
+| **O83** | Pelvis rubric, critical findings, marker/display convention, phase-neutral breath suspension and manual/AEC scope unresolved. | Owner/educator/physicist decide. No `fixed-side` single-limb default and no chest inspiration response as a substitute for breath suspension. |
+| **O84** | Pelvis image suitability/coverage and edge-graphic cleanup. Commons case-1 image is declared public domain; attached preview has R, lettering and circular graphic. | Owner authorized pixel cleanup of non-anatomical edge only (S-PELVIS-REF-2). Inspect derivative and coverage/normality before product adoption; record provenance/checksums if imported. |
+| **O85** | Honest one-image pelvic/femoral rotation model and landmarks not established. | Evaluate pelvic symmetry and femoral-neck/trochanter cues separately; report undrawable effects explicitly. No automatic reuse of chest/ankle warps or fabricated anatomy. |
+| **O86** | Currency of 2018 pelvic shielding recommendations not reviewed. | Physicist reviews current authoritative guidance before product advice; no new shielding control/scoring. |
 
 ## Session 7 implementation choices (made without the owner; the owner may overrule)
 

@@ -7,7 +7,7 @@
 ## ملخص الحالة الحالية (سرد، لا يُقرأ آلياً)
 
 - **المنفّذ والمدموج في `main`** (آخر مراجعة: `4118326`، دمج PR #31): محاكي Chest PA، تقسيم الفحص/الحالة، منصة التصفح، المراجع المكتوبة ومكتبة المصادر، آليات التعميم (S11)، فحوص الصدر الثلاثة (PA وLateral وAP supine)، وفحوص الأطراف: wrist وhand وelbow وknee وfoot وankle (12 فحصاً أطراف + 3 صدر)، مع جولتي تحسين بصري (S-VIS-1a/1b).
-- **المتبقي:** الاتجاه الحالي للمالك (2026-10-15) استكمال الأطراف أولًا؛ الساعد AP/Lateral متوقف لغياب المصدر (RAD-027، O37). ثم ترتيب S12-12: abdomen & pelvis ← head ← spine ← Assess ← Release؛ وCT/MRI/US في v2. لم يبدأ أي منها (لا يوجد مرجع طبي لها بعد، وقاعدة «المرجع أولاً» S10-2 تمنع بدء التنفيذ قبله).
+- **الاتجاه الحالي (المالك، 2026-10-15):** Pelvis AP، مرجع وNeeds فقط (RAD-028)، مع إزالة علامة الصورة بالبكسلات للمراجعة (RAD-029). الساعد مؤجل في RAD-027/O37؛ بقية abdomen & pelvis ثم head ثم spine ثم Assess ثم Release لم تبدأ. CT/MRI/US في v2.
 - **ما يحتاج المالك أو المراجع البشري:** مراجعة المعلّم/الفيزيائي (O5، ليست بوابة)، إعادة التحقق من رخص الصور على Commons قبل الإصدار، وقرارات بيانات صغيرة (O55/O74 وO52 وO59)، وتأكيد حالة نشر المعاينة (RAD-024).
 - **تعارضات بين المصادر:** مسجّلة في حقل `conflict` داخل المهام المعنيّة (RAD-024 وRAD-025) ولا تُكرَّر هنا.
 - **لا تُحسب نسبة إنجاز للمشروع**: عدد المهام لا يعكس حجم العمل ولا المخاطر.
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 2,
-  "updated_at": "2026-10-15T06:37:58Z",
+  "revision": 3,
+  "updated_at": "2026-10-15T06:53:50Z",
   "timezone": "UTC",
-  "next_id": "RAD-028",
+  "next_id": "RAD-030",
   "tasks": [
     {
       "id": "RAD-001",
@@ -215,7 +215,7 @@
       "title": "فحوص X-ray v1 المتبقية: abdomen & pelvis ثم head ثم spine (مرجع أولاً)",
       "status": "planned",
       "priority": "medium",
-      "description": "ثلاث دفعات حسب ترتيب S12-12. كل دفعة تبدأ بمرجع طبي موثّق (قالب docs/templates/EXAM_REFERENCE_TEMPLATE.md) يُدمج في main بقسم Needs مكتمل قبل أي كود (S10-2) ثم تتبع docs/exam-recipe.md. لا مرجع ولا كود لأي منها حالياً. الضلوع والقص خارج v1. إن ظهرت حاجة لتقسيمها إلى مهام فرعية فتُنشأ بمعرّفات جديدة.",
+      "description": "بدأ مرجع Pelvis AP فقط في RAD-028 بتوجيه المالك 2026-10-15؛ لا تنفيذ للحوض. بقية البطن والحوض ثم الرأس والعمود الفقري لم تبدأ، وتبقى خاضعة لقاعدة المرجع وNeeds ودمجهما قبل الكود (S10-2). لا يشمل ذلك CT/MRI/US في v2.",
       "source_ref": "DECISIONS.md S12-12، S10-2؛ docs/exam-recipe.md؛ docs/ROADMAP_SESSIONS.md (ملاحظة S14-0 والجلسة 14)"
     },
     {
@@ -255,11 +255,27 @@
     {
       "id": "RAD-027",
       "title": "مرجع Forearm AP + Lateral وقسم Needs فقط",
-      "status": "blocked",
+      "status": "deferred",
       "priority": "high",
-      "description": "استكمال الأطراف هو الاتجاه الحالي قبل البطن والحوض. بعد توفر المصدر تُستخرج القواعد وتصنيف الأدلة والأسئلة وNeeds وفق القالب؛ لا كود قبل اكتمال المرجع ودمجه واعتماد الصور والقرارات. O37 باقٍ مفتوحًا.",
-      "source_ref": "تعليمات المالك 2026-10-15؛ DECISIONS.md O37 وS10-2؛ docs/HANDOFF.md؛ docs/session-continuity-2026-10-15.md",
-      "blocker": "المادة المرجعية الموثوقة وأرقام صفحات Bontrager 9 غير متوفرة بعد لدى المالك؛ الصور المناسبة المعتمدة غير متوفرة أيضًا. يلزم توفير المصدر لبدء المرجع، واعتماد الصور قبل التنفيذ."
+      "description": "مرجع الساعد AP/Lateral لم يُكتب؛ O37 باقٍ مفتوحًا لغياب الصور المناسبة المعتمدة. أصبح كتاب Bontrager 9 متاحًا عبر Drive، لكن صفحات الساعد لم تُستخرج في مرحلة الحوض.",
+      "source_ref": "تعليمات المالك 2026-10-15؛ DECISIONS.md O37 وS10-2؛ docs/HANDOFF.md؛ docs/session-continuity-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1",
+      "defer_reason": "اختار المالك الحوض في 2026-10-15 كنطاق العمل الحالي؛ الساعد يبقى مؤجلًا وفق O37."
+    },
+    {
+      "id": "RAD-028",
+      "title": "مرجع Pelvis AP وقسم Needs",
+      "status": "review",
+      "priority": "high",
+      "description": "مرجع مكتوب من قراءة مباشرة لـBontrager 9 p.271–272، 279؛ Needs موثق، والقرارات O81–O86 تنتظر الحسم قبل أي كود. ينتظر مراجعة ودمج Draft PR #33؛ لا فحص مسجل.",
+      "source_ref": "docs/RAD-LAB_Medical_Reference_Pelvis_AP.md؛ docs/session-pelvis-ap-reference-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1/2؛ PR #33"
+    },
+    {
+      "id": "RAD-029",
+      "title": "صورة Pelvis AP المنظفة من marker — مادة مراجعة",
+      "status": "review",
+      "priority": "high",
+      "description": "حُفظ الأصل والاشتقاق A-034/A-035 خارج public. أزيلت علامة R والنص والشكل الدائري بتعديل الخلفية فقط؛ تحقق 0 بكسل متغير خارج المستطيل المحدد. تنتظر ملاءمة الصورة والتغطية مراجعة O84 قبل استخدامها في المنتج.",
+      "source_ref": "docs/ASSET_PROVENANCE_AND_LICENSES.md A-034/A-035؛ scripts/derive-pelvis-baseline.py؛ DECISIONS.md O84؛ PR #33"
     }
   ]
 }

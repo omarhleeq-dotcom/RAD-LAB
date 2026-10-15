@@ -166,3 +166,10 @@ Delivered: Chest Lateral exam, case, asset (A-006 / A-007), scene, tests and QA 
 
 - S14.5 remains the last completed exam phase (PR #31, merged). Latest verified `main`: `f19257ebd5cefc8f9ec2320782cb91cfa7e70d88` (PR #32, unified status). The handoff branch was not merged; it now incorporates that main update for a docs-only draft PR.
 - No forearm reference or implementation started: governing source and approved images remain unavailable. Next step is source acquisition, then reference + Needs only; O37 remains open (RAD-027). Record: [session-continuity-2026-10-15.md](session-continuity-2026-10-15.md).
+
+### Pelvis AP reference — 2026-10-15 (owner-selected scope change)
+
+- Owner selected pelvis after supplying a candidate image; forearm remains deferred (O37, RAD-027). This explicitly supersedes the earlier next-task suggestion; no additional limb completion is claimed.
+- [Pelvis AP reference](RAD-LAB_Medical_Reference_Pelvis_AP.md) + complete Needs assessment written from direct BONTRAGER-9 p.271–272, 279 reading. Draft PR #33, not merged; no exam/generalisation code. O81–O86 await review. Status RAD-028 is review, not done.
+- Owner-requested background-only marker removal: original/derivative A-034/A-035 + reproducible pixel script, not served to the product. Clinical suitability remains O84/RAD-029.
+- Next: owner review/decisions and reference merge, then scope the next phase; current choice controls may suffice for independent leg position and phase-neutral breath suspension, so no speculative generalisation. [Session record](session-pelvis-ap-reference-2026-10-15.md).
