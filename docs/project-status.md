@@ -21,10 +21,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 21,
-  "updated_at": "2026-10-15T17:30:00Z",
+  "revision": 22,
+  "updated_at": "2026-10-15T18:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-039",
+  "next_id": "RAD-046",
   "tasks": [
     {
       "id": "RAD-001",
@@ -359,6 +359,62 @@
       "description": "A-008 (NIH ChestX-ray14) تبقى owner-verified مؤقتًا بقرار المالك 2026-10-15؛ لم تُقرأ الشروط ولا توجد لقطة لها، فالحالة التجارية غير مثبتة بدليل. قبل الإصدار: قراءة شروط NIH عند المصدر (متصفح) أو استبدال الصورة.",
       "defer_reason": "قرار المالك 2026-10-15: نعود إليه لاحقًا؛ الأولوية للبنود الأخرى.",
       "source_ref": "DECISIONS.md O101، O16؛ docs/ASSET_LICENCE_AUDIT_2026-10-15.md §6؛ docs/ASSET_PROVENANCE_AND_LICENSES.md A-008"
+    },
+    {
+      "id": "RAD-039",
+      "title": "خطة المنصة التجريبية ووثيقة القرار (حسابات، محاولات، ملاحظات)",
+      "status": "review",
+      "priority": "high",
+      "description": "docs/PILOT_PLATFORM_PLAN.md: قرارات المالك (دعوة من المالك فقط، بريد إلزامي، كلمة مرور، 20–100 مشارك)، مطابقة مع الخطة القائمة، شريحة تجريبية ومعايير قبول وأسئلة مفتوحة Q1–Q7. توثيق فقط؛ لا شيء منفَّذ.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md؛ DECISIONS S-PILOT-1/2"
+    },
+    {
+      "id": "RAD-040",
+      "title": "جلسة التحقق من مزوّد الهوية وقاعدة البيانات للإطلاق التجريبي",
+      "status": "planned",
+      "priority": "high",
+      "description": "قراءة وثائق المزوّدين الرسمية (المنطقة، السعر، الدعوة، سياسة كلمة المرور، السجلات، النسخ الاحتياطي) وحسم Q1–Q4. DOCS. تبدأ بعد قبول المالك للخطة.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 1"
+    },
+    {
+      "id": "RAD-041",
+      "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
+      "status": "planned",
+      "priority": "high",
+      "description": "شريحة 2: دعوة من المالك، كلمة مرور، تأكيد بريد، سجل دخول، سياسات صفوف، تعديل ADR-0002 وCLAUDE.md. كود L. بعد RAD-040 وS-PILOT-2.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2"
+    },
+    {
+      "id": "RAD-042",
+      "title": "حفظ المحاولات والأحداث (Practice محفوظ)",
+      "status": "planned",
+      "priority": "medium",
+      "description": "شريحة 3: ربط محرك التقييم الموجود بحفظ المحاولة مع إصدار التعريف وقائمة الأحداث الدنيا دون تغيير القواعد. كود M. بعد RAD-041.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §5, §8"
+    },
+    {
+      "id": "RAD-043",
+      "title": "الموافقة وزر الملاحظات ورابط الاستبيان",
+      "status": "planned",
+      "priority": "medium",
+      "description": "شريحة 4: شاشة موافقة، ملاحظة مرتبطة بالفحص، رابط استبيان برمز المشارك. كود M. بعد RAD-041.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §6, §8"
+    },
+    {
+      "id": "RAD-044",
+      "title": "لوحة المالك وتصدير CSV",
+      "status": "planned",
+      "priority": "medium",
+      "description": "شريحة 5: المشاركون والمحاولات والملاحظات وتصدير. كود M. بعد RAD-042.",
+      "source_ref": "docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 5"
+    },
+    {
+      "id": "RAD-045",
+      "title": "صفحة المصادر والاعتمادات ثنائية اللغة",
+      "status": "planned",
+      "priority": "medium",
+      "description": "تنفيذ مواصفة docs/ASSET_LICENCE_AUDIT_2026-10-15.md §5 وصياغة O102؛ كود S، قبل توسيع الإطلاق. بالتوازي مع الشريحة.",
+      "source_ref": "docs/ASSET_LICENCE_AUDIT_2026-10-15.md §5؛ DECISIONS O102؛ RAD-023"
     }
   ]
 }
