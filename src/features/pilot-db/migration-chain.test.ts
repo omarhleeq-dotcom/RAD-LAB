@@ -91,7 +91,7 @@ describe("ordered migration chain", () => {
       const data = async () => (await db.query(`select 'profiles' t,to_jsonb(p) v from public.profiles p union all select 'attempts',to_jsonb(a) from public.attempts a
         union all select 'events',to_jsonb(e) from public.events e union all select 'feedback',to_jsonb(f) from public.feedback f order by t`)).rows;
       const targets = async () => (await db.query(`select schemaname,tablename,policyname,permissive,roles,cmd from pg_policies where schemaname='public' order by tablename,policyname`)).rows;
-      const functions = async () => (await db.query(`select p.proname,pg_get_functiondef(p.oid) definition,p.proacl::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' order by p.proname`)).rows;
+      const functions = async () => (await db.query<{ identity: string; definition: string; proacl: string | null }>(`select p.oid::regprocedure::text identity,pg_get_functiondef(p.oid) definition,p.proacl::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' order by p.oid::regprocedure::text`)).rows;
       const constraints = async () => (await db.query(`select conrelid::regclass::text tab,conname,pg_get_constraintdef(oid) definition from pg_constraint where connamespace='public'::regnamespace order by tab,conname`)).rows;
       const columns = async () => (await db.query(`select table_name,column_name,grantee,privilege_type from information_schema.column_privileges where table_schema='public' order by table_name,column_name,grantee,privilege_type`)).rows;
       const before = { data: await data(), targets: await targets(), functions: await functions(), constraints: await constraints(), columns: await columns(), catalogue: await catalogue(db) };
@@ -99,7 +99,12 @@ describe("ordered migration chain", () => {
       await apply(db, files.filter((f) => f > legacy[4][0]));
       expect(await data()).toEqual(before.data);
       expect(await targets()).toEqual(before.targets);
-      expect(await functions()).toEqual(before.functions);
+      // Owner-approved S-STD-1 exception: additive RPCs are allowed; every legacy
+      // overload must retain its identity, exact definition and ACL. Apply ALL files above.
+      const afterFunctions = await functions();
+      for (const old of before.functions) {
+        expect(afterFunctions.find((f) => f.identity === old.identity), String(old.identity)).toEqual(old);
+      }
       expect(await constraints()).toEqual(before.constraints);
       expect(await columns()).toEqual(before.columns);
       expect(await catalogue(db)).toEqual(before.catalogue);

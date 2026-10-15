@@ -173,3 +173,77 @@ export function csvFileName(kind: "attempts" | "notes", d: Date): string {
   const p = (n: number) => String(n).padStart(2, "0");
   return `radlab-${kind}-${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}.csv`;
 }
+
+// Versioned bounded RPC contract. Legacy parsers/CSV helpers above stay compatible.
+export type OwnerStream = "participants" | "attempts" | "notes";
+export type OwnerFilters = { participant: string; participantCode?: string; from: string; to: string; exam: string };
+export const EMPTY_FILTERS: OwnerFilters = { participant: "", from: "", to: "", exam: "" };
+export type Cursor = { time: string; id: string };
+export type OwnerPage = { version: 1; boundary: string; total: number; pending: number; rows: Record<string, unknown>[]; next: Cursor | null };
+export type RpcRead = (args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: unknown }>;
+const validTime = (v: unknown): v is string => typeof v === "string" && Number.isFinite(Date.parse(v));
+// PostgreSQL emits microseconds. Date.parse alone would collapse different cursor times.
+const timeKey = (v: string): bigint => BigInt(Date.parse(v)) * 1000n
+  + BigInt((v.match(/\.(\d{1,6})(?:Z|[+-]\d{2}:\d{2})$/)?.[1] ?? "").padEnd(6, "0").slice(3, 6));
+export function parseOwnerPage(value: unknown, limit = 100): OwnerPage {
+  if (!isObj(value) || value.version !== 1 || !validTime(value.boundary)
+    || !Number.isSafeInteger(value.total) || Number(value.total) < 0 || !Number.isSafeInteger(value.pending) || Number(value.pending) < 0
+    || !Array.isArray(value.rows) || value.rows.length > limit || !value.rows.every(isObj)
+    || (value.next !== null && (!isObj(value.next) || !validTime(value.next.time) || !str(value.next.id)))
+    || (value.next !== null && value.rows.length === 0)) throw new Error("Invalid page contract");
+  return value as OwnerPage;
+}
+export async function readOwnerPage(rpc: RpcRead, stream: OwnerStream, filters: OwnerFilters, cursor: Cursor | null = null, boundary: string | null = null, exporting = false, limit = 100): Promise<OwnerPage> {
+  const response = await rpc({ p_stream: stream, p_limit: limit, p_cursor: cursor, p_boundary: boundary, p_export: exporting,
+    p_participant: filters.participant || null, p_from: filters.from || null, p_to: filters.to || null, p_exam: stream === "participants" ? null : filters.exam || null });
+  if (response.error) throw new Error("Owner read failed");
+  const page = parseOwnerPage(response.data, limit);
+  if (boundary && timeKey(page.boundary) !== timeKey(boundary)) throw new Error("Boundary changed");
+  if (cursor && page.next && (timeKey(page.next.time) > timeKey(cursor.time)
+    || (timeKey(page.next.time) === timeKey(cursor.time) && compareIds(page.next.id, cursor.id, stream) <= 0))) throw new Error("Cursor did not advance");
+  let previous = cursor;
+  for (const row of page.rows) {
+    const time = row[stream === "participants" ? "created_at" : stream === "attempts" ? "finished_at" : "at"];
+    const id = row[stream === "participants" ? "user_id" : "id"];
+    if (!validTime(time) || typeof id !== "string" || !id) throw new Error("Invalid row cursor");
+    if (timeKey(time) > timeKey(page.boundary) || (previous && (timeKey(time) > timeKey(previous.time)
+      || (timeKey(time) === timeKey(previous.time) && compareIds(id, previous.id, stream) <= 0)))) throw new Error("Unordered or duplicate rows");
+    previous = { time, id };
+  }
+  if (page.next && page.rows.length) {
+    const last = page.rows[page.rows.length - 1]!;
+    if (String(last[stream === "participants" ? "user_id" : "id"]) !== page.next.id
+      || timeKey(String(last[stream === "participants" ? "created_at" : stream === "attempts" ? "finished_at" : "at"])) !== timeKey(page.next.time)) throw new Error("Truncated page");
+  }
+  return page;
+}
+function compareIds(a: string, b: string, stream: OwnerStream): number {
+  if (stream === "notes") return BigInt(a) > BigInt(b) ? 1 : BigInt(a) === BigInt(b) ? 0 : -1;
+  return a > b ? 1 : a === b ? 0 : -1;
+}
+/** One numbered file at a time: phone-compatible Blob download, memory bounded to one RPC page. */
+export function exportOwnerPart(stream: "attempts" | "notes", page: OwnerPage): { csv: string; written: number; skipped: number } {
+  const seen = new Set<string>();
+  let skipped = 0;
+  const rows: Record<string, unknown>[] = page.rows.flatMap((r) => {
+    const code = str(r.participant_code), id = str(String(r.id ?? ""));
+    if (!code || !id || seen.has(id) || !validTime(r[stream === "attempts" ? "finished_at" : "at"])
+      || (stream === "notes" && r.attempt_id != null && (!Number.isInteger(r.attempt_no) || Number(r.attempt_no) < 1))) { skipped++; return []; }
+    seen.add(id);
+    return [{ ...r, user_id: code }];
+  });
+  if (stream === "attempts") {
+    const parsed = parseAttempts(rows);
+    const csv = toCsv(ATTEMPT_CSV_HEADER, parsed.items.map((a) => [
+      a.userId, a.attemptNo, a.id, a.examId, a.caseId, a.definitionVersion, a.locale, a.startedAt, a.finishedAt,
+      seconds(a.startedAt, a.finishedAt), a.total, a.passed, a.thresholdMet, a.primaryVariant, a.critical.join(";"),
+      a.categories.map((c) => `${c.c}:${c.earned}/${c.weight}`).join(";"), a.checks.map((k) => `${k.id}:${k.o}:${k.credit}`).join(";"), JSON.stringify(a.settings),
+    ]));
+    return { csv, written: parsed.items.length, skipped: skipped + parsed.skipped };
+  }
+  const parsed = parseNotes(rows);
+  // Attempt number comes from the SQL join even if the attempt is outside this page/filter.
+  const no = new Map(rows.map((r) => [String(r.id), r.attempt_no as number | null]));
+  const csv = toCsv(NOTE_CSV_HEADER, parsed.items.map((n) => [n.userId, n.id, n.examId, no.get(n.id) ?? "", n.attemptId ?? "", n.at, n.text]));
+  return { csv, written: parsed.items.length, skipped: skipped + parsed.skipped };
+}

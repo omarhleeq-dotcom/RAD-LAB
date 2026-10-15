@@ -1,15 +1,15 @@
 "use client";
 
 // The owner's participant list with approve / suspend buttons (RAD-044a). Visible content depends on RLS + the database functions, not on
-// this component: a non-owner who opens the page just gets "not allowed" because `owner_list_participants()` refuses them.
+// this component: a non-owner who opens the page just gets "not allowed" because `owner_page_v1()` refuses them.
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import type { ProfileStatus } from "./account-state";
 import { getPilotClient } from "./client";
 import { PILOT } from "./config";
 import { CsvBar, ParticipantActivity } from "./OwnerActivity";
-import { groupByUser } from "./owner-data";
+import { EMPTY_FILTERS, type Cursor, type OwnerFilters } from "./owner-data";
 import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, type Participant, parseParticipants } from "./owner-state";
 import { useAccount } from "./useAccount";
 import { useOwnerData } from "./useOwnerData";
@@ -20,7 +20,9 @@ const btn = "rounded-md border border-line px-3 py-1.5 text-sm font-medium hover
 export function OwnerPanel() {
   const t = useTranslations("owner");
   const { state } = useAccount("");
-  const [rows, setRows] = useState<Participant[] | null>(null);
+  const [filters, setFilters] = useState<OwnerFilters>(EMPTY_FILTERS);
+  const [cursor, setCursor] = useState<Cursor | null>(null);
+  const [boundary, setBoundary] = useState<string | null>(null);
   const [error, setError] = useState<"load" | "action" | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [warn, setWarn] = useState<string | null>(null);
@@ -30,28 +32,12 @@ export function OwnerPanel() {
 
   // The list is fetched in an effect (inside a promise callback); buttons ask for a re-fetch by bumping `version`.
   const [version, setVersion] = useState(0);
-  const reload = () => setVersion((v) => v + 1);
+  const reload = () => { setCursor(null); setBoundary(null); setVersion((v) => v + 1); };
 
-  useEffect(() => {
-    if (!isOwner) return;
-    let cancelled = false;
-    void getPilotClient()?.then(async (client) => {
-      const { data, error: err } = await client.rpc("owner_list_participants");
-      if (cancelled) return;
-      if (err) return setError("load");
-      setError(null);
-      setRows(parseParticipants(data));
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [isOwner, version]);
-
-  // Attempts and notes (RAD-044b): read-only, loaded together with the list, keyed by participant code in the UI and the CSV.
-  const data = useOwnerData(isOwner, version);
-  const ready = data.kind === "ready" ? data : null;
-  const byUser = useMemo(() => (ready ? groupByUser(ready.attempts, ready.notes) : null), [ready]);
-  const codes = useMemo(() => new Map((rows ?? []).map((p) => [p.userId, p.code])), [rows]);
+  const data = useOwnerData(isOwner, version, "participants", { ...filters, from: "", to: "" }, cursor, boundary);
+  const ready = data.kind === "ready" ? data.page : null;
+  const rows = ready ? parseParticipants(ready.rows) : null;
+  const changeFilters = (f: OwnerFilters) => { setFilters(f); setCursor(null); setBoundary(null); };
 
   // Fixed numeric form (YYYY-MM-DD HH:mm, the owner's local time): Intl's Arabic output carries bidi marks that scramble the order.
   const when = (iso: string | null) => (iso === null ? t("never") : formatStamp(new Date(iso)));
@@ -64,6 +50,7 @@ export function OwnerPanel() {
     const { error: err } = (await client?.rpc("set_participant_status", { target: p.userId, new_status: target })) ?? { error: new Error("off") };
     setBusy(null);
     if (err) return setError("action");
+    setError(null);
     reload();
   }
 
@@ -78,27 +65,37 @@ export function OwnerPanel() {
   }
   if (!isOwner) return <p role="alert" data-testid="owner-denied" className="rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t("denied")}</p>;
 
-  const pending = (rows ?? []).filter((p) => p.status === "pending").length;
+  const pending = ready?.pending ?? 0;
   return (
     <section aria-labelledby="owner-list" data-testid="owner-list">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="owner-list" className="text-xl font-semibold">{t("participants")}</h2>
         <button type="button" className={btn} onClick={reload}>{t("refresh")}</button>
       </div>
-      {rows && <p className="mt-2 text-sm text-muted" data-testid="owner-summary">{t("summary", { total: rows.length, pending })}</p>}
+      {rows && <p className="mt-2 text-sm text-muted" data-testid="owner-summary">{t("summary", { total: ready?.total ?? 0, pending })}</p>}
       {error && <p role="alert" data-testid="owner-error" className="mt-3 rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t(`errors.${error}`)}</p>}
       {data.kind === "error" && <p role="alert" data-testid="owner-data-error" className="mt-3 rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t("errors.data")}</p>}
-      {ready && (
-        <>
-          <p className="mt-1 text-sm text-muted" data-testid="owner-data-summary">{t("activity.total", { attempts: ready.attempts.length, notes: ready.notes.length })}</p>
-          {(ready.truncated || ready.skipped > 0) && (
-            <p role="status" data-testid="owner-data-partial" className="mt-2 rounded-md border border-warn/40 bg-warn/10 px-3 py-2 text-sm text-ink">
-              {ready.truncated && t("activity.truncated")} {ready.skipped > 0 && t("activity.skipped", { count: ready.skipped })}
-            </p>
-          )}
-          <CsvBar attempts={ready.attempts} notes={ready.notes} codes={codes} />
-        </>
-      )}
+      <div className="my-3 flex flex-wrap gap-3">
+        <label className="text-sm">{t("paging.participant")}
+          <select data-testid="filter-participant" className="block max-w-full rounded border border-line bg-panel p-2" value={filters.participant}
+            onChange={(e) => changeFilters({ ...filters, participant: e.target.value, participantCode: rows?.find((p) => p.userId === e.target.value)?.code ?? "" })}>
+            <option value="">{t("paging.allParticipants")}</option>
+            {filters.participant && !rows?.some((p) => p.userId === filters.participant) && <option value={filters.participant}>{filters.participantCode}</option>}
+            {(rows ?? []).map((p) => <option key={p.userId} value={p.userId}>{p.code}</option>)}
+          </select>
+        </label>
+        {(["exam", "from", "to"] as const).map((key) => <label key={key} className="text-sm">{t(`paging.${key}`)}
+          <input data-testid={`filter-${key}`} type={key === "from" || key === "to" ? "date" : "text"} className="block max-w-full rounded border border-line bg-panel p-2" value={filters[key].slice(0, key === "from" || key === "to" ? 10 : undefined)}
+            onChange={(e) => changeFilters({ ...filters, [key]: e.target.value ? key === "from" || key === "to" ? `${e.target.value}T${key === "to" ? "23:59:59.999999" : "00:00:00"}Z` : e.target.value : "" })} />
+        </label>)}
+      </div>
+      <CsvBar key={JSON.stringify(filters)} filters={filters} />
+      {ready && rows && rows.length !== ready.rows.length && <p role="status">{t("activity.skipped", { count: ready.rows.length - rows.length })}</p>}
+      {data.kind === "loading" && <p role="status">{t("loading")}</p>}
+      <div className="my-3 flex gap-2">
+        <button className={btn} onClick={reload}>{t("paging.first")}</button>
+        <button data-testid="participants-next" className={btn} disabled={!ready?.next} onClick={() => { setCursor(ready!.next); setBoundary(ready!.boundary); }}>{t("paging.next")}</button>
+      </div>
       {rows?.length === 0 && <p className="mt-4 text-muted">{t("empty")}</p>}
       <ul className="mt-4 space-y-3">
         {(rows ?? []).map((p) => {
@@ -116,7 +113,7 @@ export function OwnerPanel() {
                 <div><dt className="inline">{t("registered")}: </dt><dd dir="ltr" className="inline">{when(p.createdAt)}</dd></div>
                 <div><dt className="inline">{t("lastActivity")}: </dt><dd dir="ltr" className="inline">{when(lastActivity(p))}</dd></div>
               </dl>
-              {byUser && <ParticipantActivity code={p.code} activity={byUser.get(p.userId)} />}
+              <ParticipantActivity key={`${p.userId}-${version}-${JSON.stringify(filters)}`} code={p.code} userId={p.userId} filters={filters} version={version} />
               {actions.length > 0 && (
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {actions.map((a) => (
