@@ -6,7 +6,7 @@
 
 - آخر مرحلة برمجية مكتملة: **S14.5 — Ankle AP + Lateral**؛ دُمجت في [PR #31](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/31).
 - commit دمج S14.5: `41183265d3e94b35cd7a939c61184a6199b29dcb`. أحدث أساس متحقق منه على `main`: `f19257ebd5cefc8f9ec2320782cb91cfa7e70d88` (PR #32، ملف الحالة الموحد).
-- فرع تحديث التسليم: `docs/resume-s14-5-handoff`؛ فرع توثيق فقط، ولا يعني اكتمال فحص أطراف جديد. تحقق في 2026-10-15: رأسه السابق `2354152e6e2de0f9a6bc7bd54d72894d5d56aff0` غير مدموج، ولم يوجد له PR؛ جرى دمج أحدث `main` فيه محليًا دون تعارض للحفاظ على تحديثات PR #32. سيُرفع ويُفتح له Draft PR، دون دمج إلى main.
+- فرع تحديث التسليم: `docs/resume-s14-5-handoff`؛ فرع توثيق فقط، ولا يعني اكتمال فحص أطراف جديد. تحقق في 2026-10-15: رأسه السابق `2354152e6e2de0f9a6bc7bd54d72894d5d56aff0` غير مدموج، ولم يوجد له PR؛ جرى دمج أحدث `main` فيه محليًا دون تعارض للحفاظ على تحديثات PR #32. رُفع الفرع وأُنشئ [Draft PR #33](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/33)، مفتوح وغير مدموج؛ لم يُفعّل auto-merge.
 - سجل المرحلة السابقة: [session-14.5-ankle.md](session-14.5-ankle.md). سجل التحقق الحالي: [session-continuity-2026-10-15.md](session-continuity-2026-10-15.md). سجل استعادة السياق: [session-continuity-2026-10-11.md](session-continuity-2026-10-11.md).
 - يوجد 15 فحصًا مسجلًا: Chest PA/Lateral/AP، وPA/Lateral للرسغ واليد، وAP/Lateral للمرفق والركبة والكاحل، وAP/Oblique للقدم. لا توجد حسابات أو قاعدة بيانات؛ الوضع المتاح هو Practice.
 
