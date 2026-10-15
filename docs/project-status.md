@@ -21,10 +21,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 15,
-  "updated_at": "2026-10-15T12:00:00Z",
+  "revision": 16,
+  "updated_at": "2026-10-15T12:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-037",
+  "next_id": "RAD-038",
   "tasks": [
     {
       "id": "RAD-001",
@@ -342,6 +342,14 @@
       "description": "Shoulder Y مؤجل؛ لم يُبنَ شيء. تُعاد البوابتان فقط إذا توفرت صورة نظيفة مرخّصة وطلب المالك استئنافه.",
       "defer_reason": "قرار المالك 2026-10-15: تأجيل Shoulder Y لأن الصورة غير معتمدة؛ إيقاف رفع الصور والفحوص الجديدة والتركيز على بقية جوانب المشروع.",
       "source_ref": "docs/RAD-LAB_Medical_Reference_Shoulder_Y.md §12؛ DECISIONS.md S-SHOULDER-Y-1…5، O92/O94/O97؛ docs/session-shoulder-y-gates-2026-10-15.md"
+    },
+    {
+      "id": "RAD-037",
+      "title": "مراجعة جودة تنفيذ فحص الحوض (pelvis-ap-supine)",
+      "status": "review",
+      "priority": "high",
+      "description": "قال المالك (2026-10-15) إن تنفيذ فحص الحوض سيئ ويحتاج مراجعة. لم تُحدَّد بعد جوانب القصور (المشهد، الصورة، الدوران، التسجيل، التغذية الراجعة، أم غيرها)؛ تُجمع من المالك قبل أي تعديل. لا تغيير على الكود في هذا البند الآن، ولا يلغي دمج PR #34 ولا RAD-029 (ملاءمة الصورة) ولا O84/O85.",
+      "source_ref": "DECISIONS.md O98؛ docs/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15"
     }
   ]
 }

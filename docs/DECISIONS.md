@@ -281,6 +281,7 @@ None of these blocks Sessions 8–9. Until decided, each stays labelled provisio
 | **O84** | Pelvis image suitability/coverage and edge-graphic cleanup. Commons case-1 image is declared public domain; attached preview has R, lettering and circular graphic. | Owner authorized pixel cleanup of non-anatomical edge only (S-PELVIS-REF-2). Inspect derivative and coverage/normality before product adoption; record provenance/checksums if imported. |
 | **O85** | Honest one-image pelvic/femoral rotation model and landmarks not established. | Evaluate pelvic symmetry and femoral-neck/trochanter cues separately; report undrawable effects explicitly. No automatic reuse of chest/ankle warps or fabricated anatomy. |
 | **O86** | Currency of 2018 pelvic shielding recommendations not reviewed. | Physicist reviews current authoritative guidance before product advice; no new shielding control/scoring. |
+| **O98** | **Owner (2026-10-15): the Pelvis AP implementation (`pelvis-ap-supine`, PR #34) is poor and needs a review.** The specific shortcomings are not yet stated (scene, image, rotation cue, scoring, feedback or other). | Owner lists the problems; a docs-only triage session classifies them (defect / teaching choice / out of scope) before any fix. Status RAD-037. Does not reopen O84/O85/O5. |
 
 ## Session 7 implementation choices (made without the owner; the owner may overrule)
 
