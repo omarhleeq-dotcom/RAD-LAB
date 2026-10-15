@@ -321,7 +321,7 @@ EXPLAIN اصطناعي على SQL الفعلي عبر نسخة مؤقتة خار
 
 #### 3. بحسب المهمة
 
-أكد المالك الدمج والمراجعة وتجربة المرشحات؛ تحقق Git من دمج [PR #63](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/63) على main `ca34efcdad28d1d01cc6be9bfb7a961f74547a24`. سُجل S-PILOT-25، وحُدّثت RAD-047/049 فقط مع revision39 وupdated_at منطقي2026-10-16T14:00:05Z؛ لا وقت رصد مختلق ولا إغلاقO105. فرع الاستئناف `feat/rad-047b3-record-contracts`. لم تُنسب للمالك تفاصيل اختبار لم يذكرها، ولم تُعدّل RAD-048 أو مهام أخرى.
+أكد المالك الدمج والمراجعة وتجربة المرشحات؛ تحقق Git من دمج [PR #63](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/63) على main `ca34efcdad28d1d01cc6be9bfb7a961f74547a24`. سُجل S-PILOT-25، وحُدّثت RAD-047/049 فقط مع revision39 وupdated_at منطقي2026-10-16T14:00:05Z؛ لا وقت رصد مختلق ولا إغلاقO105. فرع الاستئناف `feat/rad-047b3-record-contracts`؛ [Draft PR #64](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/64) للتحضير، commit `b354187`. لم تُنسب للمالك تفاصيل اختبار لم يذكرها، ولم تُعدّل RAD-048 أو مهام أخرى.
 
 #### 4. التصميم المشترك وSCALE CHECK
 
