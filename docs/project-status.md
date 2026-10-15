@@ -21,8 +21,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.0",
-  "revision": 32,
-  "updated_at": "2026-10-16T08:00:00Z",
+  "revision": 33,
+  "updated_at": "2026-10-16T12:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-046",
   "tasks": [
@@ -406,7 +406,7 @@
       "title": "لوحة المالك وتصدير CSV",
       "status": "in_progress",
       "priority": "medium",
-      "description": "044a منفَّذ للمراجعة (صفحة المالك: قائمة المشاركين بالبريد وأزرار موافقة/إيقاف، migration ثانٍ يطبّقه المالك يدويًا). المتبقي من 044: عرض المحاولات والملاحظات وتصدير CSV، بعد RAD-042. كود M.",
+      "description": "044a منفَّذ للمراجعة (صفحة المالك: قائمة المشاركين بالبريد وأزرار موافقة/إيقاف، migration ثانٍ يطبّقه المالك يدويًا). 044b منفَّذ للمراجعة (فرع feat/rad-044b-owner-attempts-csv، Draft PR): عرض المحاولات والملاحظات لكل رمز مشارك في صفحة المالك وتنزيل ملفَّي CSV (محاولات وملاحظات) بلا بريد إلكتروني؛ بلا migration (RLS يسمح للمالك بالقراءة)؛ DECISIONS S-PILOT-12؛ فحص متصفح مع Supabase مُحاكى؛ لم يُجرَّب حيًّا ولم يُدمج. كود M.",
       "source_ref": "DECISIONS S-PILOT-8؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 5"
     },
     {

@@ -1304,7 +1304,36 @@
     "warnUnconfirmed": "This email address has not been confirmed. Anyone can type any address; approve only if you know this person.",
     "errors": {
       "load": "Could not load the list. Check your connection and try again.",
-      "action": "The change was refused or failed. Refresh and try again."
+      "action": "The change was refused or failed. Refresh and try again.",
+      "data": "Could not load attempts and notes. The participant list above is still valid; refresh to try again."
+    },
+    "csv": {
+      "attempts": "Download attempts (CSV)",
+      "notes": "Download notes (CSV)",
+      "hint": "Files use participant codes only: no email addresses. Open them in Excel or Sheets; times are UTC."
+    },
+    "activity": {
+      "total": "{attempts} saved attempts and {notes} notes in total.",
+      "none": "No attempts or notes yet.",
+      "summary": "{attempts} attempts · {notes} notes",
+      "attemptsTitle": "Attempts, newest first",
+      "attemptsOf": "Attempts of {code}",
+      "notesTitle": "Notes, newest first",
+      "passed": "Passed",
+      "notPassed": "Not passed",
+      "onAttempt": "about attempt {no}",
+      "noAttempt": "not linked to an attempt",
+      "truncated": "Only the newest 10,000 rows of each kind were loaded, so the list and the CSV are partial.",
+      "skipped": "Rows that could not be read and were left out: {count}.",
+      "col": {
+        "no": "No.",
+        "exam": "Exam",
+        "score": "Score",
+        "result": "Result",
+        "critical": "Critical findings",
+        "language": "Language",
+        "finished": "Finished"
+      }
     }
   },
   "terms": {
