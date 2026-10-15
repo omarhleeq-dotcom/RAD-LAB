@@ -17,9 +17,9 @@
 | Headers | `public/_headers` | `X-Robots-Tag: noindex, nofollow, noarchive`, `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, `Permissions-Policy` (camera, mic, geolocation… off), COOP, a CSP, immutable caching for hashed assets |
 | Crawlers | `public/robots.txt` (`Disallow: /`) and `<meta name="robots" content="noindex, nofollow">` on every page | |
 | Visible preview banner | every page, EN + AR (`common.previewBanner`) | "Educational prototype — not for clinical use; values pending educator/physicist review" |
-| Runtime requests | none external | no analytics, no tracking, no fonts/CDN (system font stack), no secrets, no env vars needed. Verified by `npm run preview:smoke` (every request same-origin, no console/CSP errors) |
+| Runtime requests | none external (one optional exception) | no analytics, no tracking, no fonts/CDN (system font stack), no secrets. Verified by `npm run preview:smoke` (every request same-origin, no console/CSP errors). **RAD-041a:** if the repo variable `NEXT_PUBLIC_SUPABASE_URL` is set, `npm run build:pages` adds that one `https://<ref>.supabase.co` origin to `connect-src` in `out/_headers` and `preview:smoke` allows only that origin (setup: `docs/PILOT_SUPABASE_SETUP.md`) |
 
-**CSP note.** `script-src` has to include `'unsafe-inline'` because a static Next export embeds its bootstrap as inline scripts and a static host cannot add per-request nonces; `style-src` needs it for inline styles. Everything else is `'self'` only. This is acceptable for a no-login, no-data prototype; tighten with hashes if the app ever handles accounts.
+**CSP note.** `script-src` has to include `'unsafe-inline'` because a static Next export embeds its bootstrap as inline scripts and a static host cannot add per-request nonces; `style-src` needs it for inline styles. Everything else is `'self'` only. This was acceptable for a no-login, no-data prototype. **The pilot now has accounts (RAD-041a/b), so tightening with script hashes is an open item (O104)** before any wider release.
 
 ## A. Primary route: GitHub Actions direct upload
 
