@@ -449,3 +449,5 @@ Owner requested backup before merging #71 and ran it locally on Windows/D: CLI2.
 ### RAD-050 merge verified, live checks pending — 2026-10-16
 
 Owner reports #71 merged; one PR API read and Git fetch confirm main 6021321, local main fast-forwarded clean. S-PILOT-39 records merge only: deployment, live AR/EN Terms, renewed acceptance and saving after simulator reload still await owner evidence. RAD-050 remains review/waiting_on owner; no consent bump/code change, merge action, preview or deployment polling. Follow-up docs branch docs/rad-050-live-verification; Markdown/status/diff QA only.
+
+Owner subsequently supplied full production Arabic Terms text and /ar/terms screenshot with the pilot-version notice (S-PILOT-39.1). Seven sections/17 paragraphs, closing and approved password override match; English/renewal/saving evidence still pending. No agent site/preview navigation or new code/version change.
