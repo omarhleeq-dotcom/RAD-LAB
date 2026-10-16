@@ -1,15 +1,16 @@
 "use client";
 
 // The account page body (RAD-041b): sign in / create account, "waiting for approval", approved, suspended. Messages: namespace `account`.
-import { useLocale, useTranslations } from "next-intl";
-import { type FormEvent, useState } from "react";
+import { useTranslations } from "next-intl";
+import { type FormEvent, useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { type AuthErrorKey, passwordProblem, recoveryFromHash } from "./account-state";
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
 import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
 import { SURVEY_URL, surveyHref } from "./survey";
-import { useAccount } from "./useAccount";
+import { useSessionAccount } from "./SessionGate";
+import { safeReturnPath } from "./session-access";
 
 type Mode = "signIn" | "signUp";
 const field = "mt-1 block w-full rounded-md border border-line bg-panel px-3 py-2 text-base";
@@ -17,9 +18,7 @@ const primary = "rounded-md bg-brand px-4 py-2 font-semibold text-white hover:bg
 
 export function AccountPanel() {
   const t = useTranslations("account");
-  const locale = useLocale();
-  const redirectTo = typeof window === "undefined" ? "" : `${window.location.origin}/${locale}/account`;
-  const { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useAccount(redirectTo);
+  const { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useSessionAccount();
   const [mode, setMode] = useState<Mode>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,6 +32,12 @@ export function AccountPanel() {
   // The reset link lands here with a fragment; it is read once, before supabase-js clears it. Hydration is unaffected: nothing below uses it while loading.
   const [fragment, setFragment] = useState<"recovery" | "linkError" | null>(() => (typeof window === "undefined" ? null : recoveryFromHash(window.location.hash)));
   const [changed, setChanged] = useState(false);
+
+  useEffect(() => {
+    if (state.kind !== "signedIn" || state.profile.status !== "approved" || fragment !== null || changed) return;
+    const destination = safeReturnPath(new URLSearchParams(window.location.search).get("returnTo"));
+    if (destination) window.location.replace(destination);
+  }, [state, fragment, changed]);
 
   if (!PILOT) {
     return <p data-testid="account-off" className="rounded-lg border border-dashed border-line bg-paper p-5 text-muted">{t("notEnabled")}</p>;
