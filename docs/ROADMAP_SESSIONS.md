@@ -413,3 +413,27 @@ CSVv1 ثابت للصفوف المدعومة، بما فيه مسار الأجز
 #### 8. قائمة المالك على الهاتف والاستئناف
 
 بعد مراجعة المسودة وتهيئة staging: EN/AR، محاولة محفوظة ثم ملاحظة مرتبطة، مرشحات المشارك والتاريخ وexam، تنزيل أجزاء CSV والنص العربي وحماية الصيغ، ظهور الفشل والجزئية عند انقطاع الاستمرار، وحالات pending/suspended وعدم الموافقة. إثبات حفظ التنزيل في الجهاز فحص مالك فعلي؛ الاختبارات المحاكية لا تثبته. تجربة المرشحات السابقة لا تثبت CSV أو الهاتف أو الاستعادة. برومبت الاستئناف جاهز في HANDOFF §5؛ لا يلزم بدء سياسة جديدة لإنهاء المراجعة.
+
+## RAD-050 — Terms consistency review (2026-10-16, DOCS, review)
+
+From updated main `d7532c8`, branch `docs/rad-050-terms-review`: [76 sentence/label rows, EN/AR proposals, owner questions and confirmations](TERMS_REVIEW_2026-10-16.md); S-PILOT-31.1…11 are PROPOSED, none accepted. No messages/code/CONSENT_VERSION change. RAD-050 = review / waiting_on owner. Six documentation files; no build or browser check in this session. [Next prompt](prompts/rad-050-apply-owner-answers.md) applies confirmed answers with one consent bump and mocked checkbox/consent EN/AR × 390/1440 + axe. S-PILOT-14/15 and O105 remain open; review merge is not policy acceptance.
+
+### RAD-050 owner discussion recorded — 2026-10-16 (Asia/Amman)
+
+Owner answers and pasted EN/AR draft, with final “100%” to three amendments, are now recorded in S-PILOT-32 and [the review continuation](TERMS_REVIEW_2026-10-16.md). [Selected bilingual draft](TERMS_OWNER_DRAFT_2026-10-16.md) is approved **for technical review, not applied/verified**; password encryption, tracking settings and erasure/aggregate workflow remain gates. S-PILOT-31 stays historical PROPOSED; S-PILOT-14/15 receive only the explicit superseding answers, not blanket acceptance. Existing full-note CSV retained; internal survey deferred, no external tool selected; no backups reconfirmed, existing setup §8 local backup/restore follows important current work ahead of survey. Seven docs only (seventh preserves owner-selected text); no application/version changes or live tests. RAD-050 stays review/waiting_on owner, revision46/logical updated_at +1 second; original account count not queried. Draft PR #70 stays draft, no merge/poll/preview.
+
+### RAD-050 verification only — 2026-10-16 (Asia/Amman)
+
+Owner asks verification now, application next session. S-PILOT-33/[verification section](TERMS_REVIEW_2026-10-16.md) record official bcrypt-vs-encryption finding and exact correction pending owner approval, Brevo anonymisation versus full disabling, log/cascade/copy boundaries, absent aggregate workflow and conditional source survey-build evidence. Actual Brevo/live artifact need owner confirmation; repository-variable names read denied403, no bypass. Seven existing docs only, no settings/code/version/live-data actions, no build/preview/CI polling. RAD-050 remains review/waiting_on owner; revision47/logical timestamp +1 second. PR #70 open/draft when checked; no merge performed.
+
+### RAD-050 password choice / Brevo before-state — 2026-10-16 (Asia/Amman)
+
+S-PILOT-34 records the owner's accepted simple account-service/no-display password sentence, superseding encrypted-format preference for next session; historical text preserved with explicit override. Brevo screenshot verifies Anonymous email tracking=No before change, owner intends Yes but Save/reload unconfirmed; no full-off claim. Move to final erasure/summary note and read-only retention settings. Seven docs, revision48/logical +1 second, no messages/version/settings mutation by agent. No code application this session.
+
+### RAD-050 final-note retention evidence — 2026-10-16 (Asia/Amman)
+
+S-PILOT-35 records the owner's Brevo Retention rules screenshot: All senders / logs1 month / Never store previews (new emails). Visible configuration is not proof of successful save/reload, expired/historical deletion or all provider-copy erasure, and is not a pilot raw-event horizon decision. Tracking Yes save remains unconfirmed. Seven docs; revision49/logical +1 second; approved password override retained, no published text/code/version/settings action. Owner CSV/summary process and provider limits remain separate follow-ups; next-session application only.
+
+### RAD-050 tracking confirmation / verification record complete — 2026-10-16 (Asia/Amman)
+
+S-PILOT-36 records owner's «Tam» as completion of Yes/Save/reopen instructions; this is owner-reported persistence, not screenshot/direct/mail-flow proof or full tracking disable. Supersedes pending after-state, retains earlier No screenshot as history. Selected password override already approved; provider/source/cascade/retention observations and copy/summary limits documented. Seven docs only, revision50/logical +1 second, review/waiting_on owner for document review/merge; next session applies text with one consent bump and mocked QA. No code/version/live-data/settings action by agent, no merge/poll/preview; backup/restore and internal survey remain deferred.
