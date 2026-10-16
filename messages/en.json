@@ -11,7 +11,8 @@
     "skipToContent": "Skip to main content",
     "loading": "Loading…",
     "previewBanner": "Educational prototype — not for clinical use; values pending educator/physicist review",
-    "disclaimer": "Educational simulator — not a diagnostic or clinically validated system. Do not use it for patient care. Technique and tolerance values are provisional demonstration data until reviewed by an educator or medical physicist."
+    "disclaimer": "Educational simulator — not a diagnostic or clinically validated system. Do not use it for patient care. Technique and tolerance values are provisional demonstration data until reviewed by an educator or medical physicist.",
+    "creditsLink": "Sources and Credits"
   },
   "home": {
     "title": "Practice radiography before the real patient.",
@@ -1420,5 +1421,30 @@
       "p2": "Your account is for personal use and must not be shared with others. Training content must not be republished. You may share a screenshot of your result or talk about your experience. You must not attempt to disrupt the operation of the website."
     },
     "closing": "By ticking “I agree”, you confirm that you have read this page and agree to participate as described."
+  },
+  "credits": {
+    "title": "Sources and Credits",
+    "lead": "Sources for educational appearance and scientific background. A reference radiograph is not a diagnostic image of the simulated patient.",
+    "images": "Reference radiographs",
+    "author": "Author / provider",
+    "license": "Licence / status",
+    "date": "Recorded source date",
+    "modifications": "Project modifications",
+    "verified": "Independently verified source page and original-file checksum.",
+    "ownerVerified": "Owner-verified licence evidence accepted. This does not establish an independent match of the supplied image bytes to the linked source.",
+    "sourceLinkNote": "For owner-verified images, linked titles are the recorded source or candidate source; independent identity is not claimed.",
+    "deferred": "Owner-verified basis; official NIH terms remain unverified. Earlier terms were recorded from a secondary source. Commercial-use permission is not established; review is deferred until before release.",
+    "pendingLicense": "Official terms pending verification",
+    "science": "Textbooks, guidelines and scientific references",
+    "scienceLead": "Bontrager, 9th edition, governs X-ray positioning and technique; other sources support it. Facts are paraphrased and cited. No book pages, tables, figures or text are reproduced. Inclusion does not imply institutional endorsement. Clinical values and teaching approximations remain subject to educator / physicist review.",
+    "provenance": "The library notes record reading by the owner’s advisor, without independent rechecking of the originals in repository sessions. Bontrager shoulder / pelvis pages were also read directly in a later session. Clark is used only at p.10; its chest chapter is unread. StatPearls revision and licence were not recorded; only paraphrased facts are used.",
+    "governing": "Governing reference",
+    "supporting": "Supporting reference — library reading recorded",
+    "recorded": "Cited in earlier PA references — original reading / locators incomplete",
+    "unreadTitle": "Proposed or unread material",
+    "unread": "Merrill’s atlas, Clark’s chest chapter, additional ACR / RCR / AIR guidance and abstract-only papers are not presented as support for implemented rules. Further IAEA documents remain unobtained beyond the material already cited in the PA references.",
+    "originals": "Original educational drawings",
+    "originalsBody": "The project’s positioning schematics, procedural overlays and learner-controlled side markers are original RAD-LAB work according to the asset record. The external radiographs credited above retain their own provenance and licence status.",
+    "details": "Full sources and credits"
   }
 }

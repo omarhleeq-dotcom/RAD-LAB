@@ -74,6 +74,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           <footer className="border-t border-line bg-panel">
             <p role="note" className="mx-auto max-w-7xl px-4 py-3 text-xs text-muted">
               {t("disclaimer")}
+              <Link href="/credits" className="ms-3 inline-block min-h-6 text-brand underline">{t("creditsLink")}</Link>
             </p>
           </footer>
         </NextIntlClientProvider>
