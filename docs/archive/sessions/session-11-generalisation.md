@@ -1,6 +1,6 @@
 # Session 11 — engine generalisation against the Chest Lateral + Chest AP needs
 
-**Scope (S10-1, S10-2, S10b-19, S11-1 … S11-4):** build only the generic mechanisms that [`SESSION_11_NEEDS_SUMMARY.md`](SESSION_11_NEEDS_SUMMARY.md) marks *Needed*, as optional additions that Chest PA does not use. **No Lateral / AP exam, case, asset, medical value or scoring rule was added** (Sessions 12 / 13), and none of the S10b PA scoring changes (kV, SID, rotation direction, marker presence) was made.
+**Scope (S10-1, S10-2, S10b-19, S11-1 … S11-4):** build only the generic mechanisms that [`docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md`](../analysis/SESSION_11_NEEDS_SUMMARY.md) marks *Needed*, as optional additions that Chest PA does not use. **No Lateral / AP exam, case, asset, medical value or scoring rule was added** (Sessions 12 / 13), and none of the S10b PA scoring changes (kV, SID, rotation direction, marker presence) was made.
 
 ## Mechanisms (all optional; Chest PA declares none of them)
 | Needs row | Mechanism | Where |

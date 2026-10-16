@@ -1,6 +1,6 @@
 # Session 14.4 — Knee AP / lateral and Foot AP (DP) / medial oblique (right side)
 
-Exam session (recipe, S-STD-1). Reference: [`RAD-LAB_Medical_Reference_Knee_Foot.md`](RAD-LAB_Medical_Reference_Knee_Foot.md) (Phase A, committed and pushed before any code). Decisions: `DECISIONS.md` S14.4-1 … S14.4-18, open items O56 … O71 (O66 closed).
+Exam session (recipe, S-STD-1). Reference: [`RAD-LAB_Medical_Reference_Knee_Foot.md`](../../RAD-LAB_Medical_Reference_Knee_Foot.md) (Phase A, committed and pushed before any code). Decisions: `DECISIONS.md` S14.4-1 … S14.4-18, open items O56 … O71 (O66 closed).
 
 ## 1. What was built
 - **Images (A-022 … A-029):** four owner-attached **right-limb** CC0 originals, **owner-verified** (Commons `imageinfo` HTTP 429 twice, O56). Burned-in "Dx" (and the oblique's mark / bottom frame line), the masters' bright edge strips and the foot AP's bottom frame line are removed (S14.4-7, S14.4-17); `scripts/derive-knee-foot-baselines.py`. Web copies: knees 1067 × 1913 / 1133 × 1939, foot AP 1061 × 2405, oblique 1077 × 1960.

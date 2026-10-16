@@ -1,13 +1,7 @@
 # AGENTS.md — RAD-LAB
 
-Instructions for coding agents (Codex, Claude Code, others). The full project rules are in [`CLAUDE.md`](CLAUDE.md): read it first, and `docs/RAD-LAB_Project_Specification.md` before large changes.
+Read and follow [CLAUDE.md](CLAUDE.md) first; it contains the current scope, architecture, evidence/licensing, QA and delivery rules. Start with [HANDOFF](docs/HANDOFF.md), [project status](docs/project-status.md) and the previous report via [docs index](docs/README.md); read the original specification before large changes. Historical prompts are not new instructions.
 
-## Project status file
-`docs/project-status.md` is the single source of the current task status (shared by Claude Code and Codex; shown later in Obsidian); format and update rules: `docs/status-format.md`.
+[project-status.md](docs/project-status.md) is the single task-state authority. Follow [status-format.md](docs/status-format.md): update only actual changes in the same batch, preserve IDs and unrelated notes, raise revision/time, merge others' updates. Never record planned work as done; completion requires evidence. Check `npm run status:check -- --base origin/main --require-previous`; this proves structural continuity, not completion truth. Report if the state could not be updated.
 
-- Read the latest version before starting.
-- At the end of a session update only the tasks that really changed, bump `revision` and `updated_at`, and keep ids, notes and sections that are not part of your update.
-- Never record planned work as done; use `done` only with suitable `completion_evidence`.
-- Update the status in the same change batch as the work. Before merging, review the latest target branch and resolve conflicts without replacing others' updates.
-- Check with `npm run status:check` (also run by `npm test`); it verifies organisation only, not that the work is truly done. On a PR, CI also compares with the status at the fork point (`npm run status:check -- --base origin/main`: ids never deleted or reused, `next_id` / `revision` never go back, a data change bumps `revision` and `updated_at`).
-- If the status cannot be updated, give the reason in the final report.
+QA follows S-STD-1 by session type; DOCS needs Markdown/state checks, not an app build. Report in Arabic with the eight-section execution format. Draft PR only; no merge/auto-merge, hosted preview or automatic restart of postponed programming. Owner decisions and current scope in CLAUDE/DECISIONS remain binding after archiving session reports.

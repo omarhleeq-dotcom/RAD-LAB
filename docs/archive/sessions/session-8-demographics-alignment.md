@@ -1,6 +1,6 @@
 # Session 8 — D7: align the case demographics to the baseline image
 
-**Status: implemented (2026-10-06), branch `session-8-demographics`, PR: see the table in [`DECISIONS.md`](DECISIONS.md) (D7).** Decision D7 (owner-approved): the baseline radiograph (A-001) shows an adult woman of about 21, so the patient **case data** now says adult female, 21. The image is unchanged. Plan followed: [`session-7-demographics-impact.md`](session-7-demographics-impact.md) §3.
+**Status: implemented (2026-10-06), branch `session-8-demographics`, PR: see the table in [`DECISIONS.md`](../../DECISIONS.md) (D7).** Decision D7 (owner-approved): the baseline radiograph (A-001) shows an adult woman of about 21, so the patient **case data** now says adult female, 21. The image is unchanged. Plan followed: [`docs/archive/sessions/session-7-demographics-impact.md`](session-7-demographics-impact.md) §3.
 
 ## 1. Before / after — every changed field and string
 
@@ -57,7 +57,7 @@ Only `scripts/qa/characterisation/*` changed; **no PNG golden, no `golden-image-
 
 ## 4. Needs educator review
 
-- **Arabic feminine forms** of the instructions (خذي / احبسي / أخرجي / تنفّسي / ابقَي ثابتة / تحركي / استرخي), `أنثى عمرها ٢١ عامًا`, `قادرة`, `حالتها`, `وصلت المريضة وهي مائلة`, `المريضة المحاكاة`. Machine-drafted; Modern Standard Arabic; same status as the rest of the Arabic ([`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) lists them).
+- **Arabic feminine forms** of the instructions (خذي / احبسي / أخرجي / تنفّسي / ابقَي ثابتة / تحركي / استرخي), `أنثى عمرها ٢١ عامًا`, `قادرة`, `حالتها`, `وصلت المريضة وهي مائلة`, `المريضة المحاكاة`. Machine-drafted; Modern Standard Arabic; same status as the rest of the Arabic ([`ARABIC_TERMINOLOGY.md`](../../ARABIC_TERMINOLOGY.md) lists them).
 - **Generic المريض** in headings / labels / rule feedback: keep (generic noun) or make sex-aware.
 - **Name**: none was added (no name was needed). If the owner wants a named fictional patient, it is a one-line case-data change.
 - Whether a female case should prompt any sex- or age-specific teaching (e.g. radiation-protection questions) — **not added** (no source, outside D7).

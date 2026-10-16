@@ -108,7 +108,7 @@ Every rule must carry one of the five evidence classes in `EVIDENCE_CLASSES`: **
 
 ## 5. Marker convention for the lateral projection — OPEN (not decided)
 
-**Facts established by the sources read:** side identification is expected on radiographs as best practice (R4, R5, R6, as already recorded for PA in `session-5-qa.md` §0.1); WHO-CHEST (S2 p.17) says the side marker is used to check that the film is the right way round — **it gives no lateral convention**; EC16260 (S1) and StatPearls (S3) were read for the lateral and state **no marker rule**. **ACR-CHEST (S4, Sec IV QC; Session 10b follow-up): each image must be permanently marked with the right or left side and the patient position** — marker *presence* is stated by a professional-society parameter; **no viewer-side / lateral letter convention** is given. **BONTRAGER-9 (S7, governing; p.32, 36): the R / L marker states the patient's side, placed on the receptor inside the lateral portion of the collimated border of the side identified, within the field and not over essential anatomy; after-the-fact digital annotation is not acceptable; PA / AP are displayed with the patient's right on the viewer's left; LATERALS are marked by the side of the patient closest to the receptor, with department-dependent display orientation.** This resolves option A of the table below (owner decision **S10b-21**, closes O6). **WHO-TECH (S6) lateral pages give no marker instruction** (its PA and AP pages show a Right / Left marker). Owner decision **S10b-8**: the **Lateral marker presence is recorded but not scored in v1** (educator to decide); the letter convention stays unscored per S10-5 until a source exists. **None of the sources states a convention for lateral projections** (R4's 137 laterals are all body parts, no rule). R8 shows the patient's side can often be inferred from the lateral image itself.
+**Facts established by the sources read:** side identification is expected on radiographs as best practice (R4, R5, R6, as already recorded for PA in `docs/archive/sessions/session-5-qa.md` §0.1); WHO-CHEST (S2 p.17) says the side marker is used to check that the film is the right way round — **it gives no lateral convention**; EC16260 (S1) and StatPearls (S3) were read for the lateral and state **no marker rule**. **ACR-CHEST (S4, Sec IV QC; Session 10b follow-up): each image must be permanently marked with the right or left side and the patient position** — marker *presence* is stated by a professional-society parameter; **no viewer-side / lateral letter convention** is given. **BONTRAGER-9 (S7, governing; p.32, 36): the R / L marker states the patient's side, placed on the receptor inside the lateral portion of the collimated border of the side identified, within the field and not over essential anatomy; after-the-fact digital annotation is not acceptable; PA / AP are displayed with the patient's right on the viewer's left; LATERALS are marked by the side of the patient closest to the receptor, with department-dependent display orientation.** This resolves option A of the table below (owner decision **S10b-21**, closes O6). **WHO-TECH (S6) lateral pages give no marker instruction** (its PA and AP pages show a Right / Left marker). Owner decision **S10b-8**: the **Lateral marker presence is recorded but not scored in v1** (educator to decide); the letter convention stays unscored per S10-5 until a source exists. **None of the sources states a convention for lateral projections** (R4's 137 laterals are all body parts, no rule). R8 shows the patient's side can often be inferred from the lateral image itself.
 
 **A derivation, not a medical claim (marked as such):** the PA convention in the code (`PositioningSpec.markerSide`: L on the viewer's right half, R on the left) maps the marker letter to a *horizontal half of the displayed detector*. In a lateral display the horizontal axis of the detector runs anterior ↔ posterior, not patient left ↔ right, so a viewer-half rule cannot transfer unchanged. The wrong-side-marker critical finding, `evalMarker` and `RenderPlan.marker` all use that rule today. A lateral therefore needs a **different rule kind or no scored marker rule**.
 
@@ -141,7 +141,7 @@ Every rule must carry one of the five evidence classes in `EVIDENCE_CLASSES`: **
 Proposed Lateral terms are in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) ("Session 10 — Chest Lateral"), **pending educator review**; no existing UI string was changed.
 
 ## 8. Needs (for the generalisation session)
-Compared with **Chest PA as implemented today** (`SimulationSettings`, `CATEGORIES`, `ImageVariantId`, `EffectId`, `CriticalFindingId`, `RadiographAssetSpec`, scene `chest-pa-frontal`). Marks: **same** as PA · **differs** · **new** · **unknown — source needed**. Combined with Chest AP in [`SESSION_11_NEEDS_SUMMARY.md`](SESSION_11_NEEDS_SUMMARY.md).
+Compared with **Chest PA as implemented today** (`SimulationSettings`, `CATEGORIES`, `ImageVariantId`, `EffectId`, `CriticalFindingId`, `RadiographAssetSpec`, scene `chest-pa-frontal`). Marks: **same** as PA · **differs** · **new** · **unknown — source needed**. Combined with Chest AP in [`docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md`](archive/analysis/SESSION_11_NEEDS_SUMMARY.md).
 
 ### 8.1 Controls (what the student sets)
 | Item (PA today) | Lateral | Mark | Note / missing source |
@@ -212,7 +212,7 @@ Compared with **Chest PA as implemented today** (`SimulationSettings`, `CATEGORI
 ### 8.8 Assets (licence-verified only — none fetched or added)
 | Asset | Status |
 |---|---|
-| Lateral chest baseline radiograph, openly licensed (CC0 / CC BY), verified at source, provenance (registry `A-006+`), annotations neutralised, landmarks authored | **OPEN — none sourced.** `MODALITY_SOURCES_CANDIDATES.md` lists Wikimedia Commons lateral chest images as "to verify". A schematic / phantom fallback lowers realism and must be labelled. |
+| Lateral chest baseline radiograph, openly licensed (CC0 / CC BY), verified at source, provenance (registry `A-006+`), annotations neutralised, landmarks authored | **OPEN — none sourced.** `docs/archive/analysis/MODALITY_SOURCES_CANDIDATES.md` lists Wikimedia Commons lateral chest images as "to verify". A schematic / phantom fallback lowers realism and must be labelled. |
 | Scene art (own-work SVG) | to be authored in Session 12 |
 
 ## 9. Generalisation (S7-4) mapping — Lateral
@@ -228,7 +228,7 @@ Compared with **Chest PA as implemented today** (`SimulationSettings`, `CATEGORI
 | Move to `modalities/xray/*` | **Not needed → deferred** | No Lateral dependency; tied to the first non-X-ray engine. |
 | Migrating consumers off `RadCase` | **Not needed → deferred** | S7-2 strangler; Lateral composes through `composeCase()`. |
 
-The combined mapping across PA, Lateral and AP is in [`SESSION_11_NEEDS_SUMMARY.md`](SESSION_11_NEEDS_SUMMARY.md).
+The combined mapping across PA, Lateral and AP is in [`docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md`](archive/analysis/SESSION_11_NEEDS_SUMMARY.md).
 
 ## 10. Open owner decisions and open items
 - **O6** marker convention (§5) · **O7** lateral side(s) offered (§3) — in `DECISIONS.md`.

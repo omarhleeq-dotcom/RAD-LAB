@@ -1,6 +1,6 @@
 # Session 14.3 — Elbow AP (extended) and Elbow Lateral (flexed 90°)
 
-Exam session (recipe, S-STD-1). Reference: [`RAD-LAB_Medical_Reference_Elbow.md`](RAD-LAB_Medical_Reference_Elbow.md). Decisions: `DECISIONS.md` S14.3-5 … S14.3-12, open items O47 … O52 (O43 / O44 answered).
+Exam session (recipe, S-STD-1). Reference: [`RAD-LAB_Medical_Reference_Elbow.md`](../../RAD-LAB_Medical_Reference_Elbow.md). Decisions: `DECISIONS.md` S14.3-5 … S14.3-12, open items O47 … O52 (O43 / O44 answered).
 
 ## 1. What was built
 - **Images (A-018 … A-021):** owner-attached CC0 files, **owner-verified** (Commons API HTTP 429 twice, O47). AP: "Sin" filled, "F" and a frame line cropped (S14.3-7, O48); lateral: no text. `scripts/derive-elbow-baselines.py`.

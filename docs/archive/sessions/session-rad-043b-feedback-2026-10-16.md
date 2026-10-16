@@ -1,6 +1,6 @@
 # RAD-043b — زر الملاحظات ورابط الاستبيان (جلسة 2026-10-16)
 
-الفرع `feat/rad-043b-feedback` من main بعد دمج PR #56. القرارات: [DECISIONS S-PILOT-11](DECISIONS.md). دليل المالك: [PILOT_SUPABASE_SETUP.md](PILOT_SUPABASE_SETUP.md) §4هـ.
+الفرع `feat/rad-043b-feedback` من main بعد دمج PR #56. القرارات: [DECISIONS S-PILOT-11](../../DECISIONS.md). دليل المالك: [PILOT_SUPABASE_SETUP.md](../../PILOT_SUPABASE_SETUP.md) §4هـ.
 
 ## ما نُفِّذ
 - `supabase/migrations/20261019000100_feedback.sql`: جدول `feedback` (نص 1–1000 حرف)، RLS: إدراج لحساب معتمد وموافِق على محاولته هو فقط، قراءة الذات والمالك، بلا تعديل أو حذف.

@@ -51,7 +51,7 @@
 SESSION: RAD-053 — الكتالوج حسب المنطقة التشريحية
 Follow CLAUDE.md, docs/exam-recipe.md and S-STD-1. Start from updated main after verifying RAD-052 merged, else STOP AND REPORT.
 New branch, DRAFT PR only; no subscribe/poll, never open or share preview URL.
-READ FIRST: docs/HANDOFF.md، docs/session-rad-052-session-gate-2026-10-16.md، docs/session-ui-audit-2026-10-16.md §4، DECISIONS S-ASSESS-1 وS-STD-3، src/data/modalities.ts وصفحتا الرئيسية وmodality.
+READ FIRST: docs/HANDOFF.md، docs/archive/sessions/session-rad-052-session-gate-2026-10-16.md، docs/archive/sessions/session-ui-audit-2026-10-16.md §4، DECISIONS S-ASSESS-1 وS-STD-3، src/data/modalities.ts وصفحتا الرئيسية وmodality.
 SCOPE: تجميع فحوص X-ray حسب bodyPart من البيانات؛ أسماء المناطق EN/AR في سجل مفتوح؛ فصل CT/MRI/US في قسم «قريبًا» بلا نص طبي أو صور.
 CHANGE BUDGET: ≤12 ملفًا؛ حدّد قائمة الملفات قبل التعديل. لا تغيّر الحارس أو بيانات الفحوص أو المشاهد أو الصور أو hashes أو الطب والدرجات أو المظهر أو Assess.
 SCALE CHECK: لا قائمة فحوص أو مناطق في JSX؛ إضافة منطقة وفحص من السجلات؛ الحفاظ على روابط الفحوص والحالات الحالية.

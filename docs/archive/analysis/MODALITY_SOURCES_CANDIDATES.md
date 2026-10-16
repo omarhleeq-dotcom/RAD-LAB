@@ -28,7 +28,7 @@ Status legend: **Read** = read in full in an earlier session; **To verify** = no
 ### Candidate openly licensed imagery (all to verify at the file/dataset page)
 | Candidate | Licence as stated at source (recalled) | Notes |
 |---|---|---|
-| Wikimedia Commons *Category: X-rays of normal chest* and sibling categories (individual files, e.g. A-001 already registered) | per file; CC0 or CC BY acceptable, **BY-SA excluded**; check each file page and `extmetadata` | Verified record exists for A-001 only; candidates in `session-5-baseline-options.md` |
+| Wikimedia Commons *Category: X-rays of normal chest* and sibling categories (individual files, e.g. A-001 already registered) | per file; CC0 or CC BY acceptable, **BY-SA excluded**; check each file page and `extmetadata` | Verified record exists for A-001 only; candidates in `docs/archive/sessions/session-5-baseline-options.md` |
 | Wikimedia Commons images of lateral chest / AP chest / extremity / abdomen radiographs | per file | needed for Sessions 12–14 (S10-1 numbering); must check projection, annotations, patient demographics |
 | NIH Clinical Center **ChestX-ray14** (frontal chest, 112k images) | NIH states free download; exact licence/terms on the distribution page **to verify**; previous session flagged "needs per-use terms review" | de-identification claim to verify; many images are low-resolution (1024²), report-derived labels (not for rule validation) |
 | NLM **Open-i** / PMC open-access figures | each figure carries its article's licence (many CC BY, many NC/SA) | per-image check; useful only for figures, not as simulation baselines |

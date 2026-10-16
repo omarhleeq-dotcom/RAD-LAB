@@ -1,6 +1,6 @@
 # Session 14.2b — Hand PA + Hand Lateral (extension) exams (and Elbow reference, phase 2)
 
-Reference: [`RAD-LAB_Medical_Reference_Hand.md`](RAD-LAB_Medical_Reference_Hand.md) (S14.2a). Decisions: `DECISIONS.md` S14.2-6 … S14.2-11, O39 … O41; elbow: S14.3-1 … S14.3-4, O42 … O44.
+Reference: [`RAD-LAB_Medical_Reference_Hand.md`](../../RAD-LAB_Medical_Reference_Hand.md) (S14.2a). Decisions: `DECISIONS.md` S14.2-6 … S14.2-11, O39 … O41; elbow: S14.3-1 … S14.3-4, O42 … O44.
 
 ## 1. Built
 - `hand-pa` (Bontrager p.150) and `hand-lateral` (p.153, **extension** variant, S14.2-6): left hand, 31-year-old male, 24 × 30 cm detector, manual technique only, categories 28 / 22 / 17 / 22 / 11, critical findings = missing / wrong-side marker, letter-only `fixed-side` marker (L).

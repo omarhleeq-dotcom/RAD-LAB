@@ -3,7 +3,7 @@
 One list for everything Sessions 2–5 left for expert review. Tick, correct in the named file, and note the reviewer and date. Nothing here has been clinically validated. **Review status (S10b-20):** this review is not a gate for sessions or owner use; it is recommended before commercial release or teaching students; the owner is the first-line content reviewer.
 
 ## A. Positioning and geometry (`src/data/exams/xray/chest-pa-erect.ts`; moved from `src/data/cases/` in Session 7, values unchanged)
-- [ ] Required anatomy region 27 × 31 cm and its position (apices → costophrenic angles, both lungs). *(A Session 5 revision to 27 × 28 cm was reverted: no reference supports it. The baseline's landmark box is 27 × 28 cm of it, leaving ≈ 1.5 cm strips of neck / upper abdomen above and below: a field edge in a strip fails the score although every drawn lung stays visible; the result screen now labels this “margin only” — see `session-5-qa.md` §0.2.)* Decide: keep the demo region and its labelling, or adopt a baseline matching the region / measure the region on a validated baseline.
+- [ ] Required anatomy region 27 × 31 cm and its position (apices → costophrenic angles, both lungs). *(A Session 5 revision to 27 × 28 cm was reverted: no reference supports it. The baseline's landmark box is 27 × 28 cm of it, leaving ≈ 1.5 cm strips of neck / upper abdomen above and below: a field edge in a strip fails the score although every drawn lung stays visible; the result screen now labels this “margin only” — see `docs/archive/sessions/session-5-qa.md` §0.2.)* Decide: keep the demo region and its labelling, or adopt a baseline matching the region / measure the region on a validated baseline.
 - [ ] Centering target (midline; level 18.5 cm ≈ mid-thoracic / T7 teaching landmark) and tolerances (±1.4 / ±3 cm lateral, ±2.2 / ±5.4 cm vertical).
 - [ ] Rotation bands ±2° full / ±5° partial; whether a picture within ±2° should be drawn symmetric (Session 5 decision).
 - [ ] 5 cm excess-field margin.
@@ -51,7 +51,7 @@ Verdict: they support the *concept* that a marker should be present and correct,
 - [ ] Every term in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) and all case text.
 
 ## G. Assets
-- [ ] Baseline (young woman) and case patient (now an adult female, 21 — **D7 implemented in Session 8**, image unchanged): reviewer to confirm the new feminine Arabic wording (instructions, patient line, description, condition, effect text; list in [`session-8-demographics-alignment.md`](session-8-demographics-alignment.md) §4) and whether generic «المريض» stays ([`session-7-demographics-impact.md`](session-7-demographics-impact.md)). Options considered: [`session-5-baseline-options.md`](session-5-baseline-options.md).
+- [ ] Baseline (young woman) and case patient (now an adult female, 21 — **D7 implemented in Session 8**, image unchanged): reviewer to confirm the new feminine Arabic wording (instructions, patient line, description, condition, effect text; list in [`docs/archive/sessions/session-8-demographics-alignment.md`](archive/sessions/session-8-demographics-alignment.md) §4) and whether generic «المريض» stays ([`docs/archive/sessions/session-7-demographics-impact.md`](archive/sessions/session-7-demographics-impact.md)). Options considered: [`docs/archive/sessions/session-5-baseline-options.md`](archive/sessions/session-5-baseline-options.md).
 - [ ] Registry [`ASSET_PROVENANCE_AND_LICENSES.md`](ASSET_PROVENANCE_AND_LICENSES.md) A-001 … A-005.
 
 ## H. Pilot preview and platform (Session 6)

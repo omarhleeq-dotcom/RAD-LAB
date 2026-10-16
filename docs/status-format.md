@@ -37,12 +37,11 @@
 | `status` | نعم | `planned` · `in_progress` · `review` · `blocked` · `deferred` · `done` |
 | `priority` | نعم | `high` · `medium` · `low` |
 | `description` | نعم | المطلوب أو **المتبقي فعلياً** (لا تاريخ العمل) |
-| `source_ref` | نعم | تقرير/قرار/ملف يثبت الحالة (مثل `DECISIONS.md S14.5-9`، `docs/session-14.5-ankle.md`) |
+| `source_ref` | نعم | تقرير/قرار/ملف يثبت الحالة (مثل `DECISIONS.md S14.5-9`، `docs/archive/sessions/session-14.5-ankle.md`) |
 | `completion_evidence` | عند `done` فقط | دليل الإنجاز المناسب لطبيعة المهمة |
 | `blocker` | عند `blocked` | ما يمنع التقدّم ومن يملك رفعه |
 | `defer_reason` | عند `deferred` | لماذا أُجّلت ومن قرّر |
 | `conflict` | اختياري | وصف تعارض بين مصادر، مع المصدر المعتمد وسبب اعتماده |
-
 | `waiting_on` | صيغة 1.1: إلزامي عند `planned` / `in_progress` / `review` / `blocked`، ممنوع عند `done` | من تنتظر المهمة: `owner` (قرار أو عمل المالك) · `reviewer` (مراجِع بشري: معلّم، فيزيائي، مراجعة كود) · `code` (جلسة كود أو توثيق لم تبدأ بعد) · `external` (طرف خارجي: مزوّد، موقع ترخيص) |
 
 لا حقول أخرى. كل مهمة تظهر **مرة واحدة** فقط في البيانات الحالية؛ الإشارات المتبادلة تكون بالمعرّف داخل النص.

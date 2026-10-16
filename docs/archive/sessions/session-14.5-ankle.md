@@ -1,6 +1,6 @@
 # Session 14.5 — Ankle AP and Ankle lateral (left side, inferred)
 
-Exam session (recipe, S-STD-1). Reference: [`RAD-LAB_Medical_Reference_Ankle.md`](RAD-LAB_Medical_Reference_Ankle.md) (Phase A, committed and pushed before any code). Decisions: `DECISIONS.md` S14.5-1 … S14.5-8, open items O75 … O80.
+Exam session (recipe, S-STD-1). Reference: [`RAD-LAB_Medical_Reference_Ankle.md`](../../RAD-LAB_Medical_Reference_Ankle.md) (Phase A, committed and pushed before any code). Decisions: `DECISIONS.md` S14.5-1 … S14.5-8, open items O75 … O80.
 
 ## 1. Plan
 - **Phase A (docs only):** reference, provenance A-030 … A-033, `REGISTER` / `BONTRAGER-9` page lists, review-package rows, decisions, open items, the two masters under `assets/source/ankle/` (provenance masters, not served).

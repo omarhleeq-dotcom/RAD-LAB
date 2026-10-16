@@ -60,47 +60,47 @@
 
 | المسار الحالي | المسار المقترح |
 |---|---|
-| [docs/session-11-generalisation.md](session-11-generalisation.md) | `docs/archive/sessions/session-11-generalisation.md` |
-| [docs/session-12-chest-lateral.md](session-12-chest-lateral.md) | `docs/archive/sessions/session-12-chest-lateral.md` |
-| [docs/session-13-chest-ap.md](session-13-chest-ap.md) | `docs/archive/sessions/session-13-chest-ap.md` |
-| [docs/session-13b-scene-design.md](session-13b-scene-design.md) | `docs/archive/sessions/session-13b-scene-design.md` |
-| [docs/session-14-limbs-generalisation.md](session-14-limbs-generalisation.md) | `docs/archive/sessions/session-14-limbs-generalisation.md` |
-| [docs/session-14.2b-hand.md](session-14.2b-hand.md) | `docs/archive/sessions/session-14.2b-hand.md` |
-| [docs/session-14.3-elbow.md](session-14.3-elbow.md) | `docs/archive/sessions/session-14.3-elbow.md` |
-| [docs/session-14.4-knee-foot.md](session-14.4-knee-foot.md) | `docs/archive/sessions/session-14.4-knee-foot.md` |
-| [docs/session-14.5-ankle.md](session-14.5-ankle.md) | `docs/archive/sessions/session-14.5-ankle.md` |
-| [docs/session-2-positioning.md](session-2-positioning.md) | `docs/archive/sessions/session-2-positioning.md` |
-| [docs/session-3-technique.md](session-3-technique.md) | `docs/archive/sessions/session-3-technique.md` |
-| [docs/session-4-radiograph-renderer.md](session-4-radiograph-renderer.md) | `docs/archive/sessions/session-4-radiograph-renderer.md` |
-| [docs/session-5-baseline-options.md](session-5-baseline-options.md) | `docs/archive/sessions/session-5-baseline-options.md` |
-| [docs/session-5-qa-matrix.md](session-5-qa-matrix.md) | `docs/archive/sessions/session-5-qa-matrix.md` |
-| [docs/session-5-qa.md](session-5-qa.md) | `docs/archive/sessions/session-5-qa.md` |
-| [docs/session-7-demographics-impact.md](session-7-demographics-impact.md) | `docs/archive/sessions/session-7-demographics-impact.md` |
-| [docs/session-7-engine-generalisation.md](session-7-engine-generalisation.md) | `docs/archive/sessions/session-7-engine-generalisation.md` |
-| [docs/session-8-demographics-alignment.md](session-8-demographics-alignment.md) | `docs/archive/sessions/session-8-demographics-alignment.md` |
-| [docs/session-continuity-2026-10-11.md](session-continuity-2026-10-11.md) | `docs/archive/sessions/session-continuity-2026-10-11.md` |
-| [docs/session-continuity-2026-10-15.md](session-continuity-2026-10-15.md) | `docs/archive/sessions/session-continuity-2026-10-15.md` |
-| [docs/session-pelvis-ap-implementation.md](session-pelvis-ap-implementation.md) | `docs/archive/sessions/session-pelvis-ap-implementation.md` |
-| [docs/session-pelvis-ap-reference-2026-10-15.md](session-pelvis-ap-reference-2026-10-15.md) | `docs/archive/sessions/session-pelvis-ap-reference-2026-10-15.md` |
-| [docs/session-rad-041a-accounts-backend-2026-10-15.md](session-rad-041a-accounts-backend-2026-10-15.md) | `docs/archive/sessions/session-rad-041a-accounts-backend-2026-10-15.md` |
-| [docs/session-rad-041b-account-ui-2026-10-15.md](session-rad-041b-account-ui-2026-10-15.md) | `docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md` |
-| [docs/session-rad-043b-feedback-2026-10-16.md](session-rad-043b-feedback-2026-10-16.md) | `docs/archive/sessions/session-rad-043b-feedback-2026-10-16.md` |
-| [docs/session-rad-045-credits-2026-10-16.md](session-rad-045-credits-2026-10-16.md) | `docs/archive/sessions/session-rad-045-credits-2026-10-16.md` |
-| [docs/session-rad-047a-scalability-audit-2026-10-16.md](session-rad-047a-scalability-audit-2026-10-16.md) | `docs/archive/sessions/session-rad-047a-scalability-audit-2026-10-16.md` |
-| [docs/session-rad-050-terms-implementation-2026-10-16.md](session-rad-050-terms-implementation-2026-10-16.md) | `docs/archive/sessions/session-rad-050-terms-implementation-2026-10-16.md` |
-| [docs/session-rad-052-session-gate-2026-10-16.md](session-rad-052-session-gate-2026-10-16.md) | `docs/archive/sessions/session-rad-052-session-gate-2026-10-16.md` |
-| [docs/session-rad-053-catalogue-2026-10-16.md](session-rad-053-catalogue-2026-10-16.md) | `docs/archive/sessions/session-rad-053-catalogue-2026-10-16.md` |
-| [docs/session-rad-054-appearance-2026-10-16.md](session-rad-054-appearance-2026-10-16.md) | `docs/archive/sessions/session-rad-054-appearance-2026-10-16.md` |
-| [docs/session-rad-054-implementation-2026-10-16.md](session-rad-054-implementation-2026-10-16.md) | `docs/archive/sessions/session-rad-054-implementation-2026-10-16.md` |
-| [docs/session-rad-054-phone-fixes-2026-10-16.md](session-rad-054-phone-fixes-2026-10-16.md) | `docs/archive/sessions/session-rad-054-phone-fixes-2026-10-16.md` |
-| [docs/session-shoulder-grashey-implementation-2026-10-15.md](session-shoulder-grashey-implementation-2026-10-15.md) | `docs/archive/sessions/session-shoulder-grashey-implementation-2026-10-15.md` |
-| [docs/session-shoulder-grashey-reference-2026-10-15.md](session-shoulder-grashey-reference-2026-10-15.md) | `docs/archive/sessions/session-shoulder-grashey-reference-2026-10-15.md` |
-| [docs/session-shoulder-grashey-settlement-2026-10-15.md](session-shoulder-grashey-settlement-2026-10-15.md) | `docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md` |
-| [docs/session-shoulder-y-gates-2026-10-15.md](session-shoulder-y-gates-2026-10-15.md) | `docs/archive/sessions/session-shoulder-y-gates-2026-10-15.md` |
-| [docs/session-shoulder-y-reference-2026-10-15.md](session-shoulder-y-reference-2026-10-15.md) | `docs/archive/sessions/session-shoulder-y-reference-2026-10-15.md` |
-| [docs/session-ui-audit-2026-10-16.md](session-ui-audit-2026-10-16.md) | `docs/archive/sessions/session-ui-audit-2026-10-16.md` |
-| [docs/SESSION_11_NEEDS_SUMMARY.md](SESSION_11_NEEDS_SUMMARY.md) | `docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md` |
-| [docs/MODALITY_SOURCES_CANDIDATES.md](MODALITY_SOURCES_CANDIDATES.md) | `docs/archive/analysis/MODALITY_SOURCES_CANDIDATES.md` |
+| [docs/archive/sessions/session-11-generalisation.md](archive/sessions/session-11-generalisation.md) | `docs/archive/sessions/session-11-generalisation.md` |
+| [docs/archive/sessions/session-12-chest-lateral.md](archive/sessions/session-12-chest-lateral.md) | `docs/archive/sessions/session-12-chest-lateral.md` |
+| [docs/archive/sessions/session-13-chest-ap.md](archive/sessions/session-13-chest-ap.md) | `docs/archive/sessions/session-13-chest-ap.md` |
+| [docs/archive/sessions/session-13b-scene-design.md](archive/sessions/session-13b-scene-design.md) | `docs/archive/sessions/session-13b-scene-design.md` |
+| [docs/archive/sessions/session-14-limbs-generalisation.md](archive/sessions/session-14-limbs-generalisation.md) | `docs/archive/sessions/session-14-limbs-generalisation.md` |
+| [docs/archive/sessions/session-14.2b-hand.md](archive/sessions/session-14.2b-hand.md) | `docs/archive/sessions/session-14.2b-hand.md` |
+| [docs/archive/sessions/session-14.3-elbow.md](archive/sessions/session-14.3-elbow.md) | `docs/archive/sessions/session-14.3-elbow.md` |
+| [docs/archive/sessions/session-14.4-knee-foot.md](archive/sessions/session-14.4-knee-foot.md) | `docs/archive/sessions/session-14.4-knee-foot.md` |
+| [docs/archive/sessions/session-14.5-ankle.md](archive/sessions/session-14.5-ankle.md) | `docs/archive/sessions/session-14.5-ankle.md` |
+| [docs/archive/sessions/session-2-positioning.md](archive/sessions/session-2-positioning.md) | `docs/archive/sessions/session-2-positioning.md` |
+| [docs/archive/sessions/session-3-technique.md](archive/sessions/session-3-technique.md) | `docs/archive/sessions/session-3-technique.md` |
+| [docs/archive/sessions/session-4-radiograph-renderer.md](archive/sessions/session-4-radiograph-renderer.md) | `docs/archive/sessions/session-4-radiograph-renderer.md` |
+| [docs/archive/sessions/session-5-baseline-options.md](archive/sessions/session-5-baseline-options.md) | `docs/archive/sessions/session-5-baseline-options.md` |
+| [docs/archive/sessions/session-5-qa-matrix.md](archive/sessions/session-5-qa-matrix.md) | `docs/archive/sessions/session-5-qa-matrix.md` |
+| [docs/archive/sessions/session-5-qa.md](archive/sessions/session-5-qa.md) | `docs/archive/sessions/session-5-qa.md` |
+| [docs/archive/sessions/session-7-demographics-impact.md](archive/sessions/session-7-demographics-impact.md) | `docs/archive/sessions/session-7-demographics-impact.md` |
+| [docs/archive/sessions/session-7-engine-generalisation.md](archive/sessions/session-7-engine-generalisation.md) | `docs/archive/sessions/session-7-engine-generalisation.md` |
+| [docs/archive/sessions/session-8-demographics-alignment.md](archive/sessions/session-8-demographics-alignment.md) | `docs/archive/sessions/session-8-demographics-alignment.md` |
+| [docs/archive/sessions/session-continuity-2026-10-11.md](archive/sessions/session-continuity-2026-10-11.md) | `docs/archive/sessions/session-continuity-2026-10-11.md` |
+| [docs/archive/sessions/session-continuity-2026-10-15.md](archive/sessions/session-continuity-2026-10-15.md) | `docs/archive/sessions/session-continuity-2026-10-15.md` |
+| [docs/archive/sessions/session-pelvis-ap-implementation.md](archive/sessions/session-pelvis-ap-implementation.md) | `docs/archive/sessions/session-pelvis-ap-implementation.md` |
+| [docs/archive/sessions/session-pelvis-ap-reference-2026-10-15.md](archive/sessions/session-pelvis-ap-reference-2026-10-15.md) | `docs/archive/sessions/session-pelvis-ap-reference-2026-10-15.md` |
+| [docs/archive/sessions/session-rad-041a-accounts-backend-2026-10-15.md](archive/sessions/session-rad-041a-accounts-backend-2026-10-15.md) | `docs/archive/sessions/session-rad-041a-accounts-backend-2026-10-15.md` |
+| [docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md](archive/sessions/session-rad-041b-account-ui-2026-10-15.md) | `docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md` |
+| [docs/archive/sessions/session-rad-043b-feedback-2026-10-16.md](archive/sessions/session-rad-043b-feedback-2026-10-16.md) | `docs/archive/sessions/session-rad-043b-feedback-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-045-credits-2026-10-16.md](archive/sessions/session-rad-045-credits-2026-10-16.md) | `docs/archive/sessions/session-rad-045-credits-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-047a-scalability-audit-2026-10-16.md](archive/sessions/session-rad-047a-scalability-audit-2026-10-16.md) | `docs/archive/sessions/session-rad-047a-scalability-audit-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-050-terms-implementation-2026-10-16.md](archive/sessions/session-rad-050-terms-implementation-2026-10-16.md) | `docs/archive/sessions/session-rad-050-terms-implementation-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-052-session-gate-2026-10-16.md](archive/sessions/session-rad-052-session-gate-2026-10-16.md) | `docs/archive/sessions/session-rad-052-session-gate-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-053-catalogue-2026-10-16.md](archive/sessions/session-rad-053-catalogue-2026-10-16.md) | `docs/archive/sessions/session-rad-053-catalogue-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-054-appearance-2026-10-16.md](archive/sessions/session-rad-054-appearance-2026-10-16.md) | `docs/archive/sessions/session-rad-054-appearance-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-054-implementation-2026-10-16.md](archive/sessions/session-rad-054-implementation-2026-10-16.md) | `docs/archive/sessions/session-rad-054-implementation-2026-10-16.md` |
+| [docs/archive/sessions/session-rad-054-phone-fixes-2026-10-16.md](archive/sessions/session-rad-054-phone-fixes-2026-10-16.md) | `docs/archive/sessions/session-rad-054-phone-fixes-2026-10-16.md` |
+| [docs/archive/sessions/session-shoulder-grashey-implementation-2026-10-15.md](archive/sessions/session-shoulder-grashey-implementation-2026-10-15.md) | `docs/archive/sessions/session-shoulder-grashey-implementation-2026-10-15.md` |
+| [docs/archive/sessions/session-shoulder-grashey-reference-2026-10-15.md](archive/sessions/session-shoulder-grashey-reference-2026-10-15.md) | `docs/archive/sessions/session-shoulder-grashey-reference-2026-10-15.md` |
+| [docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md](archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md) | `docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md` |
+| [docs/archive/sessions/session-shoulder-y-gates-2026-10-15.md](archive/sessions/session-shoulder-y-gates-2026-10-15.md) | `docs/archive/sessions/session-shoulder-y-gates-2026-10-15.md` |
+| [docs/archive/sessions/session-shoulder-y-reference-2026-10-15.md](archive/sessions/session-shoulder-y-reference-2026-10-15.md) | `docs/archive/sessions/session-shoulder-y-reference-2026-10-15.md` |
+| [docs/archive/sessions/session-ui-audit-2026-10-16.md](archive/sessions/session-ui-audit-2026-10-16.md) | `docs/archive/sessions/session-ui-audit-2026-10-16.md` |
+| [docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md](archive/analysis/SESSION_11_NEEDS_SUMMARY.md) | `docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md` |
+| [docs/archive/analysis/MODALITY_SOURCES_CANDIDATES.md](archive/analysis/MODALITY_SOURCES_CANDIDATES.md) | `docs/archive/analysis/MODALITY_SOURCES_CANDIDATES.md` |
 
 ### ميزانية الدفعة الثانية
 
@@ -135,10 +135,10 @@
 
 | مسار الإحالة القديم | المرجع الثابت الذي يبقى دون تعديل |
 |---|---|
-| `docs/session-5-qa.md` | `.github/workflows/ci.yml` |
-| `docs/session-7-demographics-impact.md` | `src/data/cases/chest-pa-erect.ts` |
-| `docs/session-13b-scene-design.md` | `src/features/positioning/LateralFigure.tsx` |
-| `docs/session-3-technique.md` | `src/features/technique/model.ts` |
+| `docs/archive/sessions/session-5-qa.md` | `.github/workflows/ci.yml` |
+| `docs/archive/sessions/session-7-demographics-impact.md` | `src/data/cases/chest-pa-erect.ts` |
+| `docs/archive/sessions/session-13b-scene-design.md` | `src/features/positioning/LateralFigure.tsx` |
+| `docs/archive/sessions/session-3-technique.md` | `src/features/technique/model.ts` |
 
 قبل النقل: افحص جميع الروابط والعناوين وsource_ref والإحالات النصية مرة أخرى، واحفظ خريطة old→new والمحتوى الأصلي. بعد النقل: أعد كتابة الروابط النسبية داخل المنقول وغير المنقول، واحفظ المعرفات والعناوين/إحالات التوافق المطلوبة. REVIEW_CHECKLIST وREVIEW_PACKAGE يبقيان نشطتين؛ لا تغيير لمرجع المصدر داخل الفحوص أو ملفات التوصيف.
 

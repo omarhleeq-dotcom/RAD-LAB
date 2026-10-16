@@ -128,7 +128,7 @@ Erect (department), semi-erect, supine, mobile / portable: **exam vs patient-sta
 Proposed AP terms are in [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md) ("Session 10 — Chest AP"), **pending educator review**; no existing UI string was changed.
 
 ## 8. Needs (for the generalisation session)
-Compared with **Chest PA as implemented today**. Marks: **same** · **differs** · **new** · **unknown — source needed**. Combined with Lateral in [`SESSION_11_NEEDS_SUMMARY.md`](SESSION_11_NEEDS_SUMMARY.md).
+Compared with **Chest PA as implemented today**. Marks: **same** · **differs** · **new** · **unknown — source needed**. Combined with Lateral in [`docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md`](archive/analysis/SESSION_11_NEEDS_SUMMARY.md).
 
 ### 8.1 Controls (what the student sets)
 | Item (PA today) | AP | Mark | Note / missing source |

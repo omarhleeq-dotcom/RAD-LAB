@@ -77,7 +77,7 @@
 | أعداد الحالات | مشتقة من البيانات القائمة |
 | المعاينة والتنبيه الطبي وprovisional | محفوظة |
 
-[المصدر والرخص](ASSET_PROVENANCE_AND_LICENSES.md#rad-054--platform-fonts-and-symbolic-catalogue-artwork-2026-10-16): SVG من مسارات أصلية بلا نسخ مشاهد أو صور أو tracing. ملفات الخطوط الخمسة وإشعارا OFL من التنفيذ الأول دون تغيير في المراجعة؛346292 بايت للخطوط، تحميل محلي فقط. [النص العربي](ARABIC_TERMINOLOGY.md) DRAFT.
+[المصدر والرخص](../../ASSET_PROVENANCE_AND_LICENSES.md#rad-054--platform-fonts-and-symbolic-catalogue-artwork-2026-10-16): SVG من مسارات أصلية بلا نسخ مشاهد أو صور أو tracing. ملفات الخطوط الخمسة وإشعارا OFL من التنفيذ الأول دون تغيير في المراجعة؛346292 بايت للخطوط، تحميل محلي فقط. [النص العربي](../../ARABIC_TERMINOLOGY.md) DRAFT.
 
 ## 6. دليل عدم التراجع وQA
 
