@@ -5,7 +5,7 @@
 ## 1. البداية الحالية
 - ثبت عبر GitHub API دمج #77 في2026-10-16T13:45:41Z؛ main محدّث عند `ee99f966a951c7383eb8ffa4230c62c8e13f6266`، شجرة البداية نظيفة.
 - الفرع `docs/rad-054-appearance-proposal`؛ ميزانية الدفعة4ملفات docs فقط. [تقرير المقترح غير المعتمد](session-rad-054-appearance-2026-10-16.md).
-- هذه مرحلة نقاش وقياس حسابي؛ لا تعديل مظهر أو رسائل أو اختبار أو hashes. Draft PR فقط؛ لا merge/auto-merge أو subscribe/poll أو معاينة مستضافة.
+- [Draft PR #78](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/78) توثيقي للمراجعة؛ هذه مرحلة نقاش وقياس حسابي؛ لا تعديل مظهر أو رسائل أو اختبار أو hashes. Draft PR فقط؛ لا merge/auto-merge أو subscribe/poll أو معاينة مستضافة.
 
 ## 2. المنجز والمنتظر
 - DONE: قراءة التعليمات وHANDOFF وRAD-053 والجرد§2–3؛ حصر مواضع التكرار وحساب تباين قيمCSS وعرض مقترح.
