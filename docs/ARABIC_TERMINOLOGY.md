@@ -362,8 +362,12 @@ Visual direction approved in S-UI-054-1…6; exact new Arabic UI text remains ma
 
 - shell: التنقل الرئيسي، مكتبة الفحوصات، حسابي، الاختبارات، المادة العلمية، فتح قائمة التنقل، إغلاق قائمة التنقل.
 - library: مكتبة الفحوصات؛ استعرض فحوص {modality} حسب المنطقة التشريحية؛ البحث في الفحوصات؛ ابحث عن فحص أو إسقاط أو منطقة؛ المناطق التشريحية؛ الكل؛ مسح الفلاتر؛ فتح الفحص.
-- grouped filters: الصدر، الطرف العلوي، الطرف السفلي، الحوض. Existing region/exam names remain as registered.
+- grouped filters (S-UI-054-8): الجذع (Body: الصدر والحوض حاليًا، البطن مستقبلًا)، الأطراف العلوية (Upper extremity)، الأطراف السفلية (Lower extremity)، الرأس والعمود الفقري «قريبًا» بلا فحوص أو روابط. Existing exam names remain as registered.
 - results plurals: لا توجد فحوص مطابقة؛ فحص واحد مطابق؛ فحصان مطابقان؛ # فحوص مطابقة؛ # فحصًا مطابقًا؛ # فحص مطابق.
 - case-count plurals: لا توجد حالات تدريبية؛ حالة تدريبية واحدة؛ حالتان تدريبيتان؛ # حالات تدريبية؛ # حالة تدريبية. Counts derive from actual case definitions, not assumed examples.
 - empty state: لا توجد فحوص مطابقة؛ جرّب بحثًا آخر أو امسح الفلاتر.
 - home.mvpNote: وضع التدريب (replaces the inaccurate “بدون حساب” claim). Existing preview, clinical disclaimer, provisional-warning text and all clinical messages stay unchanged.
+
+- Home revision (S-UI-054-9, DRAFT): الرئيسية؛ مساحتك التعليمية في RAD·LAB.؛ نظرة عامة؛ مساحة لتقدّمك؛ لا توجد بيانات لعرضها حاليًا. Empty presentation only, no fabricated ratings, statistics or assessment functionality.
+
+- Category-first library (S-UI-054-10, DRAFT): اختر تصنيف الفحوصات؛ الرجوع إلى التصنيفات. Search/clear stays within the chosen category; no all-exams view before selection.
