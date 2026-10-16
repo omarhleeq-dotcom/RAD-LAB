@@ -7,7 +7,8 @@ import { localize } from "@/lib/localized";
 import { ExamGraphic } from "./ExamGraphic";
 import { LIBRARY_REGIONS, filterLibrary, graphicOf, uniformlyProvisional, type LibrarySection } from "./library";
 
-// replaceState retains Next's history metadata and does not insert an extra Back step.
+// Each category is a navigation step: browser Back restores the category cards.
+// Preserve Next's history metadata so exam navigation and Forward continue to work.
 function subscribeCategory(notify: () => void) {
   window.addEventListener("hashchange", notify);
   window.addEventListener("popstate", notify);
@@ -18,7 +19,7 @@ const serverCategory = () => "";
 function selectCategory(region: string) {
   const url = new URL(window.location.href);
   url.hash = region ? new URLSearchParams({ category: region }).toString() : "";
-  window.history.replaceState(window.history.state, "", url);
+  window.history.pushState(window.history.state, "", url);
   window.dispatchEvent(new HashChangeEvent("hashchange"));
 }
 
@@ -45,12 +46,11 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
     previousRegion.current = region;
   }, [region]);
   const clear = () => { setQuery(""); searchInput.current?.focus(); };
-  const back = () => { setQuery(""); selectCategory(""); };
   if (!selected) return <section className="library-categories" aria-labelledby={headingId} data-testid="library-categories">
     <h2 id={headingId}>{t("chooseCategory")}</h2>
     <ul className="category-grid">
       {sections.map(({ region: entry, items: exams }) => <li key={entry.id}>
-        <button type="button" className="category-choice" data-region={entry.id} ref={(node) => { categoryButtons.current[entry.id] = node; }} onClick={() => selectCategory(entry.id)}>
+        <button type="button" className="category-choice" data-region={entry.id} ref={(node) => { categoryButtons.current[entry.id] = node; }} onClick={() => { setQuery(""); selectCategory(entry.id); }}>
           <div className="exam-art"><ExamGraphic kind={entry.graphic ?? graphicOf(exams[0]!)} /></div>
           <span className="category-choice-label">{localize(entry.name, locale)}<span aria-hidden="true">←</span></span>
         </button>
@@ -62,7 +62,6 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
     </ul>
   </section>;
   return <div className="library-browser">
-    <button type="button" className="clear-filters category-back" data-testid="back-to-categories" onClick={back}>{t("backToCategories")}</button>
     <section className="library-section" data-testid={`library-region-${selected.region.id}`} aria-labelledby={headingId}>
       <h2 id={headingId} ref={heading} tabIndex={-1}>{localize(selected.region.name, locale)}</h2>
       <div className="library-search"><label htmlFor={inputId}>{t("search")}</label><div className="search-field"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="10" cy="10" r="7" /><path d="m16 16 5 5" /></svg><input ref={searchInput} id={inputId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("searchPlaceholder")} autoComplete="off" /></div></div>

@@ -33,13 +33,11 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
   const ts = await getTranslations("sex");
   const th = await getTranslations("home");
   const cases = casesOf(exam);
-  const tl = await getTranslations("library");
   const libraryHref = categoryLibraryPath(m.id, exam.bodyPart);
 
   return (
     <div className="platform-page space-y-6">
       <Breadcrumb items={[{ label: localize(m.name, locale), href: libraryHref }, { label: localize(exam.title, locale) }]} />
-      <Link href={libraryHref} className="inline-flex min-h-11 items-center text-brand underline" data-testid="back-to-exams">{tl("backToExams")}</Link>
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-bold">{localize(exam.title, locale)}</h1>
         {exam.provisional && <span className="rounded bg-signal/20 px-2 py-1 text-sm font-medium text-warn">{tc("provisionalBadge")}</span>}
