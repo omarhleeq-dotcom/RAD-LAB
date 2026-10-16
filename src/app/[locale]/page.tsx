@@ -1,59 +1,26 @@
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { MODALITIES } from "@/data/modalities";
-import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { localize } from "@/lib/localized";
-import { modalityPath } from "@/features/platform/routes";
 
 export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const t = await getTranslations("home");
-  const tc = await getTranslations("common");
-
-  return (
-    <div className="platform-page">
-      <section className="max-w-3xl">
-        <p className="practice-chip">{t("mvpNote")}</p>
-        <h1 className="mt-2 text-3xl font-bold leading-tight sm:text-4xl">{t("title")}</h1>
-        <p className="mt-4 text-lg text-muted">{t("subtitle")}</p>
-      </section>
-
-      {([
-        { status: "available", heading: "catalog-heading", title: t("catalogTitle") },
-        { status: "planned", heading: "planned-heading", title: tc("comingSoon") },
-      ] as const).map(({ status, heading, title }) => MODALITIES.some((m) => m.status === status) && (
-        <section key={status} className="mt-10" aria-labelledby={heading} data-testid={`${status}-modalities`}>
-          <h2 id={heading} className="text-xl font-semibold">
-            {title}
-          </h2>
-          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {MODALITIES.filter((m) => m.status === status).map((m) => (
-              <li
-                key={m.id}
-                data-testid={`modality-${m.id}`}
-                className={`flex flex-col rounded-lg border p-5 ${m.status === "available" ? "border-line bg-panel" : "border-dashed border-line bg-paper"}`}
-              >
-                <h3 className="text-lg font-semibold">
-                  {m.status === "available" ? (
-                    <Link href={modalityPath(m.id)} className="text-brand hover:underline">
-                      {localize(m.name, locale)}
-                    </Link>
-                  ) : (
-                    <span className="text-muted">{localize(m.name, locale)}</span>
-                  )}
-                </h3>
-                {m.status === "available" && m.description && <p className="mt-2 flex-1">{localize(m.description, locale)}</p>}
-                {m.status === "planned" && <p className="mt-2 text-sm font-medium text-muted">{tc("comingSoon")}</p>}
-              </li>
-            ))}
-          </ul>
-          {status === "available" && <p className="mt-4 max-w-3xl text-sm text-muted">{t("provisionalNotice")}</p>}
-        </section>
-      ))}
-    </div>
-  );
+  return <div className="platform-page home-dashboard" data-testid="home-dashboard">
+    <section className="home-welcome">
+      <p className="practice-chip">{t("mvpNote")}</p>
+      <h1 className="mt-3">{t("dashboardTitle")}</h1>
+      <p className="platform-intro mt-3">{t("dashboardIntro")}</p>
+      <div className="home-decoration" aria-hidden="true"><span /><span /><span /></div>
+    </section>
+    <section className="home-overview" aria-labelledby="overview-heading">
+      <h2 id="overview-heading">{t("overview")}</h2>
+      <div className="dashboard-empty">
+        <svg viewBox="0 0 80 80" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2"><rect x="16" y="12" width="48" height="56" rx="10" /><path d="M28 29h24M28 40h16M28 51h20" strokeLinecap="round" /></svg>
+        <h3>{t("emptyTitle")}</h3><p>{t("emptyBody")}</p>
+      </div>
+    </section>
+  </div>;
 }

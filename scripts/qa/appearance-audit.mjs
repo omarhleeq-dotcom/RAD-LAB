@@ -15,7 +15,7 @@ const user = { id: "00000000-0000-0000-0000-000000000001", aud: "authenticated",
 const b64 = (x) => Buffer.from(JSON.stringify(x)).toString("base64url");
 const session = { access_token: `${b64({ alg: "HS256", typ: "JWT" })}.${b64({ sub: user.id, role: "authenticated", aud: "authenticated", exp: 4102444800 })}.sig`, refresh_token: "synthetic", token_type: "bearer", expires_in: 3600, expires_at: 4102444800, user };
 const browser = await chromium.launch({ executablePath: "/usr/bin/chromium", args: ["--no-sandbox"] });
-mkdirSync("/tmp/rad-054", { recursive: true });
+mkdirSync("/tmp/rad-054-r1", { recursive: true });
 let checks = 0, audits = 0;
 const ok = (value, label) => { assert.ok(value, label); checks++; };
 const drawings = new Map();
@@ -49,6 +49,11 @@ async function drawer({ page, loc, width }) {
   const t = messages[loc].shell;
   const trigger = page.getByTestId("menu-toggle");
   if (width >= 1024) { ok(!await trigger.isVisible(), "desktop has no hamburger"); return; }
+  await page.evaluate(() => window.scrollTo(0, 1200));
+  const triggerBox = await trigger.boundingBox();
+  ok(await page.evaluate(() => window.scrollY) > 500, "library actually scrolled");
+  ok(triggerBox.y >= 0 && triggerBox.y + triggerBox.height <= 950, "menu remains in viewport after scroll");
+  ok(await trigger.evaluate((node) => { const r = node.getBoundingClientRect(); return node.contains(document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2)); }), "menu reachable without returning to top");
   await trigger.click();
   const dialog = page.getByRole("dialog");
   await dialog.waitFor();
@@ -61,7 +66,7 @@ async function drawer({ page, loc, width }) {
   await page.keyboard.press("Tab");
   ok(await dialog.evaluate((node) => node.contains(document.activeElement)), "focus remains in modal");
   await audit(page, `${loc}/${width}/drawer`);
-  await page.screenshot({ path: `/tmp/rad-054/${disabled ? "off" : "on"}-${loc}-${width}-drawer.png` });
+  await page.screenshot({ path: `/tmp/rad-054-r1/${disabled ? "off" : "on"}-${loc}-${width}-drawer.png` });
   await page.keyboard.press("Escape");
   ok(!await dialog.isVisible(), "Escape closes drawer");
   ok(await trigger.evaluate((node) => node === document.activeElement), "focus returns to trigger");
@@ -72,6 +77,7 @@ async function drawer({ page, loc, width }) {
   await trigger.click();
   await dialog.getByRole("button", { name: t.closeMenu }).click();
   ok(!await dialog.isVisible(), "close button closes drawer");
+  await page.evaluate(() => window.scrollTo(0, 0));
 }
 try {
   for (const loc of ["en", "ar"]) for (const width of [390, 1440]) {
@@ -81,49 +87,82 @@ try {
     await page.getByRole("heading", { name: m.library.title, exact: true }).waitFor();
     await page.evaluate(() => document.fonts.ready);
     const cards = page.locator('li[data-testid^="exam-"]');
-    ok(await cards.count() > 0, `${tag}: cards present`);
-    const hrefs = await cards.locator("a").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")));
-    ok(new Set(hrefs).size === hrefs.length, `${tag}: every exam once`);
-    if (!disabled) {
-      const exported = readdirSync(`out/${loc}/xray`).filter((name) => name.endsWith(".html")).map((name) => `/${loc}/xray/${name.slice(0, -5)}`).sort();
-      assert.deepEqual([...hrefs].sort(), exported, "every exported exam kept"); checks++;
+    await page.getByTestId("library-categories").waitFor();
+    ok(await cards.count() === 0 && await page.getByRole("searchbox").count() === 0, "no exam cards before category selection");
+    ok(await page.locator(".category-choice").count() === 3 && await page.locator(".category-grid > li").count() === 5, "three available and two planned categories");
+    for (const id of ["head", "spine"]) {
+      const planned = page.getByTestId(`planned-category-${id}`);
+      ok(await planned.isVisible() && await planned.innerText().then((text) => text.includes(m.common.comingSoon)), `${id} coming soon`);
+      ok(await planned.locator("a,button").count() === 0, `${id} has no fake exam route`);
     }
-    for (const href of hrefs) ok((await page.request.get(`${base}${href}`)).ok(), `${tag}: exam link ${href}`);
-    ok(await cards.locator("svg").count() === hrefs.length, "each exam has a graphic");
     ok(await page.getByTestId("preview-banner").innerText() === `ⓘ ${m.common.previewBanner}`, "preview wording kept");
     ok((await page.locator("footer").innerText()).includes(m.common.disclaimer), "medical footer wording kept");
     ok(await page.locator('footer .language-switcher').count() === 0, "no footer language");
     ok(await page.locator('.site-topbar .language-switcher').boundingBox().then((box) => box.y < 100), "language stays on top");
     ok(await page.locator('.site-nav .nav-planned').first().getAttribute("aria-disabled") === "true", "future entries inactive");
     ok(await page.locator('.nav-planned a, .nav-planned button').count() === 0, "future entries have no action");
-    ok((await page.locator('.library-notice').innerText()) === m.home.provisionalNotice, "shared provisional warning");
-    const svgs = await cards.evaluateAll((nodes) => nodes.map((node) => [node.dataset.testid, node.querySelector("svg").outerHTML]));
-    for (const [id, svg] of svgs) { if (drawings.has(id)) assert.equal(svg, drawings.get(id), `same anatomy across locales ${id}`); else drawings.set(id, svg); }
     ok(fonts.some((font) => font.includes(loc === "ar" ? "IBMPlex" : "inter-latin")), "fonts loaded locally");
     ok(await page.locator('.platform-page').evaluate((node) => getComputedStyle(node).fontFamily.includes(document.documentElement.lang === "ar" ? "RAD Arabic" : "RAD Inter")), "correct locale font family");
-    await audit(page, `${tag}/library`);
-    await page.screenshot({ path: `/tmp/rad-054/${disabled ? "off" : "on"}-${loc}-${width}-library.png`, fullPage: true });
+    await audit(page, `${tag}/categories`);
+    await page.screenshot({ path: `/tmp/rad-054-r1/${disabled ? "off" : "on"}-${loc}-${width}-categories.png`, fullPage: true });
+    const hrefs = [], shapes = [], categoryCounts = new Map();
+    const categoryIds = await page.locator(".category-choice").evaluateAll((nodes) => nodes.map((node) => node.dataset.region));
+    for (const id of categoryIds) {
+      await page.locator(`[data-region="${id}"]`).click();
+      const section = page.getByTestId(`library-region-${id}`);
+      await cards.first().waitFor();
+      categoryCounts.set(id, await cards.count());
+      ok(await page.locator('[data-testid^="library-region-"]').count() === 1 && await section.isVisible(), "only chosen category exams mounted");
+      ok(await section.locator("h2").evaluate((node) => node === document.activeElement), "category heading receives focus");
+      ok(await cards.locator("svg").count() === await cards.count(), "each exam has a graphic");
+      ok((await page.locator('.library-notice').innerText()) === m.home.provisionalNotice, "shared provisional warning");
+      if (id === "body") ok(await section.locator('li[data-testid^="exam-chest-"]').count() === 3 && await section.locator('li[data-testid^="exam-pelvis-"]').count() === 1, "Body contains chest and pelvis");
+      hrefs.push(...await cards.locator("a").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href"))));
+      const svgs = await cards.evaluateAll((nodes) => nodes.map((node) => [node.dataset.testid, node.querySelector("svg").outerHTML]));
+      for (const [examId, svg] of svgs) { if (drawings.has(examId)) assert.equal(svg, drawings.get(examId), `same anatomy across locales ${examId}`); else drawings.set(examId, svg); }
+      shapes.push(...await cards.locator("svg").evaluateAll((nodes) => nodes.map((node) => node.innerHTML)));
+      await audit(page, `${tag}/${id}`);
+      await page.screenshot({ path: `/tmp/rad-054-r1/${disabled ? "off" : "on"}-${loc}-${width}-${id}.png`, fullPage: true });
+      await page.getByTestId("back-to-categories").click();
+      await page.getByTestId("library-categories").waitFor();
+      ok(await cards.count() === 0, "back unmounts exam cards");
+      ok(await page.locator(`[data-region="${id}"]`).evaluate((node) => node === document.activeElement), "back restores chosen category focus");
+    }
+    ok(new Set(hrefs).size === hrefs.length, `${tag}: every exam once`);
+    ok(new Set(shapes).size === hrefs.length, "each exam has distinct geometry, not merely a different id");
+    if (!disabled) {
+      const exported = readdirSync(`out/${loc}/xray`).filter((name) => name.endsWith(".html")).map((name) => `/${loc}/xray/${name.slice(0, -5)}`).sort();
+      assert.deepEqual([...hrefs].sort(), exported, "every exported exam kept"); checks++;
+    }
+    for (const href of hrefs) ok((await page.request.get(`${base}${href}`)).ok(), `${tag}: exam link ${href}`);
+    await page.locator('[data-region="body"]').click();
+    await cards.first().waitFor();
     await drawer(test);
     const input = page.getByRole("searchbox");
     await input.fill("CHEST PA");
     ok(await cards.count() === 1, "English search in both locales");
     await input.fill("الصَّـدر");
     ok(await cards.count() === 3, "Arabic diacritics and tatweel normalized");
-    await input.fill("");
-    await page.locator('[data-region="upper-limb"]').click();
-    ok(await page.getByTestId("library-region-upper-limb").count() === 1 && await page.locator('[data-testid^="library-region-"]').count() === 1, "region filter");
-    await input.fill("zzzz-no-match");
+    await input.fill("wrist");
+    ok(await cards.count() === 0, "search cannot expose another category's exams");
     await page.getByRole("heading", { name: m.library.emptyTitle }).waitFor();
-    ok(await cards.count() === 0, "no fake results");
     await audit(page, `${tag}/empty`);
     await page.locator('.library-empty').getByRole("button").click();
-    ok(await cards.count() === hrefs.length && await input.inputValue() === "", "clear restores all");
+    ok(await cards.count() === categoryCounts.get("body") && await input.inputValue() === "", "clear restores only selected category");
     if (width === 390) {
       for (const extra of [360, 430]) { await page.setViewportSize({ width: extra, height: 950 }); await audit(page, `${tag}/${extra}`); }
       await page.setViewportSize({ width, height: 950 });
     }
     await page.evaluate(() => document.documentElement.style.fontSize = "200%");
+    await page.waitForFunction(() => Math.abs(parseFloat(document.documentElement.style.getPropertyValue("--site-bar-height")) - document.querySelector(".site-topbar").getBoundingClientRect().height) < 1);
+    if (width === 390) {
+      const menu = page.getByTestId("menu-toggle");
+      ok(await menu.boundingBox().then((box) => box.y >= 0 && box.y + box.height < 950), "menu remains reachable at 200 percent");
+    }
     await audit(page, `${tag}/200percent`);
+    await page.getByTestId("back-to-categories").click();
+    await page.getByTestId("library-categories").waitFor();
+    await audit(page, `${tag}/categories-200percent`);
     await page.evaluate(() => document.documentElement.style.fontSize = "");
     const other = loc === "en" ? "ar" : "en";
     await page.locator('.site-topbar').getByRole("link", { name: other === "ar" ? "العربية" : "English", exact: true }).click();
@@ -138,9 +177,11 @@ try {
     ok(!await page.locator("#case-heading").evaluate((node) => getComputedStyle(node).fontFamily.includes("RAD")), "new font does not leak into simulator");
     await audit(page, `${tag}/practice`);
     await page.goto(`${base}/${loc}`, { waitUntil: "networkidle" });
-    await page.getByTestId("available-modalities").waitFor();
+    await page.getByTestId("home-dashboard").waitFor();
     ok(!await page.locator("main").innerText().then((text) => text.includes("no account") || text.includes("بدون حساب")), "account claim removed");
-    for (const id of ["ct", "mri", "us"]) ok(await page.getByTestId(`modality-${id}`).locator("a,img").count() === 0, "planned modality no route/image");
+    ok(await page.locator('main [data-testid^="exam-"], main [data-testid^="category-"], main [data-testid^="modality-"], main a').count() === 0, "home has no exam or category listings");
+    ok(await page.locator(".dashboard-empty").isVisible() && await page.locator(".home-overview").innerText().then((text) => text.includes(m.home.emptyBody)), "honest empty dashboard without invented ratings");
+    await page.screenshot({ path: `/tmp/rad-054-r1/${disabled ? "off" : "on"}-${loc}-${width}-home.png`, fullPage: true });
     await audit(page, `${tag}/home`);
     await page.goto(`${base}/not-a-real-route`, { waitUntil: "networkidle" });
     ok(disabled ? await page.getByTestId("preview-banner").count() >= 1 : await page.getByTestId("preview-banner").count() === 2, disabled ? "server 404 keeps preview notice" : "static 404 bilingual notices");

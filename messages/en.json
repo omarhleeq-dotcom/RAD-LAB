@@ -20,7 +20,12 @@
     "catalogTitle": "Choose an imaging modality",
     "mvpNote": "Practice mode",
     "provisionalNotice": "Technique values in this MVP are provisional demo data and have not been clinically validated. Do not use them as clinical guidance.",
-    "patientLine": "{age}-year-old {sexLabel}"
+    "patientLine": "{age}-year-old {sexLabel}",
+    "dashboardTitle": "Home",
+    "dashboardIntro": "Your learning space in RAD·LAB.",
+    "overview": "Overview",
+    "emptyTitle": "Room for your progress",
+    "emptyBody": "There is no data to display yet."
   },
   "sex": {
     "male": "male",
@@ -1468,6 +1473,8 @@
     "caseCount": "{count, plural, =0 {No training cases} one {# training case} other {# training cases}}",
     "open": "Open exam",
     "emptyTitle": "No matching exams",
-    "emptyBody": "Try another search or clear your filters."
+    "emptyBody": "Try another search or clear your filters.",
+    "chooseCategory": "Choose an exam category",
+    "backToCategories": "Back to categories"
   }
 }

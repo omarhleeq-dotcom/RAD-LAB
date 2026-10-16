@@ -16,13 +16,18 @@ export interface LibraryRegion {
   id: string;
   name: LocalizedText;
   bodyParts: readonly string[];
+  status?: "available" | "planned";
+  graphic?: string;
 }
 export interface LibrarySection {
   region: LibraryRegion;
   items: LibraryItem[];
 }
 if (presentation.version !== 1) throw new Error("Unsupported catalogue presentation version");
-export const LIBRARY_REGIONS: readonly LibraryRegion[] = presentation.regions;
+export const LIBRARY_REGIONS: readonly LibraryRegion[] = presentation.regions.map((region) => {
+  if (region.status !== "available" && region.status !== "planned") throw new Error(`Unknown category status: ${region.status}`);
+  return { ...region, status: region.status };
+});
 
 /** A new registered body part keeps its own name/filter until an optional broader mapping is added. */
 export function librarySections(items: readonly LibraryItem[], parts: readonly BodyPartEntry[] = BODY_PARTS, regions: readonly LibraryRegion[] = LIBRARY_REGIONS): LibrarySection[] {
@@ -42,6 +47,7 @@ export function librarySections(items: readonly LibraryItem[], parts: readonly B
       sections.push(section);
       byPart.set(part.id, section);
     }
+    if (section.region.status === "planned") throw new Error(`Planned category contains an exam: ${section.region.id}`);
     section.items.push(item);
   }
   return sections.filter((section) => section.items.length > 0);

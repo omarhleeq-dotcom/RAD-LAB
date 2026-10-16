@@ -25,6 +25,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const locale = useLocale();
   const pathname = usePathname();
   const dialog = useRef<HTMLDialogElement>(null);
+  const topbar = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const workspace = pathname.endsWith("/practice") || pathname.startsWith("/simulation/");
   const available = MODALITIES.filter((modality) => modality.status === "available");
@@ -46,6 +47,16 @@ export function AppShell({ children }: { children: ReactNode }) {
   };
   useEffect(() => { dialog.current?.close(); }, [pathname]);
   useEffect(() => {
+    const bar = topbar.current;
+    if (!bar) return;
+    const root = document.documentElement;
+    const measure = () => root.style.setProperty("--site-bar-height", `${bar.getBoundingClientRect().height}px`);
+    const observer = new ResizeObserver(measure);
+    observer.observe(bar);
+    measure();
+    return () => { observer.disconnect(); root.style.removeProperty("--site-bar-height"); };
+  }, []);
+  useEffect(() => {
     const desktop = matchMedia("(min-width: 1024px)");
     const resized = () => { if (desktop.matches) dialog.current?.close(); };
     desktop.addEventListener("change", resized);
@@ -60,7 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   })}</nav>;
   return <div className="site-layout" data-workspace={workspace || undefined}>
     <header className="site-header site-chrome">
-      <div className="site-topbar">
+      <div ref={topbar} className="site-topbar">
         <div className="site-brand-group">
           <button type="button" className="menu-toggle" aria-label={t("openMenu")} aria-haspopup="dialog" aria-controls="mobile-navigation" aria-expanded={open} data-testid="menu-toggle" onClick={() => { dialog.current?.showModal(); setOpen(true); }}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg></button>
           {logo}

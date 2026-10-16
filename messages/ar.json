@@ -20,7 +20,12 @@
     "catalogTitle": "اختر نوع التصوير",
     "mvpNote": "وضع التدريب",
     "provisionalNotice": "قيم عوامل التعريض في هذه النسخة التجريبية مؤقتة ولم يتم التحقق منها سريريًا. لا تعتمد عليها كإرشاد سريري.",
-    "patientLine": "{sex, select, female {{sexLabel} عمرها {age} عامًا} other {{sexLabel} عمره {age} عامًا}}"
+    "patientLine": "{sex, select, female {{sexLabel} عمرها {age} عامًا} other {{sexLabel} عمره {age} عامًا}}",
+    "dashboardTitle": "الرئيسية",
+    "dashboardIntro": "مساحتك التعليمية في RAD·LAB.",
+    "overview": "نظرة عامة",
+    "emptyTitle": "مساحة لتقدّمك",
+    "emptyBody": "لا توجد بيانات لعرضها حاليًا."
   },
   "sex": {
     "male": "ذكر",
@@ -1468,6 +1473,8 @@
     "caseCount": "{count, plural, =0 {لا توجد حالات تدريبية} one {حالة تدريبية واحدة} two {حالتان تدريبيتان} few {# حالات تدريبية} many {# حالة تدريبية} other {# حالة تدريبية}}",
     "open": "فتح الفحص",
     "emptyTitle": "لا توجد فحوص مطابقة",
-    "emptyBody": "جرّب بحثًا آخر أو امسح الفلاتر."
+    "emptyBody": "جرّب بحثًا آخر أو امسح الفلاتر.",
+    "chooseCategory": "اختر تصنيف الفحوصات",
+    "backToCategories": "الرجوع إلى التصنيفات"
   }
 }
