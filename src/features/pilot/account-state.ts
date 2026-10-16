@@ -5,7 +5,7 @@ export type ProfileRole = "participant" | "owner";
 export type Profile = { readonly status: ProfileStatus; readonly role: ProfileRole; readonly code: string };
 
 /** Message key (under `account.errors.`) for a Supabase Auth error. Unknown errors are generic; nothing reveals whether an e-mail exists. */
-export type AuthErrorKey = "invalidCredentials" | "emailNotConfirmed" | "rateLimited" | "weakPassword" | "signupDisabled" | "invalidEmail" | "network" | "generic";
+export type AuthErrorKey = "invalidCredentials" | "emailNotConfirmed" | "rateLimited" | "weakPassword" | "signupDisabled" | "invalidEmail" | "samePassword" | "network" | "generic";
 
 export function authErrorKey(error: { code?: string | undefined; status?: number | undefined; name?: string | undefined } | null | undefined): AuthErrorKey {
   if (!error) return "generic";
@@ -17,11 +17,24 @@ export function authErrorKey(error: { code?: string | undefined; status?: number
     case "weak_password": return "weakPassword";
     case "signup_disabled": return "signupDisabled";
     case "email_address_invalid": return "invalidEmail";
+    case "same_password": return "samePassword";
     default: break;
   }
   if (error.status === 429) return "rateLimited";
   if (error.name === "AuthRetryableFetchError" || error.status === 0) return "network";
   return "generic";
+}
+
+/**
+ * What the address fragment of the account page says (RAD-046). Supabase redirects a reset link to `/account#access_token=…&type=recovery`
+ * (implicit flow), and an expired or already used link to `/account#error=…&error_code=…`. The fragment is read once, before supabase-js clears it.
+ * Anything else, including a sign-up confirmation, is `null` and changes nothing.
+ */
+export function recoveryFromHash(hash: string): "recovery" | "linkError" | null {
+  const params = new URLSearchParams(hash.startsWith("#") ? hash.slice(1) : hash);
+  if (params.get("type") === "recovery" && params.has("access_token")) return "recovery";
+  if (params.has("error") && params.has("error_code")) return "linkError";
+  return null;
 }
 
 /** The password rule enforced by the project (owner decision S-PILOT-6): min 8 with lower, upper, digit and symbol. Checked client-side for fast feedback only; the server decides. */

@@ -1242,7 +1242,8 @@
       "generic": "Something went wrong. Please try again.",
       "passwordShort": "The password must be at least 8 characters.",
       "passwordClasses": "The password needs a lower-case letter, an upper-case letter, a digit and a symbol.",
-      "passwordMismatch": "The two passwords do not match."
+      "passwordMismatch": "The two passwords do not match.",
+      "samePassword": "Choose a password different from the current one."
     },
     "ownerLink": "Owner dashboard",
     "agreePrefix": "I agree to the",
@@ -1258,6 +1259,27 @@
       "title": "Survey",
       "body": "Please answer a short survey about your experience. It opens in a new tab and carries your participant code, not your email address.",
       "open": "Open the survey"
+    },
+    "forgot": {
+      "link": "Forgot your password?",
+      "title": "Reset your password",
+      "body": "Enter your email address. If it belongs to an account, we will send a link to choose a new password.",
+      "submit": "Send reset link",
+      "sentTitle": "Check your email",
+      "sentBody": "If an account exists for {email}, we have sent a link to choose a new password. The link works once and expires soon.",
+      "sentSpam": "Nothing in your inbox? Check spam, or wait a few minutes before asking again.",
+      "back": "Back to sign in"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "body": "Choose a new password for your account. You will stay signed in.",
+      "newPassword": "New password",
+      "confirm": "Confirm new password",
+      "submit": "Save new password",
+      "done": "Your password was changed.",
+      "linkErrorTitle": "This link cannot be used",
+      "linkErrorBody": "The link has expired or was already used. Request a new one below.",
+      "requestNew": "Request a new link"
     }
   },
   "feedback": {
