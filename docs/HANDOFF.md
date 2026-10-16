@@ -2,7 +2,7 @@
 
 ## البداية الحالية
 - دُمج [#81](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/81) في main عند `6d9df0495a7ab5aad188ff3ee65843ea9868955c`؛ تحقق Git/API وشجرة مطابقة، لا دليل نشر أو فحص حي جديد.
-- الفرع `docs/archive-sessions-and-compact-guides`؛ هذه دفعة DOCS للمراجعة عبر Draft فقط، لا ready/merge/auto-merge أو معاينة مستضافة أو worktree/وكلاء.
+- الفرع `docs/archive-sessions-and-compact-guides`؛ Draft PR #82 مفتوح: https://github.com/omarhleeq-dotcom/RAD-LAB/pull/82 ؛ التنفيذ6b3812c ويلحقه توثيق الرابط فقط؛ دفعة DOCS عبر Draft فقط، لا ready/merge/auto-merge أو معاينة مستضافة أو worktree/وكلاء.
 - [تقرير الأرشفة وخريطة النقل وحفظ القواعد](DOCS_ARCHIVE_2_REPORT.md)؛ [فهرس الوثائق](README.md)؛ [فهرس الأرشيف](archive/README.md)؛ [الحالة](project-status.md)؛ [القرارات](DECISIONS.md).
 
 ## المنجز والحدود
