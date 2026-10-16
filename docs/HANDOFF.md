@@ -2,7 +2,7 @@
 
 ## البداية الحالية
 - ثبت دمج [#80](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/80) عند `f90b3c9e28501fa52d27fa154419a6586344db71`؛ هذا base/main لهذه الدفعة، لا دليل نشر حي جديد.
-- الفرع `docs/align-status-tables-and-core-docs`؛ Draft PR للتوثيق فقط، دون merge/auto-merge أو معاينة مستضافة أو worktree/وكلاء.
+- الفرع `docs/align-status-tables-and-core-docs`؛ [Draft PR #81](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/81) مفتوح ومسودة. دفعة المواءمة f812e9b، ويلحقها توثيق الرابط فقط؛ لا merge/auto-merge أو معاينة مستضافة أو worktree/وكلاء.
 - [التقرير والميزانية وخريطة الدفعة الثانية](DOCS_ALIGN_1_REPORT_2026-10-16.md)؛ [فهرس الوثائق](README.md)؛ [الحالة](project-status.md)؛ [القرارات](DECISIONS.md).
 
 ## المنجز والحدود
