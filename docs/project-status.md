@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 60,
-  "updated_at": "2026-10-16T15:00:00Z",
+  "revision": 61,
+  "updated_at": "2026-10-16T15:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-056",
+  "next_id": "RAD-057",
   "tasks": [
     {
       "id": "RAD-001",
@@ -514,11 +514,20 @@
     },
     {
       "id": "RAD-055",
-      "title": "قرارات Assess (توثيق) ثم نموذج بيانات الاختبارات",
+      "title": "قرارات Assess (توثيق فقط)",
+      "status": "review",
+      "priority": "high",
+      "description": "قرارات Assess مسجّلة في DECISIONS (S-ASSESS-1…6 وO106…O108): قالب اختبار، أسئلة اختيار متعدد، بنود محاكي بثلاثة مستويات، نتيجة مخفية. D3 وقيد CLAUDE.md باقيان حتى RAD-056.",
+      "source_ref": "DECISIONS S-ASSESS-1…6؛ محادثة المالك 2026-10-16",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-056",
+      "title": "نموذج بيانات الاختبارات وعزل مفاتيح الإجابة",
       "status": "planned",
       "priority": "high",
-      "description": "تثبيت قرارات Assess (قالب اختبار، أسئلة اختيار متعدد، بنود محاكي بثلاثة مستويات، نتيجة مخفية) ورفع قيد D3 رسميًا، ثم النموذج. المسودة اتفق عليها في المحادثة؛ لا كود قبل التوثيق.",
-      "source_ref": "محادثة المالك 2026-10-16؛ DECISIONS D3",
+      "description": "قالب الاختبار والأسئلة والمحاولات مع RLS وتصحيح بالخادم وتسجيل خام بإصدار، وتعديل CLAUDE.md/D3. لا يبدأ قبل RAD-052…054 ولوحة محاولاتي وقرار O106/O107/O108 من المالك.",
+      "source_ref": "DECISIONS S-ASSESS-1…6",
       "waiting_on": "owner"
     }
   ]
