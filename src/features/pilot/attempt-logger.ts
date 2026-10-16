@@ -6,7 +6,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationPhase, SimulationSettings } from "@/domain/simulation";
 import type { EvaluationResult } from "@/features/evaluation/types";
 import type { ProfileStatus } from "./account-state";
-import { buildAttemptRow, definitionVersion, splitCaseId, type Device } from "./attempt-record";
+import { buildEventRow, buildAttemptRow, definitionVersion, splitCaseId, type Device } from "./attempt-record";
 import type { SavedAttempt } from "./saved-attempt";
 
 export type Snapshot = {
@@ -58,7 +58,7 @@ export function createAttemptLogger(deps: LoggerDeps) {
 
   const event = (type: string, payload: Record<string, unknown>) =>
     run(async (client) => {
-      await client.from("events").insert({ type, payload });
+      await client.from("events").insert(buildEventRow(type, payload));
     });
 
   const ids = (c: RadCase) => {

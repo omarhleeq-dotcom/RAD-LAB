@@ -38,8 +38,18 @@ const shim = `
 async function apply(db: PGlite, names: string[]) {
   for (const file of names) await db.transaction(async (tx) => { await tx.exec(sql(file)); });
 }
+// S-PILOT-26: closed list of additive record metadata. Nothing else is ignored.
+const metadata: Readonly<Record<string, readonly string[]>> = {
+  attempts: ["settings_format_version", "result_format_version", "mode", "record_kind", "producer_version", "engine_version"],
+  events: ["payload_format_version", "mode", "record_kind", "producer_version", "engine_version"],
+  feedback: ["note_format_version", "mode", "record_kind", "producer_version", "engine_version"],
+};
+const addedConstraints = new Set([
+  "pilot_locales.pilot_locales_pkey", "pilot_locales.pilot_locales_tag_check", "pilot_locales.pilot_locales_tag_not_null", "attempts.attempts_locale_fkey",
+  ...Object.entries(metadata).flatMap(([table, keys]) => keys.flatMap((key) => [`${table}.${table}_${key}_check`, `${table}.${table}_${key}_not_null`])),
+]);
 async function catalogue(db: PGlite) {
-  return (await db.query(`select c.relname, c.relrowsecurity, c.relacl::text from pg_class c
+  return (await db.query<{ relname: string; relrowsecurity: boolean; relacl: string | null }>(`select c.relname, c.relrowsecurity, c.relacl::text from pg_class c
     join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind in ('r','S') order by c.relname`)).rows;
 }
 
@@ -88,16 +98,18 @@ describe("ordered migration chain", () => {
         values ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-000000000001',1,'x','default','v','{}','{}','ar');
         insert into public.events(user_id,type) values ('00000000-0000-0000-0000-000000000001','heartbeat');
         insert into public.feedback(user_id,exam_id,attempt_id,text) values ('00000000-0000-0000-0000-000000000001','x','10000000-0000-0000-0000-000000000001','Synthetic legacy note');`);
-      const data = async () => (await db.query(`select 'profiles' t,to_jsonb(p) v from public.profiles p union all select 'attempts',to_jsonb(a) from public.attempts a
+      const data = async () => (await db.query<{ t: string; v: Record<string, unknown> }>(`select 'profiles' t,to_jsonb(p) v from public.profiles p union all select 'attempts',to_jsonb(a) from public.attempts a
         union all select 'events',to_jsonb(e) from public.events e union all select 'feedback',to_jsonb(f) from public.feedback f order by t`)).rows;
       const targets = async () => (await db.query(`select schemaname,tablename,policyname,permissive,roles,cmd from pg_policies where schemaname='public' order by tablename,policyname`)).rows;
       const functions = async () => (await db.query<{ identity: string; definition: string; proacl: string | null }>(`select p.oid::regprocedure::text identity,pg_get_functiondef(p.oid) definition,p.proacl::text from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' order by p.oid::regprocedure::text`)).rows;
-      const constraints = async () => (await db.query(`select conrelid::regclass::text tab,conname,pg_get_constraintdef(oid) definition from pg_constraint where connamespace='public'::regnamespace order by tab,conname`)).rows;
-      const columns = async () => (await db.query(`select table_name,column_name,grantee,privilege_type from information_schema.column_privileges where table_schema='public' order by table_name,column_name,grantee,privilege_type`)).rows;
+      const constraints = async () => (await db.query<{ tab: string; conname: string; definition: string }>(`select conrelid::regclass::text tab,conname,pg_get_constraintdef(oid) definition from pg_constraint where connamespace='public'::regnamespace order by tab,conname`)).rows;
+      const columns = async () => (await db.query<{ table_name: string; column_name: string; grantee: string; privilege_type: string }>(`select table_name,column_name,grantee,privilege_type from information_schema.column_privileges where table_schema='public' order by table_name,column_name,grantee,privilege_type`)).rows;
       const before = { data: await data(), targets: await targets(), functions: await functions(), constraints: await constraints(), columns: await columns(), catalogue: await catalogue(db) };
       // New files are not enumerated: a future migration must be exercised here too.
       await apply(db, files.filter((f) => f > legacy[4][0]));
-      expect(await data()).toEqual(before.data);
+      // Approved .3 exception: preserve every original value, including JSON/text/locale/hash.
+      expect((await data()).map(({ t, v }) => ({ t, v: Object.fromEntries(Object.entries(v)
+        .filter(([key]) => !(metadata[t] ?? []).includes(key))) }))).toEqual(before.data);
       expect(await targets()).toEqual(before.targets);
       // Owner-approved S-STD-1 exception: additive RPCs are allowed; every legacy
       // overload must retain its identity, exact definition and ACL. Apply ALL files above.
@@ -105,9 +117,13 @@ describe("ordered migration chain", () => {
       for (const old of before.functions) {
         expect(afterFunctions.find((f) => f.identity === old.identity), String(old.identity)).toEqual(old);
       }
-      expect(await constraints()).toEqual(before.constraints);
-      expect(await columns()).toEqual(before.columns);
-      expect(await catalogue(db)).toEqual(before.catalogue);
+      // Only the named locale CHECK is replaced. New constraints have an exact allowlist
+      // and independent rejection/definition coverage in record-contracts.test.ts.
+      expect((await constraints()).filter((c) => !addedConstraints.has(`${c.tab}.${c.conname}`)))
+        .toEqual(before.constraints.filter((c) => !(c.tab === "attempts" && c.conname === "attempts_locale_check")));
+      expect((await columns()).filter((c) => !((metadata[c.table_name] ?? []).includes(c.column_name)
+        || (c.table_name === "pilot_locales" && c.column_name === "tag")))).toEqual(before.columns);
+      expect((await catalogue(db)).filter((c) => c.relname !== "pilot_locales")).toEqual(before.catalogue);
       await db.exec(`insert into auth.users(email) values ('new@example.test')`);
       expect((await db.query<{ participant_code: string }>(`select participant_code from public.profiles where participant_code <> 'P-1234abcd'`)).rows[0]!.participant_code).toMatch(/^P-[0-9a-f]{32}$/);
     } finally { await db.close(); }

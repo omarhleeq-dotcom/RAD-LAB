@@ -4,6 +4,7 @@
 // attempt (approved + consented account); everyone else sees nothing. Best effort: a failure shows a retry message, never breaks the page.
 import { useTranslations } from "next-intl";
 import { useId, useState, useSyncExternalStore } from "react";
+import { buildEventRow, buildFeedbackRow } from "./attempt-record";
 import { getPilotClient } from "./client";
 import { FEEDBACK_MAX, cleanNote, noteLength } from "./feedback";
 import { savedAttempt } from "./saved-attempt";
@@ -27,12 +28,12 @@ export function FeedbackBox({ examId }: { examId: string }) {
     try {
       const client = await getPilotClient();
       if (!client) throw new Error("no client");
-      const { error } = await client.from("feedback").insert({ exam_id: examId, attempt_id: attemptId, text: note });
+      const { error } = await client.from("feedback").insert(buildFeedbackRow(examId, attemptId, note));
       if (error) throw error;
       setPhase("sent");
       setText("");
       // Event payload: ids only, never the text.
-      void Promise.resolve(client.from("events").insert({ type: "feedback_sent", payload: { exam_id: examId, attempt_id: attemptId } })).catch(() => undefined);
+      void Promise.resolve(client.from("events").insert(buildEventRow("feedback_sent", { exam_id: examId, attempt_id: attemptId }))).catch(() => undefined);
     } catch {
       setPhase("failed");
     }

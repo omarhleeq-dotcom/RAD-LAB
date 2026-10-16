@@ -1,7 +1,7 @@
 // Pure rules for the owner's attempts + notes view and the CSV export (RAD-044b, DECISIONS S-PILOT-12). No React, no network.
 // The rows come from `attempts` / `feedback`, which the approved owner may already read through RLS (no migration). Everything here is
 // keyed by the pseudonymous participant code: the e-mail never enters these types, so it cannot reach a CSV by accident.
-import type { CompactResult } from "./attempt-record";
+import { readRecordContract, type CompactResult, type KnownRecordContract } from "./attempt-record";
 
 export type OwnerAttempt = {
   readonly id: string;
@@ -10,7 +10,8 @@ export type OwnerAttempt = {
   readonly examId: string;
   readonly caseId: string;
   readonly definitionVersion: string;
-  readonly locale: "en" | "ar";
+  readonly locale: string;
+  readonly record?: KnownRecordContract;
   readonly startedAt: string;
   readonly finishedAt: string;
   readonly total: number;
@@ -24,6 +25,7 @@ export type OwnerAttempt = {
 };
 
 export type OwnerNote = {
+  readonly record?: KnownRecordContract;
   readonly id: string;
   readonly userId: string;
   readonly examId: string;
@@ -46,8 +48,11 @@ export function parseAttempt(row: unknown): OwnerAttempt | null {
   const id = str(row.id), userId = str(row.user_id), examId = str(row.exam_id), caseId = str(row.case_id), version = str(row.definition_version);
   const startedAt = str(row.started_at), finishedAt = str(row.finished_at);
   const r = row.result;
+  const record = readRecordContract(row, "attempt");
   if (!id || !userId || !examId || !caseId || !version || !startedAt || !finishedAt) return null;
-  if (typeof row.attempt_no !== "number" || !Number.isInteger(row.attempt_no) || (row.locale !== "en" && row.locale !== "ar")) return null;
+  if (!record || typeof row.attempt_no !== "number" || !Number.isInteger(row.attempt_no) || typeof row.locale !== "string") return null;
+  if (record.legacy ? row.locale !== "en" && row.locale !== "ar"
+    : row.locale_registered !== true || row.locale.length > 63 || !/^[a-z]{2,8}(-[A-Za-z0-9]{1,8})*$/.test(row.locale)) return null;
   if (!isObj(r) || typeof r.total !== "number" || typeof r.passed !== "boolean" || !isObj(row.settings)) return null;
   const categories = Array.isArray(r.categories)
     ? r.categories.flatMap((c) => (isObj(c) && typeof c.c === "string" && typeof c.earned === "number" && typeof c.weight === "number" ? [{ c: c.c, earned: c.earned, weight: c.weight }] : []))
@@ -59,17 +64,20 @@ export function parseAttempt(row: unknown): OwnerAttempt | null {
     id, userId, attemptNo: row.attempt_no, examId, caseId, definitionVersion: version, locale: row.locale, startedAt, finishedAt,
     total: r.total, passed: r.passed, thresholdMet: r.thresholdMet === true, primaryVariant: typeof r.primaryVariant === "string" ? r.primaryVariant : "",
     critical: strings(r.critical), categories, checks, settings: row.settings,
+    ...(!record.legacy ? { record } : {}),
   };
 }
 
 /** One row of `feedback` (`id` is a bigint: PostgREST may send it as a number). */
 export function parseNote(row: unknown): OwnerNote | null {
   if (!isObj(row)) return null;
+  const record = readRecordContract(row, "feedback");
+  if (!record) return null;
   const id = typeof row.id === "number" || typeof row.id === "string" ? String(row.id) : null;
   const userId = str(row.user_id), examId = str(row.exam_id), at = str(row.at);
   if (!id || !userId || !examId || !at || typeof row.text !== "string" || row.text.trim() === "") return null;
   if (row.attempt_id !== null && row.attempt_id !== undefined && str(row.attempt_id) === null) return null;
-  return { id, userId, examId, attemptId: str(row.attempt_id), text: row.text, at };
+  return { id, userId, examId, attemptId: str(row.attempt_id), text: row.text, at, ...(!record.legacy ? { record } : {}) };
 }
 
 export type Parsed<T> = { items: T[]; skipped: number };
@@ -179,14 +187,14 @@ export type OwnerStream = "participants" | "attempts" | "notes";
 export type OwnerFilters = { participant: string; participantCode?: string; from: string; to: string; exam: string };
 export const EMPTY_FILTERS: OwnerFilters = { participant: "", from: "", to: "", exam: "" };
 export type Cursor = { time: string; id: string };
-export type OwnerPage = { version: 1; boundary: string; total: number; pending: number; rows: Record<string, unknown>[]; next: Cursor | null };
+export type OwnerPage = { record_contract_version?: 1; version: 1; boundary: string; total: number; pending: number; rows: Record<string, unknown>[]; next: Cursor | null };
 export type RpcRead = (args: Record<string, unknown>) => PromiseLike<{ data: unknown; error: unknown }>;
 const validTime = (v: unknown): v is string => typeof v === "string" && Number.isFinite(Date.parse(v));
 // PostgreSQL emits microseconds. Date.parse alone would collapse different cursor times.
 const timeKey = (v: string): bigint => BigInt(Date.parse(v)) * 1000n
   + BigInt((v.match(/\.(\d{1,6})(?:Z|[+-]\d{2}:\d{2})$/)?.[1] ?? "").padEnd(6, "0").slice(3, 6));
 export function parseOwnerPage(value: unknown, limit = 100): OwnerPage {
-  if (!isObj(value) || value.version !== 1 || !validTime(value.boundary)
+  if (!isObj(value) || value.version !== 1 || (Object.hasOwn(value, "record_contract_version") && value.record_contract_version !== 1) || !validTime(value.boundary)
     || !Number.isSafeInteger(value.total) || Number(value.total) < 0 || !Number.isSafeInteger(value.pending) || Number(value.pending) < 0
     || !Array.isArray(value.rows) || value.rows.length > limit || !value.rows.every(isObj)
     || (value.next !== null && (!isObj(value.next) || !validTime(value.next.time) || !str(value.next.id)))
@@ -203,6 +211,10 @@ export async function readOwnerPage(rpc: RpcRead, stream: OwnerStream, filters: 
     || (timeKey(page.next.time) === timeKey(cursor.time) && compareIds(page.next.id, cursor.id, stream) <= 0))) throw new Error("Cursor did not advance");
   let previous = cursor;
   for (const row of page.rows) {
+    if (stream !== "participants") {
+      const contract = readRecordContract(row, stream === "attempts" ? "attempt" : "feedback");
+      if (!contract || (page.record_contract_version === 1 && contract.legacy)) throw new Error("Unsupported record format");
+    }
     const time = row[stream === "participants" ? "created_at" : stream === "attempts" ? "finished_at" : "at"];
     const id = row[stream === "participants" ? "user_id" : "id"];
     if (!validTime(time) || typeof id !== "string" || !id) throw new Error("Invalid row cursor");
@@ -223,11 +235,13 @@ function compareIds(a: string, b: string, stream: OwnerStream): number {
 }
 /** One numbered file at a time: phone-compatible Blob download, memory bounded to one RPC page. */
 export function exportOwnerPart(stream: "attempts" | "notes", page: OwnerPage): { csv: string; written: number; skipped: number } {
+  const described = page.record_contract_version === 1 || page.rows.some((r) => Object.hasOwn(r, "record_kind"));
   const seen = new Set<string>();
   let skipped = 0;
   const rows: Record<string, unknown>[] = page.rows.flatMap((r) => {
     const code = str(r.participant_code), id = str(String(r.id ?? ""));
-    if (!code || !id || seen.has(id) || !validTime(r[stream === "attempts" ? "finished_at" : "at"])
+    const contract = readRecordContract(r, stream === "attempts" ? "attempt" : "feedback");
+    if (!contract || (described && contract.legacy) || !code || !id || seen.has(id) || !validTime(r[stream === "attempts" ? "finished_at" : "at"])
       || (stream === "notes" && r.attempt_id != null && (!Number.isInteger(r.attempt_no) || Number(r.attempt_no) < 1))) { skipped++; return []; }
     seen.add(id);
     return [{ ...r, user_id: code }];
