@@ -355,3 +355,15 @@ Navigation labels only, reusing the existing exam terminology; no new clinical c
 | Foot | القدم |
 | Knee | الركبة |
 | Ankle | الكاحل |
+
+## RAD-054 — Platform/library UI additions (2026-10-16, DRAFT pending owner / educator wording review)
+
+Visual direction approved in S-UI-054-1…6; exact new Arabic UI text remains machine-assisted DRAFT. No medical feedback, measurement or scoring wording changed.
+
+- shell: التنقل الرئيسي، مكتبة الفحوصات، حسابي، الاختبارات، المادة العلمية، فتح قائمة التنقل، إغلاق قائمة التنقل.
+- library: مكتبة الفحوصات؛ استعرض فحوص {modality} حسب المنطقة التشريحية؛ البحث في الفحوصات؛ ابحث عن فحص أو إسقاط أو منطقة؛ المناطق التشريحية؛ الكل؛ مسح الفلاتر؛ فتح الفحص.
+- grouped filters: الصدر، الطرف العلوي، الطرف السفلي، الحوض. Existing region/exam names remain as registered.
+- results plurals: لا توجد فحوص مطابقة؛ فحص واحد مطابق؛ فحصان مطابقان؛ # فحوص مطابقة؛ # فحصًا مطابقًا؛ # فحص مطابق.
+- case-count plurals: لا توجد حالات تدريبية؛ حالة تدريبية واحدة؛ حالتان تدريبيتان؛ # حالات تدريبية؛ # حالة تدريبية. Counts derive from actual case definitions, not assumed examples.
+- empty state: لا توجد فحوص مطابقة؛ جرّب بحثًا آخر أو امسح الفلاتر.
+- home.mvpNote: وضع التدريب (replaces the inaccurate “بدون حساب” claim). Existing preview, clinical disclaimer, provisional-warning text and all clinical messages stay unchanged.

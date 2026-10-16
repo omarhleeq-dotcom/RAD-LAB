@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "regions": [
+    { "id": "chest", "name": { "en": "Chest", "ar": "الصدر" }, "bodyParts": ["chest"] },
+    { "id": "upper-limb", "name": { "en": "Upper limb", "ar": "الطرف العلوي" }, "bodyParts": ["shoulder", "wrist", "hand", "elbow"] },
+    { "id": "lower-limb", "name": { "en": "Lower limb", "ar": "الطرف السفلي" }, "bodyParts": ["foot", "knee", "ankle"] },
+    { "id": "pelvis", "name": { "en": "Pelvis", "ar": "الحوض" }, "bodyParts": ["pelvis"] }
+  ],
+  "graphics": {
+    "chest": "chest",
+    "shoulder": "shoulder",
+    "wrist": "hand",
+    "hand": "hand",
+    "elbow": "elbow",
+    "foot": "foot",
+    "knee": "knee",
+    "ankle": "ankle",
+    "pelvis": "pelvis"
+  },
+  "projectionGraphics": { "chest": { "lateral-left": "chest-side" } }
+}

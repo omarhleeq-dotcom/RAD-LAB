@@ -15,9 +15,9 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const tc = await getTranslations("common");
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
+    <div className="platform-page">
       <section className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand">{t("mvpNote")}</p>
+        <p className="practice-chip">{t("mvpNote")}</p>
         <h1 className="mt-2 text-3xl font-bold leading-tight sm:text-4xl">{t("title")}</h1>
         <p className="mt-4 text-lg text-muted">{t("subtitle")}</p>
       </section>

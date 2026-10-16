@@ -34,11 +34,11 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
   const cases = casesOf(exam);
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 py-6">
+    <div className="platform-page space-y-6">
       <Breadcrumb items={[{ label: localize(m.name, locale), href: modalityPath(m.id) }, { label: localize(exam.title, locale) }]} />
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-bold">{localize(exam.title, locale)}</h1>
-        {exam.provisional && <span className="rounded bg-signal/20 px-2 py-1 text-xs font-medium text-warn">{tc("provisionalBadge")}</span>}
+        {exam.provisional && <span className="rounded bg-signal/20 px-2 py-1 text-sm font-medium text-warn">{tc("provisionalBadge")}</span>}
       </div>
 
       {MODES.map((mode) => (
@@ -50,7 +50,7 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
           <h3 className="mt-4 text-sm font-semibold uppercase tracking-wider text-muted">{t("casesTitle")}</h3>
           <ul className="mt-2 grid gap-4 md:grid-cols-2">
             {cases.map((c) => (
-              <li key={c.id} className="flex flex-col rounded-lg border border-line bg-panel p-5">
+              <li key={c.id} className="flex flex-col platform-case rounded-lg border border-line bg-panel p-5">
                 <p className="text-sm text-muted">{th("patientLine", { age: c.patient.age, sex: c.patient.sex, sexLabel: ts(c.patient.sex) })}</p>
                 <p className="mt-3 flex-1">{localize(c.clinicalScenario, locale)}</p>
                 <div className="mt-4 flex items-center justify-between gap-3">
@@ -60,7 +60,7 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
                   >
                     {t("startCase")}
                   </Link>
-                  {c.provisional && <span className="rounded bg-signal/20 px-2 py-1 text-xs font-medium text-warn">{tc("provisionalBadge")}</span>}
+                  {c.provisional && !exam.provisional && <span className="rounded bg-signal/20 px-2 py-1 text-sm font-medium text-warn">{tc("provisionalBadge")}</span>}
                 </div>
               </li>
             ))}

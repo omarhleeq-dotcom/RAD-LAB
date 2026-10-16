@@ -18,7 +18,7 @@
     "title": "Practice radiography before the real patient.",
     "subtitle": "RAD-LAB is an educational simulator for radiologic technology students. Position the patient, set the technique, expose, then learn from precise feedback.",
     "catalogTitle": "Choose an imaging modality",
-    "mvpNote": "Practice mode · no account required",
+    "mvpNote": "Practice mode",
     "provisionalNotice": "Technique values in this MVP are provisional demo data and have not been clinically validated. Do not use them as clinical guidance.",
     "patientLine": "{age}-year-old {sexLabel}"
   },
@@ -1446,5 +1446,28 @@
     "originals": "Original educational drawings",
     "originalsBody": "The project’s positioning schematics, procedural overlays and learner-controlled side markers are original RAD-LAB work according to the asset record. The external radiographs credited above retain their own provenance and licence status.",
     "details": "Full sources and credits"
+  },
+  "shell": {
+    "navigation": "Main navigation",
+    "library": "Exam library",
+    "account": "My account",
+    "assess": "Assessments",
+    "learn": "Learning material",
+    "openMenu": "Open navigation",
+    "closeMenu": "Close navigation"
+  },
+  "library": {
+    "title": "Exam library",
+    "intro": "Explore {modality} exams by anatomical region.",
+    "search": "Search exams",
+    "searchPlaceholder": "Search by exam, projection or region",
+    "regions": "Anatomical regions",
+    "all": "All",
+    "clear": "Clear filters",
+    "resultCount": "{count, plural, =0 {No exams found} one {# exam found} other {# exams found}}",
+    "caseCount": "{count, plural, =0 {No training cases} one {# training case} other {# training cases}}",
+    "open": "Open exam",
+    "emptyTitle": "No matching exams",
+    "emptyBody": "Try another search or clear your filters."
   }
 }
