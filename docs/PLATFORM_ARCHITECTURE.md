@@ -1,6 +1,25 @@
 # RAD-LAB — platform architecture (design Session 6; exam/case split implemented Session 7)
 
+**Current implementation snapshot — main f90b3c9, 2026-10-16 (#80 merged).** X-ray exam/case registries, `composeCase()`, validators, projection/scene/layout/figure registries, optional per-exam controls/categories and registered limb effects are implemented. The platform shell, category-first library, bilingual Practice routes and optional Supabase pilot account/data slice exist in code. The [README](../README.md) lists the shipped exams; [project-status](project-status.md) records what still needs owner/external review. This snapshot does not verify deployment or clinical suitability.
+
+| Layer | Implemented now | Still proposed / constrained |
+|---|---|---|
+| Exam and case data | `src/domain/exam.ts`, registries, validation and composition | No new exam or image import during the owner freeze |
+| Scenes and results | Projection/scene/layout/figure registries; declared effect hooks and family-specific geometry/2.5D limb models | A new effect or modality still needs a proven need and reference; not every setting or console component is generic |
+| Platform and pilot | Category-first library, Practice, account approval, saved attempts/events/feedback and owner CSV code; static export plus Supabase | Live deployment, provider checks and human review have separate evidence; the UI gate does not protect downloadable static assets |
+| Future product | Existing code remains extensible through data and optional mechanisms | Learn/Reference containers, CT/MRI/US, Assess, institutions/payments and full `ControlSpec[]`/folder redesign are not claimed implemented |
+
+**Current direction:** S12-12 puts X-ray v1 before v2 modalities, subject to S-SHOULDER-Y-6's freeze. The next programming phase is postponed by the owner for documentation work. [DECISIONS](DECISIONS.md), the [recipe](exam-recipe.md), [pilot setup](PILOT_SUPABASE_SETUP.md) and [handoff](HANDOFF.md) govern current work.
+
+<details>
+<summary>Historical opening statement from Sessions 6–7</summary>
+
 **Status: mostly design.** Session 6 wrote this document without changing behaviour. **Session 7 implemented one part of it — the `ExamDefinition` / `CaseDefinition` split behind a `composeCase()` compatibility view — as a pure refactor with zero behaviour change** (§2.4 says exactly what exists, where, and what is still hard-wired). Everything else here is still a proposal. Owner decisions D1–D6 are in [`DECISIONS.md`](DECISIONS.md). Decisions are recorded as ADRs in [`adr/`](adr/README.md); the proposed order of work is in [`ROADMAP_SESSIONS.md`](ROADMAP_SESSIONS.md); candidate sources and datasets are in [`MODALITY_SOURCES_CANDIDATES.md`](MODALITY_SOURCES_CANDIDATES.md).
+
+</details>
+
+**How to read the remaining design:** sections explicitly dated Sessions 1–7 are snapshots of those sessions, including “still hard-wired” and “not implemented” lists. Later code/decisions and the current table above supersede their implementation status; proposed schemas and target folders remain proposals. Historical detail is preserved, not silently applied to the current registry.
+
 
 > RAD-LAB is an **educational** platform. No medical value in this document is validated. Where a value or rule is suggested for a future exam it is marked *illustrative* and must pass the evidence gate (§6) before it reaches a learner.
 

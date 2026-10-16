@@ -1,13 +1,17 @@
 # Architecture Decision Records
 
-Short records of the main platform decisions (Session 6; statuses updated in Session 7 — the owner's decisions D1–D7 are in [`../DECISIONS.md`](../DECISIONS.md)). Status values: **Proposed** (design only, awaiting owner), **Accepted** (already true in the code or deployment), **Superseded**. Nothing marked Proposed is implemented. Design detail: [`../PLATFORM_ARCHITECTURE.md`](../PLATFORM_ARCHITECTURE.md); order of work: [`../ROADMAP_SESSIONS.md`](../ROADMAP_SESSIONS.md).
+Current index as of main `f90b3c9` after #80 (2026-10-16). ADRs preserve dated decisions; their implementation sections may be historical snapshots. Current code/status: [platform architecture](../PLATFORM_ARCHITECTURE.md), [project status](../project-status.md), [owner decisions](../DECISIONS.md) and [pilot setup](../PILOT_SUPABASE_SETUP.md). Accepted records are not evidence of clinical validation or a live deployment.
+
+Implemented: the exam/case split, X-ray projection/scene registries, Practice routes, static hosting artefacts and the optional pilot Supabase slice. Still future: the five-mode product, non-X-ray engines, large-volume asset hosting and Assess. New exams/images are frozen and the next programming phase is postponed; see the [handoff](../HANDOFF.md). Older statements such as “remaining for the second exam” describe the record's date, not the current code.
+
+Status labels: **Accepted** = recorded decision; **Proposed** = future design; **Superseded** = replaced by a later cited decision. Partial implementation is stated separately below.
 
 | # | Decision | Status |
 |---|---|---|
 | [0001](0001-adr-format.md) | Record decisions as ADRs | Accepted |
 | [0002](0002-static-first-hosting-cloudflare-pages.md) | Static-first pilot hosting on Cloudflare Pages (project `rad-lab`, GitHub Actions deploy), private repo | Accepted (D6) |
-| [0003](0003-modality-exam-mode-hierarchy.md) | Hierarchy modality → exam → mode, five modes | Proposed; one mode (Practice) for now (D1); route shape implemented by ADR-0011 |
-| [0004](0004-declarative-exam-definitions.md) | Declarative exam + case definitions replace the fixed `RadCase` / `SimulationSettings` | Accepted; exam/case split implemented in Session 7, vocabularies / `ControlSpec` / console / scene remaining |
+| [0003](0003-modality-exam-mode-hierarchy.md) | Hierarchy modality → exam → mode, five modes | Route hierarchy implemented (ADR-0011); only Practice available, five-mode target remains proposed (D1) |
+| [0004](0004-declarative-exam-definitions.md) | Declarative exam + case definitions replace the fixed `RadCase` / `SimulationSettings` | Accepted; exam/case split plus later optional controls, per-exam categories and scene/projection registries implemented; full `ControlSpec[]`/consumer migration remain proposals; ADR text records Session 7 |
 | [0005](0005-per-modality-engines-common-contract.md) | One engine module per modality behind a common contract | Proposed (not implemented) |
 | [0006](0006-evidence-and-licensing-gate.md) | Evidence classes and the asset registry as a platform-wide gate | Accepted for X-ray; D4, D5 extend it |
 | [0007](0007-large-asset-strategy.md) | Large volumes live outside git, described by a checksummed manifest | Proposed |
