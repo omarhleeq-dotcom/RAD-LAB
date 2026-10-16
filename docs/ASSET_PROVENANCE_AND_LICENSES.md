@@ -865,3 +865,24 @@ Two images of the same person's left hand were attached by the owner (A-014, A-0
 - A-034/A-036 remain public domain by Commons declaration, **not CC0**. No asset, licence grant, checksum, image or derivation changed.
 - A-008/A-009 remain owner-verified on the previous secondary-source basis; **official NIH terms and commercial compatibility are unestablished** (O101 deferred / RAD-038). The original provider acknowledgement, NIH download link and full Wang et al. CVPR 2017 citation appear on the new page and remain unchanged under the result.
 - O102 wording is implemented on the credits page for review: named source, author, licence where established, modifications and evidence limits. The owner explicitly chose to finish the page and temporarily retain existing result captions after the guard conflict was explained. O102 remains partial until that later wording update. No new external verification or release clearance is claimed. Details: [session report](session-rad-045-credits-2026-10-16.md).
+
+## RAD-054 — Platform fonts and symbolic catalogue artwork (2026-10-16)
+
+These are platform navigation assets, not diagnostic images or validated positioning illustrations. Existing radiograph masters, web copies and scene artwork remain unchanged.
+
+- **FONT-RAD054-IBM:** IBM Plex Sans Arabic 1.1.0 from IBM's official npm package `@ibm/plex-sans-arabic`, tarball `https://registry.npmjs.org/@ibm/plex-sans-arabic/-/plex-sans-arabic-1.1.0.tgz`; repository https://github.com/IBM/plex. Original complete WOFF2 Regular/Medium/SemiBold/Bold copied byte-for-byte. Copyright © 2017 IBM Corp.; Reserved Font Name “Plex”. Package WOFF2 licence read on 2026-10-16: SIL OFL 1.1 permits bundling/embedding and commercial software distribution with the copyright and licence; fonts are not sold separately or renamed/modified. Notice shipped at `public/fonts/IBM-Plex-OFL.txt`.
+- **FONT-RAD054-INTER:** Inter normal Latin variable WOFF2 from pinned Fontsource distribution `@fontsource-variable/inter` 5.3.0, tarball `https://registry.npmjs.org/@fontsource-variable/inter/-/inter-5.3.0.tgz`; upstream https://github.com/rsms/inter, distribution https://github.com/fontsource/font-files/tree/main/fonts/variable/inter. Package metadata and complete SIL OFL 1.1 read on 2026-10-16. Copyright 2016 The Inter Project Authors. Distributed subset copied unmodified, not subsetted or renamed by RAD-LAB. Commercial bundling/embedding permitted subject to OFL; notice shipped at `public/fonts/Inter-OFL.txt`.
+- Both use local `/fonts/` URLs and `font-display: swap`, restricted to platform chrome/pages; no runtime font provider. Downloaded archives are not committed. No installed/recurring npm dependency or package-lock change.
+- **ART-RAD054-CATALOGUE:** original SVG path artwork authored in `src/features/platform/ExamGraphic.tsx` for this session, using only basic shapes and original paths. No third-party image, tracing, scene paths or generated diagnostic radiograph. Revision S-UI-054-8: all 17 current exam/projection combinations have distinct original geometry: chest PA/AP/side, cropped wrist PA/side versus whole hand PA/extension-side, extended/bent elbow, shoulder Grashey, pelvis AP, knee/ankle front/side, and foot front/oblique (compressed/rotated symbolic perspective). Head/Spine symbols mark inactive categories only. Generic artwork remains the fallback for unmapped future parts. Decorative `aria-hidden` because the card gives its complete exam title in text; geometry remains the same in both locales. Colour derives from scoped UI tokens. Artwork is not medical validation of anatomy/projection or an engine input. The approved image-generation concept board guided composition only and is not shipped.
+
+Shipped font/notice bytes (SHA-256); font binaries are unmodified. In the IBM notice only a trailing space was removed to satisfy repository whitespace checks; copyright and complete OFL text are preserved:
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `public/fonts/IBM-Plex-OFL.txt` | 4359 | `db1e3a7a5b94313662e967f1db27ecbced0955a52427f8e63a27ebd4d36c11ad` |
+| `public/fonts/IBMPlexSansArabic-Bold.woff2` | 73788 | `db6650a05969c144ab5ab9bb6c3beca6ca4dbb3537bb5f2311c878dd293875b4` |
+| `public/fonts/IBMPlexSansArabic-Medium.woff2` | 75936 | `c72f6986f50ded745d06e71e508096209c52a55a6b3a81029954e33c52ba1dd2` |
+| `public/fonts/IBMPlexSansArabic-Regular.woff2` | 71904 | `74112e1b7bf2e2c547989a4e947a60cba6cd1f9156e0065670134636e717199d` |
+| `public/fonts/IBMPlexSansArabic-SemiBold.woff2` | 76408 | `869b2acd0a9660607a2025f0fe1c640110bf23d33417509328f07722922b8063` |
+| `public/fonts/Inter-OFL.txt` | 4477 | `3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345` |
+| `public/fonts/inter-latin-wght-normal.woff2` | 48256 | `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62` |

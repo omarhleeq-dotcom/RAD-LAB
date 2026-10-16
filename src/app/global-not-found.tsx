@@ -17,7 +17,7 @@ export default function GlobalNotFound() {
   return (
     <html lang="en">
       <body className="antialiased">
-        <header className="border-b border-line bg-panel">
+        <header className="site-chrome border-b border-line bg-panel">
           {langs.map(({ code, dir, m }) => (
             <p
               key={code}
@@ -25,7 +25,7 @@ export default function GlobalNotFound() {
               lang={code}
               dir={dir}
               data-testid="preview-banner"
-              className="border-b border-signal/60 bg-signal/25 px-4 py-1.5 text-center text-xs font-semibold text-ink"
+              className="border-b border-signal/60 bg-signal/25 px-4 py-1.5 text-center text-sm font-semibold text-ink"
             >
               {m.common.previewBanner}
             </p>
@@ -36,7 +36,7 @@ export default function GlobalNotFound() {
             </span>
           </div>
         </header>
-        <main id="main-content" className="mx-auto max-w-3xl space-y-10 px-4 py-16">
+        <main id="main-content" className="platform-page mx-auto max-w-3xl space-y-10 px-4 py-16">
           {langs.map(({ code, dir, m }) => (
             <section key={code} lang={code} dir={dir} data-testid={`not-found-${code}`}>
               <h1 className="text-2xl font-bold">{m.notFound.title}</h1>
@@ -49,9 +49,9 @@ export default function GlobalNotFound() {
             </section>
           ))}
         </main>
-        <footer className="border-t border-line bg-panel">
+        <footer className="site-chrome border-t border-line bg-panel">
           {langs.map(({ code, dir, m }) => (
-            <p key={code} role="note" lang={code} dir={dir} className="mx-auto max-w-7xl px-4 py-3 text-xs text-muted">
+            <p key={code} role="note" lang={code} dir={dir} className="mx-auto max-w-7xl px-4 py-3 text-sm text-muted">
               {m.common.disclaimer}
               <a href={`/${code}/credits`} className="ms-3 inline-block min-h-6 text-brand underline">{m.common.creditsLink}</a>
             </p>

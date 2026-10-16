@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "regions": [
+    {
+      "id": "body",
+      "name": {
+        "en": "Body",
+        "ar": "الجذع"
+      },
+      "bodyParts": [
+        "chest",
+        "abdomen",
+        "pelvis"
+      ],
+      "status": "available",
+      "graphic": "chest-pa"
+    },
+    {
+      "id": "upper-limb",
+      "name": {
+        "en": "Upper extremity",
+        "ar": "الأطراف العلوية"
+      },
+      "bodyParts": [
+        "shoulder",
+        "wrist",
+        "hand",
+        "elbow"
+      ],
+      "status": "available",
+      "graphic": "elbow-ap"
+    },
+    {
+      "id": "lower-limb",
+      "name": {
+        "en": "Lower extremity",
+        "ar": "الأطراف السفلية"
+      },
+      "bodyParts": [
+        "foot",
+        "knee",
+        "ankle"
+      ],
+      "status": "available",
+      "graphic": "knee-ap"
+    },
+    {
+      "id": "head",
+      "name": {
+        "en": "Head",
+        "ar": "الرأس"
+      },
+      "bodyParts": [
+        "head",
+        "skull"
+      ],
+      "status": "planned",
+      "graphic": "head"
+    },
+    {
+      "id": "spine",
+      "name": {
+        "en": "Spine",
+        "ar": "العمود الفقري"
+      },
+      "bodyParts": [
+        "spine"
+      ],
+      "status": "planned",
+      "graphic": "spine"
+    }
+  ],
+  "graphics": {
+    "chest": "chest-pa",
+    "shoulder": "shoulder-grashey",
+    "wrist": "wrist-pa",
+    "hand": "hand-pa",
+    "elbow": "elbow-ap",
+    "foot": "foot-ap",
+    "knee": "knee-ap",
+    "ankle": "ankle-ap",
+    "pelvis": "pelvis-ap"
+  },
+  "projectionGraphics": {
+    "chest": {
+      "pa-erect": "chest-pa",
+      "ap-erect": "chest-ap",
+      "lateral-left": "chest-lateral"
+    },
+    "shoulder": {
+      "shoulder-grashey": "shoulder-grashey"
+    },
+    "pelvis": {
+      "pelvis-ap": "pelvis-ap"
+    },
+    "wrist": {
+      "wrist-pa": "wrist-pa",
+      "wrist-lateral": "wrist-lateral"
+    },
+    "hand": {
+      "hand-pa": "hand-pa",
+      "hand-lateral": "hand-lateral"
+    },
+    "elbow": {
+      "elbow-ap": "elbow-ap",
+      "elbow-lateral": "elbow-lateral"
+    },
+    "foot": {
+      "foot-ap": "foot-ap",
+      "foot-oblique": "foot-oblique"
+    },
+    "knee": {
+      "knee-ap": "knee-ap",
+      "knee-lateral": "knee-lateral"
+    },
+    "ankle": {
+      "ankle-ap": "ankle-ap",
+      "ankle-lateral": "ankle-lateral"
+    }
+  }
+}
