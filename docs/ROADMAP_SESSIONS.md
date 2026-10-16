@@ -453,3 +453,5 @@ Owner reports #71 merged; one PR API read and Git fetch confirm main 6021321, lo
 Owner subsequently supplied full production Arabic Terms text and /ar/terms screenshot with the pilot-version notice (S-PILOT-39.1). Seven sections/17 paragraphs, closing and approved password override match; English/renewal/saving evidence still pending. No agent site/preview navigation or new code/version change.
 
 Owner supplied full English participant text and /en/terms screenshot with Pilot version (S-PILOT-39.2), matching all seven sections/17 paragraphs and closing. Complete main-site EN/AR text/labels now evidenced by owner; renewed acceptance and post-reload saving still pending. No code/version change or agent site navigation.
+
+Owner explicitly confirms the renewed-consent request appeared, was accepted, and disappeared after page refresh (S-PILOT-39.3). Live unchecked/disabled controls and raw DB version/time were not independently observed; mocked QA remains their recorded coverage. New attempt saving after simulator reload still pending.
