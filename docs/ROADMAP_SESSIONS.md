@@ -461,3 +461,11 @@ Owner then answers the requested reload/new-attempt/owner-panel check with a pro
 ### RAD-045 — sources and credits, 2026-10-16
 
 Implemented for review on `feat/rad-045-sources-credits`, based on main `9b002ab` (#72 merged): static EN/AR page, structured evidence-aware credits, locale footer links including 404, existing result captions preserved because their markup is hash-guarded (owner explicitly chose temporary retention). [Report and QA](session-rad-045-credits-2026-10-16.md). **RAD-045 done after verified merge #73** at `d2b4701` on 2026-10-16 (S-CREDITS-4); merge tree equals tested head `9f78ab2`. Existing check/build/browser evidence applies to the agreed page/footer scope; result captions remain deferred by owner choice. No live deployment verification is claimed. O100 stays closed, O101/RAD-038 deferred/unresolved; no commercial-release clearance, new exam or image.
+
+### RAD-054 — مقترح المظهر للنقاش، 2026-10-16
+
+بعد إثبات دمج #77 وتحديثmain إلى`ee99f96`، أُعد [مقترح محدود غير معتمد](session-rad-054-appearance-2026-10-16.md) للخطوط والأحجام والألوان والتحذيرات وبديل«بدون حساب». المرحلة docs-only بميزانية4ملفات؛ التنفيذ منتظر اختيار المالك وبميزانية مقترحة15ملفًا مسماة. لافتة المعاينة والتذييل الطبي باقيان في المقترح؛ الحارس والمحاكي والفحوص والدرجات والمشاهد وhashes وAssess خارج النطاق. حساب تباين منCSS فقط؛ QA التطبيق والمتصفح لم يُجرَ بهذه المرحلة. RAD-054 review/waiting_on owner؛ #76/#77 مدموجان والتحقق الحي الموروث باقٍ. لا دمج أو polling أو معاينة مستضافة.
+
+### RAD-054 — اعتماد المقترح الثالث، 2026-10-16
+
+اعتمد المالك «تمام اعتمدنا» بعد النسخة الثالثة: رسوم بطاقات تشريحية رمزية، إزالة تكرار الإسقاط، بحث وفلاتر مناطق، ضبط هيدر RTL واللغة بالأعلى، قائمة ثابتة للكمبيوتر ودرج هاتف بطول الشاشة، والاختبارات/المادة العلمية «قريبًا» دون فتح. [تقرير الاعتماد](session-rad-054-appearance-2026-10-16.md) وDECISIONS S-UI-054-1…6 مرجع التنفيذ؛ لا يعاد طلب اعتماد التصميم نفسه. دفعة توثيق 5 ملفات؛ التنفيذ لم يبدأ ويحتاج ميزانية جديدة بدل قائمة 15 القديمة، تشمل الخطوط والرخص والرسوم والتنقل والبحث. RAD-054 planned/waiting_on code وليست done. لا تغيير تطبيق أو حارس أو فحوص أو درجات أو مشاهد أو hashes أو Assess؛ #78 يبقى Draft دون دمج أو polling أو معاينة مستضافة.
