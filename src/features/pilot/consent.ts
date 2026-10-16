@@ -1,6 +1,6 @@
 // Consent to the Terms and Privacy page (RAD-043a, DECISIONS S-PILOT-10). Bump CONSENT_VERSION (a date) when the page's meaning changes:
 // everyone is then asked again on the account page, and saving attempts pauses until they accept.
-export const CONSENT_VERSION = "2026-10-17";
+export const CONSENT_VERSION = "2026-10-18";
 
 /** The consent version recorded on a `profiles` row; anything unexpected = null (treated as "not consented"). */
 export function parseConsentVersion(row: unknown): string | null {
