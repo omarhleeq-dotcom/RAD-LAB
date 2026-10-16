@@ -5,7 +5,7 @@
 ## 1. البداية الحالية
 - تحقّق دمج #76 (RAD-052) عبر Git/API مرة واحدة؛ main عند `29b22d9` وشجرته مطابقة للكود المفحوص `161abbf`.
 - هذه الجلسة RAD-053 على `feat/rad-053-body-part-catalogue`: تجميع X-ray بحسب bodyPart وفصل CT/MRI/US في «قريبًا»؛ [التقرير](session-rad-053-catalogue-2026-10-16.md).
-- Draft PR فقط؛ لا دمج/auto-merge، لا subscribe/poll، ولا فتح/مشاركة معاينة.
+- Draft PR [#77](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/77) للمراجعة؛ لا دمج/auto-merge، لا subscribe/poll، ولا فتح/مشاركة معاينة.
 
 ## 2. القرارات والحدود
 - الحارس بالواجهة على موقع ثابت: approved فقط، الدخول والشروط و404 عامة، والاعتمادات محجوبة بقرار المالك. الحسابات المعطلة تبقي الموقع مفتوحًا؛ ملفات الموقع قابلة للتنزيل.

@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 63,
-  "updated_at": "2026-10-16T15:30:02Z",
+  "revision": 64,
+  "updated_at": "2026-10-16T15:30:03Z",
   "timezone": "UTC",
   "next_id": "RAD-057",
   "tasks": [
@@ -499,8 +499,8 @@
       "title": "الكتالوج حسب المنطقة التشريحية وقسم CT/MRI/US منفصل",
       "status": "review",
       "priority": "medium",
-      "description": "الكتالوج منفّذ للمراجعة: مجموعات X-ray من bodyPart وأسماء EN/AR في سجل مفتوح، وCT/MRI/US في «قريبًا» منفصل. الروابط والفحوص والحارس محفوظة. نجحت check والبناءان وتدقيق المتصفح المحلي؛ ينتظر مراجعة Draft PR والدمج اليدوي والتحقق الحي.",
-      "source_ref": "docs/session-rad-053-catalogue-2026-10-16.md؛ docs/session-ui-audit-2026-10-16.md §4؛ S-ASSESS-1",
+      "description": "الكتالوج منفّذ للمراجعة: مجموعات X-ray من bodyPart وأسماء EN/AR في سجل مفتوح، وCT/MRI/US في «قريبًا» منفصل. الروابط والفحوص والحارس محفوظة. نجحت check والبناءان وتدقيق المتصفح المحلي؛ ينتظر مراجعة Draft PR #77 والدمج اليدوي والتحقق الحي.",
+      "source_ref": "PR #77؛ docs/session-rad-053-catalogue-2026-10-16.md؛ docs/session-ui-audit-2026-10-16.md §4؛ S-ASSESS-1",
       "waiting_on": "owner"
     },
     {
