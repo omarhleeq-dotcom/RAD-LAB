@@ -53,6 +53,7 @@ export default function GlobalNotFound() {
           {langs.map(({ code, dir, m }) => (
             <p key={code} role="note" lang={code} dir={dir} className="mx-auto max-w-7xl px-4 py-3 text-xs text-muted">
               {m.common.disclaimer}
+              <a href={`/${code}/credits`} className="ms-3 inline-block min-h-6 text-brand underline">{m.common.creditsLink}</a>
             </p>
           ))}
         </footer>
