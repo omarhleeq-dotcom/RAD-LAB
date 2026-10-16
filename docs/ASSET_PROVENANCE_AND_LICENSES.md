@@ -886,3 +886,7 @@ Shipped font/notice bytes (SHA-256); font binaries are unmodified. In the IBM no
 | `public/fonts/IBMPlexSansArabic-SemiBold.woff2` | 76408 | `869b2acd0a9660607a2025f0fe1c640110bf23d33417509328f07722922b8063` |
 | `public/fonts/Inter-OFL.txt` | 4477 | `3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345` |
 | `public/fonts/inter-latin-wght-normal.woff2` | 48256 | `3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62` |
+
+### RAD-054 — phone-feedback navigation symbols (2026-10-16)
+
+`src/features/platform/ExamGraphic.tsx`: six replacement original schematic SVGs (knee AP/lateral, ankle AP/lateral, foot AP/oblique) and two new category symbols (full upper/lower limb), authored directly as vector paths for this repository. No external image, generated raster, tracing, copied scene or diagnostic radiograph. The owner's screenshots identify the old symbols to replace; they are not product assets. Existing font licences remain. These symbols aid navigation only; they do not validate anatomy or clinical positioning. Category mappings are in the version-1 presentation registry.

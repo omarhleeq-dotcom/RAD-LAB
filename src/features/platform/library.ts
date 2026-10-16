@@ -74,3 +74,9 @@ export function graphicOf(item: Pick<LibraryItem, "bodyPart" | "projection">): s
   const graphics: Record<string, string> = presentation.graphics;
   return variants[item.bodyPart]?.[item.projection] ?? graphics[item.bodyPart] ?? "generic";
 }
+
+/** Category state belongs to the library URL, so both history and explicit return links restore it. */
+export function categoryLibraryPath(modality: string, bodyPart: string): string {
+  const region = LIBRARY_REGIONS.find((entry) => entry.bodyParts.includes(bodyPart));
+  return `/${modality}#category=${encodeURIComponent(region?.id ?? `body-part:${bodyPart}`)}`;
+}

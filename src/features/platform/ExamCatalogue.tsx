@@ -1,11 +1,27 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { localize } from "@/lib/localized";
 import { ExamGraphic } from "./ExamGraphic";
 import { LIBRARY_REGIONS, filterLibrary, graphicOf, uniformlyProvisional, type LibrarySection } from "./library";
+
+// Each category is a navigation step: browser Back restores the category cards.
+// Preserve Next's history metadata so exam navigation and Forward continue to work.
+function subscribeCategory(notify: () => void) {
+  window.addEventListener("hashchange", notify);
+  window.addEventListener("popstate", notify);
+  return () => { window.removeEventListener("hashchange", notify); window.removeEventListener("popstate", notify); };
+}
+const currentCategory = () => new URLSearchParams(window.location.hash.slice(1)).get("category") ?? "";
+const serverCategory = () => "";
+function selectCategory(region: string) {
+  const url = new URL(window.location.href);
+  url.hash = region ? new URLSearchParams({ category: region }).toString() : "";
+  window.history.pushState(window.history.state, "", url);
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+}
 
 export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[] }) {
   const t = useTranslations("library");
@@ -19,7 +35,7 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
   const categoryButtons = useRef<Record<string, HTMLButtonElement | null>>({});
   const previousRegion = useRef("");
   const [query, setQuery] = useState("");
-  const [region, setRegion] = useState("");
+  const region = useSyncExternalStore(subscribeCategory, currentCategory, serverCategory);
   const selected = sections.find((section) => section.region.id === region);
   const planned = LIBRARY_REGIONS.filter((entry) => entry.status === "planned");
   const items = selected ? filterLibrary([selected], query, region).flatMap((section) => section.items) : [];
@@ -30,12 +46,11 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
     previousRegion.current = region;
   }, [region]);
   const clear = () => { setQuery(""); searchInput.current?.focus(); };
-  const back = () => { setQuery(""); setRegion(""); };
   if (!selected) return <section className="library-categories" aria-labelledby={headingId} data-testid="library-categories">
     <h2 id={headingId}>{t("chooseCategory")}</h2>
     <ul className="category-grid">
       {sections.map(({ region: entry, items: exams }) => <li key={entry.id}>
-        <button type="button" className="category-choice" data-region={entry.id} ref={(node) => { categoryButtons.current[entry.id] = node; }} onClick={() => setRegion(entry.id)}>
+        <button type="button" className="category-choice" data-region={entry.id} ref={(node) => { categoryButtons.current[entry.id] = node; }} onClick={() => { setQuery(""); selectCategory(entry.id); }}>
           <div className="exam-art"><ExamGraphic kind={entry.graphic ?? graphicOf(exams[0]!)} /></div>
           <span className="category-choice-label">{localize(entry.name, locale)}<span aria-hidden="true">←</span></span>
         </button>
@@ -47,7 +62,6 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
     </ul>
   </section>;
   return <div className="library-browser">
-    <button type="button" className="clear-filters category-back" data-testid="back-to-categories" onClick={back}>{t("backToCategories")}</button>
     <section className="library-section" data-testid={`library-region-${selected.region.id}`} aria-labelledby={headingId}>
       <h2 id={headingId} ref={heading} tabIndex={-1}>{localize(selected.region.name, locale)}</h2>
       <div className="library-search"><label htmlFor={inputId}>{t("search")}</label><div className="search-field"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="10" cy="10" r="7" /><path d="m16 16 5 5" /></svg><input ref={searchInput} id={inputId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("searchPlaceholder")} autoComplete="off" /></div></div>

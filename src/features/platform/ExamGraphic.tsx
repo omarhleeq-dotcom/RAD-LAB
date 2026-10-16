@@ -25,21 +25,69 @@ export function ExamGraphic({ kind }: { kind: string }) {
     drawing = <><path d="m87 43 74-12-10 73-29-7-17-37M73 54q-18 12-8 34l21 61m3-86q17 11 13 28l10 53" fill="var(--art-soft)" /><path d="m87 43 74-12-10 73-29-7-17-37M59 42l52-18 58 4M73 54q-18 12-8 34l21 61m3-86q17 11 13 28l10 53" /><circle cx="81" cy="71" r="19" /><path d="m107 53 5 35" /></>;
   } else if (kind === "pelvis-ap") {
     drawing = <><path d="M112 38Q84 10 60 30q-17 32 12 56l26 22 15 22h14l15-22 26-22q29-24 12-56-24-20-52 8l-8 29Z" fill="var(--art-soft)" /><path d="M112 38Q84 10 60 30q-17 32 12 56l26 22 15 22h14l15-22 26-22q29-24 12-56-24-20-52 8l-8 29ZM98 108l-15 41m59-41 15 41M120 68v58" /><ellipse cx="96" cy="94" rx="12" ry="16" /><ellipse cx="144" cy="94" rx="12" ry="16" /></>;
-  } else if (kind === "foot-ap" || kind === "foot-oblique") {
-    drawing = <g transform={kind === "foot-oblique" ? "translate(25 -8) rotate(20 120 84) translate(24 0) scale(.8 1)" : undefined}>
-      <path d="M96 146q-13-7-8-26l8-28-13-47q-5-19 7-23 13-3 15 16l4 16q-2-24 9-25 9-1 10 20l1 12q0-22 10-18 9 3 7 25 6-17 14-9 6 6 0 27 11-11 16-1 4 8-9 23l-25 25q-5 22-23 25Z" fill="var(--art-soft)" />
-      <path d="m99 48 14 49m7-40 2 44m15-34-6 36m19-25-12 29m19-15-14 19m-29-7 22 6m-20 8 17 3m-24 10 18 3" />
-      <path d="M97 133q-10 13 1 17l22 1q11-8 5-16Z" fill="var(--art-soft)" />
-      <ellipse cx="94" cy="36" rx="7" ry="10" /><ellipse cx="119" cy="43" rx="5" ry="7" /><ellipse cx="139" cy="56" rx="5" ry="6" /><ellipse cx="156" cy="71" rx="4" ry="5" /><ellipse cx="168" cy="88" rx="4" ry="5" />
-    </g>;
+  } else if (kind === "upper-limb") {
+    drawing = <>
+      <path d="M91 22q-15 1-17 17l8 42 27 39 5 22q2 9 9 8l3-2 7 5q6 3 8-3l-7-11 8 5q7 2 7-4l-15-14-13-13-21-38-4-35q9-10 1-16Z" fill="var(--art-soft)" />
+      <circle cx="88" cy="36" r="8" /><path d="m88 45 6 32 24 36m-17-35 25 34m-7 8 10 17m-5-18 11 14" />
+      <path d="M68 26q3-12 19-13l14 7m-13 58 13 1" opacity=".65" />
+    </>;
+  } else if (kind === "lower-limb") {
+    drawing = <>
+      <path d="M109 16q-17 0-17 19l6 41-3 19 5 43-9 11q-5 7 5 7h40q12-1 5-8l-20-14 2-42 8-18 6-38q2-19-15-20Z" fill="var(--art-soft)" />
+      <path d="m113 31-3 39m-1 18 2 44m8-43-2 42m-6 9 14 8" />
+      <ellipse cx="111" cy="78" rx="9" ry="10" /><path d="m101 23 10-5 15 5m-21 125h27" />
+    </>;
+  } else if (kind === "foot-ap") {
+    drawing = <>
+      <path d="M94 60q-9 7-7 21 2 11 12 25l1 15q-11 24 0 32 12 9 26 0 10-6 9-24l5-21q4-12 18-24 9-9 6-18-3-8-18-10-24-5-41-2Z" fill="var(--art-soft)" />
+      <ellipse cx="92" cy="33" rx="12" ry="16" fill="var(--art-soft)" />
+      <ellipse cx="118" cy="28" rx="8" ry="11" fill="var(--art-soft)" />
+      <ellipse cx="139" cy="34" rx="7" ry="10" fill="var(--art-soft)" />
+      <ellipse cx="156" cy="44" rx="6" ry="9" fill="var(--art-soft)" />
+      <ellipse cx="170" cy="58" rx="5" ry="8" fill="var(--art-soft)" transform="rotate(25 170 58)" />
+      <path d="m98 70 17 35m1-37 5 36m16-34-10 36m25-29-19 31m-25 8 24 3m-23 10 21 2" strokeWidth="3" />
+      <path d="M108 139q-7 10 3 13 10 2 14-10" strokeWidth="3" />
+    </>;
+  } else if (kind === "foot-oblique") {
+    drawing = <>
+      <path d="M113 56q-14 2-17 15l2 24-4 23q-14 23-5 33 10 11 23 1 9-7 13-24l10-21 25-25q10-10 4-18-5-8-22-9Z" fill="var(--art-soft)" />
+      <ellipse cx="112" cy="31" rx="11" ry="15" fill="var(--art-soft)" transform="rotate(18 112 31)" />
+      <ellipse cx="136" cy="32" rx="7" ry="10" fill="var(--art-soft)" transform="rotate(23 136 32)" />
+      <ellipse cx="153" cy="40" rx="6" ry="9" fill="var(--art-soft)" transform="rotate(28 153 40)" />
+      <ellipse cx="166" cy="51" rx="5" ry="8" fill="var(--art-soft)" transform="rotate(35 166 51)" />
+      <ellipse cx="176" cy="64" rx="4" ry="7" fill="var(--art-soft)" transform="rotate(40 176 64)" />
+      <path d="m111 68 1 37m16-37-8 39m20-35-14 38m26-31-20 35m-24-2 21 6m-24 5 19 7" strokeWidth="3" />
+      <path d="M100 137q-10 10-2 14 8 3 13-8" strokeWidth="3" />
+    </>;
   } else if (kind === "knee-ap") {
-    drawing = <><path d="M101 14v41q-17 10-12 25 3 12 15 10h30q13 2 16-10 5-15-12-25V14M105 99l3 54m26-54-3 54" fill="var(--art-soft)" /><path d="M93 95h53M119 58v24m22 21 12 4-3 46" /><path d="M98 81q9 7 17-1m8 0q8 8 18 0" /></>;
+    drawing = <>
+      <path d="M103 13v39q0 8-10 15-9 7-7 20 2 12 14 12 12 0 19-8 7 8 19 8 12 0 14-12 2-13-7-20-10-7-10-15V13" fill="var(--art-soft)" />
+      <path d="M91 107q28-6 56 0l-8 14-7 34h-23l-6-34Z" fill="var(--art-soft)" />
+      <path d="m153 114 9-3 4 9-10 35h-8l6-33Z" fill="var(--art-soft)" />
+      <path d="M99 80q3 13 15 3m11 0q12 10 15-3m-21-14v16m-10 31h22" strokeWidth="3" />
+    </>;
   } else if (kind === "knee-lateral") {
-    drawing = <><path d="M120 15v43q23 9 16 33l-11 14-8 47m-17-137v44q-18 9-13 31l18 14-9 48" fill="var(--art-soft)" /><circle cx="111" cy="79" r="19" /><ellipse cx="147" cy="70" rx="7" ry="13" /><path d="m102 109 20 3m-21 0-4 40m30-43 10 5-7 38" /></>;
+    drawing = <>
+      <path d="M97 13v44q-13 8-13 24 0 20 20 23 18 4 29-12 8-13-1-24l-13-12V13" fill="var(--art-soft)" />
+      <path d="m106 111 27-10 9 13 27 32-17 12-29-33Z" fill="var(--art-soft)" />
+      <path d="m109 118 5 14 27 26m-40-91q-14 8-8 23 7 12 21 6" />
+      <path d="M142 63q13 1 11 13l-7 17q-10-1-11-10Z" fill="var(--art-soft)" /><path d="m117 113 14-5" strokeWidth="3" />
+    </>;
   } else if (kind === "ankle-ap") {
-    drawing = <><path d="M101 14v66l8 15h24l7-15V14m15 0-1 70-10 19M107 114l-11 32m38-32 12 32" fill="var(--art-soft)" /><path d="M108 98h24q9 10-1 17h-23q-10-7 0-17Zm-5 24h32m-32 10h32m-25 12h20" /></>;
+    drawing = <>
+      <path d="M94 13v66l-5 14 8 11 8-12h29l2-12V13" fill="var(--art-soft)" />
+      <path d="M146 13v62l-5 25 8 9 7-20V13" fill="var(--art-soft)" />
+      <path d="M106 100q13-5 25 0l7 15-10 10h-19l-10-10Z" fill="var(--art-soft)" />
+      <path d="m105 131-10 18 13 7h25l10-12-9-14m-24 1 2 17m15-17-2 17M101 83h26" />
+    </>;
   } else if (kind === "ankle-lateral") {
-    drawing = <><path d="M109 15v64l-15 21-18 19q-12 17 7 24 11 3 21-2l65-21q15-6 8-17-5-7-18-6l-27-6V15" fill="var(--art-soft)" /><path d="M108 94q12-14 23 3l-12 17-19-4Zm-15 24q-21 13-8 19l26-4m17-16 41-8m-35 15 38-8" /></>;
+    drawing = <>
+      <path d="M99 13v62l-8 15q9 9 21 5l12-8V13" fill="var(--art-soft)" />
+      <path d="M112 17v56l-6 17" opacity=".6" />
+      <path d="M99 101q17-10 31-1l8 12-17 10-23-5Z" fill="var(--art-soft)" />
+      <path d="m95 116-13 2q-15 2-15 16 0 14 17 14l38-2 16-10-17-13" fill="var(--art-soft)" />
+      <path d="m137 118 23 3 21 15q7 7-3 10l-44-6m14-10 22 8m-83-5h21" />
+    </>;
   } else if (kind === "head") {
     drawing = <><path d="M99 140v-20q-27-10-27-48 0-43 43-46 40-4 44 39l13 24-14 3v21q-1 13-27 9v18" fill="var(--art-soft)" /><path d="M84 53q33-27 59 0m-54 8q8-17 21-3 12-18 23-1m-22 2v29m39-12h5m-13 29h13" /></>;
   } else if (kind === "spine") {

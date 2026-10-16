@@ -28,7 +28,7 @@
         "elbow"
       ],
       "status": "available",
-      "graphic": "elbow-ap"
+      "graphic": "upper-limb"
     },
     {
       "id": "lower-limb",
@@ -42,7 +42,7 @@
         "ankle"
       ],
       "status": "available",
-      "graphic": "knee-ap"
+      "graphic": "lower-limb"
     },
     {
       "id": "head",
