@@ -85,6 +85,30 @@ export function useAccount(redirectTo: string) {
     }
   }, [redirectTo]);
 
+  /** Asks for a reset link. Supabase answers the same whether or not the address has an account, so the page must not reveal it either. */
+  const requestReset = useCallback(async (email: string): Promise<ActionResult> => {
+    const client = await getPilotClient();
+    if (!client) return { ok: false, error: "generic" };
+    try {
+      const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+      return error ? { ok: false, error: authErrorKey(error) } : { ok: true };
+    } catch {
+      return { ok: false, error: "network" };
+    }
+  }, [redirectTo]);
+
+  /** Sets a new password for the session the reset link created (the same call changes the password of any signed-in user). */
+  const updatePassword = useCallback(async (password: string): Promise<ActionResult> => {
+    const client = await getPilotClient();
+    if (!client) return { ok: false, error: "generic" };
+    try {
+      const { error } = await client.auth.updateUser({ password });
+      return error ? { ok: false, error: authErrorKey(error) } : { ok: true };
+    } catch {
+      return { ok: false, error: "network" };
+    }
+  }, []);
+
   /** Existing accounts accept from the account page (a participant may update only the two consent columns of their own row). */
   const acceptTerms = useCallback(async (): Promise<boolean> => {
     const client = await getPilotClient();
@@ -120,5 +144,5 @@ export function useAccount(redirectTo: string) {
     await load(data.session, false);
   }, [load]);
 
-  return { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened };
+  return { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword };
 }

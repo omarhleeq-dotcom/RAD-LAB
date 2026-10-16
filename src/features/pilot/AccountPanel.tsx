@@ -4,9 +4,10 @@
 import { useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { type AuthErrorKey, passwordProblem } from "./account-state";
+import { type AuthErrorKey, passwordProblem, recoveryFromHash } from "./account-state";
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
+import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
 import { SURVEY_URL, surveyHref } from "./survey";
 import { useAccount } from "./useAccount";
 
@@ -18,7 +19,7 @@ export function AccountPanel() {
   const t = useTranslations("account");
   const locale = useLocale();
   const redirectTo = typeof window === "undefined" ? "" : `${window.location.origin}/${locale}/account`;
-  const { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened } = useAccount(redirectTo);
+  const { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useAccount(redirectTo);
   const [mode, setMode] = useState<Mode>("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,6 +29,10 @@ export function AccountPanel() {
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
   const [acceptFailed, setAcceptFailed] = useState(false);
+  const [view, setView] = useState<"form" | "forgot">("form");
+  // The reset link lands here with a fragment; it is read once, before supabase-js clears it. Hydration is unaffected: nothing below uses it while loading.
+  const [fragment, setFragment] = useState<"recovery" | "linkError" | null>(() => (typeof window === "undefined" ? null : recoveryFromHash(window.location.hash)));
+  const [changed, setChanged] = useState(false);
 
   if (!PILOT) {
     return <p data-testid="account-off" className="rounded-lg border border-dashed border-line bg-paper p-5 text-muted">{t("notEnabled")}</p>;
@@ -53,6 +58,13 @@ export function AccountPanel() {
 
   if (state.kind === "loading") return <p role="status" className="text-muted">{t("loading")}</p>;
 
+  if (fragment === "linkError" || (fragment === "recovery" && state.kind === "signedOut")) {
+    return <LinkProblem onRequestNew={() => { setFragment(null); setView("forgot"); }} />;
+  }
+  if (fragment === "recovery" && state.kind === "signedIn") {
+    return <RecoveryForm onSave={updatePassword} onDone={() => { setFragment(null); setChanged(true); }} />;
+  }
+
   if (state.kind === "profileError") {
     return (
       <div className="rounded-lg border border-line bg-panel p-5" data-testid="account-profile-error">
@@ -69,6 +81,7 @@ export function AccountPanel() {
     const { status, code } = state.profile;
     return (
       <>
+      {changed && <p role="status" data-testid="password-changed" className="mb-4 rounded-md border border-ok/40 bg-ok/10 px-3 py-2">{t("reset.done")}</p>}
       {needsConsent(state.consentVersion) && (
         <section className="mb-4 rounded-lg border border-signal bg-signal/10 p-5" data-testid="consent-card" aria-labelledby="consent-title">
           <h2 id="consent-title" className="text-lg font-semibold">{t("consent.title")}</h2>
@@ -126,6 +139,8 @@ export function AccountPanel() {
     );
   }
 
+  if (view === "forgot") return <ForgotForm onRequest={requestReset} onBack={() => setView("form")} />;
+
   return (
     <section className="rounded-lg border border-line bg-panel p-5" aria-labelledby="acct-form">
       <div role="tablist" aria-label={t("title")} className="mb-4 flex gap-2">
@@ -168,6 +183,9 @@ export function AccountPanel() {
         {error && <p role="alert" data-testid="account-error" className="rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t(`errors.${error}`)}</p>}
         <button type="submit" disabled={busy || !email || !password || (mode === "signUp" && !agreed)} className={primary}>{busy ? t("working") : t(`submit.${mode}`)}</button>
       </form>
+      {mode === "signIn" && (
+        <p className="mt-4"><button type="button" data-testid="forgot-link" className="text-brand underline" onClick={() => { setError(null); setView("forgot"); }}>{t("forgot.link")}</button></p>
+      )}
     </section>
   );
 }
