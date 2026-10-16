@@ -413,3 +413,7 @@ CSVv1 ثابت للصفوف المدعومة، بما فيه مسار الأجز
 #### 8. قائمة المالك على الهاتف والاستئناف
 
 بعد مراجعة المسودة وتهيئة staging: EN/AR، محاولة محفوظة ثم ملاحظة مرتبطة، مرشحات المشارك والتاريخ وexam، تنزيل أجزاء CSV والنص العربي وحماية الصيغ، ظهور الفشل والجزئية عند انقطاع الاستمرار، وحالات pending/suspended وعدم الموافقة. إثبات حفظ التنزيل في الجهاز فحص مالك فعلي؛ الاختبارات المحاكية لا تثبته. تجربة المرشحات السابقة لا تثبت CSV أو الهاتف أو الاستعادة. برومبت الاستئناف جاهز في HANDOFF §5؛ لا يلزم بدء سياسة جديدة لإنهاء المراجعة.
+
+## RAD-050 — Terms consistency review (2026-10-16, DOCS, review)
+
+From updated main `d7532c8`, branch `docs/rad-050-terms-review`: [76 sentence/label rows, EN/AR proposals, owner questions and confirmations](TERMS_REVIEW_2026-10-16.md); S-PILOT-31.1…11 are PROPOSED, none accepted. No messages/code/CONSENT_VERSION change. RAD-050 = review / waiting_on owner. Six documentation files; no build or browser check in this session. [Next prompt](prompts/rad-050-apply-owner-answers.md) applies confirmed answers with one consent bump and mocked checkbox/consent EN/AR × 390/1440 + axe. S-PILOT-14/15 and O105 remain open; review merge is not policy acceptance.
