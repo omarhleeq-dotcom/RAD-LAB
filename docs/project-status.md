@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 60,
-  "updated_at": "2026-10-16T14:00:27Z",
+  "revision": 61,
+  "updated_at": "2026-10-16T15:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-051",
+  "next_id": "RAD-057",
   "tasks": [
     {
       "id": "RAD-001",
@@ -475,6 +475,60 @@
       "description": "اكتملت مراجعة النص وتطبيقه EN/AR ورفع الموافقة مرة واحدة في #71 المدموج، مع فحوص المحاكاة والتحقق الحي بأدلة المالك من النص وتجديد الموافقة وظهور المحاولات الجديدة في لوحة المالك. النسخة والاستعادة موثقتان؛ لا سياسة أو ميزة إضافية.",
       "source_ref": "PR #71؛ DECISIONS S-PILOT-37/38/39.1…39.4؛ docs/session-rad-050-terms-implementation-2026-10-16.md",
       "completion_evidence": "#71 مدموج عند6021321؛ check (1872) وbuild/build:pages ناجحة؛ محاكاة EN/AR×390/1440:158 تحققًا و44 حالةaxe. أدلة المالك: نص EN/AR كامل، طلب موافقة قُبل وبقي مختفيًا بعدrefresh، ولقطة المحاولات الحديثة بلوحة الموقع الرئيسي (S-PILOT-39.1…39.4)."
+    },
+    {
+      "id": "RAD-051",
+      "title": "جرد الواجهة (قراءة فقط) قبل الدخول والكتالوج والمظهر",
+      "status": "review",
+      "priority": "medium",
+      "description": "جرد من الكود للدخول والتحذيرات المكررة والخطوط والألوان والكتالوج؛ لا تغيير سلوك. التقرير في docs/session-ui-audit-2026-10-16.md؛ لقطات الجوال/RTL وقياس التباين لم تُجرَ.",
+      "source_ref": "docs/session-ui-audit-2026-10-16.md",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-052",
+      "title": "حارس الدخول: لا وصول لأي صفحة قبل تسجيل الدخول",
+      "status": "planned",
+      "priority": "high",
+      "description": "قرار المالك: لا وصول للكتالوج ولا للفحوصات بلا جلسة معتمدة؛ الاستثناء الدخول والشروط و404. حجب بالواجهة (الموقع ثابت)، إعادة لنفس الرابط بعد الدخول، رسائل pending/suspended، والحسابات غير المفعّلة كما هي.",
+      "source_ref": "محادثة المالك 2026-10-16؛ docs/session-ui-audit-2026-10-16.md §1",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-053",
+      "title": "الكتالوج حسب المنطقة التشريحية وقسم CT/MRI/US منفصل",
+      "status": "planned",
+      "priority": "medium",
+      "description": "تجميع فحوص X-ray حسب bodyPart من البيانات (أسماء ثنائية اللغة في سجل مفتوح)، وإبقاء CT/MRI/US «قريبًا» دون نص طبي أو صور.",
+      "source_ref": "محادثة المالك 2026-10-16؛ src/data/modalities.ts",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-054",
+      "title": "مراجعة المظهر: الخطوط والألوان والتحذيرات الزائدة",
+      "status": "planned",
+      "priority": "medium",
+      "description": "تقليل تكرار التحذيرات، سلّم خطوط وألوان بالرموز مع قياس تباين وجوال وRTL. يُناقش مع المالك قبل التنفيذ؛ لا يمس المشاهد وhashes.",
+      "source_ref": "docs/session-ui-audit-2026-10-16.md §2–3",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-055",
+      "title": "قرارات Assess (توثيق فقط)",
+      "status": "review",
+      "priority": "high",
+      "description": "قرارات Assess مسجّلة في DECISIONS (S-ASSESS-1…6 وO106…O108): قالب اختبار، أسئلة اختيار متعدد، بنود محاكي بثلاثة مستويات، نتيجة مخفية. D3 وقيد CLAUDE.md باقيان حتى RAD-056.",
+      "source_ref": "DECISIONS S-ASSESS-1…6؛ محادثة المالك 2026-10-16",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-056",
+      "title": "نموذج بيانات الاختبارات وعزل مفاتيح الإجابة",
+      "status": "planned",
+      "priority": "high",
+      "description": "قالب الاختبار والأسئلة والمحاولات مع RLS وتصحيح بالخادم وتسجيل خام بإصدار، وتعديل CLAUDE.md/D3. لا يبدأ قبل RAD-052…054 ولوحة محاولاتي وقرار O106/O107/O108 من المالك.",
+      "source_ref": "DECISIONS S-ASSESS-1…6",
+      "waiting_on": "owner"
     }
   ]
 }
