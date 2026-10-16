@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { localize } from "@/lib/localized";
 import { examPath } from "@/features/platform/routes";
+import { groupExamsByBodyPart } from "@/features/platform/catalogue";
 import { examsOf, findModality } from "@/features/platform/resolve";
 
 export function generateStaticParams() {
@@ -28,7 +29,7 @@ export default async function ModalityPage({ params }: PageProps<"/[locale]/[mod
   if (!m) notFound();
   const t = await getTranslations("modality");
   const tc = await getTranslations("common");
-  const exams = examsOf(m);
+  const groups = groupExamsByBodyPart(examsOf(m));
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-6">
@@ -38,22 +39,29 @@ export default async function ModalityPage({ params }: PageProps<"/[locale]/[mod
         <h2 id="exams-heading" className="text-xl font-semibold">
           {t("examsTitle")}
         </h2>
-        <ul className="mt-4 grid gap-4 md:grid-cols-2">
-          {exams.map((e) => (
-            <li key={e.id} data-testid={`exam-${e.id}`} className="flex flex-col rounded-lg border border-line bg-panel p-5">
-              <h3 className="text-lg font-semibold">
-                <Link href={examPath(m.id, e.id)} className="text-brand hover:underline">
-                  {localize(e.title, locale)}
-                </Link>
-              </h3>
-              {e.provisional && (
-                <p className="mt-2">
-                  <span className="rounded bg-signal/20 px-2 py-1 text-xs font-medium text-warn">{tc("provisionalBadge")}</span>
-                </p>
-              )}
-            </li>
+        <div className="mt-4 space-y-6">
+          {groups.map(({ bodyPart, exams }) => (
+            <section key={bodyPart.id} aria-labelledby={`body-part-${bodyPart.id}`} data-testid={`body-part-${bodyPart.id}`}>
+              <h3 id={`body-part-${bodyPart.id}`} className="text-lg font-semibold">{localize(bodyPart.name, locale)}</h3>
+              <ul className="mt-4 grid gap-4 md:grid-cols-2">
+                {exams.map((e) => (
+                  <li key={e.id} data-testid={`exam-${e.id}`} className="flex flex-col rounded-lg border border-line bg-panel p-5">
+                    <h4 className="text-lg font-semibold">
+                      <Link href={examPath(m.id, e.id)} className="text-brand hover:underline">
+                        {localize(e.title, locale)}
+                      </Link>
+                    </h4>
+                    {e.provisional && (
+                      <p className="mt-2">
+                        <span className="rounded bg-signal/20 px-2 py-1 text-xs font-medium text-warn">{tc("provisionalBadge")}</span>
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
           ))}
-        </ul>
+        </div>
       </section>
     </div>
   );

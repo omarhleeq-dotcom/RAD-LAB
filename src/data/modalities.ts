@@ -1,3 +1,4 @@
+import bodyPartRegistry from "./body-parts.json";
 import type { ExamDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
 
@@ -38,9 +39,17 @@ export const MODALITIES: readonly ModalityEntry[] = [
 
 /**
  * Body-part registry (S14.1b). `BodyPartId` is an open string; an exam names one of these (`validateExam` rejects an
- * unregistered id). A new body part is one entry here, added in the session that adds its first exam.
+ * unregistered id). A new body part is one entry in body-parts.json, added in the session that adds its first exam.
  */
-export const BODY_PART_IDS: readonly string[] = ["shoulder", "pelvis", "chest", "wrist", "hand", "elbow", "foot", "knee", "ankle"];
+export interface BodyPartEntry {
+  readonly id: string;
+  readonly name: LocalizedText;
+}
+
+if (bodyPartRegistry.version !== 1) throw new Error("Unsupported body-part registry version");
+/** Labels and catalogue order share the same additive registry as exam validation. */
+export const BODY_PARTS: readonly BodyPartEntry[] = bodyPartRegistry.bodyParts;
+export const BODY_PART_IDS: readonly string[] = BODY_PARTS.map((part) => part.id);
 export const isRegisteredBodyPart = (id: string): boolean => BODY_PART_IDS.includes(id);
 
 export type ModeId = "practice";

@@ -339,3 +339,19 @@ Documentation only, machine-assisted; no UI strings changed. الإسقاط ال
 ## Shoulder Grashey implementation — S-SHOULDER-3 (DRAFT, machine-assisted, pending owner/educator review)
 
 UI additions: أشعة الكتف للبالغ — الجوف الحقاني المائل (غراشي)، واقف؛ الكتف — الإسقاط المائل (غراشي)؛ ميل الجسم نحو الكتف الأيمن / إدارة الجسم نحو الكتف الأيمن؛ وضع الذراع؛ مبعدة قليلًا، المرفق مثني، دوران محايد؛ إلى الجانب، دوران داخلي / خارجي؛ المفصل الكتفي العضدي؛ نطاق المصدر ‏35°–45°؛ الحيّز المفصلي (joint space)؛ انغلاق الحيّز المفصلي؛ رأس العضد؛ الجوف الحقاني؛ الأخرم (acromion)؛ الناتئ الغرابي (coracoid); طرف الترقوة الوحشي؛ منظر علوي؛ العلامة R (يمين المريض). Reuses «الكاشف» (never «الكاسيت»), «حبس النَّفَس».
+
+## Catalogue regions — RAD-053 (DRAFT, pending Arabic review)
+
+Navigation labels only, reusing the existing exam terminology; no new clinical claim or positioning instruction. The additive registry is `src/data/body-parts.json`.
+
+| English | العربية |
+|---|---|
+| Shoulder | الكتف |
+| Pelvis | الحوض |
+| Chest | الصدر |
+| Wrist | الرسغ |
+| Hand | اليد |
+| Elbow | المرفق |
+| Foot | القدم |
+| Knee | الركبة |
+| Ankle | الكاحل |

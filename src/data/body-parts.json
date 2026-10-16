@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "bodyParts": [
+    { "id": "shoulder", "name": { "en": "Shoulder", "ar": "الكتف" } },
+    { "id": "pelvis", "name": { "en": "Pelvis", "ar": "الحوض" } },
+    { "id": "chest", "name": { "en": "Chest", "ar": "الصدر" } },
+    { "id": "wrist", "name": { "en": "Wrist", "ar": "الرسغ" } },
+    { "id": "hand", "name": { "en": "Hand", "ar": "اليد" } },
+    { "id": "elbow", "name": { "en": "Elbow", "ar": "المرفق" } },
+    { "id": "foot", "name": { "en": "Foot", "ar": "القدم" } },
+    { "id": "knee", "name": { "en": "Knee", "ar": "الركبة" } },
+    { "id": "ankle", "name": { "en": "Ankle", "ar": "الكاحل" } }
+  ]
+}
