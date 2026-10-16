@@ -3,6 +3,7 @@
 ## البداية
 - الفرع `fix/rad-054-phone-navigation-art` من `d34da7108f6a43a5b1ba308b224c2b42bb4656a1`؛ #79 مدموج، تحقق Git/API مرة واحدة.
 - latest remote main يطابق البداية؛ origin/main المحلي قديم، وفشل fetch بسبب غياب اعتماد Git بالبيئة؛ موصل GitHub متاح.
+- [Draft PR #80](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/80) مفتوح ومسودة؛ كود الإصلاح `af70b805ff3e56f7fbc7d272315fbbc10f42a209`، ويلحقه توثيق فقط.
 - القرارات S-UI-054-1…12؛ [تقرير الدفعة](session-rad-054-phone-fixes-2026-10-16.md). ميزانية15 ملفًا محددة بالتقرير، دون worktree أو وكلاء.
 
 ## المنجز
@@ -16,4 +17,4 @@
 ## الحدود والتالي
 - SessionGate/access policy/API/RLS وبيانات الفحوص والدرجات والمحاكي والمشاهد والصور وhashes والاختبارات القديمة والقفل خارج التعديل؛ AccountPanel فقط يغير وجهة الدخول المطلوبة.
 - لا Assess أو محاولاتي أو بيانات حقيقية أو معاينة مستضافة أو merge/auto-merge/poll.
-- QA مكتمل والحالة review/waiting_on owner؛ تجهيز Draft PR جديد؛ فحص الهاتف للنسخة المعدلة والدمج اليدوي للمالك.
+- QA مكتمل والحالة review/waiting_on owner؛ Draft PR #80 للمراجعة فقط؛ فحص الهاتف للنسخة المعدلة والدمج اليدوي للمالك.

@@ -1,8 +1,10 @@
 # RAD-054 — إصلاح ملاحظات الهاتف، 2026-10-16
 
+[Draft PR #80](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/80)؛ كود الإصلاح `af70b805ff3e56f7fbc7d272315fbbc10f42a209`، ويلحقه commit توثيق فقط.
+
 ## 1. الانحرافات
 
-#79 مدموج عند `d34da7108f6a43a5b1ba308b224c2b42bb4656a1` بحسب Git/API؛ HEAD والبداية يطابقانه. origin/main المحلي قديم، ومحاولة fetch واحدة فشلت لغياب اعتماد Git؛ ls-remote أثبت أحدث main، وموصل GitHub يستخدم للرفع عند الحاجة. لا worktree أو وكلاء. إعادة تثبيت الحزم من القفل تعالج اعتمادات ناقصة بالبيئة، دون تعديل dependencies/lock.
+#79 مدموج عند `d34da7108f6a43a5b1ba308b224c2b42bb4656a1` بحسب Git/API؛ HEAD والبداية يطابقانه. origin/main المحلي قديم، ومحاولة fetch واحدة فشلت لغياب اعتماد Git؛ ls-remote أثبت أحدث main، وموصل GitHub استخدم للرفع؛ الشجرة المرفوعة تطابق المحلية تمامًا. لا worktree أو وكلاء. إعادة تثبيت الحزم من القفل تعالج اعتمادات ناقصة بالبيئة، دون تعديل dependencies/lock.
 
 ميزانية15 ملفًا قبل التعديل: AccountPanel.tsx، ExamCatalogue.tsx، ExamGraphic.tsx، library.ts، catalogue-presentation.json، صفحة الفحص `[modality]/[exam]/page.tsx`، messages/en.json وar.json، سكربت phone-navigation-audit.mjs الجديد، DECISIONS.md، HANDOFF.md، project-status.md، ROADMAP_SESSIONS.md، ASSET_PROVENANCE_AND_LICENSES.md وهذا التقرير. لا اختبار موجود أو توقع أو hash يعدّل.
 
@@ -42,7 +44,7 @@ AccountPanel يتتبع محاولة دخول صريحة فقط، فيضيف Hom
 
 ## 7. المفتوح
 
-QA مكتمل؛ رفع Draft PR جديد للمراجعة، ثم مراجعة المالك والدمج اليدوي وإعادة فحص الهاتف للنسخة المعدلة. العربية DRAFT والرسوم ليست مرجعًا طبيًا. RAD-052/053 وبقية المهام لا تغلق استنتاجًا.
+QA مكتمل؛ #80 مفتوح ومسودة للمراجعة، ثم مراجعة المالك والدمج اليدوي وإعادة فحص الهاتف للنسخة المعدلة. العربية DRAFT والرسوم ليست مرجعًا طبيًا. RAD-052/053 وبقية المهام لا تغلق استنتاجًا.
 
 ## 8. قائمة المالك على الهاتف
 
