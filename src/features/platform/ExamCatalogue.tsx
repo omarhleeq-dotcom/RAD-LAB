@@ -1,11 +1,26 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { localize } from "@/lib/localized";
 import { ExamGraphic } from "./ExamGraphic";
 import { LIBRARY_REGIONS, filterLibrary, graphicOf, uniformlyProvisional, type LibrarySection } from "./library";
+
+// replaceState retains Next's history metadata and does not insert an extra Back step.
+function subscribeCategory(notify: () => void) {
+  window.addEventListener("hashchange", notify);
+  window.addEventListener("popstate", notify);
+  return () => { window.removeEventListener("hashchange", notify); window.removeEventListener("popstate", notify); };
+}
+const currentCategory = () => new URLSearchParams(window.location.hash.slice(1)).get("category") ?? "";
+const serverCategory = () => "";
+function selectCategory(region: string) {
+  const url = new URL(window.location.href);
+  url.hash = region ? new URLSearchParams({ category: region }).toString() : "";
+  window.history.replaceState(window.history.state, "", url);
+  window.dispatchEvent(new HashChangeEvent("hashchange"));
+}
 
 export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[] }) {
   const t = useTranslations("library");
@@ -19,7 +34,7 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
   const categoryButtons = useRef<Record<string, HTMLButtonElement | null>>({});
   const previousRegion = useRef("");
   const [query, setQuery] = useState("");
-  const [region, setRegion] = useState("");
+  const region = useSyncExternalStore(subscribeCategory, currentCategory, serverCategory);
   const selected = sections.find((section) => section.region.id === region);
   const planned = LIBRARY_REGIONS.filter((entry) => entry.status === "planned");
   const items = selected ? filterLibrary([selected], query, region).flatMap((section) => section.items) : [];
@@ -30,12 +45,12 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
     previousRegion.current = region;
   }, [region]);
   const clear = () => { setQuery(""); searchInput.current?.focus(); };
-  const back = () => { setQuery(""); setRegion(""); };
+  const back = () => { setQuery(""); selectCategory(""); };
   if (!selected) return <section className="library-categories" aria-labelledby={headingId} data-testid="library-categories">
     <h2 id={headingId}>{t("chooseCategory")}</h2>
     <ul className="category-grid">
       {sections.map(({ region: entry, items: exams }) => <li key={entry.id}>
-        <button type="button" className="category-choice" data-region={entry.id} ref={(node) => { categoryButtons.current[entry.id] = node; }} onClick={() => setRegion(entry.id)}>
+        <button type="button" className="category-choice" data-region={entry.id} ref={(node) => { categoryButtons.current[entry.id] = node; }} onClick={() => selectCategory(entry.id)}>
           <div className="exam-art"><ExamGraphic kind={entry.graphic ?? graphicOf(exams[0]!)} /></div>
           <span className="category-choice-label">{localize(entry.name, locale)}<span aria-hidden="true">←</span></span>
         </button>

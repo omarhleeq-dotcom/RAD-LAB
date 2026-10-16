@@ -1,8 +1,8 @@
 "use client";
 
 // The account page body (RAD-041b): sign in / create account, "waiting for approval", approved, suspended. Messages: namespace `account`.
-import { useTranslations } from "next-intl";
-import { type FormEvent, useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { type AuthErrorKey, passwordProblem, recoveryFromHash } from "./account-state";
 import { PILOT } from "./config";
@@ -18,6 +18,8 @@ const primary = "rounded-md bg-brand px-4 py-2 font-semibold text-white hover:bg
 
 export function AccountPanel() {
   const t = useTranslations("account");
+  const locale = useLocale();
+  const signingIn = useRef(false);
   const { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useSessionAccount();
   const [mode, setMode] = useState<Mode>("signIn");
   const [email, setEmail] = useState("");
@@ -36,8 +38,8 @@ export function AccountPanel() {
   useEffect(() => {
     if (state.kind !== "signedIn" || state.profile.status !== "approved" || fragment !== null || changed) return;
     const destination = safeReturnPath(new URLSearchParams(window.location.search).get("returnTo"));
-    if (destination) window.location.replace(destination);
-  }, [state, fragment, changed]);
+    if (destination || signingIn.current) window.location.replace(destination ?? `/${locale}`);
+  }, [state, fragment, changed, locale]);
 
   if (!PILOT) {
     return <p data-testid="account-off" className="rounded-lg border border-dashed border-line bg-paper p-5 text-muted">{t("notEnabled")}</p>;
@@ -53,9 +55,10 @@ export function AccountPanel() {
       if (password !== confirm) return setError("passwordMismatch");
     }
     setBusy(true);
+    signingIn.current = mode === "signIn";
     const result = mode === "signIn" ? await signIn(email.trim(), password) : await signUp(email.trim(), password);
     setBusy(false);
-    if (!result.ok) return setError(result.error);
+    if (!result.ok) { signingIn.current = false; return setError(result.error); }
     setPassword("");
     setConfirm("");
     if (mode === "signUp") setSentTo(email.trim());

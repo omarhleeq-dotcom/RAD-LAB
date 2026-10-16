@@ -1462,6 +1462,7 @@
     "closeMenu": "Close navigation"
   },
   "library": {
+    "backToExams": "Back to exams",
     "title": "Exam library",
     "intro": "Explore {modality} exams by anatomical region.",
     "search": "Search exams",
