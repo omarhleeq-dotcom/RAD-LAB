@@ -433,3 +433,7 @@ S-PILOT-34 records the owner's accepted simple account-service/no-display passwo
 ### RAD-050 final-note retention evidence — 2026-10-16 (Asia/Amman)
 
 S-PILOT-35 records the owner's Brevo Retention rules screenshot: All senders / logs1 month / Never store previews (new emails). Visible configuration is not proof of successful save/reload, expired/historical deletion or all provider-copy erasure, and is not a pilot raw-event horizon decision. Tracking Yes save remains unconfirmed. Seven docs; revision49/logical +1 second; approved password override retained, no published text/code/version/settings action. Owner CSV/summary process and provider limits remain separate follow-ups; next-session application only.
+
+### RAD-050 tracking confirmation / verification record complete — 2026-10-16 (Asia/Amman)
+
+S-PILOT-36 records owner's «Tam» as completion of Yes/Save/reopen instructions; this is owner-reported persistence, not screenshot/direct/mail-flow proof or full tracking disable. Supersedes pending after-state, retains earlier No screenshot as history. Selected password override already approved; provider/source/cascade/retention observations and copy/summary limits documented. Seven docs only, revision50/logical +1 second, review/waiting_on owner for document review/merge; next session applies text with one consent bump and mocked QA. No code/version/live-data/settings action by agent, no merge/poll/preview; backup/restore and internal survey remain deferred.

@@ -19,7 +19,11 @@ Use this override with the other approved amendments; do not apply the historica
 
 > **Retention evidence update (S-PILOT-35):** owner screenshot shows Brevo All senders / 1 month logs / Never store previews for new emails. This is a visible setting, not a completed save/reload/erasure or proof old previews/other provider copies were deleted. It does not change the selected participant text or the six-month owner policy.
 
-## Technical review gates — outside the participant text
+## Latest tracking confirmation — S-PILOT-36
+
+Owner replies «Tam» after instructions to choose Anonymous email tracking=Yes, Save and reopen to verify persistence. Record owner-reported completion, superseding the earlier unconfirmed after-state. There is no after-state screenshot/direct account access/new email-flow test. Aggregate tracking continues; do not publish “tracking disabled” or infer historical erasure. Password wording is already settled by the S-PILOT-34 override above; selected historical participant blocks remain traceable below. No code/text/version application yet.
+
+## Initial technical review gates — historical status, superseded by updates
 
 - **Password assertion remains TOO BROAD; documented mechanism VERIFIED and wording mismatch identified.** Official Supabase FAQ specifies bcrypt one-way hashing, not encryption; no live hash was inspected. The owner has subsequently approved the simple account-service alternative in S-PILOT-34 above. Preserve the old blocks as history; next implementation must use the approved override, not the contradicted term.
 - **Email tracking:** owner chooses to disable open/click tracking if supported, then verify. No dashboard setting was inspected/changed. The generic research result pasted by the owner describes possible Brevo features, not this project's setting. This draft's omission of tracking detail does not establish tracking is off. Resolve before publication if tracking remains enabled/unknown; do not infer it from successful reset mail.
