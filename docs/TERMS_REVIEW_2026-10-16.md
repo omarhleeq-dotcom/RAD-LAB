@@ -275,3 +275,16 @@ This is a concrete consistency checklist for a later owner operation, not permis
 4. Remove the subject's rows from **all owner-controlled original and derived CSV copies/parts**, including raw-note text, then verify results; DB cascade cannot edit local files. No current copy inventory/rehearsal exists. Do not assume the absence of a structured email column proves no identifying text.
 5. Inspect provider operational record categories and available controls separately. Brevo documents log/preview deletion by recipient/message and possible delayed processing; check its actual account retention and any separate contacts/copies. Supabase Auth/audit/external logs and hosting records need explicit retention/erasure limits, not an undocumented promise that account delete removes them all. No universal deadline or guaranteed full provider erasure was verified.
 6. No owner backups currently exist. Future encrypted backups require an agreed expiry and deletion replay after restore (S-PILOT-15/19/O105), alongside the planned local restore rehearsal. Retention policy, research-summary preparation and backup operation remain separate work; no automated purge/summary/backup feature added to this Terms batch.
+
+## Latest owner clarification — S-PILOT-34
+
+After reviewing the hashing/encryption distinction, the owner explicitly accepts the simpler second sentence and defers changing published text to the next Terms PR:
+
+- **Approved AR:** «تتولى خدمة الحسابات حفظ كلمة مرورك والتحقق منها، ولا تظهر لصاحب المشروع.»
+- **Faithful EN rendering for implementation:** “The account service stores and verifies your password. Your password is not shown to the project owner.”
+
+This supersedes S-PILOT-32.7's encrypted-format preference. The technical hash sentence proposed in the verification section was not the selected alternative; do not ask the settled wording question again or publish the superseded encryption claim. The historic selected blocks remain unchanged for traceability; apply this explicit override on the next code session. Standard provider storage was verified from documentation, not a read of real passwords/hashes.
+
+**Brevo owner screenshot now establishes before-state:** Transactional emails → Tracking displays Anonymous email tracking = **No** and Yes/No/Save; no separate open/click disabling controls are visible there. This supersedes the earlier inability to reach Tracking, but does not prove settings on any unshown page. Owner states intent to choose Yes, then moves to the next point. No successful Save/reload evidence was supplied, so current saved after-state remains unconfirmed. Do not claim anonymous tracking activated, tracking completely disabled or historical logs erased. Image evidence is in chat only; no key/account values or screenshots copied into Git.
+
+Owner asks to proceed to the final note (erasure/summaries). Database cascade and provider-log controls are documented; owner-copy/provider retention settings and actual manual workflow remain open. The requested next read-only check is Transactional emails → Retention rules, with no change/purge/real-data access. No number of days or automatic anonymisation procedure is selected by this navigation request.

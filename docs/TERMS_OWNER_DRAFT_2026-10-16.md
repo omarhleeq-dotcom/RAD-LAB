@@ -8,9 +8,18 @@ Owner-approved amendments to the pasted draft: (1) remove the external-survey pa
 
 > **Verification update:** official Supabase documentation now confirms bcrypt hashing and explicitly distinguishes it from encryption. The selected password wording below is contradicted by that documented mechanism; [exact proposed correction and evidence](TERMS_REVIEW_2026-10-16.md) await approval. Brevo/account and live survey settings still await owner confirmation. Selected participant text below is unchanged.
 
+## Latest approved password override — S-PILOT-34
+
+Owner has now approved the simple account-service sentence after the technical explanation, for the next Terms PR. This **supersedes the encrypted-format sentence in the historical blocks below**, without changing published messages or the consent version now.
+
+- Approved AR: «تتولى خدمة الحسابات حفظ كلمة مرورك والتحقق منها، ولا تظهر لصاحب المشروع.»
+- Faithful EN rendering for the release: “The account service stores and verifies your password. Your password is not shown to the project owner.”
+
+Use this override with the other approved amendments; do not apply the historical encrypted-format sentence or the unselected technical hash alternative. The owner then moves to erasure/summaries. Brevo screenshot proves Anonymous email tracking = No before change; owner intends Yes, but Save/reload remains unconfirmed.
+
 ## Technical review gates — outside the participant text
 
-- **Password assertion remains TOO BROAD; documented mechanism VERIFIED and wording mismatch identified.** Official Supabase FAQ specifies bcrypt one-way hashing, not encryption; no live hash was inspected. The exact proposed correction is in the verification section of the review and is not yet approved. Preserve the owner-selected text as history; do not publish the contradicted term or silently rewrite it.
+- **Password assertion remains TOO BROAD; documented mechanism VERIFIED and wording mismatch identified.** Official Supabase FAQ specifies bcrypt one-way hashing, not encryption; no live hash was inspected. The owner has subsequently approved the simple account-service alternative in S-PILOT-34 above. Preserve the old blocks as history; next implementation must use the approved override, not the contradicted term.
 - **Email tracking:** owner chooses to disable open/click tracking if supported, then verify. No dashboard setting was inspected/changed. The generic research result pasted by the owner describes possible Brevo features, not this project's setting. This draft's omission of tracking detail does not establish tracking is off. Resolve before publication if tracking remains enabled/unknown; do not infer it from successful reset mail.
 - **Survey:** no external tool selected, according to owner. Internal experience-evaluation/suggestions survey is planned but deferred behind important work, no questions or implementation accepted. Confirm the deployed external-link feature is not enabled before removing its disclosure; an enabled code-sending link would contradict that omission. No build setting was read/changed here.
 - **Retention/deletion/aggregates:** owner commitment is recorded, not evidence of a working purge, anonymisation, summary exporter or deletion procedure. Account deletion currently cascades attempts/notes; prepare and review non-identifying aggregate summaries separately before deletion. No retention of linked individual rows or raw notes for research was approved. Confirm copy handling, completeness and provider-log limits before promising erasure; local CSV files need manual handling.

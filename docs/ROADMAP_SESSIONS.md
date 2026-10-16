@@ -425,3 +425,7 @@ Owner answers and pasted EN/AR draft, with final “100%” to three amendments,
 ### RAD-050 verification only — 2026-10-16 (Asia/Amman)
 
 Owner asks verification now, application next session. S-PILOT-33/[verification section](TERMS_REVIEW_2026-10-16.md) record official bcrypt-vs-encryption finding and exact correction pending owner approval, Brevo anonymisation versus full disabling, log/cascade/copy boundaries, absent aggregate workflow and conditional source survey-build evidence. Actual Brevo/live artifact need owner confirmation; repository-variable names read denied403, no bypass. Seven existing docs only, no settings/code/version/live-data actions, no build/preview/CI polling. RAD-050 remains review/waiting_on owner; revision47/logical timestamp +1 second. PR #70 open/draft when checked; no merge performed.
+
+### RAD-050 password choice / Brevo before-state — 2026-10-16 (Asia/Amman)
+
+S-PILOT-34 records the owner's accepted simple account-service/no-display password sentence, superseding encrypted-format preference for next session; historical text preserved with explicit override. Brevo screenshot verifies Anonymous email tracking=No before change, owner intends Yes but Save/reload unconfirmed; no full-off claim. Move to final erasure/summary note and read-only retention settings. Seven docs, revision48/logical +1 second, no messages/version/settings mutation by agent. No code application this session.
