@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 48,
-  "updated_at": "2026-10-16T14:00:15Z",
+  "revision": 49,
+  "updated_at": "2026-10-16T14:00:16Z",
   "timezone": "UTC",
   "next_id": "RAD-051",
   "tasks": [
@@ -472,8 +472,8 @@
       "title": "مراجعة اتساق الشروط والخصوصية EN/AR",
       "status": "review",
       "priority": "high",
-      "description": "اعتمد المالك بديل كلمة المرور المبسّط للتطبيق لاحقًا. صورة Brevo تثبت إخفاء الارتباط=No قبل التغيير؛ نية Yes بلا تأكيد حفظ. نناقش حدود الحذف والملخّصات؛ لا تعديل للرسائل أو إصدار الموافقة.",
-      "source_ref": "docs/TERMS_REVIEW_2026-10-16.md؛ docs/TERMS_OWNER_DRAFT_2026-10-16.md؛ DECISIONS S-PILOT-33/34",
+      "description": "اعتمد بديل كلمة المرور المبسّط. صورة Brevo: كل المرسلين، سجلات شهر، بلا معاينات جديدة؛ حفظ Tracking=Yes غير مؤكّد. حدود الحذف/نسخ CSV والملخّصات تحتاج إجراءً مستقلًا؛ تطبيق النص ورفع الموافقة بجلسة لاحقة.",
+      "source_ref": "docs/TERMS_REVIEW_2026-10-16.md؛ docs/TERMS_OWNER_DRAFT_2026-10-16.md؛ DECISIONS S-PILOT-34/35",
       "waiting_on": "owner"
     }
   ]

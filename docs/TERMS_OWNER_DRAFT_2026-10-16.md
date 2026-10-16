@@ -17,6 +17,8 @@ Owner has now approved the simple account-service sentence after the technical e
 
 Use this override with the other approved amendments; do not apply the historical encrypted-format sentence or the unselected technical hash alternative. The owner then moves to erasure/summaries. Brevo screenshot proves Anonymous email tracking = No before change; owner intends Yes, but Save/reload remains unconfirmed.
 
+> **Retention evidence update (S-PILOT-35):** owner screenshot shows Brevo All senders / 1 month logs / Never store previews for new emails. This is a visible setting, not a completed save/reload/erasure or proof old previews/other provider copies were deleted. It does not change the selected participant text or the six-month owner policy.
+
 ## Technical review gates — outside the participant text
 
 - **Password assertion remains TOO BROAD; documented mechanism VERIFIED and wording mismatch identified.** Official Supabase FAQ specifies bcrypt one-way hashing, not encryption; no live hash was inspected. The owner has subsequently approved the simple account-service alternative in S-PILOT-34 above. Preserve the old blocks as history; next implementation must use the approved override, not the contradicted term.

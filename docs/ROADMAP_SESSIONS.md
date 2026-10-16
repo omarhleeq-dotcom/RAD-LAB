@@ -429,3 +429,7 @@ Owner asks verification now, application next session. S-PILOT-33/[verification 
 ### RAD-050 password choice / Brevo before-state — 2026-10-16 (Asia/Amman)
 
 S-PILOT-34 records the owner's accepted simple account-service/no-display password sentence, superseding encrypted-format preference for next session; historical text preserved with explicit override. Brevo screenshot verifies Anonymous email tracking=No before change, owner intends Yes but Save/reload unconfirmed; no full-off claim. Move to final erasure/summary note and read-only retention settings. Seven docs, revision48/logical +1 second, no messages/version/settings mutation by agent. No code application this session.
+
+### RAD-050 final-note retention evidence — 2026-10-16 (Asia/Amman)
+
+S-PILOT-35 records the owner's Brevo Retention rules screenshot: All senders / logs1 month / Never store previews (new emails). Visible configuration is not proof of successful save/reload, expired/historical deletion or all provider-copy erasure, and is not a pilot raw-event horizon decision. Tracking Yes save remains unconfirmed. Seven docs; revision49/logical +1 second; approved password override retained, no published text/code/version/settings action. Owner CSV/summary process and provider limits remain separate follow-ups; next-session application only.

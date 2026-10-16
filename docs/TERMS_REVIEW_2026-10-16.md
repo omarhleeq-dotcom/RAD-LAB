@@ -288,3 +288,19 @@ This supersedes S-PILOT-32.7's encrypted-format preference. The technical hash s
 **Brevo owner screenshot now establishes before-state:** Transactional emails → Tracking displays Anonymous email tracking = **No** and Yes/No/Save; no separate open/click disabling controls are visible there. This supersedes the earlier inability to reach Tracking, but does not prove settings on any unshown page. Owner states intent to choose Yes, then moves to the next point. No successful Save/reload evidence was supplied, so current saved after-state remains unconfirmed. Do not claim anonymous tracking activated, tracking completely disabled or historical logs erased. Image evidence is in chat only; no key/account values or screenshots copied into Git.
 
 Owner asks to proceed to the final note (erasure/summaries). Database cascade and provider-log controls are documented; owner-copy/provider retention settings and actual manual workflow remain open. The requested next read-only check is Transactional emails → Retention rules, with no change/purge/real-data access. No number of days or automatic anonymisation procedure is selected by this navigation request.
+
+## Final-note evidence — Brevo retention UI (S-PILOT-35)
+
+Owner screenshot in this conversation, 2026-10-16 (Asia/Amman), at Transactional emails → Retention rules shows:
+
+| Setting | Visible selection | Exact evidence limit |
+|---|---|---|
+| Sender scope | **All senders** | The displayed retention rule applies across senders, not only this pilot's one configured sender. No sender/contact log list opened or copied. |
+| Logs | **1 month** | Page describes automatic log deletion after the selected period. This establishes the visible configuration, not observed expiry execution, exact calendar-day semantics, successful Save/reload or all provider internal-copy erasure. No new value chosen or saved by the agent. |
+| Email previews | **Never store previews** | UI explanation says **new transactional emails** will not have a preview. It does not establish deletion of previously stored previews, delivery of no content to Brevo, or removal of all other provider records. |
+
+This replaces the previous lack of a read-out for these **visible account settings**, not the remaining operational limits. Official help's generic indefinite default does not override the account-specific visible one-month rule; no conflict need be invented between defaults and configured values. No claim owner backups exist, no storage/migration/code/version change, and no runtime deletion test was performed.
+
+**Deletion/summary conclusion for the Terms follow-up:** the database cascade is documented, owner-controlled CSV needs a separate manual erasure procedure, Brevo presents a one-month log rule/no-new-preview selection and documented manual log/preview deletion, while other categories/old previews/processing delays and provider internal-copy limits remain unverified. A six-month pilot-data promise is an owner policy commitment, not a guarantee current account delete clears provider records instantly. Brevo log retention is not the same as the pilot raw-event horizon; do not silently apply this month to public.events or choose a purge job. Summaries remain future preparation, not the current pseudonymous detailed CSV with ids/raw text.
+
+**Remaining after-state:** owner stated intent to choose Yes for Anonymous email tracking but did not confirm Save/reload; the only observed Tracking selection remains No before change. Retention screenshot also does not prove tracking state. The absence of an external survey is supported by source build path and owner's no-setup statement, not a live-page inspection. For the next session, use the approved simple password override from S-PILOT-34, not the superseded encrypted-format sentence. Application remains explicitly deferred to another session.
