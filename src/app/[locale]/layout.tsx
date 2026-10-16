@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { RouteFocus } from "@/components/shell/RouteFocus";
 import { PILOT } from "@/features/pilot/config";
-import { PilotSessionKeeper } from "@/features/pilot/PilotSessionKeeper";
+import { SessionGate } from "@/features/pilot/SessionGate";
 import { Link } from "@/i18n/navigation";
 import { dirFor, routing } from "@/i18n/routing";
 import "../globals.css";
@@ -67,9 +67,8 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
             </div>
           </header>
           <RouteFocus />
-          {PILOT && <PilotSessionKeeper />}
           <main id="main-content" tabIndex={-1} className="outline-none">
-            {children}
+            <SessionGate>{children}</SessionGate>
           </main>
           <footer className="border-t border-line bg-panel">
             <p role="note" className="mx-auto max-w-7xl px-4 py-3 text-xs text-muted">

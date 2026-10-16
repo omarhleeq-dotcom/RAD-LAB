@@ -1,9 +1,10 @@
 "use client";
 
 // Site-wide "last activity" (RAD-041b): when a saved session exists, writes a heartbeat at most every 5 minutes while the tab is visible.
-// Visitors without a session never load supabase-js and make no request. Mounted in the layout only when accounts are enabled.
+// SessionGate mounts this only after useAccount has loaded the profile and recorded the first activity.
+// Reuse that profile and start the interval after its first heartbeat; never duplicate the initial read/write.
 import { useEffect } from "react";
-import { HEARTBEAT_MS, type ProfileStatus, parseProfile, shouldHeartbeat } from "./account-state";
+import { HEARTBEAT_MS, type ProfileStatus, shouldHeartbeat } from "./account-state";
 import { recordActivity } from "./activity";
 import { getPilotClient } from "./client";
 import { PILOT, sessionStorageKey } from "./config";
@@ -17,12 +18,12 @@ function hasSavedSession(): boolean {
   }
 }
 
-export function PilotSessionKeeper() {
+export function PilotSessionKeeper({ profileStatus }: { profileStatus: ProfileStatus }) {
   useEffect(() => {
     if (!hasSavedSession()) return;
     let stop = false;
-    let status: ProfileStatus | null = null;
-    let last: number | null = null;
+    const status = profileStatus;
+    let last: number | null = Date.now();
 
     const tick = async () => {
       if (stop || document.visibilityState !== "visible") return;
@@ -31,10 +32,6 @@ export function PilotSessionKeeper() {
       if (!client || stop) return;
       const { data: s } = await client.auth.getSession();
       if (!s.session) return;
-      if (status === null) {
-        const { data } = await client.from("profiles").select("status, role, participant_code").eq("user_id", s.session.user.id).maybeSingle();
-        status = parseProfile(data)?.status ?? null;
-      }
       if (!shouldHeartbeat({ status, visible: document.visibilityState === "visible", nowMs: Date.now(), lastMs: last })) return;
       last = Date.now();
       await recordActivity(client, status, "heartbeat");
@@ -49,6 +46,6 @@ export function PilotSessionKeeper() {
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };
-  }, []);
+  }, [profileStatus]);
   return null;
 }

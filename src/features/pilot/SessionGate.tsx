@@ -1,0 +1,40 @@
+"use client";
+
+import { createContext, useContext, useEffect, type ReactNode } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next/navigation";
+import { PILOT } from "./config";
+import { PilotSessionKeeper } from "./PilotSessionKeeper";
+import { accountDestination, sessionAccess } from "./session-access";
+import { useAccount } from "./useAccount";
+
+const AccountContext = createContext<ReturnType<typeof useAccount> | null>(null);
+
+export function useSessionAccount() {
+  const account = useContext(AccountContext);
+  if (!account) throw new Error("Account UI requires SessionGate");
+  return account;
+}
+
+export function SessionGate({ children }: { children: ReactNode }) {
+  const locale = useLocale();
+  const t = useTranslations("account");
+  const pathname = usePathname();
+  const router = useRouter();
+  const redirectTo = typeof window === "undefined" ? "" : `${window.location.origin}/${locale}/account`;
+  const account = useAccount(redirectTo);
+  const access = sessionAccess(Boolean(PILOT), pathname, account.state);
+
+  useEffect(() => {
+    if (access === "account") {
+      router.replace(accountDestination(locale, `${window.location.pathname}${window.location.search}${window.location.hash}`));
+    }
+  }, [access, locale, pathname, router]);
+
+  return (
+    <AccountContext.Provider value={account}>
+      {PILOT && account.state.kind === "signedIn" && <PilotSessionKeeper profileStatus={account.state.profile.status} />}
+      {access === "allow" ? children : <p role="status" className="mx-auto max-w-3xl px-4 py-10">{t("loading")}</p>}
+    </AccountContext.Provider>
+  );
+}

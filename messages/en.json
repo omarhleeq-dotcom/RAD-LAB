@@ -1214,7 +1214,7 @@
     "status": {
       "pending": {
         "title": "Your account is waiting for approval",
-        "body": "Thank you for registering. The owner must approve your account before you can use the pilot features. Check back later."
+        "body": "The owner must approve your account before you can access the site. Check back later."
       },
       "approved": {
         "title": "Your account is approved",
@@ -1222,7 +1222,7 @@
       },
       "suspended": {
         "title": "Your account is suspended",
-        "body": "Please contact the owner."
+        "body": "Access to the site is suspended for this account. Please contact the owner."
       }
     },
     "checkEmail": {
