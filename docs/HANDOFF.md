@@ -33,7 +33,7 @@
 - [تقرير التطبيق والفحوص والبرومبت التالي](session-rad-050-terms-implementation-2026-10-16.md)، DECISIONS S-PILOT-37.
 - QA ناجح: check (1872 اختبارًا)، build وbuild:pages، 158 تحقق متصفح EN/AR ×390/1440 مع44 حالةaxe بلا مخالفات/overflow، status/diff/Markdown. لا دليل حي للموافقة الجديدة.
 - الحفظ يتوقف حتى الموافقة؛ لا replay. قد يلزم reload بسبب cache الموافقة؛ login/heartbeat مستمران وDB يتحقق من non-null فقط.
-- RAD-050 يبقى review/waiting_on owner للمراجعة والدمج اليدوي ثم فحص حي؛ لا done. لا polling أو فتح/مشاركة معاينة.
+- Draft PR [#71](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/71)؛ RAD-050 يبقى review/waiting_on owner للمراجعة والدمج اليدوي ثم فحص حي؛ لا done. لا polling أو فتح/مشاركة معاينة.
 
 ## 6. برومبت الاستئناف التشغيلي السابق (عند اختيار المالك له)
 ```text
