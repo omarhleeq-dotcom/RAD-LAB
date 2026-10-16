@@ -1,97 +1,81 @@
 # RAD-LAB
 
-Bilingual (Arabic / English) web-based educational radiography simulation platform for radiologic technology students, imaging professionals, instructors and universities.
+Bilingual Arabic/English educational radiography simulator. Learners choose an exam and case, position the patient, set technique, expose, and review simulated results with educational scores and feedback.
 
-Users position a patient, set X-ray technique, press **Expose**, then receive a simulated result, a score and explanatory feedback. Full spec: [`docs/RAD-LAB_Project_Specification.md`](docs/RAD-LAB_Project_Specification.md).
+> **Educational prototype — not for clinical use.** Medical content, teaching tolerances, image effects and Arabic text remain provisional pending the recorded human reviews. Reference radiographs are not images of the fictional case patients. The preview banner and medical disclaimer remain visible.
 
-> **Medical content is provisional.** All technique values (kVp, mAs, SID, centering, collimation, rotation tolerance) are demo placeholders and have **not** been clinically validated. The result radiograph is an **educational simulation** built on a CC0 reference image (not an image of the case patient, not diagnostic); all visual effects are labelled educational approximations.
+RAD-LAB is not a diagnostic, clinical or dose-calculation tool and must not be used for patient care. Scores are educational, not real-world accept/reject decisions. Simulated image effects are approximate and do not replace educator/medical-physicist review.
 
-## Current MVP scope (Session 1)
+## Current implementation
 
-Adult Chest X-ray — PA Erect, practice mode, no accounts, no backend.
+Snapshot: main `f90b3c9` after [PR #80](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/80), 2026-10-16. The [exam registry](src/data/exams/index.ts) contains 17 X-ray exams: Chest PA/Lateral/AP supine, Wrist PA/Lateral, Hand PA/Lateral, Elbow AP/Lateral, Knee AP/Lateral, Foot AP/Oblique, Ankle AP/Lateral, Pelvis AP supine and Shoulder Grashey erect. This is an inventory of implemented code, not clinical validation or proof of a live deployment.
 
-Implemented:
-- Landing page, case library, language switcher (English LTR / Arabic RTL, URL-prefixed `/en`, `/ar`).
-- Data-driven typed case model; first case `chest-pa-erect`.
-- Patient positioning workspace (2D SVG): front view + plan view reacting to rotation, central-ray centering, collimation, SID, projection.
-- X-ray console: projection, kVp, mAs, SID, breathing instruction, Expose (extended in Session 3, below).
-- Rule-based evaluation engine + configurable weighted scoring (25/20/15/20/10/10).
-- Placeholder result image reflecting detected faults (rotation, clipping, exposure, poor inspiration…), per-check feedback in both languages, retry / restart.
-- Unit tests for the evaluation and scoring logic.
+- Home is a quiet empty dashboard. The exam library starts with categories; selecting one reveals its exams and search. Browser Back returns from an exam to its list, then to category cards. There are no extra custom return buttons.
+- Practice is available. Assess, scientific-content navigation and future categories remain unavailable; no invented evaluation history or mastery metrics.
+- When both validated public Supabase variables are configured, the pilot provides email/password self-registration, confirmation and owner approval (`pending` → `approved`, or `suspended`), saved Practice attempts, activity/feedback and the owner participant/CSV UI. Ordinary approved password sign-in opens Home; a safe explicit pre-login destination is preserved.
+- With pilot configuration absent or invalid, account features and their network requests are off and the educational pages remain open. On a configured build, the session UI gate allows protected pages only for approved accounts; the account, Terms and not-found views remain reachable. Static assets/HTML are still downloadable: database access is protected separately by Supabase authentication and RLS.
+- The front end is a static Cloudflare Pages export, with an optional Supabase identity/Postgres backend. Provider configuration, live migrations, backups and remaining owner checks are documented separately; a merge does not prove deployment.
 
-## Session 2 — interactive positioning
-Draggable central-ray target and collimator handles (mouse/touch/keyboard + slider alternatives), normalized detector coordinates, L/R side marker, chin/shoulder cues, richer rotation/SID visuals and direction-aware centering/coverage feedback. See [`docs/session-2-positioning.md`](docs/session-2-positioning.md) for decisions and the validated/simplified/provisional rule table.
+New exams and image imports are frozen by S-SHOULDER-Y-6. CT/MRI/US remain v2 work. The owner has also postponed the next programming phase, including the next “my attempts” step, while documentation is aligned. See [current status](docs/project-status.md), [handoff](docs/HANDOFF.md) and the [documentation index](docs/README.md).
 
-## Session 3 — technique & exposure console
-Vendor-neutral console (kVp, mAs, SID, Manual/AEC with chamber selection, readiness), a deterministic target-relative detector-exposure model (DI, noise, penetration, dose awareness), evidence-classified technique scoring, and a renderer-facing `RadiographResultState` for Session 4. Digital brightness is never used as an exposure indicator. See [`docs/session-3-technique.md`](docs/session-3-technique.md).
+## Architecture and routes
 
-## Session 4 — educational radiograph renderer
-A deterministic, canvas-based Chest PA result renderer driven by `RadiographResultState`: rotation (anatomical cues, never whole-image rotation), centering / collimation clipping, scapula and chin overlap, reduced inspiration, patient motion (blur), low detector exposure (quantum-noise-like texture, brightness kept normalised), excess exposure (deliberately no visible change), low penetration (dense-region visibility), and the learner's marker as a separate annotation layer. New **Patient Instructions** (breathing + keep-still): the learner chooses what to say; inspiration and motion are derived deterministically from a patient-cooperation profile — RAD-LAB does not measure real inspiration or movement. A project-wide asset registry lives in [`docs/ASSET_PROVENANCE_AND_LICENSES.md`](docs/ASSET_PROVENANCE_AND_LICENSES.md). See [`docs/session-4-radiograph-renderer.md`](docs/session-4-radiograph-renderer.md).
+`ExamDefinition` describes an exam; `CaseDefinition` describes one patient scenario. Registries and `composeCase()` resolve the compatibility view consumed by the simulator. Evaluation/scoring are separate from React and pixel rendering; renderers never score pixels. Controls, projection/scene bindings and limb effects use the implemented optional mechanisms, not a claim that every future modality is already generic.
 
-## Session 5 — Chest PA QA and polish
-End-to-end QA of the whole Chest PA workflow with a 53-scenario matrix (fully correct, every single error, realistic combinations) in which the **score, the feedback and the rendered image describe the same findings**; a laterality audit; a medical-consistency audit of every rule and sentence against the repository references; a uniform-scale (distortion-free) baseline mapping inside the unchanged required-anatomy region; **critical findings** (wrong projection, visible patient motion, wrong-side marker) that force “Below the educational pass mark” without changing the numeric score or weights; bilingual text alternative for the radiograph; accessibility fixes (axe: 0 violations); golden-image visual regression; GitHub Actions CI (typecheck, lint, tests, build). See [`docs/session-5-qa.md`](docs/session-5-qa.md), [`docs/session-5-qa-matrix.md`](docs/session-5-qa-matrix.md), [`docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md), [`docs/ARABIC_TERMINOLOGY.md`](docs/ARABIC_TERMINOLOGY.md) and [`docs/session-5-baseline-options.md`](docs/session-5-baseline-options.md).
+Public route shapes (the UI gate above still applies):
 
-## Session 6 — pilot preview deployment and platform architecture
-**(A)** The repo is prepared for a Cloudflare Pages preview (static export `npm run build:pages` → `out/`, `_headers` / `_redirects` / `robots.txt`, noindex, a visible bilingual "Educational prototype" banner on every page, no analytics or external requests). Owner steps for a phone browser, including restricting the site to named emails with Zero Trust Access: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md). Local check: `npm run build:pages && npm run preview:smoke`. **(B)** Design only (no behaviour change): [`docs/PLATFORM_ARCHITECTURE.md`](docs/PLATFORM_ARCHITECTURE.md) (modality → exam → mode, exam-definition schema, contracts, evidence/licensing per modality, asset strategy, navigation), [`docs/ROADMAP_SESSIONS.md`](docs/ROADMAP_SESSIONS.md) (Sessions 7+), [`docs/adr/`](docs/adr/README.md) and [`docs/MODALITY_SOURCES_CANDIDATES.md`](docs/MODALITY_SOURCES_CANDIDATES.md) (candidate sources / imagery, all "to verify").
+```text
+/{locale}
+/{locale}/{modality}
+/{locale}/{modality}/{exam}
+/{locale}/{modality}/{exam}/practice[?case=...]
+```
 
-## Educational, non-diagnostic disclaimer
-RAD-LAB is an **educational simulator**. It is not a diagnostic, clinical or dose-calculation tool and must not be used for patient care. The radiograph shown is a reference image of a different patient with simulated, approximate effects; technique values, tolerances and visual magnitudes are provisional demonstration data awaiting educator / medical-physicist review. Scores are educational, not real-world accept / reject decisions.
+Old `/simulation/{caseId}` routes redirect through the [legacy registry](src/data/legacy-routes.ts). Language changes preserve route/query; anatomy and laterality never mirror with RTL. The library stores category selection in its URL fragment.
 
-## Tech stack
-Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand · next-intl · Vitest · ESLint.
-(shadcn/ui was not needed yet; the few controls are small custom components.)
+```text
+messages/                 English and Arabic UI strings
+docs/                     Current guides, medical references and historical records
+src/app/[locale]/         Localised platform/account/owner and exam routes
+src/data/exams/            Exam definitions and registry
+src/data/cases/            Patient cases and registry
+src/features/platform/    Catalogue, presentation metadata and route resolution
+src/features/exam/        Composition and validation
+src/features/pilot/       Optional pilot account/data UI
+src/features/positioning/ Registered scene/layout/figure views
+src/features/evaluation/  Pure checks and result UI
+src/features/scoring/     Pure score aggregation
+src/features/radiograph/  Render plans, effects and pixel pipeline
+src/stores/               Simulation state
+supabase/migrations/      Pilot database functions, grants and RLS migrations
+scripts/                  Build, preview, QA and status tools
+```
 
-## Getting started
+## Run locally
+
+Next.js 16 · React 19 · TypeScript · Tailwind CSS 4 · Zustand · next-intl · Vitest · ESLint. Use the repository lockfile.
+
 ```bash
-npm install
-npm run dev        # http://localhost:3000  (redirects to /en)
-npm run check      # typecheck + lint + tests
+npm ci
+npm run dev
+npm run check
 npm run build && npm start
-npm run build:pages   # static export to out/ (pilot preview hosting, see docs/DEPLOYMENT.md)
+npm run build:pages
+npm run status:check
 ```
 
-### QA tooling (manual; not part of CI)
-```bash
-npm run qa:golden                      # regenerate scripts/qa/golden/matrix.json after an intended change
-npm run build && npx next start -p 3100 &
-npm i --no-save playwright axe-core    # not project dependencies
-npm run qa:visual                      # full EN/AR × desktop/tablet/mobile browser matrix + golden-image compare
-npm run qa:a11y                        # axe-core + keyboard/focus audit
-```
+Pilot public-variable setup and synthetic verification: [Supabase setup](docs/PILOT_SUPABASE_SETUP.md). Hosting: [deployment guide](docs/DEPLOYMENT.md). Never put a service/secret key into public variables or Git. Local setup is separate from provisioning a live provider project.
 
-## Project structure
-```
-messages/              UI strings (en.json, ar.json)
-docs/                  Project specification
-src/
-  app/[locale]/        Routes: home, simulation/[caseId]
-  components/          Shared UI (RangeField, LanguageSwitcher)
-  domain/              Pure types: case model, settings, categories, locales
-  data/cases/          Case definitions (data only) + registry
-  features/
-    simulation/        Workspace composition, geometry helpers
-    positioning/       Patient positioning view + controls
-    xray-console/      Technique console (steppers, AEC panel, readiness)
-    technique/         Pure exposure model: DI, AEC, readiness, console stepping
-    patient/           Patient instructions panel + pure instruction → response model
-    radiograph/        Render plan + pure pixel pipeline + canvas (Session 4)
-    evaluation/        Rule engine, result types, result UI
-    scoring/           Weighted score aggregation
-  stores/              Zustand simulation store
-  i18n/                next-intl routing/request/navigation
-  lib/                 Small helpers
-```
+## Add or change exam/case data
 
-## Adding a case
-Create a `RadCase` object in `src/data/cases/`, register it in `src/data/cases/index.ts`. Rules are declarative (`equals`, `range`, `coverage`); bilingual feedback lives in the case. No new page needed.
+Read [CLAUDE.md](CLAUDE.md), the [exam recipe](docs/exam-recipe.md) and the merged medical reference/Needs first. New exam/image work is currently frozen. An authorised case change creates a `CaseDefinition` tied to an existing `ExamDefinition` and registers it; `composeCase()` produces the simulator's `RadCase` view. Do not create a direct `RadCase` as the primary data definition or a per-case page. Run the existing validators and the checks required by the recipe.
 
-## Known limitations
-- Medical values unvalidated; the result radiograph is an educational simulation (effect magnitudes are uncalibrated approximations).
-- Practice mode only; Assessment Mode is typed (`SimulationMode`) but not implemented.
-- Only PA / AP / lateral selectable; AP-portable and lateral scenarios not authored.
-- The collimated field is centred on the central ray (like a real collimator), so mis-centering can clip anatomy — intentional.
-- On touch devices the positioning workspace suppresses panning while editable; scroll via the surrounding gutter.
-- No persistence, accounts or backend.
+## Verification and limits
 
-## Roadmap
-See spec §22: technique console behaviour, validated image variants, assessment mode, AP portable, lateral chest, instructor tools, further exams, CT/MRI.
+`npm run check` covers types, lint and unit/characterisation/scene guards. Manual browser tools and historical evidence are indexed in [docs](docs/README.md); consult the current UI report before choosing a script, because older catalogue audits may assert superseded navigation. Golden/hash generation is reserved for an explicitly authorised behaviour change under S-STD-1; it is not a repair command for a failing guard.
+
+The DOCS-ALIGN-1 session runs documentation/status checks only. The application QA recorded for #80 is historical evidence, not a fresh build/browser run or a live-phone check. Outstanding review, licence, deployment and provider items remain in the status file.
+
+## Historical milestones
+
+Sessions 1–6 established Chest PA, positioning, technique, rendering, QA and preview hosting. Their records remain in place: [positioning](docs/session-2-positioning.md), [technique](docs/session-3-technique.md), [rendering](docs/session-4-radiograph-renderer.md), [QA](docs/session-5-qa.md) and [deployment](docs/DEPLOYMENT.md). Later exam/platform records are linked from the [documentation index](docs/README.md). The [original specification](docs/RAD-LAB_Project_Specification.md) remains the product brief, amended by the recorded owner decisions.

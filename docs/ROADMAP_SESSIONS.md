@@ -1,6 +1,24 @@
 # Proposed roadmap — Sessions 7+
 
+**Current position — main f90b3c9, 2026-10-16:** #80 is merged; it completes the latest category/browser-Back and ordinary sign-in corrections on top of #79. The X-ray exam/case registries and later chest/limb/pelvis/Grashey implementations, platform shell and pilot account/data code are present. Merge is not proof of deployment or the owner's final phone check. [project-status](project-status.md) is the live task record; [HANDOFF](HANDOFF.md) is the current continuation.
+
+| Work stream | Current direction / evidence |
+|---|---|
+| Implemented X-ray and platform | See the current [README](../README.md), [architecture](PLATFORM_ARCHITECTURE.md) and #80 [UI report](session-rad-054-phone-fixes-2026-10-16.md); detailed session results below are historical |
+| New exams and images | Frozen by S-SHOULDER-Y-6; Shoulder Y and forearm remain deferred. S12-12 places CT/MRI/US in v2; the freeze takes precedence over the earlier schedule |
+| Next programming phase | Owner postponed it for docs cleanup: no automatic start of “my attempts” or RAD-056. S-ASSESS-1's eventual order is retained, not executed |
+| Current DOCS-ALIGN-1 | Align live summaries, tables, links and the docs index; no archive moves in this batch. [Report and proposed second-batch manifest](DOCS_ALIGN_1_REPORT_2026-10-16.md) |
+| Remaining validation | Owner phone/live checks and the educator/provider/licence items stay open; no closure inferred from merge |
+
+<details>
+<summary>Historical opening status from the Sessions 7–10 planning period</summary>
+
 **Status: Sessions 7 (exam/case split), 8 (D7 demographics) and 9 (shell) done; Session 10 (Chest Lateral and AP references, docs only) delivered as drafts; Session 10b (source library, docs only, S10-4) done as a draft PR (EC16260, WHO-CHEST, STATPEARLS-POS in `docs/sources/`); Sessions 11+ are a proposal for the owner. Order changed by S10-1: Lateral reference (10) → generalisation limited to the Lateral reference's needs (11) → Lateral implementation (12).** Owner decisions D1–D7 are in [`DECISIONS.md`](DECISIONS.md). Rationale and design: [`PLATFORM_ARCHITECTURE.md`](PLATFORM_ARCHITECTURE.md); decisions: [`adr/`](adr/README.md); sources/imagery candidates: [`MODALITY_SOURCES_CANDIDATES.md`](MODALITY_SOURCES_CANDIDATES.md). Order follows the owner's brief; it deliberately departs from spec §25 (Session 7 = Practice/Assessment) because Assess needs backend/privacy decisions (ADR-0009).
+
+</details>
+
+**Historical log below:** session headings and “draft PR” / “PARTLY DONE” phrases record the state at their original dates. They do not override the current summary, current task state or later owner decisions. Detailed reduction/archiving is deferred to the proposed second batch; the original evidence and anchors remain available.
+
 
 Size scale (rough, one focused cloud session ≈ M): **S** ≈ ½ session · **M** ≈ 1 · **L** ≈ 2 · **XL** ≈ 3+ (may split). Sizes are guesses and exclude owner/expert review time.
 
