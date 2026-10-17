@@ -19,8 +19,9 @@
     "qa:visual": "node scripts/qa/run-matrix.mjs",
     "qa:a11y": "node scripts/qa/a11y-audit.mjs",
     "docs:check": "node scripts/docs/check-docs.mjs",
-    "docs:test": "node --test scripts/docs/check-docs.test.mjs scripts/status/summary.test.mjs",
-    "status:summary": "node scripts/status/summary.mjs"
+    "docs:test": "node --test scripts/docs/*.test.mjs scripts/status/*.test.mjs",
+    "status:summary": "node scripts/status/summary.mjs",
+    "docs:context": "node scripts/docs/context.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

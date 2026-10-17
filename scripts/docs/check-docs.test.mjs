@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { checkDocs, parseMarkdown, decisionIds, headingSlug, runCli } from "./check-docs.mjs";
+import { checkDocs, parseMarkdown, decisionIds, headingSlug, runCli, consistencyWarnings, handoffErrors } from "./check-docs.mjs";
 function fixture(files, run) {
   const root = mkdtempSync(path.join(tmpdir(), "radlab-docs-"));
   try {
@@ -77,4 +77,24 @@ test("oversized copied CLAUDE instructions and invalid state do not pass", () =>
   fixture({ "CLAUDE.md": "[workflow](AGENTS.md)\n" + "copy\n".repeat(20), "AGENTS.md": "# Guide", "docs/project-status.md": "bad" }, (args) => {
     const errors = checkDocs({ ...args, enforceContracts: true }).errors.join(); assert.match(errors, /short pointer/); assert.match(errors, /STATUS-DATA/);
   });
+});
+
+test("closed-task contradictions warn without silently changing or rejecting task state", () => {
+  const tasks = [
+    { id: "RAD-052", status: "done", description: "المتبقي: تحقق المالك على الهاتف" },
+    { id: "RAD-054", status: "done", description: "فحص الهاتف يبقى مفتوحًا" },
+    { id: "RAD-003", status: "done", description: "Still pending phone review" },
+    { id: "RAD-004", status: "review", description: "المتبقي: المراجعة" },
+    { id: "RAD-005", status: "done", description: "اكتملت مراجعة الهاتف؛ نطاق آخر في RAD-057" },
+  ];
+  const original = JSON.stringify(tasks);
+  assert.deepEqual(consistencyWarnings(tasks).map((w) => w.split(":")[0]), ["RAD-052", "RAD-054", "RAD-003"]);
+  assert.equal(JSON.stringify(tasks), original);
+  fixture({ "docs/project-status.md": statusDoc("docs/a.md").replace('"status":"review"', '"status":"done"').replace('"waiting_on":"owner"', '"completion_evidence":"owner confirmed"').replace('Needs evidence', 'المتبقي فحص الهاتف'), "docs/a.md": "# A" }, (args) => {
+    const result = checkDocs(args); assert.deepEqual(result.errors, []); assert.equal(result.warnings.length, 1);
+  });
+});
+test("handoff rejects copied volatile facts but permits evidence links and continuation", () => {
+  for (const text of ["main عند `4db9b3f`", "فرع العمل topic", "الحالة revision 86", "Draft PR واحد، دمجه يدوي عند المالك"]) assert.equal(handoffErrors(text).length, 1);
+  assert.deepEqual(handoffErrors("ابدأ بـ docs:context؛ [التقرير](report.md). المتابعة: مراجعة المهمة المطلوبة."), []);
 });

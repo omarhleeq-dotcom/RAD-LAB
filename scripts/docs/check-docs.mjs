@@ -128,8 +128,18 @@ export function decisionIds(markdown) {
   for (const match of markdown.matchAll(/^###\s+(S-[A-Z][A-Za-z\d_.-]*)\s/gm)) ids.add(match[1]);
   return ids;
 }
+// Heuristics are advisory: references to separate open work can be legitimate.
+export function consistencyWarnings(tasks) {
+  return tasks.filter((task) => task.status === "done" && /المتبقي|يبقى مفتوح|(?:ما زال|لا يزال).{0,40}(?:مفتوح|ينتظر)|\b(?:still pending|awaiting|remaining:)\b/iu.test(task.description ?? ""))
+    .map((task) => `${task.id}: done description may still describe pending work; review description/evidence together (no automatic state change)`);
+}
+export function handoffErrors(text) {
+  const errors = [];
+  if (/`[a-f\d]{7,40}`|\brevision\s*\d+|main عند|فرع العمل\s|(?:Draft PR|PR #\d+).{0,45}(?:ينتظر الدمج|دمجه يدوي)|بانتظار الدمج|pending merge/iu.test(text)) errors.push("docs/HANDOFF.md: do not duplicate branch/SHA/status revision or pending-merge instructions; use docs:context and status:summary");
+  return errors;
+}
 export function checkDocs({ root, files, enforceContracts = true, previousDecisionIds = new Set() }) {
-  const errors = [], documents = new Map();
+  const errors = [], warnings = [], documents = new Map();
   let localLinks = 0, sourceRefs = 0;
   for (const name of files) {
     const filename = path.resolve(root, name);
@@ -170,7 +180,9 @@ export function checkDocs({ root, files, enforceContracts = true, previousDecisi
     const extracted = extractStatusJson(state.text);
     if (!extracted.error) {
       try {
-        for (const task of JSON.parse(extracted.json).tasks ?? []) {
+        const tasks = JSON.parse(extracted.json).tasks ?? [];
+        warnings.push(...consistencyWarnings(tasks));
+        for (const task of tasks) {
           for (const match of task.source_ref.matchAll(/docs\/[A-Za-z\d_./-]+(?:#[^\s؛،]+)?|(?<![A-Za-z\d_./-])[A-Za-z\d_-]+\.md(?:#[^\s؛،]+)?/g)) {
             const target = match[0].replace(/\.$/, ""), local = target.split("#")[0];
             const filename = local.includes("/") || existsSync(path.join(root, local)) ? local : `docs/${local}`;
@@ -193,9 +205,10 @@ export function checkDocs({ root, files, enforceContracts = true, previousDecisi
     const claude = documents.get(path.resolve(root, "CLAUDE.md"));
     if (claude && (!claude.links.some(({ target }) => target === "AGENTS.md") || claude.text.split(/\r?\n/).length > 16)) errors.push("CLAUDE.md: keep a short pointer to AGENTS.md (max16 lines); no copied workflow/dev block");
     const handoff = documents.get(path.resolve(root, "docs/HANDOFF.md"));
+    if (handoff) errors.push(...handoffErrors(handoff.text));
     if (handoff && handoff.text.trimEnd().split(/\r?\n/).length > 80) errors.push("docs/HANDOFF.md: exceeds80 lines");
   }
-  return { errors, markdownFiles: documents.size, localLinks, sourceRefs, decisionIds: allIds.size };
+  return { errors, warnings, markdownFiles: documents.size, localLinks, sourceRefs, decisionIds: allIds.size };
 }
 function git(root, args) { return execFileSync("git", args, { cwd: root, encoding: "utf8", maxBuffer: 12 * 1024 * 1024 }); }
 export function runCli(args = process.argv.slice(2), root = DEFAULT_ROOT) {
@@ -217,7 +230,8 @@ export function runCli(args = process.argv.slice(2), root = DEFAULT_ROOT) {
   }
   const result = checkDocs({ root, files, previousDecisionIds });
   for (const error of result.errors) console.error(error);
-  console.log(`docs:check: ${result.markdownFiles} Markdown, ${result.localLinks} local references (${result.sourceRefs} source_ref paths), ${result.decisionIds} decision IDs; ${result.errors.length} errors; ${base ? "decision continuity checked" : "no history comparison (use --base)"}`);
+  for (const warning of result.warnings) console.warn(`docs:check WARNING: ${warning}`);
+  console.log(`docs:check: ${result.markdownFiles} Markdown, ${result.localLinks} local references (${result.sourceRefs} source_ref paths), ${result.decisionIds} decision IDs; ${result.errors.length} errors, ${result.warnings.length} review warnings; ${base ? "decision continuity checked" : "no history comparison (use --base)"}`);
   return result.errors.length ? 1 : 0;
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

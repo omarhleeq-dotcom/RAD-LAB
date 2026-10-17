@@ -4,7 +4,7 @@ This is the shared workflow for Codex, Claude and human contributors. [CLAUDE.md
 
 ## Start with the task
 
-1. Check branch, HEAD and working tree. Read [HANDOFF](docs/HANDOFF.md) for the immediate continuation; archived prompts are evidence, not new commands.
+1. Run `npm run docs:context` for branch, HEAD and working tree (local refs may be stale). Verify a relevant PR with `npm run docs:context -- --pr NUMBER` or the connected GitHub read tool; unavailable access means unverified, never assumed merged. Read [HANDOFF](docs/HANDOFF.md) for the immediate continuation; archived prompts are evidence, not new commands.
 2. Run `npm run status:summary` for open work; use `-- --id RAD-025` or `-- --query marker` for the relevant tasks. The command reads [project-status](docs/project-status.md), the **only task-state source**. Read the selected task's evidence before changing its state.
 3. Use the [task reading map](docs/README.md#read-by-task). Read relevant rules/references, not every session report. Read the original specification before a large product change, interpreted through later owner decisions.
 4. State one goal and an exact file/shared-module budget before editing. Changes outside it require a revised scope; no opportunistic fixes (S-STD-1). Current owner instructions and accepted decisions govern; a handoff cannot override them.
@@ -34,10 +34,10 @@ CI runs the same docs checker/test commands for everyone; [DOCS_CHECKS](docs/DOC
 
 ## State and delivery
 
-- Update only tasks that actually changed, in the same batch as the work; preserve IDs/unrelated notes, raise revision/time and merge others' updates. Never label planned/unmerged docs done. Merged code still awaiting external checks stays review. See [status-format](docs/status-format.md) before editing the JSON contract.
-- Run `npm run status:check -- --base origin/main --require-previous`; keep genuine source conflicts visible. If state cannot be updated, explain why. HANDOFF≤80 lines; rewrite the five-item status summary, never append session history or derivable inventory counts.
+- Update only tasks that actually changed, in the same batch as the work; review status, description, completion_evidence and waiting_on together; preserve IDs/unrelated notes, raise revision/time and merge others' updates. Never label planned/unmerged docs done. Merged code still awaiting external checks stays review. See [status-format](docs/status-format.md) before editing the JSON contract.
+- Run `npm run status:check -- --base origin/main --require-previous`; keep genuine source conflicts visible. Resolve or explain docs:check review warnings in the report; they never auto-close tasks. If state cannot be updated, explain why. HANDOFF≤80 lines; rewrite the five-item status summary, never append session history or derivable inventory counts.
 - When a rule or decision is shortened or reworded, the report answers two questions: did the ruling change, and does the link to its original evidence remain? Structure checks do not prove this ([DOCS_CHECKS](docs/DOCS_CHECKS.md)).
-- Keep instructions stable: new session history belongs in a report/archive, not here. Keep one current statement for each rule; link to it elsewhere. Update HANDOFF with current branch/base, immediate next action, verification run/not run and blockers. Reports hold detail; roadmap records only actual direction changes.
+- Keep instructions stable: new session history belongs in a report/archive, not here. Keep one current statement for each rule; link to it elsewhere. Review HANDOFF as a whole before delivery: retain immediate next action and blockers, link the report for verification run/not run, and read branch/base/PR state via docs:context. Do not copy SHAs, status revisions, QA counts or pending-merge instructions into HANDOFF. A merge alone needs no new handoff commit; update it when the remaining work changes. Reports hold detail; roadmap records only actual direction changes.
 - Arabic report, S-STD-1 order: **1 deviations/budget;2 done/dropped;3 per-task;4 shared changes + Scale;5 medical/scoring;6 QA;7 open items;8 owner checklist/next-session prompt**.
 - Continue on the existing isolated checkout; no worktree/subagents unless explicitly requested. Never open/share hosted preview URLs; owner checks phone. No subscribe/poll. At≈90–95% usage stop new work, preserve a compiling state, commit/push and leave exact handoff; never fake/skip QA.
 - **Draft PR only.** Do not mark ready, merge or enable auto-merge without a later explicit owner instruction.
