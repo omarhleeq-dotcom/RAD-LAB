@@ -2,12 +2,12 @@
 
 ## Now
 
-#81 merged at `6d9df04`. Draft #82 covers archive cleanup and the shared documentation workflow/checks. It is not yet merged. Its current review state belongs to [project-status](project-status.md), and immediate continuation to [HANDOFF](HANDOFF.md).
+Documentation archive/reading/check tooling is merged through #86. Live task state belongs to [project-status](project-status.md), immediate continuation to [HANDOFF](HANDOFF.md), and Git/PR facts to `npm run docs:context`; do not maintain a second pending-PR list here.
 
 | Work stream | Direction / source |
 |---|---|
-| Documentation | Finish #82 review; retain history but remove stale instructions from active entry points. [Report](DOCS_WORKFLOW_REPORT.md) |
-| Existing product | Practice/platform/pilot and category-first library are implemented; phone, medical and provider checks stay separate from merge evidence. [Status](project-status.md) |
+| Documentation | Maintain one current statement and linked historical evidence; record remaining work and its evidence in [project-status](project-status.md), without a separate report or checklist. |
+| Existing product | Practice/platform/pilot and category-first library are implemented; RAD-052/053/054 phone acceptance is owner-reported in #85; pelvis-specific, medical and provider checks retain their own evidence scopes. [Status](project-status.md) |
 | New exams/images | Frozen by [S-SHOULDER-Y-6](DECISIONS.md#exam-freeze-current); Shoulder Y and forearm deferred |
 | Programming | Next phase postponed by owner; My Attempts precedes Assess only when work is explicitly resumed |
 | Longer term | [S12-12](DECISIONS.md#xray-roadmap-current): X-ray v1 before CT/MRI/US v2; this order does not override the current freeze |
