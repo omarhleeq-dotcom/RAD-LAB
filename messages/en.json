@@ -1223,7 +1223,7 @@
       },
       "approved": {
         "title": "Your account is approved",
-        "body": "Your account is active. Features for saving attempts will be added during the pilot."
+        "body": "Your account is active. View your saved Practice attempts below."
       },
       "suspended": {
         "title": "Your account is suspended",
@@ -1477,5 +1477,39 @@
     "emptyBody": "Try another search or clear your filters.",
     "chooseCategory": "Choose an exam category",
     "backToCategories": "Back to categories"
+  },
+  "myAttempts": {
+    "title": "My attempts",
+    "intro": "Your saved Practice attempts, newest first. These experimental training results are not an official assessment.",
+    "refresh": "Refresh latest",
+    "first": "Back to latest",
+    "loading": "Loading your saved attempts…",
+    "error": "Could not load your attempts. Please try again.",
+    "retry": "Try again",
+    "expired": "Your session has expired. Sign in again to view your attempts.",
+    "signInAgain": "Return to sign in",
+    "pageCount": "Showing {count} saved attempts on this page.",
+    "empty": "You have no saved Practice attempts yet.",
+    "end": "No older saved attempts on this page.",
+    "attemptNo": "Practice attempt {no}",
+    "score": "Saved score (out of 100)",
+    "result": "Saved training result",
+    "passed": "Passed",
+    "notPassed": "Not passed",
+    "details": "Saved details",
+    "savedOnly": "These are the values saved with this attempt, without recalculation. Technical identifiers are preserved even if the current exam changes.",
+    "case": "Saved case ID",
+    "version": "Definition version",
+    "language": "Practice language",
+    "id": "Attempt ID",
+    "started": "Started",
+    "finished": "Finished",
+    "critical": "Saved critical finding IDs",
+    "none": "None recorded",
+    "categories": "Saved category scores (earned / weight)",
+    "checks": "Saved checks",
+    "checksHint": "Check ID: outcome code · credit. These are the saved technical values.",
+    "settings": "Saved settings (technical values)",
+    "next": "Older attempts"
   }
 }

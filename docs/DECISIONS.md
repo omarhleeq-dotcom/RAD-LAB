@@ -6,7 +6,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 
 | Rule | Current application | Original authority |
 |---|---|---|
-| <a id="exam-freeze-current"></a> `S-SHOULDER-Y-6` | الفحوص والصور وShoulder Y مجمدة؛ الساعد مؤجل. تأجيل البرمجة الحالية محفوظ في HANDOFF. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-shoulder-y-6) |
+| <a id="exam-freeze-current"></a> `S-SHOULDER-Y-6` | الفحوص والصور وShoulder Y مجمدة؛ الساعد مؤجل. استئناف «محاولاتي» وحدها في S-MY-ATTEMPTS-1 لا يرفع هذا التجميد. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-shoulder-y-6) |
 | <a id="xray-roadmap-current"></a> `S12-12` | X-ray v1 قبل CT/MRI/US v2، ولا يلغي ذلك التجميد. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s12-12) |
 | <a id="wrist-side-current"></a> `S14.1c-1` | الرسغ LEFT؛ اختيار RIGHT الأقدم مستبدل في هذا الجزء. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s14.1c-1) |
 | <a id="data-and-engine"></a> `S7-1…4 / S14.1b-2` | ExamDefinition وCaseDefinition وcomposeCase؛ registries/optional mechanisms؛ renderer منفصل عن scoring. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s7-1) |
@@ -23,6 +23,10 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 ### S-DOCS-WORKFLOW-1 — owner-authorised workflow consolidation
 
 Owner instruction in this conversation (2026-10-16): implement the agreed simpler reading/workflow and durable checks on Draft #82. AGENTS is the one shared workflow; CLAUDE is an entry pointer. Domain rules are read by task; old decisions/plans remain evidence in the archive. Scope expressly includes documentation checker/summary scripts, their new tool tests, package commands and CI wiring; no product behaviour/tests/assets/clinical changes. This replaces duplicate workflow placement in CLAUDE/recipe without relaxing S-STD-1…4, Draft-only delivery or the current freeze. The rule summary is here; execution details belong in the [report](DOCS_WORKFLOW_REPORT.md).
+
+### S-MY-ATTEMPTS-1 — استئناف «محاولاتي» فقط
+
+قرار المالك في جلسة MY-ATTEMPTS-1 (2026-10-17): استئناف البرمجة لعرض محاولات Practice المحفوظة للمستخدم نفسه داخل حسابه، وفق ترتيب [S-ASSESS-1](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-assess-1). العربية والإنجليزية ونمط الواجهة المعتمد، بقراءة محدودة وصفحات من الخادم وترتيب ثابت وعزل المستخدمين. يُعاد استخدام عقود الحفظ وRLS الحالية؛ أي تعديل لازم في القاعدة أو الصلاحيات يُشرح ويُدرج في الميزانية قبل تنفيذه. التنفيذ الحالي لا يحتاجه. لا تغيير درجات أو محاكي أو صور أو إعدادات مزوّد. التسليم Draft PR فقط، والفحص محلي؛ الهاتف الفعلي للمالك. Assess وRAD-056 والتحسين البصري الإضافي والفحوص والصور الجديدة تبقى مؤجلة؛ O106–O108 تخص Assess ولا تمنع «محاولاتي». يحل هذا الإذن محل التأجيل السابق لهذه الخطوة فقط؛ بقية الأحكام وروابط أدلتها محفوظة. الأدلة والمتبقي في RAD-058 ووصف PR، دون تقرير أو قائمة تحقق منفصلة.
 
 ## Open O-items
 

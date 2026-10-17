@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { type AuthErrorKey, passwordProblem, recoveryFromHash } from "./account-state";
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
+import { MyAttempts } from "./MyAttempts";
 import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
 import { SURVEY_URL, surveyHref } from "./survey";
 import { useSessionAccount } from "./SessionGate";
@@ -132,6 +133,7 @@ export function AccountPanel() {
         </div>
         <p className="mt-4 text-sm"><Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>
       </section>
+      {status === "approved" && <MyAttempts key={state.userId} userId={state.userId} onExpired={signOut} />}
       </>
     );
   }

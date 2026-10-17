@@ -16,7 +16,7 @@ Product baseline: main after [PR #81](https://github.com/omarhleeq-dotcom/RAD-LA
 - With pilot configuration absent or invalid, account features and their network requests are off and the educational pages remain open. On a configured build, the session UI gate allows protected pages only for approved accounts; the account, Terms and not-found views remain reachable. Static assets/HTML are still downloadable: database access is protected separately by Supabase authentication and RLS.
 - The front end is a static Cloudflare Pages export, with an optional Supabase identity/Postgres backend. Provider configuration, live migrations, backups and remaining owner checks are documented separately; a merge does not prove deployment.
 
-New exams and image imports are frozen by S-SHOULDER-Y-6. CT/MRI/US remain v2 work. The owner has also postponed the next programming phase, including the next “my attempts” step, while documentation is aligned. See [current status](docs/project-status.md), [handoff](docs/HANDOFF.md) and the [documentation index](docs/README.md).
+New exams and image imports are frozen by S-SHOULDER-Y-6. CT/MRI/US remain v2 work. The owner resumed “My attempts” only (RAD-058): saved Practice history inside the account, with bounded server pages and existing user isolation. Assess and extra visual improvements remain deferred. See [current status](docs/project-status.md), [handoff](docs/HANDOFF.md) and the [documentation index](docs/README.md).
 
 ## Architecture and routes
 
