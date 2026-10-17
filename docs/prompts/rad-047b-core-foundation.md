@@ -5,7 +5,7 @@ SESSION: RAD-047b.1 — repeatable pilot migration chain + indexed reads (CODE/D
 Follow CLAUDE.md, docs/exam-recipe.md, S-STD-1/3/4. Start from updated main with PR #60 and the RAD-047a audit PR merged; else STOP AND REPORT. New branch, DRAFT PR only, no merge/auto-merge, no subscribe/poll, never open or share preview URL. No secret keys, real participant data, production DB access, paid services or messages to others.
 
 AUTHORISATION: Owner accepts technical batch 047b.1 in docs/RAD_047B_IMPLEMENTATION_PLAN.md. PROPOSED S-PILOT-14…23 remain unaccepted unless explicitly answered; this batch must not depend on them. Do not implement the whole 047b programme.
-READ FIRST: docs/session-rad-047a-scalability-audit-2026-10-16.md, docs/RAD_047B_IMPLEMENTATION_PLAN.md, HANDOFF, project-status + status-format, DECISIONS S-PILOT-1…13/S-STD-1/3/4/O103…105, PILOT_SUPABASE_SETUP; existing supabase/migrations/* and src/features/pilot-db/*; actual owner queries in useOwnerData.ts and owner_list_participants SQL.
+READ FIRST: docs/archive/sessions/session-rad-047a-scalability-audit-2026-10-16.md, docs/RAD_047B_IMPLEMENTATION_PLAN.md, HANDOFF, project-status + status-format, DECISIONS S-PILOT-1…13/S-STD-1/3/4/O103…105, PILOT_SUPABASE_SETUP; existing supabase/migrations/* and src/features/pilot-db/*; actual owner queries in useOwnerData.ts and owner_list_participants SQL.
 ASSUMED SCALE S-PILOT-13: 500 participants/~25k attempts/few hundred k events in six months; design for 5,000/~250k attempts; Supabase Frankfurt + static Pages. Free capacity at 10× is NOT guaranteed.
 
 SCOPE (in order):

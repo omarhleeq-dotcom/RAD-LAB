@@ -1,6 +1,6 @@
 # RAD-047b — Ordered pilot core implementation plan (PROPOSED)
 
-Based on [RAD-047a audit](session-rad-047a-scalability-audit-2026-10-16.md), S-PILOT-13 and S-STD-3. **No code is implemented by this plan.** Owner acceptance of this plan does not silently accept any PROPOSED policy decision in DECISIONS. Audit date 2026-10-15; session label 2026-10-16. Base audited: main `1b0405f` (PR #60, includes #58/#59).
+Based on [RAD-047a audit](archive/sessions/session-rad-047a-scalability-audit-2026-10-16.md), S-PILOT-13 and S-STD-3. **No code is implemented by this plan.** Owner acceptance of this plan does not silently accept any PROPOSED policy decision in DECISIONS. Audit date 2026-10-15; session label 2026-10-16. Base audited: main `1b0405f` (PR #60, includes #58/#59).
 
 ## 1. Order, scope and budgets
 

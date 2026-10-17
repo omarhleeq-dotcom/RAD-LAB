@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** #80 مدموج؛ DOCS-ALIGN-1 يصحح الحالة والجداول والروابط والوثائق الرئيسية. المرحلة البرمجية التالية و«محاولاتي» مؤجلتان؛ لا أرشفة في هذه الدفعة.
-- **ينتظر المالك:** مراجعة ودمج Draft #81 للتوثيق، وفحص الهاتف للنسخة المدموجة من RAD-054 والحارس والكتالوج؛ بقية O105 وإجراءات CSV/الحذف والسياسات وحدود المزوّدين وRAD-017 وحالة النشر RAD-024. شروط NIH مؤجلة إلى ما قبل الإصدار.
+- **الاتجاه الحالي:** استؤنف تسليم متابعة #82 بأمر المالك؛ دُمج #81؛ Draft #82 للأرشفة وتبسيط القراءة وآلية عمل واحدة وفحص توثيق مشترك محليًا وفي CI. المرحلة البرمجية التالية و«محاولاتي» مؤجلتان بقرار المالك.
+- **ينتظر المالك:** مراجعة آخر رأس وفحوص CI ثم دمج Draft #82؛ فحص الهاتف للنسخة المدموجة من RAD-054 والحارس والكتالوج؛ بقية O105 وإجراءات CSV/الحذف والسياسات وحدود المزوّدين وRAD-017 وحالة النشر RAD-024. شروط NIH مؤجلة إلى ما قبل الإصدار.
 - **ينتظر مراجِعًا بشريًا:** المعلم/الفيزيائي والنص العربي RAD-019/O5، وملاءمة صور الحوض والكتف RAD-029/RAD-032.
-- **آخر دمج:** #80 عند f90b3c9؛ ثبت عبر Git/API، وليس إثبات نشر أو فحص حي جديد.
-- **مخاطر معلنة:** snapshot قديمة لا تتحدث تلقائيًا؛ الحزمة المجمعة لم تُعد على هدف فارغ آخر، وإعدادات المنصة خارجها؛ ملف الملاحظات وانقطاع التصدير غير مجربين؛ التتبّع العام مستمر؛ Free لا يضمن10×؛ تعارض RAD-024 باقٍ، ومواءمة RAD-025 تنتظر دمج دفعة التوثيق.
+- **آخر دمج:** #81 عند6d9df0495a7ab5aad188ff3ee65843ea9868955c؛ تحقق Git/API وشجرة مطابقة، وليس دليل نشر أو فحص هاتف جديد.
+- **مخاطر معلنة:** snapshot قديمة لا تتحدث تلقائيًا؛ الحزمة المجمعة لم تُعد على هدف فارغ آخر، وإعدادات المنصة خارجها؛ ملف الملاحظات وانقطاع التصدير غير مجربين؛ التتبّع العام مستمر؛ Free لا يضمن10×؛ تعارض RAD-024 باقٍ، وRAD-025 ينتظر مراجعة دفعة الأرشفة ودمجها.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 77,
-  "updated_at": "2026-10-16T21:00:10Z",
+  "revision": 84,
+  "updated_at": "2026-10-17T05:20:58Z",
   "timezone": "UTC",
   "next_id": "RAD-057",
   "tasks": [
@@ -30,8 +30,8 @@
       "status": "done",
       "priority": "high",
       "description": "المحاكي ثنائي اللغة لفحص Chest PA: التموضع، التقنية، مولّد صورة النتيجة، مصفوفة QA، ومعاينة ساكنة خاصة مع لافتة 'Educational prototype'.",
-      "source_ref": "CLAUDE.md (ملاحظات Sessions 2–6)؛ docs/session-2-positioning.md، session-3-technique.md، session-4-radiograph-renderer.md، session-5-qa.md؛ docs/DEPLOYMENT.md",
-      "completion_evidence": "الكود والاختبارات والبيانات في main؛ توثيق الجلسات؛ مصفوفة QA الموثّقة في docs/session-5-qa-matrix.md؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS. (لا يثبت هذا نشر المعاينة فعلياً: انظر RAD-024.)"
+      "source_ref": "docs/ENGINE_GUIDE.md (Medical evidence, scoring and rendering؛ Pilot, hosting and runtime)؛ docs/archive/sessions/session-2-positioning.md، docs/archive/sessions/session-3-technique.md، docs/archive/sessions/session-4-radiograph-renderer.md، docs/archive/sessions/session-5-qa.md؛ docs/DEPLOYMENT.md",
+      "completion_evidence": "الكود والاختبارات والبيانات في main؛ توثيق الجلسات؛ مصفوفة QA الموثّقة في docs/archive/sessions/session-5-qa-matrix.md؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS. (لا يثبت هذا نشر المعاينة فعلياً: انظر RAD-024.)"
     },
     {
       "id": "RAD-002",
@@ -39,7 +39,7 @@
       "status": "done",
       "priority": "high",
       "description": "تقسيم بيانات Chest PA إلى فحص وحالة مع composeCase وvalidators بلا تغيير في السلوك. الباقي من نطاق الجلسة 7 مؤجَّل في RAD-021.",
-      "source_ref": "docs/ROADMAP_SESSIONS.md (Session 7 'DONE in part')؛ docs/session-7-engine-generalisation.md؛ DECISIONS.md S7-1…S7-4",
+      "source_ref": "docs/ROADMAP_SESSIONS.md (Session 7 'DONE in part')؛ docs/archive/sessions/session-7-engine-generalisation.md؛ DECISIONS.md S7-1…S7-4",
       "completion_evidence": "اختبار التوصيف المقارِن بايتاً ببايت src/features/qa/characterisation.test.ts مع scripts/qa/characterisation/*؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -48,7 +48,7 @@
       "status": "done",
       "priority": "medium",
       "description": "مواءمة عمر/جنس/ضمائر الحالة ونصوصها العربية مع صورة الأساس A-001 دون تغيير الصورة أو قيم طبية.",
-      "source_ref": "docs/session-8-demographics-alignment.md؛ DECISIONS.md D7 (و O1 المحسومة)",
+      "source_ref": "docs/archive/sessions/session-8-demographics-alignment.md؛ DECISIONS.md D7 (و O1 المحسومة)",
       "completion_evidence": "اختبار src/features/qa/demographics-independence.test.ts واختبار التوصيف؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -57,7 +57,7 @@
       "status": "done",
       "priority": "high",
       "description": "مسارات /{locale}/{modality}/{exam}/practice، صفحات 404 ثنائية اللغة، إعادة توجيه روابط /simulation القديمة. لم تُبنَ حاويات Learn/Reference ولا مبدّل الأوضاع (قرار D1).",
-      "source_ref": "docs/ROADMAP_SESSIONS.md (Session 9)؛ DECISIONS.md D1, D2؛ docs/adr/ (ADR-0011)؛ CLAUDE.md (Platform shell)",
+      "source_ref": "docs/ROADMAP_SESSIONS.md (Session 9)؛ DECISIONS.md D1, D2؛ docs/adr/ (ADR-0011)؛ docs/PLATFORM_ARCHITECTURE.md",
       "completion_evidence": "اختبار تزامن روابط legacy مع public/_redirects ضمن مجموعة الاختبارات؛ فحص axe/QA حسب مصفوفة الجلسة؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -66,7 +66,7 @@
       "status": "done",
       "priority": "high",
       "description": "مستندات مرجعية وسجل مصادر بملاحظات مُعاد صياغتها مع أرقام الصفحات، وملخص احتياجات الجلسة 11. أُنجز بالتوثيق فقط. ملاحظة: مطالبات المصادر قرأها مستشار المالك ولم يعد Claude Code التحقق منها.",
-      "source_ref": "docs/ROADMAP_SESSIONS.md (Sessions 10, 10b)؛ docs/sources/REGISTER.md؛ docs/SESSION_11_NEEDS_SUMMARY.md؛ DECISIONS.md S10-1…S10-5، S10b-1…S10b-26",
+      "source_ref": "docs/ROADMAP_SESSIONS.md (Sessions 10, 10b)؛ docs/sources/REGISTER.md؛ docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md؛ DECISIONS.md S10-1…S10-5، S10b-1…S10b-26",
       "completion_evidence": "الملفات موجودة ومدموجة في main (docs/RAD-LAB_Medical_Reference_*.md، docs/sources/*.md). إنجاز توثيقي: لا يثبت صحة القيم الطبية (انظر RAD-019)."
     },
     {
@@ -75,7 +75,7 @@
       "status": "done",
       "priority": "high",
       "description": "قواعد العلامة، زاوية الأنبوب، choiceControls، فئات لكل فحص، مسجّل المشاهد، مجموعات معالم اختيارية، توهين لكل إسقاط.",
-      "source_ref": "docs/session-11-generalisation.md؛ DECISIONS.md S11-1…S11-4؛ CLAUDE.md (Generalisation)",
+      "source_ref": "docs/archive/sessions/session-11-generalisation.md؛ DECISIONS.md S11-1…S11-4؛ docs/ENGINE_GUIDE.md (Architecture and optional mechanisms)",
       "completion_evidence": "اختبار التوصيف وscripts/qa/golden دون تغيير؛ اختبارات generalisation.test.ts؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -93,7 +93,7 @@
       "status": "done",
       "priority": "high",
       "description": "فحص chest-lateral-erect من آليات S11 فقط، مع حالته وصورته A-006/A-007 ومشهده وقواعد العلامة والذراعين. البنود المفتوحة: O14 وO15 (انظر RAD-016 وRAD-019).",
-      "source_ref": "docs/session-12-chest-lateral.md؛ DECISIONS.md S12-1…S12-11؛ docs/ROADMAP_SESSIONS.md (Session 12 status)",
+      "source_ref": "docs/archive/sessions/session-12-chest-lateral.md؛ DECISIONS.md S12-1…S12-11؛ docs/ROADMAP_SESSIONS.md (Session 12 status)",
       "completion_evidence": "اختبارات الفحص والحالة ومصفوفة lateral-audit؛ بقاء الحارس scripts/qa/characterisation لـ Chest PA دون تغيير؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -102,8 +102,8 @@
       "status": "done",
       "priority": "high",
       "description": "فحص chest-ap-supine مع صورة NIH ChestX-ray14 وقاعدة تدوير بالحجم فقط. متغيرات erect/semi-erect وبنود O18 غير منفّذة (RAD-020).",
-      "source_ref": "docs/session-13-chest-ap.md؛ DECISIONS.md S13-1…S13-7؛ CLAUDE.md (Chest AP supine)",
-      "completion_evidence": "اختبارات الفحص وscripts/qa/ap-audit.mjs؛ PA وLateral دون تغيير بايتياً حسب docs/session-13-chest-ap.md؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
+      "source_ref": "docs/archive/sessions/session-13-chest-ap.md؛ DECISIONS.md S13-1…S13-7؛ docs/ENGINE_GUIDE.md (Existing exam limits)",
+      "completion_evidence": "اختبارات الفحص وscripts/qa/ap-audit.mjs؛ PA وLateral دون تغيير بايتياً حسب docs/archive/sessions/session-13-chest-ap.md؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
       "id": "RAD-010",
@@ -111,7 +111,7 @@
       "status": "done",
       "priority": "medium",
       "description": "لغة بصرية موحّدة للمشاهد الثلاثة وألوان وتباين مفحوصة آلياً، ثم docs/exam-recipe.md كقائمة ثابتة لإضافة فحوص جديدة.",
-      "source_ref": "docs/session-13b-scene-design.md؛ docs/exam-recipe.md؛ DECISIONS.md S13b-1, S13c-1",
+      "source_ref": "docs/archive/sessions/session-13b-scene-design.md؛ docs/exam-recipe.md؛ DECISIONS.md S13b-1, S13c-1",
       "completion_evidence": "اختبار scene-style.test.ts (تباين ≥ 3:1) وحارس scene-dom؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -120,7 +120,7 @@
       "status": "done",
       "priority": "medium",
       "description": "ProjectionId وWordingNs سلاسل مفتوحة مسجّلة، SceneLayout وDetectorFigure، حارس scene-dom؛ وإقرار معيار الجلسة S-STD-1/2 الملزم.",
-      "source_ref": "docs/session-14-limbs-generalisation.md؛ DECISIONS.md S-STD-1، S-STD-2",
+      "source_ref": "docs/archive/sessions/session-14-limbs-generalisation.md؛ DECISIONS.md S-STD-1، S-STD-2",
       "completion_evidence": "اختبار src/features/qa/scene-dom.test.ts مع scripts/qa/scene-dom/hashes.json؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -138,7 +138,7 @@
       "status": "done",
       "priority": "medium",
       "description": "فحصا اليد اليسرى (الجانبي = نسخة الامتداد) بنموذج يد 2.5D مشترك بين المشهد وصورة النتيجة.",
-      "source_ref": "docs/session-14.2b-hand.md؛ docs/RAD-LAB_Medical_Reference_Hand.md؛ DECISIONS.md S14.2-6…S14.2-11",
+      "source_ref": "docs/archive/sessions/session-14.2b-hand.md؛ docs/RAD-LAB_Medical_Reference_Hand.md؛ DECISIONS.md S14.2-6…S14.2-11",
       "completion_evidence": "scene-dom-hand.test.ts مع hand-hashes.json؛ scripts/qa/hand-audit.mjs؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -147,7 +147,7 @@
       "status": "done",
       "priority": "medium",
       "description": "فحصا الكوع الأيسر (AP ممدود، جانبي مثني 90°) بنموذج تدوير صغير مشترك.",
-      "source_ref": "docs/session-14.3-elbow.md؛ docs/RAD-LAB_Medical_Reference_Elbow.md؛ DECISIONS.md S14.3-5…S14.3-12",
+      "source_ref": "docs/archive/sessions/session-14.3-elbow.md؛ docs/RAD-LAB_Medical_Reference_Elbow.md؛ DECISIONS.md S14.3-5…S14.3-12",
       "completion_evidence": "scene-dom-elbow.test.ts مع elbow-hashes.json؛ scripts/qa/elbow-audit.mjs؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -156,7 +156,7 @@
       "status": "done",
       "priority": "medium",
       "description": "ستة فحوص أطراف سفلية (الركبة والقدم يمنى، الكاحل يسرى مستنتجة) على باني الطرف السفلي مع تحكم زاوية الأنبوب. أُنجزت في PR #29 (S14.4) وPR #31 (S14.5).",
-      "source_ref": "docs/session-14.4-knee-foot.md؛ docs/session-14.5-ankle.md؛ DECISIONS.md S14.4-1…S14.4-18، S14.5-1…S14.5-13",
+      "source_ref": "docs/archive/sessions/session-14.4-knee-foot.md؛ docs/archive/sessions/session-14.5-ankle.md؛ DECISIONS.md S14.4-1…S14.4-18، S14.5-1…S14.5-13",
       "completion_evidence": "scene-dom-lower-limb.test.ts وscene-dom-ankle.test.ts مع ملفات التجزئة الخاصة بكل فحص؛ scripts/qa/lower-limb-audit.mjs وankle-audit.mjs؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -179,11 +179,11 @@
     },
     {
       "id": "RAD-018",
-      "title": "إعادة التحقق من رخص ومصادر الصور على Commons وNIH قبل الإصدار",
+      "title": "متابعة رخص الصور وحدود الدليل قبل الإصدار",
       "status": "review",
       "priority": "high",
-      "description": "تدقيق رخص الصور 2026-10-15 (docs/ASSET_LICENCE_AUDIT_2026-10-15.md): الملفات المحلية سليمة 100% وO100 مغلق. المتبقي: إعادة التحقق عند المصدر حين تعمل واجهة Commons (كانت 429)؛ A-008 يبقى owner-verified مؤقتًا (O101، RAD-038).",
-      "source_ref": "DECISIONS.md O14، O16، O27، O39، O47، O56، O65، O75؛ docs/ASSET_PROVENANCE_AND_LICENSES.md",
+      "description": "O100 حسم قبول أدلة المالك ولا يطلب إعادة فحص Commons؛ لا تحويل owner-verified إلى تحقق مستقل. المتبقي الخارجي شروط NIH/A-008 المؤجلة في RAD-038؛ أوصاف المريض/ملاءمة الصورة لا يحسمها قرار الرخص. تبقى المهمة review دون إعادة فتح التحقق المقبول.",
+      "source_ref": "DECISIONS.md O100/O101/O16/O65/O77؛ docs/ASSET_LICENCE_AUDIT_2026-10-15.md؛ docs/ASSET_PROVENANCE_AND_LICENSES.md",
       "waiting_on": "external"
     },
     {
@@ -201,7 +201,7 @@
       "status": "deferred",
       "priority": "low",
       "description": "إضافة متغيرات الوضعية وبنود O18 (تسمية SID/الوضعية على الصورة، صفحة مصادر واعتمادات ثنائية اللغة، كاسيت أفقي وبناء المريض، فرض التعريض اليدوي، زر AP erect) وقرار O19 لعرض الإسقاط الخاطئ في PA/Lateral.",
-      "source_ref": "DECISIONS.md O9، O18، O19، S10b-12؛ docs/session-13-chest-ap.md (البنود غير المنفّذة)",
+      "source_ref": "DECISIONS.md O9، O18، O19، S10b-12؛ docs/archive/sessions/session-13-chest-ap.md (البنود غير المنفّذة)",
       "defer_reason": "لم يطلب المالك جدولتها؛ ترتيب S12-12 يقدّم بقية فحوص X-ray v1. صفحة الاعتمادات تُعاد النظر فيها ضمن RAD-023."
     },
     {
@@ -210,7 +210,7 @@
       "status": "deferred",
       "priority": "low",
       "description": "ما زال RadCase عرض توافق، ولا يوجد src/modalities. يبقى مؤجلاً حتى يحتاجه فحص أو نمط جديد فعلاً.",
-      "source_ref": "DECISIONS.md S7-2، S7-4؛ docs/SESSION_11_NEEDS_SUMMARY.md (صفوف deferred)؛ docs/session-11-generalisation.md",
+      "source_ref": "DECISIONS.md S7-2، S7-4؛ docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md (صفوف deferred)؛ docs/archive/sessions/session-11-generalisation.md",
       "defer_reason": "قاعدة الثلاثة (rule of three): لا حاجة ملموسة؛ التغيير كبير ويصعب إثبات عدم تغيّر السلوك فيه."
     },
     {
@@ -228,7 +228,7 @@
       "status": "planned",
       "priority": "low",
       "description": "آخر بند قبل الإصدار: قرار إزالة لافتة المعاينة (للمالك فقط)، إعادة تدقيق O10 بعد الأصول الجديدة، قراءة المصادر المتبقية (O4) ومصدر تقنية الأطراف (O26). لا يبدأ قبل اكتمال X-ray v1؛ صفحة الاعتمادات في RAD-045.",
-      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ CLAUDE.md (Pilot preview — لا تُزل اللافتة دون قرار المالك)",
+      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ docs/ENGINE_GUIDE.md (Pilot, hosting and runtime — لا تُزل اللافتة دون قرار المالك)",
       "waiting_on": "owner"
     },
     {
@@ -246,8 +246,8 @@
       "title": "مواءمة صياغة ROADMAP_SESSIONS.md وDECISIONS.md مع الحالة المدموجة",
       "status": "review",
       "priority": "low",
-      "description": "DOCS-ALIGN-1: توحيد ملخصات الحالة والمعمارية والخطة، إصلاح جداول DECISIONS والروابط وإحالات O24/O92/O94، وفهرس الوثائق جاهز للمراجعة. السرد القديم معلّم كتاريخ؛ الأرشفة واختصار CLAUDE والوصفة في دفعة لاحقة. المتبقي مراجعة ودمج PR التوثيق، ولا done قبل دليله.",
-      "source_ref": "Draft PR #81؛ docs/DOCS_ALIGN_1_REPORT_2026-10-16.md؛ docs/README.md؛ DECISIONS.md؛ ROADMAP_SESSIONS.md",
+      "description": "Draft #82 للأرشفة وتوحيد القراءة وأدوات docs. أُصلح نص تأجيل O101 بعد فشل اختبار الاعتمادات دون تعديل الاختبار؛ نجحت1927 اختبارًا محليًا. نشر Cloudflare السابق فشل بخطأ داخلي10500 بعد نجاح البناء. المتبقي تحقق الفحوص الجديدة ومراجعة/دمج المالك؛ لا done.",
+      "source_ref": "Draft PR #82؛ docs/DOCS_WORKFLOW_REPORT.md؛ docs/DOCS_ARCHIVE_2_REPORT.md؛ AGENTS.md؛ docs/DECISIONS.md S-DOCS-WORKFLOW-1",
       "waiting_on": "owner"
     },
     {
@@ -265,7 +265,7 @@
       "status": "deferred",
       "priority": "high",
       "description": "مرجع الساعد AP/Lateral لم يُكتب؛ O37 باقٍ مفتوحًا لغياب الصور المناسبة المعتمدة. أصبح كتاب Bontrager 9 متاحًا عبر Drive، لكن صفحات الساعد لم تُستخرج في مرحلة الحوض.",
-      "source_ref": "تعليمات المالك 2026-10-15؛ DECISIONS.md O37 وS10-2؛ docs/HANDOFF.md؛ docs/session-continuity-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1",
+      "source_ref": "تعليمات المالك 2026-10-15؛ DECISIONS.md O37 وS10-2؛ docs/HANDOFF.md؛ docs/archive/sessions/session-continuity-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1",
       "defer_reason": "اختار المالك الحوض في 2026-10-15 كنطاق العمل الحالي؛ الساعد يبقى مؤجلًا وفق O37."
     },
     {
@@ -274,7 +274,7 @@
       "status": "done",
       "priority": "high",
       "description": "مرجع Pelvis AP وNeeds مدموجان في PR #33. لا يثبت إنجاز المرجع صحة المحتوى الطبي؛ التنفيذ منفصل في RAD-030.",
-      "source_ref": "docs/RAD-LAB_Medical_Reference_Pelvis_AP.md؛ docs/session-pelvis-ap-reference-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1/2؛ PR #33",
+      "source_ref": "docs/RAD-LAB_Medical_Reference_Pelvis_AP.md؛ docs/archive/sessions/session-pelvis-ap-reference-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1/2؛ PR #33",
       "completion_evidence": "PR #33 مدموج في main عند f531a660c3a184677bb82807e6e06158a3a48857؛ المرجع وNeeds وقرارات S-PELVIS-REF-1/2؛ تحقق Git/API 2026-10-15."
     },
     {
@@ -292,7 +292,7 @@
       "status": "done",
       "priority": "high",
       "description": "تنفيذ Pelvis AP مستلقٍ مدموج في main بعد مراجعة المالك؛ وضع الطرفين وحبس النفس مستقلان، علامة تشريحية وتعريض يدوي ودوران تعليمي من صورة واحدة. لا يتضمن ذلك إثبات النشر أو اعتمادًا طبيًا.",
-      "source_ref": "DECISIONS.md S-PELVIS-1-1…5؛ docs/session-pelvis-ap-implementation.md؛ PR #34",
+      "source_ref": "DECISIONS.md S-PELVIS-1-1…5؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ PR #34",
       "completion_evidence": "راجع المالك الفرع وأعلن دمجه؛ GitHub يؤكد دمج PR #34 في 2026-10-15T07:43:19Z بالـcommit 8ba28769a9b870cef9f7cab835af8cafd1b4083a على main. QA التنفيذ الموثقة: typecheck/lint (O38 فقط)، 63 ملفًا/1629 اختبارًا، build، حارس scene-dom للحوض، 84 فحص متصفح/axe EN/AR و648 حالة تسميات ناجحة. الفحوص الـ15 السابقة دون تغيير. لم تُعد اختبارات التطبيق في تحديث التوثيق."
     },
     {
@@ -301,7 +301,7 @@
       "status": "done",
       "priority": "high",
       "description": "مرجع AP oblique glenoid/Grashey وNeeds بقراءة Bontrager ص196 مباشرة، مدموج في main. لا يشمل Shoulder AP العادي أو Y أو axillary. القيم الطبية مؤقتة تحت O5؛ الدمج لا يثبت صحة المحتوى الطبي.",
-      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-SHOULDER-REF-1؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md؛ docs/session-shoulder-grashey-reference-2026-10-15.md؛ PR #36",
+      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-SHOULDER-REF-1؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md؛ docs/archive/sessions/session-shoulder-grashey-reference-2026-10-15.md؛ PR #36",
       "completion_evidence": "PR #36 مدموج في main بيد المالك (merged_by omarhleeq-dotcom) في 2026-10-15T08:18:35Z عند الـcommit 91f0bc43247a2c955f1ff2c0c43e61b9707270ff؛ تحقق GitHub API وgit (HEAD = origin/main) في 2026-10-15. المرجع وNeeds وقرار S-SHOULDER-REF-1؛ توثيق فقط."
     },
     {
@@ -310,7 +310,7 @@
       "status": "review",
       "priority": "high",
       "description": "هوية صورة الكتف وترخيصها مطابقان (CC0، SHA-1 مطابق، O87 مغلق)؛ الأصل A-037 والويب A-038 بلا تعديل بكسلات. تبقى ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مائل، اسم الملف normal) وملاءمتها للمراجعة (O91/O5).",
-      "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/session-shoulder-grashey-settlement-2026-10-15.md",
+      "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md",
       "waiting_on": "reviewer"
     },
     {
@@ -319,8 +319,8 @@
       "status": "done",
       "priority": "medium",
       "description": "تنفيذ `shoulder-grashey-erect` مدموج في main (PR #40): قائم فقط، كاشف 24×30 أفقي، علامة R ثابتة، زاوية جسم مطلقة بهضبة 35°–45°، ذراع بلا أثر على الصورة، وإشارة واحدة هي انغلاق الحيّز المفصلي. يبقى تأكيد المالك لـS-SHOULDER-2-3…6 (O96) وهندسة O95؛ الاختيارات التعليمية B غير محققة (O5). لا تنفيذ لسلسلة كتف كاملة تلقائيًا.",
-      "completion_evidence": "دمج PR #40 في main (commit e7cbc85)؛ QA التنفيذ في docs/session-shoulder-grashey-implementation-2026-10-15.md (استُعيد نصه بعد أن أُفرغ في دمج f7b36fd؛ جلسة استعادة السجل). لا يثبت الصحة الطبية.",
-      "source_ref": "DECISIONS.md S-SHOULDER-3-1…5/O88/O95/O96؛ docs/session-shoulder-grashey-implementation-2026-10-15.md؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md §12"
+      "completion_evidence": "دمج PR #40 في main (commit e7cbc85)؛ QA التنفيذ في docs/archive/sessions/session-shoulder-grashey-implementation-2026-10-15.md (استُعيد نصه بعد أن أُفرغ في دمج f7b36fd؛ جلسة استعادة السجل). لا يثبت الصحة الطبية.",
+      "source_ref": "DECISIONS.md S-SHOULDER-3-1…5/O88/O95/O96؛ docs/archive/sessions/session-shoulder-grashey-implementation-2026-10-15.md؛ docs/RAD-LAB_Medical_Reference_Shoulder_Grashey.md §12"
     },
     {
       "id": "RAD-034",
@@ -328,7 +328,7 @@
       "status": "done",
       "priority": "high",
       "description": "مرجع PA oblique scapular Y وNeeds مدموجان في main بقراءة Bontrager ص201. إنجاز توثيقي فقط؛ لا تنفيذ فحص أو استيراد صورة أو اعتماد طبي.",
-      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-SHOULDER-Y-REF-1؛ docs/RAD-LAB_Medical_Reference_Shoulder_Y.md؛ docs/session-shoulder-y-reference-2026-10-15.md؛ PR #38",
+      "source_ref": "توجيه المالك 2026-10-15؛ DECISIONS.md S-SHOULDER-Y-REF-1؛ docs/RAD-LAB_Medical_Reference_Shoulder_Y.md؛ docs/archive/sessions/session-shoulder-y-reference-2026-10-15.md؛ PR #38",
       "completion_evidence": "أعلن المالك دمج الدوكس؛ GitHub وGit يؤكدان دمج PR #38 في 2026-10-15T08:53:49Z بالـcommit 5821c4ec31a231529eb230d26f9f7e7b219fb0db. مرجع Shoulder_Y وأقسام Needs الثمانية وسجل الجلسة مدموجة؛ نجحت فحوص Markdown/89 رابطًا محليًا/الأسوار وفحص الحالة والانتقال وgit diff. لا يثبت ذلك الصحة الطبية أو ملاءمة الصورة أو تنفيذ الفحص."
     },
     {
@@ -347,7 +347,7 @@
       "priority": "medium",
       "description": "Shoulder Y مؤجل؛ لم يُبنَ شيء. تُعاد البوابتان فقط إذا توفرت صورة نظيفة مرخّصة وطلب المالك استئنافه.",
       "defer_reason": "قرار المالك 2026-10-15: تأجيل Shoulder Y لأن الصورة غير معتمدة؛ إيقاف رفع الصور والفحوص الجديدة والتركيز على بقية جوانب المشروع.",
-      "source_ref": "docs/RAD-LAB_Medical_Reference_Shoulder_Y.md §12؛ DECISIONS.md S-SHOULDER-Y-1…5، O92/O94/O97؛ docs/session-shoulder-y-gates-2026-10-15.md"
+      "source_ref": "docs/RAD-LAB_Medical_Reference_Shoulder_Y.md §12؛ DECISIONS.md S-SHOULDER-Y-1…5، O92/O94/O97؛ docs/archive/sessions/session-shoulder-y-gates-2026-10-15.md"
     },
     {
       "id": "RAD-037",
@@ -355,7 +355,7 @@
       "status": "review",
       "priority": "high",
       "description": "مراجعة جودة تنفيذ الحوض: مخطط الإعداد أُعيد رسمه (S-PELVIS-2-2)، العلامة R ثابتة (S-PELVIS-2-1)، منطقة منع العلامة (S-PELVIS-3-1، O99 محلولة). تبقى مراجعة المالك على الهاتف؛ أي قصور يُسجَّل هنا. لا يلغي RAD-029/O84/O85/O5.",
-      "source_ref": "DECISIONS.md O98؛ docs/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15",
+      "source_ref": "DECISIONS.md O98؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15",
       "waiting_on": "owner"
     },
     {
@@ -390,8 +390,8 @@
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
       "status": "review",
       "priority": "high",
-      "description": "الكود مدموج (#50 و#52 و#53). دليل حي 2026-10-16 (المالك): المشروع الحي يحمل migrations 1–8 وصفحة المالك تعمل على الموقع الرئيسي. المتبقي: فحص الحساب والدخول حيًّا بقائمة docs/session-rad-041b-account-ui-2026-10-15.md، ونسخة احتياطية واستعادة (O105) قبل دعوة المزيد.",
-      "source_ref": "docs/session-rad-041b-account-ui-2026-10-15.md؛ docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5/7؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2",
+      "description": "الكود مدموج (#50 و#52 و#53). دليل حي 2026-10-16 (المالك): المشروع الحي يحمل migrations 1–8 وصفحة المالك تعمل على الموقع الرئيسي. المتبقي: فحص الحساب والدخول حيًّا بقائمة docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md، ونسخة احتياطية واستعادة (O105) قبل دعوة المزيد.",
+      "source_ref": "docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md؛ docs/archive/sessions/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5/7؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2",
       "waiting_on": "owner"
     },
     {
@@ -427,7 +427,7 @@
       "status": "done",
       "priority": "medium",
       "description": "صفحة المصادر والاعتمادات EN/AR وربط التذييل مدموجة في #73 ضمن النطاق المعتمد. اعتمادات النتائج الحالية محفوظة مؤقتًا باختيار المالك؛ شروط NIH/O101/RAD-038 غير محسومة.",
-      "source_ref": "PR #73؛ DECISIONS S-CREDITS-1…4؛ docs/session-rad-045-credits-2026-10-16.md",
+      "source_ref": "PR #73؛ DECISIONS S-CREDITS-1…4؛ docs/archive/sessions/session-rad-045-credits-2026-10-16.md",
       "completion_evidence": "#73 مدموج في main عندd2b4701 (Git/API، 2026-10-16)؛ شجرة الدمج مطابقة للنسخة المفحوصة9f78ab2. QA التنفيذ: check (1891 اختبارًا/90 ملفًا)، build/build:pages، EN/AR×390/1440:878 تحققًا و76axe بلا مخالفات/overflow/طلبات خارجية. اعتمادات النتائج باقية باختيار المالك (S-CREDITS-3)."
     },
     {
@@ -472,7 +472,7 @@
       "status": "done",
       "priority": "high",
       "description": "اكتملت مراجعة النص وتطبيقه EN/AR ورفع الموافقة مرة واحدة في #71 المدموج، مع فحوص المحاكاة والتحقق الحي بأدلة المالك من النص وتجديد الموافقة وظهور المحاولات الجديدة في لوحة المالك. النسخة والاستعادة موثقتان؛ لا سياسة أو ميزة إضافية.",
-      "source_ref": "PR #71؛ DECISIONS S-PILOT-37/38/39.1…39.4؛ docs/session-rad-050-terms-implementation-2026-10-16.md",
+      "source_ref": "PR #71؛ DECISIONS S-PILOT-37/38/39.1…39.4؛ docs/archive/sessions/session-rad-050-terms-implementation-2026-10-16.md",
       "completion_evidence": "#71 مدموج عند6021321؛ check (1872) وbuild/build:pages ناجحة؛ محاكاة EN/AR×390/1440:158 تحققًا و44 حالةaxe. أدلة المالك: نص EN/AR كامل، طلب موافقة قُبل وبقي مختفيًا بعدrefresh، ولقطة المحاولات الحديثة بلوحة الموقع الرئيسي (S-PILOT-39.1…39.4)."
     },
     {
@@ -480,8 +480,8 @@
       "title": "جرد الواجهة (قراءة فقط) قبل الدخول والكتالوج والمظهر",
       "status": "review",
       "priority": "medium",
-      "description": "جرد من الكود للدخول والتحذيرات المكررة والخطوط والألوان والكتالوج؛ لا تغيير سلوك. التقرير في docs/session-ui-audit-2026-10-16.md؛ لقطات الجوال/RTL وقياس التباين لم تُجرَ.",
-      "source_ref": "docs/session-ui-audit-2026-10-16.md",
+      "description": "جرد من الكود للدخول والتحذيرات المكررة والخطوط والألوان والكتالوج؛ لا تغيير سلوك. التقرير في docs/archive/sessions/session-ui-audit-2026-10-16.md؛ لقطات الجوال/RTL وقياس التباين لم تُجرَ.",
+      "source_ref": "docs/archive/sessions/session-ui-audit-2026-10-16.md",
       "waiting_on": "owner"
     },
     {
@@ -490,7 +490,7 @@
       "status": "review",
       "priority": "high",
       "description": "الكود مدموج في #76: حارس approved وعودة لنفس الرابط؛ الدخول والشروط و404 عامة والاعتمادات محجوبة. QA محلي ومحاكى ناجح، والحسابات المعطلة مفتوحة. المتبقي: تحقق المالك الحي على الهاتف من الدخول والعودة وpending/suspended والخروج؛ لا دليل نشر حي هنا.",
-      "source_ref": "PR #76؛ docs/session-rad-052-session-gate-2026-10-16.md؛ تحقق الدمج في تقرير RAD-053",
+      "source_ref": "PR #76؛ docs/archive/sessions/session-rad-052-session-gate-2026-10-16.md؛ تحقق الدمج في تقرير RAD-053",
       "waiting_on": "owner"
     },
     {
@@ -499,7 +499,7 @@
       "status": "review",
       "priority": "medium",
       "description": "الكتالوج مدموج في #77 عند ee99f96: مجموعات X-ray بحسب المنطقة وقسم «قريبًا» مستقل؛ QA المحلي موثق في تقرير RAD-053. المتبقي تحقق المالك الحي على الهاتف؛ لا دليل نشر حي في جلسة المقترح.",
-      "source_ref": "PR #77؛ docs/session-rad-053-catalogue-2026-10-16.md؛ docs/session-ui-audit-2026-10-16.md §4؛ S-ASSESS-1",
+      "source_ref": "PR #77؛ docs/archive/sessions/session-rad-053-catalogue-2026-10-16.md؛ docs/archive/sessions/session-ui-audit-2026-10-16.md §4؛ S-ASSESS-1",
       "waiting_on": "owner"
     },
     {
@@ -508,7 +508,7 @@
       "status": "review",
       "priority": "medium",
       "description": "واجهة RAD-054 وإصلاحات الدخول والرسوم وباك مدموجة في #79/#80؛ main عند f90b3c9. QA المحلي موثق، لكن فحص المالك الحي للنسخة المعدلة على الهاتف يبقى مفتوحًا. لا يُستنتج نشر أو إغلاق RAD-052/053 من الدمج.",
-      "source_ref": "PR #80 (merged f90b3c9)؛ DECISIONS S-UI-054-1…13؛ docs/session-rad-054-phone-fixes-2026-10-16.md",
+      "source_ref": "PR #80 (merged f90b3c9)؛ DECISIONS S-UI-054-1…13؛ docs/archive/sessions/session-rad-054-phone-fixes-2026-10-16.md",
       "waiting_on": "owner"
     },
     {

@@ -38,7 +38,7 @@
 
 **سبب التأجيل:** لم يطلب المالك جدولتها؛ ترتيب S12-12 يقدّم بقية فحوص X-ray v1. صفحة الاعتمادات تُعاد النظر فيها ضمن RAD-023.
 
-المرجع: DECISIONS.md O9، O18، O19، S10b-12؛ docs/session-13-chest-ap.md (البنود غير المنفّذة)
+المرجع: DECISIONS.md O9، O18، O19، S10b-12؛ docs/archive/sessions/session-13-chest-ap.md (البنود غير المنفّذة)
 
 ### RAD-021 — نقل الكود إلى modalities/xray/* وإخراج المستهلكين من RadCase (مؤجَّل منذ S7/S11) (deferred)
 
@@ -46,7 +46,7 @@
 
 **سبب التأجيل:** قاعدة الثلاثة (rule of three): لا حاجة ملموسة؛ التغيير كبير ويصعب إثبات عدم تغيّر السلوك فيه.
 
-المرجع: DECISIONS.md S7-2، S7-4؛ docs/SESSION_11_NEEDS_SUMMARY.md (صفوف deferred)؛ docs/session-11-generalisation.md
+المرجع: DECISIONS.md S7-2، S7-4؛ docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md (صفوف deferred)؛ docs/archive/sessions/session-11-generalisation.md
 
 ### RAD-022 — فحوص X-ray v1 المتبقية: abdomen & pelvis ثم head ثم spine (مرجع أولاً) (planned)
 
@@ -82,7 +82,7 @@
 
 **سبب التأجيل:** اختار المالك الحوض في 2026-10-15 كنطاق العمل الحالي؛ الساعد يبقى مؤجلًا وفق O37.
 
-المرجع: تعليمات المالك 2026-10-15؛ DECISIONS.md O37 وS10-2؛ docs/HANDOFF.md؛ docs/session-continuity-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1
+المرجع: تعليمات المالك 2026-10-15؛ DECISIONS.md O37 وS10-2؛ docs/HANDOFF.md؛ docs/archive/sessions/session-continuity-2026-10-15.md؛ DECISIONS.md S-PELVIS-REF-1
 
 ### RAD-029 — صورة Pelvis AP المنظفة من marker — مادة مراجعة (review)
 
@@ -94,7 +94,7 @@ A-034/A-035 مدموجان في #33؛ حُفظ الأصل والاشتقاق ب�
 
 طُوبقت الهوية والترخيص في 2026-10-15 (صفحة Commons وAPI، CC0 1.0، Häggström، SHA-1 للأصل يساوي المعلن 74f43679…8337؛ O87 مغلق للهوية/الترخيص). استُوردت في Draft PR الكتف: الأصل A-037 (غير مخدوم) ونسخة ويب رمادية بلا فقدان A-038، بلا أي تعديل للبكسلات. ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مستقيم مائل، اسم الملف normal مقابل وصف الخلع المتكرر) وملاءمتها للمراجعة (O91/O5).
 
-المرجع: DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/session-shoulder-grashey-settlement-2026-10-15.md
+المرجع: DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md
 
 ### RAD-035 — ملاءمة صورة Shoulder Y ومطابقة الأصل قبل اعتماده (deferred)
 
@@ -110,13 +110,13 @@ Shoulder Y مؤجل؛ لم يُبنَ شيء. تُعاد البوابتان فق
 
 **سبب التأجيل:** قرار المالك 2026-10-15: تأجيل Shoulder Y لأن الصورة غير معتمدة؛ إيقاف رفع الصور والفحوص الجديدة والتركيز على بقية جوانب المشروع.
 
-المرجع: docs/RAD-LAB_Medical_Reference_Shoulder_Y.md §12؛ DECISIONS.md S-SHOULDER-Y-1…5، O92/O94/O97؛ docs/session-shoulder-y-gates-2026-10-15.md
+المرجع: docs/RAD-LAB_Medical_Reference_Shoulder_Y.md §12؛ DECISIONS.md S-SHOULDER-Y-1…5، O92/O94/O97؛ docs/archive/sessions/session-shoulder-y-gates-2026-10-15.md
 
 ### RAD-037 — مراجعة جودة تنفيذ فحص الحوض (pelvis-ap-supine) (review)
 
 جولة مراجعة المالك على Pelvis AP: أُعيد رسم مخطط الإعداد (S-PELVIS-2-2)، وصارت العلامة R ثابتة بنمط الفحوص الأخرى (S-PELVIS-2-1)، ومراجعة الكود لم تجد خللًا منطقيًا (إضافة في سجل التنفيذ). تبقى للمالك مراجعة الهاتف؛ أي قصور آخر يذكره يُسجَّل هنا. لا يلغي RAD-029/O84/O85/O5. O99 حُلَّت (S-PELVIS-3-1): منطقة منع للعلامة تغطي العظام فقط (حقل اختياري)، والعلامة 2.8 سم في الزاوية العليا اليسرى، وهامش التحديد الزائد عاد 2.6 سم.
 
-المرجع: DECISIONS.md O98؛ docs/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15
+المرجع: DECISIONS.md O98؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15
 
 ### RAD-038 — شروط NIH لصورة Chest AP (A-008) قبل الإصدار (deferred)
 
@@ -134,9 +134,9 @@ docs/PILOT_PLATFORM_PLAN.md: قرارات المالك (دعوة من المال
 
 ### RAD-041 — الحسابات والدعوات والدخول مع RLS واختبارات العزل (review)
 
-041a مدموج (PR #50) و041b منفَّذ للمراجعة: عميل Supabase وصفحة الحساب وتسجيل النشاط وحارس المفتاح السري، متحقَّق منه بمتصفح مع Supabase مُحاكى وaxe. المتبقي: دمج المالك، ضبط متغيري GitHub (العنوان والمفتاح العام) ونشر المعاينة، فحص المالك الحي بقائمة docs/session-rad-041b-account-ui-2026-10-15.md، ثم النسخ/الاستعادة (O105) قبل أول مشارك. كود L.
+041a مدموج (PR #50) و041b منفَّذ للمراجعة: عميل Supabase وصفحة الحساب وتسجيل النشاط وحارس المفتاح السري، متحقَّق منه بمتصفح مع Supabase مُحاكى وaxe. المتبقي: دمج المالك، ضبط متغيري GitHub (العنوان والمفتاح العام) ونشر المعاينة، فحص المالك الحي بقائمة docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md، ثم النسخ/الاستعادة (O105) قبل أول مشارك. كود L.
 
-المرجع: docs/session-rad-041b-account-ui-2026-10-15.md؛ docs/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5/7؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2
+المرجع: docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md؛ docs/archive/sessions/session-rad-041a-accounts-backend-2026-10-15.md؛ DECISIONS S-PILOT-5/7؛ docs/PILOT_PLATFORM_PLAN.md §8 الخطوة 2
 
 ### RAD-042 — حفظ المحاولات والأحداث (Practice محفوظ) (in_progress)
 

@@ -20,6 +20,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run docs:check
+      - run: npm run docs:test
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
@@ -29,6 +31,8 @@ jobs:
         env:
           BASE_REF: origin/${{ github.base_ref }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: npm run status:check -- --base "$BASE_REF" --head "$HEAD_SHA"
+        run: |
+          npm run docs:check -- --base "$BASE_REF" --head "$HEAD_SHA"
+          npm run status:check -- --base "$BASE_REF" --head "$HEAD_SHA" --require-previous
       - run: npm run build
       - run: npm run build:pages   # the static export used by the pilot preview (out/)

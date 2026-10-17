@@ -17,7 +17,10 @@
     "qa:characterise": "UPDATE_CHARACTERISATION=1 vitest run src/features/qa/characterisation.test.ts",
     "status:check": "node scripts/status/check-status.mjs",
     "qa:visual": "node scripts/qa/run-matrix.mjs",
-    "qa:a11y": "node scripts/qa/a11y-audit.mjs"
+    "qa:a11y": "node scripts/qa/a11y-audit.mjs",
+    "docs:check": "node scripts/docs/check-docs.mjs",
+    "docs:test": "node --test scripts/docs/check-docs.test.mjs scripts/status/summary.test.mjs",
+    "status:summary": "node scripts/status/summary.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

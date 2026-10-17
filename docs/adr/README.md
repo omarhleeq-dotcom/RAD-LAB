@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Current index as of main `f90b3c9` after #80 (2026-10-16). ADRs preserve dated decisions; their implementation sections may be historical snapshots. Current code/status: [platform architecture](../PLATFORM_ARCHITECTURE.md), [project status](../project-status.md), [owner decisions](../DECISIONS.md) and [pilot setup](../PILOT_SUPABASE_SETUP.md). Accepted records are not evidence of clinical validation or a live deployment.
+Current index as of main after #81 (`6d9df04`), with docs workflow in Draft #82 (2026-10-16). ADRs preserve dated decisions; their implementation sections may be historical snapshots. Current code/status: [platform architecture](../PLATFORM_ARCHITECTURE.md), [project status](../project-status.md), [owner decisions](../DECISIONS.md) and [pilot setup](../PILOT_SUPABASE_SETUP.md). Accepted records are not evidence of clinical validation or a live deployment.
 
 Implemented: the exam/case split, X-ray projection/scene registries, Practice routes, static hosting artefacts and the optional pilot Supabase slice. Still future: the five-mode product, non-X-ray engines, large-volume asset hosting and Assess. New exams/images are frozen and the next programming phase is postponed; see the [handoff](../HANDOFF.md). Older statements such as “remaining for the second exam” describe the record's date, not the current code.
 
