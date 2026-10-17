@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 85,
-  "updated_at": "2026-10-17T05:37:06Z",
+  "revision": 86,
+  "updated_at": "2026-10-17T07:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-057",
   "tasks": [
@@ -182,7 +182,7 @@
       "title": "متابعة رخص الصور وحدود الدليل قبل الإصدار",
       "status": "review",
       "priority": "high",
-      "description": "O100 حسم قبول أدلة المالك ولا يطلب إعادة فحص Commons؛ لا تحويل owner-verified إلى تحقق مستقل. المتبقي الخارجي شروط NIH/A-008 المؤجلة في RAD-038؛ أوصاف المريض/ملاءمة الصورة لا يحسمها قرار الرخص. تبقى المهمة review دون إعادة فتح التحقق المقبول.",
+      "description": "O100 حسم قبول أدلة المالك ولا يطلب إعادة فحص Commons؛ لا تحويل owner-verified إلى تحقق مستقل. المتبقي الخارجي شروط NIH/A-008 المؤجلة في RAD-038؛ أوصاف المريض/ملاءمة الصورة لا يحسمها قرار الرخص. تبقى المهمة review دون إعادة فتح التحقق المقبول. يُغلق عند إغلاق RAD-038 أو قرار المالك بإخراج A-008 من الإصدار؛ لا حاجة لإعادة فحص Commons.",
       "source_ref": "DECISIONS.md O100/O101/O16/O65/O77؛ docs/ASSET_LICENCE_AUDIT_2026-10-15.md؛ docs/ASSET_PROVENANCE_AND_LICENSES.md",
       "waiting_on": "external"
     },
@@ -191,7 +191,7 @@
       "title": "مراجعة المعلّم والفيزيائي الطبي لكل القيم المؤقتة والنص العربي (O5)",
       "status": "review",
       "priority": "high",
-      "description": "حزمة المراجعة (docs/REVIEW_PACKAGE.md) جاهزة وتنتظر معلّمًا وفيزيائيًا طبيًا: قيم Chest وفحوص الأطراف والحوض والكتف، النص العربي، وحدود الصور والمقياس (بنود O في DECISIONS). ليست بوابة للجلسات (S10b-20) لكنها موصى بها قبل الإصدار أو التدريس.",
+      "description": "حزمة المراجعة (docs/REVIEW_PACKAGE.md) جاهزة وتنتظر معلّمًا وفيزيائيًا طبيًا: قيم Chest وفحوص الأطراف والحوض والكتف، النص العربي، وحدود الصور والمقياس (بنود O في DECISIONS). ليست بوابة للجلسات (S10b-20) لكنها موصى بها قبل الإصدار أو التدريس. يُغلق عند جواب كل بند أو تسجيل المالك أن بندًا يُترك غير مراجَع.",
       "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20",
       "waiting_on": "reviewer"
     },
@@ -282,7 +282,7 @@
       "title": "صورة Pelvis AP المنظفة من marker — مادة مراجعة",
       "status": "review",
       "priority": "high",
-      "description": "A-034/A-035 مدموجان (#33) وA-036 نسخة المنتج؛ التنظيف تحقق بصفر بكسل متغير خارج الخلفية. تبقى ملاءمة الصورة وتغطيتها للمراجعة الطبية (O84/O5).",
+      "description": "A-034/A-035 مدموجان (#33) وA-036 نسخة المنتج؛ التنظيف تحقق بصفر بكسل متغير خارج الخلفية. تبقى ملاءمة الصورة وتغطيتها للمراجعة الطبية (O84/O5). يُغلق بقرار المراجِع (O84) على ملاءمة الصورة.",
       "source_ref": "docs/ASSET_PROVENANCE_AND_LICENSES.md A-034/A-035؛ scripts/derive-pelvis-baseline.py؛ DECISIONS.md O84؛ PR #33",
       "waiting_on": "reviewer"
     },
@@ -309,7 +309,7 @@
       "title": "مطابقة صورة الكتف وترخيصها وملاءمتها",
       "status": "review",
       "priority": "high",
-      "description": "هوية صورة الكتف وترخيصها مطابقان (CC0، SHA-1 مطابق، O87 مغلق)؛ الأصل A-037 والويب A-038 بلا تعديل بكسلات. تبقى ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مائل، اسم الملف normal) وملاءمتها للمراجعة (O91/O5).",
+      "description": "هوية صورة الكتف وترخيصها مطابقان (CC0، SHA-1 مطابق، O87 مغلق)؛ الأصل A-037 والويب A-038 بلا تعديل بكسلات. تبقى ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مائل، اسم الملف normal) وملاءمتها للمراجعة (O91/O5). يُغلق بقرار المراجِع (O91) على ملاحظات الصورة.",
       "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md",
       "waiting_on": "reviewer"
     },
@@ -354,7 +354,7 @@
       "title": "مراجعة جودة تنفيذ فحص الحوض (pelvis-ap-supine)",
       "status": "review",
       "priority": "high",
-      "description": "مراجعة جودة تنفيذ الحوض: مخطط الإعداد أُعيد رسمه (S-PELVIS-2-2)، العلامة R ثابتة (S-PELVIS-2-1)، منطقة منع العلامة (S-PELVIS-3-1، O99 محلولة). تبقى مراجعة المالك على الهاتف؛ أي قصور يُسجَّل هنا. لا يلغي RAD-029/O84/O85/O5.",
+      "description": "مراجعة جودة تنفيذ الحوض: مخطط الإعداد أُعيد رسمه (S-PELVIS-2-2)، العلامة R ثابتة (S-PELVIS-2-1)، منطقة منع العلامة (S-PELVIS-3-1، O99 محلولة). تبقى مراجعة المالك على الهاتف؛ أي قصور يُسجَّل هنا. لا يلغي RAD-029/O84/O85/O5. يُغلق بإفادة المالك بعد فحص الهاتف أو بتسجيل القصور هنا.",
       "source_ref": "DECISIONS.md O98؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15",
       "waiting_on": "owner"
     },
@@ -363,7 +363,7 @@
       "title": "شروط NIH لصورة Chest AP (A-008) قبل الإصدار",
       "status": "deferred",
       "priority": "high",
-      "description": "A-008 (NIH ChestX-ray14) تبقى owner-verified مؤقتًا بقرار المالك 2026-10-15؛ لم تُقرأ الشروط ولا توجد لقطة لها، فالحالة التجارية غير مثبتة بدليل. قبل الإصدار: قراءة شروط NIH عند المصدر (متصفح) أو استبدال الصورة.",
+      "description": "A-008 (NIH ChestX-ray14) تبقى owner-verified مؤقتًا بقرار المالك 2026-10-15؛ لم تُقرأ الشروط ولا توجد لقطة لها، فالحالة التجارية غير مثبتة بدليل. قبل الإصدار: قراءة شروط NIH عند المصدر (متصفح) أو استبدال الصورة. يُغلق بقراءة شروط NIH موثقة (إحالة/لقطة) أو باستبدال A-008.",
       "defer_reason": "قرار المالك 2026-10-15: نعود إليه لاحقًا؛ الأولوية للبنود الأخرى.",
       "source_ref": "DECISIONS.md O101، O16؛ docs/ASSET_LICENCE_AUDIT_2026-10-15.md §6؛ docs/ASSET_PROVENANCE_AND_LICENSES.md A-008"
     },
@@ -516,7 +516,7 @@
       "title": "قرارات Assess (توثيق فقط)",
       "status": "review",
       "priority": "high",
-      "description": "قرارات Assess مسجّلة في DECISIONS (S-ASSESS-1…6 وO106…O108): قالب اختبار، أسئلة اختيار متعدد، بنود محاكي بثلاثة مستويات، نتيجة مخفية. D3 وقيد CLAUDE.md باقيان حتى RAD-056.",
+      "description": "قرارات Assess مسجّلة في DECISIONS (S-ASSESS-1…6 وO106…O108): قالب اختبار، أسئلة اختيار متعدد، بنود محاكي بثلاثة مستويات، نتيجة مخفية. D3 وقيد CLAUDE.md باقيان حتى RAD-056. يُغلق بإقرار المالك للنص المدموج؛ O106…O108 تبقى في DECISIONS وليست شرط الإغلاق.",
       "source_ref": "DECISIONS S-ASSESS-1…6؛ محادثة المالك 2026-10-16",
       "waiting_on": "owner"
     },
