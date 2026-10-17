@@ -36,6 +36,30 @@ npx eslint scripts/docs/*.mjs scripts/status/summary*.mjs
 
 [الأداة](../scripts/docs/check-docs.mjs) تفحص البنية، لا تقارن نصوص السجل كلمة بكلمة؛ عند نقل/اختصار قواعد، أثبت حفظ النص/المعرّفات والأحكام في تقرير الدفعة أيضًا. archive يحفظ الأصل وDECISIONS يلخص التطبيق الحالي؛ ليسا سلطتين مستقلتين للحالة.
 
+## نصوص الدوكس التي يقرؤها الكود
+
+تغيير نص وثيقة قد يكسر اختبارًا أو سكربتًا يقرؤها. الحصر الحالي (2026-10-17)، وكلها خارج فحص `docs:check` البنيوي:
+
+| القارئ | الملف المقروء | العقد |
+|---|---|---|
+| `src/data/credits.test.ts` (CI) | `ASSET_PROVENANCE_AND_LICENSES.md`، `ASSET_LICENCE_AUDIT_2026-10-15.md`، `DECISIONS.md` | عبارة «O100 closed» في التدقيق و«DEFERRED by the owner» في القرارات، وأرقام سجل الأصول |
+| `src/features/qa/project-status.test.ts` (CI) | `project-status.md` | سلامة بنية JSON الحالة |
+| `scripts/qa/pilot-consent-audit.mjs` (يدوي) | `TERMS_OWNER_DRAFT_2026-10-16.md` | مقارنة نص الشروط بالمسودة المعتمدة |
+| تعليقات `src/data/**` و`scripts/**` | مسارات `docs/*.md` | لا يتحقق منها اختبار؛ فحصها يدوي |
+
+قبل نقل ملف توثيقي أو إعادة صياغة عبارة في هذه الملفات، شغّل:
+
+```sh
+grep -rhoE --exclude="*.test.*" "docs/[A-Za-z0-9_./-]+\.md" src scripts public .github | sort -u | while read p; do [ -e "$p" ] || echo "MISSING $p"; done
+npx vitest run src/data/credits.test.ts src/features/qa/project-status.test.ts
+```
+
+تغيير الاختبار نفسه ليقبل صياغة أخرى يحتاج نطاقًا يسمح بتعديل الاختبارات (S-STD-1)، ولا يُجرى ضمن جلسة توثيق.
+
+## مراجعة المعنى
+
+الفحص لا يثبت أن الملخص حافظ على الحكم. عند اختصار أو إعادة صياغة قاعدة أو قرار أجب في تقرير الدفعة على سؤالين: هل تغيّر الحكم؟ وهل بقي رابط دليله الأصلي؟
+
 ## CI
 
 CI يشغّل `docs:check` و`docs:test` على الشجرة المختبرة. على PR يضيف مقارنة القرارات بـ`--base origin/<target> --head <PR-head>` وفحص انتقال الحالة مع `--require-previous`. يُستخدم head الحقيقي لتحديد fork point لأن checkout قد يكون merge commit. فحوص التطبيق القائمة باقية؛ إضافة فحص docs لا تتجاوزها أو تغيّر توقعاتها.

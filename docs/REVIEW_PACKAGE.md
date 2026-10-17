@@ -2,7 +2,17 @@
 
 **Review is not a gate (S10b-20, owner decision 2026-10-06, final):** this review is **not** a gate for sessions or for owner use; it is **recommended before commercial release or before teaching students**. The owner (radiography degree) is the first-line content reviewer; the "Educational prototype — not for clinical use" banner stays.
 
-**Status:** created in the Session 10b follow-up (docs only). Everything below is **provisional**: nothing is validated, nothing in code, data or scoring changed. The long list of Chest PA items is in [`REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md); this file adds the items created since (Sessions 10 – 10b). Decisions are in [`DECISIONS.md`](DECISIONS.md); sources in [`sources/REGISTER.md`](sources/REGISTER.md).
+**Status (reading guide updated 2026-10-17, docs only):** everything below is **provisional**: nothing is validated, and this guide changes no value, rule or code. The package began in Session 10b and has grown with every exam (Chest, wrist, hand, elbow, knee/foot, ankle, pelvis, shoulder). Decisions are in [`DECISIONS.md`](DECISIONS.md), sources in [`sources/REGISTER.md`](sources/REGISTER.md), the long Chest PA list in [`REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md). The task is RAD-019 (`npm run status:summary -- --id RAD-019`).
+
+**Which version is current?** Each row keeps the question and the basis at the time it was written. If a row conflicts with the applicable rule in [`DECISIONS.md`](DECISIONS.md) (current index; the dated originals are in the [ledger](archive/decisions/DECISIONS-until-2026-10-16.md)), the index governs and the row is context, not a rule. Rows about frozen items (new exams/images, Shoulder Y) stay informational until the owner resumes them.
+
+| You are | Start here | You answer | Return to the owner |
+|---|---|---|---|
+| **E** educator | §1–§2 (Chest), then §2b–§2e (limbs) and the pelvis / shoulder sections at the end | Is the teaching choice acceptable, or what should it be? | Per row: accept / change to (value + source) / reject |
+| **P** physicist | §1 technique rows, §2 kV / SID / DI rows, §3 | Are the kV, SID, AEC and exposure-index statements defensible as teaching approximations? | Per row: accept / change / "needs a source" |
+| **AR** Arabic reviewer | §5–§6 | Are the Arabic terms and wording correct? | Per group: approve / corrected text |
+
+Each answer is recorded by the owner as a decision id in `DECISIONS.md`, and RAD-019 closes only when every row has an answer or the owner records that a row is left unreviewed for release. Review is still **not a gate** (S10b-20).
 
 **Source provenance for the reviewer:** claims in `docs/sources/*.md` were recorded from the owner's advisor reading (full text read by the advisor; not re-verified against the originals by Claude Code). **Please spot-check the locators** against the originals (EC16260 PDF pp.15, 20, 21; WHO-CHEST pp.3, 4, 5, 17, 27–29, 32; ACR-CHEST Sec I, IV, VI; ACR-PORTABLE Sec I, II, IV, VI; WHO-TECH pp.4, 6–10; BONTRAGER-9 pp.32, 33, 36, 81–84, 87, 92, 94, 96; CLARK-12 p.10; STATPEARLS-POS sections "Projections", "Positioning – Chest" and its licence).
 
