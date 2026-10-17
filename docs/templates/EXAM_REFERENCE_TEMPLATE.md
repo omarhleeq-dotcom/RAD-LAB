@@ -1,6 +1,6 @@
 # TEMPLATE — Exam reference document (copy to `docs/RAD-LAB_Medical_Reference_<Exam>.md`)
 
-> Derived from the structure of the Chest PA references (`RAD-LAB_Medical_Reference_Chest_PA.md`, `_Technique.md`, `_Image_Quality.md`): source hierarchy → positioning → technique → image quality / result effects → sources → development rules. This template adds what the platform needs from a reference *before* any code exists: a per-claim source table, a **Needs** section (what the exam needs that Chest PA does not already have) and the generalisation mapping.
+> Derived from the structure of the Chest PA references (`RAD-LAB_Medical_Reference_Chest_PA.md`, `_Technique.md`, `_Image_Quality.md`): source hierarchy → positioning → technique → image quality / result effects → sources → development rules. This template adds what the platform needs from a reference *before* any code exists: a per-claim source table, a **Needs** section (what the exam needs beyond the currently merged mechanisms) and the generalisation mapping.
 >
 > **Standing rule (S10-2, "Reference first"):** no generalisation or implementation session for an exam may start until its reference is **merged to main** and its **§8 Needs section is complete** (every row marked, every "unknown" tied to a named missing source). References run at least one step ahead of code. Generalisation is done only against concrete needs from merged references — never against placeholders.
 >
@@ -35,12 +35,12 @@ Source rules (all references): authoritative / peer-reviewed only (IAEA, WHO, AA
 ## 3. Positioning
 | Topic | What this reference can state (cite R#) | Class / status |
 |---|---|---|
-*Rows (as Chest PA §2–§3): patient orientation / state; head, shoulders, arms; rotation / alignment; centring point and level; central-ray direction; SID; respiration; collimation / required anatomy; marker.*
+*Use only applicable anatomy/projection rows: patient orientation / state; head, shoulders, arms; rotation / alignment; centring point and level; central-ray direction; SID; respiration; collimation / required anatomy; marker.*
 
 ## 4. Technique (digital radiography)
 | Topic | What can be stated (cite R#) | Class / status |
 |---|---|---|
-*Rows (as Chest PA Technique): kVp, mAs, AEC and chamber layout, grid, exposure time / motion, exposure index (never brightness; no invented EI / EIT / DI numbers), patient size / habitus, dose optimisation.*
+*Use applicable technique rows; do not assume AEC, breathing or chest controls: kVp, mAs, AEC and chamber layout, grid, exposure time / motion, exposure index (never brightness; no invented EI / EIT / DI numbers), patient size / habitus, dose optimisation.*
 
 ## 5. Conventions and open owner decisions
 *Marker / laterality / display orientation, and any other convention. Present **options with their sources**; **do not decide**. Each becomes an O-number in `DECISIONS.md`. Mark pure derivations as "derivation, not a medical claim".*
@@ -48,33 +48,33 @@ Source rules (all references): authoritative / peer-reviewed only (IAEA, WHO, AA
 ## 6. Image quality and result rendering
 | Criterion / effect | Statement (cite R#) | Class / status |
 |---|---|---|
-*Rows: each quality criterion; each effect the renderer would need; an explicit "do NOT implement as clinical truth" list (start from the Chest PA list).*
+*Rows: each quality criterion; each effect the renderer would need; an explicit "do NOT implement as clinical truth" list (state the actual limits for this anatomy/projection).*
 
 ## 7. Arabic terms (proposed)
 *Added to `docs/ARABIC_TERMINOLOGY.md` under a dated heading, marked **pending educator review**; never changes an existing UI string.*
 
-## 8. Needs (for the generalisation session)
-Compare the exam with **Chest PA as implemented today** (`SimulationSettings`, `CATEGORIES`, `ImageVariantId`, `EffectId`, `CriticalFindingId`, `RadiographAssetSpec`, scene `chest-pa-frontal`). Every row carries exactly one mark:
+## 8. Needs (determine whether generalisation is needed)
+Record the inspected main commit and compare with the **merged engine/registries**, using [recipe §2](../exam-recipe.md#2-s11-generic-mechanisms-what-an-exam-may-use) and [ENGINE_GUIDE](../ENGINE_GUIDE.md). Name the closest implemented exam/family and actual settings/control/model fields; existing fixed-side markers, optional chest fields, scene/projection registries and generic limb steps are not new gaps. Every row carries exactly one mark:
 
-- **same** as PA · **differs** (say how) · **new** · **unknown — source needed** (name the missing source from §1.2)
+- **same** as an existing mechanism · **differs** (say how) · **new** · **unknown — source needed** (name the missing source from §1.2)
 
 ### 8.1 Controls (what the student sets)
-| Item (PA today) | This exam | Mark | Note / missing source |
+| Existing mechanism / inspected field | This exam | Mark | Note / missing source |
 |---|---|---|---|
 ### 8.2 Scoring categories
-| PA | This exam | Mark | Note |
+| Existing mechanism | This exam | Mark | Note |
 |---|---|---|---|
 ### 8.3 Critical findings
-| PA | This exam | Mark | Note |
+| Existing mechanism | This exam | Mark | Note |
 |---|---|---|---|
 ### 8.4 Image variants / effects
-| PA | This exam | Mark | Note |
+| Existing mechanism | This exam | Mark | Note |
 |---|---|---|---|
 ### 8.5 Positioning scene
-| PA | This exam | Mark | Note |
+| Existing mechanism | This exam | Mark | Note |
 |---|---|---|---|
 ### 8.6 Landmark groups (`RadiographAssetSpec`)
-| PA field | This exam | Mark | Note |
+| Existing field | This exam | Mark | Note |
 |---|---|---|---|
 ### 8.7 Case fields (`CaseDefinition`)
 | Field | This exam | Mark | Note |
@@ -83,8 +83,8 @@ Compare the exam with **Chest PA as implemented today** (`SimulationSettings`, `
 | Asset | Status (open / sourced + registry id) |
 |---|---|
 
-## 9. Generalisation (S7-4) mapping
-| S7-4 item | Needed by this exam? why | Or: not needed → deferred |
+## 9. Mechanism gap mapping (S7-4)
+| Inspected mechanism | Reuse / concrete new need and reason | Separate phase / deferred / not applicable |
 |---|---|---|
 | `SimulationSettings` / `ControlSpec[]` | | |
 | `CATEGORIES` / `CategoryId` | | |
@@ -93,13 +93,12 @@ Compare the exam with **Chest PA as implemented today** (`SimulationSettings`, `
 | Console JSX | | |
 | Positioning scene art | | |
 | `RadiographAssetSpec` landmark groups | | |
-| Move to `modalities/xray/*` | | |
-| Migrating consumers off `RadCase` | | |
+| New control shape / pixel algorithm (if actually needed) | | |
 
-*Rule of three: prefer generalising only what two or more exams (PA counts) need; list items needed by one exam only as "needed by <exam>" and say why generalising them now is, or is not, justified.*
+*Rule of three: prefer generalising only what multiple concrete referenced exams need; list items needed by one exam only as "needed by <exam>" and say why generalising them now is, or is not, justified.*
 
 ## 10. Open owner decisions and open items
 *O-numbers added to `DECISIONS.md`; blocked sources listed with the claim each would support (also copied to the session report next to O4); remaining "source needed" items.*
 
-## 11. Development rules (carry from Chest PA §8)
+## 11. Development rules
 Do not invent values; record the source of every medical rule; separate validated rule / educational simplification / provisional value; if sources disagree, document it and keep the rule configurable.

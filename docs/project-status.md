@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** دُمج #81؛ DOCS-ARCHIVE-2 لأرشفة التقارير واختصار الأدلة وتنظيم القرارات مع حفظ القواعد والمسارات الثابتة. المرحلة البرمجية التالية و«محاولاتي» مؤجلتان بقرار المالك.
-- **ينتظر المالك:** مراجعة ودمج Draft #82 للأرشفة؛ فحص الهاتف للنسخة المدموجة من RAD-054 والحارس والكتالوج؛ بقية O105 وإجراءات CSV/الحذف والسياسات وحدود المزوّدين وRAD-017 وحالة النشر RAD-024. شروط NIH مؤجلة إلى ما قبل الإصدار.
+- **الاتجاه الحالي:** استؤنف تسليم متابعة #82 بأمر المالك؛ دُمج #81؛ Draft #82 للأرشفة وتبسيط القراءة وآلية عمل واحدة وفحص توثيق مشترك محليًا وفي CI. المرحلة البرمجية التالية و«محاولاتي» مؤجلتان بقرار المالك.
+- **ينتظر المالك:** مراجعة آخر رأس وفحوص CI ثم دمج Draft #82؛ فحص الهاتف للنسخة المدموجة من RAD-054 والحارس والكتالوج؛ بقية O105 وإجراءات CSV/الحذف والسياسات وحدود المزوّدين وRAD-017 وحالة النشر RAD-024. شروط NIH مؤجلة إلى ما قبل الإصدار.
 - **ينتظر مراجِعًا بشريًا:** المعلم/الفيزيائي والنص العربي RAD-019/O5، وملاءمة صور الحوض والكتف RAD-029/RAD-032.
 - **آخر دمج:** #81 عند6d9df0495a7ab5aad188ff3ee65843ea9868955c؛ تحقق Git/API وشجرة مطابقة، وليس دليل نشر أو فحص هاتف جديد.
 - **مخاطر معلنة:** snapshot قديمة لا تتحدث تلقائيًا؛ الحزمة المجمعة لم تُعد على هدف فارغ آخر، وإعدادات المنصة خارجها؛ ملف الملاحظات وانقطاع التصدير غير مجربين؛ التتبّع العام مستمر؛ Free لا يضمن10×؛ تعارض RAD-024 باقٍ، وRAD-025 ينتظر مراجعة دفعة الأرشفة ودمجها.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 79,
-  "updated_at": "2026-10-16T21:20:47Z",
+  "revision": 83,
+  "updated_at": "2026-10-17T00:11:51Z",
   "timezone": "UTC",
   "next_id": "RAD-057",
   "tasks": [
@@ -30,7 +30,7 @@
       "status": "done",
       "priority": "high",
       "description": "المحاكي ثنائي اللغة لفحص Chest PA: التموضع، التقنية، مولّد صورة النتيجة، مصفوفة QA، ومعاينة ساكنة خاصة مع لافتة 'Educational prototype'.",
-      "source_ref": "CLAUDE.md (Medical evidence, scoring and rendering؛ Pilot, hosting and runtime)؛ docs/archive/sessions/session-2-positioning.md، docs/archive/sessions/session-3-technique.md، docs/archive/sessions/session-4-radiograph-renderer.md، docs/archive/sessions/session-5-qa.md؛ docs/DEPLOYMENT.md",
+      "source_ref": "docs/ENGINE_GUIDE.md (Medical evidence, scoring and rendering؛ Pilot, hosting and runtime)؛ docs/archive/sessions/session-2-positioning.md، docs/archive/sessions/session-3-technique.md، docs/archive/sessions/session-4-radiograph-renderer.md، docs/archive/sessions/session-5-qa.md؛ docs/DEPLOYMENT.md",
       "completion_evidence": "الكود والاختبارات والبيانات في main؛ توثيق الجلسات؛ مصفوفة QA الموثّقة في docs/archive/sessions/session-5-qa-matrix.md؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS. (لا يثبت هذا نشر المعاينة فعلياً: انظر RAD-024.)"
     },
     {
@@ -57,7 +57,7 @@
       "status": "done",
       "priority": "high",
       "description": "مسارات /{locale}/{modality}/{exam}/practice، صفحات 404 ثنائية اللغة، إعادة توجيه روابط /simulation القديمة. لم تُبنَ حاويات Learn/Reference ولا مبدّل الأوضاع (قرار D1).",
-      "source_ref": "docs/ROADMAP_SESSIONS.md (Session 9)؛ DECISIONS.md D1, D2؛ docs/adr/ (ADR-0011)؛ CLAUDE.md (Current scope and authority)",
+      "source_ref": "docs/ROADMAP_SESSIONS.md (Session 9)؛ DECISIONS.md D1, D2؛ docs/adr/ (ADR-0011)؛ docs/PLATFORM_ARCHITECTURE.md",
       "completion_evidence": "اختبار تزامن روابط legacy مع public/_redirects ضمن مجموعة الاختبارات؛ فحص axe/QA حسب مصفوفة الجلسة؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -75,7 +75,7 @@
       "status": "done",
       "priority": "high",
       "description": "قواعد العلامة، زاوية الأنبوب، choiceControls، فئات لكل فحص، مسجّل المشاهد، مجموعات معالم اختيارية، توهين لكل إسقاط.",
-      "source_ref": "docs/archive/sessions/session-11-generalisation.md؛ DECISIONS.md S11-1…S11-4؛ CLAUDE.md (Architecture and optional mechanisms)",
+      "source_ref": "docs/archive/sessions/session-11-generalisation.md؛ DECISIONS.md S11-1…S11-4؛ docs/ENGINE_GUIDE.md (Architecture and optional mechanisms)",
       "completion_evidence": "اختبار التوصيف وscripts/qa/golden دون تغيير؛ اختبارات generalisation.test.ts؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -102,7 +102,7 @@
       "status": "done",
       "priority": "high",
       "description": "فحص chest-ap-supine مع صورة NIH ChestX-ray14 وقاعدة تدوير بالحجم فقط. متغيرات erect/semi-erect وبنود O18 غير منفّذة (RAD-020).",
-      "source_ref": "docs/archive/sessions/session-13-chest-ap.md؛ DECISIONS.md S13-1…S13-7؛ CLAUDE.md (Existing exam limits)",
+      "source_ref": "docs/archive/sessions/session-13-chest-ap.md؛ DECISIONS.md S13-1…S13-7؛ docs/ENGINE_GUIDE.md (Existing exam limits)",
       "completion_evidence": "اختبارات الفحص وscripts/qa/ap-audit.mjs؛ PA وLateral دون تغيير بايتياً حسب docs/archive/sessions/session-13-chest-ap.md؛ تحقق آلي: npm run check (typecheck وlint وvitest: 59 ملفاً، 1583 اختباراً ناجحاً) على المراجعة 4118326 في جلسة RAD-STATUS."
     },
     {
@@ -179,11 +179,11 @@
     },
     {
       "id": "RAD-018",
-      "title": "إعادة التحقق من رخص ومصادر الصور على Commons وNIH قبل الإصدار",
+      "title": "متابعة رخص الصور وحدود الدليل قبل الإصدار",
       "status": "review",
       "priority": "high",
-      "description": "تدقيق رخص الصور 2026-10-15 (docs/ASSET_LICENCE_AUDIT_2026-10-15.md): الملفات المحلية سليمة 100% وO100 مغلق. المتبقي: إعادة التحقق عند المصدر حين تعمل واجهة Commons (كانت 429)؛ A-008 يبقى owner-verified مؤقتًا (O101، RAD-038).",
-      "source_ref": "DECISIONS.md O14، O16، O27، O39، O47، O56، O65، O75؛ docs/ASSET_PROVENANCE_AND_LICENSES.md",
+      "description": "O100 حسم قبول أدلة المالك ولا يطلب إعادة فحص Commons؛ لا تحويل owner-verified إلى تحقق مستقل. المتبقي الخارجي شروط NIH/A-008 المؤجلة في RAD-038؛ أوصاف المريض/ملاءمة الصورة لا يحسمها قرار الرخص. تبقى المهمة review دون إعادة فتح التحقق المقبول.",
+      "source_ref": "DECISIONS.md O100/O101/O16/O65/O77؛ docs/ASSET_LICENCE_AUDIT_2026-10-15.md؛ docs/ASSET_PROVENANCE_AND_LICENSES.md",
       "waiting_on": "external"
     },
     {
@@ -228,7 +228,7 @@
       "status": "planned",
       "priority": "low",
       "description": "آخر بند قبل الإصدار: قرار إزالة لافتة المعاينة (للمالك فقط)، إعادة تدقيق O10 بعد الأصول الجديدة، قراءة المصادر المتبقية (O4) ومصدر تقنية الأطراف (O26). لا يبدأ قبل اكتمال X-ray v1؛ صفحة الاعتمادات في RAD-045.",
-      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ CLAUDE.md (Pilot, hosting and runtime — لا تُزل اللافتة دون قرار المالك)",
+      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ docs/ENGINE_GUIDE.md (Pilot, hosting and runtime — لا تُزل اللافتة دون قرار المالك)",
       "waiting_on": "owner"
     },
     {
@@ -246,8 +246,8 @@
       "title": "مواءمة صياغة ROADMAP_SESSIONS.md وDECISIONS.md مع الحالة المدموجة",
       "status": "review",
       "priority": "low",
-      "description": "دُمجت مواءمة الحالة والجداول والروابط والفهرس في #81 عند 6d9df04. DOCS-ARCHIVE-2 ينقل التقارير والتحليل مع إحالات توافق، ويختصر الأدلة وينظم القرارات دون تغيير أحكامها. المتبقي مراجعة ودمج دفعة الأرشفة؛ لا إغلاق قبل دليلها.",
-      "source_ref": "Draft PR #82؛ PR #81؛ docs/DOCS_ALIGN_1_REPORT_2026-10-16.md؛ docs/DOCS_ARCHIVE_2_REPORT.md؛ docs/README.md؛ DECISIONS.md؛ ROADMAP_SESSIONS.md",
+      "description": "مواءمة #81 مدموجة. Draft #82 يجمع الأرشفة وworkflow واحدًا وقراءة حسب المهمة وأدوات docs:check/status:summary مع CI. استؤنف بأمر المالك من الحفظ المحلي 1ca28d8 لتسليم المتابعة. المتبقي مراجعة آخر رأس وCI ثم الدمج؛ لا done أو استئناف منتج تلقائيًا.",
+      "source_ref": "Draft PR #82؛ docs/DOCS_WORKFLOW_REPORT.md؛ docs/DOCS_ARCHIVE_2_REPORT.md؛ AGENTS.md؛ docs/DECISIONS.md S-DOCS-WORKFLOW-1",
       "waiting_on": "owner"
     },
     {

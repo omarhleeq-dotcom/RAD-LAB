@@ -60,3 +60,10 @@
 ## توافق المسارات والتحقق
 
 تبقى أربعة ملفات إحالة قصيرة في docs: `session-3-technique.md` و`session-5-qa.md` و`session-7-demographics-impact.md` و`session-13b-scene-design.md` لأن الكود/CI يشير إليها؛ المحتوى المعتمد تاريخيًا في sessions، دون نسخة ثانية قابلة للتحرير. [خريطة النقل وحفظ القواعد وQA](../DOCS_ARCHIVE_2_REPORT.md).
+
+## سجل القرارات والتصميم السابق
+
+- [القرارات كاملة قبل توحيد القراءة](decisions/DECISIONS-until-2026-10-16.md): جميع النصوص والمعرّفات، والتطبيق الحالي في [DECISIONS](../DECISIONS.md).
+- [خريطة الجلسات التاريخية](planning/ROADMAP-until-2026-10-16.md)؛ [المعمارية المقترحة والسجل](planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md).
+
+هذه أدلة مؤرخة؛ الدخول المعتاد من [خريطة القراءة](../README.md#read-by-task)، لا من كل السجلات.

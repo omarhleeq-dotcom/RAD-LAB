@@ -1,6 +1,6 @@
 # Exam recipe — adding one X-ray exam to RAD-LAB
 
-Derived from what Chest Lateral (S12) and Chest AP supine (S13) actually touched (`git diff` of PRs #16, #17, #18), not from memory. **Binding rules live elsewhere and are only linked here:** [`DECISIONS.md`](DECISIONS.md) (binding), [`../CLAUDE.md`](../CLAUDE.md), [`docs/archive/sessions/session-11-generalisation.md`](archive/sessions/session-11-generalisation.md), [`docs/archive/sessions/session-12-chest-lateral.md`](archive/sessions/session-12-chest-lateral.md), [`docs/archive/sessions/session-13-chest-ap.md`](archive/sessions/session-13-chest-ap.md), [`docs/archive/sessions/session-13b-scene-design.md`](archive/sessions/session-13b-scene-design.md), [`sources/REGISTER.md`](sources/REGISTER.md), [`REVIEW_PACKAGE.md`](REVIEW_PACKAGE.md), [`ARABIC_TERMINOLOGY.md`](ARABIC_TERMINOLOGY.md), [`ASSET_PROVENANCE_AND_LICENSES.md`](ASSET_PROVENANCE_AND_LICENSES.md).
+Read [AGENTS](../AGENTS.md) for the shared workflow and [the relevant ENGINE_GUIDE sections](ENGINE_GUIDE.md) for domain constraints. This recipe is an operational checklist for an authorised exam session, not a session log. Clinical authority, source evidence and per-exam choices are linked from [DECISIONS](DECISIONS.md), [REVIEW_PACKAGE](REVIEW_PACKAGE.md) and [source register](sources/REGISTER.md).
 
 **Scope:** the current registry-driven chest/limb/pelvis/shoulder engine. **New exams/images are frozen (S-SHOULDER-Y-6); this is guidance for a separately authorised future exam session, not permission to resume it.** Use existing optional mechanisms (§2). If an exam needs something the engine does not have (see §2 "Remaining bespoke needs"), that is **not** an exam session: stop, list the need, and propose a separate, byte-identical generalisation session (reference first, rule of three — S10-2, S7-4).
 
@@ -97,17 +97,7 @@ Routing needs **no edit**: `/{locale}/{modality}/{exam}[/practice]` comes from `
 
 ## 4. Scene design
 
-Full rules and the shape audit: [`docs/archive/sessions/session-13b-scene-design.md`](archive/sessions/session-13b-scene-design.md). **Never invent a hex value or a stroke weight**: import from `src/features/positioning/scene-style.ts` (`SCENE`, `STROKE`, `UNDER`, `LABEL_SIZE`); parts from `SceneParts.tsx` (`SceneLabel`, `SceneArrow`, `HeadProfile`) and `FrontalFigure.tsx`.
-
-**Colour code (pinned by `scene-style.test.ts`; a failing contrast test means the colour is wrong, not the test):**
-- **Anatomy** = muted cool grey-blue, every fill dark (luminance < 0.12), no accent hue, thin outline (`edge`, `bone`). Patient parts: trunk / head / near limb / far limb / lung from `SCENE`.
-- **Interactive elements and the beam** (collimation field, crosshair, handles, marker, tube beam) = ONE accent, **amber** (`beam`), always on a dark `underStroke`.
-- **Guides** (practice guides ON only) = at most two colours: **green** (`good`) = targets (centring zone, reference SID, "square" tick); **sky blue** (`guide`) = reference lines and the fault outline. Always also told apart by shape / label, never by colour alone.
-- Every accent ≥ 3:1 on every anatomy fill it can cross; label text ≥ 7:1 on its pill.
-- **Labels** = text on a measured dark semi-opaque pill (no stroke halo — it smears Arabic joins); every label has its own slot; no overlaps, none outside the viewBox (measure at 390 and 1440, EN and AR, guides ON/OFF, every state that moves a label).
-- **Directions:** Head ↑ top-left, Feet ↓ at the **bottom edge** of detector views; then Anterior / Posterior (lateral) or the patient's right / left (frontal, guides ON); side views: Anterior / Posterior / Head / Feet / Detector. Direction labels and anatomy are image conventions: SVG `direction: ltr`, **never mirrored in RTL**. Numbers isolated with LRM so the unit stays attached.
-- **Scored cues and honest limits.** The faulty state of a scored cue is visible by shape (arms over the lungs, jaw over the apices); only outlined / labelled with guides ON. Never draw what the result reveals. Figures end exactly at the detector edge (no dead space); plan-view viewBox cropped to content.
-- Every drawing has a text alternative built from the learner's own settings (`scene.alt*`); pointer / keyboard / ARIA of crosshair, 8 collimation handles and marker unchanged.
+Use [scene design and bilingual constraints](ENGINE_GUIDE.md#scene-design-and-bilingual-ui): tokens, colour/contrast, LTR anatomy, text alternatives and input semantics. They are maintained there, not copied here. The [original shape audit](archive/sessions/session-13b-scene-design.md) is an example when drawing a new family.
 
 **Anatomical checklist pattern** (the Lateral figure's list, S13b-2 — write one per new figure and verify it on screenshots EN + AR, 390 px, guides ON/OFF, every choice state):
 1. Orientation and direction labels. 2. Landmark lines that mark the field (sternum, spine, …) in the right place. 3. Joints / girdles the exam scores or must stay clear of. 4. Organs and the structures the beam / rules refer to, labelled if non-obvious. 5. Figure meets the detector edge, no overrun. 6. Proportions (head ≈ 0.3 chest depth, tapered limbs, no extra circles). 7. Each choice state (raised/lowered, supine/semi-erect…) visibly different. 8. **Scored and drawn** vs **scored but not drawn** vs **not modelled** — the last two are recorded as gaps (`REVIEW_PACKAGE` §1d, an O-item, and the "not drawn in this image" label), plus assumptions deliberately kept out of the drawing (exact heart outline, bone detail).
@@ -185,49 +175,32 @@ Use the single short S-STD-1 skeleton in §8a. Fill exam order, **reference merg
 
 ## 8a. Session prompt skeleton (S-STD-1)
 
-Prompts follow the **Session prompt standard** ([`DECISIONS.md`](DECISIONS.md) **S-STD-1**: change budget, no opportunistic fixes, optional-field rule, effect honesty, test-edit rule, QA by session type, 8-section final report, usage guard). Generic rules (branch, draft PR, no polling, usage, stop conditions) are in `CLAUDE.md` and this recipe and are **not** repeated in prompts. Short skeleton:
+Generic workflow, QA/delivery and stop conditions are in [AGENTS](../AGENTS.md). Fill only task-specific information:
 
 ```text
-SESSION: [ID] — [ONE GOAL]
-Follow CLAUDE.md, docs/exam-recipe.md and S-STD-1. Start from updated main (predecessors merged: [..]) else STOP AND REPORT. New branch, DRAFT PR only, no subscribe/poll, never open or share preview URL.
-READ ONLY: [reference doc], [DECISIONS sections], [provenance if assets].
-OWNER DECISIONS (record first as [IDs]): [..]
-SCOPE: [numbered tasks]
-ALLOWED SHARED CHANGES: [list]
-SCALE CHECK (S-STD-3): [what ceiling could this create — volume, hard-coded sets / ids / locales / roles, unversioned shapes, unbounded reads, hand-only changes — and how it is avoided]
-CHANGE BUDGET: [expected files]
-OUT OF SCOPE: [list]
-SESSION TYPE: [DOCS | REFACTOR | EXAM] → QA accordingly.
-Conflict with repo docs/decisions, unsourced medical value, dishonest effect, or budget overflow → STOP AND REPORT, change nothing.
-Final report in the standard 8-section order.
+SESSION: [ID] — [one goal / session type]
+BASE / PREDECESSORS: [verified commit / merged references]
+READ FOR THIS TASK: [reference + relevant current decisions/guide sections]
+SCOPE / EXCLUSIONS: [what changes, existing mechanisms, honest effects/limits]
+OWNER DECISIONS: [existing IDs; unresolved questions without guessed answers]
+FILES / SHARED BUDGET: [exact list]
+SCALE CHECK: [specific ceiling and avoidance]
+VERIFICATION: [task-specific checks in addition to AGENTS]
 ```
 
 ---
 
 ## 9. Definition of done / Always stop and report
 
-**Definition of done (all):**
-- Every §1 checklist item ticked in the PR; `npm run check` + `npm run build` pass; the audit passes EN/AR × 1440/390 (no axe violations, no overflow).
-- Byte-identity proof for PA, Lateral, AP (and every later exam) empty/green; characterisation untouched.
-- No clinical value without a cited page or a "teaching choice / provisional" label in the UI text **and** `REVIEW_PACKAGE.md`; weights sum to 100; evidence class on every rule.
-- Provenance records, REGISTER rows, derive script, stripped metadata, credit line; licence of every asset clear.
-- EN/AR keys in sync; AR draft listed in `ARABIC_TERMINOLOGY.md`; RTL checked; scene colours/labels per §4, contrast test green.
-- `DECISIONS.md` entries (new only), O-items for every gap, `docs/session-N-*.md` (archive when the session is historical), current status/handoff and roadmap where changed. Update CLAUDE.md for standing rules only, no session bullet. Draft PR and final report; ready/merge only by later explicit owner instruction.
+Follow [AGENTS implement/verify and delivery](../AGENTS.md#implement-and-verify) and §7 for QA. Before an exam PR, verify: checklist §1 complete; prior exams' behaviour/hashes protected; source/provisional/teaching-choice labels and REVIEW_PACKAGE accurate; provenance/derivation/credits complete; EN/AR/RTL and family scene/label audits complete; current status/handoff reflect evidence, not plans.
 
-**Always stop and report (never work around):**
-- A medical value, tolerance or scoring weight would change **unexpectedly**, or a rule has no source and no owner decision.
-- **Byte-identity breaks** for PA, Lateral or AP (any characterisation / golden / existing-exam file diff, or an existing test that must change beyond the §3B registry list).
-- The exam needs an engine mechanism outside §2 (new `ProjectionId`, anatomy effect, settings shape, console control, scene family) → propose a generalisation session instead.
-- **Licence unclear** (not CC0 / public domain / CC BY, terms unreadable, identifiers / devices / pathology in the image, only a secondary source).
-- A site is **blocked** (HTTP 403/429 after the one allowed retry, captcha, Cloudflare), a command is denied, or a secret would be printed.
-- Any conflict between the prompt and `DECISIONS.md` / ADRs / CLAUDE.md; a source conflict with Bontrager; an unresolved O-item (O16, O19…; O14 is closed, not a new gate) that the exam would silently depend on.
-- A recurring dependency would be added; anything in `src/`, `messages/`, data or goldens is touched in a **docs-only** session.
+Exam-specific stop gates: no merged reference/approved image; a mechanism outside §2; an unresolved source/convention/O-item the exam silently relies on; unapproved prior-output or test-semantic change; unclear commercial licence or dishonest effect. Record the gap and defer the exam; do not invent data or expand the scope. Never regenerate old guards to pass. New exams/images remain frozen until explicitly resumed.
 
 ---
 
 <a id="10-known-gaps-in-this-recipe"></a>
 ## 10. Gap navigation (compatibility)
 
-The former chronological gap list is distributed into §2 mechanisms/Needs, §4/§4a scene/axis limits, §5 sourcing, §6 conventions, §7 guards and §8 readiness. This anchor remains for old references; it does not add mechanisms or close open items. The [session report](DOCS_ARCHIVE_2_REPORT.md#قاعدة-وفجوة-إلى-موضعها-الجديد) maps every former bullet to its new home or explicit closed evidence.
+The former chronological gap list is distributed into §2 mechanisms/Needs, §4/§4a scene/axis limits, §5 sourcing, §6 conventions, §7 guards and §8 readiness. This anchor remains for old references; it does not add mechanisms or close open items. The [initial archive-stage report](DOCS_ARCHIVE_2_REPORT.md#قاعدة-وفجوة-إلى-موضعها-الجديد) maps every former bullet to its new home or explicit closed evidence.
 
 Remaining cross-exam concerns: O19 plan-view sign (§6), O20 AP Arabic label collision (§4a), O29 case-level side (§6), baseline coverage/one-image limits (§4/§5), and incomplete label-state axes (§4a). **O18 is mixed:** credits exist after RAD-045, but the original SID/position-label, landscape/build and manual-enforcement requests cannot all be declared done by that delivery; see [DECISIONS](DECISIONS.md) and the current status before acting. Registry optionality, fixed-side, generic limb steps and render resolution are implemented, not new open gaps (§2).

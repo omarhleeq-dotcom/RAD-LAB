@@ -18,7 +18,7 @@ Status legend: **Read** = read in full in an earlier session; **To verify** = no
 ## 1. X-ray (general radiography)
 
 ### Authoritative sources (to verify title / edition / access)
-- **IAEA** — *Diagnostic Radiology Physics: A Handbook for Teachers and Students* (2014; chapters on projection radiography, DR detectors, image quality, patient dose); IAEA Radiation Protection of Patients (RPOP) website (radiography pages; free); IAEA Human Health Series reports on diagnostic radiology QA. 
+- **IAEA** — *Diagnostic Radiology Physics: A Handbook for Teachers and Students* (2014; chapters on projection radiography, DR detectors, image quality, patient dose); IAEA Radiation Protection of Patients (RPOP) website (radiography pages; free); IAEA Human Health Series reports on diagnostic radiology QA.
 - **WHO** — *Manual of Diagnostic Imaging* (radiographic technique and anatomy/positioning volumes); WHO *Communicating Radiation Risks in Paediatric Imaging* (radiation-risk communication).
 - **AAPM** — Report No. 116 *An Exposure Indicator for Digital Radiography* (TG-116; basis of EI/EIT/DI concepts); TG-151 *Ongoing Quality Control in Digital Radiography*; AAPM reports on DR acceptance testing.
 - **IEC** — IEC 62494-1 (exposure index of digital X-ray imaging systems; the *concept* of EI/EIT/DI that the Technique reference already uses). Concepts only.

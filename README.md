@@ -8,7 +8,7 @@ RAD-LAB is not a diagnostic, clinical or dose-calculation tool and must not be u
 
 ## Current implementation
 
-Snapshot: main `f90b3c9` after [PR #80](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/80), 2026-10-16. The [exam registry](src/data/exams/index.ts) contains 17 X-ray exams: Chest PA/Lateral/AP supine, Wrist PA/Lateral, Hand PA/Lateral, Elbow AP/Lateral, Knee AP/Lateral, Foot AP/Oblique, Ankle AP/Lateral, Pelvis AP supine and Shoulder Grashey erect. This is an inventory of implemented code, not clinical validation or proof of a live deployment.
+Product baseline: main after [PR #81](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/81) (`6d9df04`), with the UI changes merged in #80, 2026-10-16. The [exam registry](src/data/exams/index.ts) contains 17 X-ray exams: Chest PA/Lateral/AP supine, Wrist PA/Lateral, Hand PA/Lateral, Elbow AP/Lateral, Knee AP/Lateral, Foot AP/Oblique, Ankle AP/Lateral, Pelvis AP supine and Shoulder Grashey erect. This is an inventory of implemented code, not clinical validation or proof of a live deployment.
 
 - Home is a quiet empty dashboard. The exam library starts with categories; selecting one reveals its exams and search. Browser Back returns from an exam to its list, then to category cards. There are no extra custom return buttons.
 - Practice is available. Assess, scientific-content navigation and future categories remain unavailable; no invented evaluation history or mastery metrics.
@@ -79,3 +79,7 @@ The DOCS-ALIGN-1 session runs documentation/status checks only. The application 
 ## Historical milestones
 
 Sessions 1–6 established Chest PA, positioning, technique, rendering, QA and preview hosting. Their records remain in place: [positioning](docs/archive/sessions/session-2-positioning.md), [technique](docs/archive/sessions/session-3-technique.md), [rendering](docs/archive/sessions/session-4-radiograph-renderer.md), [QA](docs/archive/sessions/session-5-qa.md) and [deployment](docs/DEPLOYMENT.md). Later exam/platform records are linked from the [documentation index](docs/README.md). The [original specification](docs/RAD-LAB_Project_Specification.md) remains the product brief, amended by the recorded owner decisions.
+
+## Contributor entry points
+
+Follow [AGENTS](AGENTS.md); choose reading from the [task map](docs/README.md#read-by-task). Run `npm run docs:check -- --base origin/main` for documentation integrity and `npm run status:summary` for a compact read-only task view. [Check guarantees and CI](docs/DOCS_CHECKS.md).
