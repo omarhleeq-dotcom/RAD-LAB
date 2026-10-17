@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 83,
-  "updated_at": "2026-10-17T00:11:51Z",
+  "revision": 84,
+  "updated_at": "2026-10-17T05:20:58Z",
   "timezone": "UTC",
   "next_id": "RAD-057",
   "tasks": [
@@ -246,7 +246,7 @@
       "title": "مواءمة صياغة ROADMAP_SESSIONS.md وDECISIONS.md مع الحالة المدموجة",
       "status": "review",
       "priority": "low",
-      "description": "مواءمة #81 مدموجة. Draft #82 يجمع الأرشفة وworkflow واحدًا وقراءة حسب المهمة وأدوات docs:check/status:summary مع CI. استؤنف بأمر المالك من الحفظ المحلي 1ca28d8 لتسليم المتابعة. المتبقي مراجعة آخر رأس وCI ثم الدمج؛ لا done أو استئناف منتج تلقائيًا.",
+      "description": "Draft #82 للأرشفة وتوحيد القراءة وأدوات docs. أُصلح نص تأجيل O101 بعد فشل اختبار الاعتمادات دون تعديل الاختبار؛ نجحت1927 اختبارًا محليًا. نشر Cloudflare السابق فشل بخطأ داخلي10500 بعد نجاح البناء. المتبقي تحقق الفحوص الجديدة ومراجعة/دمج المالك؛ لا done.",
       "source_ref": "Draft PR #82؛ docs/DOCS_WORKFLOW_REPORT.md؛ docs/DOCS_ARCHIVE_2_REPORT.md؛ AGENTS.md؛ docs/DECISIONS.md S-DOCS-WORKFLOW-1",
       "waiting_on": "owner"
     },
