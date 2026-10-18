@@ -1223,7 +1223,7 @@
       },
       "approved": {
         "title": "Your account is approved",
-        "body": "Your account is active. View your saved Practice attempts below."
+        "body": "Your account is active. Open Training to view saved practice."
       },
       "suspended": {
         "title": "Your account is suspended",
@@ -1389,7 +1389,7 @@
     "lead": "RAD-LAB is an educational practice space for radiography students, graduates and practitioners. The current pilot is for adult participants in Jordan and aims to improve the practice experience.",
     "keep": {
       "title": "What do we keep?",
-      "p1": "You create your account using your email address and a password you choose. The account service stores and verifies your password. Your password is not shown to the project owner.",
+      "p1": "You create your account using your email address and a password you choose. The account service stores and verifies your password. Your password is not shown to the project owner. We also keep the name you add to your profile; you can edit it in Account.",
       "p2": "We keep details of your practice attempts, their results and times, and some website usage and technical information to help us improve the practice experience.",
       "p3": "We also record the version of the terms you accepted and when you accepted it.",
       "p4": "If you choose to submit a note, we keep its text with the linked attempt. A note can contain up to 1,000 characters. Please do not include your name, contact details or information about real people."
@@ -1403,7 +1403,7 @@
     "who": {
       "title": "Who can access it?",
       "p1": "The project owner can access pilot data and download attempts and notes in separate files for analysis. The notes file includes the text as submitted by the participant.",
-      "p2": "Your account is linked to a participant code that the project owner can match to your email when needed. The website allows each participant to access their own data."
+      "p2": "Your account is linked to a participant code that the project owner can match to your email when needed. The website allows each participant to access their own data. Your profile name and email help the project owner identify you when reviewing your training."
     },
     "protect": {
       "title": "How do we handle it?",
@@ -1459,7 +1459,8 @@
     "assess": "Assessments",
     "learn": "Learning material",
     "openMenu": "Open navigation",
-    "closeMenu": "Close navigation"
+    "closeMenu": "Close navigation",
+    "training": "Training"
   },
   "library": {
     "backToExams": "Back to exams",
@@ -1511,5 +1512,78 @@
     "checksHint": "Check ID: outcome code · credit. These are the saved technical values.",
     "settings": "Saved settings (technical values)",
     "next": "Older attempts"
+  },
+  "training": {
+    "title": "Training",
+    "mine": "My training",
+    "follow": "Trainee follow-up",
+    "practiceOnly": "Saved Practice data only. These are educational training results, not official assessment results. Future assessments will have separate results.",
+    "open": "View my training",
+    "personal": "Personal information",
+    "name": "Name",
+    "nameHint": "Use the name you want your reviewer to see (up to 100 characters). Arabic and English are welcome.",
+    "email": "Email (read-only):",
+    "save": "Save name",
+    "saving": "Saving…",
+    "saved": "Your name has been saved.",
+    "saveError": "We could not save your name. Check your session and try again.",
+    "welcome": "Welcome, {name}",
+    "completeName": "Add your name so your reviewer can recognise you.",
+    "loading": "Loading saved training…",
+    "error": "Training could not be loaded. Please try again.",
+    "expired": "Your session has expired. Sign in again to view your training.",
+    "denied": "This account cannot access this training view. Check your account status.",
+    "signIn": "Sign in again",
+    "retry": "Try again",
+    "attempts": "Saved attempts",
+    "exams": "Exams practised",
+    "activeTrainees": "Trainees with saved practice",
+    "latest": "Latest saved training",
+    "none": "No saved training",
+    "trainees": "Trainees",
+    "byExam": "Training by exam",
+    "history": "Saved attempts",
+    "refresh": "Refresh",
+    "first": "Back to first page",
+    "next": "Next page",
+    "pageCount": "Showing {count} items on this page.",
+    "empty": "No saved training matches this view.",
+    "unnamed": "Name not added",
+    "personCounts": "{attempts} attempts · {exams} exams",
+    "attemptCount": "{count} saved attempts",
+    "archivedExam": "Previously available exam",
+    "trend": "Saved result trend",
+    "trendHint": "The chart follows saved results from comparable training on this page, using its newest attempt as the reference. Each point is a saved result, not a new evaluation or a measure of mastery.",
+    "chartLabel": "Saved scores, from earlier to later. Exact dates and scores are available below.",
+    "earlier": "Earlier",
+    "later": "Later",
+    "chartCount": "{count} comparable attempts on this page.",
+    "chartValues": "Read chart values",
+    "notComparable": "At least two comparable saved attempts are needed to show a trend. You can still read each saved result below.",
+    "scoreValue": "Score: {score}",
+    "passed": "Met the educational pass criteria",
+    "notPassed": "Below the educational pass criteria",
+    "savedResult": "The result shown is the result saved at the time of training. It has not been recalculated.",
+    "categories": "Saved category results (earned / available)",
+    "otherCategory": "Other saved category",
+    "noCategories": "Category details were not saved.",
+    "critical": "{count} critical findings were recorded in this attempt.",
+    "backExams": "Back to exams",
+    "backPeople": "Back to trainees",
+    "scope": "Training view",
+    "manage": "Manage accounts",
+    "period": "Training period",
+    "allTime": "All time",
+    "days": "Last {count} days",
+    "search": "Search by name or email",
+    "accountStatus": "Account status",
+    "allStatus": "All statuses",
+    "apply": "Search",
+    "notEnabled": "Training history is not enabled in this build.",
+    "status": {
+      "approved": "Approved",
+      "pending": "Pending approval",
+      "suspended": "Suspended"
+    }
   }
 }

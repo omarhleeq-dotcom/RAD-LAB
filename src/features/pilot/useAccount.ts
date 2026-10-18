@@ -6,36 +6,41 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type AuthErrorKey, authErrorKey, parseProfile, type Profile } from "./account-state";
 import { recordActivity } from "./activity";
 import { CONSENT_VERSION, parseConsentVersion } from "./consent";
+import { validName } from "./training";
 import { getPilotClient } from "./client";
 
 export type AccountState =
   | { kind: "loading" }
   | { kind: "signedOut" }
   | { kind: "profileError"; email: string }
-  | { kind: "signedIn"; email: string; userId: string; profile: Profile; consentVersion: string | null };
+  | { kind: "signedIn"; email: string; userId: string; profile: Profile; consentVersion: string | null; displayName?: string | null };
 
 export type ActionResult = { ok: true } | { ok: false; error: AuthErrorKey };
 
 export function useAccount(redirectTo: string) {
   const [state, setState] = useState<AccountState>({ kind: "loading" });
   const loaded = useRef<string | null>(null);
+  const loadGeneration = useRef(0);
 
   const load = useCallback(async (session: Session | null, announce: boolean) => {
+    const generation = ++loadGeneration.current;
+    if (session && loaded.current !== session.user.id) setState({ kind: "loading" });
     const client = await getPilotClient();
-    if (!client) return;
+    if (!client || generation !== loadGeneration.current) return;
     if (!session) {
       loaded.current = null;
       setState({ kind: "signedOut" });
       return;
     }
     const email = session.user.email ?? "";
-    const { data } = await client.from("profiles").select("status, role, participant_code, consent_version").eq("user_id", session.user.id).maybeSingle();
+    const { data } = await client.from("profiles").select("status, role, participant_code, consent_version, display_name").eq("user_id", session.user.id).maybeSingle();
+    if (generation !== loadGeneration.current) return;
     const profile = parseProfile(data);
     if (!profile) {
       setState({ kind: "profileError", email });
       return;
     }
-    setState({ kind: "signedIn", email, userId: session.user.id, profile, consentVersion: parseConsentVersion(data) });
+    setState({ kind: "signedIn", email, userId: session.user.id, profile, consentVersion: parseConsentVersion(data), displayName: typeof data?.display_name === "string" ? data.display_name : null });
     if (loaded.current !== session.user.id) {
       loaded.current = session.user.id;
       await recordActivity(client, profile.status, announce ? "signed_in" : "heartbeat");
@@ -50,6 +55,7 @@ export function useAccount(redirectTo: string) {
       const { data } = await client.auth.getSession();
       if (cancelled) return;
       await load(data.session, false);
+      if (cancelled) return;
       const sub = client.auth.onAuthStateChange((event, session) => {
         // INITIAL_SESSION / TOKEN_REFRESHED fire on their own; only a real sign-in or sign-out changes what the page shows.
         if (event === "SIGNED_OUT") void load(null, false);
@@ -59,6 +65,9 @@ export function useAccount(redirectTo: string) {
     });
     return () => {
       cancelled = true;
+      // Invalidate all reads, including those started after this effect was set up.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      loadGeneration.current++;
       off?.();
     };
   }, [load]);
@@ -74,11 +83,11 @@ export function useAccount(redirectTo: string) {
     }
   }, []);
 
-  const signUp = useCallback(async (email: string, password: string): Promise<ActionResult> => {
+  const signUp = useCallback(async (email: string, password: string, displayName?: string): Promise<ActionResult> => {
     const client = await getPilotClient();
     if (!client) return { ok: false, error: "generic" };
     try {
-      const { error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, data: { consent_version: CONSENT_VERSION } } });
+      const { error } = await client.auth.signUp({ email, password, options: { emailRedirectTo: redirectTo, data: { consent_version: CONSENT_VERSION, ...(displayName ? { display_name: displayName.trim() } : {}) } } });
       return error ? { ok: false, error: authErrorKey(error) } : { ok: true };
     } catch {
       return { ok: false, error: "network" };
@@ -144,5 +153,18 @@ export function useAccount(redirectTo: string) {
     await load(data.session, false);
   }, [load]);
 
-  return { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword };
+  const saveName = useCallback(async (value: string): Promise<boolean> => {
+    if (state.kind !== "signedIn" || !validName(value)) return false;
+    const id = state.userId;
+    try {
+      const client = await getPilotClient();
+      if (!client) return false;
+      const { data, error } = await client.from("profiles").update({ display_name: value.trim() }).eq("user_id", id).select("display_name").single();
+      if (error || data?.display_name !== value.trim()) return false;
+      setState((current) => current.kind === "signedIn" && current.userId === id ? { ...current, displayName: data.display_name } : current);
+      return true;
+    } catch { return false; }
+  }, [state]);
+
+  return { state, saveName, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword };
 }
