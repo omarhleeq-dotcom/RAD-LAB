@@ -7,10 +7,10 @@ const source = readFileSync("scripts/pilot/live-service-check.js", "utf8");
 const owner = "00000000-0000-0000-0000-000000000001", participant = "00000000-0000-0000-0000-000000000002";
 const token = "synthetic-session-token-never-log", publicKey = "sb_publishable_synthetic_test_public_key";
 type Failure = "expired" | "leaked-profile" | "leaked-attempt" | "scope-allowed" | "false-denial" | "missing-name" | "wrong-auth" | "missing-target" | "network";
-async function run(role: "owner" | "participant", options: { failure?: Failure; key?: string; target?: string; noSession?: boolean } = {}) {
+async function run(role: "owner" | "participant", options: { failure?: Failure; key?: string; target?: string; noSession?: boolean; cancelTarget?: boolean } = {}) {
   const id = role === "owner" ? owner : participant, other = options.target ?? (role === "owner" ? participant : owner);
   const calls: { url: URL; method: string; body: Record<string, unknown> | null }[] = [], output: string[] = [];
-  const answers = [options.key ?? publicKey, other];
+  const answers = [options.key ?? publicKey, options.cancelTarget ? null : other];
   await runInNewContext(source, {
     location: { protocol: "https:", hostname: "owner-existing-application.test" },
     localStorage: { getItem: (key: string) => { expect(key).toBe("sb-vlacestfruxooznrcjqc-auth-token"); return options.noSession ? null : JSON.stringify({ access_token: token, user: { id } }); } },
@@ -71,4 +71,13 @@ it("requires the owner to verify that the paired participant really exists and i
 it.each([{ key: "sb_secret_do_not_send" }, { target: participant }, { noSession: true }])("rejects unsafe setup before any request", async (options) => {
   const { result, calls } = await run("participant", options);
   expect(result.outcome).toBe("STOP"); expect(calls).toHaveLength(0);
+});
+it.each([
+  [{ target: "not-a-uuid" }, "OTHER_ACCOUNT_UUID_INVALID"],
+  [{ target: participant }, "OTHER_ACCOUNT_MATCHES_CURRENT_SESSION"],
+  [{ cancelTarget: true }, "OTHER_ACCOUNT_INPUT_CANCELLED"],
+] as const)("distinguishes input failures without any request or private output: %s", async (options, code) => {
+  const { result, calls } = await run("participant", options);
+  expect(result).toMatchObject({ outcome: "STOP", stage: "setup", code, status: 0 });
+  expect(calls).toHaveLength(0);
 });

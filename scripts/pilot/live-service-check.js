@@ -19,8 +19,11 @@
     require(typeof session?.access_token === "string" && uuid(session?.user?.id), "SIGN_IN_ON_THIS_BROWSER_FIRST");
     const key = prompt("RAD-LAB: public sb_publishable_ key for rad-lab-pilot only. Never enter a secret key or password.")?.trim();
     require(typeof key === "string" && /^sb_publishable_[A-Za-z0-9_-]{16,}$/.test(key), "PUBLIC_KEY_REQUIRED");
-    const other = prompt("UUID of the OTHER existing approved account (owner <-> participant). Keep it in your browser; do not send it in chat.")?.trim().toLowerCase();
-    require(uuid(other) && other !== session.user.id.toLowerCase(), "DISTINCT_EXISTING_ACCOUNT_REQUIRED");
+    const otherInput = prompt("User UID of the OTHER account (owner <-> participant): UUID only, 36 characters in 8-4-4-4-12 groups. Keep it in your browser; do not send it in chat.");
+    require(otherInput !== null, "OTHER_ACCOUNT_INPUT_CANCELLED");
+    const other = otherInput.trim().toLowerCase();
+    require(uuid(other), "OTHER_ACCOUNT_UUID_INVALID");
+    require(other !== session.user.id.toLowerCase(), "OTHER_ACCOUNT_MATCHES_CURRENT_SESSION");
     const request = async (name, path, body) => {
       stage = name;
       const response = await fetch(`${project}${path}`, {
