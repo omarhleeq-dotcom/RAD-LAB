@@ -59,7 +59,13 @@ async function setup(locale,width,scenario="ready",role="participant",path="trai
    if(p.p_view==="summary")summary={attempts:empty?0:p.p_scope==="all"?48:24,exams:empty?0:2,latest:empty?null:boundary,trainees:p.p_scope==="all"&&!p.p_user?2:null};
    if(p.p_view==="exams"&&!empty){ rows=[{exam:p.p_cursor?"archived-exam":"chest-pa-erect",attempts:24,latest:boundary}];next=p.p_cursor?null:{exam:"chest-pa-erect"}; }
    if(p.p_view==="people"&&!empty){rows=[{id:other,name:scenario==="long"?"س".repeat(100):"Trainee سلمى",email:"salma@example.test",status:"approved",attempts:24,exams:2,latest:boundary}];next=p.p_cursor?null:{id:other};if(p.p_search&&!"Trainee سلمى salma@example.test".toLowerCase().includes(p.p_search.toLowerCase()))rows=[];}
-   if(p.p_view==="history"&&!empty){rows=p.p_cursor?[row(4)]:[row(1),row(2),{...row(3),case:"different"}];next=p.p_cursor?null:{id:row(3).id,time:row(3).time};if(scenario==="unsupported")rows=[{...row(1),format:2}];}
+   if(p.p_view==="history"&&!empty){
+    rows=p.p_cursor?[row(4)]:[row(1),row(2),{...row(3),case:"different"}];next=p.p_cursor?null:{id:row(3).id,time:row(3).time};
+    if(scenario==="unsupported")rows=[{...row(1),format:2}];
+    if(scenario==="chart-unknown")rows=[{...row(1),engine:"unknown"},{...row(2),engine:"unknown"}];
+    if(scenario==="chart-different")rows=[row(1),{...row(2),engine:"next-evaluator"},{...row(3),case:"different"}];
+    if(scenario==="chart-single")rows=[row(1)];
+   }
    return json({version:1,boundary,rows,next,summary});
   }
   assert.fail(`unexpected ${req.method()} ${url.pathname}`);
@@ -83,6 +89,7 @@ try{
   await s.page.getByTestId("training-chart").waitFor();ok(await s.page.getByTestId("training-attempt").count()===3,"compact rows");
   await s.page.getByText(m.chartValues,{exact:true}).click();
   ok(await s.page.getByTestId("training-chart").locator("ol li").count()===2,"incompatible case excluded from chart");
+  ok(await s.page.getByTestId("training-chart-separated").textContent()===m.separateComparison,"excluded history explained");
   await s.page.getByTestId("training-attempt").first().locator("summary").focus();await s.page.keyboard.press("Enter");
   ok(!(await s.page.locator("main").textContent()).includes("10000000-"),"technical IDs hidden");await audit(s.page,label+"-details");
   await s.page.screenshot({path:`/tmp/my-attempts/${label}-details.png`,fullPage:true});
@@ -92,6 +99,17 @@ try{
   await s.page.getByRole("button",{name:m.next,exact:true}).click();await s.page.getByRole("button",{name:m.archivedExam,exact:true}).waitFor();
   await s.switchUser();await s.page.waitForTimeout(300);ok(s.calls.some(p=>p.p_user===other),"account switch resets scoped reads");
   assert.deepEqual(s.errors,[]);await s.context.close();
+  for(const [scenario,message,count] of [["chart-unknown","unknownComparison",2],["chart-different","differentComparison",3],["chart-single","notComparable",1]]){
+   const r=await setup(locale,width,scenario);
+   await r.page.getByTestId("training-exams").getByRole("button").filter({hasText:locale==="ar"?"الصدر":"Chest"}).first().click();
+   await r.page.getByTestId("training-chart-reason").waitFor();
+   ok(await r.page.getByTestId("training-chart-reason").textContent()===m[message],scenario+": actual cause explained");
+   ok(await r.page.getByTestId("training-chart").count()===0,scenario+": no incompatible line");
+   ok(await r.page.getByTestId("training-attempt").count()===count,scenario+": history retained");
+   await r.page.getByTestId("training-attempt").first().locator("summary").focus();await r.page.keyboard.press("Enter");
+   await audit(r.page,label+"-"+scenario);await r.page.screenshot({path:`/tmp/my-attempts/${label}-${scenario}.png`,fullPage:true});
+   assert.deepEqual(r.errors,[]);await r.context.close();
+  }
   const o=await setup(locale,width,"ready","owner");await o.page.getByRole("button",{name:"Trainee سلمى",exact:true}).waitFor();
   ok(o.calls.some(p=>p.p_view==="people"&&p.p_scope==="all"&&!p.p_user),"owner defaults to all");
   await o.page.getByRole("searchbox").fill("salma");await o.page.getByRole("button",{name:m.apply,exact:true}).click();

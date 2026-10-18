@@ -6,7 +6,7 @@ import { localize } from "@/lib/localized";
 import { Link } from "@/i18n/navigation";
 import { PILOT } from "./config";
 import { useSessionAccount } from "./SessionGate";
-import { comparableAttempts, type Trainee, type TrainingAttempt, type TrainingExam, type TrainingRequest } from "./training";
+import { comparableAttempts, comparisonMessage, type Trainee, type TrainingAttempt, type TrainingExam, type TrainingRequest } from "./training";
 import { SummaryCards, TrainingReadStatus, trainingButton as button, useTraining } from "./TrainingSummary";
 
 function useTrainingLabels() {
@@ -18,6 +18,7 @@ function Results({ rows }: { rows: TrainingAttempt[] }) {
   const { t, date } = useTrainingLabels();
   const categories = useTranslations("categories");
   const points = comparableAttempts(rows);
+  const message = comparisonMessage(rows);
   const values = points.map((a) => a.result.total);
   const low = Math.min(0, ...values), high = Math.max(100, ...values);
   const xy = points.map((a, i) => [30 + i * 540 / Math.max(1, points.length - 1), 150 - (a.result.total - low) / (high - low) * 120]);
@@ -33,7 +34,8 @@ function Results({ rows }: { rows: TrainingAttempt[] }) {
       </svg>
       <figcaption className="text-sm">{t("chartCount", { count: points.length })}</figcaption>
       <details className="mt-2"><summary className="cursor-pointer py-2 text-brand">{t("chartValues")}</summary><ol className="space-y-2">{points.map((a) => <li key={a.id}>{date(a.time)} · <bdi>{a.result.total}</bdi></li>)}</ol></details>
-    </figure> : <p className="my-4 rounded-md bg-paper p-3">{t("notComparable")}</p>}
+    </figure> : <p className="my-4 rounded-md bg-paper p-3" data-testid="training-chart-reason">{t(message!)}</p>}
+    {points.length >= 2 && points.length < rows.length && <p className="my-3 text-sm text-muted" data-testid="training-chart-separated">{t("separateComparison")}</p>}
     <ul className="mt-4 divide-y divide-line" data-testid="training-history">
       {rows.map((a) => <li key={a.id} className="py-4" data-testid="training-attempt">
         <details>

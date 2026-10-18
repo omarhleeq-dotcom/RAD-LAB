@@ -3,6 +3,7 @@
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import type { EvaluationResult } from "@/features/evaluation/types";
+import { evaluationVersion } from "@/features/evaluation/version";
 
 export type RecordKind = "attempt" | "event" | "feedback";
 export const PILOT_WRITER_VERSION = "radlab-pilot-writer/1";
@@ -120,6 +121,7 @@ export function buildAttemptRow(a: {
     settings_format_version: 1,
     result_format_version: 1,
     ...recordStamps("attempt"),
+    engine_version: evaluationVersion(a.result),
     device: a.device,
     started_at: a.startedAt.toISOString(),
     finished_at: a.finishedAt.toISOString(),

@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { expect, it } from "vitest";
-import { comparableAttempts, parseTrainingPage, readTraining, validName, type TrainingAttempt } from "./training";
+import { comparableAttempts, comparisonMessage, parseTrainingPage, readTraining, validName, type TrainingAttempt } from "./training";
 const row: TrainingAttempt = { id: "a", exam: "x", case: "default", definition: "v1", engine: "v1", producer: "v1", format: 1, time: "2026-01-01T00:00:00Z", result: { total: 80, passed: true, critical: [], categories: [{ c: "positioning", earned: 10, weight: 20 }] } };
 const page = { version: 1, boundary: row.time, summary: null, rows: [row], next: null };
 it("uses explicit bounded RPC values and preserves microsecond cursors", async () => {
@@ -19,6 +19,19 @@ it("rejects unsupported and malformed saved results instead of fabricating score
 it("compares only matching known versions/cases, without recalculation", () => {
   expect(comparableAttempts([row, { ...row, id: "b", result: { ...row.result, total: 60 } }, { ...row, case: "other" }, { ...row, definition: "v2" }, { ...row, engine: "v2" }, { ...row, producer: "v2" }]).map((a) => a.result.total)).toEqual([60, 80]);
   expect(comparableAttempts([{ ...row, engine: "unknown" }, row])).toEqual([]);
+});
+it("explains missing identity, separate scoring histories and insufficient page data", () => {
+  expect(comparisonMessage([row])).toBe("notComparable");
+  for (const field of ["engine", "producer", "definition"] as const) {
+    const unknown = { ...row, [field]: "unknown" };
+    expect(comparableAttempts([unknown, { ...unknown, id: "b" }])).toEqual([]);
+    expect(comparisonMessage([row, unknown])).toBe("unknownComparison");
+  }
+  for (const change of [{ engine: "v2" }, { producer: "v2" }, { definition: "v2" }, { case: "other" }, { exam: "other" }, { format: 2 }]) {
+    expect(comparableAttempts([row, { ...row, ...change }])).toEqual([row]);
+    expect(comparisonMessage([row, { ...row, ...change }])).toBe("differentComparison");
+  }
+  expect(comparisonMessage([row, { ...row, id: "b" }, { ...row, engine: "unknown" }])).toBeNull();
 });
 it("accepts Arabic/English and single names, rejecting empty and excessive names", () => {
   for (const name of ["عمر", "  أحمد علي  ", "Jane", "Name 2"]) expect(validName(name)).toBe(true);

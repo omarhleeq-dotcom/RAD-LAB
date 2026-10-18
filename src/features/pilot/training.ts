@@ -60,9 +60,16 @@ export async function readTraining(client: SupabaseClient, request: TrainingRequ
 }
 
 // A plot never joins different cases, definitions or engine/producer versions. Unknown versions are not comparable.
+const knownComparison = (a: TrainingAttempt) => [a.definition, a.engine, a.producer].every((v) => v.trim().length > 0 && v !== "unknown");
 export function comparableAttempts(rows: TrainingAttempt[]): TrainingAttempt[] {
   const latest = rows[0];
-  if (!latest || latest.engine === "unknown" || latest.producer === "unknown") return [];
+  if (!latest || !knownComparison(latest)) return [];
   const key = (a: TrainingAttempt) => JSON.stringify([a.exam, a.case, a.definition, a.engine, a.producer, a.format]);
   return rows.filter((a) => key(a) === key(latest)).reverse();
+}
+
+export function comparisonMessage(rows: TrainingAttempt[]): "notComparable" | "unknownComparison" | "differentComparison" | null {
+  if (comparableAttempts(rows).length >= 2) return null;
+  if (rows.some((a) => !knownComparison(a))) return "unknownComparison";
+  return rows.length < 2 ? "notComparable" : "differentComparison";
 }

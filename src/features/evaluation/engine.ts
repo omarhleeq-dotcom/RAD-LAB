@@ -28,6 +28,7 @@ import { centeringOnAxis } from "./centering";
 import { detectCriticalFindings } from "./critical";
 import { buildResultState } from "./result-state";
 import type { CheckResult, EvaluationResult } from "./types";
+import { identifyEvaluation } from "./version";
 
 const PARTIAL_CREDIT = 0.5;
 const inside = (v: number, [min, max]: [number, number]) => v >= min && v <= max;
@@ -251,7 +252,7 @@ export function evaluate(c: RadCase, settings: SimulationSettings): EvaluationRe
   const exposureFault = variants.find(isExposureFault);
   variants = variants.filter((v) => !isExposureFault(v) || v === exposureFault);
   const finalVariants = variants.length ? variants : (["correct"] as const);
-  return {
+  return identifyEvaluation({
     checks,
     score,
     variants: [...finalVariants],
@@ -259,5 +260,5 @@ export function evaluate(c: RadCase, settings: SimulationSettings): EvaluationRe
     criticalFindings,
     exposure,
     resultState: buildResultState(c, settings, exposure, patientResponse, checks, [...finalVariants]),
-  };
+  });
 }
