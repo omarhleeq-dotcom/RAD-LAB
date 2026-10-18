@@ -65,13 +65,15 @@ describe("full chain record contracts and seven-file upgrade", () => {
   it("adds only the declared columns, preserves v1 data and every legacy function except the compatible page projection, with exact ACLs", async () => {
     expect((await db.query(`select id,definition_version,settings,result,locale,started_at,finished_at from public.attempts`)).rows).toEqual(originalData);
     const columns = (await db.query<{ key: string; is_nullable: string }>(`select table_name||'.'||column_name key,is_nullable from information_schema.columns where table_schema='public' order by 1`)).rows;
-    expect(columns.filter((r) => !originalColumns.includes(r.key)).map((r) => r.key).sort()).toEqual([...Object.entries(metadata).flatMap(([t, keys]) => keys.map((k) => `${t}.${k}`)), "pilot_locales.tag", "profiles.display_name"].sort());
-    // RAD-058 approved exception: one nullable name; every record-contract column remains NOT NULL.
+    expect(columns.filter((r) => !originalColumns.includes(r.key)).map((r) => r.key).sort()).toEqual([...Object.entries(metadata).flatMap(([t, keys]) => keys.map((k) => `${t}.${k}`)), "pilot_locales.tag", "profiles.display_name", "attempts.comparison_version"].sort());
+    // MY-ATTEMPTS-3 owner-approved exception: comparison identity stays nullable
+    // for historical/old-client rows; all original record metadata stays NOT NULL.
     expect(columns.find((r) => r.key === "profiles.display_name")?.is_nullable).toBe("YES");
-    expect(columns.filter((r) => !originalColumns.includes(r.key) && r.key !== "profiles.display_name").every((r) => r.is_nullable === "NO")).toBe(true);
+    expect(columns.find((r) => r.key === "attempts.comparison_version")?.is_nullable).toBe("YES");
+    expect(columns.filter((r) => !originalColumns.includes(r.key) && r.key !== "profiles.display_name" && r.key !== "attempts.comparison_version").every((r) => r.is_nullable === "NO")).toBe(true);
     const current = (await functions()).rows;
-    expect(current).toHaveLength(originalFunctions.length + 2);
-    expect(current.filter((f) => !originalFunctions.some((old) => old.identity === f.identity)).map((f) => f.name).sort()).toEqual(["can_read_training", "training_page_v1"]);
+    expect(current).toHaveLength(originalFunctions.length + 3);
+    expect(current.filter((f) => !originalFunctions.some((old) => old.identity === f.identity)).map((f) => f.name).sort()).toEqual(["can_read_training", "training_page_v1", "training_page_v1_with_comparison"]);
     for (const old of originalFunctions) {
       const next = current.find((r) => r.identity === old.identity)!;
       if (old.name === "owner_page_v1" || old.name === "handle_new_user") {
