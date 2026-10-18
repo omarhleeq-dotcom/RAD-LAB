@@ -4,6 +4,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { RadCase } from "@/domain/case";
 import type { SimulationPhase, SimulationSettings } from "@/domain/simulation";
+import { evaluationComparison } from "@/features/evaluation/version";
 import type { EvaluationResult } from "@/features/evaluation/types";
 import type { ProfileStatus } from "./account-state";
 import { buildEventRow, buildAttemptRow, definitionVersion, splitCaseId, type Device } from "./attempt-record";
@@ -97,7 +98,7 @@ export function createAttemptLogger(deps: LoggerDeps) {
       const id = attemptId;
       const { result, settings } = s;
       const finishedAt = now();
-      const row = definitionVersion(c).then((version) =>
+      const row = Promise.all([definitionVersion(c), evaluationComparison(result)]).then(([version]) =>
         buildAttemptRow({ id, radCase: c, version, attemptNo: s.attempt, settings, result, locale: deps.locale(), device: deps.device(), startedAt, finishedAt }),
       );
       report({ id, status: "pending" });

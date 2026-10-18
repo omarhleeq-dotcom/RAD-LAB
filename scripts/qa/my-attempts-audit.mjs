@@ -46,7 +46,7 @@ async function setup(locale,width,scenario="ready",role="participant",path="trai
    return json({status:["pending","suspended"].includes(scenario)?scenario:"approved",role,participant_code:"P-synthetic",consent_version:consent,display_name:name});
   }
   if(["/rest/v1/events","/rest/v1/rpc/touch_last_seen"].includes(url.pathname))return route.fulfill({status:201,headers});
-  if(url.pathname==="/rest/v1/rpc/training_page_v1"){
+  if(url.pathname==="/rest/v1/rpc/training_page_v1_with_comparison"){
    const p=req.postDataJSON();calls.push(p);
    ok(p.p_limit===20,"server page bound");ok(role==="owner"||p.p_scope==="own","student scope");
    ok(p.p_scope!=="own"||p.p_user===activeId,"own identity in query");
@@ -65,6 +65,10 @@ async function setup(locale,width,scenario="ready",role="participant",path="trai
     if(scenario==="chart-unknown")rows=[{...row(1),engine:"unknown"},{...row(2),engine:"unknown"}];
     if(scenario==="chart-different")rows=[row(1),{...row(2),engine:"next-evaluator"},{...row(3),case:"different"}];
     if(scenario==="chart-single")rows=[row(1)];
+    if(scenario==="chart-text")rows=[{...row(1),comparison:`radlab-comparison/1:${"a".repeat(64)}`},
+      {...row(2),definition:"translated-original",comparison:`radlab-comparison/1:${"a".repeat(64)}`},row(3)];
+    if(scenario==="chart-rules")rows=[{...row(1),comparison:`radlab-comparison/1:${"a".repeat(64)}`},
+      {...row(2),comparison:`radlab-comparison/1:${"b".repeat(64)}`}];
    }
    return json({version:1,boundary,rows,next,summary});
   }
@@ -99,7 +103,7 @@ try{
   await s.page.getByRole("button",{name:m.next,exact:true}).click();await s.page.getByRole("button",{name:m.archivedExam,exact:true}).waitFor();
   await s.switchUser();await s.page.waitForTimeout(300);ok(s.calls.some(p=>p.p_user===other),"account switch resets scoped reads");
   assert.deepEqual(s.errors,[]);await s.context.close();
-  for(const [scenario,message,count] of [["chart-unknown","unknownComparison",2],["chart-different","differentComparison",3],["chart-single","notComparable",1]]){
+  for(const [scenario,message,count] of [["chart-unknown","unknownComparison",2],["chart-different","differentComparison",3],["chart-single","notComparable",1],["chart-rules","differentComparison",2]]){
    const r=await setup(locale,width,scenario);
    await r.page.getByTestId("training-exams").getByRole("button").filter({hasText:locale==="ar"?"الصدر":"Chest"}).first().click();
    await r.page.getByTestId("training-chart-reason").waitFor();
@@ -110,6 +114,18 @@ try{
    await audit(r.page,label+"-"+scenario);await r.page.screenshot({path:`/tmp/my-attempts/${label}-${scenario}.png`,fullPage:true});
    assert.deepEqual(r.errors,[]);await r.context.close();
   }
+  const text=await setup(locale,width,"chart-text");
+  await text.page.getByTestId("training-exams").getByRole("button").filter({hasText:locale==="ar"?"الصدر":"Chest"}).first().click();
+  await text.page.getByTestId("training-chart").waitFor();
+  ok(await text.page.getByTestId("training-chart").locator("circle").count()===2,"copy-only fingerprint change keeps two semantic points");
+  ok(await text.page.getByTestId("training-attempt").count()===3,"legacy row remains in history");
+  ok(await text.page.getByTestId("training-chart-separated").count()===1,"legacy domain excluded explicitly");
+  await text.page.getByTestId("training-chart").locator("summary").click();
+  const values=await text.page.getByTestId("training-chart").locator("ol").textContent();
+  ok(values.includes("74")&&values.includes("77"),"semantic plot retains synthetic saved values");
+  await audit(text.page,label+"-chart-text");
+  await text.page.screenshot({path:`/tmp/my-attempts/${label}-chart-text.png`,fullPage:true});
+  assert.deepEqual(text.errors,[]);await text.context.close();
   const o=await setup(locale,width,"ready","owner");await o.page.getByRole("button",{name:"Trainee سلمى",exact:true}).waitFor();
   ok(o.calls.some(p=>p.p_view==="people"&&p.p_scope==="all"&&!p.p_user),"owner defaults to all");
   await o.page.getByRole("searchbox").fill("salma");await o.page.getByRole("button",{name:m.apply,exact:true}).click();

@@ -12,6 +12,7 @@ function requiredMarker(origin) {
   const files = readdirSync(resolve(root, "supabase/migrations")).filter((f) => f.endsWith(".sql")).sort();
   for (const file of files) hash.update(`${file}\0`).update(readFileSync(resolve(root, "supabase/migrations", file))).update("\0");
   hash.update(readFileSync(resolve(root, "supabase/checks/training-ready.sql")));
+  hash.update(readFileSync(resolve(root, "supabase/checks/comparison-ready.sql")));
   return `pilot-v1:${hash.digest("hex")}`;
 }
 export function runSchemaGate(env, printMarker = false) {

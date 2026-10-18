@@ -40,15 +40,16 @@ async function apply(db: PGlite, names: string[]) {
 }
 // S-PILOT-26: closed list of additive record metadata. Nothing else is ignored.
 const metadata: Readonly<Record<string, readonly string[]>> = {
-  attempts: ["settings_format_version", "result_format_version", "mode", "record_kind", "producer_version", "engine_version"],
+  attempts: ["comparison_version", "settings_format_version", "result_format_version", "mode", "record_kind", "producer_version", "engine_version"],
   events: ["payload_format_version", "mode", "record_kind", "producer_version", "engine_version"],
   feedback: ["note_format_version", "mode", "record_kind", "producer_version", "engine_version"],
 };
 // RAD-058 owner-approved structural exception; exact new grants/upgrade semantics in training.test.ts.
 const addedConstraints = new Set([
   "profiles.profiles_display_name_check",
+  "attempts.attempts_comparison_version_check",
   "pilot_locales.pilot_locales_pkey", "pilot_locales.pilot_locales_tag_check", "pilot_locales.pilot_locales_tag_not_null", "attempts.attempts_locale_fkey",
-  ...Object.entries(metadata).flatMap(([table, keys]) => keys.flatMap((key) => [`${table}.${table}_${key}_check`, `${table}.${table}_${key}_not_null`])),
+  ...Object.entries(metadata).flatMap(([table, keys]) => keys.filter((key) => key !== "comparison_version").flatMap((key) => [`${table}.${table}_${key}_check`, `${table}.${table}_${key}_not_null`])),
 ]);
 async function catalogue(db: PGlite) {
   return (await db.query<{ relname: string; relrowsecurity: boolean; relacl: string | null }>(`select c.relname, c.relrowsecurity, c.relacl::text from pg_class c

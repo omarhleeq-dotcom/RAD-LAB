@@ -260,5 +260,5 @@ export function evaluate(c: RadCase, settings: SimulationSettings): EvaluationRe
     criticalFindings,
     exposure,
     resultState: buildResultState(c, settings, exposure, patientResponse, checks, [...finalVariants]),
-  });
+  }, c);
 }

@@ -32,9 +32,9 @@ it("persists two genuine logger attempts and reads chart-eligible scores through
     const client = createClient("https://synthetic.supabase.co", "synthetic", { auth: { persistSession: false }, global: { fetch: async (input, init) => {
       const path = new URL(String(input)).pathname, body = JSON.parse(String(init?.body));
       try {
-        if (path === "/rest/v1/rpc/training_page_v1") {
+        if (path === "/rest/v1/rpc/training_page_v1_with_comparison") {
           requests.push(body);
-          const result = await db.query<{ page: unknown }>("select training_page_v1($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) page",
+          const result = await db.query<{ page: unknown }>("select training_page_v1_with_comparison($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) page",
             [body.p_view, body.p_scope, body.p_user, body.p_exam, body.p_search, body.p_status, body.p_days, body.p_cursor === null ? null : JSON.stringify(body.p_cursor), body.p_boundary, body.p_limit]);
           return new Response(JSON.stringify(result.rows[0]!.page), { status: 200 });
         }
@@ -45,7 +45,7 @@ it("persists two genuine logger attempts and reads chart-eligible scores through
         const columns = (await db.query<{ column_name: string }>("select column_name from information_schema.columns where table_schema='public' and table_name=$1", [table])).rows.map((r) => r.column_name);
         for (const key of keys) expect(columns).toContain(key);
         await db.query(`insert into public.${table} (${keys.map((k) => `"${k}"`).join(",")}) values (${keys.map((_, i) => `$${i + 1}`).join(",")})`,
-          keys.map((k) => typeof body[k] === "object" ? JSON.stringify(body[k]) : body[k]));
+          keys.map((k) => body[k] !== null && typeof body[k] === "object" ? JSON.stringify(body[k]) : body[k]));
         return new Response(null, { status: 201 });
       } catch (error) {
         failures.push(error);
@@ -87,7 +87,7 @@ it("persists two genuine logger attempts and reads chart-eligible scores through
     // Simulate stored history from a later evaluator/case and missing old stamps.
     // Change metadata only; saved totals never get recomputed or rewritten.
     const second = saved[1]!;
-    for (const [column, value] of [["engine_version", "radlab-practice-evaluation/2"], ["case_id", "other"], ["definition_version", "other-definition"], ["producer_version", "other-writer"], ["engine_version", "unknown"], ["producer_version", "unknown"], ["definition_version", "unknown"]]) {
+    for (const [column, value] of [["engine_version", "radlab-practice-evaluation/2"], ["case_id", "other"], ["producer_version", "other-writer"], ["engine_version", "unknown"], ["producer_version", "unknown"], ["definition_version", "unknown"]]) {
       await db.exec("reset role");
       await db.query(`update attempts set ${column}=$1 where id=$2`, [value, second]);
       await login(a);
@@ -98,6 +98,16 @@ it("persists two genuine logger attempts and reads chart-eligible scores through
       await db.query("update attempts set engine_version=$1,case_id='default',definition_version=$2,producer_version=$3 where id=$4", [rows[0]!.engine, rows[0]!.definition, rows[0]!.producer, second]);
       await login(a);
     }
+    // Owner-approved MY-ATTEMPTS-3 exception: a changed original fingerprint
+    // separates legacy rows, while an evidenced identical semantic identity does not.
+    await db.exec("reset role");
+    await db.query("update attempts set definition_version='synthetic-copy-change' where id=$1", [second]);
+    await login(a);
+    expect(comparableAttempts((await readTraining(client, request)).rows as TrainingAttempt[])).toHaveLength(2);
+    await db.exec("reset role; update attempts set comparison_version=null");
+    await login(a);
+    expect(comparableAttempts((await readTraining(client, request)).rows as TrainingAttempt[])).toHaveLength(1);
+    expect(((await readTraining(client, request)).rows as TrainingAttempt[]).map((r) => r.result.total).sort()).toEqual(results.map((r) => r.score.total).sort());
     logger.onState({ ...base, attempt: 3 });
     logger.onState({ ...base, attempt: 3, phase: "result", result: structuredClone(results[0]!) });
     await vi.waitFor(() => expect(saved).toHaveLength(3), { timeout: 5000 });
