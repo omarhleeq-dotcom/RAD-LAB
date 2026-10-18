@@ -11,7 +11,7 @@ export const trainingButton = "inline-block rounded-md border border-line px-4 p
 export function useTraining(request: TrainingRequest) {
   const [revision, setRevision] = useState(0);
   const key = JSON.stringify([request, revision]);
-  const [result, setResult] = useState<{ key: string; page?: TrainingPage; error?: "error" | "expired" | "denied" } | null>(null);
+  const [result, setResult] = useState<{ key: string; page?: TrainingPage; error?: "error" | "expired" | "denied" | "schema" } | null>(null);
   useEffect(() => {
     let cancelled = false;
     void (async () => {
@@ -30,7 +30,7 @@ export function useTraining(request: TrainingRequest) {
   }, [key]);
   return { page: result?.key === key ? result.page : undefined, error: result?.key === key ? result.error : undefined, retry: () => setRevision((v) => v + 1) };
 }
-export function TrainingReadStatus({ error, retry }: { error?: "error" | "expired" | "denied"; retry: () => void }) {
+export function TrainingReadStatus({ error, retry }: { error?: "error" | "expired" | "denied" | "schema"; retry: () => void }) {
   const t = useTranslations("training");
   const { signOut } = useSessionAccount();
   if (!error) return <p role="status" className="py-5">{t("loading")}</p>;

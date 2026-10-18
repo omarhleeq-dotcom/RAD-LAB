@@ -37,6 +37,8 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 استثناء S-STD-1 المحدد: بعد بيان فشل المقارنة الحرفية للمخطط القديم وطلب الاستثناء، وجّه المالك «اكمل العمل» (2026-10-18). يُحدَّث في `migration-chain.test.ts` و`record-contracts.test.ts` فقط السماح بعمود الاسم nullable وقيده ومنحه، وتعريف مشغّل التسجيل ودالتَي التدريب الجديدتين. لا حذف ترحيلات من السلسلة ولا تغيير بيانات قديمة أو hashes أو توقعات درجات. يثبت اختبار `training.test.ts` المستقل بقاء البيانات والسياسات والدوال القديمة والمنح المحددة. إفصاح الاسم وإصدار الموافقة جزء لازم من إضافة الاسم، وليس سياسة احتفاظ جديدة.
 
+إصلاح توافق المعاينة ضمن الإذن نفسه: بعد صور المالك وتشخيص تعارض الواجهة مع مخطط قديم، أمر المالك «ابدأ بالعمل». الميزانية18 ملفًا تشمل تصنيف أخطاء الحساب والتدريب، اختبار واجهة مقابل PostgreSQL قديم/جزئي/محدّث، وفحص SQL للقراءة فقط وحارس نشر. تسجيل `PILOT_SCHEMA_VERIFIED` يأتي بعد التحقق من المشروع ومسار الخدمة؛ يربط المشروع بمحتوى SQL، ولا يدّعي فحصًا حيًا تلقائيًا أو يأذن بتطبيق إنتاج. غيابه يحجب نشر رابط جديد. لا تغيير للترحيل أو المنح أو RLS أو توقعات الاختبارات السابقة في هذا الإصلاح. بقيت أصول القرار وأحكام الطب وAssess وDraft-only محفوظة؛ الأدلة في RAD-058 ووصف PR.
+
 ## Open O-items
 
 These are **residual scope descriptions**, not a second task-status register. Owner/reviewer/waiting states come only from [project-status](project-status.md); use `npm run status:summary -- --id RAD-045` for the credits task (O102); text queries search task fields only. Partial implementation and later decisions are stated beside the item so the old ledger cannot be mistaken for current instructions.

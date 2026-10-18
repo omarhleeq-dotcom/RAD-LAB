@@ -1236,7 +1236,7 @@
       "spam": "If you do not see it within a few minutes, check your spam folder.",
       "back": "Back to sign in"
     },
-    "profileError": "Your profile could not be loaded. This can happen when the network is down.",
+    "profileError": "The account service could not load your profile. Try again later.",
     "errors": {
       "invalidCredentials": "The email or password is incorrect.",
       "emailNotConfirmed": "Please confirm your email first: open the link we sent you.",
@@ -1286,7 +1286,17 @@
       "linkErrorTitle": "This link cannot be used",
       "linkErrorBody": "The link has expired or was already used. Request a new one below.",
       "requestNew": "Request a new link"
-    }
+    },
+    "profileErrors": {
+      "schema": "This version needs a database update before accounts can be used. Contact the project owner or try again later. Your password does not need to be changed.",
+      "network": "We could not reach the account service. Check your connection and try again.",
+      "expired": "Your session has expired. Sign in again to load your account.",
+      "denied": "The account service refused access to your profile. Contact the project owner.",
+      "missing": "Your profile is not available. Contact the project owner to check your account.",
+      "invalid": "Your profile could not be read correctly. Contact the project owner.",
+      "service": "The account service could not load your profile. Try again later."
+    },
+    "profileSignIn": "Sign in again"
   },
   "feedback": {
     "title": "Notes on this attempt",
@@ -1584,6 +1594,7 @@
       "approved": "Approved",
       "pending": "Pending approval",
       "suspended": "Suspended"
-    }
+    },
+    "schema": "This version needs a database update before training can be displayed. Contact the project owner or try again later."
   }
 }

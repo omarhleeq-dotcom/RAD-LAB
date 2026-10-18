@@ -3,16 +3,17 @@
 // Account state for the account page (RAD-041b): session + own profile + the four actions. All network goes through getPilotClient().
 import type { Session } from "@supabase/supabase-js";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { type AuthErrorKey, authErrorKey, parseProfile, type Profile } from "./account-state";
+import { type AuthErrorKey, authErrorKey, type Profile } from "./account-state";
 import { recordActivity } from "./activity";
-import { CONSENT_VERSION, parseConsentVersion } from "./consent";
+import { CONSENT_VERSION } from "./consent";
 import { validName } from "./training";
+import { readAccountProfile, ProfileReadError, type ProfileReadFailure } from "./profile-read";
 import { getPilotClient } from "./client";
 
 export type AccountState =
   | { kind: "loading" }
   | { kind: "signedOut" }
-  | { kind: "profileError"; email: string }
+  | { kind: "profileError"; email: string; reason?: ProfileReadFailure }
   | { kind: "signedIn"; email: string; userId: string; profile: Profile; consentVersion: string | null; displayName?: string | null };
 
 export type ActionResult = { ok: true } | { ok: false; error: AuthErrorKey };
@@ -33,14 +34,17 @@ export function useAccount(redirectTo: string) {
       return;
     }
     const email = session.user.email ?? "";
-    const { data } = await client.from("profiles").select("status, role, participant_code, consent_version, display_name").eq("user_id", session.user.id).maybeSingle();
-    if (generation !== loadGeneration.current) return;
-    const profile = parseProfile(data);
-    if (!profile) {
-      setState({ kind: "profileError", email });
+    let loadedProfile;
+    try {
+      loadedProfile = await readAccountProfile(client, session.user.id);
+    } catch (error) {
+      if (generation !== loadGeneration.current) return;
+      setState({ kind: "profileError", email, reason: error instanceof ProfileReadError ? error.kind : "service" });
       return;
     }
-    setState({ kind: "signedIn", email, userId: session.user.id, profile, consentVersion: parseConsentVersion(data), displayName: typeof data?.display_name === "string" ? data.display_name : null });
+    if (generation !== loadGeneration.current) return;
+    const { profile } = loadedProfile;
+    setState({ kind: "signedIn", email, userId: session.user.id, ...loadedProfile });
     if (loaded.current !== session.user.id) {
       loaded.current = session.user.id;
       await recordActivity(client, profile.status, announce ? "signed_in" : "heartbeat");

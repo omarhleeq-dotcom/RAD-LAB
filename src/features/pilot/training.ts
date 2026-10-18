@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { backendFailure } from "./profile-read";
 
 export type TrainingView = "summary" | "people" | "exams" | "history";
 export type TrainingRequest = { view: TrainingView; scope: "own" | "all"; user?: string; exam?: string; search?: string; status?: string; days?: number | null; cursor?: Record<string, string> | null; boundary?: string | null };
@@ -8,7 +9,7 @@ export type TrainingExam = { exam: string; attempts: number; latest: string };
 export type TrainingAttempt = { id: string; exam: string; case: string; definition: string; engine: string; producer: string; format: number; time: string; result: { total: number; passed: boolean; critical: string[]; categories: { c: string; earned: number; weight: number }[] } };
 export type TrainingPage = { version: 1; boundary: string; summary: TrainingSummaryData | null; rows: (Trainee | TrainingExam | TrainingAttempt)[]; next: Record<string, string> | null };
 export class TrainingReadError extends Error {
-  constructor(readonly kind: "error" | "expired" | "denied") { super("Training unavailable"); }
+  constructor(readonly kind: "error" | "expired" | "denied" | "schema") { super("Training unavailable"); }
 }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 const count = (v: unknown) => typeof v === "number" && Number.isSafeInteger(v) && v >= 0;
@@ -51,7 +52,10 @@ export async function readTraining(client: SupabaseClient, request: TrainingRequ
     p_search: request.search ?? "", p_status: request.status ?? "", p_days: request.days ?? null,
     p_cursor: request.cursor ?? null, p_boundary: request.boundary ?? null, p_limit: 20,
   });
-  if (error) throw new TrainingReadError(status === 401 ? "expired" : error.code === "42501" ? "denied" : "error");
+  if (error) {
+    const kind = backendFailure(error, status);
+    throw new TrainingReadError(kind === "schema" || kind === "expired" || kind === "denied" ? kind : "error");
+  }
   return parseTrainingPage(data, request.view);
 }
 

@@ -80,10 +80,10 @@ export function AccountPanel() {
   if (state.kind === "profileError") {
     return (
       <div className="rounded-lg border border-line bg-panel p-5" data-testid="account-profile-error">
-        <p role="alert">{t("profileError")}</p>
+        <p role="alert">{t(`profileErrors.${state.reason ?? "service"}`)}</p>
         <div className="mt-4 flex gap-3">
           <button type="button" className={primary} onClick={() => void retry()}>{t("retry")}</button>
-          <button type="button" className="rounded-md border border-line px-4 py-2" onClick={() => void signOut()}>{t("signOut")}</button>
+          <button type="button" className="rounded-md border border-line px-4 py-2" onClick={() => void signOut()}>{t(state.reason === "expired" ? "profileSignIn" : "signOut")}</button>
         </div>
       </div>
     );
