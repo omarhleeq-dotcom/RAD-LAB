@@ -6,7 +6,8 @@ import { expect, it } from "vitest";
 const source = readFileSync("scripts/pilot/assess-service-check.js", "utf8");
 const owner = "00000000-0000-0000-0000-000000000001", participant = "00000000-0000-0000-0000-000000000002";
 const token = "private-session-never-print", key = "sb_publishable_synthetic_public_key";
-type Fault = "expired" | "network" | "wrong-auth" | "pending" | "missing-target" | "schema" | "missing-rpc" | "admin-leak" | "table-leak" | "anon-leak" | "false-denial" | "unassigned-leak" | "excess-page" | "bad-page";
+type Fault = "expired" | "network" | "wrong-auth" | "pending" | "missing-target" | "schema" | "missing-rpc" | "admin-leak" | "table-leak" | "anon-leak" | "false-denial" | "unassigned-leak" | "excess-page" | "bad-page"
+  | "anonymous-401" | "signed-admin-401" | "table-401";
 async function run(role: "owner" | "participant", options: { fault?: Fault; target?: string | null; key?: string; noSession?: boolean; populated?: boolean; hidden?: boolean } = {}) {
   const id = role === "owner" ? owner : participant, other = role === "owner" ? participant : owner;
   const calls: { path: string; body: Record<string, unknown> | null; signed: boolean }[] = [], output: string[] = [];
@@ -43,9 +44,11 @@ async function run(role: "owner" | "participant", options: { fault?: Fault; targ
       if (options.fault === "schema") return Response.json({ code: "PGRST106", message: token }, { status: 406 });
       if (options.fault === "missing-rpc") return Response.json({ code: "PGRST202", message: token }, { status: 404 });
       const deny = () => Response.json({ code: options.fault === "false-denial" ? "XX000" : "42501", message: token }, { status: 403 });
+      if (!signed && options.fault === "anonymous-401") return Response.json({ message: token }, { status: 401 });
       if (!signed) return options.fault === "anon-leak" ? Response.json({ version: 1, rows: [], next: null }) : deny();
       if (url.pathname.endsWith("assigned_version_v1")) return options.fault === "unassigned-leak" ? Response.json({ private: token }) : deny();
       if (url.pathname.endsWith("owner_page_v1")) {
+        if (options.fault === "signed-admin-401") return Response.json({ message: token }, { status: 401 });
         if (role === "participant" && options.fault !== "admin-leak") return deny();
         if (options.fault === "bad-page") return Response.json({ version: 2, rows: [], next: null });
         const kind = body.p_kind;
@@ -56,6 +59,7 @@ async function run(role: "owner" | "participant", options: { fault?: Fault; targ
       }
       expect(headers["Accept-Profile"]).toBe("assess");
       expect(["groups", "memberships", "versions", "assignments", "targets"]).toContain(url.pathname.split("/").at(-1));
+      if (options.fault === "table-401") return Response.json({ message: token }, { status: 401 });
       if (options.fault === "table-leak") return Response.json([]); // Even empty SELECT success is a failure.
       return options.hidden ? Response.json({ code: "PGRST205", message: token }, { status: 404 }) : deny();
     },
@@ -87,4 +91,15 @@ it("requires an existing approved counterpart in the owner run", async () => {
 });
 it.each([{ key: "sb_secret_never_send" }, { target: participant }, { target: "bad-id" }, { target: null }, { noSession: true }])("rejects invalid setup before network %s", async options => {
   const { result, calls } = await run("participant", options);expect(result.outcome).toBe("STOP");expect(calls).toHaveLength(0);
+});
+it.each(["owner", "participant"] as const)("accepts HTTP 401 only for the intentional anonymous probe: %s", async role => {
+  const { result, calls } = await run(role, { fault: "anonymous-401" });
+  expect(result).toMatchObject({ outcome: "PASS", role, anonymousDenial: "http-401" });
+  expect(calls.filter(c => !c.signed)).toHaveLength(1);
+  expect(result.checks).toContain("direct_targets_denied");
+});
+it.each(["signed-admin-401", "table-401"] as const)("keeps signed-in 401 fatal and preserves its HTTP status: %s", async fault => {
+  const { result } = await run("participant", { fault });
+  expect(result).toMatchObject({ outcome: "STOP", code: "ACCESS_NOT_EXPLICITLY_DENIED", status: 401 });
+  expect(result).not.toHaveProperty("pair");
 });

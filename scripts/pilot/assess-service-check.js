@@ -42,8 +42,10 @@
       checks.push(stage); return r.data;
     };
     const denied = (r, hiddenTable = false) => {
-      require((r.status === 403 && r.data?.code === "42501") ||
-        (hiddenTable && r.status === 404 && r.data?.code === "PGRST205"), "ACCESS_NOT_EXPLICITLY_DENIED");
+      if (!((r.status === 403 && r.data?.code === "42501") ||
+        (hiddenTable && r.status === 404 && r.data?.code === "PGRST205"))) {
+        throw new Failure("ACCESS_NOT_EXPLICITLY_DENIED", r.status);
+      }
       checks.push(stage);
     };
     const args = (kind) => ({ p_kind: kind, p_context: null, p_search: "", p_after: null, p_limit: 1 });
@@ -78,8 +80,12 @@
     }
     // Empty Assess is valid. This sentinel proves only rejection of an unassigned metadata request.
     denied(await rpc("unassigned_metadata_denied", "assigned_version_v1", { p_assignment: "00000000-0000-0000-0000-000000000000" }));
-    // No JWT: schema/RPC must not become available to the anonymous role.
-    denied(await rpc("anonymous_admin_denied", "owner_page_v1", args("groups"), false));
+    // No JWT: the gateway or PostgREST can return HTTP 401 for this request.
+    // The same API key/session has already passed Auth/profile and the signed-in checks.
+    const anonymous = await rpc("anonymous_admin_denied", "owner_page_v1", args("groups"), false);
+    if (anonymous.status === 401) checks.push(stage);
+    else denied(anonymous);
+    const anonymousDenial = anonymous.data?.code === "42501" ? "sql-42501" : "http-401";
     for (const [table, column] of [["groups", "id"], ["memberships", "group_id"], ["versions", "id"], ["assignments", "id"], ["targets", "assignment_id"]]) {
       // PGRST205 is allowed only here: inaccessible relations can be absent from the API cache.
       denied(await request(`direct_${table}_denied`, `/rest/v1/${table}?select=${column}&limit=1`, null, true), true);
@@ -88,7 +94,7 @@
     const bytes = new TextEncoder().encode([project, ...[user.id.toLowerCase(), other].sort()].join("\n"));
     const pair = [...new Uint8Array(await crypto.subtle.digest("SHA-256", bytes))].map(v => v.toString(16).padStart(2, "0")).join("");
     console.log("RADLAB_ASSESS_SERVICE_CHECK " + JSON.stringify({ version: 1, contract: "assess-b-service/1", role, pair,
-      outcome: "PASS", checks, at: new Date().toISOString() }));
+      outcome: "PASS", anonymousDenial, checks, at: new Date().toISOString() }));
   } catch (error) {
     console.log("RADLAB_ASSESS_SERVICE_CHECK " + JSON.stringify({ version: 1, contract: "assess-b-service/1", outcome: "STOP", stage,
       code: error instanceof Failure ? error.safeCode : "LOCAL_OR_NETWORK_FAILURE", status: error instanceof Failure ? error.status : 0,
