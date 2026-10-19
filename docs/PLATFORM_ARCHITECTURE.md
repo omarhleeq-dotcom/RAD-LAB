@@ -9,7 +9,7 @@ Current code baseline: main after #81 (`6d9df04`); #82 changes documentation/too
 | Platform and pilot | Category-first library, Practice, account approval, saved attempts/events/feedback and owner CSV code; static export plus Supabase | Live deployment, provider checks and human review have separate evidence; the UI gate does not protect downloadable static assets |
 | Future product | Existing code remains extensible through data and optional mechanisms | Learn/Reference containers, CT/MRI/US, Assess, institutions/payments and full `ControlSpec[]`/folder redesign are not claimed implemented |
 
-**Current direction:** S12-12 puts X-ray v1 before v2 modalities, subject to S-SHOULDER-Y-6's freeze. The owner resumed My Attempts only in S-MY-ATTEMPTS-1; Assess stays deferred. [DECISIONS](DECISIONS.md), the [recipe](exam-recipe.md), [pilot setup](PILOT_SUPABASE_SETUP.md) and [handoff](HANDOFF.md) govern current work.
+**Current direction:** S12-12 puts X-ray v1 before v2 modalities, subject to S-SHOULDER-Y-6's freeze. The owner resumed saved Practice in S-MY-ATTEMPTS-1; its training/follow-up views remain intact. [Current Assess decisions](DECISIONS.md#assess-owner-2026-10-19) replace the separate My Attempts prerequisite with compact exam history inside Assess. The [implementation plan](ASSESS_IMPLEMENTATION_PLAN.md) distinguishes the code audit from proposed runtime work. Assess programming stays deferred until explicitly resumed; no groups, Assess backend or Assess routes are claimed implemented. [DECISIONS](DECISIONS.md), the [recipe](exam-recipe.md), [pilot setup](PILOT_SUPABASE_SETUP.md) and [handoff](HANDOFF.md) govern current work.
 
 ## Data and runtime flow
 

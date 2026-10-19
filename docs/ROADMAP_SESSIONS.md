@@ -9,7 +9,8 @@ Documentation archive/reading/check tooling is merged through #86. Live task sta
 | Documentation | Maintain one current statement and linked historical evidence; record remaining work and its evidence in [project-status](project-status.md), without a separate report or checklist. |
 | Existing product | Practice/platform/pilot and category-first library are implemented; RAD-052/053/054 phone acceptance is owner-reported in #85; pelvis-specific, medical and provider checks retain their own evidence scopes. [Status](project-status.md) |
 | New exams/images | Frozen by [S-SHOULDER-Y-6](DECISIONS.md#exam-freeze-current); Shoulder Y and forearm deferred |
-| Programming | Owner resumed My Attempts (RAD-058), revised to home summary + personal training + separate owner trainee follow-up and editable profile names; supervisor is future scope only. Before Assess; Assess and extra visual improvements remain deferred. [Decision](DECISIONS.md#s-my-attempts-1--استئناف-محاولاتي-فقط) |
+| Assess | Product decisions recorded in the [owner amendment](DECISIONS.md#assess-owner-2026-10-19); separate full-exam and mixed-question tracks, with compact history inside Assess replacing the separate My Attempts prerequisite. [Implementation stages A–F](ASSESS_IMPLEMENTATION_PLAN.md) define scope and acceptance; live state stays in project-status. |
+| Programming | This batch authorises documentation only. On explicit resumption, start with implementation-plan stage A (contracts/runtime proof), then groups, attempt lifecycle, runners and history/retention. No automatic product work, new exams or image imports. |
 | Longer term | [S12-12](DECISIONS.md#xray-roadmap-current): X-ray v1 before CT/MRI/US v2; this order does not override the current freeze |
 
 ## History and proposed work

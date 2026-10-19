@@ -6,12 +6,12 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 
 | Rule | Current application | Original authority |
 |---|---|---|
-| <a id="exam-freeze-current"></a> `S-SHOULDER-Y-6` | الفحوص والصور وShoulder Y مجمدة؛ الساعد مؤجل. استئناف «محاولاتي» وحدها في S-MY-ATTEMPTS-1 لا يرفع هذا التجميد. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-shoulder-y-6) |
+| <a id="exam-freeze-current"></a> `S-SHOULDER-Y-6` | الفحوص والصور وShoulder Y مجمدة؛ الساعد مؤجل. عمل التدريب في S-MY-ATTEMPTS-1 لا يرفع هذا التجميد؛ قرارات Assess الحالية في القسم المخصص أدناه. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-shoulder-y-6) |
 | <a id="xray-roadmap-current"></a> `S12-12` | X-ray v1 قبل CT/MRI/US v2، ولا يلغي ذلك التجميد. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s12-12) |
 | <a id="wrist-side-current"></a> `S14.1c-1` | الرسغ LEFT؛ اختيار RIGHT الأقدم مستبدل في هذا الجزء. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s14.1c-1) |
 | <a id="data-and-engine"></a> `S7-1…4 / S14.1b-2` | ExamDefinition وCaseDefinition وcomposeCase؛ registries/optional mechanisms؛ renderer منفصل عن scoring. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s7-1) |
 | <a id="practice-and-pilot"></a> `D1 / D3 / S-PILOT-4` | Practice منفذ؛ pilot accounts/DB استثناء معتمد من منع MVP القديم؛ Assess مؤجل، لا فتح تلقائي للنطاق. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-4) |
-| <a id="assess-design"></a> `S-ASSESS-1…6` | تصميم Assess المتفق عليه (مسجل لا منفذ): اختبار أسئلة MCQ واختبار محاكي؛ المالك وحده يضع الاختبارات الآن؛ قالب بيانات بعدد أسئلة/محاولات/وقت؛ مفاتيح الإجابة والتصحيح بالخادم؛ بنود المحاكي بثلاثة مستويات (فحص كامل/فئة/فحص منفرد) بعلامات يضعها صاحب الاختبار، الأخطاء الحرجة تُهمل في اختبار الجزء، والنتيجة مخفية عن الطالب. لا تنفيذ قبل RAD-056 وقرارات O106…O108 واستئناف المالك للبرمجة (D3 باقٍ). | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-assess-1) |
+| <a id="assess-design"></a> `S-ASSESS-1…6` amended | التطبيق الحالي في [قرارات جلسة Assess](#assess-owner-2026-10-19): مساران مستقلان، MCQ بإجابة واحدة وأجزاء محاكي، إظهار العلامة باختيار واضع الاختبار، مجموعات ونتائج مختصرة لستة أشهر. استُبدل شرط «محاولاتي» المنفصلة؛ بقي التصحيح بالخادم وحفظ الإصدارات وحماية التدريب. التصميم معتمد؛ التنفيذ غير مأذون بهذه الدفعة. | [الأصل المحفوظ](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-assess-1)؛ سجل جلسة المالك أدناه |
 | <a id="reference-and-source"></a> `S10-2 / S10b-25` | مرجع merged مع Needs قبل التنفيذ/التعميم؛ BONTRAGER-9 حاكم وO5 مراجعة provisional باقية. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s10b-25) |
 | <a id="licence-authority"></a> `S10-3 / O100 / O101` | توافق تجاري وتوثيق الدليل؛ لا تعِد فحص ما قبله المالك في O100، ولا تعتبر NIH terms مثبتة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o100) |
 | <a id="marker-policy"></a> `S11b-1 / S14.1c-4` | PA side-marker weight0 مع missing/wrong critical gates؛ البقية بحسب exam definition، fixed-side دون half rule. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s11b-1) |
@@ -25,6 +25,8 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 Owner instruction in this conversation (2026-10-16): implement the agreed simpler reading/workflow and durable checks on Draft #82. AGENTS is the one shared workflow; CLAUDE is an entry pointer. Domain rules are read by task; old decisions/plans remain evidence in the archive. Scope expressly includes documentation checker/summary scripts, their new tool tests, package commands and CI wiring; no product behaviour/tests/assets/clinical changes. This replaces duplicate workflow placement in CLAUDE/recipe without relaxing S-STD-1…4, Draft-only delivery or the current freeze. The rule summary is here; execution details belong in the [report](DOCS_WORKFLOW_REPORT.md).
 
 ### S-MY-ATTEMPTS-1 — استئناف «محاولاتي» فقط
+
+**توضيح حالي:** هذا إذن التدريب المنفذ ومحفوظ بأدلته؛ [تعديل Assess](#assess-owner-2026-10-19) يستبدل فقط اشتراط صفحة «محاولاتي» منفصلة قبل Assess، ولا يحذف وجهة التدريب أو يعيد تنفيذها.
 
 قرار المالك في جلسة MY-ATTEMPTS-1 (2026-10-17): استئناف عرض Practice المحفوظ وفق ترتيب [S-ASSESS-1](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-assess-1). الإذن الأول كان عرض محاولات المستخدم داخل الحساب. بعد مراجعة المسودة طلب المالك الفصل والتبسيط، ثم وافق على الاسم في «حسابي» وأمر «تمام 100% ابدا بالعمل»؛ الحكم الجاري أدناه يحل محل موقع العرض ونطاق المالك في الإذن الأول، مع بقاء أصل القرار هنا.
 
@@ -46,6 +48,26 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 متابعة اعتماد الحارس الثالث (2026-10-18): بعد عرض فشل الاختبار وشرح العمود والدوال والحدود قال المالك «تمام ابدا العمل» مع صور فشل CI والنشر. يعتمد هذا التعديل المحدد في `src/features/pilot-db/record-contracts.test.ts` فقط: إضافة `attempts.comparison_version` إلى قائمة الأعمدة، إثبات nullable له مع بقاء بقية metadata إلزامية، وعدد الدوال الإضافية من2 إلى3 مع اسم `training_page_v1_with_comparison`. لا تغيير لتوقعات البيانات الأصلية أو الدرجات أو تعريفات الدوال القديمة أو المنح أو السياسات. لا يمتد إلى تطبيق إنتاج أو تغيير إثبات نشر أو حذف؛ الحارس يبقى فعالًا لحين إجراء التحقق للترحيل الجديد. هذا استثناء محدد إضافي بعد الاستثناءين السابقين، وليس إذنًا عامًا.
 
+
+<a id="assess-owner-2026-10-19"></a>
+### قرارات جلسة Assess — 2026-10-19
+
+**المصدر:** محادثة المالك الحالية، بدءًا من «لا تعدل اي كود ... بس بدنا نتناقش»، ثم الإجابات التفصيلية، وانتهاءً بإذن «تمام ابدا بالعمل» لتحديث القرارات والخارطة والتسليم فقط. هذا سجل قرارات المالك، وليس استنتاجًا بأن منتج Assess نُفّذ. ملف `RAD-LAB_Assess_Blueprint_v0.1.md` مادة نقاش فقط بقول المالك «الملف مابعكس قرارت جديدة ... نوخذ الافضل منو»؛ وصفه الداخلي «معتمد» لا يمنح سلطة، وأعداد محتواه وأنواعه وتحليلاته ليست التزامًا. القرارات الضرورية محفوظة هنا؛ الاستئناف لا يحتاج المرفق أو ذاكرة المحادثة.
+
+| القرار | الحكم المعتمد ودليله من المحادثة |
+|---|---|
+| <a id="decision-s-assess-7"></a> `S-ASSESS-7` | **المساران والمحتوى:** «مسار خاص بالفحوصات ... الفحص كامل بكل متغيراتو» مستقل عن «مسار خاص بالاسئلة المنوعة من ضمنها اسئلة اجزاء من المحاكي». البداية MCQ بإجابة واحدة، وليست multiple-response، وأجزاء المحاكي؛ المحتوى الامتحاني English فقط، وواجهة المنصة تبقى ثنائية اللغة. البنية تستقبل أنواعًا وصورًا مستقبلًا دون تنفيذها الآن. |
+| <a id="decision-s-assess-8"></a> `S-ASSESS-8` | **المحاكي:** تعريض واحد لكل بند/فحص؛ يتقفل بعد التعريض مع إمكان الرجوع إليه. سؤال الجزء يختبر إعدادًا أو عدة إعدادات، ويظهر فقط ما يحتاجه الطالب من أدوات ومشهد، لا المحاكي الكامل. تُثبت بقية القيم بما يناسب الحالة وتُستبعد من العلامة. جانب Marker وموضعه أو كلاهما حسب السؤال. تبقى علامات الأجزاء من واضع الاختبار دون فرض أوزان الفحص الكامل؛ لا بوابة أخطاء حرجة خارج الجزء. حسابات التدريب ومعاييره لا تتغير ضمن الدمج. |
+| <a id="decision-s-assess-9"></a> `S-ASSESS-9` | **سياسة الاختبار:** واضع الاختبار يحدد الوقت وعدد المحاولات. التنقل وتعديل الأسئلة مسموحان قبل التسليم؛ بند المحاكي لا يُعدّل بعد التعريض. غير المحلول صفر، مع تنبيه قبل التسليم اليدوي. عند انتهاء الوقت يُسلّم المحفوظ تلقائيًا. لا تلميحات أو حلول أو تصحيح كاشف أثناء الحل. المجموع وعلامات البنود إعدادات قالب بإصدار، لا ثوابت برمجية؛ التصحيح بالخادم ومفاتيح MCQ لا تصل للطالب. |
+| <a id="decision-s-assess-10"></a> `S-ASSESS-10` | **النتيجة والسجل:** «اظهار العلامة فقط و يحدد ظهورها واضع الامتحان»؛ اختيار الإظهار بعد التسليم أو الحجب لكل اختبار. سجل داخل Assess بدل صفحة «محاولاتي» مستقلة، يعرض فقط اسم الاختبار، نوعه، تاريخ التسليم والعلامة إذا سُمح، وإلا النتيجة محجوبة. لا عرض رقم محاولة أو توزيع مهاري أو فتح الأسئلة/الإجابات أو مراجعة امتحان كامل. التدريب ونتائجه التفصيلية يبقيان في قسم التدريب. |
+| <a id="decision-s-assess-11"></a> `S-ASSESS-11` | **الإدارة والإسناد:** المالك وحده ينشئ ويدير الاختبارات الآن؛ المشرف لاحقًا ضمن نطاقه. الاختبار لطلاب نختارهم، فرديًا أو عبر مجموعات؛ إدارة العضوية للمالك الآن والمشرف لاحقًا، لا انضمام ذاتي. قُبل اقتراح الإضافة الجماعية للطلاب المسجلين، وعضوية الطالب في عدة مجموعات، وتثبيت المستهدفين عند الإتاحة؛ تغيير العضوية لا يغير وصول اختبار منشور بصمت، ويُعدل إسناده صراحةً. استيراد القوائم ورمز طلب الانضمام امتدادات لاحقة، لا MVP. |
+| <a id="decision-s-assess-12"></a> `S-ASSESS-12` | **الانقطاع:** وافق المالك على حفظ تلقائي واستكمال نفس المحاولة عند الرجوع؛ الوقت يستمر للاختبار المؤقت، والتعريض المسجّل لا يُعاد. نجاح الحفظ والتسليم يُثبت من الخادم؛ حدود الإجابات غير المتزامنة وتسليم التعريض أثناء الانقطاع قرار بروتوكول قبل التنفيذ، لا وعد بأن التخزين المحلي يثبت وقتًا موثوقًا. |
+| <a id="decision-s-assess-13"></a> `S-ASSESS-13` | **الحفظ التجريبي:** «6 اشهر بدون بيانات تفصيلية ما الها داعي» ثم قبول الاحتساب من تسليم المحاولة. السجل الدائم الأدنى: هوية الطالب والاختبار وإصداره، تاريخ التسليم، العلامة ومجموعها؛ التفاصيل تُحفظ مؤقتًا للاستكمال والتصحيح ثم تُحذف بعد تثبيت النتيجة بنجاح. النتيجة تُحذف تلقائيًا بعد ستة أشهر؛ النشاط لا يمددها. لا إعادة تصحيح أو تحليل مهارات/أسئلة بعد حذف التفاصيل. مدة حفظ بيانات Practice القديمة لم تتغير. |
+| <a id="decision-s-assess-14"></a> `S-ASSESS-14` | **النطاق والاستئناف:** هذه الدفعة توثيق وخارطة قابلة للاستئناف فقط، بعد مراجعة قراءة للكود. شرط «محاولاتي قبل Assess» في الترتيب القديم مستبدل بقسم السجل داخل Assess؛ لا اعتماد شامل للـBlueprint ولا بناء تحليلات/صفحة مشرف/مؤسسات أو صور وفحوص جديدة. تأجيل البرمجة في D3 باقٍ حتى استئناف صريح؛ نشر هذه الوثائق لا يثبت تنفيذًا أو طبًا أو نشرًا حيًا. |
+
+**ما تغير عن الأصل:** S-ASSESS-1 في ترتيب «محاولاتي»؛ S-ASSESS-3 في English أولًا وتوضيح single-choice؛ S-ASSESS-4 في إمكان عرض العلامة دون الحل؛ S-ASSESS-5 في فصل الفحص الكامل عن السؤال الجزئي والظهور الانتقائي والتعريض الواحد؛ S-ASSESS-6 في استبدال الحفظ التفصيلي طويل المدة بنتيجة مختصرة. بقيت بنية القوالب والإصدارات، المالك أولًا، التصحيح بالخادم، المصادر المرخصة والمراجعة العلمية. [النص الأصلي لم يُعدّل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-assess-1).
+
+[خطة التنفيذ والتدقيق](ASSESS_IMPLEMENTATION_PLAN.md) تفصل قرارات المنتج أعلاه عن المقترحات التقنية؛ [تقرير الدفعة](ASSESS_DOCS_REPORT_2026-10-19.md) يحفظ التحقق وحدوده. الحالة الحالية في project-status وحده.
 
 ## Open O-items
 
@@ -129,9 +151,9 @@ These are **residual scope descriptions**, not a second task-status register. Ow
 | <a id="decision-o103"></a> `O103` | أسئلة pilot الأصلية لها إجابات/تنفيذ لاحق؛ طبّق S-PILOT-4/6/30/32/38 وحالة المهام، وتبقى provider/retention facts غير المثبتة فقط؛ لا إعادة دعوة أو SMTP setup قديم. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o103) |
 | <a id="decision-o104"></a> `O104` | CSP inline scripts مع جلسات المتصفح مخاطرة موثقة؛ لا ادعاء tightening منفذ أو permission لتعديل سياسة ضمن docs. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o104) |
 | <a id="decision-o105"></a> `O105` | نسخة/restore المالك مثبتة بحدود S-PILOT-38؛ تبقى audit-log availability وAccess limits وغيرها منفصلة. لا إغلاق كامل أو افتراض أن backup تتحدث ذاتيًا. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o105) |
-| <a id="decision-o106"></a> `O106` | مدة حفظ/موافقة نتائج Assess تحتاج قرارًا قبل تخزينها؛ المرحلة البرمجية مؤجلة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o106) |
-| <a id="decision-o107"></a> `O107` | عدد المحاولات/time expiry/question exposure لAssess يحتاج حسمًا؛ لا تنفيذ ضمن docs. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o107) |
-| <a id="decision-o108"></a> `O108` | مصادر وترخيص question banks ومالك المراجعة غير محددة؛ لا استيراد مفترض. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o108) |
+| <a id="decision-o106"></a> `O106` | حُسمت مدة نتائج التجربة وتقليل البيانات في [قرار الحفظ](#decision-s-assess-13). المتبقي صياغة/تطبيق موافقة Assess والحذف الآلي وآثار النسخ والاستعادة قبل التخزين؛ لا purge منفذ أو تغيير لسياسة Practice. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o106) |
+| <a id="decision-o107"></a> `O107` | حُسمت إعدادات الوقت والمحاولات والتعريض والتنقل في [سياسة الاختبار](#decision-s-assess-9). المتبقي بروتوكول الخادم للانقطاع والمهلة والتزامن ومنع تكرار التعريض والتسليم؛ لا إعادة طلب القرارات المحسومة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o107) |
+| <a id="decision-o108"></a> `O108` | مصادر أسئلة البداية وتوثيق تراخيصها ومراجعها وتكليف المراجعين لم تُحدد. Blueprint ليس اعتماد بنك أو لجنة أو أسئلة؛ لا نشر محتوى قبل الدليل والمراجعة، وفق S-ASSESS-3 المتبقي. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o108) |
 
 ## Closed O-items
 

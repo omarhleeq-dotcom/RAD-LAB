@@ -1,6 +1,10 @@
 # ADR-0009 — New modalities climb Learn + Reference → Simulate → Practice → Assess; Assess last
 **Status:** Accepted by owner decision D3 (Session 7): Assess is deferred to the end of the roadmap (sign-in, attempt storage, retention and privacy, server scoring) · **Date:** 2026-10-06 · supersedes the spec's session order (§25: Session 7 = Practice/Assessment) for Assess only
 
+## Current amendment — 2026-10-19
+
+This ADR preserves its original context and rationale below, including the historical no-account pilot. Later pilot accounts exist; see [current architecture](../PLATFORM_ARCHITECTURE.md). [Owner decisions](../DECISIONS.md#assess-owner-2026-10-19) specify the X-ray Assess design, retention and result disclosure and replace the separate My Attempts prerequisite with history inside Assess. Identity, integrity, privacy and reviewed-content requirements survive; programming is not resumed by this documentation update. The [implementation plan](../ASSESS_IMPLEMENTATION_PLAN.md) is the technical continuation, not evidence of implementation.
+
 ## Context
 Assess needs: user identity, storage of attempts, retention and privacy rules (students' performance data), integrity (no answer leakage, tamper resistance), instructor roles, legal/ownership questions (spec §28 lists database, authentication, storage of results as undecided). The pilot is static with no accounts. Content validated enough for *assessment* is stricter than for learning.
 
