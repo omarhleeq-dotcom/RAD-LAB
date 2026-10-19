@@ -13,6 +13,7 @@ import { EMPTY_FILTERS, type Cursor, type OwnerFilters } from "./owner-data";
 import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, type Participant, parseParticipants } from "./owner-state";
 import { useAccount } from "./useAccount";
 import { useOwnerData } from "./useOwnerData";
+import { OwnerAssessPanel } from "@/features/assess/OwnerAssessPanel";
 
 const badge: Record<ProfileStatus, string> = { pending: "bg-signal/30 text-ink", approved: "bg-ok/20 text-ink", suspended: "bg-bad/20 text-ink" };
 const btn = "rounded-md border border-line px-3 py-1.5 text-sm font-medium hover:bg-paper disabled:opacity-60";
@@ -130,6 +131,7 @@ export function OwnerPanel() {
           );
         })}
       </ul>
+      <OwnerAssessPanel key={ownerId} />
     </section>
   );
 }
