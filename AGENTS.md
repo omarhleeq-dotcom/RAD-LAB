@@ -11,7 +11,7 @@ This is the shared workflow for Codex, Claude and human contributors. [CLAUDE.md
 
 ## Current boundaries
 
-- New exams/images and Shoulder Y are frozen/deferred (S-SHOULDER-Y-6); forearm remains deferred. The next programming phase, including My Attempts before Assess, is postponed until the owner resumes it. Do not re-request already accepted design approval.
+- New exams/images and Shoulder Y are frozen/deferred (S-SHOULDER-Y-6); forearm remains deferred. Assess programming remains postponed until explicitly resumed; its current design and replacement of the separate My Attempts prerequisite are in [DECISIONS](docs/DECISIONS.md#assess-owner-2026-10-19) and the [implementation plan](docs/ASSESS_IMPLEMENTATION_PLAN.md). Do not re-request already accepted design approval.
 - Practice/platform and the optional Supabase pilot exist. Assess/institutions/payments/full3D/research physics are not authorised by documentation cleanup. Merges do not prove deployment, phone checks or clinical validation.
 - Never invent medical facts, diagnostic images or verification evidence. BONTRAGER-9 governs X-ray; clinical values/teaching choices remain labelled provisional until the recorded review. Domain-specific architecture, evidence/licensing, scoring, marker, rendering, scenes and runtime constraints are in [ENGINE_GUIDE](docs/ENGINE_GUIDE.md); consult relevant sections before touching those areas.
 - Historical decisions are preserved in the linked ledger; use [DECISIONS](docs/DECISIONS.md) to find the applicable current rule. History does not silently change present policy.
