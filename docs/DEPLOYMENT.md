@@ -1,6 +1,6 @@
 # RAD-LAB — pilot preview deployment (Cloudflare Pages)
 
-**Status:** the repository is *prepared*; nothing is deployed until the owner adds two repo secrets (§A, ≈ 10 minutes, doable from a phone browser). The repo stays **private**; do not use GitHub Pages and do not change the repo's visibility or settings.
+**Deployment prerequisites:** the workflow needs the Cloudflare repo secrets and, for an enabled pilot, the verified schema attestation in §A. Live deployment evidence belongs in [project-status](project-status.md). The repo stays **private**; do not use GitHub Pages or change its visibility.
 
 > Cloudflare changes its dashboard often. Wording marked **(may differ)** could not be verified from this environment (no Cloudflare account, no network access to the dashboard) and is written from the documented flow as I know it. If a label differs, pick the closest one; the *values* (build command, output directory, Node version, branch) are what matter.
 
@@ -23,17 +23,19 @@
 
 ## A. Primary route: GitHub Actions direct upload
 
+**Pilot database gate:** an enabled-account deployment must pass `scripts/pages/pilot-schema-gate.mjs` before build/upload. The owner must first verify the target database and service path, then set the project/SQL-bound `PILOT_SCHEMA_VERIFIED` repo variable. Missing or stale attestation stops upload and replaces the PR preview comment with a blocked notice. This is an offline attestation check, not an automated live-database check; no migration is applied by the workflow. See the [single verification procedure](PILOT_SUPABASE_SETUP.md#training-deployment-check). Existing preview URLs retain their previously deployed code. Manual uploads and the legacy Git integration bypass this workflow and must follow the same verification procedure.
+
 Why: the Cloudflare Git-integration flow (§1) could not be completed from the owner's phone browser. `.github/workflows/deploy-pages.yml` builds the static export in GitHub Actions and uploads `out/` to Cloudflare Pages with Wrangler. The repo stays private; Cloudflare never gets access to the repo. The workflow:
 
 - runs on every push to `main` (production deploy, branch `main`) and every pull request (preview deploy, branch = PR branch name);
 - creates the Pages project `rad-lab` if missing (idempotent), then runs `pages deploy out --project-name=rad-lab`;
-- posts or updates **one** comment on the PR with the preview URL;
+- posts or updates **one** comment on the PR with the preview URL after successful upload, or a blocked notice when schema attestation fails;
 - is **skipped with a notice** (not failed) when the secrets are absent, and for fork PRs (GitHub withholds secrets from forks);
 - does not run tests or Playwright (`ci.yml` does).
 
 ### Owner steps (phone browser)
 
-Cloudflare/GitHub labels below **may differ**.
+Cloudflare/GitHub labels below **may differ**. If deployment secrets already exist, continue at step4; the schema check does not require recreating the Cloudflare project or credentials.
 
 1. **Find the Account ID.** Log in at <https://dash.cloudflare.com>. Open **Workers & Pages** (☰ menu); the **Account ID** is shown on that overview page (right side, or at the bottom on a phone), with a copy button. Alternatively, on the account home page open the ⋮ menu next to the account name and choose **Copy account ID**. **(may differ)** Do not paste it into issues or chats.
 2. **Create the scoped API token.** Tap the profile icon → **My Profile → API Tokens → Create Token → Create Custom Token → Get started**. **(may differ)**
@@ -49,7 +51,7 @@ Cloudflare/GitHub labels below **may differ**.
    | `CLOUDFLARE_API_TOKEN` | the token from step 2 |
    | `CLOUDFLARE_ACCOUNT_ID` | the Account ID from step 1 |
 
-4. **Trigger the first deploy.** Merge the PR that added the workflow (a push to `main` deploys production), or open the workflow run for the PR under **Actions → Deploy Pages** and tap **Re-run all jobs** (there is no manual trigger).
+4. **Verify pilot compatibility, then trigger the authorised deployment.** For an enabled pilot, complete the [schema and service verification](PILOT_SUPABASE_SETUP.md#training-deployment-check) and record its attestation first. Then open the workflow run for the intended change under **Actions → Deploy Pages** and tap **Re-run all jobs** (there is no manual trigger). Production changes remain subject to owner authorisation.
 5. **Find the deployed URL.**
    - Production (push to `main`): `https://rad-lab.pages.dev`. If the name `rad-lab` was already taken on Cloudflare, the project gets a different `*.pages.dev` host; the real URL is printed in the deploy step log and shown at **Workers & Pages → rad-lab**. **(may differ)**
    - Pull request previews: the PR gets one comment (updated on every push) with a branch URL like `https://<branch-name>.rad-lab.pages.dev` (branch name lower-cased, non-alphanumerics replaced by `-`, possibly truncated) and a per-commit URL like `https://<8-char-hash>.rad-lab.pages.dev`. All deployments are also listed at **Workers & Pages → rad-lab → Deployments**. **(may differ)**
@@ -93,7 +95,7 @@ Cloudflare builds every non-production branch you push and gives it its own URL.
 4. If previews don't appear: **rad-lab → Settings → Builds → Branch control**, set **Preview branches** to *All non-Production branches*. **(may differ)**
 5. Cloudflare can also post the preview link as a comment/check on the GitHub pull request (the check shows "Cloudflare Pages"). On a phone the GitHub PR page is often the quickest way to the link: open the PR → the **Cloudflare Pages** check → **Details**.
 
-Production deploys (`main`) happen automatically on every merge to `main`. Nothing deploys from a draft PR to production.
+Production deploys (`main`) run after merges to `main` only when deployment guards pass. Nothing deploys from a draft PR to production.
 
 ## 3. IMPORTANT before sharing the link: restrict who can open it (Cloudflare Zero Trust Access, free tier)
 

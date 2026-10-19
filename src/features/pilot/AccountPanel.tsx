@@ -7,6 +7,8 @@ import { Link } from "@/i18n/navigation";
 import { type AuthErrorKey, passwordProblem, recoveryFromHash } from "./account-state";
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
+import { ProfileName } from "./ProfileName";
+import { validName } from "./training";
 import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
 import { SURVEY_URL, surveyHref } from "./survey";
 import { useSessionAccount } from "./SessionGate";
@@ -18,10 +20,12 @@ const primary = "rounded-md bg-brand px-4 py-2 font-semibold text-white hover:bg
 
 export function AccountPanel() {
   const t = useTranslations("account");
+  const tt = useTranslations("training");
   const locale = useLocale();
   const signingIn = useRef(false);
-  const { state, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useSessionAccount();
+  const { state, saveName, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useSessionAccount();
   const [mode, setMode] = useState<Mode>("signIn");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -49,14 +53,14 @@ export function AccountPanel() {
     e.preventDefault();
     setError(null);
     if (mode === "signUp") {
-      if (!agreed) return;
+      if (!agreed || !validName(name)) return;
       const problem = passwordProblem(password);
       if (problem) return setError(problem === "short" ? "passwordShort" : "passwordClasses");
       if (password !== confirm) return setError("passwordMismatch");
     }
     setBusy(true);
     signingIn.current = mode === "signIn";
-    const result = mode === "signIn" ? await signIn(email.trim(), password) : await signUp(email.trim(), password);
+    const result = mode === "signIn" ? await signIn(email.trim(), password) : await signUp(email.trim(), password, name.trim());
     setBusy(false);
     if (!result.ok) { signingIn.current = false; return setError(result.error); }
     setPassword("");
@@ -76,10 +80,10 @@ export function AccountPanel() {
   if (state.kind === "profileError") {
     return (
       <div className="rounded-lg border border-line bg-panel p-5" data-testid="account-profile-error">
-        <p role="alert">{t("profileError")}</p>
+        <p role="alert">{t(`profileErrors.${state.reason ?? "service"}`)}</p>
         <div className="mt-4 flex gap-3">
           <button type="button" className={primary} onClick={() => void retry()}>{t("retry")}</button>
-          <button type="button" className="rounded-md border border-line px-4 py-2" onClick={() => void signOut()}>{t("signOut")}</button>
+          <button type="button" className="rounded-md border border-line px-4 py-2" onClick={() => void signOut()}>{t(state.reason === "expired" ? "profileSignIn" : "signOut")}</button>
         </div>
       </div>
     );
@@ -132,6 +136,8 @@ export function AccountPanel() {
         </div>
         <p className="mt-4 text-sm"><Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>
       </section>
+      <ProfileName key={state.userId} name={state.displayName ?? null} email={state.email} save={saveName} />
+      {status === "approved" && <p className="mt-4"><Link href="/training" className="text-brand underline">{tt("open")}</Link></p>}
       </>
     );
   }
@@ -167,6 +173,7 @@ export function AccountPanel() {
       </div>
       <h2 id="acct-form" className="sr-only">{t(`tabs.${mode}`)}</h2>
       <form onSubmit={(e) => void submit(e)} noValidate className="max-w-md space-y-4">
+        {mode === "signUp" && <label className="block">{tt("name")}<input name="displayName" dir="auto" autoComplete="name" required maxLength={100} value={name} onChange={(e) => setName(e.target.value)} className={field} aria-describedby="signup-name-hint" /><span id="signup-name-hint" className="mt-1 block text-sm text-muted">{tt("nameHint")}</span></label>}
         <label className="block">
           {t("email")}
           <input type="email" required dir="ltr" autoComplete="email" inputMode="email" className={field} value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -189,7 +196,7 @@ export function AccountPanel() {
           </>
         )}
         {error && <p role="alert" data-testid="account-error" className="rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t(`errors.${error}`)}</p>}
-        <button type="submit" disabled={busy || !email || !password || (mode === "signUp" && !agreed)} className={primary}>{busy ? t("working") : t(`submit.${mode}`)}</button>
+        <button type="submit" disabled={busy || !email || !password || (mode === "signUp" && (!agreed || !validName(name)))} className={primary}>{busy ? t("working") : t(`submit.${mode}`)}</button>
       </form>
       {mode === "signIn" && (
         <p className="mt-4"><button type="button" data-testid="forgot-link" className="text-brand underline" onClick={() => { setError(null); setView("forgot"); }}>{t("forgot.link")}</button></p>

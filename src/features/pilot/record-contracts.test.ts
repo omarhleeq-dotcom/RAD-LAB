@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { getCase } from "@/data/cases";
 import { evaluate } from "@/features/evaluation/engine";
+import { PRACTICE_EVALUATION_VERSION } from "@/features/evaluation/version";
 import { buildAttemptRow, buildEventRow, buildFeedbackRow, definitionVersion, PILOT_WRITER_VERSION, readRecordContract, recordStamps } from "./attempt-record";
 import { recordActivity } from "./activity";
 import { createAttemptLogger, type Snapshot } from "./attempt-logger";
@@ -37,7 +38,7 @@ describe("v1 record compatibility and explicit contracts", () => {
     const c = getCase("chest-pa-erect")!;
     const version = await definitionVersion(c);
     const built = buildAttemptRow({ id: "new", radCase: c, version, attemptNo: 1, settings: c.initialSettings, result: evaluate(c, c.initialSettings), locale: "fr-CA", device: { w: 390, h: 844, touch: true }, startedAt: new Date(0), finishedAt: new Date(1000) });
-    expect(built).toMatchObject({ locale: "fr-CA", settings_format_version: 1, result_format_version: 1, producer_version: PILOT_WRITER_VERSION, engine_version: "unknown", mode: "practice", record_kind: "attempt", definition_version: version });
+    expect(built).toMatchObject({ locale: "fr-CA", settings_format_version: 1, result_format_version: 1, producer_version: PILOT_WRITER_VERSION, engine_version: PRACTICE_EVALUATION_VERSION, mode: "practice", record_kind: "attempt", definition_version: version });
     expect(built.settings).toBe(c.initialSettings);
     // Keep the exact pre-existing case-definition algorithm, not a writer/engine stamp masquerading as its hash.
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(c)));

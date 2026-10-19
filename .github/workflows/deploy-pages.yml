@@ -43,8 +43,16 @@ jobs:
       - name: Install
         if: steps.gate.outputs.enabled == 'true'
         run: npm ci
-      - name: Build static export
+      - name: Require verified pilot schema
+        id: schema
         if: steps.gate.outputs.enabled == 'true'
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          PILOT_SCHEMA_VERIFIED: ${{ vars.PILOT_SCHEMA_VERIFIED }}
+        run: node scripts/pages/pilot-schema-gate.mjs
+      - name: Build static export
+        if: steps.gate.outputs.enabled == 'true' && steps.schema.outcome == 'success'
         env:
           # Public project URL of the pilot's Supabase project (a repo *variable*, not a secret). Empty = no account backend, CSP unchanged.
           NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
@@ -52,7 +60,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
         run: npm run build:pages
       - name: Ensure Pages project exists
-        if: steps.gate.outputs.enabled == 'true'
+        if: steps.gate.outputs.enabled == 'true' && steps.schema.outcome == 'success'
         run: |
           set +e
           out=$(npx --yes wrangler@4 pages project create rad-lab --production-branch=main 2>&1)
@@ -69,25 +77,30 @@ jobs:
           fi
       - name: Deploy to Cloudflare Pages
         id: deploy
-        if: steps.gate.outputs.enabled == 'true'
+        if: steps.gate.outputs.enabled == 'true' && steps.schema.outcome == 'success'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy out --project-name=rad-lab --branch=${{ env.DEPLOY_BRANCH }}
       - name: Comment preview URL on PR
-        if: steps.gate.outputs.enabled == 'true' && github.event_name == 'pull_request'
+        if: always() && steps.gate.outputs.enabled == 'true' && github.event_name == 'pull_request' && (steps.schema.outcome == 'failure' || steps.deploy.outcome == 'success')
         uses: actions/github-script@v7
         env:
+          SCHEMA_OUTCOME: ${{ steps.schema.outcome }}
           DEPLOY_URL: ${{ steps.deploy.outputs.deployment-url }}
           ALIAS_URL: ${{ steps.deploy.outputs.pages-deployment-alias-url }}
         with:
           script: |
             const marker = '<!-- rad-lab-pages-preview -->';
             const lines = [marker, '**Cloudflare Pages preview**', ''];
-            if (process.env.ALIAS_URL) lines.push(`- Branch preview: ${process.env.ALIAS_URL}`);
-            if (process.env.DEPLOY_URL) lines.push(`- This commit: ${process.env.DEPLOY_URL}`);
-            lines.push('', `Commit \`${context.sha.slice(0, 7)}\`. Educational prototype, access may be restricted by Cloudflare Access.`);
+            if (process.env.SCHEMA_OUTCOME === 'failure') {
+              lines.push('Preview deployment is blocked: the pilot database compatibility has not been verified for this project and migration contents. Follow docs/PILOT_SUPABASE_SETUP.md before setting PILOT_SCHEMA_VERIFIED. No new preview was deployed; previous preview links do not prove compatibility.');
+            } else {
+              if (process.env.ALIAS_URL) lines.push(`- Branch preview: ${process.env.ALIAS_URL}`);
+              if (process.env.DEPLOY_URL) lines.push(`- This commit: ${process.env.DEPLOY_URL}`);
+              lines.push('', `Commit \`${context.sha.slice(0, 7)}\`. Educational prototype, access may be restricted by Cloudflare Access.`);
+            }
             const body = lines.join('\n');
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;

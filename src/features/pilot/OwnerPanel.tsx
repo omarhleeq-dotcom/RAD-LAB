@@ -19,6 +19,7 @@ const btn = "rounded-md border border-line px-3 py-1.5 text-sm font-medium hover
 
 export function OwnerPanel() {
   const t = useTranslations("owner");
+  const tt = useTranslations("training");
   const { state } = useAccount("");
   const [filters, setFilters] = useState<OwnerFilters>(EMPTY_FILTERS);
   const [cursor, setCursor] = useState<Cursor | null>(null);
@@ -68,6 +69,7 @@ export function OwnerPanel() {
   const pending = ready?.pending ?? 0;
   return (
     <section aria-labelledby="owner-list" data-testid="owner-list">
+      <p className="mb-4"><Link href="/training" className="text-brand underline">{tt("follow")}</Link></p>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 id="owner-list" className="text-xl font-semibold">{t("participants")}</h2>
         <button type="button" className={btn} onClick={reload}>{t("refresh")}</button>
