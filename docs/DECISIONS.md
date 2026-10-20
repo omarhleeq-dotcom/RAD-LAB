@@ -89,6 +89,13 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 بقية S-ASSESS-15 أعلاه محفوظة، بما فيها سياسة التشغيل اليومية المشفرة ذات تداول سبعة أيام، وتجربة الاسترداد وحجر الوصول بعد restore والتحقق المستقل من المزود. لا يُفسر ترتيب النسخة لهذه العملية على أنه تنفيذ هذه الوسائل أو إلغاء دائم لها، ولا تُغيّر نصوص v1/v2 أو تُسجل موافقة نيابة عن مستخدم. [تقرير الحزمة اليدوية](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md) يوضح فحوصها وحدود الأدلة والمتبقي. تبقى البوابة مغلقة وPR مسودة، ولا runtime/عامل/جدولة أو إعدادات إنتاج.
 
+<a id="assess-cloud-run-owner-2026-10-21"></a>
+### اختيار استضافة Assess — Google Cloud Run، 2026-10-21 عمّان
+
+**السلطة:** بعد مراجعة تقرير الربط قال المالك إنه اختار خطة Google، ثم حدد صراحة «Google Cloud Run». يُعتمد Google Cloud Run خيار الاستضافة في الوقت الراهن لحزمة Node24 الخاصة، بدل إبقاء المزوّد غير مختار. هذا اختيار مزوّد ضمن الإذن المحلي القائم، لا إذن إنشاء مشروع/موارد أو تفعيل فوترة أو IAM/أسرار أو SQL أو نشر/تشغيل عامل/جدولة أو فتح launch_gate. لا اعتماد تكلفة أو region أو ضمان Free من اختيار الخدمة.
+
+[خطة المطابقة](ASSESS_CLOUD_RUN_PLAN_2026-10-21.md) تقترح Cloud Run Jobs لدفعة runAssessJobs المحدودة دون HTTP عام، وتفصل ذلك عن قرار المالك باختيار Cloud Run عمومًا. ما زالت container/entrypoint وهوية التشغيل وACL/TLS وإدارة السر والإلغاء واختبار SIGTERM/القتل/فقد الإقرار والمراقبة والتكلفة والجدولة تحتاج تجهيزًا وأدلة مستقلة. Supabase Auth/Data API للمستخدم وPages للواجهة كما هما، ولا نقل قاعدة البيانات أو انتحال مستخدم/قبول v2. S-ASSESS-15 وقرار النسخة الشاملة المؤجلة وحدود restore وO108 وبوابات القبول الحي محفوظة.
+
 ## Open O-items
 
 These are **residual scope descriptions**, not a second task-status register. Owner/reviewer/waiting states come only from [project-status](project-status.md); use `npm run status:summary -- --id RAD-045` for the credits task (O102); text queries search task fields only. Partial implementation and later decisions are stated beside the item so the old ledger cannot be mistaken for current instructions.
