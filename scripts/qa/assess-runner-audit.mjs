@@ -38,6 +38,7 @@ async function setup(locale,width,owner=false){
   if(fn==='content_page_v1')return json({rows:content?[{id:id(77),name:'Synthetic queued',version:'1',state:'pending'}]:[],next:null});
   if(fn==='content_submit_v1'){ok(owner,'owner-only UI');content=true;return json(id(77));}
   if(fn==='assigned_page_v1'){ok(p.p_limit===20,'bounded assigned page');return json({rows:[{id:id(30),name:'Synthetic local test',version:'1'}],next:null});}
+  if(fn==='consent_v1')return json({accepted:true});
   if(fn==='start_v1'){started=true;return json({attemptId:id(99)});}
   if(fn==='read_mixed_session_v1')return json(state.ack.state==='active'?state:{attemptId:state.attemptId,ack:state.ack});
   if(fn==='command_v1'){

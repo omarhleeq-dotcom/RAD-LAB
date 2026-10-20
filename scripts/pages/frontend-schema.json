@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "contract": "pilot-through-assess-e/1",
+  "contract": "pilot-through-assess-f/1",
   "requiredMigrations": [
     "20261015000100_pilot_accounts.sql",
     "20261016000100_owner_list_participants.sql",
@@ -15,14 +15,16 @@
     "20261020000600_assess_assignments.sql",
     "20261020000700_assess_lifecycle.sql",
     "20261020000800_assess_mixed_ui.sql",
-    "20261020000900_assess_practical_ui.sql"
+    "20261020000900_assess_practical_ui.sql",
+    "20261020001000_assess_history_consent.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/assess-mixed-ready.sql",
     "supabase/checks/assess-practical-ready.sql",
-    "supabase/checks/assess-staging-ready.sql"
+    "supabase/checks/assess-staging-ready.sql",
+    "supabase/checks/assess-history-ready.sql"
   ],
   "deferredMigrations": {},
   "browserBoundaries": {
@@ -46,7 +48,10 @@
     "src/features/assess/content-data.ts": "2c2b06add8358339237055326e256366bbe75d0a88b6feb1ea3b49df89817a2f",
     "src/features/assess/runner-data.ts": "4225aa8f80962ab709c323783e25d24d077abe176fbbf1b21b4fb15120abbd34",
     "src/features/pilot/OwnerActivity.tsx": "9e1a1c3a57351c4adcc791045c42162e6963b3b5b06db7cd1ea5f49c562dd404",
-    "src/features/assess/AssessPanel.tsx": "4daab7adc598a074ca827736c55c2acd322ba2ab7d9e2414cbf030762a61e165",
+    "src/features/assess/HistoryPanel.tsx": "2a98829cf8b922e238a735b13dcfc93f06c83dd444c9e641c341d2305f4b9424",
+    "src/features/assess/history-data.ts": "d2651cbf0b72460912ce53c428ae1125db278408280ca9819a7aba26b32122be",
+    "src/features/assess/AssessPanel.tsx": "fa8cc535ec24308bbd2aebf8131815117c13fc2635ea31de9e9737430607bd79",
+    "src/features/assess/AssessConsent.tsx": "7260304c244560a5725ab7c34faccad7ed4ede9e4dd93c1783aa14ed09ea923a",
     "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31"
   },
   "serverModules": [

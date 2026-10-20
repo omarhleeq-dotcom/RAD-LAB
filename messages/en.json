@@ -1684,7 +1684,9 @@
     "practical": "Full practical examinations",
     "locked": "Exposure recorded. This item is locked.",
     "oneExposure": "One exposure only. Settings lock when the server records it.",
-    "expose": "Expose once"
+    "expose": "Expose once",
+    "sections": "Assess sections",
+    "history": "Assessment history"
   },
   "assessContent": {
     "title": "Mixed assessment content and templates",
@@ -1699,5 +1701,29 @@
     "saved": "Version queued. No publication or launch is confirmed.",
     "error": "Unable to process the content request. Check the document, version and service availability.",
     "tracks": "Mixed questions and full practical examinations use separate, immutable versions. Installation requires the trusted validator for the selected track."
+  },
+  "assessHistory": {
+    "title": "Assessment history",
+    "privacyTitle": "Assess pilot privacy and consent",
+    "privacy": "Your Assess record contains the assessment name and type, submission date, and grade and maximum. Your grade is shown only if the assessment policy allows it. Results are deleted six calendar months after submission; activity does not extend this period.",
+    "temporary": "Answers and simulator settings are stored temporarily to resume and grade your attempt. They are deleted when the result is successfully finalized. Failed grading retains the frozen attempt for recovery for up to seven days after submission, then deletes the details without inventing a grade.",
+    "limits": "Untimed attempts are unavailable until their retention policy is settled. No answer review, criterion review or regrading is available after details are deleted. Practice has its own unchanged policy.",
+    "recovery": "Minimal account-linked consent and attempt-limit records are separate from results. Their retention and the backup and restore deletion process require review before pilot storage is opened. Deletion from the active service does not immediately erase an older backup.",
+    "agree": "I have read this Assess notice and agree to the described processing.",
+    "accept": "Save Assess consent",
+    "accepted": "Assess consent recorded.",
+    "retention": "Results are available for six calendar months from submission.",
+    "name": "Assessment name",
+    "track": "Assessment type",
+    "submittedAt": "Submitted at (UTC)",
+    "grade": "Grade",
+    "mixed": "Mixed questions",
+    "practical": "Full practical",
+    "hidden": "Result withheld",
+    "empty": "No available results.",
+    "unavailable": "Assess is unavailable. Try again.",
+    "refresh": "Refresh history",
+    "loading": "Loading history…",
+    "next": "Next page"
   }
 }

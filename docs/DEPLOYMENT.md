@@ -196,3 +196,10 @@ Cloudflare is steering new projects toward Workers *Static Assets*. The `out/` d
 مراجعة pins تخص bytes طبقات الاتصال الفعلية؛ لا تغيير لـPILOT_SCHEMA_VERIFIED أو إعداد GitHub/مزود أو كود الحارس أو تحسين أدائه المدموج أو مهلات/توقعات اختبارات قائمة. إثبات C/D السابق لا يثبت E؛ **حظر Deploy Pages على E غير المجهزة صحيح**، ولا يُستبدل الإثبات لمجرد تمريره. البناء المحلي بإعداد اصطناعي منفصل لا يصدر attestation حيًا ولا يفتح البوابة أو يتصل بالمزود.
 
 المشروع الجاري هو الأصلية vlacestfruxooznrcjqc. [إعداد E](PILOT_SUPABASE_SETUP.md#assess-e-local) يحدد التجهيز المطلوب قبل دليل جديد بإذن مستقل: مراجعة الإضافة، نسخة حديثة واسترداد مناسب، تطبيق E وحدها وفحوصها وACL ومسار الخدمة، دون إعادة B/C/D. runtime/worker/scheduler والمراقبة والموافقة والاحتفاظ والنسخ والاستعادة وO106/O108 وبوابة launch مستقلة. [تقرير E](ASSESS_E_REPORT_2026-10-20.md) يفصل أدلة Node/PGlite وPostgreSQL المحلي المتزامن والمتصفح الاصطناعي عن المزوّد الحي والمراجعة الطبية. لا F أو merge/ready من هذا الربط.
+
+<a id="assess-f-contract"></a>
+## عقد F — السجل والموافقة
+
+اتصال F المحلي موثق في [تقرير F](ASSESS_F_REPORT_2026-10-20.md): عقد `pilot-through-assess-f/1` يصنف `20261020001000_assess_history_consent.sql` مطلوبة ويضيف `assess-history-ready.sql`. يحتاج المتصفح `history_page_v1` و`consent_v1`، مع pins للوحدات الفعلية الجديدة/المتغيرة فقط؛ وحدات الخادم الخاصة تبقى محظورة. إثبات E السابق لا يطابق F، وحظر Deploy pilot صحيح حتى تجهيز SQL والتحقق المأذون مستقلًا. لا تغير PILOT_SCHEMA_VERIFIED أو pins لتجاوز المنع. لم تُغيّر Variables أو الخلفية بهذه الدفعة.
+
+نجح CI وDeploy Pages على main الذي دمج #93 قبل بدء F؛ الروابط والرأس في التقرير. لا يُستنتج نجاح main لاحق من ذلك أو من فحوص PR. فحص catalogue F قراءة فقط يثبت شروطه المحدودة ولا يثبت runtime أو جدولة purge أو موافقة/احتفاظ/استرداد أو launch. لا job جديد: العامل الحالي يستعمل `maintain_v1` من C، ولا تثبيت schedule ضمن F. قبل أي إذن SQL F على الأصلية تلزم نسخة حديثة واسترداد ومراجعة فرق؛ استثناء النسخة السابق انتهى بعملية E. [الخطوة التالية](ASSESS_STAGING_PLAN.md#assess-f-next) تبقي بوابات القبول الحي مستقلة.
