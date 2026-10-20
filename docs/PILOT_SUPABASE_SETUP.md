@@ -512,3 +512,15 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-e.mjs
 أرسل المالك نتيجة assess-e-preinstall/1: read_only=true وcd_catalogue_ready=true وlaunch_gate_closed=true وe_absent=true؛ لكن cd_source_bodies_match=false وبالتالي ready_for_e_install=false. recovery_verified/runtime_or_launch_verified=false مقصودان ولا يفسران فشل شرط المصدر. هذا تقرير من المالك، لا اتصال إدارة مباشر، ولا إثبات تطبيق E.
 
 **تعليمات التطبيق المشروطة السابقة لا تُستخدم لتجاوز false.** شغّل [assess-e-source-diff.sql](../supabase/checks/assess-e-source-diff.sql) كاملًا للقراءة فقط على الأصلية، وأرسل جدول الدوال المخالفة فقط. يحصر signatures الست والعشرين المتوقعة ويعرض expected/actual SHA-256 والأطوال، ومؤشرات مقارنة نهايات الأسطر والفراغات الطرفية. لا أجسام دوال أو بيانات مستخدمين أو keys في الناتج. التطابق بعد normalization أداة تشخيص لا تكافؤ دلاليًا معتمدًا أو installation approval؛ يبقى installer exact guard بلا تغيير. إذا عاد بلا صفوف فلا تتجاوز نتيجة الفحص السابقة، بل تُراجع استمرارية الحالة قبل إعادة فحص مناسب. لا DROP/إعادة C/D أو تثبيت E أو تغيير PILOT_SCHEMA_VERIFIED قبل تحديد الفرق ومراجعته. السبب الفعلي غير محسوم حتى وصول التشخيص.
+
+### استئناف E بعد مراجعة LF وCRLF
+
+وصل جدول assess-e-source-diff/1 من المالك: الدوال الست والعشرون موجودة، وكل مؤشري المقارنة true. لم يُعتمد المؤشر وحده: أُعيد حساب SHA-256 وطول UTF-8 لكل مصدر Git بعد تحويل LF إلى CRLF؛ طابقت **كل البصمات والأطوال الفعلية**. روجعت أجسام B/C/D/E مع استثناء التعليقات من فحص النصوص: لا literals متعددة الأسطر أو dollar strings داخلية تتغير قيمتها. التفاصيل وحدود الدليل في [التقرير](ASSESS_E_REPORT_2026-10-20.md#reviewed-line-endings).
+
+لهذه المصادر المراجعة فقط، استخدم بدل ملفي LF-only السابقين:
+
+1. على الأصلية **vlacestfruxooznrcjqc**، شغّل [فحص البصمات المراجعة](../supabase/checks/assess-e-preinstall-reviewed-lines.sql) كاملًا في استعلام جديد؛ يلزم ready_for_e_install=true. لا تستنتج ذلك مسبقًا من التشخيص القديم.
+2. عند نجاحه فقط، شغّل [حزمة E ذات البصمات المراجعة](../supabase/manual/assess-original-e-install-reviewed-lines.sql) كاملة مرة واحدة. تعيد الفحص تحت القفل والمعاملة، وتقبل فقط SHA-256 الحرفية المحددة لنسختَي LF وCRLF لكل دالة؛ لا normalization أو trim وقت القرار، ولا قبول أي مصدر آخر. نسخة ترحيل E والصلاحيات وشروط البوابة والتراجع كما كانت. لا تعيد C/D أو تغير أجسامها.
+3. أرسل نتيجة التطبيق، ثم شغّل جرد B/C/D/E وفحص E المغلق السابقين. أي خطأ/false يعني التوقف؛ لا تغير إثبات النشر قبل الأدلة المطابقة. recovery/runtime=false يبقيان مقصودين، ولا F أو فتح بوابة.
+
+الاستثناء الحالي للنسخة محفوظ لهذه العملية فقط. أدوات LF-only والتشخيص القديمة باقية دون تعديل، واختباراتها وتوقعاتها الأصلية محفوظة؛ رفضها CRLF يظل صحيحًا لعقدها الحرفي الأضيق. هذه متابعة مراجعة فرق محدد وليست تخفيفًا لحارس Pages أو إذنًا عامًا لقبول فروق تنسيق.
