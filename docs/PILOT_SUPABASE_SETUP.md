@@ -653,7 +653,7 @@ $radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
 <a id="assess-retention-original-install"></a>
 ### إضافة الاحتفاظ على الأصلية — ملف يدوي محروس واحد
 
-السلطة هي [توجيه المالك الأحدث](DECISIONS.md#assess-retention-original-no-backup-2026-10-20): الأصلية الآن، دون نسخة حديثة مثبتة، ونسخة شاملة بعد إنهاء العمل. لا حاجة لتثبيت CLI أو تشغيل Docker/7-Zip لهذه الخطوة. [تقرير التجربة المحلية](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md) يفرق بين PGlite وPostgreSQL والمزود؛ لا نتيجة تطبيق أصلية وصلت بعد.
+السلطة هي [توجيه المالك الأحدث](DECISIONS.md#assess-retention-original-no-backup-2026-10-20): الأصلية الآن، دون نسخة حديثة مثبتة، ونسخة شاملة بعد إنهاء العمل. لا حاجة لتثبيت CLI أو تشغيل Docker/7-Zip لهذه الخطوة. [تقرير التجربة المحلية](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md) يفرق بين PGlite وPostgreSQL والمزود؛ وصلت نتيجة التطبيق لاحقًا؛ [الصف الحالي](#assess-retention-install-owner-result) يحكم المتابعة، ولا تعاد هذه الخطوات.
 
 1. افتح SQL Editor للمشروع الأصلي **vlacestfruxooznrcjqc** وطابق محدده يدويًا؛ SQL نفسها لا تثبت هويته. استخدم جلسة مشغّل واحدة دون تغييرات SQL متزامنة.
 2. انسخ [assess-original-retention-install.sql](../supabase/manual/assess-original-retention-install.sql) **كاملًا** من مسودة العمل وشغّله مرة واحدة. لا تحدد جزءًا ولا تعِد B/C/D/E/F أو الترحيل الخام أو أي حزمة منح/استعادة قديمة.
@@ -662,3 +662,21 @@ $radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
 5. أرسل الصف الأخير **assess-retention-install/1** بعد COMMIT فقط. المتوقع: read_only وretention_catalogue_ready وretention_source_bodies_match وschema_shape_matches وno_direct_column_grants وtrigger_contract_matches وlaunch_gate_closed وinstallation_valid كلها true؛ backup_verified وrecovery_verified وprovider_backups_verified وruntime_or_launch_verified تبقى false. صف قفل advisory أو “Success” وحده لا يثبت التثبيت.
 
 الحزمة لا تشغّل maintain أو التصحيح أو محاولة ولا تضيف قبولًا لمستخدم، ولا تغيّر profiles/Practice أو البوابة. بعد النتيجة تراجع جاهزية الخدمة المغلقة وعقد الواجهة بحسب الاتصال الفعلي قبل أي attestation؛ لا تُغيّر pins أو PILOT_SCHEMA_VERIFIED لمجرد تمرير deploy. يبقى النشر والتشغيل وO108 وباقي المراجعات والنسخ/الاستعادة بوابات منفصلة. النسخة الشاملة اللاحقة عمل باقٍ، لا ضمان بأن dump قاعدة وحدها يشمل Auth/Storage/إعدادات النظام وتبعياته.
+
+
+<a id="assess-retention-install-owner-result"></a>
+### نتيجة التثبيت — نجح فحص SQL النهائي وفق إفادة المالك
+
+وصل صف assess-retention-install/1 النهائي بعد COMMIT؛ جميع شروط المصدر والمخطط والصلاحيات والtrigger وinstallation_valid والبوابة المغلقة true، والنسخ/recovery/provider/runtime false. [التقرير](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result) يحفظ النتيجة وحدودها. **انتهى انتظار التثبيت؛ لا تعِد الملف أو preinstall/postinstall الآن.** النص السابق يصف خطوات العملية التي أتمها المالك؛ التالي فحص الخدمة المغلقة أدناه. لا يثبت الصف قبول v2 لأي حساب أو تشغيل محاولة/صيانة أو restore، ولا يجيز تحديث PILOT_SCHEMA_VERIFIED/pins أو فتح gate.
+
+<a id="assess-retention-closed-service"></a>
+### فحص الخدمة المغلقة الجديد — v2 وخصوصية metadata
+
+أداة F السابقة وزوجها يخصان v1 فقط؛ لا تعِدهما لهذه الخطوة. [أداة retention الجديدة](../scripts/pilot/assess-retention-closed-service-check.js) تقرأ حالة v2 بإرسال null صريحًا، دون قبول، وتراجع منع القراءة المباشرة لبيانات الحجز والتعطيل والموافقة والنتائج. لا SQL كتابة/حذف أو start/read-session/command أو تشغيل عامل؛ بقاء launch_gate مغلقة مثبت بصف SQL السابق، والأداة لا تعدّلها أو تزعم قياس قيمتها عبر JWT.
+
+1. افتح التطبيق الحالي الذي تستخدمه وسجّل الدخول كمالك معتمد. افتح Console والصق الأداة الجديدة كاملة مرة واحدة.
+2. عند الطلب أدخل **المفتاح العام sb_publishable_ للمشروع الأصلي فقط**، ثم UUID المشارك المعتمد الآخر. تبقى هذه القيم محليًا؛ لا ترسلها في المحادثة، ولا تدخل secret/service-role/password. يتحقق المالك من وجود المشارك واعتماده.
+3. سجّل الدخول كمشارك معتمد وشغّل الأداة نفسها مرة واحدة، وأدخل المفتاح العام نفسه وUUID المالك الآخر محليًا. لا حاجة لقبول v2 أو إنشاء محاولة لهذا الفحص.
+4. أرسل فقط السطرين البادئين **RADLAB_ASSESS_RETENTION_CLOSED_CHECK**. المتوقع contract=assess-retention-closed-service/1، ودورا owner/participant، وoutcome=PASS وpair متطابق، وruntimeOrLaunchVerified=false. زوج F لا ينوب عنه حتى للحسابين نفسيهما. عند STOP أرسل السطر المنقح ونتوقف؛ لا تعِد SQL أو تتجاوز الحارس.
+
+نتيجة PASS تثبت الطلبات المحدودة من جلستي المالك والمشارك حسب الأداة، ولا تثبت مسارات تشغيل حية أو worker/maintenance أو عزل نتائج حقيقية قائمة أو نشرًا أو طبًا. لا موافقة تُسجّل بالنيابة، ولا إعدادات إنتاج أو marker تتغير. النسخة الشاملة ما زالت مؤجلة حسب قرار المالك؛ بقية البوابات مستقلة.
