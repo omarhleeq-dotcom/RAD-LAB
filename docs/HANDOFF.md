@@ -1,19 +1,19 @@
-# التسليم الحالي — مراجعة S-ASSESS-15 وقائمة البوابات
+# التسليم الحالي — حزمة ربط Assess المحلية
 
 ## نقطة البداية
-اقرأ [AGENTS](../AGENTS.md)، وشغّل docs:context مع تحقق GitHub لـ#95 و#96 وأحدث main وفحوص كل رأس مقصود، ثم status:summary لـRAD-056. [project-status](project-status.md) المصدر الوحيد للحالة. تابع checkout المعزول؛ لا worktree/subagents أو إعادة QA ناجحة بلا سبب.
+اقرأ [AGENTS](../AGENTS.md)، وشغّل docs:context مع تحقق GitHub لأحدث main و#96 وفحوص كل رأس مقصود، ثم status:summary لـRAD-056. [project-status](project-status.md) مصدر الحالة الوحيد. تابع checkout المعزول؛ لا worktree/subagents أو QA ناجحة معادة بلا تغير ذي صلة.
 
 ## المنجز
-انتهت المراجعة التقنية المركزة للحزمة دون خلل مثبت يستدعي تعديل الكود. [تقرير المراجعة](ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md) يحفظ مصفوفة الإغلاق/البدء والتعطيل والتسوية والموافقة وmetadata والعامل وحدود الأدلة ونتائج الفحوص المنفذة وغير المعادة. الحزمة غير مدموجة وتنتظر مراجعة بشرية؛ لا قبول حي من المراجعة أو SQL أو CI.
+جُهزت [مكتبة Node24 المحلية](ASSESS_RUNTIME_LOCAL.md) لنقل RPC العامل المحدود عبر PostgreSQL/TLS، مع إعادة استخدام server-service وrunAssessJobs وmaintain والمصحح وlease/recovery والحذف الذري. المستخدم يبقى Supabase Auth/Data API بهوية JWT المتحقق منها لدى المزود؛ لا وسيط مستخدم جديد أو admin key باسمه. [تقرير الربط](ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md) يحفظ الفحوص وحدود محاكاة النقل والمكتبة مقابل المزود الحي. الحزمة داخل المسودة، وليست عاملًا أو schedule أو نشر runtime.
 
 ## الخطوة التالية
-أبلغ المالك برسالة حظر إثبات المخطط وطلب معالجتها قبل الانتقال. جُهز [إثبات retention المراجع وخطوات تسجيله](PILOT_SUPABASE_SETUP.md#assess-retention-schema-attestation)، وطابق حسابًا مستقلًا وقَبِله الحارس محليًا ورفض F القديمة. لم يُحدّث الوكيل PILOT_SCHEMA_VERIFIED أو ينشر؛ حد الإعدادات السابق محفوظ. المتبقي تسجيل المالك للقيمة ثم نشر واجهة مأذون وفحص أحدث رأس مقصود والهاتف. لا إعادة SQL أو الحسابين أو تغيير pins/الحارس لتجاوز الفشل. [تقرير المتابعة](ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md#retention-deploy-block-followup) يحفظ الفحوص وحدودها.
+مراجعة بشرية للحزمة ونص EN/AR وحدود الأدلة، ثم نطاق مستقل لاختيار استضافة Node وآلية سر login وCA وACL وإلغاء الصلاحيات ومراقبة العامل والجدولة. حزمة البناء منفصلة عن binding والنشر والتشغيل. ثبت من GitHub نجاح CI وDeploy Pages لرأس المسودة السابق بعد تصحيح المالك إثبات المخطط؛ لا انتظار تحديث Variable من الوكيل أو إعادة نشر، ولا نسبة ذلك لهاتف جديد أو قبول حي. تحقق نتائج رأس التسليم الجديد مستقلة عند الاستئناف.
 
 ## الأدلة المكتملة وحدودها
-وصل [صف SQL النهائي](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result) ثم [زوج retention المغلق PASS المتطابق](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result). لا إعادة installer/preinstall/postinstall أو أدوات الحسابين لمجرد شاهد. runtimeOrLaunchVerified=false مقصودة؛ القراءات ورفض الوصول المباشر لا تثبت قبول v2 أو start/close/disable/تصحيح/صيانة/حذف حي. أدلة PostgreSQL المحلية والمتصفح الاصطناعي لا تثبت المزود أو الهاتف أو الطب؛ هاتف F يخص مرحلته.
+وصل [صف SQL النهائي](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result) و[زوج retention المغلق PASS المتطابق](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result). لا إعادة installer/preinstall/postinstall أو أدوات الحسابين لمجرد شاهد. runtimeOrLaunchVerified=false مقصودة؛ القراءات ورفض الوصول المباشر لا تثبت قبول v2 أو start/close/disable/تصحيح/صيانة/حذف حي. اختبار SQL اصطناعي تحت login محدود ليس شبكة pg/TLS أو JWT مزود؛ v1 لا تنوب عن v2 ولا قبول نيابة عن أحد. هاتف F يخص مرحلته.
 
 <a id="المتابعة"></a>
 ## المتبقي والحدود الثابتة
-[اختار المالك المتابعة دون نسخة الآن ونسخة شاملة عند انتهاء العمل](DECISIONS.md#assess-retention-original-no-backup-2026-10-20)؛ لا تعِد سؤال النسخة أو تبدأ تجهيزها تلقائيًا. backup/recovery/provider غير مثبتة. restore تحتاج حجر الشبكة/API والوصول وإعادة آثار الإغلاق والتعطيل والموافقة وmetadata المحذوفة ثم الحذف وفحص ACL؛ purge النتائج وحده وlaunch_gate وحدها لا يكفيان. لا نظام نسخ إنتاجي أو تصدير عام في هذه الدفعة.
+[اختار المالك المتابعة دون نسخة الآن ونسخة شاملة عند انتهاء العمل](DECISIONS.md#assess-retention-original-no-backup-2026-10-20)؛ لا إعادة سؤال أو تجهيز تلقائي. backup/recovery/provider غير مثبتة. restore تحتاج حجر الشبكة/API/الهويات ثم إعادة آثار الإغلاق والتعطيل والموافقة وmetadata المحذوفة والحذف وفحص ACL؛ purge النتائج وlaunch_gate وحدهما لا يحجران القراءات. لا نظام نسخ إنتاجي أو تصدير عام.
 
-Practice ودرجاته وصوره وتوقعاته وبصماته محفوظة. O108 والمصادر والترخيص والمراجعة والخلفية والمعايير وMarker، وruntime والعامل والجدولة والمراقبة والنسخ والاستعادة والتصدير والنشر بوابات مستقلة. لا SQL كتابة على الأصلية أو تغيير إعداد إنتاج أو نشر runtime/عامل/schedule أو ready/merge/auto-merge. أبق launch_gate مغلقة؛ القبول التجريبي الحي غير مكتمل.
+Practice ودرجاته وصوره وتوقعاته وبصماته محفوظة. O108 والمصادر والترخيص والمراجعة والخلفية والمعايير وMarker، وruntime والعامل والجدولة والمراقبة والنسخ والاستعادة والتصدير والنشر بوابات مستقلة. لا SQL كتابة على الأصلية أو تغيير PILOT_SCHEMA_VERIFIED/إعداد إنتاج أو نشر runtime/عامل/schedule أو ready/merge/auto-merge. تبقى launch_gate مغلقة؛ القبول التجريبي الحي غير مكتمل.
