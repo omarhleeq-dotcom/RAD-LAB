@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "contract": "pilot-through-assess-b/1",
+  "contract": "pilot-through-assess-d/1",
   "requiredMigrations": [
     "20261015000100_pilot_accounts.sql",
     "20261016000100_owner_list_participants.sql",
@@ -12,24 +12,16 @@
     "20261020000300_pilot_record_contracts.sql",
     "20261020000400_training_dashboard.sql",
     "20261020000500_practice_comparison.sql",
-    "20261020000600_assess_assignments.sql"
+    "20261020000600_assess_assignments.sql",
+    "20261020000700_assess_lifecycle.sql",
+    "20261020000800_assess_mixed_ui.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
-    "supabase/checks/comparison-ready.sql"
+    "supabase/checks/comparison-ready.sql",
+    "supabase/checks/assess-mixed-ready.sql"
   ],
-  "deferredMigrations": {
-    "20261020000700_assess_lifecycle.sql": {
-      "sha256": "198a581275ade58ac7be47528768f4028dc566857fce8b57fa031c9845e96581",
-      "reason": "C is server-only, unconnected to the static UI and launch-gated. Local-only rehearsal; production deployment is separately authorized.",
-      "serverModules": [
-        "src/features/assess/server-contracts.ts",
-        "src/features/assess/server-validation.ts",
-        "src/features/assess/server-grader.ts",
-        "src/features/assess/server-service.ts"
-      ]
-    }
-  },
+  "deferredMigrations": {},
   "browserBoundaries": {
     "src/features/pilot/FeedbackBox.tsx": "c6ae92fc0d39108fc60f8bac3f4028ca3e6b8bb950061e24166c4de47db4e703",
     "src/features/pilot/client.ts": "e4ad823775d64b2e7a650a61674bdbd00d76cff838397e5274c6ea34971ecdf0",
@@ -45,8 +37,19 @@
     "src/features/pilot/TrainingSummary.tsx": "44739e74a52db8f40b1b7669d391941e40c483d1c44b541ad2ed64ad12e21358",
     "src/features/pilot/PilotSessionKeeper.tsx": "c812951455090fc989fd481ddaadced07e16b2533af8d359e276857779b6fe88",
     "src/features/pilot/OwnerPanel.tsx": "bc42d14ec14bf319df57398cdd81b7ae3aa0a405e60297e0094819f620f166ba",
-    "src/features/assess/OwnerAssessPanel.tsx": "f5c30113ee5f092988e72467a29913c2dc06180818a281d41a9033660de1c156",
+    "src/features/assess/OwnerAssessPanel.tsx": "5fb54cb28f08cb5e71ca163594de1b3bf23860c0427326b7f1210c3530334403",
     "src/features/assess/admin-data.ts": "c39b767b2b48b3cd941698f14baef70cc87aa062973f037bb4623e288c3b1576",
-    "src/features/pilot/OwnerActivity.tsx": "9e1a1c3a57351c4adcc791045c42162e6963b3b5b06db7cd1ea5f49c562dd404"
-  }
+    "src/features/assess/OwnerContentPanel.tsx": "7b7e71ec41faa5db640120edb5cb8e0023b47395f47d3610becabc23207ecf4a",
+    "src/features/assess/content-data.ts": "2c2b06add8358339237055326e256366bbe75d0a88b6feb1ea3b49df89817a2f",
+    "src/features/assess/runner-data.ts": "d11bc2a69cc3ee71a5f3b28c49940c5ceb5ade47a1876afa25f4e402b86431f5",
+    "src/features/pilot/OwnerActivity.tsx": "9e1a1c3a57351c4adcc791045c42162e6963b3b5b06db7cd1ea5f49c562dd404",
+    "src/features/assess/AssessPanel.tsx": "6ec8580bf1b5aa9a3332c9ca44daad52102df9dfef5d704673031c5745e52541"
+  },
+  "serverModules": [
+    "src/features/assess/server-contracts.ts",
+    "src/features/assess/server-validation.ts",
+    "src/features/assess/server-grader.ts",
+    "src/features/assess/server-service.ts",
+    "src/features/assess/server-presentation.ts"
+  ]
 }

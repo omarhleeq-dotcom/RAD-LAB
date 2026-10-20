@@ -1,4 +1,4 @@
-import { cpSync,existsSync,mkdtempSync,readFileSync,rmSync,writeFileSync } from "node:fs";
+import { cpSync,mkdirSync,existsSync,mkdtempSync,readFileSync,rmSync,writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join,resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -13,7 +13,20 @@ const migration="20261020000700_assess_lifecycle.sql";
 let root:string;
 beforeAll(()=>{
   root=mkdtempSync(join(tmpdir(),"radlab-frontend-schema-"));
-  for(const dir of ["src","supabase","scripts/pages"])cpSync(dir,join(root,dir),{recursive:true});
+  // Retained B fixture: these tests continue to prove the original B attestation and deferred-C contract.
+  // D's active contract is tested separately; none of these historical expectations change.
+  for(const dir of ["supabase","scripts/pages"])cpSync(dir,join(root,dir),{recursive:true});
+  rmSync(join(root,"supabase/migrations/20261020000800_assess_mixed_ui.sql"),{force:true});
+  mkdirSync(join(root,"src/features/assess"),{recursive:true});
+  mkdirSync(join(root,"src/features/positioning"),{recursive:true});
+  cpSync("src/features/assess/admin-data.ts",join(root,"src/features/assess/admin-data.ts"));
+  for(const file of ["server-service","server-contracts","server-validation","server-grader"])
+    writeFileSync(join(root,`src/features/assess/${file}.ts`),file==="server-service"?"export const attemptService=()=>{};":"export {};");
+  writeFileSync(join(root,"src/features/assess/OwnerAssessPanel.tsx"),`"use client";import type {SupabaseClient} from "@supabase/supabase-js";import {readAssessAdmin} from "./admin-data";export const Panel=readAssessAdmin;`);
+  writeFileSync(join(root,"src/features/positioning/ShoulderFigure.tsx"),`export const figure=1;`);
+  const retained=JSON.parse(readFileSync("src/features/deployment/fixtures/frontend-through-b.json","utf8"));
+  retained.browserBoundaries=Object.fromEntries(["src/features/assess/OwnerAssessPanel.tsx","src/features/assess/admin-data.ts"].map(f=>[f,createHash("sha256").update(readFileSync(join(root,f))).digest("hex")]));
+  writeFileSync(join(root,"scripts/pages/frontend-schema.json"),JSON.stringify(retained));
 },30000);
 afterAll(()=>rmSync(root,{recursive:true,force:true}));
 function gate(marker=verifiedB,print=false){
@@ -28,7 +41,7 @@ function edit(path:string,change:(original:string)=>string,work:()=>void){
 function manifest(change:(m:Record<string,unknown>)=>void,work:()=>void){
   edit("scripts/pages/frontend-schema.json",s=>{const m=JSON.parse(s);change(m);return JSON.stringify(m);},work);
 }
-it("preserves the exact B attestation and accepts the current UI without installing C",()=>{
+it("preserves the exact B attestation for the retained B fixture without installing C",()=>{
   expect(gate().status).toBe(0);expect(gate("",true).stdout.trim()).toBe(verifiedB);
 });
 it("rejects changed required SQL or readiness checks against the existing attestation",()=>{

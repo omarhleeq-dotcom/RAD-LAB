@@ -43,6 +43,7 @@ async function setup(locale,width,role="owner",scenario="ready") {
     ok(req.headers()["content-profile"]==="assess","explicit Assess schema");
     const p=req.postDataJSON(),fn=url.pathname.split("/").at(-1);calls.push({fn,p});
     if(fail)return json({code:"PGRST106",message:"private implementation"},406);
+    if(fn==="content_page_v1")return json({rows:[],next:null});
     if(fn==="owner_page_v1") {
       ok(p.p_limit===20,"bounded page");let rows=[],next=null;
       if(p.p_kind==="groups"&&groupName)rows=[{id:id(10),name:groupName}];

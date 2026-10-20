@@ -4,8 +4,11 @@ import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import ts from "typescript";
+import { createRequire } from "node:module";
 import { assertPublishableKey, supabaseOrigin } from "./headers.mjs";
+
+const require = createRequire(import.meta.url);
+let ts;
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -21,13 +24,23 @@ const typeOnly = (node) => node.isTypeOnly || (node.importClause && (node.import
  * DB/network boundaries must match the reviewed source bytes; new ones fail closed.
  */
 export function inspectBrowserBoundaries(projectRoot = root) {
+  // Load the compiler only for dependency review; early rejection paths stay cheap.
+  ts ??= require("typescript");
   const files = sourceFiles(resolve(projectRoot, "src"));
+  const sources = new Map(files.map((file) => [file, readFileSync(file, "utf8")]));
   const parsed = new Map();
   const load = (path) => {
-    if (!parsed.has(path)) parsed.set(path, ts.createSourceFile(path, readFileSync(path, "utf8"), ts.ScriptTarget.Latest, true));
+    if (!parsed.has(path)) parsed.set(path, ts.createSourceFile(path, sources.get(path) ?? readFileSync(path, "utf8"), ts.ScriptTarget.Latest, false));
     return parsed.get(path);
   };
-  const pending = files.filter((f) => load(f).statements.some((n) => ts.isExpressionStatement(n) && ts.isStringLiteral(n.expression) && n.expression.text === "use client"));
+  const pending = files.filter((file) => {
+    const source = sources.get(file);
+    // A StringLiteral whose decoded value is "use client" must contain either
+    // that exact text or an escape. This only skips impossible roots; the AST
+    // still decides every candidate, including escaped and non-prologue literals.
+    if (!source.includes("use client") && !source.includes("\\")) return false;
+    return load(file).statements.some((n) => ts.isExpressionStatement(n) && ts.isStringLiteral(n.expression) && n.expression.text === "use client");
+  });
   if (!pending.length) throw new Error("Frontend contract has no client roots.");
   const seen = new Set(), boundaries = {}, calls = [], literals = [];
   while (pending.length) {
@@ -123,6 +136,9 @@ export function frontendRequirements(projectRoot = root) {
   for (const literal of graph.literals) if (deferred.functionNames.has(literal.name) && !needed.functionNames.has(literal.name)) {
     throw new Error(`Deferred RPC used by frontend: ${literal.path} (${literal.name})`);
   }
+  // Required migrations do not make private Node modules safe to ship to participants.
+  if (manifest.serverModules !== undefined && (!Array.isArray(manifest.serverModules) || manifest.serverModules.some((file) => typeof file !== "string" || !file.startsWith("src/") || !existsSync(resolve(projectRoot, file))))) throw new Error("Invalid server-only module list.");
+  for (const file of manifest.serverModules ?? []) if (graph.reachable.includes(file)) throw new Error(`Server-only backend reached the frontend: ${file}`);
   const expected = manifest.browserBoundaries;
   if (Object.keys(expected).length !== Object.keys(graph.boundaries).length || Object.entries(graph.boundaries).some(([file, hash]) => expected[file] !== hash)) {
     throw new Error("Frontend database boundary changed. Review frontend-schema.json and promote any newly required backend migrations before attestation.");

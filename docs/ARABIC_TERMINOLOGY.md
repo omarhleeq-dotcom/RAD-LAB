@@ -371,3 +371,7 @@ Visual direction approved in S-UI-054-1…6; exact new Arabic UI text remains ma
 - Home revision (S-UI-054-9, DRAFT): الرئيسية؛ مساحتك التعليمية في RAD·LAB.؛ نظرة عامة؛ مساحة لتقدّمك؛ لا توجد بيانات لعرضها حاليًا. Empty presentation only, no fabricated ratings, statistics or assessment functionality.
 
 - Category-first library (S-UI-054-10, DRAFT): اختر تصنيف الفحوصات؛ الرجوع إلى التصنيفات. Search/clear stays within the chosen category; no all-exams view before selection.
+
+## Assess D — 2026-10-20 (DRAFT, machine-assisted; pending Arabic review)
+
+أضيفت نصوص منصة D في `messages/ar.json`، namespaces `assess` و`assessContent`؛ المحتوى الامتحاني وأدوات الحل بالإنجليزية وفق قرار المالك. للمراجعة: «إقرار الخادم» (server acknowledgement)، «مصالحة مع الخادم» (reconcile)، «بنود غير محلولة» (unresolved items)، «إصدار ثابت» (immutable version)، «نسخة مرشحة» (candidate)، «بانتظار تحقق الخادم» (pending server validation). لا اعتماد طبي أو تغيير لاصطلاحات التدريب من إضافة هذه الرسائل.
