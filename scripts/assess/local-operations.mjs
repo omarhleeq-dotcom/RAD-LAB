@@ -54,7 +54,7 @@ try {
   await assert.rejects(()=>attemptService(worker).start(assignment,randomUUID()),{code:'denied'});
   assert.equal((await query('select enabled from assess.launch_gate'))[0].enabled,false);
   await assert.rejects(()=>service.start(assignment,randomUUID()),{code:'unavailable'});
-  await student.call('consent_v1',{p_version:'assess-pilot-2026-10-20-v1'});
+  await student.call('consent_v2',{p_version:'assess-pilot-2026-10-20-v2'});
   // This handle can only refer to a cluster created above. No remote target/URL is accepted.
   await exec('update assess.launch_gate set enabled=true');
   checks.push('separate-user-worker-capabilities','existing-content-installer');

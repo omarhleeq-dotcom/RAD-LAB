@@ -51,7 +51,7 @@ try {
   await installPracticalContent(worker,version);
   const assignment=await owner.call('assign_v1',{p_version:version,p_users:[uid(2)],p_groups:[]});
   // Current migration chain includes F: explicit synthetic Assess consent, never Practice consent.
-  await student.call('consent_v1',{p_version:'assess-pilot-2026-10-20-v1'});
+  await student.call('consent_v2',{p_version:'assess-pilot-2026-10-20-v2'});
   const [a,b]=await Promise.all([attemptService(held).start(assignment,uid(100)),attemptService(student).start(assignment,uid(100))]);assert.equal(a.attemptId,b.attemptId);
   const session=a.attemptId,read=async()=>student.call('read_practical_session_v1',{p_session:session});
   const initial=await read(),item=initial.assessment.items[0],answer={type:'full-practical',values:initial.views[item.ref.id].initial};

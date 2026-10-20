@@ -26,24 +26,27 @@ try{for(const locale of ['en','ar'])for(const width of [390,1440]){
   if(url.pathname==='/rest/v1/profiles')return json({role:'participant',status:'approved',participant_code:'P-synthetic',consent_version:pilotConsent,display_name:'Synthetic'});
   if(['/rest/v1/events','/rest/v1/rpc/touch_last_seen'].includes(url.pathname)){ok(!/Synthetic hidden|Synthetic shown|earned|submittedAt|answers|criteria/.test(req.postData()??''),'no history details in telemetry');return route.fulfill({status:201,headers});}
   ok(req.headers()['content-profile']==='assess','explicit Assess schema');const p=req.postDataJSON(),fn=url.pathname.split('/').at(-1);calls.push({fn,p});
-  if(fn==='consent_v1'){if(p.p_version!==null){ok(p.p_version==='assess-pilot-2026-10-20-v1','versioned consent');accepted=true;if(loseAck){loseAck=false;return route.abort('connectionreset');}}return json({accepted});}
+  if(fn==='consent_v2'){if(p.p_version!==null){ok(p.p_version==='assess-pilot-2026-10-20-v2','versioned consent');accepted=true;if(loseAck){loseAck=false;return route.abort('connectionreset');}}return json({accepted});}
   if(fn==='history_page_v1'){
-   ok(accepted,'no history before consent');ok(p.p_limit===20,'bounded history');if(unavailable)return json({message:'PRIVATE server detail'},503);
+   ok(p.p_limit===20,'bounded history');if(unavailable)return json({message:'PRIVATE server detail'},503);
    if(empty)return json({rows:[],next:null});
    const rows=p.p_after===null?[{name:'Synthetic hidden',track:'mixed',submittedAt:'2026-10-20T00:00:00.000Z',grade:leak?{visibility:'hidden',earned:'SECRET'}:{visibility:'hidden'}},{name:'Synthetic shown',track:'full-practical',submittedAt:'2026-10-19T00:00:00.000Z',grade:{visibility:'shown',earned:'1.25',maximum:'10.00'}}]:[{name:'Synthetic next',track:'mixed',submittedAt:'2026-10-18T00:00:00.000Z',grade:{visibility:'hidden'}}];return json({rows,next:p.p_after===null?id(999):null});
   }
   if(fn==='assigned_page_v1')return json({rows:[],next:null});
   assert.fail('unexpected RPC '+fn);
  });
- const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(`${base}/${locale}/assess?history=1`,{waitUntil:'networkidle'});const t=messages[locale].assessHistory,label=`${locale}-${width}`;
+ const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(`${base}/${locale}/assess`,{waitUntil:'networkidle'});const t=messages[locale].assessHistory,label=`${locale}-${width}`;
  const consent=page.getByTestId('assess-consent');await consent.getByRole('checkbox').waitFor();ok(await consent.getByRole('button',{name:t.accept,exact:true}).isDisabled(),'explicit unchecked consent');ok(!calls.some(c=>c.fn==='history_page_v1'),'no premature history');await audit(page,label+'-privacy');
- await consent.getByRole('checkbox').check();await consent.getByRole('button',{name:t.accept,exact:true}).click();await consent.getByRole('alert').waitFor();ok(await page.getByTestId('assess-history').count()===0,'lost ack not treated as consent success');await audit(page,label+'-consent-retry');await consent.getByRole('button',{name:t.accept,exact:true}).click();
+ await consent.getByRole('checkbox').check();await consent.getByRole('button',{name:t.accept,exact:true}).click();await consent.getByRole('alert').waitFor();ok(await page.getByTestId('assess-history').count()===0,'lost ack not treated as consent success');await audit(page,label+'-consent-retry');await consent.getByRole('button',{name:t.accept,exact:true}).click();await page.getByText(t.accepted,{exact:true}).waitFor();await page.goto(`${base}/${locale}/assess?history=1`,{waitUntil:'networkidle'});
  const history=page.getByTestId('assess-history');await history.getByText('Synthetic shown',{exact:true}).waitFor();ok(await history.locator('dt').count()===8,'four fields per record');ok((await history.textContent()).includes('1.25 / 10.00'),'allowed grade');ok((await history.textContent()).includes(t.hidden),'withheld grade');ok(await history.getByRole('link').count()===0,'no review or attempt links');ok(!(await history.textContent()).includes(id(999)),'cursor not displayed');await audit(page,label+'-history');
  await history.getByRole('button',{name:t.next,exact:true}).click();await history.getByText('Synthetic next',{exact:true}).waitFor();ok(!(await history.textContent()).includes('Synthetic shown'),'next replaces page');await audit(page,label+'-next');
  unavailable=true;await history.getByRole('button',{name:t.refresh,exact:true}).click();await history.getByRole('alert').waitFor();ok(!(await page.textContent('body')).includes('PRIVATE'),'sanitized failure');ok(!(await history.textContent()).includes('Synthetic next'),'failure clears prior data');await audit(page,label+'-unavailable');
  unavailable=false;leak=true;await history.getByRole('button',{name:t.refresh,exact:true}).click();await history.getByRole('alert').waitFor();ok(!(await page.textContent('body')).includes('SECRET'),'malformed hidden grade fails closed');
  leak=false;empty=true;await history.getByRole('button',{name:t.refresh,exact:true}).click();await history.getByText(t.empty,{exact:true}).waitFor();await audit(page,label+'-empty');
- await page.reload({waitUntil:'networkidle'});await page.getByText(t.accepted,{exact:true}).waitFor();await page.getByText(t.empty,{exact:true}).waitFor();ok(await page.getByRole('checkbox').count()===0,'persisted server acceptance');
+ await page.reload({waitUntil:'networkidle'});await page.getByText(t.empty,{exact:true}).waitFor();
+ // Results do not require accepting a new disclosure; v1-only/disabled accounts can settle existing data.
+ accepted=false;await page.reload({waitUntil:'networkidle'});await page.getByText(t.empty,{exact:true}).waitFor();ok(await page.getByRole('checkbox').count()===0,'history independent of new-start consent');await audit(page,label+'-history-without-v2');
+ accepted=true;await page.goto(`${base}/${locale}/assess`,{waitUntil:'networkidle'});await page.getByText(t.accepted,{exact:true}).waitFor();ok(await page.getByRole('checkbox').count()===0,'persisted server acceptance');
  assert.deepEqual(errors,[]);await context.close();
 }console.log(`Assess F audit: ${checks} checks, ${audits} EN/AR390/1440 axe/overflow audits passed; local synthetic API only.`);
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

@@ -33,7 +33,7 @@ async function setup(locale,width,short=false){
   if(['/rest/v1/events','/rest/v1/rpc/touch_last_seen'].includes(url.pathname))return route.fulfill({status:201,headers});
   ok(req.headers()['content-profile']==='assess','explicit Assess schema');const p=req.postDataJSON(),fn=url.pathname.split('/').at(-1);
   if(fn==='assigned_practical_page_v1'){ok(p.p_limit===20,'bounded practical list');return json({rows:[{id:id(30),name:'Synthetic local practical',version:'1'}],next:null});}
-  if(fn==='consent_v1')return json({accepted:true});
+  if(fn==='consent_v2')return json({accepted:true});
   if(fn==='start_v1'){
    // Start the synthetic server clock at the start RPC, matching C; consent/page setup is not attempt time.
    state.ack.serverTime=new Date().toISOString();state.ack.deadline=new Date(Date.now()+(short?3000:3600000)).toISOString();

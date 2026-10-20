@@ -1725,5 +1725,11 @@
     "refresh": "Refresh history",
     "loading": "Loading history…",
     "next": "Next page"
+  },
+  "assessConsentV2": {
+    "summary": "The first Assess pilot supports timed assessments only. Your history contains the assessment name, track, submission date, and mark and maximum when the assessment policy permits showing them. Results are deleted six calendar months after submission. Activity and export do not extend that period.",
+    "temporary": "Answers and simulator settings are stored temporarily to resume and grade an attempt, then deleted when its result is successfully committed. If grading fails, the frozen attempt is retained for recovery for up to seven days after submission; its details are then deleted without inventing a mark. Answers and criteria cannot be reviewed, and attempts cannot be regraded, after their details have been deleted.",
+    "metadata": "We retain minimal attempt-reservation data to enforce attempt limits until the assignment is permanently closed and all its attempts, results, and recovery windows have ended, then delete it. A permanently closed assignment cannot be reopened. We retain your consent version and acceptance time while Assess is enabled for your account. When Assess is disabled, new attempts are blocked; the consent record is deleted after your attempt and result data have been settled. This operational metadata may remain for longer than six months and contains no answers or marks.",
+    "backups": "Our backup policy is a daily encrypted backup with seven-day rotation and a backup before a database change. Data deleted from the active service may remain in a protected backup until its retention period ends; deletion does not immediately erase an older backup. The provider's backup policy must be verified separately before operation. Following a restore, access remains closed until deletion rules have been reapplied and permissions checked. Exports contain summary results only, without answers or settings, and remain subject to the original deletion deadlines. Practice has a separate, unchanged policy."
   }
 }

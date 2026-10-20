@@ -56,7 +56,7 @@ try {
     itemMarks:[{item:sim.ref,maximum:'1'}],privateItems:[{schemaVersion:1,ref:sim.ref,type:'simulator-part',review,caseRef:{id:c.id,version:caseVersion(c)},evaluatorVersion:ASSESS_EVALUATOR,fixedSettings:c.initialSettings,mutablePaths:['sidCm'],criteria:[{ruleId:c.rules.find(r=>r.kind==='range'&&r.setting==='sidCm').id,part:'sidCm',maximum:'1'}]}]};
   await publicationService(worker).install(uid(10),doc);
   // Current migration chain includes F: explicit synthetic Assess consent, never Practice consent.
-  const consentRace=await Promise.all([held.call('consent_v1',{p_version:'assess-pilot-2026-10-20-v1'}),student.call('consent_v1',{p_version:'assess-pilot-2026-10-20-v1'})]);
+  const consentRace=await Promise.all([held.call('consent_v2',{p_version:'assess-pilot-2026-10-20-v2'}),student.call('consent_v2',{p_version:'assess-pilot-2026-10-20-v2'})]);
   assert.deepEqual(consentRace,[{accepted:true},{accepted:true}]);
   const [start1,start2]=await Promise.all([attemptService(held).start(uid(11),uid(100)),attemptService(student).start(uid(11),uid(100))]);
   assert.equal(start1.attemptId,start2.attemptId);const session=start1.attemptId;

@@ -19,6 +19,7 @@ with expected_tables(name) as (values
   ('assess.content_submissions'),
   ('assess.practical_presentations')
   union all select 'assess.consents' where to_regclass('assess.consents') is not null
+  union all select 'assess.account_stops' where to_regclass('assess.account_stops') is not null
 ), tables as (
   select e.name,c.oid,c.relrowsecurity from expected_tables e left join pg_class c on c.oid=to_regclass(e.name)
 ), expected_functions(signature,audience) as (values
@@ -56,6 +57,12 @@ with expected_tables(name) as (values
     ('assess.history_page_v1(uuid,integer)','user'),
     ('assess.require_consent_v1()','internal')
   ) f(signature,audience) where to_regclass('assess.consents') is not null
+  union all select signature,audience from (values
+    ('assess.close_assignment_v1(uuid)','user'),
+    ('assess.disable_account_v1(uuid)','user'),
+    ('assess.consent_v2(text)','user'),
+    ('assess.assignment_terminal_v1()','internal')
+  ) retention(signature,audience) where to_regclass('assess.account_stops') is not null
 ), functions as (
   select e.*,p.oid,p.prosecdef,p.proconfig,p.proacl,p.proowner
   from expected_functions e left join pg_proc p on p.oid=to_regprocedure(e.signature)

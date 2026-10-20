@@ -78,7 +78,7 @@ function Assigned({practical}:{practical:boolean}) {
   }
   if(attempt&&port&&practical)return <PracticalMount attempt={attempt} leave={()=>{setAttempt(null);history.replaceState(null,"",`${location.pathname}?track=full-practical`);void load();}}/>;
   if(attempt&&port)return <Runner key={attempt} port={port} attempt={attempt} leave={()=>{setAttempt(null);history.replaceState(null,"",location.pathname);void load();}}/>;
-  return <section className="mt-6 space-y-4" data-testid="assess-assigned">
+  return <AssessConsent><section className="mt-6 space-y-4" data-testid="assess-assigned">
     <p>{t("intro")}</p>
     {error&&<p role="alert">{t("unavailable")}</p>}
     <button className={button} disabled={busy} onClick={()=>void load()}>{t("refresh")}</button>
@@ -86,7 +86,7 @@ function Assigned({practical}:{practical:boolean}) {
     {page&&!page.rows.length&&<p>{t("empty")}</p>}
     <ul className="space-y-3">{page?.rows.map(row=><li key={row.id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-line p-3"><span lang="en" dir="ltr">{row.name} — {row.version}</span><button className={button} disabled={busy||!port} onClick={()=>void start(row.id)}>{t("start")}</button></li>)}</ul>
     {page?.next&&<button className={button} disabled={busy} onClick={()=>void load(page.next)}>{t("next")}</button>}
-  </section>;
+  </section></AssessConsent>;
 }
 function PracticalMount({attempt,leave}:{attempt:string;leave:()=>void}){
   const [port,setPort]=useState<ReturnType<typeof practicalPort>|null>(null);
@@ -99,6 +99,6 @@ function TrackSelection(){
   // Changing track remounts its isolated runner. Native navigation protects unacknowledged drafts.
   return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
 }
-export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<AssessConsent key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><AssessView/></AssessConsent>:<p className="mt-6">{t("approved")}</p>;}
+export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><AssessView/></div>:<p className="mt-6">{t("approved")}</p>;}
 
 function AssessView(){const history=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("history")==="1",()=>null);return history===null?null:history?<HistoryPanel/>:<TrackSelection/>;}
