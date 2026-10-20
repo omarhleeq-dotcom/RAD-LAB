@@ -1,6 +1,6 @@
 # ربط Assess المحلي — Node24
 
-هذه حزمة مكتبة خاصة قابلة للمراجعة، بلا executable عامل أو HTTP endpoint أو timer أو binding حي. [التقرير](ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md) يفصل الفحوص عن الأدلة الحية؛ [السياسة](ASSESS_RETENTION_POLICY.md) و[S-ASSESS-15](DECISIONS.md#assess-retention-owner-2026-10-20) حاكمتان.
+هذه حزمة مكتبة وentrypoint محدودة وحاوية **محلية** قابلة للمراجعة، بلا HTTP endpoint أو timer أو binding حي. [تقرير المكتبة](ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md) و[تقرير الحاوية](ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md) يفصلان الفحوص عن الأدلة الحية؛ [السياسة](ASSESS_RETENTION_POLICY.md) و[S-ASSESS-15](DECISIONS.md#assess-retention-owner-2026-10-20) حاكمتان.
 
 ## المسار المختار وحدوده
 
@@ -15,7 +15,29 @@ npm ci
 node scripts/assess/build-runtime.mjs
 ```
 
-الأمر يبني `assess-runtime.cjs` وpackage.json داخل مجلد مؤقت جديد `radlab-assess-build-*` ويطبع مساره وruntimeOrLaunchVerified=false. يستعمل esbuild مع target=node24 ويضم pg والمصحح والبيانات اللازمة، دون node-loader المرجعي أو source maps. يثبت البناء سائق pg JavaScript، ويرفض React/Next/Zustand في الرسم. ملف المكتبة يُستورد بلا credential أو اتصال؛ لا main أو scheduler أو process signal handler. هذه حزمة بناء محلية وليست release artifact منشورًا أو نظام أرشفة/نسخ. لا bundle أو private keys أو ملفات مؤقتة في Git.
+الأمر يبني `assess-runtime.cjs` و`assess-job.cjs` و`job-main.mjs` وDockerfile وpackage.json داخل مجلد مؤقت جديد `radlab-assess-build-*` ويطبع مساره وruntimeOrLaunchVerified=false. يستعمل esbuild مع target=node24 ويضم pg والمصحح والبيانات اللازمة، دون node-loader المرجعي أو source maps. يثبت البناء سائق pg JavaScript، ويرفض React/Next/Zustand في الرسم. ملفا المكتبة يُستوردان بلا credential أو اتصال؛ entrypoint منفصلة، ولا scheduler. الحاوية تنسخ assess-job.cjs وjob-main.mjs فقط وتعمل بغير root، من صورة Node24.19.0-bookworm-slim مثبتة بـdigest داخل runtime.Dockerfile. هذه حزمة بناء محلية وليست release artifact منشورًا أو نظام أرشفة/نسخ. لا bundle أو private keys أو ملفات مؤقتة في Git.
+
+## entrypoint المحدودة والحاوية
+
+`server-job` يعيد runAssessJobs نفسها مرة واحدة بـlimit=1 وconnections=1، ثم ينتظر close. `job-main.mjs` ترفض flags، ولا تقرأ ملفًا قبل ASSESS_JOB_ENABLED=1 الصريح. إعداد خارجي واحد في `/run/secrets/assess-worker.json` بحد64KiB؛ الحقول الستة فقط host/port/database/user/password/ca، بلا connectionString أو هوية مستخدم أو fallback. لا سر في ENV/args أو build، ولا config حية أو secret mount أُعدت من هذه الدفعة. المفتاح المحلي للتفعيل لا يفتح launch_gate ولا يمنح إذن تشغيل.
+
+تسجل SIGTERM/SIGINT قبل قراءة الملف، وتتوقف عن claim التالية وتنتظر الجاري وhealth ثم close، دون إلغاء RPC جارٍ. `assess-job/1` يخرج0 مع COMPLETE فقط، أو1 عند configuration/unavailable/grading_uncertain/cleanup_failed، أو130 عند توقف تعاوني. المخرجات counters منقحة بعد تحقق العدد فقط؛ غياب/فشل رد SQL لا يولد counters صفرية. عند فشل finish قد يعني COMMIT نجح؛ counts.failed عدم يقين تنفيذ، لا علامة صفر أو غياب نتيجة. لا stdout للمستند أو claim أو config أو raw errors.
+
+ابنِ الصورة من **مجلد الإخراج المطبوع وحده** عبر Docker محليًا و`--network=none` للبناء؛ لا تستخدم checkout كله كسياق. runtime.Dockerfile بلا RUN/npm/network steps، وENTRYPOINT بصيغة exec تجعل Node PID1. التشغيل المحلي بلا إعداد يقصد به STOP/configuration وخروج1. لا أوامر نشر أو push registry أو gcloud أو Cloud Build في هذا الدليل. Docker المحلي اختُبر بغير root وfilesystem للقراءة فقط وnetwork=none، وفُحص خلو /app من checkout/مكتبات QA والأسرار. هذا لا يثبت صلاحيات mount الفعلية لـSecret Manager على Google؛ يلزم إثبات قراءة non-root للسر المخصص دون توسيع كشفه قبل ربط حي.
+
+هذه الحزمة لا تضع task count/parallelism/retries/schedule في Google. تبقى قيم1/1/0 في الخطة مقترحات إعداد خارجي، وتعدد executions مستقل عن parallelism؛ لا وعد بسعة أو تكلفة. مهلة Cloud Run للإيقاف قد تنتهي قبل معاملة60ثانية: لا ضمان لإتمامها في10ثوانٍ ولا تغيير مهلة SQL/lease لإخفاء ذلك.
+
+## شاهد العمليات الحقيقي المحلي
+
+```sh
+ASSESS_POSTGRES_MANIFEST=/tmp/radlab-job-postgres/package.json node --import ./scripts/assess/node-loader.mjs scripts/assess/job-process-rehearsal.mjs --synthetic-disposable
+```
+
+حزم QA خارج المستودع كما في دليل العمليات: embedded-postgres@18.4.0-beta.17 وpg@8.23.1، Linux x64 غير root وNode24. الشاهد يعيد openLocalDatabase بقواعد جديدة فقط، يرفض كل flags/وجهة إضافية، ويمرر socket الخاص إلى child محلية عبر IPC؛ لا URL/DSN أو سر مزود أو أدوات حسابين. الطفل يستخدم lifecycle الفعلية المجمعة، مع نقل pg/Unix-socket اصطناعي تحت assess_worker، **ولا يستخدم TLS binding الإنتاجية**. Auth.uid وv2 بيانات fixture محلية، لا JWT أو موافقة حساب حقيقي.
+
+SIGTERM/SIGINT أثناء finish تنتظران COMMIT ثم health/close. SIGKILL قبل COMMIT يترك التفاصيل بلا نتيجة حتى استرداد lease؛ وبعد COMMIT وقبل عودة الإقرار تبقى نتيجة واحدة بلا تفاصيل ولا تصحيح جديد. يقرأ الأب من اتصال مستقل مع قفل ينتظر انتهاء المعاملة، بلا polling. يشمل retry_at وrecover الصريحة وحد السبعة أيام ورفض token قديم والدرجة المثبتة وخلو Practice/events/feedback. العمر والـlease يُعدلان اصطناعيًا محليًا، لا انتظار مدة حقيقية أو اختبار provider.
+
+الناتج `assess-job-process/1` أكواد وأسماء checks وcleanup وruntimeOrLaunchVerified=false فقط. cleanup يتلف cluster الطبيعي؛ قتل الشاهد الأب/المضيف قسرًا قد يترك بقايا، وتتبع إجراءات التنظيف المحددة في دليل العمليات، لا wildcard أو ادعاء finally عند SIGKILL. اختبار PID1 داخل Docker يستخدم worker محاكى منفصلًا، ولا يثبت PID1+PostgreSQL/TLS أو Google معًا. التفاصيل والإخفاقات المصححة في تقرير الحاوية.
 
 ## منفذ العامل
 

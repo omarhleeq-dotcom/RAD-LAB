@@ -1,15 +1,15 @@
-# التسليم الحالي — اختيار Cloud Run لحزمة Assess
+# التسليم الحالي — حاوية Assess المحلية لـCloud Run Jobs
 
 ## نقطة البداية
 اقرأ [AGENTS](../AGENTS.md)، وشغّل docs:context مع تحقق GitHub لأحدث main و#96 وفحوص كل رأس مقصود، ثم status:summary لـRAD-056. [project-status](project-status.md) مصدر الحالة الوحيد. تابع checkout المعزول؛ لا worktree/subagents أو QA ناجحة معادة بلا تغير ذي صلة.
 
 ## المنجز
-جُهزت [مكتبة Node24 المحلية](ASSESS_RUNTIME_LOCAL.md) لنقل RPC العامل المحدود عبر PostgreSQL/TLS، مع إعادة استخدام server-service وrunAssessJobs وmaintain والمصحح وlease/recovery والحذف الذري. المستخدم يبقى Supabase Auth/Data API بهوية JWT المتحقق منها لدى المزود؛ لا وسيط مستخدم جديد أو admin key باسمه. [تقرير الربط](ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md) يحفظ الفحوص وحدود محاكاة النقل والمكتبة مقابل المزود الحي. الحزمة داخل المسودة، وليست عاملًا أو schedule أو نشر runtime.
+اختيار [Google Cloud Run](DECISIONS.md#assess-cloud-run-owner-2026-10-21) محفوظ. أُعدت حاوية Node24 خاصة بغير root وentrypoint تنفذ runAssessJobs مرة واحدة بحد1 ثم تغلق النقل القائم، دون HTTP أو schedule أو purge/recovery مكررة. [الدليل](ASSESS_RUNTIME_LOCAL.md) و[تقرير الحاوية](ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md) يحفظان بناء الصورة المحلي ورفض الإعداد وتنقيح المخرجات واختبارات SIGTERM/SIGINT/القتل وCOMMIT. لا سر أو اتصال مزود في الصورة.
 
 ## الخطوة التالية
-اختار المالك [Google Cloud Run](DECISIONS.md#assess-cloud-run-owner-2026-10-21). [خطة المطابقة](ASSESS_CLOUD_RUN_PLAN_2026-10-21.md) تقترح Jobs محدودة دون HTTP، وتوثق فجوة SIGTERM/القتل مقابل مهلة SQL. التالي تجهيز container وentrypoint محليين يعيدان runAssessJobs نفسها، واختبار الإيقاف/القتل وفقد الإقرار والـlease دون تخفيف المهل أو إعادة محاولة عمياء. لا إعادة سؤال اختيار المزوّد أو النسخة. لم يُبن container أو يبدأ عامل من تثبيت القرار.
+مراجعة الحزمة والأدلة، ثم تحديد project/region والتكلفة ومسؤول التشغيل وIAM والسر وCA وlogin ومسار الشبكة/ACL والإلغاء والتنبيه ضمن نطاق ربط خارجي مستقل. لا موارد أو APIs/فوترة أو نشر/تشغيل عامل أو schedule أُعدت. قيم tasks/parallelism/retries في الخطة مقترحات غير مطبقة. لا إعادة سؤال المزوّد أو النسخة أو إعادة QA ناجحة بلا تغير.
 
-ثبت نجاح CI وDeploy Pages لرأس حزمة الربط السابق نفسه؛ تفاصيل الرأس وروابط النتائج في خطة المطابقة، ولا هاتف جديد أو قبول حي. حزمة البناء منفصلة عن binding والنشر والعامل والجدولة والمراقبة الحية؛ project/region والتكلفة ومسؤول التشغيل وIAM/السر/TLS/ACL والإلغاء ما زالت بوابات ربط مستقل.
+فحص PID1 داخل Docker استخدم worker محاكى، وشاهد القتل استخدم PostgreSQL محلية باتصالات مستقلة ونقل Unix socket بلا TLS. لا يثبتان Google/JWT/TLS أو PID1+المزوّد معًا، ولا ضمان تسوية معاملة60ثانية خلال نافذة إنهاء10ثوانٍ. يبقى lease/الاسترداد مرجع عدم اليقين دون retry عمياء أو صفر مصطنع. تحقق نتائج رأس #96 الجديد مستقل؛ نجاح Pages لا ينشر runtime ولا يثبت هاتفًا جديدًا.
 
 ## الأدلة المكتملة وحدودها
 وصل [صف SQL النهائي](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result) و[زوج retention المغلق PASS المتطابق](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result). لا إعادة installer/preinstall/postinstall أو أدوات الحسابين لمجرد شاهد. runtimeOrLaunchVerified=false مقصودة؛ القراءات ورفض الوصول المباشر لا تثبت قبول v2 أو start/close/disable/تصحيح/صيانة/حذف حي. اختبار SQL اصطناعي تحت login محدود ليس شبكة pg/TLS أو JWT مزود؛ v1 لا تنوب عن v2 ولا قبول نيابة عن أحد. هاتف F يخص مرحلته.
