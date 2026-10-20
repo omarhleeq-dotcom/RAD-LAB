@@ -613,3 +613,38 @@ pilot-v1:79416f28ed75826571ed08c6bc9732e5278280ffa0a48437830c2b0d685a054d
 5. بعد قراءة النتيجة نراجع معًا شروط النسخة قبل التغيير والاسترداد والمزود وإجراء التطبيق الإضافي المناسب، ثم التحقق بعده والخدمة المغلقة قبل أي إثبات واجهة. لا استثناء نسخ موروث للعملية الجديدة، ولا فتح gate أو نشر runtime/عامل/schedule أو تغيير PR state. لا إنشاء موافقة/محاولة حقيقية لإنتاج شاهد.
 
 هذا حاجز يدوي مقروء، لا installer أو دورة restore أو قبول حي. لا يغير سياسة S-ASSESS-15 أو Practice؛ بقية بوابات O106/O108 والتشغيل والنسخ والاستعادة مستقلة.
+
+
+<a id="assess-retention-preinstall-owner-result"></a>
+### نتيجة فحص الاحتفاظ الحالية — الكتابة متوقفة للنسخة
+
+أرسل المالك صف assess-retention-preinstall/1 مطابقًا: جميع مؤشرات baseline والمخطط والمصدر والصلاحيات وtrigger والبوابة المغلقة وغياب الإضافة true؛ manual_review_required=true، وapply_authorized وbackup/recovery/provider/runtime غير مثبتة (false). [التقرير](ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md#retention-preinstall-owner-result) يحفظ الصف وحدوده. انتهى انتظار الفحص المقروء؛ لا تعِده أو تشغّل أدوات حسابين لمجرد توفير شاهد آخر.
+
+أفاد المالك بأنه لا توجد نسخة حديثة مثبتة أو لا يعرف؛ **لا SQL كتابة الآن**. الخطوة التالية نسخة حديثة مشفرة قبل تغيير القاعدة على المشروع نفسه، بمراجعة جهاز وأدوات التنفيذ أولًا، ثم تحقق سلامة الأرشيف وحفظ المفتاح محليًا وتجربة الاستعادة المعزولة والمتطلبات ذات الصلة. لا ترفع dump أو كلمات مرور إلى Git/المحادثة. دليل §8 تاريخي لنسخته ومخططه؛ لا يثبت B–F الحالية ولا يجيز إعادة حزمة منح/استعادة قديمة أو الكتابة فوق مشروع اختبار قائم.
+
+نسخة ما قبل التغيير لا تمنح وحدها اعتماد تشغيل Assess أو restore بعد السياسة؛ يلزم حجر الوصول وإعادة الآثار الأحدث وفحص الصلاحيات، والتحقق المستقل من نسخ المزود. لا يستعمل استثناء F السابق لهذه العملية، ولا يغير PILOT_SCHEMA_VERIFIED أو pins أو launch_gate من نتيجة التشخيص. بقية بوابات السياسة والتشغيل وO108 محفوظة.
+
+
+<a id="assess-retention-windows-backup-readiness"></a>
+### Windows — فحص الأدوات قبل نسخة ما قبل التغيير
+
+أكد المالك Windows وأن تطبيق SQL مطلوب على الأصلية **vlacestfruxooznrcjqc**. هذا هو الهدف المقصود أصلًا؛ النسخة المشفرة أرشيف للاسترجاع قبل تعديل الأصلية وليست وجهة تطبيق الإضافة. لا ربط للموقع بمشروع آخر أو استبدال الإنتاج بنسخة.
+
+الخطوة الحالية في PowerShell تتحقق من وجود الأدوات فقط؛ لا اتصال بقاعدة أو أسرار أو تثبيت برامج أو SQL:
+
+```powershell
+$radlabToolNames = 'node', 'npm', 'npx', 'docker', 'supabase'
+foreach ($radlabToolName in $radlabToolNames) {
+    [pscustomobject]@{
+        Tool = $radlabToolName
+        Available = [bool](Get-Command $radlabToolName -ErrorAction SilentlyContinue)
+    }
+}
+$radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
+[pscustomobject]@{
+    Tool = '7-Zip'
+    Available = ([bool]$radlabSevenZip -or (Test-Path "$env:ProgramFiles\7-Zip\7z.exe"))
+}
+```
+
+أرسل Tool/Available فقط. false لـsupabase قد يعني أن CLI تُشغل عبر npx، وfalse لـ7-Zip قد يعني أنها في مسار مخصص؛ ليست النتيجة إذن تثبيت أو إعادة تهيئة تلقائيًا. بعد تحديد المتوفر تراجع إصدارات الأدوات وتشغيل Docker وطريقة الاتصال الآمنة وحفظ الأرشيف المشفر والتحقق منه. لا تشارك ملفات اتصال أو مفاتيح/كلمات مرور أو dumps. لم يُنفذ هذا المقطع على جهاز المالك بعد.
