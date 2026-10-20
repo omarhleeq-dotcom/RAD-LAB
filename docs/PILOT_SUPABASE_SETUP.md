@@ -680,3 +680,9 @@ $radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
 4. أرسل فقط السطرين البادئين **RADLAB_ASSESS_RETENTION_CLOSED_CHECK**. المتوقع contract=assess-retention-closed-service/1، ودورا owner/participant، وoutcome=PASS وpair متطابق، وruntimeOrLaunchVerified=false. زوج F لا ينوب عنه حتى للحسابين نفسيهما. عند STOP أرسل السطر المنقح ونتوقف؛ لا تعِد SQL أو تتجاوز الحارس.
 
 نتيجة PASS تثبت الطلبات المحدودة من جلستي المالك والمشارك حسب الأداة، ولا تثبت مسارات تشغيل حية أو worker/maintenance أو عزل نتائج حقيقية قائمة أو نشرًا أو طبًا. لا موافقة تُسجّل بالنيابة، ولا إعدادات إنتاج أو marker تتغير. النسخة الشاملة ما زالت مؤجلة حسب قرار المالك؛ بقية البوابات مستقلة.
+
+
+<a id="assess-retention-closed-pair-owner-result"></a>
+### وصل الزوج المطابق — لا إعادة SQL أو الحسابين
+
+وصل owner=PASS وparticipant=PASS لعقد assess-retention-closed-service/1، وبنفس pair، عند00:04و00:05 يوم2026-10-21 بتوقيت عمّان؛ runtimeOrLaunchVerified=false في كليهما. [النتيجتان وحدودهما](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result) محفوظتان. انتهى إجراء الحسابين أعلاه؛ لا تكرره لمجرد شاهد إضافي. هذا يضيف دليل الطلبات المحدودة من الجلستين إلى صف SQL السابق؛ لا قبول v2 نيابة عن أحد أو start/عامل/صيانة/حذف حي أو نشر. التالي مراجعة الحزمة وأدلتها، مع بقاء launch_gate مغلقة وفق آخر صف SQL، والنسخ والاسترداد وبقية بوابات التشغيل والنشر مستقلة. لا marker/attestation أو إعدادات إنتاج تتغير، والنسخة الشاملة مؤجلة إلى نهاية العمل بتوجيه المالك.
