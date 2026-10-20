@@ -464,3 +464,14 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-c.mjs
 [خطة staging](ASSESS_STAGING_PLAN.md) تحدد فصل المعاينة عن الإنتاج وعقد ربط Node والعامل والجدولة والقبول الاصطناعي، وأوامر preflight وcatalogue. هذه حزمة محلية مأذونة، وليست إنشاء موارد أو إذن تطبيق SQL أو نشر. workflow الحالي يشارك متغيرات Supabase بين PR وmain؛ لا تستبدلها بقيم staging. المتغيرات STAGING والبيئة ومشروع Pages المستقل المقترحة لم تُنشأ ولم يُعدل workflow؛ إثبات حارس النشر وبوابة launch يبقيان كما هما.
 
 [`staging-preflight.mjs`](../scripts/assess/staging-preflight.mjs) لا يتصل بأي عنوان ولا يقرأ مفاتيح أو يكتب إثباتًا؛ يطبع جرد المصادر وبصماتها وdeploymentReady=false. [`assess-staging-ready.sql`](../supabase/checks/assess-staging-ready.sql) إضافي للقراءة فقط، ولا يدخل تلقائيًا في frontend-schema أو يغير بصمة النشر. يثبت catalogue/ACL عند تشغيله على البيئة المأذونة، لا قيمة launch_gate أو JWT/runtime؛ يتبعه فحص D المغلق القائم وفق الخطة. لا تنسخ bootstrap Auth من اختبارات PGlite إلى Supabase الحقيقي، ولا تستخدم checker B المثبت على مشروع الإنتاج لتجربة staging.
+
+
+### فحص خدمة D والبوابة المغلقة على الأصلية — 2026-10-20
+
+أبلغ المالك نجاح حزمة C/D ثم أرسل نجاح جرد B/C/D والصلاحيات وفحص D وlaunch_gate_closed؛ [سجل التجهيز](ASSESS_STAGING_PLAN.md#فحصا-ما-بعد-التطبيق-وخدمة-d-المغلقة) يحفظ النتيجة وحدودها واستثناء النسخة للعملية. لا تعِد SQL أو فحص B-only، ولا تعتبر هذا تشغيلًا حيًا للمحاولات أو العامل.
+
+فحص [`assess-d-closed-service-check.js`](../scripts/pilot/assess-d-closed-service-check.js) مستقل عن فحص B السابق، وموجه فقط إلى المشروع الأصلي vlacestfruxooznrcjqc. يشغله المالك من Console تطبيق RAD-LAB المسجل دخوله على اللابتوب، مرة بحساب owner approved ثم بعد الخروج/الدخول بحساب participant approved مختلف. لا يغير التطبيق أو إعدادات المتصفح أو قاعدة البيانات؛ POST محصور في RPCs قراءة. يحتاج الجلسة الحالية، ومفتاح sb_publishable_ العام من إعدادات API، وUUIDالحساب الآخر من Auth Users؛ أدخلها محليًا في المطالبات ولا ترسل UUID أو بريدًا أو مفتاحًا أو JWT في المحادثة. لا كلمة مرور أو service_role أو sb_secret_.
+
+المطلوب سطرا `RADLAB_ASSESS_D_CLOSED_CHECK` فقط: outcome=PASS، contract=assess-d-closed-service/1، دورا owner/participant وpair متطابق، وruntimeOrLaunchVerified=false. الصفحات الفارغة صحيحة؛ لا تنشئ محتوى أو إسنادًا أو محاولة لإنجاح الفحص. يتحقق من Auth/profile، وقائمة المسند/metadata المحتوى المحدودة، ورفض المشارك لإدارة المحتوى، ورفض قراءة مستند خاص/health العامل، وجداول C/D المباشرة والزائر. عند STOP أرسل السطر المنقح وحده؛ لا console/network/localStorage كاملة أو تعديل منح دون تشخيص. اختبارات الأداة VM اصطناعية ضمن docs:test، لا دليل Supabase حي.
+
+لا start/command/قراءة محاولة أو submission/install/worker maintenance في الأداة. النجاح يثبت مسارات الخدمة المغلقة فقط، ولا تشغيل runner أو الحفظ/الانقطاع/التعريض/التسليم/التصحيح في الإنتاج. بعد نتائج الحسابين تُراجع بقية أدلة العقد قبل حساب إثبات النشر الصحيح؛ الأداة لا تكتب PILOT_SCHEMA_VERIFIED أو pins ولا تعيد نشرًا أو تفتح launch_gate. لا إغلاق O106/O108 أو انتقال E.
