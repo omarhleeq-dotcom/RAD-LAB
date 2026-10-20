@@ -584,3 +584,19 @@ pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f
 4. أرسل فقط سطري RADLAB_ASSESS_F_CLOSED_CHECK: المطلوب contract=assess-f-closed-service/1 وoutcome=PASS ودورا owner/participant وpair متطابق وruntimeOrLaunchVerified=false. عند STOP أرسل السطر المنقح فقط؛ لا تغيّر grants لتجاوز الخطأ.
 
 الأداة قراءة فقط: history_page_v1 بحد1 مع whitelist الحجب، وconsent_v1(p_version:null) لقراءة الحالة فقط، ورفض الزائر وقراءة جدولي consents/results المباشرة. لا تسجيل موافقة أو start/command/read-session/content/worker/maintenance، ولا كتابة في Practice/events أو localStorage أو طباعة تفاصيل النتائج. القوائم الفارغة وaccepted=false صحيحان؛ لا تُنشئ محتوى/محاولة أو توافق نيابة عن أحد لتوفير شاهد. لا يلزم نشر واجهة F لتشغيل السكربت المستقل، ولا تُعاد أداة E. نجاحه دليل المسارات المحددة فقط، لا عزل صفوف نتائج حقيقية أو حفظ/انقطاع/تسليم/تصحيح/runtime حيًا. لا تغيير PILOT_SCHEMA_VERIFIED قبل الزوج ومراجعة العقد، والبوابة وسائر O106/O108/الاسترداد مستقلة.
+
+
+<a id="assess-f-attestation"></a>
+### نجاح زوج F المغلق وإثبات مخطط الواجهة
+
+ورد owner=PASS وparticipant=PASS بعقد assess-f-closed-service/1 وpair متطابق، وruntimeOrLaunchVerified=false عمدًا في السطرين. [التقرير](ASSESS_F_REPORT_2026-10-20.md#f-closed-pair-attestation) يحفظ توقيتَي الأداة وعمّان وحدود الدليل. مع SQL والجرد وفحص F السابق اكتملت مراجعة توافق المخطط لمسارات F المغلقة المحددة؛ لا إعادة SQL أو أدوات الحسابين، ولا استنتاج runtime/تصحيح أو موافقة/استرداد أو قبول حي.
+
+لم تتغير مصادر عقد pilot-through-assess-f/1 منذ مراجعة الحزمة؛ راجع الوكيل required migrations/checks وحدود المتصفح ثم حسب marker بالأمر القائم وبحساب SHA-256 مستقل مطابق. للأصلية **vlacestfruxooznrcjqc فقط**:
+
+```text
+pilot-v1:79416f28ed75826571ed08c6bc9732e5278280ffa0a48437830c2b0d685a054d
+```
+
+في GitHub Settings → Secrets and variables → Actions → Variables، طابق NEXT_PUBLIC_SUPABASE_URL مع `https://vlacestfruxooznrcjqc.supabase.co`، ثم حدّث **PILOT_SCHEMA_VERIFIED وحدها** بالقيمة أعلاه؛ لا تغير URL/المفتاح العام أو pins. أعد Deploy Pages لآخر رأس مسودة #94 المقصود وتحقق من CI وDeploy لذلك الرأس ثم عرض الهاتف ضمن الحالة المأذونة. لا إفادة تحديث Variable أو نجاح نشر F بعد، ولا كتابة إعدادات من الوكيل. لا تنشئ موافقة أو محتوى أو محاولة لتوفير شاهد؛ البوابة مغلقة والتشغيل ما زال يحتاج إذنًا وتجهيزًا مستقلين. لا نشر runtime/عامل/schedule أو ready/merge هنا.
+
+هذا الإثبات شهادة توافق يدوية للمشروع ومحتويات المتطلبات فقط؛ لا حارس يتصل بالقاعدة أو يتحقق من runtime/launch/recovery. نتيجة CI للرأس الأحدث تتحقق مستقلة، وفشل Require verified pilot schema قبل تحديث الإثبات متوقع ولا يُعالج بتغيير الحارس. O106/O108 والمراقبة والموافقة والاحتفاظ والنسخ والاستعادة مستقلة؛ لا نقل للقيمة إلى مشروع آخر أو بعد تغير المخطط/المنح/restore دون تحقق مناسب.

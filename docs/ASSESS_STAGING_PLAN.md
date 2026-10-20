@@ -220,3 +220,8 @@ F تضيف سجلًا محدودًا وموافقة مستقلة وحاجز إن
 ### اكتمال جرد SQL F ومتابعة الخدمة المغلقة
 
 ورد من المالك نجاح جرد المخطط وفحص F بعد COMMIT، مع launch_gate_closed=true وruntime_or_launch_verified=false. لا إعادة SQL أو جرد قديم بلا تغير؛ [تقرير النتائج](ASSESS_F_REPORT_2026-10-20.md#f-sql-owner-results) يحفظ نطاق الدليل المنقول. المتبقي [أداة F المغلقة الجديدة](PILOT_SUPABASE_SETUP.md#assess-f-closed-service) بحسابَي owner/participant مع pair متطابق، دون أدوات B/C/D/E أو تسجيل موافقة/محتوى/محاولات أو worker/maintenance. بعد الزوج تُراجع أدلة توافق عقد الواجهة قبل إثبات F، ولا تغيير Variables لتجاوز الحارس. SQL/الخدمة المحدودة ليسا تشغيلًا حيًا؛ runtime/العامل/الجدولة/المراقبة/الموافقة/الاحتفاظ/النسخ والاستعادة وO106/O108 والهاتف مستقلة والبوابة مغلقة.
+
+
+### قبول زوج F المغلق وإثبات توافق المخطط
+
+وصل PASS من owner وparticipant بعقد assess-f-closed-service/1 وبـpair متطابق وruntimeOrLaunchVerified=false عمدًا. [التقرير](ASSESS_F_REPORT_2026-10-20.md#f-closed-pair-attestation) يحفظ الدليل المنقول؛ لا إعادة SQL أو أداة F/E دون تغير ذي صلة. روجعت متطلبات الواجهة وحُسب إثبات F المطابق للأصلية دون تغيير guard/pins. المتبقي [مطابقة وجهة البناء وتحديث PILOT_SCHEMA_VERIFIED وحدها](PILOT_SUPABASE_SETUP.md#assess-f-attestation) عند المالك، ثم إعادة Deploy والتحقق من CI/النشر للرأس نفسه والهاتف ضمن الحالة المأذونة. لا نتيجة نشر أو تحديث إعدادات وصلت بعد. القيمة شهادة توافق المخطط فقط؛ تبقى gate مغلقة وruntime/recovery غير متحققين وبوابات التشغيل وO106/O108 مستقلة، ولا إنشاء موافقة/محتوى/محاولات للشاهد أو ready/merge.
