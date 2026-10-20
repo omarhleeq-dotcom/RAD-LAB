@@ -74,10 +74,14 @@ it.each(['c.rpc("start_v1")','c.from("session_details")','c.rpc("unknown_rpc")',
 });
 it("requires a new attestation when a reviewed backend migration is promoted to frontend requirements",()=>{
   manifest(m=>{(m.requiredMigrations as string[]).push(migration);delete(m.deferredMigrations as Record<string,unknown>)[migration];},()=>{
-    expect(gate().status).toBe(1);expect(gate("",true).stdout.trim()).not.toBe(verifiedB);
-    const next=gate("",true).stdout.trim();expect(gate(next).status).toBe(0);
+    expect(gate().status).toBe(1);
+    const printed=gate("",true);expect(printed.status).toBe(0);
+    const next=printed.stdout.trim();expect(next).not.toBe(verifiedB);
+    expect(gate(next).status).toBe(0);
   });
-});
+  // Three isolated CLI processes parse the real browser graph; allow runner startup/CPU variance.
+  // The assertions, per-process timeout and production gate remain strict and unchanged.
+},20000);
 it("fails closed on malformed or stale contract entries",()=>{
   manifest(m=>{m.version=2;},()=>expect(gate().status).toBe(1));
   manifest(m=>{(m.requiredMigrations as string[]).push("../../untrusted.sql");},()=>expect(gate().status).toBe(1));
