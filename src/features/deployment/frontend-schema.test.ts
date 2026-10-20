@@ -1,0 +1,91 @@
+import { cpSync,existsSync,mkdtempSync,readFileSync,rmSync,writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join,resolve } from "node:path";
+import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { afterAll,beforeAll,expect,it } from "vitest";
+
+// Separate tests: existing schema-gate expectations remain unchanged.
+const origin="https://vlacestfruxooznrcjqc.supabase.co";
+const key="sb_publishable_synthetic_local_test_123456";
+const verifiedB="pilot-v1:26b88b9dd0b1aa96e0b25ea9bb16c358c5710fb2c89a773e4a55c995720b4df5";
+const migration="20261020000700_assess_lifecycle.sql";
+let root:string;
+beforeAll(()=>{
+  root=mkdtempSync(join(tmpdir(),"radlab-frontend-schema-"));
+  for(const dir of ["src","supabase","scripts/pages"])cpSync(dir,join(root,dir),{recursive:true});
+},30000);
+afterAll(()=>rmSync(root,{recursive:true,force:true}));
+function gate(marker=verifiedB,print=false){
+  const script=`import {runSchemaGate} from ${JSON.stringify(new URL("../../../scripts/pages/pilot-schema-gate.mjs",import.meta.url).href)};try{console.log(runSchemaGate({NEXT_PUBLIC_SUPABASE_URL:${JSON.stringify(origin)},NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:${JSON.stringify(key)},PILOT_SCHEMA_VERIFIED:${JSON.stringify(marker)}},${print},${JSON.stringify(root)}));}catch(e){console.error(e.message);process.exitCode=1;}`;
+  return spawnSync(process.execPath,["--input-type=module","-e",script],{encoding:"utf8",timeout:15000});
+}
+function edit(path:string,change:(original:string)=>string,work:()=>void){
+  const file=join(root,path),original=existsSync(file)?readFileSync(file,"utf8"):null;
+  writeFileSync(file,change(original??""));
+  try{work();}finally{if(original===null)rmSync(file);else writeFileSync(file,original);}
+}
+function manifest(change:(m:Record<string,unknown>)=>void,work:()=>void){
+  edit("scripts/pages/frontend-schema.json",s=>{const m=JSON.parse(s);change(m);return JSON.stringify(m);},work);
+}
+it("preserves the exact B attestation and accepts the current UI without installing C",()=>{
+  expect(gate().status).toBe(0);expect(gate("",true).stdout.trim()).toBe(verifiedB);
+});
+it("rejects changed required SQL or readiness checks against the existing attestation",()=>{
+  for(const file of ["supabase/migrations/20261020000600_assess_assignments.sql","supabase/checks/training-ready.sql","supabase/checks/comparison-ready.sql"])
+    edit(file,s=>s+"\n-- synthetic edit\n",()=>expect(gate().status).toBe(1));
+});
+it("rejects unclassified SQL and edits to a deferred migration instead of ignoring future SQL",()=>{
+  edit("supabase/migrations/20261020000800_unknown.sql",()=>"select 1;",()=>expect(gate().stderr).toContain("Unreviewed deferred migration"));
+  edit(`supabase/migrations/${migration}`,s=>s+"\n-- synthetic backend edit",()=>expect(gate().status).toBe(1));
+});
+it("permits another explicitly reviewed dormant backend without changing the frontend marker",()=>{
+  const future="20261020000800_future_private.sql";
+  edit(`supabase/migrations/${future}`,()=>"create table assess.future_private(id uuid);",()=>{
+    manifest(m=>{(m.deferredMigrations as Record<string,unknown>)[future]={sha256:createHash("sha256").update(readFileSync(join(root,"supabase/migrations",future))).digest("hex"),reason:"Synthetic dormant backend, never applied",serverModules:["src/features/assess/server-service.ts"]};},()=>expect(gate().status).toBe(0));
+  });
+});
+it("keeps unrelated presentation edits independent from the database attestation",()=>{
+  edit("src/features/positioning/ShoulderFigure.tsx",s=>s+"\n// synthetic presentation-only edit\n",()=>expect(gate().status).toBe(0));
+});
+it("rejects a modified DB boundary and detects a new direct RPC client",()=>{
+  edit("src/features/assess/admin-data.ts",s=>s+"\n// changed adapter requires review\n",()=>expect(gate().stderr).toContain("database boundary changed"));
+  edit("src/features/assess/NewClient.tsx",()=>`"use client";export function NewClient(c: {rpc:Function}){return c.rpc("start_v1");}`,()=>expect(gate().status).toBe(1));
+});
+it.each(["import","reexport","dynamic"])("rejects a runtime %s of deferred C even after pinning the UI boundary",kind=>{
+  const target=kind==="reexport"?'export {attemptService} from "./server-service";':kind==="dynamic"?'void import("./server-service");':'import {attemptService} from "./server-service";void attemptService;';
+  edit("src/features/assess/OwnerAssessPanel.tsx",s=>s+"\n"+target,()=>{
+    // Re-pinning a changed UI adapter must not silently enable server-only C.
+    manifest(m=>{
+      const pins=m.browserBoundaries as Record<string,string>;
+      pins["src/features/assess/OwnerAssessPanel.tsx"]=createHash("sha256").update(readFileSync(join(root,"src/features/assess/OwnerAssessPanel.tsx"))).digest("hex");
+    },()=>expect(gate().stderr).toContain("Deferred backend reached the frontend"));
+  });
+});
+it("rejects a literal C RPC even when the adapter source pin is updated",()=>{
+  edit("src/features/assess/admin-data.ts",s=>s.replace('name="group_write_v1"','name="start_v1"'),()=>{
+    manifest(m=>{(m.browserBoundaries as Record<string,string>)["src/features/assess/admin-data.ts"]=createHash("sha256").update(readFileSync(join(root,"src/features/assess/admin-data.ts"))).digest("hex");},()=>expect(gate().stderr).toContain("Deferred RPC used by frontend"));
+  });
+});
+it.each(['c.rpc("start_v1")','c.from("session_details")','c.rpc("unknown_rpc")','c.schema("assess").rpc("training_page_v1_with_comparison")','c.schema("assess").from("profiles")'])("rejects an API outside required SQL even after pinning: %s",call=>{
+    edit("src/features/assess/ExtraClient.tsx",()=>`"use client";export function ExtraClient(c: any){return ${call};}`,()=>{
+      manifest(m=>{(m.browserBoundaries as Record<string,string>)["src/features/assess/ExtraClient.tsx"]=createHash("sha256").update(readFileSync(join(root,"src/features/assess/ExtraClient.tsx"))).digest("hex");},()=>expect(gate().stderr).toContain("Frontend API missing from required SQL"));
+    });
+});
+it("requires a new attestation when a reviewed backend migration is promoted to frontend requirements",()=>{
+  manifest(m=>{(m.requiredMigrations as string[]).push(migration);delete(m.deferredMigrations as Record<string,unknown>)[migration];},()=>{
+    expect(gate().status).toBe(1);expect(gate("",true).stdout.trim()).not.toBe(verifiedB);
+    const next=gate("",true).stdout.trim();expect(gate(next).status).toBe(0);
+  });
+});
+it("fails closed on malformed or stale contract entries",()=>{
+  manifest(m=>{m.version=2;},()=>expect(gate().status).toBe(1));
+  manifest(m=>{(m.requiredMigrations as string[]).push("../../untrusted.sql");},()=>expect(gate().status).toBe(1));
+  manifest(m=>{(m.checks as string[]).push("../../untrusted.sql");},()=>expect(gate().status).toBe(1));
+  manifest(m=>{m.browserBoundaries={};},()=>expect(gate().status).toBe(1));
+});
+it("keeps the deployment gate ahead of upload with no bypass or SQL execution",()=>{
+  const workflow=readFileSync(resolve(".github/workflows/deploy-pages.yml"),"utf8");
+  expect(workflow.indexOf("run: node scripts/pages/pilot-schema-gate.mjs")).toBeLessThan(workflow.indexOf("name: Build static export"));
+  expect(workflow).not.toMatch(/continue-on-error|supabase db push|psql|--skip-schema/);
+});

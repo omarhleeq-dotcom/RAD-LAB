@@ -43,6 +43,8 @@ jobs:
       - name: Install
         if: steps.gate.outputs.enabled == 'true'
         run: npm ci
+      # Verify reviewed static-frontend requirements, not dormant server-only migrations.
+      # The contract rejects unknown SQL, changed DB boundaries and imports/calls into deferred backends.
       - name: Require verified pilot schema
         id: schema
         if: steps.gate.outputs.enabled == 'true'
@@ -95,10 +97,11 @@ jobs:
             const marker = '<!-- rad-lab-pages-preview -->';
             const lines = [marker, '**Cloudflare Pages preview**', ''];
             if (process.env.SCHEMA_OUTCOME === 'failure') {
-              lines.push('Preview deployment is blocked: the pilot database compatibility has not been verified for this project and migration contents. Follow docs/PILOT_SUPABASE_SETUP.md before setting PILOT_SCHEMA_VERIFIED. No new preview was deployed; previous preview links do not prove compatibility.');
+              lines.push('Preview deployment is blocked: the pilot database compatibility has not been verified for this project and the required frontend schema. Follow docs/PILOT_SUPABASE_SETUP.md before setting PILOT_SCHEMA_VERIFIED. No new preview was deployed; previous preview links do not prove compatibility.');
             } else {
               if (process.env.ALIAS_URL) lines.push(`- Branch preview: ${process.env.ALIAS_URL}`);
               if (process.env.DEPLOY_URL) lines.push(`- This commit: ${process.env.DEPLOY_URL}`);
+              lines.push('', 'This publishes the static frontend only. Backend migrations and workers are not deployed by this workflow.');
               lines.push('', `Commit \`${context.sha.slice(0, 7)}\`. Educational prototype, access may be restricted by Cloudflare Access.`);
             }
             const body = lines.join('\n');
