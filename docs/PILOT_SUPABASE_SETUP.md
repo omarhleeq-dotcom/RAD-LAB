@@ -408,6 +408,8 @@ SMTP/redirects ومفاتيح المشروع وإعدادات لوحة الخد�
 <a id="assess-b-setup"></a>
 ## Assess B — مخطط المجموعات والإسناد والتحقق التشغيلي
 
+**الحالة الأحدث:** المقاطع B/C/D التالية تسجل مراحلها التاريخية؛ أفاد المالك بنجاح تطبيق C/D على الأصلية، ثم catalogue والصلاحيات وفحص D والبوابة المغلقة وزوج خدمة D، ودُمج #92 مع نجاح CI وPages على main. لا تُعاد هذه الخطوات. E محلية فقط وفق [قسمها](#assess-e-local) و[تقريرها](ASSESS_E_REPORT_2026-10-20.md)؛ لا تستنتج جاهزيتها من أدلة C/D.
+
 الترحيل الإضافي `20261020000600_assess_assignments.sql` ينشئ schema مستقلة `assess` وجداول groups/memberships/versions/assignments/targets. لا يعدل public أو حسابات/بيانات/درجات Practice أو دوالها ومنحها. كل الجداول RLS default-deny بلا منح مباشرة حتى للمالك؛ واجهة المالك تتعامل مع RPCs في schema assess عبر جلسة المستخدم ومفتاح publishable المعتاد. SECURITY DEFINER ببحث فارغ، وفحص المالك والملكية قبل الكشف/الكتابة؛ قراءة metadata المسندة تتحقق من الاعتماد والاستهداف على كل طلب. لا مفاتيح/نتائج/إجابات Assess أو دور مشرف هنا.
 
 لا يُنفذ الترحيل أو أي إعداد مزود تلقائيًا. قبل إذن نشر/تجربة مستقلة: راجع O106 والموافقة/الاحتفاظ للبيانات الجديدة؛ خذ نسخة واستعادة مناسبة، وراجع catalogue/المشروع المطابق والترحيلات وتسلسلها واختبارات العزل. بعد إذن التنفيذ فقط يطبق المسؤول السلسلة على بيئة اختبار أولًا ثم المشروع المحدد؛ الترحيل غير idempotent ولا يُعدّل ملفه لإخفاء drift. إضافته تغير بصمة حارس التوافق القديم؛ لا تنقل إثبات PILOT_SCHEMA_VERIFIED قديمًا ولا تختلق إثباتًا جديدًا.
@@ -463,7 +465,7 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-c.mjs
 
 [خطة staging](ASSESS_STAGING_PLAN.md) تحدد فصل المعاينة عن الإنتاج وعقد ربط Node والعامل والجدولة والقبول الاصطناعي، وأوامر preflight وcatalogue. هذه حزمة محلية مأذونة، وليست إنشاء موارد أو إذن تطبيق SQL أو نشر. workflow الحالي يشارك متغيرات Supabase بين PR وmain؛ لا تستبدلها بقيم staging. المتغيرات STAGING والبيئة ومشروع Pages المستقل المقترحة لم تُنشأ ولم يُعدل workflow؛ إثبات حارس النشر وبوابة launch يبقيان كما هما.
 
-[`staging-preflight.mjs`](../scripts/assess/staging-preflight.mjs) لا يتصل بأي عنوان ولا يقرأ مفاتيح أو يكتب إثباتًا؛ يطبع جرد المصادر وبصماتها وdeploymentReady=false. [`assess-staging-ready.sql`](../supabase/checks/assess-staging-ready.sql) إضافي للقراءة فقط، ولا يدخل تلقائيًا في frontend-schema أو يغير بصمة النشر. يثبت catalogue/ACL عند تشغيله على البيئة المأذونة، لا قيمة launch_gate أو JWT/runtime؛ يتبعه فحص D المغلق القائم وفق الخطة. لا تنسخ bootstrap Auth من اختبارات PGlite إلى Supabase الحقيقي، ولا تستخدم checker B المثبت على مشروع الإنتاج لتجربة staging.
+[`staging-preflight.mjs`](../scripts/assess/staging-preflight.mjs) لا يتصل بأي عنوان ولا يقرأ مفاتيح أو يكتب إثباتًا؛ يطبع جرد المصادر وبصماتها وdeploymentReady=false. [`assess-staging-ready.sql`](../supabase/checks/assess-staging-ready.sql) كان في دفعة التحضير إضافيًا للقراءة فقط خارج frontend-schema. عند ربط E توسع جرده للإضافة المراجعة وصار ضمن checks المطلوبة؛ دليل C/D السابق لا يثبت catalogue E الحالي. يثبت catalogue/ACL عند تشغيله على البيئة المأذونة، لا قيمة launch_gate أو JWT/runtime؛ يتبعه فحص D المغلق القائم وفق الخطة. لا تنسخ bootstrap Auth من اختبارات PGlite إلى Supabase الحقيقي، ولا تستخدم checker B المثبت على مشروع الإنتاج لتجربة staging.
 
 
 ### فحص خدمة D والبوابة المغلقة على الأصلية — 2026-10-20
@@ -475,3 +477,21 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-c.mjs
 المطلوب سطرا `RADLAB_ASSESS_D_CLOSED_CHECK` فقط: outcome=PASS، contract=assess-d-closed-service/1، دورا owner/participant وpair متطابق، وruntimeOrLaunchVerified=false. الصفحات الفارغة صحيحة؛ لا تنشئ محتوى أو إسنادًا أو محاولة لإنجاح الفحص. يتحقق من Auth/profile، وقائمة المسند/metadata المحتوى المحدودة، ورفض المشارك لإدارة المحتوى، ورفض قراءة مستند خاص/health العامل، وجداول C/D المباشرة والزائر. عند STOP أرسل السطر المنقح وحده؛ لا console/network/localStorage كاملة أو تعديل منح دون تشخيص. اختبارات الأداة VM اصطناعية ضمن docs:test، لا دليل Supabase حي.
 
 لا start/command/قراءة محاولة أو submission/install/worker maintenance في الأداة. النجاح يثبت مسارات الخدمة المغلقة فقط، ولا تشغيل runner أو الحفظ/الانقطاع/التعريض/التسليم/التصحيح في الإنتاج. بعد نتائج الحسابين تُراجع بقية أدلة العقد قبل حساب إثبات النشر الصحيح؛ الأداة لا تكتب PILOT_SCHEMA_VERIFIED أو pins ولا تعيد نشرًا أو تفتح launch_gate. لا إغلاق O106/O108 أو انتقال E.
+
+<a id="assess-e-local"></a>
+### Assess E — تنفيذ محلي دون تطبيق على الأصلية
+
+إذن E يشمل البرمجة والفحوص والحفظ وPR مسودة فقط. [الترحيل الإضافي](../supabase/migrations/20261020000900_assess_practical_ui.sql) ينشئ practical_presentations خاصة بلا منح جداول، وقراءة/قائمة منفصلتين للمسار الكامل، وتثبيت عرض خادمي ذري. يوسع content_submit_v1 لقبول track الكامل مع نفس هوية المالك وحدود المرشحات وقفل الإصدارات. لا تعديل bytes ترحيلات B/C/D أو بيانات التدريب أو gate أو grants دور العامل العام؛ لا SQL حي منفذ أو جاهزية runtime مثبتة.
+
+مالك معتمد يرسل publication إنجليزية بعقد C، track/type=full-practical، وcaseRef/evaluator خاص مثبت، وitemMarks/review. مرشح مستقل غير available؛ لا تعديل نسخة مستعملة. `installPracticalContent(worker,version)` في [server-practical](../src/features/assess/server-practical.ts) يتحقق من C ومن دعم الأدوات/المشهد، ويولد whitelist من محددات الأدوات وقيم البداية وهندسة الرسم الظاهرة فقط، بلا rules/targets/tolerances/scoring أو مفاتيح. `content_install_practical_v1` يثبت publication والعرض والإتاحة ويحذف مستند المرشح ذريًا. استكمال المحاولة يحل نفس ref/version المثبتة، لا أحدث إصدار. O108 يلزم صلاحية المشهد والخلفية والمعايير والمصادر والترخيص واعتماديات Marker؛ حقول review ليست توقيع مراجعة أو إذن نشر طبي.
+
+التحقق المحلي مع Node24:
+
+```sh
+npx vitest run src/features/assess/practical-presentation.test.ts src/features/assess/practical-grader.test.ts src/features/assess/practical-state.test.ts src/features/assess/practical-db.test.ts src/features/deployment/assess-e-schema.test.ts
+node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-e.mjs
+```
+
+للـPostgreSQL المتزامن فقط: حاوية محلية قابلة للإتلاف باسم يبدأ `radlab-assess-e-`، بلا منافذ منشورة، ثم تمرير `--postgres-container=اسم_الحاوية` للسكربت نفسه. الأداة تنشئ قاعدة عشوائية اصطناعية وتمحوها ودور عاملها بنهايتها؛ لا تستخدم حاوية مشتركة أو اتصال مزود أو بيانات حقيقية. هذا ليس تجهيز خدمة أو عامل إنتاج.
+
+**قبل أي إذن تطبيق لاحق:** الهدف الجاري الأصلية vlacestfruxooznrcjqc، مع catalogue فرق فعلي ومراجعة E وحدها، ونسخة حديثة واسترداد مناسبين. استثناء النسخة لعملية C/D الماضية لا يتكرر. لا تعِد B/C/D أو فحص B-only أو أدوات الحسابين القديمة. بعد إذن مستقل محدد فقط: تطبيق E الإضافية، ثم [جرد B/C/D/E](../supabase/checks/assess-staging-ready.sql) و[فحص E المغلق](../supabase/checks/assess-practical-ready.sql) وACL ومسارات الخدمة بهويات مستقلة؛ اسم staging للجرد لا يختار مشروعًا ولا يمنح إذنًا. لا start/expose/content إنتاجية لإنتاج شاهد دون تصريحها. نجاح القراءة/SQL/Pages لا يثبت تشغيل lifecycle أو مصحح/عامل حيًا. runtime والجدولة والمراقبة والموافقة والاحتفاظ والنسخ والاستعادة وO106/O108 مستقلة، وlaunch_gate مغلقة. بعدها فقط يُراجع دليل المخطط المطابق؛ لا تغيير PILOT_SCHEMA_VERIFIED لمجرد تمرير نشر E. لا F.

@@ -24,7 +24,8 @@ import { rotationVisual, scapulaOffset } from "./visual-model";
 export const U = 10;
 
 export interface FigureProps {
-  radCase: RadCase;
+  /** Only the existing drawing geometry, never a grading rule or target. */
+  radCase: Pick<RadCase, "detector" | "requiredAnatomy" | "requiredProjection">;
   settings: SimulationSettings;
   showGuides: boolean;
   /** Detector size in drawing units. */

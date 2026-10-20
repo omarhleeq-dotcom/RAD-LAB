@@ -1,10 +1,12 @@
 "use client";
-import { useEffect,useReducer,useRef,useState } from "react";
+import { useEffect,useReducer,useRef,useState,useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
 import { useSessionAccount } from "@/features/pilot/SessionGate";
 import { getPilotClient } from "@/features/pilot/client";
 import { assignedPage,isUuid,runnerPort,type Listing,type RunnerPort } from "./runner-data";
 import { MixedRunner } from "./runner-state";
+import { practicalAssignedPage,practicalPort } from "./practical-data";
+import { FullPracticalRunner } from "./FullPracticalRunner";
 import { PartControls } from "./PartControls";
 const button="min-h-11 rounded border border-line px-4 py-2 text-sm disabled:opacity-50";
 function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>void}) {
@@ -57,20 +59,22 @@ function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>v
     <button className={button} disabled={c.busy||!!c.pending||c.dirty} onClick={leave}>{t("list")}</button>
   </section>;
 }
-function Assigned() {
+function Assigned({practical}:{practical:boolean}) {
+  const listPage=practical?practicalAssignedPage:assignedPage;
   const t=useTranslations("assess");const [page,setPage]=useState<Listing|null>(null),[error,setError]=useState(false),[busy,setBusy]=useState(false);
   const [attempt,setAttempt]=useState<string|null>(null),[port,setPort]=useState<RunnerPort|null>(null);
   const startOperation=useRef<{assignment:string;operation:string}|null>(null);
-  const load=async(after:string|null=null)=>{setBusy(true);try{const client=await getPilotClient();if(!client)throw new Error();setPage(await assignedPage(client,after));setPort(runnerPort(client));setError(false);}catch{setError(true);}finally{setBusy(false);}};
+  const load=async(after:string|null=null)=>{setBusy(true);try{const client=await getPilotClient();if(!client)throw new Error();setPage(await listPage(client,after));setPort(runnerPort(client));setError(false);}catch{setError(true);}finally{setBusy(false);}};
   useEffect(()=>{let cancelled=false;void getPilotClient()?.then(async client=>{
-    try{const p=runnerPort(client),list=await assignedPage(client,null);if(cancelled)return;setPort(p);setPage(list);const id=new URLSearchParams(location.search).get("attempt");if(isUuid(id))setAttempt(id);}catch{if(!cancelled)setError(true);}
-  });return ()=>{cancelled=true;};},[]);
+    try{const p=runnerPort(client),list=await listPage(client,null);if(cancelled)return;setPort(p);setPage(list);const id=new URLSearchParams(location.search).get("attempt");if(isUuid(id))setAttempt(id);}catch{if(!cancelled)setError(true);}
+  });return ()=>{cancelled=true;};},[listPage]);
   async function start(assignment:string){
     if(!port||busy)return;setBusy(true);setError(false);
     if(startOperation.current?.assignment!==assignment)startOperation.current={assignment,operation:crypto.randomUUID()};
-    try{const id=await port.start(assignment,startOperation.current.operation);setAttempt(id);history.replaceState(null,"",`${location.pathname}?attempt=${id}`);startOperation.current=null;}
+    try{const id=await port.start(assignment,startOperation.current.operation);setAttempt(id);history.replaceState(null,"",`${location.pathname}?attempt=${id}${practical?"&track=full-practical":""}`);startOperation.current=null;}
     catch{setError(true);}finally{setBusy(false);}
   }
+  if(attempt&&port&&practical)return <PracticalMount attempt={attempt} leave={()=>{setAttempt(null);history.replaceState(null,"",`${location.pathname}?track=full-practical`);void load();}}/>;
   if(attempt&&port)return <Runner key={attempt} port={port} attempt={attempt} leave={()=>{setAttempt(null);history.replaceState(null,"",location.pathname);void load();}}/>;
   return <section className="mt-6 space-y-4" data-testid="assess-assigned">
     <p>{t("intro")}</p>
@@ -82,4 +86,15 @@ function Assigned() {
     {page?.next&&<button className={button} disabled={busy} onClick={()=>void load(page.next)}>{t("next")}</button>}
   </section>;
 }
-export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<Assigned key={state.userId}/>:<p className="mt-6">{t("approved")}</p>;}
+function PracticalMount({attempt,leave}:{attempt:string;leave:()=>void}){
+  const [port,setPort]=useState<ReturnType<typeof practicalPort>|null>(null);
+  useEffect(()=>{let cancelled=false;void getPilotClient()?.then(client=>{if(!cancelled)setPort(practicalPort(client));});return ()=>{cancelled=true;};},[]);
+  return port?<FullPracticalRunner port={port} attempt={attempt} leave={leave}/>:null;
+}
+const subscribeTrack=(changed:()=>void)=>{window.addEventListener("popstate",changed);return ()=>window.removeEventListener("popstate",changed);};
+function TrackSelection(){
+  const t=useTranslations("assess"),practical=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("track")==="full-practical",()=>null);
+  // Changing track remounts its isolated runner. Native navigation protects unacknowledged drafts.
+  return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
+}
+export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<TrackSelection key={state.userId}/>:<p className="mt-6">{t("approved")}</p>;}

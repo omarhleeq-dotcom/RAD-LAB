@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "contract": "pilot-through-assess-d/1",
+  "contract": "pilot-through-assess-e/1",
   "requiredMigrations": [
     "20261015000100_pilot_accounts.sql",
     "20261016000100_owner_list_participants.sql",
@@ -14,12 +14,15 @@
     "20261020000500_practice_comparison.sql",
     "20261020000600_assess_assignments.sql",
     "20261020000700_assess_lifecycle.sql",
-    "20261020000800_assess_mixed_ui.sql"
+    "20261020000800_assess_mixed_ui.sql",
+    "20261020000900_assess_practical_ui.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
-    "supabase/checks/assess-mixed-ready.sql"
+    "supabase/checks/assess-mixed-ready.sql",
+    "supabase/checks/assess-practical-ready.sql",
+    "supabase/checks/assess-staging-ready.sql"
   ],
   "deferredMigrations": {},
   "browserBoundaries": {
@@ -39,17 +42,19 @@
     "src/features/pilot/OwnerPanel.tsx": "bc42d14ec14bf319df57398cdd81b7ae3aa0a405e60297e0094819f620f166ba",
     "src/features/assess/OwnerAssessPanel.tsx": "5fb54cb28f08cb5e71ca163594de1b3bf23860c0427326b7f1210c3530334403",
     "src/features/assess/admin-data.ts": "c39b767b2b48b3cd941698f14baef70cc87aa062973f037bb4623e288c3b1576",
-    "src/features/assess/OwnerContentPanel.tsx": "7b7e71ec41faa5db640120edb5cb8e0023b47395f47d3610becabc23207ecf4a",
+    "src/features/assess/OwnerContentPanel.tsx": "c637817a067cb14bf6964cd6e52f1a01f59f4148ae461ec8337ded8f64173658",
     "src/features/assess/content-data.ts": "2c2b06add8358339237055326e256366bbe75d0a88b6feb1ea3b49df89817a2f",
-    "src/features/assess/runner-data.ts": "d11bc2a69cc3ee71a5f3b28c49940c5ceb5ade47a1876afa25f4e402b86431f5",
+    "src/features/assess/runner-data.ts": "4225aa8f80962ab709c323783e25d24d077abe176fbbf1b21b4fb15120abbd34",
     "src/features/pilot/OwnerActivity.tsx": "9e1a1c3a57351c4adcc791045c42162e6963b3b5b06db7cd1ea5f49c562dd404",
-    "src/features/assess/AssessPanel.tsx": "6ec8580bf1b5aa9a3332c9ca44daad52102df9dfef5d704673031c5745e52541"
+    "src/features/assess/AssessPanel.tsx": "4daab7adc598a074ca827736c55c2acd322ba2ab7d9e2414cbf030762a61e165",
+    "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",
     "src/features/assess/server-validation.ts",
     "src/features/assess/server-grader.ts",
     "src/features/assess/server-service.ts",
-    "src/features/assess/server-presentation.ts"
+    "src/features/assess/server-presentation.ts",
+    "src/features/assess/server-practical.ts"
   ]
 }
