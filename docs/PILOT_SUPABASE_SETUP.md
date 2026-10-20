@@ -408,7 +408,7 @@ SMTP/redirects ومفاتيح المشروع وإعدادات لوحة الخد�
 <a id="assess-b-setup"></a>
 ## Assess B — مخطط المجموعات والإسناد والتحقق التشغيلي
 
-**الحالة الأحدث:** المقاطع B/C/D التالية تسجل مراحلها التاريخية؛ أفاد المالك بنجاح تطبيق C/D على الأصلية، ثم catalogue والصلاحيات وفحص D والبوابة المغلقة وزوج خدمة D، ودُمج #92 مع نجاح CI وPages على main. لا تُعاد هذه الخطوات. E محلية فقط وفق [قسمها](#assess-e-local) و[تقريرها](ASSESS_E_REPORT_2026-10-20.md)؛ لا تستنتج جاهزيتها من أدلة C/D.
+**الحالة الأحدث:** المقاطع B/C/D التالية تسجل مراحلها التاريخية؛ أفاد المالك بنجاح تطبيق C/D على الأصلية، ثم catalogue والصلاحيات وفحص D والبوابة المغلقة وزوج خدمة D، ودُمج #92 مع نجاح CI وPages على main. لا تُعاد هذه الخطوات. أرسل المالك لاحقًا نجاح فحوص SQL E والجرد المحدث والبوابة المغلقة؛ [المتابعة الحالية](#assess-e-closed-service) تتطلب خدمة E المغلقة، ولا تثبت runtime أو launch.
 
 الترحيل الإضافي `20261020000600_assess_assignments.sql` ينشئ schema مستقلة `assess` وجداول groups/memberships/versions/assignments/targets. لا يعدل public أو حسابات/بيانات/درجات Practice أو دوالها ومنحها. كل الجداول RLS default-deny بلا منح مباشرة حتى للمالك؛ واجهة المالك تتعامل مع RPCs في schema assess عبر جلسة المستخدم ومفتاح publishable المعتاد. SECURITY DEFINER ببحث فارغ، وفحص المالك والملكية قبل الكشف/الكتابة؛ قراءة metadata المسندة تتحقق من الاعتماد والاستهداف على كل طلب. لا مفاتيح/نتائج/إجابات Assess أو دور مشرف هنا.
 
@@ -524,3 +524,21 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-e.mjs
 3. أرسل نتيجة التطبيق، ثم شغّل جرد B/C/D/E وفحص E المغلق السابقين. أي خطأ/false يعني التوقف؛ لا تغير إثبات النشر قبل الأدلة المطابقة. recovery/runtime=false يبقيان مقصودين، ولا F أو فتح بوابة.
 
 الاستثناء الحالي للنسخة محفوظ لهذه العملية فقط. أدوات LF-only والتشخيص القديمة باقية دون تعديل، واختباراتها وتوقعاتها الأصلية محفوظة؛ رفضها CRLF يظل صحيحًا لعقدها الحرفي الأضيق. هذه متابعة مراجعة فرق محدد وليست تخفيفًا لحارس Pages أو إذنًا عامًا لقبول فروق تنسيق.
+
+
+<a id="assess-e-closed-service"></a>
+### نجاح فحوص SQL E ومتابعة الخدمة المغلقة
+
+بتاريخ2026-10-20 أرسل المالك preinstall المراجع بكل شروط الجاهزية true، ثم صف pg_advisory_xact_lock من تشغيل حزمة E (الصف وحده ليس دليل COMMIT). تلاه جرد assess-staging-catalogue/1 بكل شروطه وcatalogue_ready=true، وفحص E: read_only/presentation_rls/no_direct_grants/participant_read_grants/private_installer/launch_gate_closed كلها true، وruntime_or_launch_verified=false. تكرار جدول E في المحادثة لا يشكل تشغيلًا مستقلًا جديدًا. هذه نتائج SQL منقولة على الأصلية vlacestfruxooznrcjqc، لا اتصال إدارة للوكيل، وتثبت وجود E والصلاحيات المفحوصة والبوابة المغلقة؛ لا تعِد تثبيت E أو C/D.
+
+**false ليست مشكلة إصلاح:** runtime_or_launch_verified قيمة false حرفية في الاستعلام، لأنها تمنع تفسير الجرد كتجربة تشغيل. لا يفحص الاستعلام runtime أو بدء/حفظ/تعريض/انتهاء/تسليم/تصحيح المحاولة، ولا العامل والجدولة والمراقبة. لا تُعدل إلى true؛ يلزم تجهيز واختبار مستقل مأذون لهذه المسارات، مع إبقاء بواباتها وO106/O108 منفصلة.
+
+الخطوة التالية هي [`assess-e-closed-service-check.js`](../scripts/pilot/assess-e-closed-service-check.js) الجديدة، لا أداة D القديمة:
+
+1. من تطبيق RAD-LAB المسجل دخوله على اللابتوب، افتح Console وشغّل الملف كاملًا مرة بحساب owner approved، ثم بعد الخروج/الدخول بحساب participant approved مختلف.
+2. أدخل محليًا في المطالبات مفتاح sb_publishable_ العام للأصلية وUUID الحساب الآخر. لا ترسل مفتاحًا أو UUID أو JWT أو بريدًا/كلمة مرور في المحادثة؛ لا service_role أو sb_secret_. لا حاجة لنسخة E منشورة؛ الأداة مستقلة وتستعمل الجلسة الحالية مع وجهة ثابتة.
+3. أرسل فقط سطري RADLAB_ASSESS_E_CLOSED_CHECK. يلزم outcome=PASS وcontract=assess-e-closed-service/1 ودورا owner/participant وpair متطابق، وruntimeOrLaunchVerified=false. عند STOP أرسل السطر المنقح فقط؛ لا بيانات Console/Network/localStorage أو تعديل grants لتجاوز الخطأ.
+
+تفحص الأداة Auth/profile المعتمدين وهوية الزوج، وقائمة assigned_practical_page_v1 بحد صف واحد وعقد metadata مغلق، ورفض الزائر للقائمة ورفض الحساب والزائر لقراءة practical_presentations المباشرة. القوائم الفارغة صحيحة؛ لا تنشئ محتوى أو محاولة لتعبئتها. لا تقرأ read_practical_session_v1، لأن قراءة C قد تطبق انتهاء الوقت وحذف التفاصيل النهائية؛ لا start/command/content_submit/install/worker أو إعادة فحوص D. POST محصور في RPC القائمة القراءة فقط؛ لا استجابة أو صف خاص يُطبع، ولا refresh/retry تلقائي أو تغيير إعدادات.
+
+نجاح الزوج يثبت مسارات E المحددة فقط، لا قراءة جلسة E نشطة أو منع وصول حساب لصف موجود لحساب آخر أو عمل lifecycle/التصحيح/المشهد حيًا. SQL ACL يسجل فحص صلاحية read RPC وprivate installer، دون استدعائهما في هذه الأداة. بعد نتائج الخدمة تُراجع أدلة العقد قبل حساب/تسجيل إثبات نشر مطابق؛ الأداة لا تعدل PILOT_SCHEMA_VERIFIED أو pins أو workflow، ولا تفتح البوابة أو تنتقل F. [التقرير](ASSESS_E_REPORT_2026-10-20.md#e-sql-owner-results) يحفظ QA المحلي وحدوده.
