@@ -1,0 +1,57 @@
+# تقرير حزمة تشغيل Assess المحلية المغلقة — 2026-10-20
+
+## 1. النطاق والانحرافات والميزانية
+
+الإذن برمجة وفحوص وحفظ وPR مسودة فقط؛ لا SQL على الأصلية أو نشر runtime/عامل/schedule أو فتح launch_gate أو تغيير حالة PR. قُرئ AGENTS وأوامر السياق وRAD-056 قبل التعديل. نسخة `/workspace/RAD-LAB` على work نظيفة ورأسها أقدم من main؛ بقيت محفوظة. جُلب main وأُنشئ checkout معزول بإذن المستخدم في `/workspace/RAD-LAB-local-operations`؛ لا stash أو حذف عمل أو subagents.
+
+GitHub: [#95](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/95) مفتوحة ومسودة وغير مدموجة، رأسها `b48854d3f042e8f62c7a5b88c0f5ddfae941ac55`. merge_commit المحتمل في API ليس دمجًا؛ merged_at=null وmerged=false. أحدث main عند البدء `8366cac1b1652e5afc40ad1b2063ba0bd6d38ce7`، دمج #94 نفسه؛ [CI39448095185](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/39448095185) و[Deploy39448095607](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/39448095607) success على **هذا الرأس نفسه**. لا تعميم على الحزمة الجديدة أو main أحدث.
+
+وجد دليل هاتف أحدث في [تقرير #95 المثبت برأسه](https://github.com/omarhleeq-dotcom/RAD-LAB/blob/b48854d3f042e8f62c7a5b88c0f5ddfae941ac55/docs/ASSESS_F_REPORT_2026-10-20.md#f-phone-owner-confirmation): «تم الفحص على الهاتف الامور كويسة». إفادة عرض عام من المالك، لا لغات/حسابات/تدفقات لم يفصلها أو lifecycle حي. حُفظ مضمونها في الحالة دون افتراض دمج مستندها أو cherry-pick للـPR؛ لا انتظار إفادة غائبة بعد وجودها.
+
+الميزانية8ملفات المعروضة قبل التحرير هي الفعلية بلا توسع: `src/features/assess/server-service.ts`، `server-operations.test.ts`؛ `scripts/assess/local-database.mjs`، `local-operations.mjs`؛ `docs/ASSESS_LOCAL_OPERATIONS.md`، هذا التقرير، HANDOFF وproject-status. لا package/lock أو migration/check SQL أو UI أو workflow/حارس/pins/Variables متغيرة. لم يتغير حكم منتج أو يُختصر؛ روابط القرارات وأدلتها باقية. دليل الهاتف رابط بعيد لأن إضافته غير مدموجة.
+
+## 2. المنجز والمستبعد
+
+راجعت server-service وrunAssessJobs وأدوات rehearsal C/E/F والعقود ومدققَي D/E وSQL C. لا حاجة إلى endpoint أو طبقة runtime إضافية؛ العام user→RPC والخاص worker→RPC/المصحح القائم. أضيف [دليل التشغيل](ASSESS_LOCAL_OPERATIONS.md) وأداة finite بقاعدة جديدة تُتلف محليًا: PGlite متسلسلة أو PostgreSQL بsocket خاص ومعاملات مستقلة. لا URL/DSN/credential أو بيانات إنتاج تقبلها الأداة. حروف MCQ اصطناعية تمر عبر owner content_submit ثم installMixedContent وassign والموافقة والبدء والحفظ والتسليم القائمة.
+
+تغيير الخدمة الوحيد signal اختياري: توقف تعاوني قبل أول RPC وبين claims، وانتظار إقرار العمل الجاري وإتمامه/تسجيل فشله تحت lease. شكل النتيجة الناجحة والعقود والتصحيح لم تتغير؛ pre-abort يرمي stopped دون اتصال. SIGINT/SIGTERM يوقفان ticks اللاحقة. SIGKILL يحتاج تنظيف البقايا المحددة؛ لا ادعاء finally عند قتل المضيف للعملية.
+
+maintain_v1 وlease/recovery وfinish والحذف الذري من C معاد استخدامها؛ لا عامل/جدولة/حذف ثانٍ أو صفر عند فشل التصحيح. lost ack قد يرفع failed رغم COMMIT؛ موثق ومختبر دون تغيير semantics قائمة. المخرجات رموز/أعداد فقط، بلا أجوبة/إعدادات/علامات/صفوف طلاب أو أخطاء خام في logs/events. تسجيل statements/parameters وأخطاء SQL الاختبارية معطل محليًا؛ لا تنبيه خارجي أُرسل.
+
+لم يُتصل بالأصلية `vlacestfruxooznrcjqc`. SQL F النهائي بعد COMMIT والجرد وفحصها وزوج assess-f-closed-service/1 محفوظ من المالك مع pair `6d954fdcf76b93a794d3db5eff4a864ba71cd6b4988261d789a852823791464d` وruntimeOrLaunchVerified=false عمدًا. إثباتها الموثق `pilot-v1:79416f28ed75826571ed08c6bc9732e5278280ffa0a48437830c2b0d685a054d` لم يُغير أو يُعد حسابه للمرور. لا إعادة SQL B/C/D/E/F على قاعدة قائمة أو أدوات الحسابين/CRLF أو محتوى/محاولة/موافقة إنتاجية للشاهد.
+
+## 3. المهام
+
+RAD-056 وحدها محدثة في [مصدر الحالة](project-status.md)، وتبقى review/waiting_on owner لمراجعة الحزمة وبوابات القبول الحي. تعكس دمج F والهاتف الأحدث وحدوده والعمل المحلي الحالي؛ لا done لمسودة أو تشغيل حي. رُفعت revision فوق main ومسودة #95 المقروءتين مع وقت جديد؛ بقية المهام والتعارض RAD-024 وأدلة RAD-058 محفوظة. عند تداخل توثيق #95 لاحقًا تُدمج تحديثات الحالة والتسليم مع المتبقي الأحدث دون استبداله.
+
+## 4. المشترك وScale
+
+المشترك المتغير خدمة Assess فقط بإضافة signal اختيارية. روجع frontend-schema بعقد pilot-through-assess-f/1؛ اتصال الواجهة ثابت والوحدة ما زالت محظورة في serverModules، لذلك لا تصنيف/pin/إثبات جديد أو تخفيف للحارس. لا تعديل محرك/مخزن/حسابات/بيانات/مشاهد Practice.
+
+السقف المحلي24ticks وclaim واحد لكل tick وعاملان، بلا timer مستمر؛ لا قياس batch/سعة إنتاج. fixture ثابتة بإصدار وخيارات CLI مغلقة لا loader محتوى عام. PostgreSQL QA مقيد Linux x64 وحساب غير root وNode24/loader التجريبي؛ منصة أخرى تحتاج adapter مراجعًا. المزود/bundling/binding والأداء والتكلفة والتشغيل المستمر تحتاج أدلة مستقلة؛ لا اختيار Free/QPS. حزم PostgreSQL QA خارج المستودع فقط.
+
+## 5. الطب والدرجات
+
+لا محتوى طبي أو صور أو بنك Training Quiz أو تغيير لدرجات/سلوك/بيانات/صور Practice أو توقعاته وبصماته. MCQ حروف غير منشورة وreview هندسية لا اعتماد مصدر/ترخيص/طب. التصحيح من snapshot الخادم، لا رقم عميل. O108 والخلفية والمعايير وMarker مستقلة؛ المساران والحقول الأربعة وسياسة الحجب وستة الأشهر التقويمية من التسليم محسومة.
+
+## 6. QA وحدود الدليل
+
+اختبارات الخدمة الجديدة والقائمة الموجهة:20حالة ناجحة، تشمل pre-abort بلا RPC، التوقف أثناء maintenance/claim/finish وإتمام أو fail الجاري بلا claim ثانٍ، أعطال maintain/claim/health المنقحة، ورفض CLI للوجهة/flags أو غياب إقرار القاعدة الاصطناعية. typecheck وlint المتغيرين ناجحان.
+
+`assess-local-operations/1`: PASS في Node24/PGlite ثم PostgreSQL18.4 محليًا بمعاملات مستقلة، ونجح تشغيل PostgreSQL جديد بعد ضبط منع سجلات SQL وcleanup. كل تشغيل21ticks و23check، cleanup=true وruntimeOrLaunchVerified=false. replay وعاملان وlease قديم/منتهٍ، فشل التصحيح/retry/recovery، lost finish ack، فشل حذف مفتعل/rollback واسترداد، السبعة أيام/void، المهلة دون متصفح، حجب القراءة وعاملا purge وتكراره وبقاء الحجز وعدم كتابة Practice/events/feedback نجحت. الساعة والtrigger محليان، لا restore بعد COMMIT أو مزود حي.
+
+`npm run check` ناجح:133ملفًا و2207اختبارات مع typecheck وlint، بما فيها حراس Practice/characterisation/scoring/marker/store/scene-dom والعزل والنشر القائمة دون تغيير توقعات/hashes أو مهلات. `npm run build` و`npm run build:pages` ناجحان، بإعداد pilot غير مفعل محليًا، لا أسرار/attestation أو اتصال مزود؛ فحص static chunks لم يجد runAssessJobs/gradePublication/claim_v1/content_read_v1/correctOptionId/fixedSettings. `docs:test`:75حالة ناجحة. فحوص docs:check وstatus:check بالقاعدة origin/main وrequire-previous وdiff ناجحة بلا errors/review warnings، مع تعارض RAD-024 الموروث ظاهرًا.
+
+مراجعة التنظيف أضافت تمييز cleanup_failed أثناء setup وانتظار الفرعين المتوازيين حتى عند خطأ قبل إغلاق القاعدة؛ بعد هذه التعديلات المحصورة بالأداة شُغّل lint واختبار التشغيل الجديد وPostgreSQL المحلي مجددًا. لم تتغير الخدمة أو المنتج بعد check/build. لا UI تغيرت، لذلك لا إعادة EN/AR390/1440/axe أو هاتف؛ أدلة F السابقة وإفادة الهاتف مستقلة. لا QA طبية/مزود حي أو bundling مزود أو متصفح E2E أو أداء/تنبيه خارجي أو restore لهذه الحالة، ولا رفع مهلات أو إعادة توقعات. لم يفشل فحص قبول فعلي أثناء هذه الدفعة؛ الأعطال المذكورة حقن متعمد ضمن اختبارات ناجحة.
+
+## 7. المفتوح والبوابات
+
+O106: احتفاظ غير المؤقت المتروك، أعمار metadata الحجز/الموافقة، اعتماد نص/إجراء الموافقة، ودورة النسخ/التصدير/الحذف بعد restore وتجربة الاسترداد. لا مدة/موافقة اخترعت لعائق هندسي؛ غير المؤقت محجوب. حذف النتائج القائم بعد ستة أشهر لا يحتاج job ثانيًا؛ أعمار المرشحات الخاصة وتنظيفها قبل بيانات حقيقية لا تحسمها fixture.
+
+O108 للمصادر والترخيص والمراجعة وصلاحية الخلفية والمعايير وMarker مستقلة. runtime والعامل والجدولة والمراقبة والموافقة والاحتفاظ والنسخ والاستعادة وlaunch بوابات مستقلة؛ launch_gate الأصلية مغلقة وفق آخر دليل، ولا عملية هنا فتحتها. استثناء غياب دليل الاسترداد للعملية الماضية فقط. لا اعتماد Blueprint أو مزود إنتاج أو قبول حي من SQL/Pages/خدمة مغلقة أو Node/PostgreSQL محليين.
+
+## 8. قائمة المالك ونقطة الاستئناف
+
+راجع المسودة والدليل وأدلة التوقف والفشل. الخطوة التالية تحديد نطاق مستقل لاختيار runtime/bundling وربط صلاحية العامل والهوية والجدولة والمراقبة على بيئة مأذونة بعد معالجة بواباتها. لا حاجة لإعادة قرارات السجل/الوقت/المسارين. O106/O108 ونسخة حديثة واسترداد مناسب يسبقون بيانات حقيقية؛ لا SQL جديدة أو نشر أو فتح gate أو merge/ready/auto-merge هنا.
+
+الاستئناف: AGENTS وHANDOFF والحالة وهذا التقرير والدليل، ثم docs:context وRAD-056 وتحقق GitHub لـ#95 والمسودة الجديدة وأحدث main وفحوص رأسه. احفظ العمل المحلي ولا تعِد أدوات حية أو QA ناجحة بلا تغير ذي صلة. قبول الإسناد والحفظ والانقطاع والتعريض والتسليم والتصحيح الحي اختبار مستقل غير مكتمل.

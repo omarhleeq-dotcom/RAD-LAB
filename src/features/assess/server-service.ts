@@ -53,11 +53,15 @@ interface GradingClaim {
 /** One bounded tick for a scheduler. No student response or logs contain the private claim/grade.
  * At-least-once execution is safe: DB lease/token prevents stale finalisation and SQL commits grade+deletion atomically.
  */
-export async function runAssessJobs(worker:AssessRpc,limit=50) {
+export async function runAssessJobs(worker:AssessRpc,limit=50,signal?:AbortSignal) {
   if(!Number.isInteger(limit)||limit<1||limit>100)throw new AssessServiceError("invalid");
+  // Stop cooperatively: never cancel an in-flight RPC or abandon its acknowledgement.
+  // A process killed outright still relies on SQL lease expiry/recovery, not this signal.
+  if(signal?.aborted)throw new AssessServiceError("stopped");
   const maintenance=await safe(()=>worker.call<{expired:number;purged:number}>("maintain_v1",{p_limit:limit}));
   let graded=0,failed=0;
   for(let i=0;i<limit;i++) {
+    if(signal?.aborted)break;
     const claim=await safe(()=>worker.call<GradingClaim|null>("claim_v1",{}));if(!claim)break;
     try {
       const grade=gradePublication(claim.publication,claim.answers,claim.locked);
