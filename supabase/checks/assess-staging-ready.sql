@@ -1,4 +1,4 @@
--- Supplemental reviewed B/C/D/E catalogue only. No network/auth configuration or runtime proof.
+-- Supplemental reviewed B/C/D/E catalogue, with the reviewed F extension when installed. No network/auth configuration or runtime proof.
 -- Target-specific authorization is required on any provider. E additions do not re-verify the prior C/D service proof.
 -- Only catalogues are read. No profiles, candidate documents, answers, grades or gate values are returned.
 -- Follow a passing catalogue with assess-mixed-ready.sql for the CLOSED gate value.
@@ -18,6 +18,7 @@ with expected_tables(name) as (values
   ('assess.results'),
   ('assess.content_submissions'),
   ('assess.practical_presentations')
+  union all select 'assess.consents' where to_regclass('assess.consents') is not null
 ), tables as (
   select e.name,c.oid,c.relrowsecurity from expected_tables e left join pg_class c on c.oid=to_regclass(e.name)
 ), expected_functions(signature,audience) as (values
@@ -50,6 +51,11 @@ with expected_tables(name) as (values
   ('assess.session_authorize_v1(uuid)','internal'),
   ('assess.session_ack_v1(uuid,uuid)','internal'),
   ('assess.validate_answer_v1(jsonb,jsonb,jsonb)','internal')
+  union all select signature,audience from (values
+    ('assess.consent_v1(text)','user'),
+    ('assess.history_page_v1(uuid,integer)','user'),
+    ('assess.require_consent_v1()','internal')
+  ) f(signature,audience) where to_regclass('assess.consents') is not null
 ), functions as (
   select e.*,p.oid,p.prosecdef,p.proconfig,p.proacl,p.proowner
   from expected_functions e left join pg_proc p on p.oid=to_regprocedure(e.signature)

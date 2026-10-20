@@ -8,6 +8,8 @@ import { MixedRunner } from "./runner-state";
 import { practicalAssignedPage,practicalPort } from "./practical-data";
 import { FullPracticalRunner } from "./FullPracticalRunner";
 import { PartControls } from "./PartControls";
+import {HistoryPanel} from "./HistoryPanel";
+import {AssessConsent} from "./AssessConsent";
 const button="min-h-11 rounded border border-line px-4 py-2 text-sm disabled:opacity-50";
 function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>void}) {
   const t=useTranslations("assess");const [,render]=useReducer(n=>n+1,0);
@@ -97,4 +99,6 @@ function TrackSelection(){
   // Changing track remounts its isolated runner. Native navigation protects unacknowledged drafts.
   return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
 }
-export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<TrackSelection key={state.userId}/>:<p className="mt-6">{t("approved")}</p>;}
+export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<AssessConsent key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><AssessView/></AssessConsent>:<p className="mt-6">{t("approved")}</p>;}
+
+function AssessView(){const history=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("history")==="1",()=>null);return history===null?null:history?<HistoryPanel/>:<TrackSelection/>;}

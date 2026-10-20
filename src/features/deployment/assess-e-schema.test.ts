@@ -12,7 +12,7 @@ it("E requires its reviewed SQL/catalogues, rejects a C/D-only attestation and p
   expect(m.requiredMigrations).toContain("20261020000900_assess_practical_ui.sql");expect(m.checks).toContain("supabase/checks/assess-practical-ready.sql");expect(m.checks).toContain("supabase/checks/assess-staging-ready.sql");expect(m.deferredMigrations).toEqual({});
   // Compute the prior C/D marker from its actual historical files, independent of E source pins.
   const hash=createHash("sha256").update("https://vlacestfruxooznrcjqc.supabase.co\n");
-  for(const f of m.requiredMigrations.filter((f:string)=>!f.includes("assess_practical")).sort())hash.update(`${f}\0`).update(readFileSync(join(dir,"supabase/migrations",f))).update("\0");
+  for(const f of m.requiredMigrations.filter((f:string)=>f<"20261020000900").sort())hash.update(`${f}\0`).update(readFileSync(join(dir,"supabase/migrations",f))).update("\0");
   for(const f of ["training-ready.sql","comparison-ready.sql","assess-mixed-ready.sql"])hash.update(readFileSync(join(dir,"supabase/checks",f)));
   const marker=`pilot-v1:${hash.digest("hex")}`;
   const run=(print=false)=>spawnSync(process.execPath,["--input-type=module","-e",`import {runSchemaGate} from ${JSON.stringify(script)};try{console.log(runSchemaGate({NEXT_PUBLIC_SUPABASE_URL:'https://vlacestfruxooznrcjqc.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'sb_publishable_synthetic_local_test_123456',PILOT_SCHEMA_VERIFIED:${JSON.stringify(marker)}},${print},${JSON.stringify(dir)}));}catch(e){console.error(e.message);process.exitCode=1;}`],{encoding:"utf8",timeout:15000});
