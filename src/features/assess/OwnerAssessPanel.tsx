@@ -1,4 +1,5 @@
 "use client";
+import { OwnerContentPanel } from "./OwnerContentPanel";
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -133,6 +134,6 @@ export function OwnerAssessPanel() {
   const [open,setOpen]=useState(false);
   return <details className="mt-8 rounded-lg border border-line bg-panel p-4" onToggle={e=>setOpen(e.currentTarget.open)}>
     <summary className="cursor-pointer text-lg font-semibold">{t("title")}</summary>
-    {open&&<Administration/>}
+    {open&&<><Administration/><OwnerContentPanel/></>}
   </details>;
 }

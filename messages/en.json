@@ -1602,7 +1602,7 @@
   },
   "assessAdmin": {
     "title": "Assess groups and assignments",
-    "intro": "Manage registered students and groups. Exam content and the exam runner are not available in this step.",
+    "intro": "Manage groups and assign installed assessment versions. Queue a versioned content candidate below.",
     "loading": "Loading…",
     "empty": "No entries on this page.",
     "first": "First page",
@@ -1651,5 +1651,46 @@
       "error": "Could not complete the request. Refresh to check whether your changes were saved before trying again."
     },
     "remove": "Remove"
+  },
+  "assess": {
+    "title": "Assessments",
+    "intro": "Mixed questions assigned to your approved account. Exam content is in English.",
+    "loading": "Loading…",
+    "approved": "An approved account is required.",
+    "unavailable": "This assessment service is unavailable. No start or save is confirmed.",
+    "refresh": "Refresh",
+    "empty": "No mixed assessments are assigned.",
+    "start": "Start or resume",
+    "next": "Next page",
+    "saving": "Waiting for server confirmation…",
+    "pending": "Changes await saving.",
+    "saved": "Showing the last server-confirmed state.",
+    "unconfirmed": "Operation not confirmed. Reconcile before continuing.",
+    "interrupted": "The connection or service interrupted this operation. Answers are confirmed only by the server.",
+    "conflict": "Another session changed this attempt. Reconciliation discards local edits and loads the server state.",
+    "reconcile": "Reconcile with server",
+    "closed": "The attempt is closed for editing. Submission or grading is handled by the server.",
+    "deadline": "Server deadline (UTC):",
+    "serverRule": "Time continues while disconnected. Refresh resumes the last server-confirmed answers and exposure locks.",
+    "questions": "Questions",
+    "submit": "Submit assessment",
+    "confirmTitle": "Confirm submission",
+    "unresolved": "Unresolved items: {count}. Unanswered questions and simulator items without an exposure receive zero.",
+    "confirmSubmit": "Confirm final submission",
+    "back": "Continue editing",
+    "list": "Return to assigned assessments"
+  },
+  "assessContent": {
+    "title": "Mixed assessment content and templates",
+    "help": "Submit a complete versioned publication JSON document. Every item, mark, policy, source and private key belongs to that immutable version. To change it, submit a new version. The document stays on the server and is never returned to participants.",
+    "review": "Sources, commercial licence evidence, named review, background settings, criteria and Marker dependencies must be reviewed under O108. Submission queues a candidate; the separately configured trusted Node validator must install it before assignment. It does not open the launch gate.",
+    "document": "Private publication JSON (English content)",
+    "submit": "Queue immutable version",
+    "refresh": "Refresh versions",
+    "next": "Next page",
+    "pending": "Awaiting server validation",
+    "installed": "Installed version",
+    "saved": "Version queued. No publication or launch is confirmed.",
+    "error": "Unable to process the content request. Check the document, version and service availability."
   }
 }

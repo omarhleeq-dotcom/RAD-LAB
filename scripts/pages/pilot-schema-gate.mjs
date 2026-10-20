@@ -123,6 +123,9 @@ export function frontendRequirements(projectRoot = root) {
   for (const literal of graph.literals) if (deferred.functionNames.has(literal.name) && !needed.functionNames.has(literal.name)) {
     throw new Error(`Deferred RPC used by frontend: ${literal.path} (${literal.name})`);
   }
+  // Required migrations do not make private Node modules safe to ship to participants.
+  if (manifest.serverModules !== undefined && (!Array.isArray(manifest.serverModules) || manifest.serverModules.some((file) => typeof file !== "string" || !file.startsWith("src/") || !existsSync(resolve(projectRoot, file))))) throw new Error("Invalid server-only module list.");
+  for (const file of manifest.serverModules ?? []) if (graph.reachable.includes(file)) throw new Error(`Server-only backend reached the frontend: ${file}`);
   const expected = manifest.browserBoundaries;
   if (Object.keys(expected).length !== Object.keys(graph.boundaries).length || Object.entries(graph.boundaries).some(([file, hash]) => expected[file] !== hash)) {
     throw new Error("Frontend database boundary changed. Review frontend-schema.json and promote any newly required backend migrations before attestation.");
