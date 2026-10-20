@@ -6,8 +6,11 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-export async function openLocalDatabase(backend) {
+export async function openLocalDatabase(backend, {through='latest',lineEndings='lf'}={}) {
   if(!['pglite','postgres'].includes(backend))throw new Error('invalid_backend');
+  // A finite migration ceiling exists only for destructive synthetic upgrade QA.
+  if(!['latest','f'].includes(through))throw new Error('invalid_migration_ceiling');
+  if(!['lf','crlf'].includes(lineEndings))throw new Error('invalid_line_endings');
   let db,admin,dir,ctl,started=false;
   const clients=new Set();
   async function close() {
@@ -45,7 +48,10 @@ export async function openLocalDatabase(backend) {
       create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
       create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
       grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
-    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await exec(readFileSync(`supabase/migrations/${file}`,'utf8'));
+    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'||f<'20261020001100')).sort()) {
+      const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
+      await exec(lineEndings==='crlf'&&file>='20261020000600'?sql.replaceAll('\n','\r\n'):sql);
+    }
     function port(role,user='') {
       if(!['anon','authenticated','assess_worker'].includes(role)||
         (role==='authenticated'?!/^[0-9a-f-]{36}$/.test(user):user!==''))throw new Error('invalid_local_identity');
