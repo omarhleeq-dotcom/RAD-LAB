@@ -1678,7 +1678,13 @@
     "unresolved": "Unresolved items: {count}. Unanswered questions and simulator items without an exposure receive zero.",
     "confirmSubmit": "Confirm final submission",
     "back": "Continue editing",
-    "list": "Return to assigned assessments"
+    "list": "Return to assigned assessments",
+    "tracks": "Assessment tracks",
+    "mixed": "Mixed questions",
+    "practical": "Full practical examinations",
+    "locked": "Exposure recorded. This item is locked.",
+    "oneExposure": "One exposure only. Settings lock when the server records it.",
+    "expose": "Expose once"
   },
   "assessContent": {
     "title": "Mixed assessment content and templates",
@@ -1691,6 +1697,7 @@
     "pending": "Awaiting server validation",
     "installed": "Installed version",
     "saved": "Version queued. No publication or launch is confirmed.",
-    "error": "Unable to process the content request. Check the document, version and service availability."
+    "error": "Unable to process the content request. Check the document, version and service availability.",
+    "tracks": "Mixed questions and full practical examinations use separate, immutable versions. Installation requires the trusted validator for the selected track."
   }
 }

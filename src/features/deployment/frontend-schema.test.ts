@@ -17,6 +17,8 @@ beforeAll(()=>{
   // D's active contract is tested separately; none of these historical expectations change.
   for(const dir of ["supabase","scripts/pages"])cpSync(dir,join(root,dir),{recursive:true});
   rmSync(join(root,"supabase/migrations/20261020000800_assess_mixed_ui.sql"),{force:true});
+  // E must not change the retained historical B fixture or any of its expectations.
+  rmSync(join(root,"supabase/migrations/20261020000900_assess_practical_ui.sql"),{force:true});
   mkdirSync(join(root,"src/features/assess"),{recursive:true});
   mkdirSync(join(root,"src/features/positioning"),{recursive:true});
   cpSync("src/features/assess/admin-data.ts",join(root,"src/features/assess/admin-data.ts"));

@@ -408,6 +408,8 @@ SMTP/redirects ومفاتيح المشروع وإعدادات لوحة الخد�
 <a id="assess-b-setup"></a>
 ## Assess B — مخطط المجموعات والإسناد والتحقق التشغيلي
 
+**الحالة الأحدث:** المقاطع B/C/D التالية تسجل مراحلها التاريخية؛ أفاد المالك بنجاح تطبيق C/D على الأصلية، ثم catalogue والصلاحيات وفحص D والبوابة المغلقة وزوج خدمة D، ودُمج #92 مع نجاح CI وPages على main. لا تُعاد هذه الخطوات. أرسل المالك لاحقًا نجاح فحوص SQL E والجرد المحدث والبوابة المغلقة؛ [المتابعة الحالية](#assess-e-closed-service) تتطلب خدمة E المغلقة، ولا تثبت runtime أو launch.
+
 الترحيل الإضافي `20261020000600_assess_assignments.sql` ينشئ schema مستقلة `assess` وجداول groups/memberships/versions/assignments/targets. لا يعدل public أو حسابات/بيانات/درجات Practice أو دوالها ومنحها. كل الجداول RLS default-deny بلا منح مباشرة حتى للمالك؛ واجهة المالك تتعامل مع RPCs في schema assess عبر جلسة المستخدم ومفتاح publishable المعتاد. SECURITY DEFINER ببحث فارغ، وفحص المالك والملكية قبل الكشف/الكتابة؛ قراءة metadata المسندة تتحقق من الاعتماد والاستهداف على كل طلب. لا مفاتيح/نتائج/إجابات Assess أو دور مشرف هنا.
 
 لا يُنفذ الترحيل أو أي إعداد مزود تلقائيًا. قبل إذن نشر/تجربة مستقلة: راجع O106 والموافقة/الاحتفاظ للبيانات الجديدة؛ خذ نسخة واستعادة مناسبة، وراجع catalogue/المشروع المطابق والترحيلات وتسلسلها واختبارات العزل. بعد إذن التنفيذ فقط يطبق المسؤول السلسلة على بيئة اختبار أولًا ثم المشروع المحدد؛ الترحيل غير idempotent ولا يُعدّل ملفه لإخفاء drift. إضافته تغير بصمة حارس التوافق القديم؛ لا تنقل إثبات PILOT_SCHEMA_VERIFIED قديمًا ولا تختلق إثباتًا جديدًا.
@@ -463,7 +465,7 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-c.mjs
 
 [خطة staging](ASSESS_STAGING_PLAN.md) تحدد فصل المعاينة عن الإنتاج وعقد ربط Node والعامل والجدولة والقبول الاصطناعي، وأوامر preflight وcatalogue. هذه حزمة محلية مأذونة، وليست إنشاء موارد أو إذن تطبيق SQL أو نشر. workflow الحالي يشارك متغيرات Supabase بين PR وmain؛ لا تستبدلها بقيم staging. المتغيرات STAGING والبيئة ومشروع Pages المستقل المقترحة لم تُنشأ ولم يُعدل workflow؛ إثبات حارس النشر وبوابة launch يبقيان كما هما.
 
-[`staging-preflight.mjs`](../scripts/assess/staging-preflight.mjs) لا يتصل بأي عنوان ولا يقرأ مفاتيح أو يكتب إثباتًا؛ يطبع جرد المصادر وبصماتها وdeploymentReady=false. [`assess-staging-ready.sql`](../supabase/checks/assess-staging-ready.sql) إضافي للقراءة فقط، ولا يدخل تلقائيًا في frontend-schema أو يغير بصمة النشر. يثبت catalogue/ACL عند تشغيله على البيئة المأذونة، لا قيمة launch_gate أو JWT/runtime؛ يتبعه فحص D المغلق القائم وفق الخطة. لا تنسخ bootstrap Auth من اختبارات PGlite إلى Supabase الحقيقي، ولا تستخدم checker B المثبت على مشروع الإنتاج لتجربة staging.
+[`staging-preflight.mjs`](../scripts/assess/staging-preflight.mjs) لا يتصل بأي عنوان ولا يقرأ مفاتيح أو يكتب إثباتًا؛ يطبع جرد المصادر وبصماتها وdeploymentReady=false. [`assess-staging-ready.sql`](../supabase/checks/assess-staging-ready.sql) كان في دفعة التحضير إضافيًا للقراءة فقط خارج frontend-schema. عند ربط E توسع جرده للإضافة المراجعة وصار ضمن checks المطلوبة؛ دليل C/D السابق لا يثبت catalogue E الحالي. يثبت catalogue/ACL عند تشغيله على البيئة المأذونة، لا قيمة launch_gate أو JWT/runtime؛ يتبعه فحص D المغلق القائم وفق الخطة. لا تنسخ bootstrap Auth من اختبارات PGlite إلى Supabase الحقيقي، ولا تستخدم checker B المثبت على مشروع الإنتاج لتجربة staging.
 
 
 ### فحص خدمة D والبوابة المغلقة على الأصلية — 2026-10-20
@@ -475,3 +477,84 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-c.mjs
 المطلوب سطرا `RADLAB_ASSESS_D_CLOSED_CHECK` فقط: outcome=PASS، contract=assess-d-closed-service/1، دورا owner/participant وpair متطابق، وruntimeOrLaunchVerified=false. الصفحات الفارغة صحيحة؛ لا تنشئ محتوى أو إسنادًا أو محاولة لإنجاح الفحص. يتحقق من Auth/profile، وقائمة المسند/metadata المحتوى المحدودة، ورفض المشارك لإدارة المحتوى، ورفض قراءة مستند خاص/health العامل، وجداول C/D المباشرة والزائر. عند STOP أرسل السطر المنقح وحده؛ لا console/network/localStorage كاملة أو تعديل منح دون تشخيص. اختبارات الأداة VM اصطناعية ضمن docs:test، لا دليل Supabase حي.
 
 لا start/command/قراءة محاولة أو submission/install/worker maintenance في الأداة. النجاح يثبت مسارات الخدمة المغلقة فقط، ولا تشغيل runner أو الحفظ/الانقطاع/التعريض/التسليم/التصحيح في الإنتاج. بعد نتائج الحسابين تُراجع بقية أدلة العقد قبل حساب إثبات النشر الصحيح؛ الأداة لا تكتب PILOT_SCHEMA_VERIFIED أو pins ولا تعيد نشرًا أو تفتح launch_gate. لا إغلاق O106/O108 أو انتقال E.
+
+<a id="assess-e-local"></a>
+### Assess E — تنفيذ محلي دون تطبيق على الأصلية
+
+إذن E يشمل البرمجة والفحوص والحفظ وPR مسودة فقط. [الترحيل الإضافي](../supabase/migrations/20261020000900_assess_practical_ui.sql) ينشئ practical_presentations خاصة بلا منح جداول، وقراءة/قائمة منفصلتين للمسار الكامل، وتثبيت عرض خادمي ذري. يوسع content_submit_v1 لقبول track الكامل مع نفس هوية المالك وحدود المرشحات وقفل الإصدارات. لا تعديل bytes ترحيلات B/C/D أو بيانات التدريب أو gate أو grants دور العامل العام؛ لا SQL حي منفذ أو جاهزية runtime مثبتة.
+
+مالك معتمد يرسل publication إنجليزية بعقد C، track/type=full-practical، وcaseRef/evaluator خاص مثبت، وitemMarks/review. مرشح مستقل غير available؛ لا تعديل نسخة مستعملة. `installPracticalContent(worker,version)` في [server-practical](../src/features/assess/server-practical.ts) يتحقق من C ومن دعم الأدوات/المشهد، ويولد whitelist من محددات الأدوات وقيم البداية وهندسة الرسم الظاهرة فقط، بلا rules/targets/tolerances/scoring أو مفاتيح. `content_install_practical_v1` يثبت publication والعرض والإتاحة ويحذف مستند المرشح ذريًا. استكمال المحاولة يحل نفس ref/version المثبتة، لا أحدث إصدار. O108 يلزم صلاحية المشهد والخلفية والمعايير والمصادر والترخيص واعتماديات Marker؛ حقول review ليست توقيع مراجعة أو إذن نشر طبي.
+
+التحقق المحلي مع Node24:
+
+```sh
+npx vitest run src/features/assess/practical-presentation.test.ts src/features/assess/practical-grader.test.ts src/features/assess/practical-state.test.ts src/features/assess/practical-db.test.ts src/features/deployment/assess-e-schema.test.ts
+node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-e.mjs
+```
+
+للـPostgreSQL المتزامن فقط: حاوية محلية قابلة للإتلاف باسم يبدأ `radlab-assess-e-`، بلا منافذ منشورة، ثم تمرير `--postgres-container=اسم_الحاوية` للسكربت نفسه. الأداة تنشئ قاعدة عشوائية اصطناعية وتمحوها ودور عاملها بنهايتها؛ لا تستخدم حاوية مشتركة أو اتصال مزود أو بيانات حقيقية. هذا ليس تجهيز خدمة أو عامل إنتاج.
+
+**قبل أي إذن تطبيق لاحق:** الهدف الجاري الأصلية vlacestfruxooznrcjqc، مع catalogue فرق فعلي ومراجعة E وحدها، ونسخة حديثة واسترداد مناسبين. استثناء النسخة لعملية C/D الماضية لا يتكرر. لا تعِد B/C/D أو فحص B-only أو أدوات الحسابين القديمة. بعد إذن مستقل محدد فقط: تطبيق E الإضافية، ثم [جرد B/C/D/E](../supabase/checks/assess-staging-ready.sql) و[فحص E المغلق](../supabase/checks/assess-practical-ready.sql) وACL ومسارات الخدمة بهويات مستقلة؛ اسم staging للجرد لا يختار مشروعًا ولا يمنح إذنًا. لا start/expose/content إنتاجية لإنتاج شاهد دون تصريحها. نجاح القراءة/SQL/Pages لا يثبت تشغيل lifecycle أو مصحح/عامل حيًا. runtime والجدولة والمراقبة والموافقة والاحتفاظ والنسخ والاستعادة وO106/O108 مستقلة، وlaunch_gate مغلقة. بعدها فقط يُراجع دليل المخطط المطابق؛ لا تغيير PILOT_SCHEMA_VERIFIED لمجرد تمرير نشر E. لا F.
+
+### متابعة إذن تطبيق E على الأصلية دون نسخة حديثة
+
+بعد توثيق نجاح CI وفشل Require verified pilot schema على مسودة #93، أذن المالك بتطبيق SQL E. سُئل عن النسخة والاستعادة لأن استثناء C/D السابق لا يشملها؛ فأجاب «لا ما عندي بدنا نطبق على النسخة الاصلية». يُتبع هذا التوجيه الجديد **لعملية E الحالية فقط** على vlacestfruxooznrcjqc؛ لا يُطلب اعتماد الاستثناء نفسه مجددًا. إجراء النسخ المعتاد ومرجعه أعلاه محفوظان، وجاهزية الاسترداد لم تصبح متحققة. لا اتصال إدارة مجهز هنا، ولا إفادة تطبيق حي حتى الآن.
+
+1. طابق محدد مشروع SQL Editor مع **vlacestfruxooznrcjqc**؛ SQL لا يثبت origin المشروع.
+2. في استعلام جديد، شغّل [assess-e-preinstall.sql](../supabase/checks/assess-e-preinstall.sql) كاملًا. يقرأ catalogue والصلاحيات وبصمات أجسام دوال B/C/D والبوابة فقط، بلا صفوف طلاب. المطلوب ready_for_e_install=true، مع recovery_verified=false وruntime_or_launch_verified=false عمدًا. أي خطأ أو false يعني التوقف وفحص الفرق، لا إعادة C/D أو DROP.
+3. إذا نجح الفحص، شغّل [assess-original-e-install.sql](../supabase/manual/assess-original-e-install.sql) كاملًا مرة واحدة، دون تغيير أو نسخ bootstrap الاختبارات. الحزمة تعيد guard تحت معاملة وقفل gate، وتحتوي bytes ترحيل E وحده وبصمته، وتتحقق من catalogue/ACL والبصمات والبوابة قبل COMMIT. سقف lock5ثوانٍ وstatement60ثانية تقنيان أوليان، لا ضمان زمن مزود. الخطأ قبل COMMIT يرجع تغييرات المعاملة فقط؛ ليس نسخة أو undo بعد COMMIT.
+4. بعد نجاح التطبيق المبلغ عنه، شغّل الجرد B/C/D/E وفحص E المغلق المرتبطين أعلاه، ثم تُراجع خدمة E بالهويات المناسبة ضمن الإذن، دون أدوات C/D القديمة أو بيانات/محاولات إنتاجية. لا تغيير إثبات النشر قبل دليل مطابق، ولا فتح بوابة أو نشر خلفية أو F من هذا الإجراء.
+
+فحوص الحزمة المحلية وحدودها وبصماتها في [تقرير E](ASSESS_E_REPORT_2026-10-20.md#متابعة-تطبيق-sql-e-على-الأصلية). لا تعديل لترحيل E أو C/D المطبقين، ولا حساب marker جديد أو تغيير Variables أو إطلاق تلقائي. ظهور Success من SQL Editor لا يثبت العامل أو الجدولة أو الموافقة أو المراقبة أو الاسترداد.
+
+### توقف E عند اختلاف أجسام دوال C/D
+
+أرسل المالك نتيجة assess-e-preinstall/1: read_only=true وcd_catalogue_ready=true وlaunch_gate_closed=true وe_absent=true؛ لكن cd_source_bodies_match=false وبالتالي ready_for_e_install=false. recovery_verified/runtime_or_launch_verified=false مقصودان ولا يفسران فشل شرط المصدر. هذا تقرير من المالك، لا اتصال إدارة مباشر، ولا إثبات تطبيق E.
+
+**تعليمات التطبيق المشروطة السابقة لا تُستخدم لتجاوز false.** شغّل [assess-e-source-diff.sql](../supabase/checks/assess-e-source-diff.sql) كاملًا للقراءة فقط على الأصلية، وأرسل جدول الدوال المخالفة فقط. يحصر signatures الست والعشرين المتوقعة ويعرض expected/actual SHA-256 والأطوال، ومؤشرات مقارنة نهايات الأسطر والفراغات الطرفية. لا أجسام دوال أو بيانات مستخدمين أو keys في الناتج. التطابق بعد normalization أداة تشخيص لا تكافؤ دلاليًا معتمدًا أو installation approval؛ يبقى installer exact guard بلا تغيير. إذا عاد بلا صفوف فلا تتجاوز نتيجة الفحص السابقة، بل تُراجع استمرارية الحالة قبل إعادة فحص مناسب. لا DROP/إعادة C/D أو تثبيت E أو تغيير PILOT_SCHEMA_VERIFIED قبل تحديد الفرق ومراجعته. السبب الفعلي غير محسوم حتى وصول التشخيص.
+
+### استئناف E بعد مراجعة LF وCRLF
+
+وصل جدول assess-e-source-diff/1 من المالك: الدوال الست والعشرون موجودة، وكل مؤشري المقارنة true. لم يُعتمد المؤشر وحده: أُعيد حساب SHA-256 وطول UTF-8 لكل مصدر Git بعد تحويل LF إلى CRLF؛ طابقت **كل البصمات والأطوال الفعلية**. روجعت أجسام B/C/D/E مع استثناء التعليقات من فحص النصوص: لا literals متعددة الأسطر أو dollar strings داخلية تتغير قيمتها. التفاصيل وحدود الدليل في [التقرير](ASSESS_E_REPORT_2026-10-20.md#reviewed-line-endings).
+
+لهذه المصادر المراجعة فقط، استخدم بدل ملفي LF-only السابقين:
+
+1. على الأصلية **vlacestfruxooznrcjqc**، شغّل [فحص البصمات المراجعة](../supabase/checks/assess-e-preinstall-reviewed-lines.sql) كاملًا في استعلام جديد؛ يلزم ready_for_e_install=true. لا تستنتج ذلك مسبقًا من التشخيص القديم.
+2. عند نجاحه فقط، شغّل [حزمة E ذات البصمات المراجعة](../supabase/manual/assess-original-e-install-reviewed-lines.sql) كاملة مرة واحدة. تعيد الفحص تحت القفل والمعاملة، وتقبل فقط SHA-256 الحرفية المحددة لنسختَي LF وCRLF لكل دالة؛ لا normalization أو trim وقت القرار، ولا قبول أي مصدر آخر. نسخة ترحيل E والصلاحيات وشروط البوابة والتراجع كما كانت. لا تعيد C/D أو تغير أجسامها.
+3. أرسل نتيجة التطبيق، ثم شغّل جرد B/C/D/E وفحص E المغلق السابقين. أي خطأ/false يعني التوقف؛ لا تغير إثبات النشر قبل الأدلة المطابقة. recovery/runtime=false يبقيان مقصودين، ولا F أو فتح بوابة.
+
+الاستثناء الحالي للنسخة محفوظ لهذه العملية فقط. أدوات LF-only والتشخيص القديمة باقية دون تعديل، واختباراتها وتوقعاتها الأصلية محفوظة؛ رفضها CRLF يظل صحيحًا لعقدها الحرفي الأضيق. هذه متابعة مراجعة فرق محدد وليست تخفيفًا لحارس Pages أو إذنًا عامًا لقبول فروق تنسيق.
+
+
+<a id="assess-e-closed-service"></a>
+### نجاح فحوص SQL E ومتابعة الخدمة المغلقة
+
+بتاريخ2026-10-20 أرسل المالك preinstall المراجع بكل شروط الجاهزية true، ثم صف pg_advisory_xact_lock من تشغيل حزمة E (الصف وحده ليس دليل COMMIT). تلاه جرد assess-staging-catalogue/1 بكل شروطه وcatalogue_ready=true، وفحص E: read_only/presentation_rls/no_direct_grants/participant_read_grants/private_installer/launch_gate_closed كلها true، وruntime_or_launch_verified=false. تكرار جدول E في المحادثة لا يشكل تشغيلًا مستقلًا جديدًا. هذه نتائج SQL منقولة على الأصلية vlacestfruxooznrcjqc، لا اتصال إدارة للوكيل، وتثبت وجود E والصلاحيات المفحوصة والبوابة المغلقة؛ لا تعِد تثبيت E أو C/D.
+
+**false ليست مشكلة إصلاح:** runtime_or_launch_verified قيمة false حرفية في الاستعلام، لأنها تمنع تفسير الجرد كتجربة تشغيل. لا يفحص الاستعلام runtime أو بدء/حفظ/تعريض/انتهاء/تسليم/تصحيح المحاولة، ولا العامل والجدولة والمراقبة. لا تُعدل إلى true؛ يلزم تجهيز واختبار مستقل مأذون لهذه المسارات، مع إبقاء بواباتها وO106/O108 منفصلة.
+
+الخطوة التالية هي [`assess-e-closed-service-check.js`](../scripts/pilot/assess-e-closed-service-check.js) الجديدة، لا أداة D القديمة:
+
+1. من تطبيق RAD-LAB المسجل دخوله على اللابتوب، افتح Console وشغّل الملف كاملًا مرة بحساب owner approved، ثم بعد الخروج/الدخول بحساب participant approved مختلف.
+2. أدخل محليًا في المطالبات مفتاح sb_publishable_ العام للأصلية وUUID الحساب الآخر. لا ترسل مفتاحًا أو UUID أو JWT أو بريدًا/كلمة مرور في المحادثة؛ لا service_role أو sb_secret_. لا حاجة لنسخة E منشورة؛ الأداة مستقلة وتستعمل الجلسة الحالية مع وجهة ثابتة.
+3. أرسل فقط سطري RADLAB_ASSESS_E_CLOSED_CHECK. يلزم outcome=PASS وcontract=assess-e-closed-service/1 ودورا owner/participant وpair متطابق، وruntimeOrLaunchVerified=false. عند STOP أرسل السطر المنقح فقط؛ لا بيانات Console/Network/localStorage أو تعديل grants لتجاوز الخطأ.
+
+تفحص الأداة Auth/profile المعتمدين وهوية الزوج، وقائمة assigned_practical_page_v1 بحد صف واحد وعقد metadata مغلق، ورفض الزائر للقائمة ورفض الحساب والزائر لقراءة practical_presentations المباشرة. القوائم الفارغة صحيحة؛ لا تنشئ محتوى أو محاولة لتعبئتها. لا تقرأ read_practical_session_v1، لأن قراءة C قد تطبق انتهاء الوقت وحذف التفاصيل النهائية؛ لا start/command/content_submit/install/worker أو إعادة فحوص D. POST محصور في RPC القائمة القراءة فقط؛ لا استجابة أو صف خاص يُطبع، ولا refresh/retry تلقائي أو تغيير إعدادات.
+
+نجاح الزوج يثبت مسارات E المحددة فقط، لا قراءة جلسة E نشطة أو منع وصول حساب لصف موجود لحساب آخر أو عمل lifecycle/التصحيح/المشهد حيًا. SQL ACL يسجل فحص صلاحية read RPC وprivate installer، دون استدعائهما في هذه الأداة. بعد نتائج الخدمة تُراجع أدلة العقد قبل حساب/تسجيل إثبات نشر مطابق؛ الأداة لا تعدل PILOT_SCHEMA_VERIFIED أو pins أو workflow، ولا تفتح البوابة أو تنتقل F. [التقرير](ASSESS_E_REPORT_2026-10-20.md#e-sql-owner-results) يحفظ QA المحلي وحدوده.
+
+
+<a id="assess-e-attestation"></a>
+### قبول زوج خدمة E المغلقة وإثبات توافق الواجهة
+
+أرسل المالك سطري assess-e-closed-service/1: owner=PASS عند2026-10-20T07:46:11.816Z وparticipant=PASS عند2026-10-20T07:47:11.308Z (توقيت الأداة UTC؛10:46و10:47 بتوقيت عمّان). pair متطابق `6d954fdcf76b93a794d3db5eff4a864ba71cd6b4988261d789a852823791464d` وruntimeOrLaunchVerified=false في السطرين. فحوص Auth/profile وقائمة E المحدودة ورفض الزائر/جدول العرض المباشر نجحت في نطاق الأداة؛ هذه إفادة تشغيل من المالك، لا وصول مستقل للوكيل. لا قراءة جلسة أو تشغيل محاولة/عامل/تصحيح أو إثبات عزل صفوف قائمة فعلية بين الحسابين. الجداول وزوج الخدمة يكملان مراجعة توافق مخطط **واجهة E المغلقة**؛ لا تشغيل حي كامل.
+
+عقد frontend-schema الحالي pilot-through-assess-e/1 ومصادر SQL والفحوص لم تتغير في متابعات التشخيص والخدمة؛ المهاجرات الأقدم وأدلة التدريب والمقارنة وC/D السابقة محفوظة دون إعادة تطبيق/فحوص. أضيفت أدوات يدوية خارج بصمة العقد. حُسبت القيمة للمشروع الأصلي بأمر --print-marker القائم؛ لا تعديل للحارس أو pins أو ملف SQL مطلوب أو تطبيع مصدر أثناء حسابها:
+
+```text
+pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f
+```
+
+في GitHub Settings → Secrets and variables → Actions → Variables، طابق NEXT_PUBLIC_SUPABASE_URL مع `https://vlacestfruxooznrcjqc.supabase.co` ثم حدّث **PILOT_SCHEMA_VERIFIED وحدها** بالقيمة أعلاه. لا تغير URL/مفتاح عام أو pins. بعدها أعد Deploy Pages الخاص بمسودة #93 للرأس المقصود وتحقق من نتيجة CI/النشر لذلك الرأس ثم الهاتف. قراءة متغير URL عبر التكامل رفضت403، ولم تُطلب صلاحيات إضافية أو تُحاول كتابة؛ لذلك مطابقة إعداد البناء الحالية تكون لدى المالك. لا نتيجة تفيد تحديث المتغير أو نجاح إعادة النشر حتى الآن.
+
+قيمة marker شهادة توافق يدوية للمشروع ومحتويات العقد، لا دليل SQL حي صادر من الحارس أو تحقق runtime/launch أو تأكيد أنهما يعملان. تبقى البوابة مغلقة وruntime_or_launch_verified=false، والنسخ/الاستعادة وO106/O108 والمراقبة والجدولة مستقلة. لا F أو تغيير حالة PR. عند تغير المشروع/المخطط/المنح أو الاستعادة يلزم إجراء التحقق القائم مجددًا؛ لا تُنقل القيمة إلى مشروع آخر أو تتغير لإخفاء فشل. [تقرير المتابعة](ASSESS_E_REPORT_2026-10-20.md#e-closed-pair-attestation) يحفظ التحقق المحلي وحدوده.

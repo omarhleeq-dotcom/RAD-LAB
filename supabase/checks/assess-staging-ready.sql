@@ -1,5 +1,5 @@
--- Supplemental staging catalogue only. No network/auth configuration or runtime proof.
--- Run after separate authorization against the isolated STAGING database, as its catalogue administrator.
+-- Supplemental reviewed B/C/D/E catalogue only. No network/auth configuration or runtime proof.
+-- Target-specific authorization is required on any provider. E additions do not re-verify the prior C/D service proof.
 -- Only catalogues are read. No profiles, candidate documents, answers, grades or gate values are returned.
 -- Follow a passing catalogue with assess-mixed-ready.sql for the CLOSED gate value.
 begin read only;
@@ -16,7 +16,8 @@ with expected_tables(name) as (values
   ('assess.session_details'),
   ('assess.receipts'),
   ('assess.results'),
-  ('assess.content_submissions')
+  ('assess.content_submissions'),
+  ('assess.practical_presentations')
 ), tables as (
   select e.name,c.oid,c.relrowsecurity from expected_tables e left join pg_class c on c.oid=to_regclass(e.name)
 ), expected_functions(signature,audience) as (values
@@ -34,6 +35,8 @@ with expected_tables(name) as (values
   ('assess.content_page_v1(uuid,integer)','user'),
   ('assess.assigned_page_v1(uuid,integer)','user'),
   ('assess.read_mixed_session_v1(uuid)','user'),
+  ('assess.assigned_practical_page_v1(uuid,integer)','user'),
+  ('assess.read_practical_session_v1(uuid)','user'),
   ('assess.install_publication_v1(uuid,jsonb,jsonb)','worker'),
   ('assess.maintain_v1(integer)','worker'),
   ('assess.claim_v1()','worker'),
@@ -43,6 +46,7 @@ with expected_tables(name) as (values
   ('assess.health_v1()','worker'),
   ('assess.content_read_v1(uuid)','worker'),
   ('assess.content_install_v1(uuid,jsonb)','worker'),
+  ('assess.content_install_practical_v1(uuid,jsonb,jsonb)','worker'),
   ('assess.session_authorize_v1(uuid)','internal'),
   ('assess.session_ack_v1(uuid,uuid)','internal'),
   ('assess.validate_answer_v1(jsonb,jsonb,jsonb)','internal')

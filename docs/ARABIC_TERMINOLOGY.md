@@ -375,3 +375,7 @@ Visual direction approved in S-UI-054-1…6; exact new Arabic UI text remains ma
 ## Assess D — 2026-10-20 (DRAFT, machine-assisted; pending Arabic review)
 
 أضيفت نصوص منصة D في `messages/ar.json`، namespaces `assess` و`assessContent`؛ المحتوى الامتحاني وأدوات الحل بالإنجليزية وفق قرار المالك. للمراجعة: «إقرار الخادم» (server acknowledgement)، «مصالحة مع الخادم» (reconcile)، «بنود غير محلولة» (unresolved items)، «إصدار ثابت» (immutable version)، «نسخة مرشحة» (candidate)، «بانتظار تحقق الخادم» (pending server validation). لا اعتماد طبي أو تغيير لاصطلاحات التدريب من إضافة هذه الرسائل.
+
+## Assess E — 2026-10-20 (DRAFT, machine-assisted; pending Arabic review)
+
+نصوص المنصة الجديدة في `messages/ar.json`: «مسارات الاختبار»، «الفحوصات الكاملة»، «سُجل التعريض. هذا البند مقفل.» و«تعريض واحد فقط». أسماء الأدوات والمحتوى الامتحاني بالإنجليزية؛ لا نص تصحيح أو معيار طبي جديد. تعليمات القفل والتعريض نص منصة عربي/إنجليزي، مع وسم اللغة المناسب داخل البند الإنجليزي.

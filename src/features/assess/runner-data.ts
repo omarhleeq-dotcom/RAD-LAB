@@ -21,13 +21,13 @@ export function parseListing(raw:unknown):Listing {
   if(new Set(rows.map(r=>r.id)).size!==rows.length||(raw.next!==null&&raw.next!==rows.at(-1)?.id))return invalid();
   return {rows,next:raw.next};
 }
-function parseAck(raw:unknown):AttemptAcknowledgement {
+export function parseAck(raw:unknown):AttemptAcknowledgement {
   if(!isObject(raw)||!Number.isSafeInteger(raw.revision)||Number(raw.revision)<0||!text(raw.serverTime)||!Number.isFinite(Date.parse(raw.serverTime))||
     !(raw.deadline===null||(text(raw.deadline)&&Number.isFinite(Date.parse(raw.deadline))))||
     !["active","grading","graded","grading-failed","void"].includes(String(raw.state))||!Array.isArray(raw.lockedItemIds)||raw.lockedItemIds.length>200||raw.lockedItemIds.some(x=>!text(x,100)))return invalid();
   return {operationId:typeof raw.operationId==="string"?raw.operationId:"",revision:Number(raw.revision),serverTime:raw.serverTime,deadline:raw.deadline as string|null,state:raw.state as AttemptAcknowledgement["state"],lockedItemIds:raw.lockedItemIds as string[]};
 }
-function parseSpec(raw:unknown):ControlSpec {
+export function parseSpec(raw:unknown):ControlSpec {
   if(!isObject(raw))return invalid();
   if(raw.kind==="number"&&typeof raw.min==="number"&&Number.isFinite(raw.min)&&typeof raw.max==="number"&&Number.isFinite(raw.max)&&raw.min<raw.max)return {kind:"number",min:raw.min,max:raw.max};
   if(raw.kind==="enum"&&Array.isArray(raw.values)&&raw.values.length>0&&raw.values.length<=50&&raw.values.every(v=>v===null||typeof v==="string"||(Array.isArray(v)&&v.every(x=>typeof x==="string"))))return {kind:"enum",values:raw.values};
