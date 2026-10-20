@@ -7,7 +7,7 @@
 اختيار [Google Cloud Run](DECISIONS.md#assess-cloud-run-owner-2026-10-21) محفوظ. أُعدت حاوية Node24 خاصة بغير root وentrypoint تنفذ runAssessJobs مرة واحدة بحد1 ثم تغلق النقل القائم، دون HTTP أو schedule أو purge/recovery مكررة. [الدليل](ASSESS_RUNTIME_LOCAL.md) و[تقرير الحاوية](ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md) يحفظان بناء الصورة المحلي ورفض الإعداد وتنقيح المخرجات واختبارات SIGTERM/SIGINT/القتل وCOMMIT. لا سر أو اتصال مزود في الصورة.
 
 ## الخطوة التالية
-مراجعة الحزمة والأدلة، ثم تحديد project/region والتكلفة ومسؤول التشغيل وIAM والسر وCA وlogin ومسار الشبكة/ACL والإلغاء والتنبيه ضمن نطاق ربط خارجي مستقل. لا موارد أو APIs/فوترة أو نشر/تشغيل عامل أو schedule أُعدت. قيم tasks/parallelism/retries في الخطة مقترحات غير مطبقة. لا إعادة سؤال المزوّد أو النسخة أو إعادة QA ناجحة بلا تغير.
+راجع [حزمة External Binding & Provisioning Readiness](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md) و[تقريرها](ASSESS_EXTERNAL_BINDING_REPORT_2026-10-21.md). تتضمن region/موارد/timeout والتكلفة وIAM والسر وTLS/login والشبكة والإلغاء وقتل الجلسات والتنبيه؛ كلها مقترحات غير مطبقة. التالي قرار المالك بشأن الإعدادات وتثبيت project/Billing والمسؤول والبديل، وحسم وصول direct وقيود الشبكة قبل إذن تجهيز منفصل. shared pooler غير متوافق مع validator وsession_user الحاليين؛ والدور الحالي أوسع من tick-only. لا تخفيف ACL أو validator أو شراء IPv4/NAT تلقائيًا، ولا موارد أو تشغيل من هذا التسليم.
 
 فحص PID1 داخل Docker استخدم worker محاكى، وشاهد القتل استخدم PostgreSQL محلية باتصالات مستقلة ونقل Unix socket بلا TLS. لا يثبتان Google/JWT/TLS أو PID1+المزوّد معًا، ولا ضمان تسوية معاملة60ثانية خلال نافذة إنهاء10ثوانٍ. يبقى lease/الاسترداد مرجع عدم اليقين دون retry عمياء أو صفر مصطنع. تحقق نتائج رأس #96 الجديد مستقل؛ نجاح Pages لا ينشر runtime ولا يثبت هاتفًا جديدًا.
 
