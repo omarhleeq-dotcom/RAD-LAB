@@ -69,6 +69,19 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 [خطة التنفيذ والتدقيق](ASSESS_IMPLEMENTATION_PLAN.md) تفصل قرارات المنتج أعلاه عن المقترحات التقنية؛ [تقرير الدفعة](ASSESS_DOCS_REPORT_2026-10-19.md) يحفظ التحقق وحدوده. الحالة الحالية في project-status وحده.
 
+<a id="assess-retention-owner-2026-10-20"></a>
+### S-ASSESS-15 — سياسة O106 للتجربة الأولى، 2026-10-20
+
+**السلطة:** بعد عرض الخيارات الخمسة في المحادثة قال المالك «اعتمد الخيارات». هذا اعتماد السياسة التالية، لا دليل تنفيذ أو إذن SQL/نشر/فتح بوابة. [السياسة ونص EN/AR وخطة الإنفاذ](ASSESS_RETENTION_POLICY.md) تحفظ التفاصيل والتمييز بين المعتمد والمنفذ والمتحقق.
+
+- التجربة الأولى مؤقتة فقط؛ غير المؤقت خارجها حتى سياسة مستقلة للمتروك، دون مهلة inactivity مخترعة. مسارا mixed/full-practical والسجل والحقول الأربعة وحجب العلامة والستة أشهر التقويمية من التسليم لا تتغير.
+- metadata الحجز الدنيا لحماية حد المحاولات تبقى بعد حذف النتيجة، ثم تحذف بعد إغلاق الإسناد نهائيًا وانتهاء جميع محاولاته ونتائجه ونوافذ استرداده. لا إعادة فتح للإسناد المغلق؛ الإتاحة الجديدة بإسناد جديد.
+- إصدار الموافقة وتوقيتها يبقيان طوال تفعيل Assess للحساب. عند تعطيله يمنع البدء الجديد، ثم يحذف سجل الموافقة بعد تسوية بيانات المحاولات والنتائج. يمكن أن تبقى metadata أطول من ستة أشهر دون أجوبة أو علامات؛ لا عمر تقويمي آخر اختير لها.
+- النسخ التي نديرها: يومية مشفرة بتداول سبعة أيام، ونسخة قبل تغيير القاعدة. تجربة استرداد قبل التشغيل وبعد تغير مؤثر في إجراء الاستعادة؛ يبقى الوصول مغلقًا بعد restore حتى إعادة تطبيق الحذف وفحص الصلاحيات. نسخ المزود تحتاج تحققًا مستقلًا، ولا وعد لها بسبعة أيام أو محو فوري.
+- التصدير نتائج مختصرة فقط، بلا أجوبة أو إعدادات، وبموعد حذف النتيجة الأصلي؛ لا ستة أشهر جديدة أو نسخة دائمة بسبب التصدير.
+
+يتبع ذلك نص موافقة بإصدار جديد وقبول صريح؛ لا إعادة ختم v1 أو تغيير النص تحت إصدارها. اعتماد السياسة لا يثبت موافقة مستخدم أو تشغيل النسخ أو purge/restore، ولا يغير Practice أو يمنح إتلاف أرشيف قائم. المتبقي تنفيذ وتجربة وضبط مزود، لا إعادة طلب هذه الخيارات. O108 وruntime والعامل والجدولة والمراقبة والنشر والاسترداد بوابات مستقلة، ولا اعتماد Blueprint أو قبول حي. لم تُختر مدد مرشحات المحتوى أو RPO/RTO أو قناة مراقبة بهذا القرار.
+
 ## Open O-items
 
 These are **residual scope descriptions**, not a second task-status register. Owner/reviewer/waiting states come only from [project-status](project-status.md); use `npm run status:summary -- --id RAD-045` for the credits task (O102); text queries search task fields only. Partial implementation and later decisions are stated beside the item so the old ledger cannot be mistaken for current instructions.
@@ -151,7 +164,7 @@ These are **residual scope descriptions**, not a second task-status register. Ow
 | <a id="decision-o103"></a> `O103` | أسئلة pilot الأصلية لها إجابات/تنفيذ لاحق؛ طبّق S-PILOT-4/6/30/32/38 وحالة المهام، وتبقى provider/retention facts غير المثبتة فقط؛ لا إعادة دعوة أو SMTP setup قديم. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o103) |
 | <a id="decision-o104"></a> `O104` | CSP inline scripts مع جلسات المتصفح مخاطرة موثقة؛ لا ادعاء tightening منفذ أو permission لتعديل سياسة ضمن docs. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o104) |
 | <a id="decision-o105"></a> `O105` | نسخة/restore المالك مثبتة بحدود S-PILOT-38؛ تبقى audit-log availability وAccess limits وغيرها منفصلة. لا إغلاق كامل أو افتراض أن backup تتحدث ذاتيًا. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o105) |
-| <a id="decision-o106"></a> `O106` | حُسمت مدة نتائج التجربة وتقليل البيانات في [قرار الحفظ](#decision-s-assess-13). المتبقي صياغة/تطبيق موافقة Assess والحذف الآلي وآثار النسخ والاستعادة قبل التخزين؛ لا purge منفذ أو تغيير لسياسة Practice. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o106) |
+| <a id="decision-o106"></a> `O106` | قرارات [حفظ النتائج](#decision-s-assess-13) وتقليل البيانات محفوظة، واعتمدت سياسة التجربة الأولى وmetadata والنسخ والتصدير في [S-ASSESS-15](#assess-retention-owner-2026-10-20). المتبقي إنفاذها بنسخة موافقة جديدة وتجربتها والتحقق من نسخ المزود والاسترداد؛ ليس اعتماد السياسة دليل تشغيل أو تغيير Practice. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o106) |
 | <a id="decision-o107"></a> `O107` | حُسمت إعدادات الوقت والمحاولات والتعريض والتنقل في [سياسة الاختبار](#decision-s-assess-9). المتبقي بروتوكول الخادم للانقطاع والمهلة والتزامن ومنع تكرار التعريض والتسليم؛ لا إعادة طلب القرارات المحسومة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o107) |
 | <a id="decision-o108"></a> `O108` | مصادر أسئلة البداية وتوثيق تراخيصها ومراجعها وتكليف المراجعين لم تُحدد. Blueprint ليس اعتماد بنك أو لجنة أو أسئلة؛ لا نشر محتوى قبل الدليل والمراجعة، وفق S-ASSESS-3 المتبقي. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o108) |
 
