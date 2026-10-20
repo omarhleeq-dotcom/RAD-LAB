@@ -23,7 +23,7 @@
 
 ## A. Primary route: GitHub Actions direct upload
 
-**Pilot database gate:** an enabled-account deployment must pass `scripts/pages/pilot-schema-gate.mjs` before build/upload. The owner must first verify the target database and service path, then set the project/SQL-bound `PILOT_SCHEMA_VERIFIED` repo variable. Missing or stale attestation stops upload and replaces the PR preview comment with a blocked notice. This is an offline attestation check, not an automated live-database check; no migration is applied by the workflow. See the [single verification procedure](PILOT_SUPABASE_SETUP.md#training-deployment-check). Existing preview URLs retain their previously deployed code. Manual uploads and the legacy Git integration bypass this workflow and must follow the same verification procedure.
+**Pilot database gate:** an enabled-account deployment must pass `scripts/pages/pilot-schema-gate.mjs` before build/upload. The owner must first verify the target database and service path, then set the project/required-frontend-SQL-bound `PILOT_SCHEMA_VERIFIED` repo variable. Missing or stale attestation stops upload and replaces the PR preview comment with a blocked notice. This is an offline attestation check, not an automated live-database check; no migration is applied by the workflow. See the [single verification procedure](PILOT_SUPABASE_SETUP.md#training-deployment-check). The reviewed [frontend contract](../scripts/pages/frontend-schema.json) selects the SQL/checks required by this static UI; dormant backends have a separate pinned classification and are not deployed. Existing preview URLs retain their previously deployed code. Manual uploads and the legacy Git integration bypass this workflow and must follow the same verification procedure.
 
 Why: the Cloudflare Git-integration flow (§1) could not be completed from the owner's phone browser. `.github/workflows/deploy-pages.yml` builds the static export in GitHub Actions and uploads `out/` to Cloudflare Pages with Wrangler. The repo stays private; Cloudflare never gets access to the repo. The workflow:
 
@@ -150,3 +150,33 @@ Cloudflare is steering new projects toward Workers *Static Assets*. The `out/` d
 - Project name / custom domain (none planned for the pilot).
 - Whether previews of *every* branch should be built (cost: none; exposure: more URLs — mitigated by Access).
 - Who the first reviewers are (email list for Access).
+
+
+## عقد متطلبات الواجهة — فصل النشر عن الخدمات الخلفية
+
+أذن المالك بهذا الإصلاح بعد توقف PR #91 عند Require verified pilot schema. السبب كان حساب البصمة من **كل** ملفات SQL، بما فيها C التي لا يستوردها المتصفح ولا يستدعيها. الإصلاح لا يطبق SQL ولا يفتح launch_gate أو ينشر عاملًا أو يبدأ D. يبقى PR مسودة؛ نشر Pages هو نشر الواجهة الساكنة وحدها.
+
+[`frontend-schema.json`](../scripts/pages/frontend-schema.json) عقد مراجع بإصدار، وله أربعة أجزاء:
+
+| الجزء | دوره |
+|---|---|
+| requiredMigrations + checks | ملفات SQL والفحوص التي تحتاجها الواجهة الحالية؛ البصمة تربط محتوياتها كاملةً بالمشروع. تغيير أي منها يطلب إثباتًا جديدًا بعد التحقق الحي المأذون |
+| deferredMigrations | تصنيف صريح لترحيل خلفي غير مستخدم بالواجهة: SHA-256 مطابق وسبب ووحداته الخادمية. ملف SQL جديد غير مصنف أو تعديل غير مراجع في المؤجل يوقف النشر |
+| serverModules | استيرادها في شبكة المتصفح يوقف النشر حتى لو أُعيد تثبيت بصمة ملف الاتصال؛ imports/reexports/dynamic imports المحلية تُفحص، وtype-only لا يشحن كودًا |
+| browserBoundaries | SHA-256 لمصادر حدود الاتصال المكتشفة؛ حد جديد أو تغيير فيها يطلب مراجعة العقد، لا تعديل إثبات قاعدة البيانات آليًا |
+
+الحارس يبدأ من كل وحدات use client ويتتبع اعتمادياتها المحلية وقت التشغيل باستعمال TypeScript المقفل في المشروع. يستكشف حدود SDK وgetPilotClient/RPC/table/schema/fetch، ويفحص أسماء RPC والجداول الحرفية مع schema المعلنة مقابل SQL المطلوب؛ كما يرفض أسماء دوال الخلفية المؤجلة داخل adapters ذات RPC ديناميكي. **هذا فحص محافظ للعقود وليس برهانًا على JavaScript أو SQL عشوائيين**: computed calls أو مكتبة نقل/SQL vocabulary جديدة تحتاج مراجعة المراجع وتوسيع التحقق قبل اعتمادها. تغيير pins ليس أمرًا آليًا لتمرير النشر؛ راجع فرق الكود واحتياجات SQL. قد تتطلب تعديلات JSX في ملف اتصال مختلط مراجعة pin، لكن لا تحتاج بصمة قاعدة جديدة إذا لم تتغير متطلبات SQL. لا قوائم مستخدمين أو قراءة قاعدة أو وعود سعة؛ تكلفة الفحص مرتبطة بمصادر المستودع، لا بعدد الطلاب.
+
+الواجهة الحالية تحتاج السلسلة حتى Assess B فقط. يعيد الحارس **نفس البصمة المثبتة سابقًا** لهذه الملفات والمشروع؛ لا fallback أو قيمة true أو تغيير Actions Variable. C مثبتة كخلفية مؤجلة ببصمة ملفها، وحماياتها القديمة واختبارات العزل باقية. عند ربط runner بخدمات C: تُراجع طبقة الاتصال، وتُنقل C إلى requiredMigrations، وتُحدّث مصادر الحدود والعقد؛ حينها تتغير البصمة ويُمنع النشر حتى تجهيز بيئة اختبار والتحقق من المخطط/خدمة الحسابات وفق الإجراء قبل أي إذن إنتاج مستقل. لا إنشاء لمشروع Supabase تجريبي أو binding أو مجدول ضمن هذا الإصلاح.
+
+التحقق المحلي لهذه الدفعة: الاختبارات القائمة للحارس محفوظة دون تعديل، واختبارات جديدة في [`frontend-schema.test.ts`](../src/features/deployment/frontend-schema.test.ts) تثبت مطابقة B، اختلاف المشروع/SQL والفحوص، الترحيل المجهول/المعدل، مؤجل جديد مراجع، تغييرات العرض، حدود الاتصال، استيراد C بثلاث صيغ، RPC/table غير جاهزة حتى بعد إعادة pin، وترقية C التي تطلب إثباتًا جديدًا. مصدر الحالة ونتائج الفحوص النهائية في [project-status](project-status.md) والتسليم؛ لا يُعد الاختبار المحلي فحص مزود حي أو مراجعة طبية. لم تُعدّل توقعات أو hashes تدريب، ولم يتغير ruling لقرارات المنتج أو روابط أدلتها؛ تغير تنظيم حارس النشر التقني بإذن المالك فقط.
+
+
+فحوص دفعة الفصل بتاريخ2026-10-20: `npm run check` ناجح (114ملفًا/2098اختبارًا مع typecheck وlint)، ثم22حالة مستهدفة للحارس بعد توسيع فحص schema وتقسيم حالات API مستقلة؛ `npm run docs:test` ناجح (23حالة)، وفحوص الوثائق والحالة وdiff ناجحة بلا review warnings، مع إبقاء تعارض RAD-024 الموروث. الفحص الشامل الأول التقط fixture في مجلد pilot بواسطة حارس عزل C؛ نُقل الاختبار الجديد إلى deployment ولم تُغير توقعات الحارس. لا تغيير للتطبيق يستدعي إعادة البناء/تدقيق المتصفح لهذه الدفعة؛ أدلة البناء والمتصفح السابقة تخص C وتبقى بحدودها. نجحت محاكاة الحارس للمشروع المعني بمفتاح عام اصطناعي وإثبات B المعروف، دون اتصال قاعدة أو تغيير Repository Variable. نتيجة GitHub بعد الرفع تُتحقق مستقلة؛ نجاح محلي لا يثبت نشرًا بعيدًا.
+
+
+### متابعة CI — مهلة اختبار الترقية
+
+أكد GitHub نجاح Deploy Pages رقم39350833079 للدفعة السابقة، بما فيه حارس المخطط والبناء والرفع؛ لم يُفتح رابط المعاينة من الوكيل. وفشل CI رقم39350833090 في اختبار واحد فقط من2102: اختبار ترقية C إلى requiredMigrations تجاوز مهلة Vitest الافتراضية5ثوانٍ، بينما نجحت2101حالة وبقية فحوص الوثائق والأنواع وlint. السبب تشغيلي للاختبار: أربع عمليات Node مستقلة تُعيد تحميل TypeScript وفحص شبكة المصادر، لا قبول مخطط غير صحيح أو عطل في التطبيق.
+
+الميزانية4ملفات فقط: اختبار الحارس الجديد وهذا الدليل والحالة والتسليم. خُفضت العمليات إلى ثلاث بإعادة استعمال ناتج طباعة البصمة، مع تحقق إضافي من exit status؛ ضُبط timeout **لهذا الاختبار فقط** إلى20ثانية، وبقي حد كل عملية15ثانية وجميع شروط الرفض/القبول والحارس الإنتاجي وتوقعات الاختبارات القديمة كما هي. لا retry أو skip أو تعديل Vitest العام أو workflow أو أي SQL/مفتاح/بصمة. التغيير لا يحتاج build أو تدقيق واجهة جديدًا؛ لا أثر طبي أو على الدرجات أو Scale للتطبيق، ووقت الاختبار مرتبط بمصادر المستودع لا ببيانات الطلاب. لا ruling منتج تغير، وروابط القرارات وأدلتها محفوظة. إعادة الفحوص المستهدفة ناجحة:22حالة على Node24 ثم22حالة على Node22 المستخدم في CI، مع typecheck وlint وفحوص الوثائق والحالة وdiff ناجحة. متابعة CI الأحدث بعد الرفع مستقلة عن نجاح نشر الواجهة السابق، ولا يُفترض نجاحها من الدليل المحلي.
