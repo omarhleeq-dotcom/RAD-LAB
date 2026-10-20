@@ -570,3 +570,17 @@ pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f
 4. بعد التطبيق شغّل [جرد المخطط المراجع](../supabase/checks/assess-staging-ready.sql) ثم [فحص F المغلق](../supabase/checks/assess-history-ready.sql) كاملين. أي خطأ/false يعني توقفًا وتشخيص فرق جديد قبل تغيير أي شيء؛ لا DROP أو replay أو تعديل hashes أو Variables لتجاوز الفشل.
 
 الحزمة تقبل بصمات LF وCRLF المحددة للمصادر المراجعة فقط، بلا normalization/trim. تقارن أشكال الجداول وRLS والصلاحيات والمنح العمودية وtrigger/index مع المصدر، ولا تعرض صفوف مستخدمين أو body/keys. لا اتصال إدارة مجهز لدى الوكيل؛ التنفيذ من SQL Editor عند المالك ولا أسرار تُرسل بالمحادثة. نجاح SQL لا يثبت خدمة حسابين F أو إسناد/حفظ/تصحيح/runtime حيًا؛ يلزم دليل F مناسب لاحقًا قبل إثبات نشر مطابق، دون إعادة أدوات E أو فتح gate. O106/O108 والنسخ والاستعادة وبقية التشغيل مستقلة.
+
+<a id="assess-f-closed-service"></a>
+### نجاح SQL F وفحص الخدمة المغلقة
+
+أرسل المالك جرد المخطط وcatalogue_ready=true بكل شروطه، ثم فحص F بكل شروطه وlaunch_gate_closed=true، وruntime_or_launch_verified=false عمدًا. مع صف assess-f-install/1 السابق اكتمل دليل SQL المفحوص؛ لا إعادة F أو B/C/D/E أو preinstall أو أدوات الخدمة القديمة. [التقرير](ASSESS_F_REPORT_2026-10-20.md#f-sql-owner-results) يحفظ النتائج وحدودها، ولا يثبت تشغيل المحاولات أو العامل حيًا.
+
+الخطوة التالية [`assess-f-closed-service-check.js`](../scripts/pilot/assess-f-closed-service-check.js) الجديدة:
+
+1. من تطبيق RAD-LAB المسجل دخوله على اللابتوب، افتح Console وشغّل الملف كاملًا بحساب owner approved.
+2. أدخل محليًا المفتاح العام sb_publishable_ للأصلية وUUID المشارك الآخر المعتمد. لا ترسل أي مفتاح أو UUID أو JWT أو بريد/كلمة مرور أو بيانات Console/Network في المحادثة؛ لا sb_secret_ أو service_role.
+3. اخرج وادخل بحساب participant approved مختلف، ثم شغّل الأداة نفسها وأدخل UUID المالك بوصفه الحساب الآخر.
+4. أرسل فقط سطري RADLAB_ASSESS_F_CLOSED_CHECK: المطلوب contract=assess-f-closed-service/1 وoutcome=PASS ودورا owner/participant وpair متطابق وruntimeOrLaunchVerified=false. عند STOP أرسل السطر المنقح فقط؛ لا تغيّر grants لتجاوز الخطأ.
+
+الأداة قراءة فقط: history_page_v1 بحد1 مع whitelist الحجب، وconsent_v1(p_version:null) لقراءة الحالة فقط، ورفض الزائر وقراءة جدولي consents/results المباشرة. لا تسجيل موافقة أو start/command/read-session/content/worker/maintenance، ولا كتابة في Practice/events أو localStorage أو طباعة تفاصيل النتائج. القوائم الفارغة وaccepted=false صحيحان؛ لا تُنشئ محتوى/محاولة أو توافق نيابة عن أحد لتوفير شاهد. لا يلزم نشر واجهة F لتشغيل السكربت المستقل، ولا تُعاد أداة E. نجاحه دليل المسارات المحددة فقط، لا عزل صفوف نتائج حقيقية أو حفظ/انقطاع/تسليم/تصحيح/runtime حيًا. لا تغيير PILOT_SCHEMA_VERIFIED قبل الزوج ومراجعة العقد، والبوابة وسائر O106/O108/الاسترداد مستقلة.
