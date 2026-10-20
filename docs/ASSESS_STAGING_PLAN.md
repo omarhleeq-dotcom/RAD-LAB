@@ -6,6 +6,18 @@
 
 الميزانية8ملفات: هذا المستند؛ `scripts/assess/staging-preflight.mjs` و`scripts/docs/assess-staging-preflight.test.mjs`؛ `supabase/checks/assess-staging-ready.sql`؛ `src/features/assess/staging-catalogue.test.ts`؛ [الإعداد](PILOT_SUPABASE_SETUP.md#assess-staging-preparation)، [التسليم](HANDOFF.md)، [مصدر الحالة](project-status.md). لا تعديل تطبيق أو workflow أو migration أو frontend-schema أو pins أو package/lock أو قواعد/توقعات تدريب. لا تغيير ruling أو حذف دليل قرار؛ روابط الأصل محفوظة.
 
+## المسار الجاري بعد اختيار المالك للأصلية
+
+بعد توضيح أن staging اقتراح عزل وليس متطلبًا من Supabase، قال المالك «تمام خلينا نكمل على الأصلية وانا جاهز حاليا». الوجهة الجارية أصبحت `vlacestfruxooznrcjqc` لتجهيز C/D مع البوابة مغلقة، بدل تجهيز مشروع mucrvdknpkqggpsypiqw؛ لا حذف أو تعديل للمشروع الجديد. يُحفظ اقتراح staging أدناه كبديل سابق، لا كشرط يعاد طلب اعتماده. اختيار الأصلية لا يمنح إذن فتح Assess أو نشر عامل/جدولة أو تغيير الموافقة/الاحتفاظ أو دمج PR أو بدء E.
+
+الخطوة الفورية: من SQL Editor للمشروع الأصلي، تشغيل [`assess-cd-preinstall.sql`](../supabase/checks/assess-cd-preinstall.sql) للقراءة فقط. يطلب read_only=true وready_for_cd_review=true، مع B موجودة وRLS وكامل تواقيعها، وغياب جداول C/D ودور العامل وأي كائن Assess إضافي غير مراجع. إذا ظهر C أو D مطبقًا جزئيًا/كاملًا فلا إعادة تلقائية ولا DROP؛ يُجرد الفرق أولًا. هذا فحص metadata أولي لا تطابق bodies/ACL شاملًا ولا proof هوية URL من داخل SQL. قبل التطبيق يلزم سجل الهدف/المشغّل/النسخة والبصمات، والنسخة الاحتياطية المشفرة وتجربة restore ونافذة القفل وفق §8 في [إجراء القاعدة القائمة](PILOT_SUPABASE_SETUP.md). لا إعادة ترحيلات public أو B القديمة.
+
+الميزانية لهذه المتابعة4ملفات فقط: فحص القراءة الجديد وهذه الخطة وHANDOFF وproject-status. حُضرت حزمة محلية لمراجعة C ثم D وحدهما، من bytes المصدر دون تعديل أو seeds أو Auth shim أو gate opening، مع BEGIN/COMMIT وحارس B-only وحد lock5ثوانٍ وstatement60ثانية مبدئيين؛ ليسا ضمان زمن إنتاج. البصمتان: C=`198a581275ade58ac7be47528768f4028dc566857fce8b57fa031c9845e96581`، D=`1f42463fa9af7f4d269e66f08669302ce2675b8c5ad2b6c7d984ade2df23bdef`؛ بصمة الحزمة المحلية `93523b118f5b81cfa61b4d14fb9c29d9c07523957701971ab70b3425ce1fd021`. هي artifact مراجعة خارج Git، وليست migration جديدة أو سجل تطبيق حي. لا تعديل frontend-schema/pins/Variables/workflow أو محتوى طبي أو حساب/بيانات/صور/توقعات تدريب.
+
+rehearsal محلي بـPGlite للحزمة الفعلية: PASS لرفض غياب الأساس، وقبول B-only وread-only، وفشل مفتعل بعد statements C/D يرجع الكائنات والدور بالكامل، وحفظ دوال public وبيانات profile اصطناعي قائم، وgate=false، وcatalogue ما بعد التطبيق، ورفض إعادة الحزمة. اختبار metadata نفسه لا يثبت عدم تعارض writer حي أو توازي PostgreSQL أو توافق SQL Editor/صلاحيات Supabase أو نسخة احتياطية حقيقية. فحوص docs/status/diff مطلوبة لهذه الدفعة دون build/متصفح لأن التطبيق والترحيلات لم يتغيرا.
+
+لم يُنفذ SQL بعيد ولم تُجمع بيانات دخول؛ التطبيق اليدوي ينتظر فحص البداية وشروط الاسترداد أعلاه. بعد التطبيق الموثق: catalogue C/D وقيمة البوابة المغلقة، ثم فحص Data API بحسابين على المشروع الأصلي قبل مراجعة الإثبات المناسب. نشر واجهة مغلقة أو تحديث إثبات schema لا يثبت runtime/العامل/الجدولة أو يفتح launch_gate؛ تبقى هذه وO106/O108 بوابات مستقلة. الربط المقترح لـSTAGING Variables ومشروع Pages مستقل لا يُنفذ ضمن مسار الأصلية، ولا يغير المتغيرات القائمة.
+
 ## 2. الحزمة المجهزة ومسار التنفيذ المقترح
 
 ### ما جُهّز محليًا
