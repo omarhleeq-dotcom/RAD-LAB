@@ -686,3 +686,20 @@ $radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
 ### وصل الزوج المطابق — لا إعادة SQL أو الحسابين
 
 وصل owner=PASS وparticipant=PASS لعقد assess-retention-closed-service/1، وبنفس pair، عند00:04و00:05 يوم2026-10-21 بتوقيت عمّان؛ runtimeOrLaunchVerified=false في كليهما. [النتيجتان وحدودهما](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result) محفوظتان. انتهى إجراء الحسابين أعلاه؛ لا تكرره لمجرد شاهد إضافي. هذا يضيف دليل الطلبات المحدودة من الجلستين إلى صف SQL السابق؛ لا قبول v2 نيابة عن أحد أو start/عامل/صيانة/حذف حي أو نشر. التالي مراجعة الحزمة وأدلتها، مع بقاء launch_gate مغلقة وفق آخر صف SQL، والنسخ والاسترداد وبقية بوابات التشغيل والنشر مستقلة. لا marker/attestation أو إعدادات إنتاج تتغير، والنسخة الشاملة مؤجلة إلى نهاية العمل بتوجيه المالك.
+
+<a id="assess-retention-schema-attestation"></a>
+### معالجة حظر نشر #96 — إثبات retention المجهز، 2026-10-21 عمّان
+
+أبلغ المالك برسالة الحارس وطلب معالجة الحظر قبل المرحلة التالية. راجعت الحزمة واتصال الواجهة، وصف SQL النهائي بعد COMMIT وزوج retention المغلق المكتملين أعلاه؛ لا إعادة installer أو SQL أو أدوات الحسابين. أحدث main المتحقق بقي ff68413042e6e8414ad70884efcfa71cac7443a7، و#96 مفتوحة/مسودة عند563af8d4a3f57d48a888cab722f902800f0430e0. هذا الرأس نجح CI وفشل Deploy؛ الرسالة التي أرسلها المالك تثبت رفض إثبات التوافق، لا عطلًا في SQL.
+
+عقد الواجهة المراجع هو pilot-through-assess-retention/1 ويحتاج consent_v2 والترحيل الإضافي وفحوصه. قيمة F التاريخية لا تطابقه. حُسبت القيمة بأمر --print-marker القائم، وطابقت حساب SHA-256 مستقلًا للمشروع وبايتات requiredMigrations/checks؛ قبلها الحارس محليًا بمفتاح عام اصطناعي ورفض قيمة F القديمة. لم يتغير كود الحارس أو pins أو SQL أو المتغيرات. للأصلية **vlacestfruxooznrcjqc فقط**، مع بقاء المتطلبات نفسها:
+
+```text
+pilot-v1:0bc3743c707cff0fcef456d00096f6e186b759390708d2d963a6eabea55e5d52
+```
+
+الإجراء المتبقي للمالك في GitHub: **Settings → Secrets and variables → Actions → Variables → Repository variables → PILOT_SCHEMA_VERIFIED → Edit**، ثم استبدال القيمة كاملة بالسطر أعلاه وحفظها. ليست Secret ولا متغير NEXT_PUBLIC. طابق NEXT_PUBLIC_SUPABASE_URL مع `https://vlacestfruxooznrcjqc.supabase.co`؛ عند اختلاف المشروع توقف، ولا تغيّر URL أو المفتاح لتجاوز المشكلة. لا إعادة موافقة أو محاولة أو SQL لإنتاج شاهد.
+
+**لم يُحدّث الوكيل المتغير ولم يشغّل نشرًا.** يبقى منع تغيير الإعدادات/النشر من الإذن السابق قائمًا؛ القيمة جهزت للمراجعة والتطبيق من المالك. بعد تحديثه وفي نطاق إذن نشر الواجهة فقط: اختر تشغيل Deploy Pages المرتبط بأحدث رأس #96 المقصود ثم Re-run all jobs، وتحقق من CI وDeploy لذلك الرأس وعرض الهاتف. إعادة تشغيل رأس قديم لا تثبت أحدث رأس، وتحديث Variable وحده لا ينشر أو يثبت نجاح البناء. لا merge/ready أو نشر runtime/عامل/schedule أو فتح launch_gate من هذه الخطوة.
+
+الإثبات شهادة توافق يدوية محدودة بدليل المخطط والخدمة للطلبات المحددة؛ ليس قبول v2 أو تشغيل محاولات/عامل/صيانة أو backup/restore/provider proof. لا تغيير لقرار النسخة المؤجلة أو O108 وبوابات المراجعة والمراقبة والنسخ والاستعادة والتصدير والتشغيل المستقلة. [دليل التشخيص المحلي](ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md#retention-deploy-block-followup).
