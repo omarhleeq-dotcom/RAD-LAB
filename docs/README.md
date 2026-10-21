@@ -8,7 +8,7 @@
 | مهمتك | القراءة المطلوبة بعد البداية | عند الحاجة فقط |
 |---|---|---|
 | مراجعة/تعديل docs | البند المعني من الحالة، القسم المعني من القرارات، [طريقة الفحص](DOCS_CHECKS.md) | السجل التاريخي الذي يستند إليه التغيير |
-| تخطيط/تنفيذ Assess عند استئنافه | [قرارات المالك](DECISIONS.md#assess-owner-2026-10-19)، [خطة التنفيذ والتدقيق](ASSESS_IMPLEMENTATION_PLAN.md)، RAD-055/RAD-056 من الحالة | [تقرير التوثيق](ASSESS_DOCS_REPORT_2026-10-19.md)، ENGINE_GUIDE وpilot setup بحسب الوحدة؛ Blueprint ليس اعتمادًا |
+| تخطيط/تنفيذ Assess عند استئنافه | [قرارات المالك](DECISIONS.md#assess-owner-2026-10-19)، [خطة التنفيذ والتدقيق](ASSESS_IMPLEMENTATION_PLAN.md)، [مراجعة الدورة وخطة التجربة المضبوطة](ASSESS_CONTROLLED_TRIAL_READINESS_2026-10-22.md)، RAD-055/RAD-056 من الحالة | [تقرير التوثيق](ASSESS_DOCS_REPORT_2026-10-19.md)، ENGINE_GUIDE وpilot setup بحسب الوحدة؛ Blueprint ليس اعتمادًا |
 | فهم المعمارية | [المعمارية الحالية](PLATFORM_ARCHITECTURE.md) | [ADR](adr/README.md)، تفاصيل القسم المعني من [دليل المحرك](ENGINE_GUIDE.md) |
 | تعديل حسابات/سياسات/تشغيل pilot | [الخطة والتسجيل الحالي](PILOT_PLATFORM_PLAN.md)، قرارات pilot ذات الصلة | [إعداد Supabase](PILOT_SUPABASE_SETUP.md)، [تحقق المزوّد](PILOT_PROVIDER_VERIFICATION_CHECKLIST.md)؛ لا إذن تشغيل إنتاج تلقائي |
 | تعديل scoring/rendering/المشاهد | الأقسام المعنية من [دليل المحرك](ENGINE_GUIDE.md)، قرار الأسرة ودليلها | التقرير الأصلي أو حارس الأسرة؛ لا قراءة كل تقارير الفحوص |
