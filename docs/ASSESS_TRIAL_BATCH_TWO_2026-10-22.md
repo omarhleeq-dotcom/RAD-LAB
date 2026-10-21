@@ -8,11 +8,30 @@
 
 معايير القبول المحلي: دليل ناقص/قديم/متناقض يتوقف، لا أصفار بديلة، ربط تقرير tick بـexecution ومهمة واحدة، كشف اختلاف النسخ والتداخل/الجدولة/الفشل والـleases والتسوية، إخراج منقح، وعدم إرسال تنبيه أو إنشاء scheduler. لا worktree/subagents أو ready/merge/auto-merge.
 
+متابعة المهمة4 بعد طلب المالك «تمام خلينا نخلص مهمة4»: ميزانية منفصلة5ملفات، مولد تشخيص catalogue واختباره وهذا التقرير وHANDOFF وproject-status. معيارها تفسير اختلاف المزود بقراءة فقط دون تغيير baseline أو hashes/ACL أو SQL التركيب؛ لا وحدات مشتركة أو انحراف.
+
 ## 2. المنجز والمستبعد
 
 أُنجزت أداتا مراجعة offline بعقد versioned وSQL read-only محدودة، وأضيف خيار تعبئة scope file في build context مستقلة بحارس0 وبصمة ومراجعة COPY. [الدليل](ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md) يشرح حقول JSON ومصدر كل fact ومكان كل خطوة، وإعداد الجدولة PAUSED كمقترح وشروط التزامن والإلغاء/الـcache والتكلفة ومسؤول التنبيه. CLI تقرأ ملفًا منقحًا محليًا فقط؛ لا تجمع بيانات من Google/Supabase، ولا ترسل رسائل أو تستدعي worker/maintain/recover. CLEAR ليست شهادة صحة الأدلة أو قبولًا حيًا؛ الرايات false دائمًا.
 
 SQL المراقبة ليست إعادة جرد الأصلية أو probe، ولم تستخدم حيًا. تربط فحوصها بنافذة تشغيل لاحقة وتقرأ counts scalar من sessions وgate/role/backend فقط، تحت سقف100 وREAD ONLY/ROLLBACK. تتوقف عند تجاوز السقف/نقص الدور/الصلاحية. لا بيانات طلاب/أجوبة/درجات أو دوال مراقبة دائمة أو table grants للعامل.
+
+<a id="trial-preinstall-catalog-mismatch"></a>
+### متابعة فحص ما قبل التركيب — شاهد المالك 2026-10-22 عمّان
+
+بعد طلب إتمام المهمة4، جُهز preinstall.sql المطابق لبصمته الأصلية `186ea18ad1f45166aa788c944627c66503ec8b0db68f20666db66347d0c6359c`، وأرسله المالك إلى SQL Editor. أعاد: `ERROR: 55000: trial preinstall catalog mismatch` و`PL/pgSQL function inline_code_block line 32 at RAISE`. هذا فشل مقارنة catalogue، وليس شاهد تركيب أو بيانات تشغيل أو اختراق مثبتًا؛ لا نستنتج سببه قبل الحقول المختلفة. ملف الفحص read-only؛ لم تُطبق الحماية ولم يطلب تكرار الجرد/probe أو فتح gate/LOGIN.
+
+أُعد [مولد التشخيص](../scripts/assess/trial-catalog-diff.mjs) بعقد assess-trial-catalog-diff/1، يستعمل **مراجع LF/CRLF نفسها** و[عقد catalogue](../scripts/assess/trial-catalog.sql) دون تعديلهما. ينتج catalog-diff.sql مستقلًا يبدأ ROLLBACK لإنهاء معاملة preinstall الفاشلة ثم REPEATABLE READ READ ONLY وينتهي ROLLBACK. يلزم postgres الفعلي، statement15s/lock2s. يبين kind/object/field والمرجع والمرصود للأجسام ببصماتها وACL والمالك/خصائص الجداول/الغياب والإضافات، ويحفظ ارتباط بدائل الدالة كاملة لا قبول كل hash مستقلًا. إضافات public الامتدادية تُستثنى كما في الفحص الأصلي؛ إضافات Assess لا تُستثنى.
+
+config والسياسات والقيود وتعريفات triggers تُعرض كبصمات فقط، مع ترتيب أسماء triggers، دون النصوص أو prosrc/تعريف دالة أو إعداد خاص. الأعمدة وACL metadata فقط؛ لا قراءة بيانات مشاركين أو أجوبة/علامات/JWT. يعرض100اختلاف بحد أقصى مع totalDifferences وtruncated؛ truncated=true تعني تشخيصًا ناقص التفاصيل يحتاج متابعة لا قبولًا. قراءة metadata خاضعة لمهلة15ثانية وبحجم مخطط المشروع الحالي، وليست schema crawler عامة. لا تعديل للمزود أو اعتماد hashes مرصودة أو إصلاح/قبول تلقائي.
+
+وظيفة الأمر التالي **محليًا فقط** توليد الملف من المرجع المثبت؛ لا يتصل بالمزود. المالك يشغّل ملف catalog-diff.sql الناتج كاملًا مرة واحدة في **Supabase SQL Editor بدور postgres** ويرسل عمود diagnostic؛ لا يستخدم Cloud Shell أو install.sql لهذه الخطوة. لا إعادة preinstall نفسها قبل فهم الاختلاف.
+
+```bash
+node scripts/assess/trial-catalog-diff.mjs
+```
+
+اختبار التشخيص جديد ومحدود: baseline LF وCRLF، وتغيير body/ACL/config وcolumn/table permissions وtrigger order، ودالة مفقودة/زائدة وتجاوز100، وعدم إخراج قيمة PRIVATE في الجسم/الإعداد، وحفظ catalogue دون تغيير بعد القراءة، ورفض قارئ مستخدم، وثبات SHA256 للـpreinstall الأصلية. عند إعادة دالة fixture بعد DROP فقدت منحة worker، فكشف الاختبار102اختلافًا بدل101؛ أُعيدت صلاحيات fixture الأصلية قبل مرحلة السقف، ولم يغير المرجع أو التوقع101 أو أي test قائمة. نتيجة التشخيص من المزود لم تصل بعد.
 
 ### سجل الخطوة4 — جميع البنود الحية غير منفذة
 
@@ -59,6 +78,8 @@ SQL المراقبة ليست إعادة جرد الأصلية أو probe، ول
 أول fixture للاختبار الجديد لم تسجل موافقة v2؛ رفضها trigger القائم كما ينبغي. أُكملت fixture الاصطناعية باعتماد حسابها المحلي وموافقة v2، دون تعطيل trigger أو تغيير المنتج/توقعات قائمة. لا حساب أو موافقة حقيقية من ذلك. نجحت7اختبارات موجهة في ملفَي server-operations-review وserver-trial-package، وtypecheck وESLint لكل الملفات البرمجية المعدلة. نجح أيضًا شاهد operations-health على PostgreSQL18.4 محلي عبر Unix socket، بأعداد صفر صحيحة وإغلاق مثبت وcleanup=true؛ ليس شاهد تزامن أو مزود. اعتماديته QA السابقة خارجGit (embedded-postgres18.4.0-beta.17 وpg8.23.1)، دون package/lock جديدة. نجحت docs:test75pass وdocs:check بلا errors/review warnings وstatus:check --require-previous مع تعارض RAD-024 الموروث فقط وgit diff --check. CLI بلا flags أعادت BLOCKED/invalid_evidence منقحًا دون ملف/شبكة. اختبارات التعبئة تثبت رفض symlink/مدخلات زائدة وسر داخل config، وتطابق bytes/hash/COPY والحارس0؛ لم يُبنَ Docker أو يُشغّل عامل حي.
 
 لا إعادة2315اختبارًا أو app build أو browser/axe/هاتف أو probe لشاهد غير متغير. المنتج ومدخل العامل وSQL الحماية لم تتغير؛ تغيرت تعبئة build context المقيدة واختُبرت اختبارات الحزمة الموجهة؛ التحقق الموجه/typecheck/lint وفحوص التوثيق المناسبة كافية لهذا النطاق التحضيري. لا نسخة artifact/QA حيّة أو budget/تنبيه أُنشئ أو أرسل.
+
+متابعة catalogue: نجح اختبار التشخيص الشامل الجديد (مرجعا LF/CRLF وحالات الاختلاف والحد والإخفاء والصلاحيات) بعد آخر تعديل، وESLint للملفين وtypecheck. نجح شاهد PostgreSQL18.4 محلي جديد لمرجع مطابق ثم ACL معدلة مع cleanup=true؛ لا اتصال مزود أو TLS/Auth من ذلك. نجحت docs:check بلا errors/review warnings وstatus:check --require-previous مع RAD-024 الموروث وgit diff --check؛ لا إعادة full suite/build أو probe. عند بداية المتابعة تحققت #96 draft/open برأسd9430de وcheck/deploy ناجحين، وأحدث mainff68413 وفحصاها ناجحان؛ الرأس التالي مستقل.
 
 ## 7. العوائق وما يحتاج إذنًا حيًا
 
