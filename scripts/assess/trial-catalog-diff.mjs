@@ -101,7 +101,7 @@ do $reader$ begin
  if to_regprocedure('public.owner_list_participants()') is null then raise exception 'detail function missing' using errcode='55000'; end if;
  if (select octet_length(prosrc)>32768 from pg_proc where oid='public.owner_list_participants()'::regprocedure) then raise exception 'detail source ceiling exceeded' using errcode='54000'; end if;
 end $reader$;
-with expected as materialized(select ${quote(expected)}::text src),
+with expected as materialized(select convert_from(decode('${Buffer.from(expected,'utf8').toString('hex')}','hex'),'UTF8') src),
 observed as materialized(select prosrc src,md5(pg_get_functiondef(oid)) definition_hash from pg_proc where oid='public.owner_list_participants()'::regprocedure),
 expected_lines as materialized(select ordinal i,line from expected e,lateral unnest(string_to_array(e.src,chr(10))) with ordinality l(line,ordinal)),
 observed_lines as materialized(select ordinal i,line from observed o,lateral unnest(string_to_array(replace(o.src,chr(13)||chr(10),chr(10)),chr(10))) with ordinality l(line,ordinal)),

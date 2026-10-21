@@ -1,4 +1,4 @@
-# التسليم الحالي — حصر اختلاف المهمة4 في دالة public واحدة
+# التسليم الحالي — حسم اختلافات المهمة4 وتجهيز فحص التوافق
 
 ## نقطة البداية
 اقرأ [AGENTS](../AGENTS.md)، وشغّل docs:context مع --pr 96 وتحقق من أحدث main وفحوص الرأسين، ثم status:summary لـRAD-056. [project-status](project-status.md) مصدر الحالة الوحيد. استمر بالـcheckout نفسه؛ لا worktree/subagents أو ready/merge/auto-merge.
@@ -14,9 +14,9 @@
 [الربط](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass) و[الإغلاق](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-closed-final) و[الجرد](ASSESS_TRIAL_PREPARATION_2026-10-22.md#trial-inventory-owner-result) محفوظة؛ لا تكرار probe/سر/password/تهيئة أو عدّ لمجرد الشاهد. backend0 وNOLOGIN لا يثبتان إلغاء cache/اتصال جديد. لا تقييم حي أو طبي أو استعادة من5/10 أو QA محلية.
 
 ## الخطوة التالية والتوقف
-وصل [تشخيص المالك](ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-catalog-owner-result) كاملًا:30فرقًا. أُثبت محليًا أن16قيود تمثيل NOT NULL بين PostgreSQL18/17 و12بصمة لست دوال CRLF تطابق المصدر؛ بقي body/definition لدالة public.owner_list_participants دون تفسير. لا تبنٍ للبصمة المرصودة أو تعديل للدالة/Practice. الفحص الجديد أخطأ بمقارنة تمثيل NOT NULL الذي كانت F تراعيه؛ attnotnull مطابقة، ولا تغيير قيود حي.
+وصل تشخيص catalogue ثم نتيجة الدالة الواحدة؛ [المراجعة](ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-catalog-reviewed-profile) تفسر30من30من المصدر:16تمثيل NOT NULL بين17/18، و12بصمة CRLF لست دوال، وجسم/تعريف owner_list_participants بتوزيع SELECT محدد وCRLF. البصمتان الكاملتان والطول مطابقان للاشتقاق المحلي؛ لا تبنٍ لمصدر مجهول أو تغيير Practice. خطأ الفحص في تمثيل NOT NULL محفوظ مع تفسيره؛ attnotnull تبقى مقارنة.
 
-التالي [مولد التشخيص](../scripts/assess/trial-catalog-diff.mjs) مع --owner-list-detail ثم ملف owner-list-detail.sql كاملًا في SQL Editor بدور postgres وإرسال diagnostic. يفحص دالة واحدة، يعرض أعدادًا وبصمات أسطر ومطابقتها للمصدر، دون جسم مرصود أو literals أو تنفيذ الدالة/قراءة بيانات. المقارنة التشخيصية للتنسيق لا تقبل مصدرًا أو تغير baseline. لا إعادة catalogue/preinstall أو الجرد/probe؛ تبقى الحماية غير مركبة. إصلاح المقارنة والمراجع المشتقة بعد حسم الدالة واختبارات17/18، دون تغيير بصمات لتمرير الفحص.
+التالي مولد trial-install.mjs مع --reviewed-pg17-v1 ثم **preinstall.sql الجديدة فقط** كاملة في Supabase SQL Editor بدور postgres وإرسال result. profile مستقل بعقد /2؛ الأصل وبصمته وتوقعاته محفوظة. المراجع مشتقة من المصدر محليًا؛ لا normalization للنص المرصود، وACL/المالك/RLS/triggers/NOT NULL exact. الفحص read-only ينتهي ROLLBACK؛ لا install/postinstall أو LOGIN/gate/worker الآن. لا إعادة التشخيص أو الجرد/probe. تركيب الحماية ما زال غير منفذ ويحتاج مراجعة الخطوة المحددة وإذنها بعد PASS.
 
 تابع المهمة4 وفق النتيجة؛ لا تعتبرها تجربة حية منفذة من فحص SQL. تركيب الحماية وتجهيز الصورة/الهوية والمحتوى والنافذة والإغلاق تبقى متطلبات منفصلة قبل أي تشغيل، بلا أسرار/OTP أو انتحال auth.uid. لا تبدأ7–8 أو ready/merge/auto-merge؛ الانتقال للدفعة الثالثة يحتاج توجيه المالك الصريح.
 <a id="المتابعة"></a>
