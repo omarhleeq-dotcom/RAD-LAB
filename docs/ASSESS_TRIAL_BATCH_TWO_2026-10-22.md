@@ -33,6 +33,27 @@ node scripts/assess/trial-catalog-diff.mjs
 
 اختبار التشخيص جديد ومحدود: baseline LF وCRLF، وتغيير body/ACL/config وcolumn/table permissions وtrigger order، ودالة مفقودة/زائدة وتجاوز100، وعدم إخراج قيمة PRIVATE في الجسم/الإعداد، وحفظ catalogue دون تغيير بعد القراءة، ورفض قارئ مستخدم، وثبات SHA256 للـpreinstall الأصلية. عند إعادة دالة fixture بعد DROP فقدت منحة worker، فكشف الاختبار102اختلافًا بدل101؛ أُعيدت صلاحيات fixture الأصلية قبل مرحلة السقف، ولم يغير المرجع أو التوقع101 أو أي test قائمة. نتيجة التشخيص من المزود لم تصل بعد.
 
+<a id="trial-catalog-owner-result"></a>
+### نتيجة catalogue من المالك وحصر المتبقي — 2026-10-22 عمّان
+
+وصل عقد assess-trial-catalog-diff/1 مع totalDifferences=30 وtruncated=false وreferenceMatched=false: body وdefinition لسبع دوال public (14فرقًا)، وconstraints لجداول Assess الستة عشر. لم يسجل التقرير فروقًا في أجسام Assess أو ACL أو المالك أو الأعمدة أو RLS أو triggers. هذا شاهد المالك لقراءة metadata، لا تركيب أو قبول حي.
+
+أُعيد اشتقاق28فرقًا من مصدر Git محليًا، **دون أخذ بصمات المزود كمرجع قبول**:
+
+- القيود16: كل بصمة مرصودة تطابق تمامًا قيود المصدر مع استثناء contype=n فقط. PGlite المحلية PostgreSQL18.6 تضيف قيود NOT NULL إلى pg_constraint؛ المزود PostgreSQL17 وفق الشاهد السابق يمثلها بـattnotnull. فحص الأعمدة في التقرير مطابق. هذا خطأ في تمثيل المقارنة الجديدة، وقد كانت [حزمة F](ASSESS_F_REPORT_2026-10-20.md) تستثني n وتحفظ attnotnull أصلًا؛ لا مبرر لتغيير NOT NULL أو أي قيد حي.
+- ست دوال: can_read_training وhandle_new_user وowner_page_v1 وset_participant_status وtraining_page_v1_with_comparison وtraining_page_v1؛ بصمتا الجسم والتعريف لكل واحدة تطابقان المصدر نفسه بنهايات CRLF حرفيًا. لا تغير منطق أو ACL في هذا التفسير، ولا إعادة تطبيق لدوال Practice.
+- بقيت owner_list_participants وحدها: الجسم المرصود30a7a3fd013ed6af5b2712f1479171e6 والتعريفd3a10b1b03d5284b7ee6208f82a064a9 لا يطابقان LF أو CRLF من المصدر. الجسم LF المرجعي2a997a11c8cf4d32ae9f469ef5a2dea1 وCRLF المشتق2229f1f56e8a84435a71afb4572af09c. السبب غير محسوم؛ لا اعتماد لهاتين البصمتين أو إعادة إنشاء الدالة لتجاوز الفحص.
+
+ميزانية المتابعة5ملفات: امتداد مولد التشخيص واختباره وهذا التقرير وHANDOFF وproject-status؛ صفر وحدات مشتركة. أُضيف `--owner-list-detail` ليولد owner-list-detail.sql مستقلًا للمالك في SQL Editor بدور postgres. يقرأ pg_proc لدالة واحدة فقط، ولا يستدعيها أو يقرأ auth.users أو بيانات المشاركين. يعرض النسخة والأطوال وأعداد LF/CRLF ونتائج المقارنات التشخيصية وبصمات الأسطر وأرقام أسطر المصدر المعروفة المطابقة. لا نص مرصود أو literals أو body في النتيجة، حتى إذا تغيرت الدالة إلى نص حساس. المقارنة بعد تقليم الأسطر **تشخيص فقط** وليست مسار قبول أو normalization للفحص الأصلي.
+
+السقف32KiB للمصدر و64اختلاف سطر، وstatement15s/lock2s، وREAD ONLY ثم ROLLBACK. truncation/تجاوز السقف أو دالة مفقودة يوقفان الاستنتاج. الأصل والـpreinstall وcatalogue وبصمات قبولها لم تتغير؛ يؤجل إصلاح التمثيل المحدد والمراجع المشتقة حتى حسم الدالة المتبقية واختبار17/18، دون مس نطاق Practice أو تبني مصدر حي غير معروف.
+
+وظيفة الأمر التالي **محليًا** توليد ملف الدالة الواحدة؛ لا اتصال مزود. المالك يشغّل owner-list-detail.sql كاملًا في **Supabase SQL Editor** للمشروع نفسه، ويرسل عمود diagnostic. لا إعادة catalogue الكبيرة أو preinstall أو جرد/اتصال أو install الآن.
+
+```bash
+node scripts/assess/trial-catalog-diff.mjs --owner-list-detail
+```
+
 ### سجل الخطوة4 — جميع البنود الحية غير منفذة
 
 | المجموعة | الدليل المطلوب عند الإذن، وليس دليلًا وصل |
@@ -80,6 +101,8 @@ node scripts/assess/trial-catalog-diff.mjs
 لا إعادة2315اختبارًا أو app build أو browser/axe/هاتف أو probe لشاهد غير متغير. المنتج ومدخل العامل وSQL الحماية لم تتغير؛ تغيرت تعبئة build context المقيدة واختُبرت اختبارات الحزمة الموجهة؛ التحقق الموجه/typecheck/lint وفحوص التوثيق المناسبة كافية لهذا النطاق التحضيري. لا نسخة artifact/QA حيّة أو budget/تنبيه أُنشئ أو أرسل.
 
 متابعة catalogue: نجح اختبار التشخيص الشامل الجديد (مرجعا LF/CRLF وحالات الاختلاف والحد والإخفاء والصلاحيات) بعد آخر تعديل، وESLint للملفين وtypecheck. نجح شاهد PostgreSQL18.4 محلي جديد لمرجع مطابق ثم ACL معدلة مع cleanup=true؛ لا اتصال مزود أو TLS/Auth من ذلك. نجحت docs:check بلا errors/review warnings وstatus:check --require-previous مع RAD-024 الموروث وgit diff --check؛ لا إعادة full suite/build أو probe. عند بداية المتابعة تحققت #96 draft/open برأسd9430de وcheck/deploy ناجحين، وأحدث mainff68413 وفحصاها ناجحان؛ الرأس التالي مستقل.
+
+متابعة نتيجة30فرقًا: نجحت3اختبارات موجهة في server-trial-catalog-diff، تشمل إعادة إنتاج28فرقًا من المصدر ورفض تبني owner_list غير المعروفة، وإخفاء literal/comment خاصتين، وLF/CRLF/تقليم الأسطر والحد32KiB/64سطرًا ورفض قارئ مستخدم. بقي فحص SHA256 الأصلي للـpreinstall ناجحًا دون تعديل توقعه. نجح شاهد الدالة الواحدة على PostgreSQL18.4 محلي مع cleanup=true، وtypecheck وESLint وفحوص docs/status/diff بلا أخطاء أو review warnings؛ RAD-024 الموروث محفوظ. ليست اختبارات مزود أو إثبات الدالة الحية. عند القراءة #96 draft/open برأس8b6f60d وفحصاها ناجحان، وmainff68413 لم تتغير؛ الرأس التالي مستقل. لا full build/Practice/phone أو probe معادة.
 
 ## 7. العوائق وما يحتاج إذنًا حيًا
 

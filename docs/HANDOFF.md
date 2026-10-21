@@ -1,4 +1,4 @@
-# التسليم الحالي — المهمة4 متوقفة عند اختلاف catalogue قبل التركيب
+# التسليم الحالي — حصر اختلاف المهمة4 في دالة public واحدة
 
 ## نقطة البداية
 اقرأ [AGENTS](../AGENTS.md)، وشغّل docs:context مع --pr 96 وتحقق من أحدث main وفحوص الرأسين، ثم status:summary لـRAD-056. [project-status](project-status.md) مصدر الحالة الوحيد. استمر بالـcheckout نفسه؛ لا worktree/subagents أو ready/merge/auto-merge.
@@ -14,7 +14,9 @@
 [الربط](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass) و[الإغلاق](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-closed-final) و[الجرد](ASSESS_TRIAL_PREPARATION_2026-10-22.md#trial-inventory-owner-result) محفوظة؛ لا تكرار probe/سر/password/تهيئة أو عدّ لمجرد الشاهد. backend0 وNOLOGIN لا يثبتان إلغاء cache/اتصال جديد. لا تقييم حي أو طبي أو استعادة من5/10 أو QA محلية.
 
 ## الخطوة التالية والتوقف
-طلب المالك إتمام4 ثم نفّذ preinstall القراءة فقط وأعاد55000: trial preinstall catalog mismatch. السبب غير محدد بعد؛ لا تركيب/تفعيل أو إعادة الجرد/probe. [التفاصيل وشاهد المالك](ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-preinstall-catalog-mismatch) و[مولد التشخيص](../scripts/assess/trial-catalog-diff.mjs) يحفظان المرجع الأصلي؛ التالي ملف catalog-diff.sql كاملًا في SQL Editor بدور postgres وإرسال عمود diagnostic. الملف ينهي معاملة الفحص الفاشلة ثم يقرأ metadata وبصمات فقط؛ لا أجسام دوال أو إعدادات خاصة. لا تعديل baseline/hash/ACL لتجاوز الرفض.
+وصل [تشخيص المالك](ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-catalog-owner-result) كاملًا:30فرقًا. أُثبت محليًا أن16قيود تمثيل NOT NULL بين PostgreSQL18/17 و12بصمة لست دوال CRLF تطابق المصدر؛ بقي body/definition لدالة public.owner_list_participants دون تفسير. لا تبنٍ للبصمة المرصودة أو تعديل للدالة/Practice. الفحص الجديد أخطأ بمقارنة تمثيل NOT NULL الذي كانت F تراعيه؛ attnotnull مطابقة، ولا تغيير قيود حي.
+
+التالي [مولد التشخيص](../scripts/assess/trial-catalog-diff.mjs) مع --owner-list-detail ثم ملف owner-list-detail.sql كاملًا في SQL Editor بدور postgres وإرسال diagnostic. يفحص دالة واحدة، يعرض أعدادًا وبصمات أسطر ومطابقتها للمصدر، دون جسم مرصود أو literals أو تنفيذ الدالة/قراءة بيانات. المقارنة التشخيصية للتنسيق لا تقبل مصدرًا أو تغير baseline. لا إعادة catalogue/preinstall أو الجرد/probe؛ تبقى الحماية غير مركبة. إصلاح المقارنة والمراجع المشتقة بعد حسم الدالة واختبارات17/18، دون تغيير بصمات لتمرير الفحص.
 
 تابع المهمة4 وفق النتيجة؛ لا تعتبرها تجربة حية منفذة من فحص SQL. تركيب الحماية وتجهيز الصورة/الهوية والمحتوى والنافذة والإغلاق تبقى متطلبات منفصلة قبل أي تشغيل، بلا أسرار/OTP أو انتحال auth.uid. لا تبدأ7–8 أو ready/merge/auto-merge؛ الانتقال للدفعة الثالثة يحتاج توجيه المالك الصريح.
 <a id="المتابعة"></a>
