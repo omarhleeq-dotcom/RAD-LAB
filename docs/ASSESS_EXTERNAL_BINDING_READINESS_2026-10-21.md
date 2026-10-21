@@ -2,16 +2,16 @@
 
 ## صفة القرار والحدود
 
-**مقترح محدد للمراجعة، وليس إذن provisioning أو شهادة جاهزية حية.** Cloud Run مختار في [قرار المالك](DECISIONS.md#assess-cloud-run-owner-2026-10-21). حزمة الحاوية المعتمدة محليًا وأدلتها في [الدليل](ASSESS_RUNTIME_LOCAL.md) و[التقرير](ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md). لا تغيير لها هنا. Google IAM منفصلة عن login PostgreSQL وعن هوية المستخدم JWT؛ Pages لا يستضيف العامل.
+**مقترح محدد للمراجعة، وليس إذن provisioning أو شهادة جاهزية حية.** Cloud Run مختار في [قرار المالك](DECISIONS.md#assess-cloud-run-owner-2026-10-21). حزمة الحاوية المعتمدة محليًا وأدلتها في [الدليل](ASSESS_RUNTIME_LOCAL.md) و[التقرير](ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md). أضيف إليها دعم اسم Session pooler محليًا فقط وفق [تقرير المتابعة](ASSESS_SESSION_POOLER_REPORT_2026-10-21.md). Google IAM منفصلة عن login PostgreSQL وعن هوية المستخدم JWT؛ Pages لا يستضيف العامل.
 
-لا موارد حية أو APIs/فوترة أو SQL كتابة على الأصلية أو Variables/pins أو فتح launch_gate أو ready/merge/auto-merge. كل إجراء خارجي أدناه **وصفة مستقبلية غير منفذة** تحتاج نطاقًا مأذونًا لاحقًا. النسخة الشاملة المؤجلة باختيار المالك وO108 والبوابات المستقلة محفوظة، بلا إعادة سؤال أو إعادة الأدلة المغلقة.
+هذه الحزمة لا تمنح إذن موارد حية أو APIs/فوترة أو SQL كتابة على الأصلية أو Variables/pins أو فتح launch_gate أو ready/merge/auto-merge. كل إجراء خارجي أدناه **وصفة مستقبلية غير منفذة** تحتاج نطاقًا مأذونًا لاحقًا. النسخة الشاملة المؤجلة باختيار المالك وO108 والبوابات المستقلة محفوظة، بلا إعادة سؤال أو إعادة الأدلة المغلقة.
 
 ## 1. إعداد التجربة والتكلفة
 
 | البند | المقترح المحدد | شرط اعتماده قبل الإنشاء |
 |---|---|---|
-| المشروع | مشروع GCP مخصص لـAssess، اسم مقترح radlab-assess-pilot؛ project ID/number وحساب Billing غير محددة أو منشأة | يسجل المالك المعرف الفعلي والحساب والمسؤول؛ لا افتراض أن الاسم متاح أو أن trial تغطي التشغيل |
-| region | us-central1 كبداية لحساب Free Tier واضح، وregistry بالمنطقة نفسها | قراءة metadata لمنطقة DB ومتطلبات الإقامة أولًا؛ إذا كانت خارج أمريكا أو توجد قيد إقامة، تتوقف هذه التوصية حتى مراجعة region قريبة من DB وحساب egress/latency؛ لا نقل للقاعدة |
+| المشروع | أظهر المالك My First Project بمعرف project-bff9124a-ec31-4d57-bc0 مرتبطًا بـMy Billing Account التجريبي | لقطة Console ليست تحقق agent/API؛ تثبيت صلاحية استخدامه لـAssess وهوية التشغيل والبديل ورقم المشروع قبل الإنشاء |
+| region | europe-west3 (Frankfurt) وregistry بالمنطقة نفسها، بعد إفادة المالك بأن DB في AWS eu-central-1 / Central EU Frankfurt | توصية جغرافية تحل محل us-central1؛ مراجعة الإقامة وتسعير المنطقة وegress بين AWS وGoogle والـlatency قبل provisioning؛ لا نقل للقاعدة |
 | الموارد | 1 vCPU، 512MiB، دون GPU، مهمة واحدة/parallelism=1/maxRetries=0 | الحد الأدنى الموثق للـJobs؛ قياس peak memory ومدة tick قبل رفع أي حد؛ لا افتراض كفاية الذاكرة من build محلي |
 | timeout | task timeout=300s صراحة، runAssessJobs مرة واحدة limit=1 وpool=1 | مهلة تشغيل لا ضمان تسوية؛ SQL statement60s/lock5s/connect10s محفوظة؛ SIGTERM ثم نافذة10s قد تنتهي بالقتل، وlease5دقائق مرجع الاسترداد |
 | التشغيل الأول | يدوي فقط؛ execution واحدة نشطة، بحد10 executions في اليوم و100 في الشهر كسياسة تجربة | المشغّل يفحص executions قبل run؛ هذه حدود إجرائية وليست quota منصة أو mutex. لا schedule أو تكرار فوري عند timeout/ack مفقود |
@@ -19,13 +19,17 @@
 
 [حدود الذاكرة الرسمية](https://docs.cloud.google.com/run/docs/configuring/jobs/memory-limits) توثق حد512MiB للـJobs. [عقد الحاوية](https://docs.cloud.google.com/run/docs/container-contract) يحكم الإنهاء؛ زيادة timeout لا تلغي عدم يقين COMMIT أو تسمح بإعادة التصحيح إداريًا.
 
-حساب تخطيطي لـ100 تنفيذ شهري ×300s: 30,000 vCPU-s و15,000 GiB-s؛ يحسب كل تنفيذ max(60s,مدة الفوترة الفعلية)، بما فيها بدء/إنهاء المثيل. [تسعير Jobs](https://cloud.google.com/run/pricing) يستخدم instance-based billing وحدًا أدنى دقيقة، مع رصيد شهري مرجعي240,000 vCPU-s و450,000 GiB-s على أساس us-central1 ومشترك على حساب Billing. عند معدلي CPU=$0.000018 وRAM=$0.000002 يكون الحوسبة الإجمالية النظرية قبل الرصيد نحو$0.57؛ ليست فاتورة أو سقفًا، ولا تشمل overhead أو باقي الخدمات. التشغيل كل دقيقة يتجاوز رصيد CPU حتى لو tick قصيرة بسبب حد الدقيقة؛ الجدولة قرار مستقل.
+حساب تخطيطي لـ100 تنفيذ شهري ×300s: 30,000 vCPU-s و15,000 GiB-s؛ يحسب كل تنفيذ max(60s,مدة الفوترة الفعلية)، بما فيها بدء/إنهاء المثيل. [تسعير Jobs](https://cloud.google.com/run/pricing) يستخدم instance-based billing وحدًا أدنى دقيقة، مع رصيد شهري مرجعي240,000 vCPU-s و450,000 GiB-s على أساس us-central1 ومشترك على حساب Billing. عند معدلي CPU=$0.000018 وRAM=$0.000002 يكون الحوسبة الإجمالية النظرية قبل الرصيد نحو$0.57 على فرض معدلي المثال المرجعيين؛ لا يعتمد هذا الرقم كتسعير europe-west3، ويلزم تسعيرها قبل provisioning. ليست فاتورة أو سقفًا، ولا تشمل overhead أو باقي الخدمات. التشغيل كل دقيقة يتجاوز رصيد CPU حتى لو tick قصيرة بسبب حد الدقيقة؛ الجدولة قرار مستقل.
 
 إعداد إنفاق مقترح: ميزانية مشروع شهرية$5، تنبيه actual عند$0.50/$2.50/$4/$5 وforecast عند$5، مع إيقاف التشغيل اليدوي عند أول تكلفة غير متوقعة أو بلوغ$4. تفعيل MFA وهوية بشرية مسماة، دون مفاتيح SA قابلة للتنزيل أو التزام مدفوع/CUD أو ترقية خطة DB أو إضافة IPv4 مدفوعة تلقائيًا. لا Owner/Editor للمهمة أو المشغّل. يسمح provisioning اللاحق فقط بـRun/Artifact Registry/Secret Manager والقياس الضروري؛ لا Cloud SQL/Scheduler/Cloud Build/VPC connector/NAT افتراضيًا.
 
 [ميزانية التنبيه](https://docs.cloud.google.com/billing/docs/how-to/budgets) لا توقف الفوترة وتصل بياناتها متأخرة. توجد [spend caps](https://docs.cloud.google.com/billing/docs/how-to/budgets-spend-caps) للخدمات والحسابات المؤهلة؛ يفحص مسؤول Billing أهلية Cloud Run Jobs وتغطيتها وحدودها قبل اقتراح cap$5، ولا يفترض تغطية المشروع كله أو ضمان صفر تجاوز. إن لم تتوفر، تبقى الحدود الإجرائية والتنبيه فقط، بلا ادعاء hard cap. لا ربط أو تعديل Billing في هذه الجلسة.
 
 تشمل مراجعة الفاتورة Secret Manager ونسخه/قراءاته، storage للصورة وegress بين Google وSupabase وlogs/metrics/alerts ونسخ المزود. احتفظ بصورة مراجعة واحدة ونسخة سابقة مؤقتة، بلا repositories عامة أو نسخ متعددة المناطق بلا حاجة. [Secret Manager pricing](https://cloud.google.com/secret-manager/pricing) مرجع التكلفة المستقل؛ انخفاض حساب CPU لا يعني مجانية هذه البنود.
+
+### حالة إعداد الحساب من المالك
+
+أظهرت لقطات المالك حساب Free trial برصيد$300 و90يومًا وتكلفة$0، وحفظ ميزانية radlab-pilot-monthly-5usd الشهرية على All projects/All services، وتنبيهات Actual10/25/50/80/100% وForecast100% مع بريد مسؤولي الفوترة. هذه **شواهد شاشة من المالك** وليست اتصالًا مستقلًا أو تجربة تسليم تنبيه؛ ليست spend cap. وُجه لاستبعاد Promotional credits وإبقاء Free tier credits؛ لم تصل لقطة بعد الاستبعاد تثبت الحفظ الفعلي لذلك الخيار، فيراجع من budget لاحقًا دون افتراض. قائمة المشاريع كانت لا تسمح باختيار منفرد فبقي نطاق الحساب كله؛ لا نسميها ميزانية مشروع واحد. لا إذن تلقائي لـJob/secret/SA من إنشاء الحساب أو الميزانية. [تقرير متابعة pooler](ASSESS_SESSION_POOLER_REPORT_2026-10-21.md) يحفظ حدود هذه الأدلة.
 
 ## 2. مصفوفة Google IAM ونطاق السر
 
@@ -43,7 +47,7 @@
 
 مرجع [أدوار Run الرسمية](https://docs.cloud.google.com/iam/docs/roles-permissions/run) يميز jobsExecutor عن jobsExecutorWithOverrides. لا يرث المشغّل صلاحيات أوسع من group/project/folder؛ مراجعة effective IAM مطلوبة، بما فيها Token Creator وWorkload Identity impersonation. فصل الناشر تشغيلي: من يستطيع تغيير image أو هوية Job قد يسرّب السر عبر كود جديد، حتى دون secretAccessor مباشر؛ لذلك نافذة نشر قصيرة ومراجعة ثانية للـdigest/config.
 
-الـvolume المقترحة: secret واحد، key اسمها assess-worker.json وإصدار رقمي N، mount على /run/secrets؛ ملف JSON≤64KiB، الحقول host/port/database/user/password/ca فقط. [توثيق أسرار Jobs](https://docs.cloud.google.com/run/docs/configuring/jobs/secrets) يبين أن volume في بيئة Jobs يملكها root. يقترح mode0444 للملف لقراءة USER node؛ لا root أو chmod777. يلزم إثبات non-root read من المسار المحدد مع منع mounts/sidecars غير لازمة. 0444 ليست عزلة بين عمليات الحاوية نفسها؛ الحاوية ذات عملية موثوقة واحدة. لا تثبيت N في هذه الجلسة ولا تغيير Variables.
+الـvolume المقترحة: secret واحد، key اسمها assess-worker.json وإصدار رقمي N، mount على /run/secrets؛ ملف JSON≤64KiB، الحقول host/port/database/user/password/ca مطلوبة، وحقل sessionPoolerProjectRef اختياري صريح لمسار session5432 وفق [دليل runtime](ASSESS_RUNTIME_LOCAL.md#إعداد-session-pooler-المحلي). [توثيق أسرار Jobs](https://docs.cloud.google.com/run/docs/configuring/jobs/secrets) يبين أن volume في بيئة Jobs يملكها root. يقترح mode0444 للملف لقراءة USER node؛ لا root أو chmod777. يلزم إثبات non-root read من المسار المحدد مع منع mounts/sidecars غير لازمة. 0444 ليست عزلة بين عمليات الحاوية نفسها؛ الحاوية ذات عملية موثوقة واحدة. لا تثبيت N في هذه الجلسة ولا تغيير Variables.
 
 ### التدوير والإلغاء
 
@@ -53,13 +57,13 @@
 
 ## 3. الشبكة وTLS وlogin PostgreSQL
 
-المسار المفضل للحزمة الحالية: hostname مباشر من Connect dialog للمشروع القائم، TCP5432 وTLS مع CA المزود المراجعة، login خاص assess_job_a؛ لا استخراج سر أو الاتصال بالأصلية هنا. لا Cloud SQL ولا tunnel/proxy يعطل TLS. لا عنوان IP بدل hostname أو rejectUnauthorized=false/sslmode=require وحده. config.ca تشمل PEM الموثوقة، والتحقق من سلسلة الشهادة واسم المضيف إلزامي؛ لا connectionString تتجاوز ssl options. سجل fingerprint وتاريخ صلاحية CA كـmetadata فقط، وحدّثها بإصدار جديد قبل الانتهاء؛ فشل السلسلة/الاسم توقف، بلا fallback.
+المسار المرشح الحالي: shared session pooler IPv4، hostname من Connect dialog للمشروع القائم، TCP5432 وTLS مع CA المزود المراجعة، login خاص assess_job_a؛ لا استخراج سر أو الاتصال بالأصلية هنا. لا Cloud SQL ولا tunnel/proxy يعطل TLS. لا عنوان IP بدل hostname أو rejectUnauthorized=false/sslmode=require وحده. config.ca تشمل PEM الموثوقة، والتحقق من سلسلة الشهادة واسم المضيف إلزامي؛ لا connectionString تتجاوز ssl options. سجل fingerprint وتاريخ صلاحية CA كـmetadata فقط، وحدّثها بإصدار جديد قبل الانتهاء؛ فشل السلسلة/الاسم توقف، بلا fallback.
 
 | الطريق | القرار/العائق | قبول لاحق لازم |
 |---|---|---|
-| direct5432 | المفضل بشرط الوصول؛ Supabase direct غالبًا IPv6، وجاهزية egress IPv6 من Cloud Run غير مثبتة | DNS A/AAAA والمسار الفعلي من المنطقة المختارة وTLS وlogin محدود؛ لا افتراض أن IPv6 في DNS يعني قابلية وصول. عند غياب المسار نتوقف بدل شراء IPv4 تلقائيًا |
-| shared pooler session5432 | بديل IPv4 محتمل، **غير متوافق حاليًا** | custom-role username يكون role.project-ref؛ validator الحالي يرفض النقطة/الشرطة ويقارن config.user بـsession_user. يتطلب تعديلًا مستقلًا يفصل اسم النقل عن login المتوقع مع اختبارات، لا تخفيف validator هنا |
-| shared pooler transaction6543 | غير جاهز، بنفس عائق username، وبشروط معاملات أشد | BEGIN → فحص session_user/ACL → SET LOCAL ROLE → RPC → COMMIT على backend نفسها، ثم role reset بين المعاملات وعزل اتصالات login آخر. لا session SET ROLE أو prepared statements مسماة؛ اختبار دعم startup options الحالية search_path/statement_timeout/lock_timeout قبل اعتماده |
+| direct5432 | بديل بشرط الوصول؛ أكد المالك من Connect أن direct يستخدم IPv6، وجاهزية egress IPv6 من Cloud Run غير مثبتة | DNS A/AAAA والمسار الفعلي من المنطقة المختارة وTLS وlogin محدود؛ لا افتراض أن IPv6 في DNS يعني قابلية وصول. عند غياب المسار نتوقف بدل شراء IPv4 تلقائيًا |
+| shared pooler session5432 | المرشح دون إضافة IPv4 مدفوعة؛ أكد المالك ظهور IPv4 proxied for free؛ عائق الاسم عولج محليًا | sessionPoolerProjectRef تركب اسم النقل role.projectRef ويبقى user هو login المتوقع؛ TLS/ACL وstartup options والإلغاء وإغلاق clients/backends تحتاج شاهد Supavisor مأذونًا، لا نجاح حي من الاختبارات المحلية |
+| shared pooler transaction6543 | خارج النطاق؛ إعداد session الجديد يرفض6543 صراحة | BEGIN → فحص session_user/ACL → SET LOCAL ROLE → RPC → COMMIT على backend نفسها، ثم role reset بين المعاملات وعزل اتصالات login آخر. لا session SET ROLE أو prepared statements مسماة؛ اختبار دعم startup options الحالية search_path/statement_timeout/lock_timeout قبل اعتماده |
 
 [دليل اتصال Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) يفرق بين direct وsession وtransaction ويطلب اسم custom role المركب للـshared pooler؛ hostname ينسخ من المشروع ولا يخمن من region. أي dedicated pooler أو IPv4 add-on له أهلية/تكلفة مستقلة، وليس بديلًا مجانيًا مفترضًا.
 
@@ -104,9 +108,9 @@ health_v1 لا تعرض oldest queue age أو lease count/age أو عدد reserv
 
 ## 6. قائمة قرار المراجع
 
-- قبول/تعديل us-central1 بعد region DB والإقامة، و1CPU/512Mi/300s وحدود التجربة وميزانية$5؛ project/Billing والهوية البشرية والبديل تحتاج تعبئة آمنة، لا قيم مخترعة.
+- مراجعة europe-west3 القريبة من DB Frankfurt وتسعيرها والإقامة، و1CPU/512Mi/300s وحدود التجربة؛ أظهر المالك حفظ ميزانية$5 على حساب Billing، بينما الهوية التشغيلية والبديل لم يثبتا.
 - مراجعة effective IAM ومورد secret واحد/إصدار مثبت وnon-root mount؛ اختبار run بلا overrides ورفض قراءة أي سر آخر ورفض المشغّل قراءة payload.
-- حسم وصول direct IPv4/v6 وقيود DB network؛ أو نطاق إصلاح pooler مستقل. لا مسار ready قبل نجاح TLS/ACL وسحب جلسة قائمة، ولا ادعاء tick-only privilege للدور الحالي.
+- حسم قيود DB network وقبول session5432 الحي بعد الإصلاح المحلي؛ direct IPv6 بديل مشروط. لا مسار ready قبل نجاح TLS/ACL وسحب جلسة قائمة، ولا ادعاء tick-only privilege للدور الحالي.
 - قبول حدود التنبيه وقناة وack ومسؤول DB قادر على القتل، ثم إذن منفصل للتجهيز/الاختبار الخارجي؛ كل دليل يسجل منفصلًا عن البناء والتشغيل والنسخ والاستعادة والإطلاق.
 
 تظل launch_gate مغلقة وruntimeOrLaunchVerified=false؛ لا قبول حي أو JWT/backup/restore/O108 مثبت بهذه الوثيقة. راجع [تقرير هذه الدفعة](ASSESS_EXTERNAL_BINDING_REPORT_2026-10-21.md) للفحوص وما لم ينفذ.

@@ -22,6 +22,8 @@ export interface WorkerBinding {
   /** Explicit trust root; verification and hostname checking cannot be disabled. */
   ca: string;
   connections?: number;
+  /** Explicit Supabase session-pooler routing suffix; user remains the DB login. */
+  sessionPoolerProjectRef?: string;
 }
 function invalid(): never { throw new AssessServiceError("invalid"); }
 function redacted(error: unknown) {
@@ -35,12 +37,17 @@ function redacted(error: unknown) {
  */
 export function createWorkerBinding(config: WorkerBinding): AssessRpc & { close(): Promise<void> } {
   const max = config.connections ?? 2;
+  const login = config.user;
+  const sessionPooler = Object.hasOwn(config, "sessionPoolerProjectRef");
   if (!/^[a-z0-9][a-z0-9.-]*$/i.test(config.host) || !Number.isInteger(config.port) || config.port < 1 || config.port > 65535 ||
       !config.database || !/^[a-z_][a-z0-9_]*$/.test(config.user) ||
       /^(postgres|supabase_admin|service_role|authenticated|anon|assess_worker)$/.test(config.user) ||
       !config.password || !config.ca.includes("-----BEGIN CERTIFICATE-----") || !Number.isInteger(max) || max < 1 || max > 4) invalid();
+  if (sessionPooler && (typeof config.sessionPoolerProjectRef !== "string" ||
+      !/^[a-z0-9]{1,63}$/.test(config.sessionPoolerProjectRef) || config.port !== 5432)) invalid();
   const pool = new Pool({
-    host: config.host, port: config.port, database: config.database, user: config.user, password: config.password,
+    host: config.host, port: config.port, database: config.database,
+    user: sessionPooler ? `${login}.${config.sessionPoolerProjectRef}` : login, password: config.password,
     ssl: { ca: config.ca, rejectUnauthorized: true }, max,
     connectionTimeoutMillis: 10_000, idleTimeoutMillis: 30_000,
     application_name: "radlab-assess-worker-v1",
@@ -86,7 +93,7 @@ export function createWorkerBinding(config: WorkerBinding): AssessRpc & { close(
             where m.member=r.oid and g.rolname='assess_worker' and not m.admin_option)
           and not exists (select 1 from pg_catalog.pg_auth_members m join pg_catalog.pg_roles g on g.oid=m.roleid
             where m.member=r.oid and (g.rolname<>'assess_worker' or m.admin_option))
-        ) as allowed from pg_catalog.pg_roles r where r.rolname=session_user`, [config.user]);
+        ) as allowed from pg_catalog.pg_roles r where r.rolname=session_user`, [login]);
         if (check.rows.length !== 1 || check.rows[0]?.allowed !== true) throw { code: "42501" };
         await client.query("set local role assess_worker");
         await client.query("set local search_path = ''");

@@ -119,3 +119,95 @@ it("builds and imports an inert Node artifact without the reference TS loader or
   const child = spawnSync(process.execPath, ["-e", "const r=require(process.argv[1]); if(typeof r.createWorkerBinding!=='function'||typeof r.runAssessJobs!=='function'||typeof r.installMixedContent!=='function')process.exit(1)", `${result.output}/assess-runtime.cjs`], { encoding: "utf8", timeout: 10000 });
   expect(child.status, child.stderr).toBe(0); expect(child.stdout).toBe("");
 });
+
+it("routes a session pooler username while pinning the original DB login and TLS hostname", async () => {
+  const routed = { ...config, sessionPoolerProjectRef: "syntheticproject123" };
+  const worker = createWorkerBinding(routed);
+  expect(pg.config).toHaveBeenCalledWith(expect.objectContaining({
+    host: config.host, port: 5432, user: `${config.user}.syntheticproject123`,
+    ssl: { ca: config.ca, rejectUnauthorized: true }, max: 2,
+    options: "-c search_path= -c statement_timeout=60000 -c lock_timeout=5000",
+  }));
+  // Caller mutation must not change the identity checked after pool construction.
+  routed.user = "postgres";
+  await worker.call("health_v1", {});
+  expect(pg.query).toHaveBeenCalledWith(expect.stringContaining("session_user = $1"), [config.user]);
+  expect(pg.query).toHaveBeenCalledWith("set local role assess_worker");
+  expect(pg.query.mock.calls.map(call => call[0]).slice(-2)).toEqual(["select assess.health_v1() as value", "commit"]);
+  await worker.close();
+});
+
+it("rejects ambiguous pooler routing and privileged or already suffixed logins before creating a pool", () => {
+  for (const sessionPoolerProjectRef of [undefined, null, 123, "", "a".repeat(64), "project.ref", "project-ref", "PROJECT", "ref/other", "ref\u0000", "ref;select 1"]) {
+    expect(() => createWorkerBinding({ ...config, sessionPoolerProjectRef } as unknown as Parameters<typeof createWorkerBinding>[0])).toThrow("invalid");
+  }
+  for (const user of ["postgres", "supabase_admin", "service_role", "authenticated", "anon", "assess_worker", "assess_runtime_test.ref", "assess_runtime_test;set role postgres"]) {
+    expect(() => createWorkerBinding({ ...config, user, sessionPoolerProjectRef: "ref" })).toThrow("invalid");
+  }
+  for (const port of [6543, 5433]) {
+    expect(() => createWorkerBinding({ ...config, port, sessionPoolerProjectRef: "ref" })).toThrow("invalid");
+  }
+  expect(pg.config).not.toHaveBeenCalled();
+});
+
+it("checks actual session-pooler backend identity and ACL on every transaction, including role reset and revocation", async () => {
+  // Only pg transport is mocked. The exact binding SQL executes inside a new disposable DB.
+  const db = new PGlite();
+  try {
+    await db.exec(`create role assess_worker nologin noinherit; create schema assess;
+      create function assess.health_v1() returns jsonb language sql as $$select '{}'::jsonb$$;
+      revoke all on schema assess from public;
+      revoke all on function assess.health_v1() from public;
+      grant usage on schema assess to assess_worker;
+      grant execute on function assess.health_v1() to assess_worker;
+      create table assess.private_data(secret text); revoke all on assess.private_data from public;
+      create role assess_runtime_test login noinherit; grant assess_worker to assess_runtime_test;
+      create role assess_other_test login noinherit; grant assess_worker to assess_other_test;
+      create role assess_extra nologin;`);
+    pg.query.mockImplementation((sql: string, values?: unknown[]) => db.query(sql, values));
+    const worker = createWorkerBinding({ ...config, sessionPoolerProjectRef: "syntheticref" });
+    const identity = async () => (await db.query<{ session: string; role: string }>("select session_user as session,current_user as role")).rows[0];
+    await db.exec("set session authorization assess_runtime_test");
+    await expect(worker.call("health_v1", {})).resolves.toEqual({});
+    expect(await identity()).toEqual({ session: config.user, role: config.user });
+    await expect(db.query("select * from assess.private_data")).rejects.toMatchObject({ code: "42501" });
+    await expect(db.query("select assess.health_v1()")).rejects.toMatchObject({ code: "42501" });
+    await expect(db.query("set role postgres")).rejects.toMatchObject({ code: "42501" });
+    // A backend logged in as a different role cannot be accepted by stripping a suffix.
+    await db.exec("set session authorization postgres;set session authorization assess_other_test");
+    await expect(worker.call("health_v1", {})).rejects.toMatchObject({ code: "denied" });
+    expect(await identity()).toEqual({ session: "assess_other_test", role: "assess_other_test" });
+    await db.exec("set session authorization postgres;set session authorization assess_runtime_test;set role assess_worker");
+    await expect(worker.call("health_v1", {})).rejects.toMatchObject({ code: "denied" });
+    await db.exec("reset role;set session authorization postgres");
+    for (const [grant, revoke] of [
+      ["alter role assess_runtime_test inherit", "alter role assess_runtime_test noinherit"],
+      ["grant assess_extra to assess_runtime_test", "revoke assess_extra from assess_runtime_test"],
+      ["grant assess_worker to assess_runtime_test with admin option", "revoke admin option for assess_worker from assess_runtime_test"],
+    ]) {
+      await db.exec(`${grant};set session authorization assess_runtime_test`);
+      await expect(worker.call("health_v1", {})).rejects.toMatchObject({ code: "denied" });
+      await db.exec(`set session authorization postgres;${revoke}`);
+    }
+    await db.exec("revoke assess_worker from assess_runtime_test;set session authorization assess_runtime_test");
+    await expect(worker.call("health_v1", {})).rejects.toMatchObject({ code: "denied" });
+    await worker.close();
+  } finally { await db.close(); }
+});
+
+it.each(["acl", "rpc", "commit"])("redacts session-pooler %s failure, discards the backend and never replays", async stage => {
+  const worker = createWorkerBinding({ ...config, sessionPoolerProjectRef: "syntheticref" });
+  pg.query.mockImplementation(async (sql: string) => {
+    if (sql.includes("as allowed")) return { rows: [{ allowed: stage !== "acl" }] };
+    if ((stage === "rpc" && sql.includes("select assess.health_v1")) || (stage === "commit" && sql === "commit")) {
+      throw { code: "XX000", message: "SYNTHETIC_SECRET pooler password", detail: config };
+    }
+    return { rows: [{ value: null }] };
+  });
+  const error = await worker.call("health_v1", {}).catch(error => error);
+  expect(error).toMatchObject({ message: stage === "acl" ? "denied" : "unavailable" });
+  expect(JSON.stringify(error)).not.toMatch(/SYNTHETIC_SECRET|password|syntheticref/);
+  expect(pg.query.mock.calls.filter(call => String(call[0]).includes("select assess.health_v1"))).toHaveLength(stage === "acl" ? 0 : 1);
+  expect(pg.release).toHaveBeenCalledWith(true);
+  await worker.close();
+});

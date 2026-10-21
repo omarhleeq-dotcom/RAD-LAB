@@ -14,12 +14,16 @@ export function parseJobConfig(raw: unknown): WorkerBinding {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) throw new Error("configuration");
   const keys = ["host", "port", "database", "user", "password", "ca"];
   const config = raw as Record<string, unknown>;
-  if (Object.keys(config).length !== keys.length || keys.some(key => !Object.hasOwn(config, key)) ||
+  const sessionPooler = Object.hasOwn(config, "sessionPoolerProjectRef");
+  if (Object.keys(config).length !== keys.length + Number(sessionPooler) || keys.some(key => !Object.hasOwn(config, key)) ||
       keys.filter(key => key !== "port").some(key => typeof config[key] !== "string" || !config[key] || String(config[key]).length > 32768) ||
       typeof config.port !== "number" || !Number.isInteger(config.port) || config.port < 1 || config.port > 65535) throw new Error("configuration");
+  if (sessionPooler && (typeof config.sessionPoolerProjectRef !== "string" ||
+      !/^[a-z0-9]{1,63}$/.test(config.sessionPoolerProjectRef) || config.port !== 5432)) throw new Error("configuration");
   // A fresh object excludes prototype/extra fields and fixes this first job to pool=1.
   return { host: config.host as string, port: config.port, database: config.database as string,
-    user: config.user as string, password: config.password as string, ca: config.ca as string, connections: 1 };
+    user: config.user as string, password: config.password as string, ca: config.ca as string, connections: 1,
+    ...(sessionPooler ? { sessionPoolerProjectRef: config.sessionPoolerProjectRef as string } : {}) };
 }
 
 export async function executeAssessJob(load: () => Promise<unknown>, signal: AbortSignal,

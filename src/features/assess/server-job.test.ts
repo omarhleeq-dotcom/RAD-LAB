@@ -85,3 +85,31 @@ it("builds a curated context and the actual entrypoint refuses unset config/flag
     expect(JSON.parse(child.stdout)).toEqual({ contract: "assess-job/1", outcome: "STOP", code: "configuration", runtimeOrLaunchVerified: false });
   }
 });
+
+it("accepts only an explicit bounded session-pooler suffix while preserving the DB login and one connection", async () => {
+  const routed = { ...config, sessionPoolerProjectRef: "syntheticref" };
+  expect(parseJobConfig(routed)).toEqual({ ...routed, connections: 1 });
+  const { worker, close } = fixture(), make = vi.fn(() => worker);
+  const result = await executeAssessJob(async () => routed, new AbortController().signal, make);
+  expect(make).toHaveBeenCalledWith({ ...routed, connections: 1 });
+  expect(result).toMatchObject({ outcome: "COMPLETE", runtimeOrLaunchVerified: false });
+  expect(JSON.stringify(result)).not.toMatch(/syntheticref|SYNTHETIC_PRIVATE|password|host/);
+  expect(close).toHaveBeenCalledTimes(1);
+});
+
+it("fails closed on malformed or transaction-pooler routing before creating a worker", async () => {
+  const make = vi.fn();
+  const badConfigs = [
+    ...[undefined, null, 123, "", "a".repeat(64), "ref.other", "ref-with-dash", "ref\u0000"].map(sessionPoolerProjectRef => ({ ...config, sessionPoolerProjectRef })),
+    { ...config, sessionPoolerProjectRef: "ref", port: 6543 },
+    { ...config, sessionPoolerProjectRef: "ref", connectionString: "SYNTHETIC_PRIVATE" },
+    { ...config, sessionPoolerProjectRef: "ref", expectedUser: "postgres" },
+  ];
+  for (const raw of badConfigs) {
+    expect(() => parseJobConfig(raw)).toThrow("configuration");
+    expect(await executeAssessJob(async () => raw, new AbortController().signal, make)).toEqual({
+      contract: "assess-job/1", outcome: "STOP", code: "configuration", runtimeOrLaunchVerified: false,
+    });
+  }
+  expect(make).not.toHaveBeenCalled();
+});

@@ -19,7 +19,7 @@ node scripts/assess/build-runtime.mjs
 
 ## entrypoint المحدودة والحاوية
 
-`server-job` يعيد runAssessJobs نفسها مرة واحدة بـlimit=1 وconnections=1، ثم ينتظر close. `job-main.mjs` ترفض flags، ولا تقرأ ملفًا قبل ASSESS_JOB_ENABLED=1 الصريح. إعداد خارجي واحد في `/run/secrets/assess-worker.json` بحد64KiB؛ الحقول الستة فقط host/port/database/user/password/ca، بلا connectionString أو هوية مستخدم أو fallback. لا سر في ENV/args أو build، ولا config حية أو secret mount أُعدت من هذه الدفعة. المفتاح المحلي للتفعيل لا يفتح launch_gate ولا يمنح إذن تشغيل.
+`server-job` يعيد runAssessJobs نفسها مرة واحدة بـlimit=1 وconnections=1، ثم ينتظر close. `job-main.mjs` ترفض flags، ولا تقرأ ملفًا قبل ASSESS_JOB_ENABLED=1 الصريح. إعداد خارجي واحد في `/run/secrets/assess-worker.json` بحد64KiB؛ الحقول الستة المطلوبة host/port/database/user/password/ca، وحقل sessionPoolerProjectRef اختياري صريح لمسار session5432 فقط؛ بلا connectionString أو هوية مستخدم أو fallback. لا سر في ENV/args أو build، ولا config حية أو secret mount أُعدت من هذه الدفعة. المفتاح المحلي للتفعيل لا يفتح launch_gate ولا يمنح إذن تشغيل.
 
 تسجل SIGTERM/SIGINT قبل قراءة الملف، وتتوقف عن claim التالية وتنتظر الجاري وhealth ثم close، دون إلغاء RPC جارٍ. `assess-job/1` يخرج0 مع COMPLETE فقط، أو1 عند configuration/unavailable/grading_uncertain/cleanup_failed، أو130 عند توقف تعاوني. المخرجات counters منقحة بعد تحقق العدد فقط؛ غياب/فشل رد SQL لا يولد counters صفرية. عند فشل finish قد يعني COMMIT نجح؛ counts.failed عدم يقين تنفيذ، لا علامة صفر أو غياب نتيجة. لا stdout للمستند أو claim أو config أو raw errors.
 
@@ -49,11 +49,19 @@ SIGTERM/SIGINT أثناء finish تنتظران COMMIT ثم health/close. SIGKIL
 
 ## TLS وACL والأسرار والإلغاء — قبل أي ربط حي
 
-CA صريحة وrejectUnauthorized=true وفحص اسم المضيف الافتراضي في pg/Node، بلا تعطيل verification أو fallback إلى اتصال غير مشفر. عنوان DNS وميناء وقاعدة/login خاصون؛ socket غير مقبول لهذا الربط. لا اعتبار قبول CA الاصطناعية في mock شهادة TLS. يلزم على المزود إثبات السلسلة واسم المضيف ورفض شهادة/مضيف خاطئين، وتوافق الاتصال المباشر/الـpooler مع login وSET LOCAL؛ الربط قد يرفض أسماء pooler المركبة عمدًا حتى مراجعتها.
+CA صريحة وrejectUnauthorized=true وفحص اسم المضيف الافتراضي في pg/Node، بلا تعطيل verification أو fallback إلى اتصال غير مشفر. عنوان DNS وميناء وقاعدة/login خاصون؛ socket غير مقبول لهذا الربط. لا اعتبار قبول CA الاصطناعية في mock شهادة TLS. يلزم على المزود إثبات السلسلة واسم المضيف ورفض شهادة/مضيف خاطئين، وتوافق الاتصال المباشر/الـpooler مع login وSET LOCAL وstartup options. أُضيف دعم اسم النقل المركب محليًا في [تقرير إصلاح session pooler](ASSESS_SESSION_POOLER_REPORT_2026-10-21.md)، دون شهادة Supavisor أو TLS حي.
 
 صلاحية login مخصصة محدودة: CONNECT للقاعدة المقصودة وعضوية assess_worker فقط، بلا ملكية كائنات/منح جداول أو public CREATE أو أدوار إدارية. مراجعة ACL تشمل المنح المباشرة وPUBLIC والعضويات العابرة وصلاحيات assess_worker وsecurity definer/RLS، مع رفض مستخدم/anon لدوال العامل. فحص login في الكود لا يغلق هذه البوابة. أسرار login خارج Git/build/browser، تُحقن من مدير أسرار يختار لاحقًا، ولا تُرسل للمحادثة. لا نسخ JWT أو مفاتيح service/admin إلى العامل.
 
 إلغاء الصلاحية يحتاج منع اتصالات login الجديدة وإلغاء العضوية/الصلاحية وإغلاق الاتصالات القائمة وإبطال/تدوير السر بحسب المنصة؛ NOLOGIN وحدها لا تنهي اتصالًا أو معاملة قائمة. عند incident لا يكتفى بإيقاف scheduler. هذا تصميم مطلوب لإجراء إلغاء مراجع، لا أوامر SQL أو تجربة إلغاء حية منفذة. يراجع المسؤول أيضًا إعدادات logs لدى DB/host/proxy: لا statements/parameters/claims/أجوبة/إعدادات/علامات/هويات أو connection config. المحوّل لا يسجل events أو أخطاء خام؛ يحولها إلى invalid/limit/denied/conflict/unavailable فقط، دون cause/detail.
+
+## إعداد Session pooler المحلي
+
+يبقى `user` اسم login PostgreSQL المحدود فقط (مثل assess_job_a)، دون لاحقة مشروع أو اسم postgres. عند إضافة `sessionPoolerProjectRef` الصريحة يُرسل pg اسم النقل `user.projectRef`، بينما يفحص SQL `session_user = user` و`current_user = session_user` قبل SET LOCAL ROLE assess_worker في **كل** معاملة. لا اشتقاق للهوية من استجابة pooler أو تقسيم suffix وارد أو تمرير expectedUser مستقل لتجاوز الفحص. عند غياب الحقل تبقى إعدادات direct الستة كما هي. وجود الحقل بقيمة فارغة/null/undefined أو محارف غير a-z0-9 أو طول خارج1..63 يُرفض؛ هذه صيغة توجيه محدودة وليست إثبات وجود مشروع أو ملكيته.
+
+هذا المسار يقبل port5432 فقط ويرفض6543 وبدائل المنافذ؛ ليس دعم transaction pooler. hostname يؤخذ من Connect للمشروع ولا يُخمن من region؛ CA وhostname verification تبقيان إلزاميتين. المسار لا يُكتشف من hostname أو ENV، ولا fallback من direct إلى pooler. الحد pool1 في Job و1..4 في المكتبة محفوظ؛ إعداد الحاوية يظل ملفًا واحدًا≤64KiB. لم يتغير startup options أو statement60s/lock5s/connect10s؛ قبولها لدى Supavisor يحتاج شاهدًا مأذونًا لاحقًا ولا يحسمه نجاح mock/PGlite.
+
+[دليل Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) يحدد username للـshared pooler بصيغة role.project-ref. فصل اسم النقل لا يمنح Google IAM أو login أو عضوية أو شهادة TLS؛ لا إعداد حي أو سر منشأ من هذه الدفعة. نطاق الدور assess_worker ما زال أوسع من tick-only كما تسجله [حزمة الربط](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md).
 
 ## الإيقاف والفشل وScale
 
