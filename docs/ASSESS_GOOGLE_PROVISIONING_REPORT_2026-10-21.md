@@ -1,5 +1,7 @@
 # تجهيز Google من Cloud Shell وتسليم حزمة الصورة — 2026-10-21 عمّان
 
+الحالة الأحدث في [متابعة الاتصال والإغلاق](#connection-owner-followup) بتاريخ2026-10-22 عمّان؛ الفقرات السابقة لها أدلة تاريخية وليست نفيًا لرفع السر واختبار Cloud Shell اللاحقين.
+
 ## 1. السلطة والميزانية والانحرافات
 
 طلب المالك الانتقال إلى ربط Cloud Run بـSupabase مباشرةً دون جعل psql على اللابتوب شرطًا، ثم نفذ خطوات إنشاء الهوية والسر ومستودع الصور. هذا إذن تجهيز خارجي ضمن الموارد المحددة، يحدّث منع الإنشاء السابق لهذه الموارد فقط؛ لا يفتح launch_gate أو يأذن merge/ready أو تغيير Variables أو تجاوز TLS أو تشغيل tick يكتب على الأصلية دون نطاقه المراجع. الحساب الإداري postgres ليس login العامل.
@@ -111,3 +113,45 @@ RAD-056 تبقى review/waiting_on owner لتشغيل أداة الإصدار ا
 التالي نقل كود أداة uploader المحدد إلى Cloud Shell وتشغيلها مرة واحدة بإدخال كلمة assess_job_a المخفية، لا كلمة postgres. ترفض الأداة أي نسخة موجودة؛ عند PASS تُراجع metadata إصدار1 ثم mount بإصدار رقمي فقط مع إبقاء الحارس0. عند خطأ أو انقطاع توقف وافحص versions metadata؛ لا retry أو إظهار سر. تفعيل DB/login ومدة الصلاحية وTEMP والإلغاء واختبار credential/runtime خطوات مستقلة قبل أي tick حي؛ لا admin postgres في config. لا إعادة describe/surface/تعيين password أو staging/build/push/create الناجحين لمجرد تكرار الشاهد.
 
 ابدأ AGENTS وHANDOFF وRAD-056 وهذا التقرير وحزمة الربط، ثم docs:context/GitHub للرؤوس وفحوصها. تابع checkout نفسه بلا worktree/subagents؛ اشرح وظيفة كل خطوة للمالك قبل تنفيذها، وحدد ميزانية ومعايير قبول لأي تعديل. لا إعادة إنشاء Google resources أو مرحلة NOLOGIN أو TLS أو النقل/build/push الناجحين؛ لا طلب سر في المحادثة أو admin login للعامل أو فتح gate أو ready/merge/auto-merge. بقية نطاق الربط يحتاج تهيئة credential آمنة وفحصًا منفصلًا قبل أي worker tick حي.
+
+
+<a id="connection-owner-followup"></a>
+## متابعة 2026-10-22 عمّان: السر والاتصال والإغلاق
+
+### 1. الميزانية والسلطة
+
+أذن المالك بمتابعة الربط، ثم وافق صراحةً على اختبار حساب مدته ساعة باستثناء TEMP لهذه النافذة فقط. الميزانية ثمانية ملفات: connection-probe.mjs وconnection-probe.test.mjs وbuild-connection-probe.mjs وci.yml ودليل ASSESS_CONNECTION_PROBE.md وهذا التقرير وHANDOFF وproject-status. لا تعديل صورة العامل أو schema أو PUBLIC أو gate أو Variables؛ لا SQL حي من الوكيل. لا subagents/worktree. معيار القبول: تثبيت شاهد المالك دون مبالغة، وأداة مستقلة لا تكتب/تستدعي RPC أو تكشف أسرارًا، وبناء artifact واختبارات سلبية قبل التسليم.
+
+### 2. المنجز وشواهد المالك
+
+وصل فشل gcloud لغياب credentialed accounts ثم نجاح تسجيل دخول المالك؛ فحص versions أعاد[] قبل retry. سُجل خطأ Bash history أثناء إدخال كلمة العامل وكشف جزء منها، ثم رفض المالك تغييرها؛ لا نعيد الجزء ولا ندعي تدويرها أو ضمان خلو history. mismatch لاحق توقف قبل الرفع. بعدها وصلت metadata النسخة projects/124842667755/secrets/assess-worker-config/versions/1 بحالة ENABLED. لا قرأنا payload ولا نربط ENABLED بتفعيل DB.
+
+وصل نجاح Job update ثم describe: mountPath=/run/secrets وitems key=1/path=assess-worker.json وsecretName=assess-worker-config، مع ASSESS_JOB_ENABLED=0 والصورة/SA/الموارد السابقة نفسها. إنشاء mount ليس تنفيذًا. جاهزية catalogue: staged=true/active=false/public_surface_review_required=true/direct=false/sessions0/gate_closed=true.
+
+الجرد المقارن لكلا الدورين assess_job_a وassess_worker أعاد خارج assess/information_schema/pg_* دوال قابلة للاستدعاء0 وforeign servers0 وforeign wrappers0. هذه effective privileges مع USAGE على المخطط، وليست جرد دوال النظام أو قراءة أجسام كل الدوال. ظهرت لغاتc/internal غير trusted وplpgsql/sql trusted؛ USAGE وحدها لا تمنح إنشاء دوال غير trusted ولا CREATE schema. لا ندعي اكتمال مراجعة كل النظام/default grants/مزود من ذلك.
+
+بعد موافقة الساعة وصل login=true وexpiry=2026-10-21T22:00:32.542372Z (2026-10-22 الساعة01:00:32 عمّان). نجح اختبار psql من Cloud Shell بverify-full وCA المراجعة: postgres/assess_job_a/assess_worker/read_only=on، BEGIN/SET ثم ROLLBACK. أُدخلت كلمة العامل يدويًا؛ هذا ليس اختبار محتوى secret أو Node/Google runtime. أُغلق الحساب بعد الاختبار بوصول login_disabled=true وexpired=true؛ لا نفترض قتل cache أو الجلسات كلها من هذين العلمين. لم يصل worker tick أو launch أو execute.
+
+### 3. RAD-056
+
+تبقى review/waiting_on owner؛ تبدلت الأدلة إلى secret version/mount وشاهد credential/session-pooler من Cloud Shell والإغلاق. credential/pooler نجحا بهذا العميل والوقت المحددين؛ أعلام readiness الثابتة false لا تتبدل تلقائيًا ولا يثبت ذلك Node أو التشغيل. التالي [أداة Cloud Run المستقلة](ASSESS_CONNECTION_PROBE.md)؛ الحساب مغلق فلا تفعله قبل جاهزية الصورة ونافذة محددة. إذن TEMP لساعة الاختبار فقط، لا قبول سياسة تشغيل مستمر أو نافذة ثانية تلقائية.
+
+### 4. المشترك وScale
+
+أداة مستقلة بـpg الحالية ووجهة ثابتة واتصال واحد وقراءات catalogue ثابتة. builder ينتج سياقًا بملفين فقط وUSER node وقاعدة Node24 المثبتة؛ لا imports للعامل أو React/Next ولا تعديل صوره السابقة. CI يشغل10اختبارات اصطناعية بلا cloud/DB. هذا تشخيص مؤقت لا scheduler أو registry متعددة الوجهات؛ التوسع يحتاج قرارًا مستقلاً.
+
+### 5. الطبي والدرجات
+
+لم تتغير Practice أو صورها أو درجاتها أو توقعات الاختبارات. لا دليل طبي أو ترخيص أو O108 جديد؛ لا فتح بوابة Assess.
+
+### 6. QA وحدوده
+
+نجحت10اختبارات node:test لفحص الشكل/الوجهة/CA وإضافة CA ثانية والهوية وترتيب READ ONLY/SET ROLE/ROLLBACK، والفشل المنقح قبل/أثناء/بعد الاتصال؛ لا provider error أو password في التقارير. نجح ESLint للملفات الثلاثة، وبناء artifact وتجربة STOP بلا secret mount مع تحميل pg؛ سياق البناء ملفان. docs:test75pass. نجحت docs:check بلا errors/warnings وstatus:check مع تعارض RAD-024 الموروث وgit diff --check؛ أعيدت الاختبارات والبناء بعد تشديد رفض CA إضافية. لا إعادة full app check/build؛ التغيير تشخيص مستقل وليس منتجًا أو واجهة. لا Docker build أو push أو job create/execute جديد من الوكيل. تحقق GitHub: رأس PR السابق5dd8999 وmainff68413 كلاهما check/deploy success، و#96 draft/open/unmerged؛ نتائج الرأس الجديد مستقلة بعد push.
+
+### 7. المفتوح
+
+تبقى قراءة mount واتصال Node من Google غير مثبتين، وكذلك logs/provider/cache-revocation/effective IAM/التنبيه والجدولة والنسخ/restore/JWT/قبول وظيفي. الجزء المكشوف من كلمة العامل خطر قائم برفض تدوير المالك؛ لا إعادة عرضه. لا تحميل كلمة الإدارة في الحاوية. الحساب الآن مغلق، expiry لا يقتل جلسة قائمة؛ سجل نجاح إغلاق الأعلام ليس إثبات termination أو رفض pooler جديد.
+
+### 8. التالي للمالك
+
+نقل ملفي الأداة والبناء فقط إلى Cloud Shell والتحقق من بصمتيهما، ثم بناء صورة تشخيص مستقلة وتثبيت digest وإنشاء Job منفصلة مغلقة دون تشغيل تلقائي. بعد metadata تبدأ نافذة اختبار محددة مستقلة بموافقة صاحبها، اختبار واحد بلا RPC ثم إغلاق login وفحص الجلسات/المصادقة الجديدة. لا إعادة secret uploader أو password أو نقل865ملفًا أو صورة العامل أو staging. اشرح وظيفة الخطوة قبل أمرها؛ لا ترسل صاحبها دفعة أوامر تفعيل وتنفيذ غير مراجع.
