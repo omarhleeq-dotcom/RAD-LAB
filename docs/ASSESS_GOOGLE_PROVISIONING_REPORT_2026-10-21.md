@@ -36,9 +36,29 @@
 
 الملفان المنسوخان يطابقان Dockerfile وentrypoint المراجعتين byte-for-byte، والمحتويات المستخرجة تطابق البناء بايتًا، وكل entries ملفات عادية بأسماء محددة، دون مسارات مطلقة أو links أو أسرار/CA/config/env أو باقي checkout. gzip/tar metadata ثابتة. Dockerfile مثبتة على base digest السابقة وتستعمل USER node؛ لا npm install داخل الصورة أو Cloud Build. هذه **حزمة build context** وليست صورة OCI أو digest صورة منشورة.
 
+### متابعة نقل المصدر وبناء الصورة وإنشاء المهمة — 2026-10-21
+
+تعذر فتح رابط archive المحلي من واجهة المالك؛ لم ندعِ نجاح نقله. انتقل التسليم إلى ZIP خاصة من GitHub للرأس6b568a26a4bccc49c1c0cd3a772f50848f7aa0bd. مرشح محلي أول بحجم37008byte و118entries لم يحتو build-runtime.mjs أو package-lock.json، فرفض ولم يُرفع للبناء. لا سبب مؤكد لاختلاف المرشح. قرأ الوكيل أرشيف GitHub نفسه عبر API موثوقة:974entries و865ملفًا و36,625,096byte مفكوكة؛ لا نشر source الخاصة أو token.
+
+حُسبت بصمة محتوى موحدة تتجاهل اسم مجلد جذر archive وتغطي كل الملفات: SHA256 لقائمة JSON مرتبة من [relative-path, SHA256(content)] بفواصل compact وensure_ascii=true. القيمة c00207f79b229a617ef607e2dc73cd041354476a53fc7b0628b9995e7bd9a297. بعد تنزيل ZIP جديدة نحو28.2MiB ورفع RAD-LAB-cloud-source.zip.zip، أرسل المالك PASS source verified and extracted وFiles865 وDirectory=/home/radlab_pilot/assess-source-6b568a2؛ الفحص يرفض mismatch قبل أي استخراج ولا يشغل المحتوى، ويكتب إلى مجلد جديد فقط. suffix.zip.zip اسم الملف الفعلي وليس خطأ بنية. لا يُعاد التحميل أو الاستخراج بعد الشاهد الناجح.
+
+أرسل المالك Node v24.21.0 ونجاح npm ci (448حزمة/33s) ثم assess-runtime-build/1 مع output=/tmp/radlab-assess-build-729RTv. npm حذرت من eslint منتهية الدعم ومن install scripts محجوبة لأربع حزم ومنها esbuild؛ bundling نجح دون السماح العام بهذه scripts. ليس ذلك ادعاء نجاح كل أدوات QA بهذه البيئة. base image ما زالت Node24.19.0 المثبتة بـdigest المراجعة، ولم نحدث package/lock أو الصورة الأساسية لإسكات تحذير.
+
+سجل البناء/الرفع المرفوع من المالك أثبت docker build --platform=linux/amd64 وFROM pinned Node24.19.0 وCOPY assess-job.cjs/job-main.mjs فقط، ثم push ناجحة إلى:
+
+- image: europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-worker
+- tag: source-6b568a2 (نسخة المصدر المستخدمة فعليًا، لا source-aefb857 المخطط القديم).
+- pushed index digest: sha256:0f4f4117608f752ddbec69f4b67ca607d04db09fd0e5e18e774f445dacee7a5f.
+
+سجل push يميز image manifest وconfig وattestation عن manifest-list/index؛ المرجع المثبت للمهمة هو pushed index المذكور، لا config hash أو base digest أو hash الأرشيف. هذا شاهد المالك وليس registry pull مستقلًا من الوكيل، ولا signature/runtime acceptance.
+
+ثم أرسل Job [assess-worker] has successfully been created بعد أمر create في europe-west3 بالـimage@digest المذكورة، وservice account assess-job، وCPU1/memory512Mi/task1/parallelism1/timeout300s/maxRetries0 وASSESS_JOB_ENABLED=0 دون secret mount أو execute-now أو schedule. نجاح create يثبت إنشاء التعريف، وليس قراءة ثانية للإعداد الفعلي أو execution count. توجيه CLI الافتراضي To execute this job ليس إجراءً مأذونًا أو منفذًا تلقائيًا. حارس التطبيق=0 يرفض العمل؛ ليس تعطيل Job على مستوى منصة IAM، وما زال من يملك run يستطيع إطلاق execution تتوقف عند الحارس. لا ادعاء عدم وجود حق run أو منع overrides من هذا المتغير وحده.
+
+المتابعة الحالية تقرأ job describe وsecret versions metadata فقط؛ لا versions access/payload أو تنفيذ عامل. تبقى credential/pooler/runtimeOrLaunchVerified=false وlaunch_gate مغلقة؛ secret version/content وعدد executions الفعلي غير مثبتين بعد، وحساب DB المعطل لا يصبح صالحًا بمجرد نجاح Google bootstrap.
+
 ## 3. لكل مهمة
 
-RAD-056 تبقى review/waiting_on owner لرفع الحزمة إلى Cloud Shell ثم بناء/رفع الصورة وتوفير شاهد digest. تبقى قناة credential ومراجعة PUBLIC/TEMP وهوية backend والإلغاء ومسؤول التشغيل والتنبيه غير مكتملة؛ no completion_evidence أو done. حدّث الوصف/source_ref والملخص الخماسي وrevision/time فقط للمهمة؛ تعارض RAD-024 الموروث محفوظ.
+RAD-056 تبقى review/waiting_on owner لإرجاع metadata إعداد المهمة وقائمة إصدارات السر، بعد وصول شواهد نقل المصدر وبناء/رفع الصورة وإنشاء Job بحارس التطبيق المغلق. تبقى قناة credential ومراجعة PUBLIC/TEMP وهوية backend والإلغاء ومسؤول التشغيل والتنبيه غير مكتملة؛ no completion_evidence أو done. حدّث الوصف/source_ref والملخص الخماسي وrevision/time فقط للمهمة؛ تعارض RAD-024 الموروث محفوظ.
 
 ## 4. المشترك وScale واستمرارية الحكم
 
@@ -56,7 +76,9 @@ RAD-056 تبقى review/waiting_on owner لرفع الحزمة إلى Cloud Shel
 
 نجح bundling الحالي وnode --check للـCJS والـentrypoint، والتحقق من allowlist والأحجام والبصمات ومطابقة tar للمصدر المبني. تشغيل entrypoint محليًا مع ASSESS_JOB_ENABLED=0 أعاد STOP/configuration وexit1 والمخرجات المنقحة المتوقعة بلا stderr؛ لم تُحمّل credentials أو يُنشأ اتصال DB. لا Docker image جديدة بُنيت هنا أو رُفعت أو Job نُشئت/شُغلت. بناء الصورة السابق وشواهده يظلان بحدودهما في [تقرير الحاوية](ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md).
 
-نجحت docs:check مقابل origin/main بلا errors أو review warnings وstatus:check مع require-previous وgit diff --check؛ تعارض RAD-024 الموروث بقي ظاهرًا دون تعديل. لا app build أو QA تطبيق/SQL/متصفح/Docker ناجحة معادة؛ المنتج لم يتغير. نقل archive من البيئة إلى جهاز المالك ثم Cloud Shell لم يثبت بعد؛ لا ندعي upload من إنشاء ملف محلي.
+نجحت docs:check مقابل origin/main بلا errors أو review warnings وstatus:check مع require-previous وgit diff --check؛ تعارض RAD-024 الموروث بقي ظاهرًا دون تعديل. لا app build أو QA تطبيق/SQL/متصفح/Docker ناجحة معادة؛ المنتج لم يتغير. عند تسليم الحزمة المحلية الأولى لم يثبت نقلها؛ المتابعة أعلاه تحفظ انتقال التسليم إلى ZIP المصدر وشواهد النقل/build/push/create من المالك، دون تعميمها إلى تشغيل ناجح.
+
+متابعة شواهد المالك بدأت بشجرة نظيفة على6b568a26a4bccc49c1c0cd3a772f50848f7aa0bd؛ docs:context/GitHub أثبتا بقاء #96 مسودة مفتوحة وmain المذكورة، وcheck/deploy completed/success لكليهما. نجحت فحوص docs/status/diff لهذه المتابعة بلا errors أو review warnings؛ لا إعادة app/Docker QA أو نقل CI للرأس التالي.
 
 ## 7. المتبقي وشواهد خارجية إضافية
 
@@ -68,6 +90,6 @@ RAD-056 تبقى review/waiting_on owner لرفع الحزمة إلى Cloud Shel
 
 ## 8. تسليم المالك وبرومت الاستئناف
 
-التالي نقل archive وحدها إلى Cloud Shell عبر upload file، والتحقق من SHA256 قبل استخراجها إلى مجلد جديد. إن لم يتمكن المستخدم من تنزيل الملف من واجهة Codex، فالتوقف عند نقل الملف صريح؛ لا نشر الحزمة في repo عامة أو طلب token، ولا تصوير نص bundle أو لصقه كأوامر. بعد نجاح النقل، تعطى أوامر Docker build وpush إلى europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-worker بوسم source-aefb857 ثم يؤخذ digest الفعلي من registry. لا Cloud Build أو إنشاء/تشغيل Job ضمن خطوة رفع الصورة.
+التالي قراءة job describe مع إعداد الحاوية/taskCount/parallelism وstatus.executionCount/conditions، وsecret versions list بأسماء/حالة فقط، من Cloud Shell. لا إعادة build/push/create أو رفع ZIP أو تثبيت حزم بعدما ثبتت، ولا execute أو update ENV أو mount أحدث إصدار غير مراجع. بعد metadata تحدد قناة credential للعامل المحدود ومراجعة PUBLIC/TEMP والسر الرقمي والإلغاء قبل ربط وتشغيل حي؛ لا تثبيت admin postgres في السر لتجاوز العائق. لا Cloud Build أو جدولة تلقائية.
 
-ابدأ AGENTS وHANDOFF وRAD-056 وهذا التقرير وحزمة الربط، ثم docs:context/GitHub للرؤوس وفحوصها. تابع checkout نفسه بلا worktree/subagents؛ اشرح وظيفة كل خطوة للمالك قبل تنفيذها، وحدد ميزانية ومعايير قبول لأي تعديل. لا إعادة إنشاء Google resources أو مرحلة NOLOGIN أو TLS الناجحين؛ لا طلب سر في المحادثة أو admin login للعامل أو فتح gate أو ready/merge/auto-merge. بقية نطاق الربط يحتاج تهيئة credential آمنة وفحصًا منفصلًا قبل أي worker tick حي.
+ابدأ AGENTS وHANDOFF وRAD-056 وهذا التقرير وحزمة الربط، ثم docs:context/GitHub للرؤوس وفحوصها. تابع checkout نفسه بلا worktree/subagents؛ اشرح وظيفة كل خطوة للمالك قبل تنفيذها، وحدد ميزانية ومعايير قبول لأي تعديل. لا إعادة إنشاء Google resources أو مرحلة NOLOGIN أو TLS أو النقل/build/push الناجحين؛ لا طلب سر في المحادثة أو admin login للعامل أو فتح gate أو ready/merge/auto-merge. بقية نطاق الربط يحتاج تهيئة credential آمنة وفحصًا منفصلًا قبل أي worker tick حي.

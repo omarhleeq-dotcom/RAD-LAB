@@ -33,7 +33,7 @@
 
 ### متابعة التجهيز المأذون من المالك
 
-انتقل المالك لاحقًا إلى الربط من Cloud Run دون psql على اللابتوب، ونفّذ من Cloud Shell إنشاء assess-job والسر assess-worker-config بـuser-managed replica في europe-west3 ومنحة secretAccessor عليه لهوية المهمة، ثم تفعيل Run/Artifact Registry وإنشاء repo Docker اسمها assess-runtime في المنطقة نفسها. [تقرير التجهيز والحزمة](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md) يحفظ شواهد metadata/policy وإنشاء repo وحدودها وحزمة الصورة الحالية. لا صورة مرفوعة أو Job/run أو secret version/content أو effective IAM أو credential/DB binding مثبتة؛ لا يعاد إنشاء الموارد ولا تُفتح gate من ذلك. هذا تحديث نطاق التجهيز بعد الإذن الأول، لا نقل لقائمة القرار كلها إلى مقبولة.
+انتقل المالك لاحقًا إلى الربط من Cloud Run دون psql على اللابتوب، ونفّذ من Cloud Shell إنشاء assess-job والسر assess-worker-config بـuser-managed replica في europe-west3 ومنحة secretAccessor عليه لهوية المهمة، ثم تفعيل Run/Artifact Registry وإنشاء repo Docker اسمها assess-runtime في المنطقة نفسها. [تقرير التجهيز والحزمة](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md) يحفظ شواهد metadata/policy وإنشاء repo وحدودها وحزمة الصورة الحالية. أرسل المالك لاحقًا شاهد نقل ZIP المصدر المتحقق وبناء/رفع image بوسم source-6b568a2 وبصمة index المثبتة في التقرير، ثم نجاح إنشاء assess-worker بموارد المقترح وASSESS_JOB_ENABLED=0 دون secret mount أو execute. لا run أو secret version/content أو effective IAM أو credential/DB binding مثبتة؛ لا يعاد إنشاء الموارد ولا تُفتح gate من ذلك. هذا تحديث نطاق التجهيز بعد الإذن الأول، لا نقل لقائمة القرار كلها إلى مقبولة.
 
 ## 2. مصفوفة Google IAM ونطاق السر
 
