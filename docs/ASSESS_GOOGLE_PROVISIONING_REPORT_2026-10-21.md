@@ -1,6 +1,6 @@
 # تجهيز Google من Cloud Shell وتسليم حزمة الصورة — 2026-10-21 عمّان
 
-الحالة الأحدث في [متابعة الاتصال والإغلاق](#connection-owner-followup) بتاريخ2026-10-22 عمّان؛ الفقرات السابقة لها أدلة تاريخية وليست نفيًا لرفع السر واختبار Cloud Shell اللاحقين.
+الحالة الأحدث في [نجاح فحص Cloud Run والإغلاق](#cloud-run-probe-owner-pass) بتاريخ2026-10-22 عمّان؛ الفقرات السابقة لها أدلة تاريخية وليست نفيًا لرفع السر واختبار Cloud Shell اللاحقين.
 
 ## 1. السلطة والميزانية والانحرافات
 
@@ -155,3 +155,59 @@ RAD-056 تبقى review/waiting_on owner لتشغيل أداة الإصدار ا
 ### 8. التالي للمالك
 
 نقل ملفي الأداة والبناء فقط إلى Cloud Shell والتحقق من بصمتيهما، ثم بناء صورة تشخيص مستقلة وتثبيت digest وإنشاء Job منفصلة مغلقة دون تشغيل تلقائي. بعد metadata تبدأ نافذة اختبار محددة مستقلة بموافقة صاحبها، اختبار واحد بلا RPC ثم إغلاق login وفحص الجلسات/المصادقة الجديدة. لا إعادة secret uploader أو password أو نقل865ملفًا أو صورة العامل أو staging. اشرح وظيفة الخطوة قبل أمرها؛ لا ترسل صاحبها دفعة أوامر تفعيل وتنفيذ غير مراجع.
+
+
+<a id="cloud-run-probe-owner-pass"></a>
+## نجاح فحص Cloud Run وإغلاق الحساب — 2026-10-22 عمّان
+
+### 1. النطاق والميزانية
+
+المتابعة ضمن اختبار الاتصال المحدود الذي وافق عليه المالك؛ أُعيد فتح login داخل الموعد الأصلي نفسه، لا نافذة إضافية أو تمديد TEMP. توثيق هذه النتيجة في أربعة ملفات فقط: هذا التقرير وASSESS_CONNECTION_PROBE.md وHANDOFF وproject-status. لا كود/SQL ملف جديد أو إعادة QA تطبيق ناجحة، ولا worktree/subagents أو ready/merge. المالك نفذ أوامر Google وSQL؛ الوكيل لم يمتلك credential سحابية أو يقرأ secret payload.
+
+### 2. شواهد البناء والموارد والنتيجة
+
+تحققت بصمتا ملفي الأداة/builder على Cloud Shell؛ بدأ اسم builder بزيادة '- ' فنسخ إلى الاسم المراجع داخل scripts/assess. build أعاد /tmp/radlab-assess-probe-q9UX7V. نجح docker build محليًا من سياق188.41kB وبقاعدة Node المثبتة؛ رفض docker push مرتين TCP443 على عنوانين مختلفين. نجح curl للسجل HTTP401، وبIPv4 أيضًا؛ Docker والسياقdefault والطرفية بلا proxy. لا تشخيص جازم لسبب شبكة daemon أو تجاوز TLS/مسار وصول؛ انتقل المالك إلى Cloud Build.
+
+أُفعّلت Cloud Build API. أول submit رفع source إلى bucket إقليمي ثم فشل PERMISSION_DENIED؛ حساب المالك ظهر Owner ولا سجل رفض مطابق في الاستعلام المحدود. get-default-service-account حدد124842667755-compute@developer.gserviceaccount.com، وسياسة المشروع أظهرت Cloud Build serviceAgent الصحيح دون grants لهذا compute آنذاك. لا نساوي سياسة المشروع بمراجعة effective IAM كاملة.
+
+أضاف المالك لحساب compute فقط: roles/storage.objectViewer على bucket project-bff9124a-ec31-4d57-bc0_europe-west3_cloudbuild، وroles/artifactregistry.writer على repository assess-runtime/europe-west3، وroles/logging.logWriter على المشروع. لم نمنحه Owner أو نغيّر SA العامل؛ تبقى هذه منح فعلية بعد التجربة ما لم تُسحب لاحقًا بإجراء محدد. السياسة أظهرت كذلك هوية Cloud Build التقليدية ذات builds.builder؛ لم نضفها أو نحذفها من ذلك الشاهد.
+
+أنشأ المالك /tmp/assess-probe-cloudbuild.yaml ببناء Docker واحد والصورة التشخيصية فقط وlogging=CLOUD_LOGGING_ONLY وtimeout300s؛ submit صريح بـcompute serviceAccount والمنطقةeurope-west3 وregional-user-owned-bucket. نجح build e011ed24-a3ff-4fa7-a40f-9735ce5ae8ee، CREATE_TIME=2026-10-21T21:32:29Z، DURATION=11S. فحص results.images ثبت digest النهائي sha256:70b872a32fc4354d4bbe9820529db84adba4d13091df1b403691fb5d0f29054a لصورة europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-connection-probe:check-v1. هذا digest البناء السحابي، لا config أو digest الصورة المحلية التي فشل رفعها.
+
+نجح create وdescribe لمهمة assess-connection-check: الصورة المثبتة أعلاه، SA assess-job، ملف السر assess-worker-config version1 على /run/secrets/assess-worker.json، ASSESS_JOB_ENABLED=0، taskCount/parallelism1، retries0، timeout60s، cpu1/memory512Mi. هذه مهمة التشخيص المستقلة؛ ASSESS_JOB_ENABLED=0 فيها لا يمنع أداة التشخيص، التي لا تستورد العامل أصلًا.
+
+قبل التنفيذ أُعيد تفعيل assess_job_a حتى2026-10-21T22:00:32.542372Z فقط بعد فحص عدم انتهاء المهلة وبقاء gate مغلقة. المحاولة الأولى للصق SQL في Bash فشلت command-not-found ولم تعدل DB؛ نفذها المالك في SQL Editor ووصل login=true بالموعد نفسه. لا تمديد للنافذة الأصلية.
+
+نفذ المالك assess-connection-check مرة واحدة بـ--wait؛ execution assess-connection-check-mstxd completed1/1. ثم استعلام logs المقيد باسم هذه execution وcontract أعاد:
+
+```json
+{"contract":"assess-connection-probe/1","outcome":"PASS","runtimeOrLaunchVerified":false}
+```
+
+بعده نفذ المالك NOLOGIN وVALID UNTIL1970 ووصل assess_job_a/login_disabled=true/expired=true. لا عدد جلسات بعد هذه الخطوة أو رفض اتصال جديد أو cache termination مثبت بعد.
+
+### 3. RAD-056 ودلالة PASS
+
+تبقى review/waiting_on owner للبوابات الأخرى؛ لا done أو completion_evidence جديدة. أصبح mount/secret والهوية وNode-pg/TLS/hostname/CA والاتصال بالـsession pooler ومعاملة READ ONLY والانتقال للدور والخروج/الإغلاق مثبتًا بشاهد المالك من Google في هذه execution. لا ادعاء اختبار TLS revocation أو startup params أخرى أو worker RPC أو actual worker artifact. runtimeOrLaunchVerified=false مقصودة للتشخيص، ولا يحوّلها نجاح execution إلى قبول تشغيل أو فتح launch_gate.
+
+### 4. المشترك وScale
+
+لا تعديل مصدر أو صورة assess-worker السابقة؛ الحارس الأخير المراجع0 ولا إذن تغييره أو جدولة. أضيفت خدمة بناء وbucket مصدر وصورة/Job تشخيص ومنح compute وفق شواهد المالك؛ لا نسمّيها بلا أثر أو دائمة الصفر. التشخيص اتصال واحد وexecution واحدة، وليس نظام تشغيل مستمرًا أو مراقبة.
+
+### 5. الطبي والتقييم
+
+لا تغيير طبي أو درجات أو Practice أو اختبار هاتف جديد. O108/مصادر/ترخيص/Marker والقبول الوظيفي تبقى مستقلة.
+
+### 6. QA والمراجعة
+
+شاهد حي جديد من المالك: Docker build ثم Cloud Build SUCCESS وdigest وJob describe وexecution completed وlog PASS ثم إغلاق login/expiry. لا إعادة10اختبارات الأداة أو app check/build بعد تعديل توثيقي فقط. نجحت QA هذه الدفعة docs:check بلا errors/warnings وstatus:check مع تعارض RAD-024 الموروث وgit diff --check. رأس566195c وmainff68413 راجعا عبر GitHub، وكلاهما check/deploy completed/success؛ لا يُستدل من Pages على تشغيل worker. نتائج رأس التوثيق الجديد مستقلة بعد push. لم يُقرأ سر أو raw provider query أو بيانات مستخدمين.
+
+### 7. المفتوح والتكلفة
+
+يبقى فحص عدد sessions بعد الإغلاق، ورفض مصادقة جديدة والإلغاء الفعلي/cache لدى Supavisor، وeffective IAM/logs/المراقبة وJWT والنسخ/restore والقبول والتشغيل المستمر. لا إعادة secret uploader أو كلمة مرور أو probe لمجرد دليل مكرر. رفض المالك تدوير كلمة العامل بعد كشف جزء سابق خطر محفوظ دون إظهاره. نحتاج جرد تنظيف منفصل للبناء والصور/المهمة/المصدر والمنح عند انتهاء الحاجة؛ لا حذف تلقائي.
+
+سأل المالك عن الرصيد/الحد الشهري: وضحنا أن budget5USD تنبيه وليس cap، وأن تفعيل API لا يبدأ build، وأن رسوم البناء والتخزين/مصدره تعتمد على حساب الفوترة والحصة/الأرصدة. الصور السابقة Free Trial300USD؛ ذكر500USD لم يتحقق من صفحة Billing، والترقية إلى مدفوع غير متحققة. DURATION11S ليست مبلغًا ماليًا. أوضحنا Billing→Reports→Today وCloud Build/Cloud Storage/Artifact Registry مع تأخر التقارير، وOverview للرصيد. لا تكلفة فعلية أو رصيد متبق مثبت، ولا وعد أن الفاتورة صفر أو أن المشروع سيقف عند5USD.
+
+### 8. الخطوة التالية
+
+قراءة مجمعة نهائية لحالة login/expiry وعدد backend_sessions للدور وبقاء gate مغلقة، دون عرض الجلسات/query text أو قتل أحد. عند جلسات قائمة يُراجع إنهاؤها بهوية الدور فقط وفق خطة الإلغاء؛ لا اعتبار NOLOGIN قتلًا تلقائيًا. بعد شاهد الإغلاق تكتمل مرحلة ربط الاتصال فقط؛ تشغيل Assess الفعلي ومراقبته وإلغاء وصوله وميزانيته ونسخه بوابات منفصلة تتطلب نطاقها. لا تعديل موارد أخرى أو قبول تشغيل من PASS التشخيص.
