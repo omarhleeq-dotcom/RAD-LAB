@@ -21,16 +21,20 @@ with target as (
     and (has_table_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')
       or has_any_column_privilege(r.oid,c.oid,'SELECT,INSERT,UPDATE,REFERENCES'))) as direct_assess_table_access,
   exists(select 1 from pg_shdepend d where d.refclassid='pg_authid'::regclass and d.refobjid=r.oid and d.deptype='o') as owns_objects,
-  exists(select 1 from pg_auth_members m where m.roleid=r.oid) as has_member_roles,
+  -- PostgreSQL16+ gives a non-superuser creator ADMIN-only management of its new role.
+  -- Accept that only for the current inspecting operator, with no SET/INHERIT path.
+  exists(select 1 from pg_auth_members m where m.roleid=r.oid and not (
+    m.member=(select oid from pg_roles where rolname=current_user) and m.admin_option
+    and not m.inherit_option and not m.set_option)) as has_unexpected_members,
   (select count(*)::integer from pg_stat_activity where usesysid=r.oid) as backend_sessions
  from target r
 )
 select 'assess-worker-login-catalogue/1' as contract,
  exists(select 1 from target) as target_present,
  coalesce((select managed_marker and restricted_attributes and disabled_expired and only_worker_membership
-   and can_connect and not direct_assess_table_access and not owns_objects and not has_member_roles from facts),false) as staged_catalogue_valid,
+   and can_connect and not direct_assess_table_access and not owns_objects and not has_unexpected_members from facts),false) as staged_catalogue_valid,
  coalesce((select managed_marker and restricted_attributes and active_time_bounded and only_worker_membership
-   and can_connect and not direct_assess_table_access and not owns_objects and not has_member_roles from facts),false) as active_catalogue_valid,
+   and can_connect and not direct_assess_table_access and not owns_objects and not has_unexpected_members from facts),false) as active_catalogue_valid,
  coalesce((select can_create_temp or can_create_schema_objects from facts),true) as public_surface_review_required,
  coalesce((select direct_assess_table_access from facts),true) as direct_assess_table_access,
  coalesce((select backend_sessions from facts),0) as backend_sessions,

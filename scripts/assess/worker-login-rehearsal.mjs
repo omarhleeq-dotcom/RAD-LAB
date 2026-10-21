@@ -17,6 +17,7 @@ try {
  const provision=readFileSync('supabase/manual/assess-worker-login-provision.sql','utf8');
  const revoke=readFileSync('supabase/manual/assess-worker-login-revoke.sql','utf8');
  const inspect=readFileSync('supabase/checks/assess-worker-login-ready.sql','utf8');
+ const delivery=readFileSync('supabase/manual/assess-original-worker-login-stage.sql','utf8');
  const inspection=inspect.slice(inspect.indexOf('with target as ('),inspect.lastIndexOf(';\nrollback;'));
  const marker='-- TERMINATION PHASE:';
  const revocation=revoke.slice(0,revoke.indexOf(marker));
@@ -37,7 +38,11 @@ try {
  await exec('update assess.launch_gate set enabled=true');await reject(provision);await exec('update assess.launch_gate set enabled=false');
  assert.equal((await query("select count(*)::int n from pg_roles where rolname='assess_job_a'"))[0].n,0);
  checks.push('ack-name-database-and-closed-gate-guards');
- phase='provision';await exec(provision);
+ phase='provision';
+ await reject(delivery.replace('do $catalogue_guard$',"grant select on assess.sessions to assess_job_a;\ndo $catalogue_guard$"));
+ assert.equal((await query("select count(*)::int n from pg_roles where rolname='assess_job_a'"))[0].n,0);
+ checks.push('delivery-catalogue-failure-rolls-back-before-commit');
+ await exec(delivery);
  let row=await facts();assert.equal(row.staged_catalogue_valid,true);assert.equal(row.active_catalogue_valid,false);
  assert.equal(row.credential_verified,false);assert.equal(row.pooler_verified,false);
  // Default PostgreSQL PUBLIC TEMP is visible, not silently revoked or declared least-privilege complete.
@@ -46,8 +51,23 @@ try {
  await selectTarget('assess_job_b','provision-reviewed');
  await reject(provision.replace('end\n$provision$;',"raise exception 'synthetic rollback';\nend\n$provision$;"));
  assert.equal((await query("select count(*)::int n from pg_roles where rolname='assess_job_b'"))[0].n,0);
+ await exec(`create role assess_stage_operator login createrole bypassrls;
+  grant assess_worker to assess_stage_operator with admin true,inherit false,set false;
+  grant connect on database postgres to assess_stage_operator with grant option;
+  grant usage on schema assess to assess_stage_operator;
+  grant select on assess.launch_gate to assess_stage_operator;
+  set role assess_stage_operator`);
  await exec(provision);
- checks.push('provision-exception-rolls-back-role-and-grants');
+ assert.equal((await facts()).staged_catalogue_valid,true);
+ // The creator's management membership must never become a SET/INHERIT path.
+ await exec('reset role;grant assess_job_b to assess_stage_operator with set true;set role assess_stage_operator');
+ assert.equal((await facts()).staged_catalogue_valid,false);
+ await exec('reset role;grant assess_job_b to assess_stage_operator with set false,inherit true;set role assess_stage_operator');
+ assert.equal((await facts()).staged_catalogue_valid,false);
+ await exec('reset role;grant assess_job_b to assess_stage_operator with inherit false;set role assess_stage_operator');
+ assert.equal((await facts()).staged_catalogue_valid,true);
+ await exec('reset role');
+ checks.push('provision-exception-rolls-back-role-and-grants','non-superuser-creator-admin-only-without-set-or-inherit');
  checks.push('disabled-passwordless-expired-staging','replay-refused-and-rotation-slot','public-temp-surface-reported');
  phase='postconditions';await selectTarget('assess_job_a','provision-reviewed');
  await exec('grant select on assess.sessions to assess_job_a');assert.equal((await facts()).staged_catalogue_valid,false);

@@ -1,6 +1,6 @@
 # حزمة login عامل Assess — للمراجعة المحلية
 
-حزمة منفصلة عن schema migrations، لا إذن لتطبيقها على الأصلية أو تجهيز عامل حي. تحافظ على [حزمة الربط](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md) و[عقد runtime](ASSESS_RUNTIME_LOCAL.md)، ودور assess_worker القائم دون توسيع أو تضييق منح مشتركة. [تقرير الدفعة](ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md) يفصل نتيجة TLS من جهاز المالك عن التجارب المحلية والربط الحي غير المثبت.
+حزمة منفصلة عن schema migrations؛ أذن المالك لاحقًا بمرحلة إنشاء NOLOGIN محددة على الأصلية وفق القسم التالي، دون تجهيز عامل حي. تحافظ على [حزمة الربط](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md) و[عقد runtime](ASSESS_RUNTIME_LOCAL.md)، ودور assess_worker القائم دون توسيع أو تضييق منح مشتركة. [تقرير الدفعة](ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md) يفصل نتيجة TLS من جهاز المالك عن التجارب المحلية والربط الحي غير المثبت.
 
 ## الملفات والمراحل
 
@@ -11,6 +11,12 @@
 | تفعيل | خطوة مستقبلية مستقلة بعد حسم PUBLIC والسر والصلاحية | لا كلمة مرور نموذجية أو SQL تفعيل تلقائي في الحزمة؛ دور NOLOGIN ليس login صالحًا لتشغيل الحاوية |
 | إلغاء | [revoke](../supabase/manual/assess-worker-login-revoke.sql) | NOLOGIN وPASSWORD NULL وصلاحية منتهية وإلغاء العضوية وCONNECT ثم COMMIT، وبعده قتل backends الخاصة بالدور وفحص منفصل؛ لا DROP أو حذف بيانات |
 | rehearsal | [أداة اصطناعية](../scripts/assess/worker-login-rehearsal.mjs) | تنشئ قاعدة جديدة فقط وتُتلفها، بلا URL/DSN أو أصلية؛ PostgreSQL تختبر الجلسات، وPGlite تختبر catalogue فقط |
+
+## مرحلة الأصلية المأذونة الآن
+
+بعد قراءة المالك PostgreSQL17.11 وPUBLIC TEMP=true وPUBLIC schema CREATE count0، أذن «تمام طبق» بإنشاء assess_job_a معطّلًا دون password وفحصه فقط. [ملف التطبيق الكامل](../supabase/manual/assess-original-worker-login-stage.sql) يحدد settings داخل transaction نفسها، ويعيد استعمال provision وcatalogue المراجعتين، مع فحص staged/gate/no-direct-tables/no-sessions قبل COMMIT ثم صف مستقل بعده. [تقرير المتابعة](ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md) يحفظ الإذن وحدود الدليل؛ لا وصول مباشر من الوكيل أو صف تنفيذ من المالك بعد.
+
+يفتح المالك SQL Editor على vlacestfruxooznrcjqc، يتحقق من selector بنفسه، وينفذ الملف كاملًا مرة واحدة كمنفذ إداري. لا backticks أو مقتطفات منفصلة ولا password. عند الخطأ يتوقف ويرسل code/message، ولا replay أو حذف دور موجود. نجاح NOLOGIN لا يرفع شرط PUBLIC/قناة السر قبل LOGIN أو يفتح gate. لا إعادة سؤال إذن هذه المرحلة أو النسخة المؤجلة.
 
 ## اختيار الهدف والحواجز
 
@@ -28,11 +34,11 @@ provision يرفض عدم الإقرار/اسمًا آخر/قاعدة مختلف
 
 ## قبول الصلاحيات قبل التفعيل
 
-لا يكفي staged_catalogue_valid وحده: يلزم launch_gate_closed=true وdirect_assess_table_access=false ومراجعة public_surface_review_required. الفحص يكشف صلاحيات الجداول والأعمدة المباشرة، الملكية، الأعلام الإدارية/INHERIT، خيارات العضوية وعضويات أخرى أو roles أعضاء في الهدف. لا يمسح كل دوال/extensions/foreign access في المزود؛ مراجعة surface خارج assess وPUBLIC والعضويات العابرة والـdefault privileges مطلوبة مستقلة.
+لا يكفي staged_catalogue_valid وحده: يلزم launch_gate_closed=true وdirect_assess_table_access=false ومراجعة public_surface_review_required. الفحص يكشف صلاحيات الجداول والأعمدة المباشرة، الملكية، الأعلام الإدارية/INHERIT، خيارات العضوية وعضويات أخرى أو أعضاء غير متوقعة في الهدف. تُقبل عضوية ADMIN-only لمنشئ غير superuser عندما يكون هو المشغّل الحالي فقط، بشرط SET=false وINHERIT=false؛ أي عضو آخر أو إمكان افتراض للدور يفشل الفحص. لا يمسح كل دوال/extensions/foreign access في المزود؛ مراجعة surface خارج assess وPUBLIC والعضويات العابرة والـdefault privileges مطلوبة مستقلة.
 
 PUBLIC TEMP افتراضية في PostgreSQL المحلية وظهرت في الشاهد، وقد يوجد PUBLIC CREATE في مخططات المزود. NOINHERIT لا يلغي PUBLIC وREVOKE عن login وحده لا ينفي منحة PUBLIC. لذلك لا سحب جماعي لـTEMP/CREATE/CONNECT أو تعديلات Practice من الحزمة. يبقى التفعيل محجوبًا إلى أن يُراجع privilege surface الحقيقي ويُعتمد علاج منفصل أو استثناء محدد بحدوده؛ لا ادعاء tick-only: assess_worker تتيح publication/recover أيضًا بحسب العقد الحالي.
 
-أدوار PostgreSQL cluster-wide؛ CONNECT للقاعدة المعنية لا يمنع CONNECT عبر PUBLIC إلى قواعد أخرى. readiness تعرض إعداد القاعدة الحالية ولا تثبت عزل كل قاعدة/endpoint. يجب جرد قواعد المزود المسموح بها والمنح قبل ادعاء قاعدة واحدة فقط؛ لا إنشاء/إزالة قواعد لذلك. قد تضيف منصة غير superuser عضوية إدارية لمنشئ الدور؛ لا تتجاهلها إذا أبلغت readiness اختلافًا، بل راجع set/inherit/admin وإمكان الإلغاء دون إسقاط أي حماية.
+أدوار PostgreSQL cluster-wide؛ CONNECT للقاعدة المعنية لا يمنع CONNECT عبر PUBLIC إلى قواعد أخرى. readiness تعرض إعداد القاعدة الحالية ولا تثبت عزل كل قاعدة/endpoint. يجب جرد قواعد المزود المسموح بها والمنح قبل ادعاء قاعدة واحدة فقط؛ لا إنشاء/إزالة قواعد لذلك. يعالج الفحص عضوية المنشئ الإدارية المحدودة كما سبق؛ التشغيل بهوية مختلفة أو خيارات إضافية يبقي الاختلاف ظاهرًا، دون إسقاط حماية SET/INHERIT أو عضويات العامل نفسه.
 
 ## السر والتفعيل والدوران — غير منفذ
 
@@ -63,4 +69,4 @@ ASSESS_POSTGRES_MANIFEST=/tmp/radlab-login-postgres/package.json node scripts/as
 
 PostgreSQL18 المحلية تعمل بغير root عبر Unix socket0700 مع listen_addresses=''، دون TCP أو TLS أو Docker أو بيانات حقيقية. تستخدم local-database القائمة وترحيلات repo على قاعدة جديدة فقط. كلمة fixture للاختبار وحدها؛ Unix trust لا يثبت مصادقة password أو صلاحيتها على المزود. لا تعديل helper أو ترحيل أو schema attestation. الخرج assess-worker-login-rehearsal/1 بأسماء checks وcleanup وأعلام provider/runtime=false فقط؛ raw errors/config/credentials غير مطبوعة.
 
-لا إعادة SQL/الحسابين أو النسخة المؤجلة أو تنبيه الميزانية؛ لا worker run/Job/secret/IAM أو Variables/gate أو ready/merge/auto-merge من هذه الحزمة.
+لا إعادة SQL/الحسابين أو النسخة المؤجلة أو تنبيه الميزانية؛ مرحلة NOLOGIN المحددة وحدها مأذونة على الأصلية، ولا worker run/Job/secret/IAM أو Variables/gate أو ready/merge/auto-merge من هذه الحزمة.

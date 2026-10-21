@@ -32,3 +32,21 @@ it("keeps inspection read-only and separates committed containment from session 
  expect(revoke).not.toMatch(/\b(application_name|query|datname)\s*=/);
  expect(read("manual/assess-worker-login-provision.sql")).toContain("nologin noinherit nosuperuser nobypassrls nocreatedb nocreaterole noreplication");
 });
+
+it("delivers the reviewed staging transaction with fixed original target and exact catalogue guard before COMMIT",()=>{
+ const provision=readFileSync("supabase/manual/assess-worker-login-provision.sql","utf8");
+ const inspect=readFileSync("supabase/checks/assess-worker-login-ready.sql","utf8");
+ const manual=readFileSync("supabase/manual/assess-original-worker-login-stage.sql","utf8");
+ const query=inspect.slice(inspect.indexOf("with target as ("),inspect.lastIndexOf(";\nrollback;"));
+ const guard=manual.slice(manual.indexOf("do $catalogue_guard$"),manual.indexOf("commit;"));
+ expect(guard).toContain(query);
+ expect(guard).toContain("verified is distinct from true");
+ expect(guard).toContain("staged_catalogue_valid and not active_catalogue_valid");
+ const settings="set local assess.worker_login_target='assess_job_a';\nset local assess.worker_login_database='postgres';\nset local assess.worker_login_action='provision-reviewed';\n";
+ const stripped=manual.slice(manual.indexOf("begin;\n"),manual.indexOf("\n-- Read-only catalogue inspection"))
+   .replace(settings,"").replace(guard,"").trim();
+ expect(stripped).toBe(provision.slice(provision.indexOf("begin;\n")).trim());
+ expect(manual.slice(manual.indexOf("\n-- Read-only catalogue inspection")).trim()).toBe(
+  inspect.replace("begin read only;\n","begin read only;\nset local assess.worker_login_target='assess_job_a';\n").trim()
+ );
+});
