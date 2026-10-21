@@ -77,7 +77,7 @@ login المقترح LOGIN NOINHERIT NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATE
 
 ### حزمة login وشاهد TLS الحالي
 
-أُعدت [حزمة login المحدود](ASSESS_WORKER_LOGIN.md) بإنشاء مغلق NOLOGIN/password null وانتهاء صلاحية وعضوية محدودة، وفحص catalogue وإلغاء يثبت السحب قبل قتل القائم. جُربت على PGlite وPostgreSQL محليتين فقط؛ لم تُطبق على الأصلية. PUBLIC TEMP الافتراضية ظهرت في الشاهد، ولا تسحب الحزمة منح PUBLIC المشتركة؛ يبقى التفعيل معلقًا على مراجعة surface وقناة credential الآمنة وإذن مستقل.
+أُعدت [حزمة login المحدود](ASSESS_WORKER_LOGIN.md) بإنشاء مغلق NOLOGIN/password null وانتهاء صلاحية وعضوية محدودة، وفحص catalogue وإلغاء يثبت السحب قبل قتل القائم. جُربت الحزمة على PGlite وPostgreSQL محليتين، ثم أذن المالك بمرحلة NOLOGIN المحددة على الأصلية وأرسل [صف التجهيز المغلق الناجح](ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md#worker-login-stage-owner-result)؛ لا تفعيل أو اختبار إلغاء مزود ثبت بذلك. PUBLIC TEMP ظهرت في إفادة المالك، ولا تسحب الحزمة منح PUBLIC المشتركة؛ [مقترح TEMP وقناة السر](ASSESS_WORKER_ACTIVATION_DECISION_2026-10-21.md) يحدد شروط استثناء تجربة≤7أيام وخطوات إدخال مخفي. لا استثناء مقبول أو قناة مثبتة بعد؛ التفعيل يحتاج حسم السطح والقناة وإذنًا مستقلًا.
 
 [إفادة المالك](ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md#إفادة-tls-من-جهاز-المالك) أثبتت من جهازه PASS TLS1.2 واسم aws-1-eu-central-1.pooler.supabase.com وجذرًا مطابقًا تمامًا لملف Supabase Root 2021 CA. لم يُرسل login/SQL، ولم يُفحص certificate revocation أو وصول Google/Node أو startup options/ACL/إلغاء مزود. لا نكرر TLS أو نستخدم حساب postgres باسم العامل من ذلك.
 
