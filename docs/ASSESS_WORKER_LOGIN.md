@@ -14,9 +14,9 @@
 
 ## مرحلة الأصلية المأذونة الآن
 
-بعد قراءة المالك PostgreSQL17.11 وPUBLIC TEMP=true وPUBLIC schema CREATE count0، أذن «تمام طبق» بإنشاء assess_job_a معطّلًا دون password وفحصه فقط. [ملف التطبيق الكامل](../supabase/manual/assess-original-worker-login-stage.sql) يحدد settings داخل transaction نفسها، ويعيد استعمال provision وcatalogue المراجعتين، مع فحص staged/gate/no-direct-tables/no-sessions قبل COMMIT ثم صف مستقل بعده. [تقرير المتابعة](ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md) يحفظ الإذن وحدود الدليل؛ لا وصول مباشر من الوكيل أو صف تنفيذ من المالك بعد.
+بعد قراءة المالك PostgreSQL17.11 وPUBLIC TEMP=true وPUBLIC schema CREATE count0، أذن «تمام طبق» بإنشاء assess_job_a معطّلًا دون password وفحصه فقط. [ملف التطبيق الكامل](../supabase/manual/assess-original-worker-login-stage.sql) يحدد settings داخل transaction نفسها، ويعيد استعمال provision وcatalogue المراجعتين، مع فحص staged/gate/no-direct-tables/no-sessions قبل COMMIT ثم صف مستقل بعده. [تقرير المتابعة](ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md) يحفظ الإذن وحدود الدليل؛ وصل [صف المالك النهائي](ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md#worker-login-stage-owner-result): staged=true وactive=false وdirect table=false وsessions0 وgate مغلقة؛ credential/pooler/runtime=false وPUBLIC review=true. لا وصول مباشر من الوكيل.
 
-يفتح المالك SQL Editor على vlacestfruxooznrcjqc، يتحقق من selector بنفسه، وينفذ الملف كاملًا مرة واحدة كمنفذ إداري. لا backticks أو مقتطفات منفصلة ولا password. عند الخطأ يتوقف ويرسل code/message، ولا replay أو حذف دور موجود. نجاح NOLOGIN لا يرفع شرط PUBLIC/قناة السر قبل LOGIN أو يفتح gate. لا إعادة سؤال إذن هذه المرحلة أو النسخة المؤجلة.
+نفّذ المالك مرحلة التجهيز وأرسل الصف المتوقع؛ لا إعادة ملف الإنشاء أو طلب تنفيذ جديد. يبقى الملف مرجعًا للدفعة المأذونة فقط، وليس إجراء replay. نجاح NOLOGIN لا يرفع شرط PUBLIC/قناة السر قبل LOGIN أو يفتح gate. لا إعادة سؤال إذن هذه المرحلة أو النسخة المؤجلة.
 
 ## اختيار الهدف والحواجز
 

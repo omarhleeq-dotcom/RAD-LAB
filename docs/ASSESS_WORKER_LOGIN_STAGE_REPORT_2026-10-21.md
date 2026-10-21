@@ -8,15 +8,38 @@
 
 عُرضت ميزانية **ثمانية ملفات** وهي الفعلية: supabase/checks/assess-worker-login-ready.sql؛ scripts/assess/worker-login-rehearsal.mjs؛ src/features/assess/worker-login.test.ts؛ supabase/manual/assess-original-worker-login-stage.sql؛ docs/ASSESS_WORKER_LOGIN.md وهذا التقرير وHANDOFF.md وproject-status.md. لا worktree/subagents أو كود تطبيق/نقل/مصحح أو migrations أو package/lock أو guard/pins/Variables تغيرت، ولا انحراف.
 
+متابعة صف المالك اقتصرت على أربعة ملفات توثيق: هذا التقرير وASSESS_WORKER_LOGIN.md وHANDOFF.md وproject-status.md. معيار القبول حفظ الصف وإزالة انتظار التنفيذ دون تفعيل أو إعادة SQL؛ لا تغيير للكود أو الموارد أو الصلاحيات.
+
 ## 2. المنجز والمستبعد
 
 أُعدت [دفعة التطبيق المحددة](../supabase/manual/assess-original-worker-login-stage.sql) للمشروع vlacestfruxooznrcjqc وقاعدة postgres والدور assess_job_a فقط. تضع settings داخل المعاملة نفسها وتضم provision المراجعة دون تغيير منطقها، ثم query catalogue الفعلية كشرط **قبل COMMIT**؛ عند فشلها يرجع إنشاء الدور ومنحه كاملًا. بعدها transaction read-only مستقلة تعيد صف الحالة. اسم القاعدة/settings ليست مصادقة هوية المشروع؛ يراجع المالك selector قبل التنفيذ الكامل مرة واحدة.
 
-لا اعتماد قاعدة أو أداة اتصال مزود متاحة في الجلسة، ولا credential/secret/outbound identity مرتبطة. بقيت TCP grants فارغة ولا توجد أداة Supabase/SQL موصولة. لذلك **لم ينفذ الوكيل SQL الأصلية**؛ التسليم للمالك كمنفذ SQL Editor تحت إذنه الصريح، ولا ندعي دورًا منشأ قبل صف المالك. لم يُطلب password أو admin key ولم يُرسل LOGIN/worker RPC إلى الأصلية.
+لا اعتماد قاعدة أو أداة اتصال مزود متاحة في الجلسة، ولا credential/secret/outbound identity مرتبطة. بقيت TCP grants فارغة ولا توجد أداة Supabase/SQL موصولة. لذلك **لم ينفذ الوكيل SQL الأصلية**؛ التسليم للمالك كمنفذ SQL Editor تحت إذنه الصريح، وكان إعلان الإنشاء معلقًا على صف المالك؛ وصل الصف لاحقًا كما هو محفوظ أدناه. لم يُطلب password أو admin key ولم يُرسل LOGIN/worker RPC إلى الأصلية.
+
+<a id="worker-login-stage-owner-result"></a>
+### صف المالك النهائي — 2026-10-21
+
+أرسل المالك بعد التنفيذ الصف التالي. هذا شاهد catalogue مُبلغ من المالك، وليس اتصالًا مستقلًا من الوكيل:
+
+| الحقل | القيمة |
+|---|---|
+| contract | assess-worker-login-catalogue/1 |
+| target_present | true |
+| staged_catalogue_valid | true |
+| active_catalogue_valid | false |
+| public_surface_review_required | true |
+| direct_assess_table_access | false |
+| backend_sessions | 0 |
+| launch_gate_closed | true |
+| credential_verified | false |
+| pooler_verified | false |
+| runtime_or_launch_verified | false |
+
+نجحت مرحلة التجهيز المغلق وفق هذا الصف؛ لا إعادة تشغيل دفعة الإنشاء. PUBLIC surface تظل بحاجة إلى مراجعة، ووجود الدور المعطل لا يثبت password أو اتصال pooler أو تشغيلًا حيًا ولا يجيز تفعيلًا.
 
 ## 3. لكل مهمة
 
-RAD-056 تبقى review وتنتظر owner لإرجاع صف مرحلة staging، دون completion_evidence أو إغلاق بوابات التفعيل/المزود. يحدث الوصف والمصدر والملخص الخماسي وrevision/time ضمن الدفعة. تعارض RAD-024 الموروث محفوظ؛ لا مهمة أخرى تغيرت.
+RAD-056 تبقى review وتنتظر owner لحسم PUBLIC وقناة السر قبل أي إذن تفعيل مستقل، بعد وصول صف staging المتوقع، دون completion_evidence أو إغلاق بوابات التفعيل/المزود. يحدث الوصف والمصدر والملخص الخماسي وrevision/time ضمن الدفعة. تعارض RAD-024 الموروث محفوظ؛ لا مهمة أخرى تغيرت.
 
 ## 4. فرق PostgreSQL16+ وScale وحفظ الحكم
 
@@ -38,14 +61,16 @@ RAD-056 تبقى review وتنتظر owner لإرجاع صف مرحلة staging�
 
 نجحت اختبارات Vitest المستهدفة الأربعة ومنها byte-identity بين دفعة التسليم وprovision/query المراجعتين، وlint المتغير. نجح npm run check كاملًا: typecheck وlint و140 ملفًا/2281 اختبارًا، وdocs:check مقابل origin/main بلا errors أو review warnings، وstatus:check مع require-previous وgit diff --check. بقي تعارض RAD-024 الموروث ظاهرًا دون تغيير. لا app build أو Docker/retention installer/حسابين/هاتف/EN/AR/axe معادة؛ التطبيق لم يتغير. لا expectations قديمة أو timeout/guard/hashes تغيرت لإخفاء فشل.
 
+متابعة التوثيق بدأت على `8b3fc0df5d9ab2947795efb30f75bb0e05fbb010` بشجرة نظيفة؛ تحقق GitHub أثبت نجاح check/deploy لهذا الرأس ولـmain المذكور أعلاه وبقاء #96 مسودة مفتوحة. نجحت فحوص هذه المتابعة التوثيقية فقط: docs:check بلا errors أو review warnings وstatus:check مع require-previous وgit diff --check؛ تعارض RAD-024 الموروث محفوظ؛ لا إعادة QA التطبيق الناجحة بلا تغير. نتائج الرأس التالي مستقلة.
+
 ## 7. المتبقي
 
-المتبقي الآن تنفيذ المالك **الدفعة كاملة مرة واحدة** ثم صف catalogue. المتوقع: target_present/staged_catalogue_valid/launch_gate_closed=true، وactive_catalogue_valid/direct_assess_table_access=false، وbackend_sessions=0، وcredential/pooler/runtime=false. public_surface_review_required=true متوقع من TEMP، ولا يمنع مرحلة NOLOGIN المأذونة أو يُقدّم كحل لصلاحية PUBLIC. لا إعلان نجاح قبل الرد، ولا replay عند خطأ أو target موجود.
+وصل صف المالك المتوقع وحُفظ أعلاه؛ انتهى انتظار تنفيذ مرحلة NOLOGIN. لا إعادة provision أو readiness لمجرد تكرار الشاهد. public_surface_review_required=true متوقع من TEMP، ولا يمنع نجاح التجهيز المغلق ولا يحسم مراجعة PUBLIC قبل التفعيل.
 
 قبل أي LOGIN: مراجعة PUBLIC خارج assess وقناة secret/logs وصلاحيات التشغيل/الإلغاء ومدة credential، ثم إذن مستقل. الشبكة Google/Node وstartup options وهوية backend وACL والإلغاء/cache/frontends والتنبيه والمسؤول/البديل غير مثبتة. TLS من جهاز المالك ونسخة الحزمة السابقة محفوظان بحدودهما؛ gate مغلقة والنسخ/restore/export/JWT/O108 والنشر مستقلة.
 
 ## 8. تسليم المالك وبرومت الاستئناف
 
-افتح SQL Editor للمشروع الأصلي الصحيح، استبدل محتوى المحرر بملف الدفعة **كاملًا** دون Markdown/backticks، شغله مرة واحدة، وأرسل الصف النهائي فقط أو code/message منقحين عند الخطأ؛ لا تعِد التطبيق قبل التشخيص. لا إنشاء password أو LOGIN أو موارد Google أو تعديل PUBLIC من ذلك. لا طلب إذن جديد للمرحلة التي أذن بها المالك.
+لا SQL إضافية مطلوبة من المالك لهذه المرحلة، ولا إعادة الدفعة بعد نجاحها. التالي إعداد قرار محدد لمعالجة PUBLIC TEMP أو استثنائها بحدود معلنة، وقناة إدخال سر تمنع كشفه في المحادثة/السجلات، ثم مراجعة التفعيل المستقل. لا إنشاء password أو LOGIN أو موارد Google أو تعديل PUBLIC من صف النجاح؛ لا طلب إذن جديد للمرحلة المنتهية.
 
 ابدأ AGENTS وHANDOFF وRAD-056 وحزمة login وهذا التقرير، ثم docs:context/GitHub للرؤوس وفحوصها. تابع checkout نفسه بلا worktree/subagents؛ ميزانية ومعايير قبول قبل أي تعديل، ولا توسيع إذن NOLOGIN إلى تفعيل أو تشغيل أو ready/merge/auto-merge أو Variables/gate.
