@@ -6,6 +6,11 @@ export { installMixedContent } from "./server-presentation";
 
 // Identifiers and casts are source constants; neither is supplied by a caller.
 const operations = {
+  trial_maintain_v1: [["p_trial", "uuid"], ["p_limit", "integer"]],
+  trial_claim_v1: [["p_trial", "uuid"]],
+  trial_health_v1: [["p_trial", "uuid"]],
+  trial_finish_v1: [["p_trial", "uuid"], ["p_session", "uuid"], ["p_token", "uuid"], ["p_n", "text"], ["p_d", "text"]],
+  trial_fail_v1: [["p_trial", "uuid"], ["p_session", "uuid"], ["p_token", "uuid"]],
   maintain_v1: [["p_limit", "integer"]],
   claim_v1: [],
   finish_v1: [["p_session", "uuid"], ["p_token", "uuid"], ["p_n", "text"], ["p_d", "text"]],
