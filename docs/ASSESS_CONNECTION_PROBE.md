@@ -14,7 +14,7 @@
 
 ## شاهد Google المنجز
 
-وصل [شاهد المالك النهائي](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass): Cloud Build SUCCESS ثم Job تشخيص بالصورة المثبتة ونسخة السر، execution مكتملة وlog PASS، ثم login_disabled=true/expired=true. أُعيد الفتح داخل النافذة الأصلية نفسها دون تمديد الموعد، وأُغلق بعد الفحص. الاتصال من Cloud Run مثبت لهذه الصورة والنسخة والتنفيذ؛ عامل Assess الفعلي لم يُشغَّل. لا إعادة هذه الخطوات الناجحة أو فتح login تلقائيًا؛ المتبقي عدّ الجلسات بعد الإغلاق والإلغاء/بوابات التشغيل المستقلة.
+وصل [شاهد المالك النهائي](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass): Cloud Build SUCCESS ثم Job تشخيص بالصورة المثبتة ونسخة السر، execution مكتملة وlog PASS، ثم login_disabled=true/expired=true. أُعيد الفتح داخل النافذة الأصلية نفسها دون تمديد الموعد، وأُغلق بعد الفحص. الاتصال من Cloud Run مثبت لهذه الصورة والنسخة والتنفيذ؛ عامل Assess الفعلي لم يُشغَّل. وصل بعدها [شاهد الإغلاق النهائي](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-closed-final): login_disabled=true وexpired=true وbackend_sessions=0 وlaunch_gate_closed=true. لا إعادة هذه الخطوات الناجحة أو فتح login تلقائيًا؛ المتبقي إلغاء cache/رفض اتصال جديد وبوابات التشغيل المستقلة، وليس إعادة عدّ الجلسات للحصول على الدليل نفسه.
 
 ## مرجع التجهيز دون إعادة نقل المشروع
 
