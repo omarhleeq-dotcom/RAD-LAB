@@ -22,6 +22,8 @@ jobs:
       - run: npm ci
       - run: npm run docs:check
       - run: npm run docs:test
+      - name: Test first-version secret uploader (synthetic only)
+        run: python3 -B -m unittest discover -s scripts/assess -p test_upload_worker_secret.py
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test

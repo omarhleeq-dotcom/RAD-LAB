@@ -29,24 +29,24 @@ TEMP تتيح إنشاء جداول مؤقتة وليست بحد ذاتها SELE
 
 الضوابط الحالية pool1 وtask count1/parallelism1 وretries0 وtimeout300s تقلل العمل العادي؛ ليست حصص أمان لـTEMP أو عدد جلسات Supavisor. connection limit2 لا يثبت قيد frontends/cache. إعدادات جلسة يستطيع المستخدم تغييرها ليست بديلًا لحدود موارد يفرضها المزود. لا اقتراح حصة قرص أو مراقبة TEMP غير متاحة كأنها مطبقة. أي تكلفة غير متوقعة أو جلسة تعود بعد الإلغاء توقف التجربة وتستدعي الحجر.
 
-## 2. قناة السر المقترحة — لم تُجهّز ولم تُستخدم
+## 2. قناة السر — أداة أول إصدار مجهّزة، والتفعيل غير مثبت
 
-المسار المرشح: جهاز المالك الموثوق → عميل psql (المتاح لدى المالك18.6) → مطالبة كلمة مرور مخفية، ثم إدخال JSON مباشرة إلى Secret Manager من أداة محلية مراجعة تمرر payload في الذاكرة إلى stdin. لا SQL Editor لتعيين password، ولا URI/وسيط CLI/ENV/ملف على Downloads أو داخل Git يحتوي السر. لا إرسال كلمة postgres أو كلمة العامل أو SCRAM verifier للمحادثة. شهادة CA عامة وليست كلمة مرور.
+المسار المرشح: جهاز المالك الموثوق → عميل psql (المتاح لدى المالك18.6) → مطالبة كلمة مرور مخفية، ثم إدخال JSON إلى Secret Manager من [أداة أول إصدار المراجعة](../scripts/assess/upload-worker-secret.py) في Cloud Shell بذاكرة/stdin. أُعدت واختُبرت اصطناعيًا، ولم يصل شاهد رفعها الحي بعد. لا SQL Editor لتعيين password، ولا URI/وسيط CLI/ENV/ملف على Downloads أو داخل Git يحتوي السر. لا إرسال كلمة postgres أو كلمة العامل أو SCRAM verifier للمحادثة. شهادة CA عامة وليست كلمة مرور.
 
 | الخطوة اللاحقة | المسؤول/الإجراء المحدد | شرط القبول أو التوقف |
 |---|---|---|
 | جاهزية جهاز المالك | التحقق من psql ونسخته ومسار CA؛ أداة تشخيصه الحالية Get-Command psql وpsql --version فقط | لا تثبيت تلقائي أو وصول عن بعد مفترض؛ بيئة الوكيل Linux مستقلة عن Windows |
 | اتصال إدارة مستقل | psql -X، TLS verify-full مع hostname الصحيح وCA المراجعة وconnect timeout10s؛ password الإدارة عبر prompt فقط | لا sslmode=require أو تجاوز السلسلة/الاسم. اسم postgres.projectRef يخص الإدارة وحدها؛ لا يدخل config العامل |
-| حماية السجلات | منع echo/debug/transcript وتسجيل الإدخال/الجلسة محليًا، ومراجعة server/audit/proxy/pooler logs لمنع plaintext وverifier | لا يكفي psql prompt وحده لإثبات إخفاء SCRAM verifier من logs المزوّد. عدم القدرة على التحقق عائق قناة، بلا طلب سجلات خام أو تغيير audit من هذه الحزمة |
+| حماية السجلات | منع echo/debug/transcript وتسجيل الإدخال/الجلسة محليًا، ومراجعة server/audit/proxy/pooler logs لمنع plaintext وverifier | لا يكفي psql prompt وحده لإثبات إخفاء SCRAM verifier من logs المزوّد. عدم القدرة على التحقق يبقى عائق قبول التفعيل؛ تجهيز سر لحساب معطل لا يثبت سلامة logs ولا يغير audit، ولا يُطلب سجل خام |
 | توليد سر العامل | مولد عشوائي تشفيري أو مدير كلمات مرور موثوق على جهاز المالك؛ 32byte عشوائية على الأقل، مثال ترميز base64url ينتج43محرفًا؛ فريد لهذا login | لا كلمة نموذجية أو إعادة كلمة postgres؛ لا توليد داخل المحادثة. إن استُعمل clipboard فتعطل مشاركته/history وتُمسح بعد الإدخال؛ لا يُعد المسح محوًا مضمونًا |
 | ضبط كلمة الدور المعطل | داخل psql يستخدم المنفذ meta-command المستهدفة \password assess_job_a بعد مراجعة password_encryption=scram-sha-256 | \password عملية ALTER ROLE كتابة فعلية، تحتاج نطاق التفعيل اللاحق؛ ليست فحصًا أو أمرًا مطلوبًا الآن. لا نطبع verifier. يبقى NOLOGIN حتى نجاح تخزين السر والتحقق من الخطة |
-| إدخال نسخة السر | بعد إذن Google منفصل، أداة محلية مراجعة تقرأ password مخفية وCA العامة، وتستخدم JSON serializer ثم stdin لـgcloud secrets versions add assess-worker-config --data-file=- مع project صريح | الأداة غير مبنية/مختبرة هنا؛ لا أمر PowerShell pipeline يدوي قد يغيّر encoding أو يطبع payload. ترفض args/env/files للسر وتطبع metadata منقحة فقط؛ أي فشل يبقي NOLOGIN |
+| إدخال نسخة السر | بعد إذن Google منفصل، أداة محلية مراجعة تقرأ password مخفية وCA العامة، وتستخدم JSON serializer ثم stdin لـgcloud secrets versions add assess-worker-config --data-file=- مع project صريح | [الأداة](../scripts/assess/upload-worker-secret.py) مبنية ومختبرة اصطناعيًا للإصدار1 فقط، وتوقف وجود نسخة/فشل/غموض دون replay؛ لا أمر PowerShell pipeline يدوي أو تشغيل حي للوكيل. ترفض args/env/files للسر وتطبع metadata منقحة فقط؛ أي فشل يبقي NOLOGIN |
 | تثبيت الإصدار | مسؤول السر يسجل رقم N وlogin وexpiry UTC وCA fingerprint دون payload؛ الناشر يثبت N في mount /run/secrets/assess-worker.json | IAM على السر الواحد فقط وفق الحزمة؛ لا latest أو تنزيل مفاتيح SA. نجاح upload/metadata لا يثبت محتوى أو اتصال runtime |
 | تفعيل محدود | بعد موافقة محددة وتحقق جديد للحواجز، تعيين VALID UNTIL ثم LOGIN؛ readiness وcredential/pooler/identity/ACL تختبر منفصلة | لا activate-on-upload أو تشغيل تلقائي، ولا فتح gate. فشل أي مرحلة يبقي/يعيد الحجر وفق خطة الإلغاء |
 
 دليل psql17 الرسمي يوضح أن \password يطلب الإدخال ثم يشفره من جانب العميل ويرسله كـALTER ROLE، فيحمي plaintext من history/server log. هذا لا يضمن أن verifier لم يسجل أو أن proxy/audit لدى Supabase يحذفه، ولا يثبت أن psql الموجودة على Windows محدثة أو متاحة. psql -X يتجاوز startup file الخاصة بالعميل فقط؛ لا يثبت قبول startup options أو هوية backend من session pooler.
 
-قالب البيانات غير السري المطلوب للأداة المستقبلية: host=aws-1-eu-central-1.pooler.supabase.com، port=5432، database=postgres، user=assess_job_a، sessionPoolerProjectRef=vlacestfruxooznrcjqc، ca=PEM العامة المراجعة، password=إدخال مخفي فقط. الأداة تركب JSON بالـserializer؛ النقل القائم يركب الاسم المركب. لا نكرر PEM أو نص JSON بكلمة بديلة قابلة للتنفيذ. يجب إثبات الحجم≤64KiB وnon-root read من الإصدار المثبت لاحقًا؛ لا ملف سر منشأ الآن.
+قالب البيانات غير السري المثبت في الأداة: host=aws-1-eu-central-1.pooler.supabase.com، port=5432، database=postgres، user=assess_job_a، sessionPoolerProjectRef=vlacestfruxooznrcjqc، ca=PEM العامة المراجعة، password=إدخال مخفي فقط. الأداة تركب JSON بالـserializer؛ النقل القائم يركب الاسم المركب. لا نكرر PEM أو نص JSON بكلمة بديلة قابلة للتنفيذ. يجب إثبات الحجم≤64KiB وnon-root read من الإصدار المثبت لاحقًا؛ لا ملف سر منشأ الآن.
 
 ## 3. نافذة التفعيل والإلغاء المقترحة
 
