@@ -31,6 +31,10 @@
 
 أظهرت لقطات المالك حساب Free trial برصيد$300 و90يومًا وتكلفة$0، وحفظ ميزانية radlab-pilot-monthly-5usd الشهرية على All projects/All services، وتنبيهات Actual10/25/50/80/100% وForecast100% مع بريد مسؤولي الفوترة. هذه **شواهد شاشة من المالك** وليست اتصالًا مستقلًا أو تجربة تسليم تنبيه؛ ليست spend cap. وُجه لاستبعاد Promotional credits وإبقاء Free tier credits؛ لم تصل لقطة بعد الاستبعاد تثبت الحفظ الفعلي لذلك الخيار، فيراجع من budget لاحقًا دون افتراض. قائمة المشاريع كانت لا تسمح باختيار منفرد فبقي نطاق الحساب كله؛ لا نسميها ميزانية مشروع واحد. لا إذن تلقائي لـJob/secret/SA من إنشاء الحساب أو الميزانية. [تقرير متابعة pooler](ASSESS_SESSION_POOLER_REPORT_2026-10-21.md) يحفظ حدود هذه الأدلة.
 
+### متابعة التجهيز المأذون من المالك
+
+انتقل المالك لاحقًا إلى الربط من Cloud Run دون psql على اللابتوب، ونفّذ من Cloud Shell إنشاء assess-job والسر assess-worker-config بـuser-managed replica في europe-west3 ومنحة secretAccessor عليه لهوية المهمة، ثم تفعيل Run/Artifact Registry وإنشاء repo Docker اسمها assess-runtime في المنطقة نفسها. [تقرير التجهيز والحزمة](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md) يحفظ شواهد metadata/policy وإنشاء repo وحدودها وحزمة الصورة الحالية. لا صورة مرفوعة أو Job/run أو secret version/content أو effective IAM أو credential/DB binding مثبتة؛ لا يعاد إنشاء الموارد ولا تُفتح gate من ذلك. هذا تحديث نطاق التجهيز بعد الإذن الأول، لا نقل لقائمة القرار كلها إلى مقبولة.
+
 ## 2. مصفوفة Google IAM ونطاق السر
 
 الأسماء التالية رمزية حتى تحديد project ID/number. المورد Job واحد اسمه assess-worker، والسر الواحد assess-worker-config. **IAM يمنح الوصول إلى مورد السر، وليس إلى مسار filesystem أو حقل password داخله**؛ المسار /run/secrets/assess-worker.json ناتج mount لهذا السر وحده. لا أسرار أخرى في السر أو الـvolume أو حساب المهمة.
