@@ -75,13 +75,19 @@ login المقترح LOGIN NOINHERIT NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATE
 
 شواهد القبول اللاحقة: قبول CA/hostname الصحيحين ورفض الخاطئين/الاتصال بلا TLS؛ شهادة TLS من اتصال فعلي؛ تطابق session_user/current_user قبل SET، وcurrent_user=assess_worker داخل المعاملة وعودته بعد COMMIT/ROLLBACK؛ رفض login زائد العضوية أو INHERIT/admin، ورفض direct tables/launch_gate/user RPC/roles الأخرى. بعض RPCs مثل health/maintain/claim قابلة للكتابة حتى لو كان الاسم فحصًا؛ لا تستعملها كشاهد read-only على الأصلية. اختبار ACL والقتل والـpooler أولًا على قاعدة اصطناعية معزولة مأذونة، ثم بوابة مستقلة لأي استعمال للأصلية.
 
+### حزمة login وشاهد TLS الحالي
+
+أُعدت [حزمة login المحدود](ASSESS_WORKER_LOGIN.md) بإنشاء مغلق NOLOGIN/password null وانتهاء صلاحية وعضوية محدودة، وفحص catalogue وإلغاء يثبت السحب قبل قتل القائم. جُربت على PGlite وPostgreSQL محليتين فقط؛ لم تُطبق على الأصلية. PUBLIC TEMP الافتراضية ظهرت في الشاهد، ولا تسحب الحزمة منح PUBLIC المشتركة؛ يبقى التفعيل معلقًا على مراجعة surface وقناة credential الآمنة وإذن مستقل.
+
+[إفادة المالك](ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md#إفادة-tls-من-جهاز-المالك) أثبتت من جهازه PASS TLS1.2 واسم aws-1-eu-central-1.pooler.supabase.com وجذرًا مطابقًا تمامًا لملف Supabase Root 2021 CA. لم يُرسل login/SQL، ولم يُفحص certificate revocation أو وصول Google/Node أو startup options/ACL/إلغاء مزود. لا نكرر TLS أو نستخدم حساب postgres باسم العامل من ذلك.
+
 ## 4. سحب DB الفعلي وقتل الجلسات
 
 مسؤول DB ينفذ لاحقًا من اتصال إداري منفصل موثوق، بصلاحية تغيير login المحدد وعضويته وقتل backends الخاصة به فقط؛ لا تمنحها للمهمة. [ALTER ROLE](https://www.postgresql.org/docs/current/sql-alterrole.html) و[pg_terminate_backend](https://www.postgresql.org/docs/current/functions-admin.html) مرجعا الإجراء. الأسماء هنا أمثلة وليست SQL كتابة منفذة أو ملف تطبيق على الأصلية.
 
 1. منع إطلاق جديد وسحب run وإلغاء executions، ثم حجر المسار/إيقاف pooler clients المعنية عند استخدامها؛ مراجعة احتمالات COMMIT المفقود بلا retry أو علامة صفر.
 2. تثبيت الهوية والقاعدة من catalogue دون أسرار؛ تنفيذ ALTER ROLE assess_job_a NOLOGIN، ثم REVOKE assess_worker FROM assess_job_a، وتثبيتهما بـCOMMIT قبل قتل الجلسات. تعطيل/تغيير password من قناة آمنة؛ REVOKE CONNECT وحدها لا تغلب PUBLIC ولا تنهي القائم.
-3. اختيار backends عبر pg_stat_activity بشرط usename='assess_job_a' وdatname=قاعدة المهمة وpid<>pg_backend_pid()، ثم pg_terminate_backend(pid,5000) لكل واحدة، وتسجيل عدد النجاح فقط. لا الاعتماد على application_name وحده أو current_user الذي قد يصبح assess_worker؛ لا طباعة query/parameters. kill داخل معاملة الإلغاء قبل COMMIT يترك نافذة إعادة اتصال.
+3. اختيار backends عبر pg_stat_activity بشرط usename='assess_job_a' وpid<>pg_backend_pid() عبر كل قواعد الـcluster للدور المخصص، ثم pg_terminate_backend(pid,1000) لكل واحدة ضمن سقف8 جلسات/15ثانية وفق الحزمة المغلقة، وتسجيل عدد النجاح فقط. لا الاعتماد على application_name وحده أو current_user الذي قد يصبح assess_worker؛ لا طباعة query/parameters. kill داخل معاملة الإلغاء قبل COMMIT يترك نافذة إعادة اتصال.
 4. مع pooler يجب إغلاق frontends الخاصة بذلك login وإخلاء backends/auth cache له أيضًا بإجراء مزود مثبت؛ NOLOGIN أو password rotation قد لا يلغيان clients مصادقًا عليها أو backends معاد استخدامها. عدم امتلاك قدرة مزود محدودة لذلك عائق قبول للـpooler؛ لا restart شامل لحسابات الآخرين أو ادعاء إلغاء من قتل client واحدة.
 5. إثبات عدد جلسات القديم=0 وأنها لا تعود في فحص محدود لمدة60ثانية، ورفض إعادة اتصال بالقديم ورفض استدعاء من اتصال كان قائمًا قبل السحب. فحص login بديل/حساب غير معني يثبت عدم أثر جانبي. سجل metadata وأعدادًا دون بيانات. عند فشل terminate أو عودة جلسة يبقى الحجر، ويصعّد لمسؤول المزود دون نجاح صوري.
 6. reconcile من قاعدة الحقيقة فقط تحت إذن منفصل: القتل قبل COMMIT قد يرجع المعاملة، وبعده قد تبقى نتيجة صحيحة؛ انتظر lease/retry_at واستعمل recover_v1 صراحة بحسب السياسة، بلا إعادة finish أو تشغيل أعمى. إعادة الخدمة تتطلب login/سر جديدين وشاهد رفض القديم، لا إعادة تمكين مخترق.

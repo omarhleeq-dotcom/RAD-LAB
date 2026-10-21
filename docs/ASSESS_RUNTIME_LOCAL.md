@@ -63,6 +63,12 @@ CA صريحة وrejectUnauthorized=true وفحص اسم المضيف الافت�
 
 [دليل Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) يحدد username للـshared pooler بصيغة role.project-ref. فصل اسم النقل لا يمنح Google IAM أو login أو عضوية أو شهادة TLS؛ لا إعداد حي أو سر منشأ من هذه الدفعة. نطاق الدور assess_worker ما زال أوسع من tick-only كما تسجله [حزمة الربط](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md).
 
+## حزمة login مغلقة وشاهد TLS
+
+أُعدت [حزمة تجهيز login والإلغاء](ASSESS_WORKER_LOGIN.md) محليًا: دور جديد NOLOGIN/password null وصلاحية منتهية، وcatalogue read-only، وCOMMIT لسحب الصلاحية قبل قتل جلساته. لا تفعيل سر أو دور على المزود؛ PUBLIC TEMP/CREATE وCONNECT إلى قواعد أخرى ما زالت تحتاج مراجعة، ولا تعديل لصلاحيات assess_worker المشتركة.
+
+[تقرير login](ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md#إفادة-tls-من-جهاز-المالك) يحفظ PASS من جهاز المالك لـTLS1.2 وhostname وجذر مطابق تمامًا للـCA المرفقة على مضيف session5432. كان رفض Windows الأول UntrustedRoot، فحُددت الثقة في الملف المطابق فقط دون تثبيته عالميًا. لا login/SQL أو certificate revocation أو Node/Cloud Run أو startup options أو ACL/إلغاء حي ثبتت بذلك، ولا نجاح شبكة الوكيل التي بقيت بلا TCP grants.
+
 ## الإيقاف والفشل وScale
 
 التسلسل المطلوب من المضيف مستقبلًا: أوقف قبول ticks/عمليات install أو recover جديدة، أرسل AbortSignal إلى runAssessJobs، انتظر tick الجاري حتى تسوية claim وfinish/fail ثم health، ثم await binding.close. close يمنع calls جديدة وينتظر الاتصالات/المعاملات الجارية قبل pool.end، وتكراره يعيد الوعد نفسه. استدعاء close قبل تسوية tick قد يمنع finish/fail لاحقًا؛ ليس بديلًا عن Signal/انتظار tick. لا SIGKILL أو توقف مضيف موثوق من finally؛ تبقى lease/نوافذ C مرجع الاسترداد.
