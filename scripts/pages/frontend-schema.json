@@ -45,7 +45,7 @@
     "src/features/pilot/activity.ts": "ef0fbb293a0fdd42faa46d5a5556b10b570f65396dd884e8f707186fba7d0f4a",
     "src/features/pilot/TrainingSummary.tsx": "44739e74a52db8f40b1b7669d391941e40c483d1c44b541ad2ed64ad12e21358",
     "src/features/pilot/PilotSessionKeeper.tsx": "c812951455090fc989fd481ddaadced07e16b2533af8d359e276857779b6fe88",
-    "src/features/pilot/OwnerPanel.tsx": "bc42d14ec14bf319df57398cdd81b7ae3aa0a405e60297e0094819f620f166ba",
+    "src/features/pilot/OwnerPanel.tsx": "75ac309d2a7d4148f206384a4d3eb061540430fc350a8dd18039c4241d1b71a6",
     "src/features/assess/OwnerAssessPanel.tsx": "5fb54cb28f08cb5e71ca163594de1b3bf23860c0427326b7f1210c3530334403",
     "src/features/assess/admin-data.ts": "c39b767b2b48b3cd941698f14baef70cc87aa062973f037bb4623e288c3b1576",
     "src/features/assess/OwnerContentPanel.tsx": "c637817a067cb14bf6964cd6e52f1a01f59f4148ae461ec8337ded8f64173658",
