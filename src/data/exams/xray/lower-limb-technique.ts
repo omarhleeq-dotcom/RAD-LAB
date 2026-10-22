@@ -5,7 +5,7 @@ import { chestPaTechnique } from "./chest-pa-technique";
 
 /**
  * Technique / exposure PROTOCOL PROFILE of the four knee / foot exams (S14.4): MANUAL technique only (no `aec`: Bontrager, as supplied, gives no AEC
- * rule for the lower limb). Same structure as the elbow profile (`elbow-technique.ts`): built from the generic digital system of the Chest PA
+ * rule for the lower limb). Same structure as the upper-limb profiles (`upper-limb-technique.ts`): built from the generic digital system of the Chest PA
  * profile (same Deviation-Index model and bands) with only what differs for a limb overridden. Nothing here is a medical constant.
  *
  * What is Bontrager (BONTRAGER-9 p.224-225 lower-limb common, p.232 / 233 foot, p.246 / 249 knee; digital radiography): the kV full-credit band,

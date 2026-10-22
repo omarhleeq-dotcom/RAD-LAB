@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066)، ونُفذ UI-3 (RAD-067) في PR مسودة؛ كلاهما بانتظار تحقق المالك من الهاتف. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
-- **ينتظر المالك:** تحقق الهاتف لـRAD-066 وRAD-067؛ قائمة الصور الاختيارية؛ تواريخ إرسال مراجعة RAD-019 والرد عليها؛ موافقة منفصلة لكل جلسة؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
+- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066) وUI-3 (RAD-067) واكتملا بتحقق المالك، وسُجلت نتائج فحص المالك للصور، ونُفذ الجزء 1 من RAD-068 في PR مسودة. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
+- **ينتظر المالك:** البند 16 من قائمة الصور (بعد RAD-067)؛ موافقة منفصلة لكل جلسة؛ استئناف برمجة Assess.
 - **ينتظر مراجِعًا بشريًا:** لا شيء جديد. RAD-019 أُغلق دون توقيع مرخّص (تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
 - **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
 - **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ بصمات scene-dom تُحدَّث بموافقة المالك فقط (مقبولة لنصوص D1 الخمسة داخل دفعة RAD-068)؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 218,
-  "updated_at": "2026-10-22T10:27:00+00:00",
+  "revision": 221,
+  "updated_at": "2026-10-22T13:59:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-072",
+  "next_id": "RAD-073",
   "tasks": [
     {
       "id": "RAD-001",
@@ -191,7 +191,7 @@
       "title": "مراجعة القيم المؤقتة والنص العربي (O5)",
       "status": "done",
       "priority": "high",
-      "description": "أُغلق بقرار المالك: owner-verified with an AI-assisted research review; no licensed human sign-off; image rows left unreviewed by owner decision until confirmed. قواعد التصحيح المقترحة بنود منفصلة بموافقة المالك في RAD-068. بلا تواريخ إرسال ورد حتى يرسلها المالك. ليست بوابة للجلسات (S10b-20).",
+      "description": "أُغلق بقرار المالك: owner-verified with an AI-assisted research review; no licensed human sign-off; image rows left unreviewed by owner decision until confirmed. قواعد التصحيح المقترحة بنود منفصلة بموافقة المالك في RAD-068. أُرسلت الحزمة ووصل الرد في 2026-10-22 (المالك). ليست بوابة للجلسات (S10b-20).",
       "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#rad-019-review-items (CLN-018/027/034)؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
       "completion_evidence": "المراجعة المحفوظة docs/RAD-019_AI_ASSISTED_REVIEW_2026-10-22.md؛ قرار المالك docs/DECISIONS.md#review-closure-owner-2026-10-22؛ تقرير الفرز وقائمة الصور docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md. توثيق فقط؛ لا مراجعة معلّم أو فيزيائي مرخّص ولا مصادقة سريرية (D5)."
     },
@@ -579,7 +579,7 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "بعد UI-4 (F9) وتحقق المالك من حصص Supabase. أولًا الاحتفاظ والأدوار (RLS) وRAD-060 في أول migration؛ ثم جدول→JSON فالكتابي فالصور. يشمل CLN-035/036 وF4 ولوحة المالك وفرض الاسم الكامل في الخادم. لا برمجة قبل الاستئناف. PGlite option (b) من RAD-061: يُراجع إن تجاوز CI نحو 5 دقائق أو ملفات PGlite نحو 40.",
+      "description": "بعد UI-4 (F9). حصص Supabase متحقق منها (المالك 2026-10-22): القاعدة 500 MB والتخزين 1000 MB؛ يجب أن يناسبها تصميم الاحتفاظ. أولًا الاحتفاظ والأدوار (RLS) وRAD-060 في أول migration؛ ثم جدول→JSON فالكتابي فالصور. يشمل CLN-035/036 وF4 ولوحة المالك وفرض الاسم في الخادم. لا برمجة قبل الاستئناف. PGlite (ب): يُراجع إن تجاوز CI نحو 5 دقائق أو ملفاته نحو 40",
       "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
       "waiting_on": "owner"
     },
@@ -613,28 +613,28 @@
     {
       "id": "RAD-066",
       "title": "UI-1: تنظيف تجربة الواجهة",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "دُمج في PR #106: حذف الشريط والعبارات (D1) ونقل القانوني إلى الشروط والمصادر، دخول مستقل، اسم ≥3 كلمات (عميل)، موافقة وانتظار عند الحاجة، خروج في القائمة، المكتبة واللمس، CLN-010 والمفاتيح الثمانية. ينتظر تحقق المالك من الهاتف. المتبقي: فرض الاسم في الخادم (RAD-062)، ونصوص D1 الخمسة في لوحة النتيجة (RAD-068)؛ التفاصيل في تقرير RAD-066.",
+      "description": "دُمج في PR #106: حذف الشريط والعبارات (D1) ونقل القانوني إلى الشروط والمصادر، دخول مستقل، اسم ≥3 كلمات (عميل)، خروج في القائمة، المكتبة واللمس، CLN-010 والمفاتيح الثمانية. نُقل إلى مهامه: فرض الاسم في الخادم إلى RAD-062، ونصوص D1 الخمسة إلى RAD-068.",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md",
-      "waiting_on": "owner"
+      "completion_evidence": "PR #106 مدموج؛ تقرير docs/RAD-066_UI1_REPORT_2026-10-22.md؛ تحقق المالك من الهاتف 2026-10-22 (docs/RAD-068_PART1_REPORT_2026-10-22.md §3): الدخول المستقل، وقاعدة الاسم من ثلاث كلمات، والخروج في القائمة الجانبية، وجملة الحجب في الشروط، والملاحظة القانونية في المصادر."
     },
     {
       "id": "RAD-067",
       "title": "UI-3: تخطيط المحاكي على الهاتف",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "نُفذ في PR مسودة (تخطيط فقط) وعُدّل بعد تحقق المالك مرتين: عرض تطبيق بملء الشاشة على الهاتف بلا تمرير (شريط علوي، مشهد، 4 تبويبات، شريط سفلي، ورقة (i))، ومناطق لمس ≥44px وتكبير المشهد وملاءمة العرض للتشريح، ومفتاح اللغة خارج الشريط العلوي. الحاسوب كما هو؛ لا تصحيح ولا بصمات. ينتظر تحقق المالك (تقرير RAD-067).",
+      "description": "دُمج في PR #108: عرض تطبيق بملء الشاشة على الهاتف بلا تمرير (شريط علوي، مشهد، 4 تبويبات، شريط سفلي، ورقة (i))، ومناطق لمس ≥44px وتكبير المشهد وملاءمة العرض للتشريح، ومفتاح اللغة خارج الشريط العلوي، بعد فحوص المالك 1–3. الحاسوب كما هو؛ لا تصحيح ولا بصمات.",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-067_UI3_REPORT_2026-10-22.md؛ scripts/qa/simulator-layout-audit.mjs",
-      "waiting_on": "owner"
+      "completion_evidence": "PR #108 مدموج؛ فحوص المالك من الهاتف 1–3 مسجلة في docs/RAD-067_UI3_REPORT_2026-10-22.md (§9–§11)؛ التحقق المُشغَّل وغير المُشغَّل في التقرير نفسه."
     },
     {
       "id": "RAD-068",
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "يبدأ بتوحيد الأطراف العليا (CLN-016/017/025/028). ثم: (1) دفعة نص T+AR مع نصوص D1 الخمسة وتسميات شارات الدليل VALIDATED وPROVISIONAL (تعارض D5؛ صياغة محايدة تُحسم هنا)، وتحديث بصمات scene-dom واللقطات لها مقبول من المالك داخل الدفعة فقط؛ (2) دفعات S بحسب s-items-owner؛ (3) بنود R؛ (4) علامات provisional.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
+      "description": "الجزء 1 في PR مسودة: توحيد الأطراف العليا (CLN-016/017/028) بتطابق بايت، وتدقيق علامة النتيجة لكل الفحوص، وإصلاح التقاط اللمس على الهاتف بعرض «الكاشف كاملًا» (سبب عيب العلامة). CLN-025 يحتاج استثناء S-STD-2. التالي: (2) دفعة نص T+AR مع نصوص D1 الخمسة وشارات VALIDATED/PROVISIONAL (بصماتها مقبولة داخلها)؛ (3) دفعات S؛ ثم بنود R وعلامات provisional.",
+      "source_ref": "docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
     {
@@ -642,7 +642,7 @@
       "title": "UI-4: المكتبة والتدريب والثيم والرسومات",
       "status": "planned",
       "priority": "medium",
-      "description": "بعد RAD-068: شبكة المكتبة (F1)، وصفحتا التدريب والنتيجة (F5: صفحة النتيجة كثيفة على الهاتف بتأكيد المالك، فالملخص أولًا والتفاصيل مطوية)، وثيم داكن/فاتح بزر في الشريط العلوي، الافتراضي داكن ومحفوظ (F7)، ورسومات SVG من عمل المشروع مسجلة في سجل الأصول (F8).",
+      "description": "بعد RAD-068 ثم RAD-072: شبكة المكتبة (F1)، وصفحتا التدريب والنتيجة (F5: صفحة النتيجة كثيفة على الهاتف بتأكيد المالك، فالملخص أولًا والتفاصيل مطوية)، وثيم داكن/فاتح بزر في الشريط العلوي، الافتراضي داكن ومحفوظ (F7)، ورسومات SVG من عمل المشروع مسجلة في سجل الأصول (F8).",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
       "waiting_on": "code"
     },
@@ -663,6 +663,15 @@
       "description": "مهمة مستقبلية (S10، S14.2b-R11): تقييم وضع الأصابع وبسطها في فحوص اليد. تحتاج تحكمًا جديدًا في المحاكي ونطاقًا مرجعيًا مستقلًا.",
       "source_ref": "docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md",
       "defer_reason": "قرار المالك S10: يحتاج تحكمًا جديدًا في المحاكي؛ ليس الآن."
+    },
+    {
+      "id": "RAD-072",
+      "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
+      "status": "planned",
+      "priority": "high",
+      "description": "بعد RAD-068 وقبل RAD-069: مناظر مشهد الصدر الجانبي، ورئتا الصدر AP مستلقيًا، وعظام القدم ودورانها، واتجاه رسم الكاحل الجانبي، وعظم اليد الذي يختفي عند الدوران، وغياب تغيّر الكتف مع زاوية الجسم في المنظر الجانبي، والمساحة المخططة الكبيرة في نتيجة الكاحل AP. كل تغيير رسم يحتاج موافقة المالك على بصمة scene-dom.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
+      "waiting_on": "code"
     }
   ]
 }

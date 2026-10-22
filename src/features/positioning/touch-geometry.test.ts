@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HANDLE, HIT, PHONE_HIT_PX, markerBox, touchGeometry } from "./touch-geometry";
+import { HANDLE, HIT, PHONE_HIT_PX, markerBox, nearestTouchTarget, touchGeometry } from "./touch-geometry";
 
 describe("phone touch geometry (owner phone check 2)", () => {
   it("is the unchanged default without a measured scale (desktop)", () => {
@@ -27,5 +27,23 @@ describe("phone touch geometry (owner phone check 2)", () => {
     }
     expect(touchGeometry(0.45).markerScale).toBeGreaterThan(1);
     expect(markerBox(centre, 40, touchGeometry(0.45).markerScale).size).toBeGreaterThan(base.size);
+  });
+});
+
+describe("overlapping phone hit areas (RAD-068: whole-detector view)", () => {
+  // At whole-detector zoom the crosshair's 44 px circle covers the marker: a touch on the marker must still take the marker.
+  const g = touchGeometry(0.4);
+  const marker = { target: "marker", x: 100, y: 100, size: g.hit };
+  const ray = { target: "ray", x: 130, y: 110, radius: g.rayHit };
+  const handle = { target: "edge", x: 60, y: 100, size: g.hit };
+
+  it("gives the touch to the control whose visible centre is nearest, not to the one drawn last", () => {
+    expect(nearestTouchTarget({ x: 101, y: 99 }, [handle, marker, ray])).toBe("marker");
+    expect(nearestTouchTarget({ x: 129, y: 111 }, [handle, marker, ray])).toBe("ray");
+    expect(nearestTouchTarget({ x: 62, y: 100 }, [handle, marker, ray])).toBe("edge");
+  });
+
+  it("ignores controls whose hit area does not contain the point", () => {
+    expect(nearestTouchTarget({ x: 1000, y: 1000 }, [handle, marker, ray])).toBeNull();
   });
 });
