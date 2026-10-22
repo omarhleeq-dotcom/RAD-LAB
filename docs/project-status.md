@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 226,
-  "updated_at": "2026-10-22T19:25:00+00:00",
+  "revision": 227,
+  "updated_at": "2026-10-22T20:30:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -633,7 +633,7 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "in_progress",
       "priority": "high",
-      "description": "الجزءان 1 و2 مدموجان (#109، #110). الجزء 3 (بنود S: S8 فحص، S3، S5، S2، S6) منفذ في PR مسودة. الجزء الأخير: علامات provisional ونصوص الدليل المعروضة (provisional/VALIDATED/pending educator review، D1) تُحسم قبل اكتمال RAD-068؛ ثم بنود R. CLN-025 مؤجل، CLN-018 مفتوح.",
+      "description": "الجزءان 1 و2 مدموجان (#109، #110). الجزء 3 (بنود S: S8 فحص، S3، S5، S2 بدفعاته 4a–4d، S6، ومتابعة S5) منفذ في PR مسودة؛ تدقيقا العلامة والتخطيط وbuild:pages نجحت. الجزء الأخير: علامات provisional ونصوص الدليل المعروضة (provisional/VALIDATED/pending educator review، D1) تُحسم قبل اكتمال RAD-068؛ ثم بنود R. CLN-025 مؤجل، CLN-018 مفتوح.",
       "source_ref": "docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#part2-acceptance-owner-2026-10-22؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
