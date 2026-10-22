@@ -24,7 +24,7 @@ export const chestPaAdultDemo: CaseDefinition = {
     sex: "female",
     description: {
       en: "21-year-old female, ambulant, able to stand and follow breathing instructions.",
-      ar: "أنثى عمرها ٢١ عامًا، قادرة على المشي والوقوف واتباع تعليمات التنفس.",
+      ar: "أنثى عمرها ٢١ عامًا، قادرة على الوقوف واتباع تعليمات التنفس.",
     },
   },
   clinicalScenario: {

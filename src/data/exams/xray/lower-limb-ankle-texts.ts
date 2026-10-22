@@ -33,7 +33,7 @@ export const ANKLE_PER = {
     rotationLabel: T("Ankle rotation (turn of the leg)", "دوران الكاحل (دوران الساق)"),
     rotationPass: T(
       "The leg is not rotated: the medial part of the ankle mortise is open, the lateral part is closed and the distal fibula is partly overlapped by the tibia and the talus (Bontrager p.239).",
-      "الساق غير مدارة: الجزء الإنسي من تجويف مفصل الكاحل مفتوح والجزء الوحشي مغلق والشظية السفلية متراكبة جزئيًّا بالظنبوب وعظم الكاحل (Bontrager ص.239).",
+      "الساق غير مدارة: الجزء الإنسي من تجويف مفصل الكاحل مفتوح والجزء الوحشي مغلق والشظية السفلية متراكبة جزئيًّا بالظنبوب وعظم القَعْب (Bontrager ص.239).",
     ),
     rotationFail: T(
       "The leg is rotated: the medial and lateral parts of the ankle mortise no longer look as they do in a true AP (medial open, lateral closed) and the overlap of the distal fibula changes (Bontrager p.239). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). Value 0 = the leg not rotated, the line between the malleoli about 15° from parallel to the detector (the lateral malleolus lies further back). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
@@ -41,7 +41,7 @@ export const ANKLE_PER = {
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal tibia and fibula.", "الحافة العلوية للمجال تقطع الظنبوب والشظية السفليين."),
-      bottom: T("The bottom of the field cuts off the talus and the upper part of the heel.", "الحافة السفلية للمجال تقطع عظم الكاحل والجزء العلوي من العقب."),
+      bottom: T("The bottom of the field cuts off the talus and the upper part of the heel.", "الحافة السفلية للمجال تقطع عظم القَعْب والجزء العلوي من العقب."),
       left: T("The left side of the field (in the detector view) cuts off the medial side of the ankle (the medial malleolus).", "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الجهة الإنسية للكاحل (الكعب الإنسي)."),
       right: T("The right side of the field (in the detector view) cuts off the lateral side of the ankle (the lateral malleolus and the fibula).", "الجانب الأيمن للمجال (في عرض الكاشف) يقطع الجهة الوحشية للكاحل (الكعب الوحشي والشظية)."),
     },
@@ -58,14 +58,14 @@ export const ANKLE_PER = {
     ),
     centreYLow: T(
       "The central ray is too far up the leg (top of the detector view). The talus and the upper part of the heel may be clipped. Move the target down, toward the ankle joint.",
-      "الشعاع المركزي أعلى الساق أكثر من اللازم (أعلى عرض الكاشف). قد يُقطع عظم الكاحل والجزء العلوي من العقب. حرّك الهدف للأسفل نحو مفصل الكاحل.",
+      "الشعاع المركزي أعلى الساق أكثر من اللازم (أعلى عرض الكاشف). قد يُقطع عظم القَعْب والجزء العلوي من العقب. حرّك الهدف للأسفل نحو مفصل الكاحل.",
     ),
     centreYHigh: T(
       "The central ray is too far down the leg (bottom of the detector view). The distal tibia and fibula may be clipped. Move the target up, toward the ankle joint.",
       "الشعاع المركزي أسفل الساق أكثر من اللازم (أسفل عرض الكاشف). قد يُقطع الظنبوب والشظية السفليان. حرّك الهدف للأعلى نحو مفصل الكاحل.",
     ),
     coverageEn: "the distal tibia and fibula, both malleoli and the talus",
-    coverageAr: "الظنبوب والشظية السفليين والكعبين وعظم الكاحل",
+    coverageAr: "الظنبوب والشظية السفليين والكعبين وعظم القَعْب",
     angle: {
       label: T("Tube angle (perpendicular)", "ميل الأنبوب (عمودي)"),
       ideal: [-2, 2] as [number, number],
@@ -86,8 +86,8 @@ export const ANKLE_PER = {
       evidenceNote: "CR perpendicular to the detector is Bontrager. The ±2° full-credit and ±5° partial-credit bands are an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
-      { id: "rotation", description: T("True AP: medial mortise open, lateral mortise closed; some overlap of the distal fibula by the tibia and the talus", "إسقاط AP صحيح: الجزء الإنسي من التجويف مفتوح والوحشي مغلق؛ وبعض التراكب للشظية السفلية بالظنبوب وعظم الكاحل") },
-      { id: "coverage", description: T("Distal tibia and fibula, both malleoli and the talus included (this reference picture ends at the talus and the upper heel: the proximal half of the metatarsals is not shown); soft tissue visible", "الظنبوب والشظية السفليان والكعبان وعظم الكاحل ضمن الصورة (تنتهي هذه الصورة المرجعية عند عظم الكاحل وأعلى العقب: النصف القريب من عظام المشط غير ظاهر)؛ والأنسجة الرخوة ظاهرة") },
+      { id: "rotation", description: T("True AP: medial mortise open, lateral mortise closed; some overlap of the distal fibula by the tibia and the talus", "إسقاط AP صحيح: الجزء الإنسي من التجويف مفتوح والوحشي مغلق؛ وبعض التراكب للشظية السفلية بالظنبوب وعظم القَعْب") },
+      { id: "coverage", description: T("Distal tibia and fibula, both malleoli and the talus included (this reference picture ends at the talus and the upper heel: the proximal half of the metatarsals is not shown); soft tissue visible", "الظنبوب والشظية السفليان والكعبان وعظم القَعْب ضمن الصورة (تنتهي هذه الصورة المرجعية عند عظم القَعْب وأعلى العقب: النصف القريب من عظام المشط غير ظاهر)؛ والأنسجة الرخوة ظاهرة") },
       { id: "sharpness", description: T("No loss of sharpness from patient movement", "لا يوجد فقدان في الحدّة بسبب حركة المريض") },
       { id: "exposure", description: T("Detector exposure near target (judged by DI, not by displayed brightness)", "تعريض كاشف قريب من الهدف (يُحكم عليه من DI وليس من سطوع الصورة المعروضة)") },
     ],
@@ -117,7 +117,7 @@ export const ANKLE_PER = {
     rotationLabel: T("Ankle rotation (turn of the leg)", "دوران الكاحل (دوران الساق)"),
     rotationPass: T(
       "The ankle is a true lateral: the distal fibula lies over the posterior half of the tibia, the lateral malleolus is seen through the distal tibia and the talus, and the tibiotalar joint is open with a uniform space (Bontrager p.242).",
-      "الكاحل بإسقاط جانبي صحيح: الشظية السفلية فوق النصف الخلفي للظنبوب والكعب الوحشي ظاهر عبر الظنبوب السفلي وعظم الكاحل ومفصل الظنبوب والكاحل مفتوح بحيز منتظم (Bontrager ص.242).",
+      "الكاحل بإسقاط جانبي صحيح: الشظية السفلية فوق النصف الخلفي للظنبوب والكعب الوحشي ظاهر عبر الظنبوب السفلي وعظم القَعْب ومفصل الظنبوب والكاحل مفتوح بحيز منتظم (Bontrager ص.242).",
     ),
     rotationFail: T(
       "The ankle is rotated: the distal fibula no longer lies over the posterior half of the tibia and the tibiotalar joint space is no longer uniform (Bontrager p.242). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
@@ -126,7 +126,7 @@ export const ANKLE_PER = {
     clippedSides: {
       top: T("The top of the field cuts off the distal tibia and fibula.", "الحافة العلوية للمجال تقطع الظنبوب والشظية السفليين."),
       bottom: T("The bottom of the field cuts off the soft tissue below the heel.", "الحافة السفلية للمجال تقطع الأنسجة الرخوة أسفل العقب."),
-      left: T("The left side of the field (in the detector view) cuts off the front of the foot (the navicular and the cuboid).", "الجانب الأيسر للمجال (في عرض الكاشف) يقطع مقدمة القدم (الزورقي والنردي)."),
+      left: T("The left side of the field (in the detector view) cuts off the front of the foot (the navicular and the cuboid).", "الجانب الأيسر للمجال (في عرض الكاشف) يقطع مقدمة القدم (الزورقي والمكعبي)."),
       right: T("The right side of the field (in the detector view) cuts off the back of the ankle (the heel and the soft tissue behind it).", "الجانب الأيمن للمجال (في عرض الكاشف) يقطع خلف الكاحل (العقب والأنسجة الرخوة خلفه)."),
     },
     centreXLabel: T("Central ray — front to back across the ankle", "الشعاع المركزي — من الأمام إلى الخلف عبر الكاحل"),
@@ -149,7 +149,7 @@ export const ANKLE_PER = {
       "الشعاع المركزي أسفل الساق أكثر من اللازم (أسفل عرض الكاشف). قد يُقطع الظنبوب والشظية السفليان. حرّك الهدف للأعلى نحو مفصل الكاحل.",
     ),
     coverageEn: "the distal tibia and fibula, the talus and the calcaneus",
-    coverageAr: "الظنبوب والشظية السفليين وعظم الكاحل وعظم العقب",
+    coverageAr: "الظنبوب والشظية السفليين وعظم القَعْب وعظم العقب",
     angle: {
       label: T("Tube angle (perpendicular)", "ميل الأنبوب (عمودي)"),
       ideal: [-2, 2] as [number, number],
@@ -170,8 +170,8 @@ export const ANKLE_PER = {
       evidenceNote: "CR perpendicular to the detector is Bontrager. The ±2° full-credit and ±5° partial-credit bands are an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
-      { id: "rotation", description: T("True lateral: distal fibula over the posterior half of the tibia; tibiotalar joint open with a uniform space; lateral malleolus seen through the distal tibia and talus", "إسقاط جانبي صحيح: الشظية السفلية فوق النصف الخلفي للظنبوب؛ ومفصل الظنبوب والكاحل مفتوح بحيز منتظم؛ والكعب الوحشي ظاهر عبر الظنبوب السفلي وعظم الكاحل") },
-      { id: "coverage", description: T("Distal tibia and fibula, talus and calcaneus included (this reference picture shows the navicular and cuboid only partly and does not show the 5th metatarsal tuberosity); soft tissue visible", "الظنبوب والشظية السفليان وعظم الكاحل وعظم العقب ضمن الصورة (تُظهر هذه الصورة المرجعية الزورقي والنردي جزئيًّا فقط ولا تُظهر حدبة المشط الخامس)؛ والأنسجة الرخوة ظاهرة") },
+      { id: "rotation", description: T("True lateral: distal fibula over the posterior half of the tibia; tibiotalar joint open with a uniform space; lateral malleolus seen through the distal tibia and talus", "إسقاط جانبي صحيح: الشظية السفلية فوق النصف الخلفي للظنبوب؛ ومفصل الظنبوب والكاحل مفتوح بحيز منتظم؛ والكعب الوحشي ظاهر عبر الظنبوب السفلي وعظم القَعْب") },
+      { id: "coverage", description: T("Distal tibia and fibula, talus and calcaneus included (this reference picture shows the navicular and cuboid only partly and does not show the 5th metatarsal tuberosity); soft tissue visible", "الظنبوب والشظية السفليان وعظم القَعْب وعظم العقب ضمن الصورة (تُظهر هذه الصورة المرجعية الزورقي والمكعبي جزئيًّا فقط ولا تُظهر حدبة المشط الخامس)؛ والأنسجة الرخوة ظاهرة") },
       { id: "sharpness", description: T("No loss of sharpness from patient movement", "لا يوجد فقدان في الحدّة بسبب حركة المريض") },
       { id: "exposure", description: T("Detector exposure near target (judged by DI, not by displayed brightness)", "تعريض كاشف قريب من الهدف (يُحكم عليه من DI وليس من سطوع الصورة المعروضة)") },
     ],

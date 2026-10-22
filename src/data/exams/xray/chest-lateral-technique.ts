@@ -14,8 +14,8 @@ export const chestLateralTechnique: ExamTechniqueProfile = {
   ...chestPaTechnique,
   id: "demo-adult-lateral-reference-dr",
   label: {
-    en: "Demo protocol — average adult lateral, generic DR system (provisional)",
-    ar: "بروتوكول تجريبي — صورة جانبية لبالغ متوسط، نظام DR عام (مؤقت)",
+    en: "Teaching protocol — average adult lateral, generic DR system",
+    ar: "بروتوكول تعليمي — صورة جانبية لبالغ متوسط، نظام DR عام",
   },
   evidence: {
     status: "provisional",

@@ -41,7 +41,7 @@ export const chestApAdultDemo: CaseDefinition = {
   patientTechnique: {
     attenuation: 1,
     attenuationByProjection: { "lateral-left": 2 },
-    label: { en: "Average adult (AP path taken as the PA reference; provisional)", ar: "بالغ متوسط (مسار AP كمرجع PA؛ مؤقت)" },
+    label: { en: "Average adult (AP path taken as the PA reference; teaching value)", ar: "بالغ متوسط (مسار AP كمرجع PA؛ قيمة تعليمية)" },
     evidence: {
       status: "provisional",
       reference: "S10b-9; WHO-TECH p.6-7; EC16260 p.21",

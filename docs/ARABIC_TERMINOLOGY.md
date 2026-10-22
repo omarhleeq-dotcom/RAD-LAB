@@ -16,7 +16,7 @@ All Arabic in RAD-LAB (UI in `messages/ar.json`, case text in `src/data/cases/*`
 | PA erect / AP erect | PA وقوفًا / AP وقوفًا | console | إبقاء الاختصار لاتينيًا؟ | |
 | Central ray | الشعاع المركزي | positioning | | |
 | Collimated field / collimation | المجال المحدَّد / التحديد | positioning | «المُسدِّد/الكوليميتر»؟ | |
-| Detector / Bucky | الكاسيت / البكي | positioning | الكاشف الرقمي ≠ الكاسيت (DR) | |
+| Detector / Bucky | الكاشف / البكي | positioning | «الكاسيت» استُبدل بـ«الكاشف» (الكاشف الرقمي ≠ الكاسيت)؛ انظر RAD-068 الجزء 2 أدناه | |
 | Side marker | علامة الجانب | positioning | | |
 | Detector view as displayed (patient's left on the viewer's right) | عرض الكاسيت كما يظهر في الصورة (يسار المريض على يمين المشاهد) | positioning | | |
 | Lung apices | قمم الرئتين | feedback | | |
@@ -36,7 +36,7 @@ All Arabic in RAD-LAB (UI in `messages/ar.json`, case text in `src/data/cases/*`
 | AEC / chambers | AEC / حجرات الاستشعار | console | | |
 | Manual | يدوي | console | | |
 | Educational visual approximation | تقريب بصري تعليمي | effect cards | | |
-| Evidence classes | مثبت · مرجع شائع / غير عالمي · يعتمد على الجهاز / البروتوكول المحلي · تبسيط تعليمي · مؤقت | evidence badges | تأكيد المقابلات الخمسة | |
+| Evidence classes | مستند إلى مصدر · مرجع شائع / غير عالمي · يعتمد على الجهاز / البروتوكول المحلي · تبسيط تعليمي · قيمة تعليمية | evidence badges | تسميتان معدّلتان بقرار المالك 2026-10-22 (D5: لا «مثبت» ولا «مؤقت»)؛ المعرّفات الداخلية `validated` و`provisional` كما هي | |
 | Educational pass mark | درجة النجاح التعليمية | result | | |
 | Not drawn in this image | غير مرسومة في هذه الصورة | result | | |
 | Educational prototype — not for clinical use; values pending educator/physicist review | نموذج تعليمي أولي — ليس للاستخدام السريري؛ القيم بانتظار مراجعة مدرّس أو فيزيائي طبي | preview banner (every page) | «مدرّس» أم «معلّم/أستاذ»؟ «فيزيائي طبي» مناسب؟ | |
@@ -47,13 +47,13 @@ The patient-instruction and patient-description strings agree with the case's se
 
 | English | Female (current) | Male (unchanged) | Where | OK? |
 |---|---|---|---|---|
-| "Take a deep breath in and hold it." | «خذي شهيقًا عميقًا واحبسي نفسك.» | «خذ شهيقًا عميقًا واحبس نفسك.» | patient instructions | |
-| "Breathe out and hold it." | «أخرجي الزفير واحبسي نفسك.» | «أخرج الزفير واحبس نفسك.» | patient instructions | |
+| "Take a deep breath in and hold it." | «خذي شهيقًا عميقًا واحبسي نَفَسَكِ.» | «خذ شهيقًا عميقًا واحبس نَفَسَك.» | patient instructions | |
+| "Breathe out and hold it." | «أخرجي الزفير واحبسي نَفَسَكِ.» | «أخرج الزفير واحبس نَفَسَك.» | patient instructions | |
 | "Breathe normally." | «تنفّسي بشكل طبيعي.» | «تنفّس بشكل طبيعي.» | patient instructions | |
 | "Stay still and don't move until I tell you." | «ابقَي ثابتة ولا تتحركي حتى أخبرك.» | «ابقَ ثابتًا ولا تتحرك حتى أخبرك.» | patient instructions | |
 | "Relax — you can move normally." | «استرخي — يمكنك التحرك بشكل طبيعي.» | «استرخِ — …» | patient instructions | |
-| "{sex}, {age} years old" | أنثى عمرها {age} عامًا | ذكر عمره {age} عامًا | home card | |
-| "…able to stand and follow breathing instructions" | قادرة على المشي والوقوف واتباع تعليمات التنفس | قادر … | case description | |
+| "{sex}, {age} years old" | أنثى عمرها {age} عامًا (ICU plural: 1 «عام واحد»، 2 «عامان»، 3–10 «أعوام»، 11+ «عامًا») | ذكر عمره {age} عامًا (بالقواعد نفسها) | home card | |
+| "…able to stand and follow breathing instructions" | قادرة على الوقوف واتباع تعليمات التنفس | قادر … | case description | |
 | "Stable… The patient has arrived slightly turned…" | حالتها مستقرة … وصلت المريضة وهي مائلة قليلًا … | حالته … وصل المريض وهو مائل … | case condition | |
 | "the simulated patient (female / male)" | المريضة المحاكاة (لم تأخذ شهيقًا / تحركت) | المريض المحاكى | effect cards | |
 | Generic "the patient" in headings / labels / rule feedback | المريض (unchanged) | المريض | many | generic noun — keep, or make sex-aware? |
@@ -398,3 +398,37 @@ Platform UI/ARIA text moved from `AssessPanel.tsx`, `PartControls.tsx` and `Prac
 | Equipment: SID {sid} cm; tube angle {angle} degrees / Current equipment settings | الجهاز: SID ‏{sid} سم؛ زاوية الأنبوب {angle} درجة / إعدادات الجهاز الحالية | |
 | Drag the beam, field edges or marker; … All settings are available below. | اسحب الشعاع المركزي أو حواف المجال أو العلامة؛ … كل الإعدادات متاحة أدناه. | |
 | Current settings in text | الإعدادات الحالية نصًا | |
+
+## RAD-068 part 2 — text batch (2026-10-22; owner-approved wording; machine-assisted, not reviewed by an educator)
+
+The owner decided the evidence badge labels (D5) and the table (c) corrections of the [triage report](RAD-065_REVIEW_TRIAGE_2026-10-22.md). Applied in `messages/ar.json` and in the exam / case data; the shared upper-limb texts once, in `upper-limb-common.ts`.
+
+| English | Before | After | Where |
+|---|---|---|---|
+| Evidence badge "validated" / "provisional" | مثبت / مؤقت | مستند إلى مصدر / قيمة تعليمية | `evidence.*` (EN: SOURCE-BASED / TEACHING VALUE) |
+| Distal radius and ulna | الطرف السفلي للكعبرة والزند | النهايتان البعيدتان للكعبرة والزند؛ «النهاية البعيدة للكعبرة» للكعبرة وحدها | wrist / hand texts |
+| MCP | السلامي المشطي | المفصل المشطي السلامي (MCP) | hand texts |
+| Distal forearm | الساعد السفلي | الجزء البعيد من الساعد | hand texts |
+| Condyle (not epicondyle) | حدود اللقيمتين | حدود اللقمتين («اللقيمة» تبقى لـ epicondyle) | elbow lateral; knee rotation help |
+| Olecranon | الزج / رأس الزند | الناتئ الزُّجّي للزند (نتوء المرفق)؛ «رأس الزند» للرسغ فقط | elbow texts |
+| Talus | عظم الكاحل | عظم القَعْب («عظم الكاحل» مرادف مقبول في الشرح) | ankle texts |
+| Cuboid | النردي | المكعبي | foot / ankle texts |
+| Sinus tarsi / sesamoids | جيب الرسغ / السمسمانيات | لا يرد أي منهما في النص المعروض حاليًا؛ المقترح (جيب الرُّصغ، العظام السمسمانية) يُطبق عند ظهوره | — |
+| Glenohumeral joint | الكتفي العضدي | المفصل الحقاني العضدي | shoulder texts |
+| Body rotation (Grashey) | ميل الجسم / إدارة الجسم | تدوير الجسم نحو الكتف المفحوص (الأيمن) | shoulder texts |
+| Detector | الكاسيت | الكاشف | console, effect cards, chest PA / AP texts |
+| Jugular notch | الشق الوداجي | الثَّلمة الوداجية | AP chest |
+| Exposure index (simulated) | مؤشر التعريض | مؤشر تعريض محاكى | `technique.model`, `technique.gaugeNote`, `technique.di` |
+| Breath | احبس نفسك / احبسي نفسك | احبس نَفَسَك / احبسي نَفَسَكِ | patient instructions |
+| Able to stand | قادرة على المشي والوقوف | قادرة على الوقوف | chest PA / lateral cases |
+| Arrived turned | ويده / ساقه مائلة قليلًا | ملتفة قليلًا (دوران لا ميل) | limb cases |
+| Server acknowledgement | إقرار الخادم | تأكيد الخادم | `assess.*` |
+| Reconcile | مصالحة | مزامنة الحالة مع الخادم | `assess.*` |
+| Age | عمرها {age} عامًا | ICU plural (انظر Session 8) | `home.patientLine` |
+| Elbow SID text | «لليد» (خطأ وُجد في RAD-068 الجزء 1) | «للمرفق» | `upper-limb-common.ts` (elbow `sidForPart`) |
+| Not a repeat decision | «تُعاد الصورة عادةً» | «وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة» | critical findings (G8) |
+| Out of this case's protocol | خارج نطاق البروتوكول التجريبي / خارج نطاق المحاكي | خارج نطاق بروتوكول هذه الحالة | kVp / SID feedback (G1) |
+
+**CLN-034 (arrows and phrasing):** in the Arabic effect titles the arrow is «←» (the direction of reading in Arabic), as the chest PA title already had; the limb and AP titles used «→» for the same meaning and now use «←». The «يُفترض أن» / «يجب أن» difference named in the audit no longer occurs: «يُفترض أن» appears nowhere in the displayed Arabic, and «يجب أن» is the only form of "should".
+
+**Still open:** the other §12 terms of the review that are not in table (c); the Arabic of the evidence notes (internal working notes shown in the expandable evidence panel).

@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066) وUI-3 (RAD-067) واكتملا بتحقق المالك، وسُجلت نتائج فحص المالك للصور، ونُفذ الجزء 1 من RAD-068 في PR مسودة. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
+- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066) وUI-3 (RAD-067) واكتملا بتحقق المالك، وسُجلت نتائج فحص المالك للصور، ودُمج الجزء 1 من RAD-068 (#109) ونُفذ الجزء 2 (دفعة النص T+AR) في PR مسودة. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
 - **ينتظر المالك:** البند 16 من قائمة الصور (بعد RAD-067)؛ موافقة منفصلة لكل جلسة؛ استئناف برمجة Assess.
 - **ينتظر مراجِعًا بشريًا:** لا شيء جديد. RAD-019 أُغلق دون توقيع مرخّص (تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
 - **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
-- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ بصمات scene-dom تُحدَّث بموافقة المالك فقط (مقبولة لنصوص D1 الخمسة داخل دفعة RAD-068)؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
+- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ بصمات scene-dom تُحدَّث بموافقة المالك فقط (حُدّثت في الجزء 2 لنصوص الدفعة وحدها بإثبات أن الفرق نص فقط)؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)؛ نصوص الأدلة الداخلية المعروضة (`note`) ما زالت تحمل الكلمات ولها قرار مستقل، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 221,
-  "updated_at": "2026-10-22T13:59:00+00:00",
+  "revision": 223,
+  "updated_at": "2026-10-22T15:21:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -570,7 +570,7 @@
       "title": "تدقيق وتنظيف الكود قبل ميزات Assess الكبيرة",
       "status": "done",
       "priority": "medium",
-      "description": "الدفعات 1 إلى 6 وحد الوقت وCLN-042 مدموجة. المؤجل منقول إلى مهامه: CLN-016/017/025/028 في RAD-021/RAD-027/RAD-057 وRAD-068؛ CLN-035/036 وRAD-060 في RAD-062؛ CLN-010 والمفاتيح الشائعة الثمانية في RAD-066.",
+      "description": "الدفعات 1 إلى 6 وحد الوقت وCLN-042 مدموجة. المؤجل منقول إلى مهامه: CLN-016/017/025/028 في RAD-021/RAD-027/RAD-057 وRAD-068 (CLN-016/017/028 نُفذت في RAD-068 الجزء 1؛ CLN-025 مؤجل بقرار المالك 2026-10-22: لا في الوقت الحالي لأنه يحتاج استثناء S-STD-2 لمكسب تسمية فقط)؛ CLN-035/036 وRAD-060 في RAD-062؛ CLN-010 والمفاتيح الشائعة الثمانية في RAD-066.",
       "source_ref": "docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md؛ docs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md؛ docs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ .github/workflows/deploy-pages.yml؛ .github/workflows/ci.yml",
       "completion_evidence": "PRs مدموجة #100 و#101 و#102 و#103 (CLN-042)؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md وdocs/RAD-061_BATCH1_REPORT_2026-10-22.md وdocs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md وdocs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ الخيار (ب) لحد الوقت موثق بمحفّزاته في تقرير الدفعات. الدمج لا يثبت نتيجة deploy."
     },
@@ -633,8 +633,8 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "in_progress",
       "priority": "high",
-      "description": "الجزء 1 في PR مسودة: توحيد الأطراف العليا (CLN-016/017/028) بتطابق بايت، وتدقيق علامة النتيجة لكل الفحوص، وإصلاح التقاط اللمس على الهاتف بعرض «الكاشف كاملًا» (سبب عيب العلامة). CLN-025 يحتاج استثناء S-STD-2. التالي: (2) دفعة نص T+AR مع نصوص D1 الخمسة وشارات VALIDATED/PROVISIONAL (بصماتها مقبولة داخلها)؛ (3) دفعات S؛ ثم بنود R وعلامات provisional.",
-      "source_ref": "docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
+      "description": "الجزءان 1 (توحيد الأطراف العليا، علامة النتيجة) و2 (نص T+AR، شارات، D1) منجزان؛ الثاني في PR مسودة. CLN-025: لا في الوقت الحالي. مفتوح: نصوص الأدلة الداخلية، CLN-018. التالي: (3) دفعات S؛ ثم بنود R وعلامات provisional.",
+      "source_ref": "docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
     {

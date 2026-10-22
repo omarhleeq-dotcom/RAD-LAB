@@ -25,25 +25,25 @@ const FAMILY: Record<UpperLimbFamily, { condition: CaseText; attenuationLabel: C
   wrist: {
     condition: {
       en: "Stable and cooperative. No cast, splint or jewellery on the left wrist. The patient has arrived with the hand slightly turned.",
-      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الرسغ الأيسر. وصل المريض ويده مائلة قليلًا.",
+      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الرسغ الأيسر. وصل المريض ويده ملتفة قليلًا.",
     },
-    attenuationLabel: { en: "Average adult wrist (reference attenuation; provisional)", ar: "رسغ بالغ متوسط (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult wrist (reference attenuation)", ar: "رسغ بالغ متوسط (توهين مرجعي)" },
     attenuationRef: "S14.1c-6; S10b-9; O26",
   },
   hand: {
     condition: {
       en: "Stable and cooperative. No cast, splint, rings or jewellery on the left hand. The patient has arrived with the hand slightly turned.",
-      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا خواتم ولا مجوهرات على اليد اليسرى. وصل المريض ويده مائلة قليلًا.",
+      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا خواتم ولا مجوهرات على اليد اليسرى. وصل المريض ويده ملتفة قليلًا.",
     },
-    attenuationLabel: { en: "Average adult hand (reference attenuation; provisional)", ar: "يد بالغ متوسطة (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult hand (reference attenuation)", ar: "يد بالغ متوسطة (توهين مرجعي)" },
     attenuationRef: "S14.2-10; S10b-9; O26",
   },
   elbow: {
     condition: {
       en: "Stable and cooperative. No cast, splint or jewellery on the left arm. The patient has arrived with the forearm slightly turned.",
-      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الذراع اليسرى. وصل المريض وساعده مائل قليلًا.",
+      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الذراع اليسرى. وصل المريض وساعده ملتف قليلًا.",
     },
-    attenuationLabel: { en: "Average adult elbow (reference attenuation; provisional)", ar: "مرفق بالغ متوسط (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult elbow (reference attenuation)", ar: "مرفق بالغ متوسط (توهين مرجعي)" },
     attenuationRef: "S14.3-9; S10b-9; O26",
   },
 };

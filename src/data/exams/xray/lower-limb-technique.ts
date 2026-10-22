@@ -44,8 +44,8 @@ const lowerLimbProfile = (kind: LowerLimbKind): AnyExamTechniqueProfile => {
     ...base,
     id: `demo-adult-${kind}-reference-dr`,
     label: {
-      en: `Demo protocol — adult ${c.part.en}, generic DR system, manual technique (provisional)`,
-      ar: `بروتوكول تجريبي — ${c.part.ar} لدى بالغ، نظام DR عام، تقنية يدوية (مؤقت)`,
+      en: `Teaching protocol — adult ${c.part.en}, generic DR system, manual technique`,
+      ar: `بروتوكول تعليمي — ${c.part.ar} لدى بالغ، نظام DR عام، تقنية يدوية`,
     },
     evidence: {
       status: "provisional",

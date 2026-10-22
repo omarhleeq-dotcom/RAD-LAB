@@ -228,6 +228,20 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 **الحدود:** لا يمنح هذا القرار إذن برمجة بذاته؛ كل جلسة بموافقة منفصلة. لا يغيّر علامات `provisional` ولا تجميد الفحوص والصور.
 
+<a id="text-batch-owner-2026-10-22"></a>
+### قرارات دفعة النص RAD-068 الجزء 2 — 2026-10-22
+
+**السلطة:** أجوبة المالك في المحادثة بتاريخ 2026-10-22 لجلسة RAD-068 الجزء 2 (دفعة النص T + AR). تسجل هنا كما قيلت؛ التنفيذ والدليل في [تقرير الجزء 2](RAD-068_PART2_REPORT_2026-10-22.md).
+
+1. **CLN-025: لا في الوقت الحالي.** مؤجل لأنه يحتاج تغييرات اختبارات بموجب S-STD-2 مقابل مكسب تسمية فقط. يُسجل في RAD-068 وفي متابعة RAD-061؛ محفّز رفعه كما في [تقرير الجزء 1](RAD-068_PART1_REPORT_2026-10-22.md) (§4 Scale).
+2. **تسميات شارات الأدلة (D5: لا «validated» أبدًا):**
+   - «VALIDATED» / «مثبت» ← «SOURCE-BASED» / «مستند إلى مصدر»؛
+   - «PROVISIONAL» / «مؤقت» ← «TEACHING VALUE» / «قيمة تعليمية».
+   - **تتغير التسميات المعروضة فقط.** المعرّفات الداخلية وقيم البيانات (`provisional` و`validated`) كما هي (D4).
+3. **قبول S-STD-2 للنص فقط:** إن تغيّرت لقطات توصيف الصدر PA أو الـgoldens أو بصمات scene-dom **بسبب نص مدرج في هذه الدفعة فقط**، يجوز تحديثها، مع سرد كل ملف (الفحص والمفاتيح والنص القديم ← الجديد) وإثبات أن لا رقم ولا درجة ولا إحداثي ولا رسم تغيّر. أي فرق آخر ← توقف وسؤال.
+
+**الحدود:** لا تغيير في أي درجة أو قيمة أو قاعدة أو رسم أو إصدار محرك. لا يغيّر علامات `provisional` في البيانات (بند مستقل في RAD-068) ولا بنود S (الجزء 3) ولا رسم المشاهد (RAD-072) ولا إعادة تصميم صفحة النتيجة (RAD-069). لا يمنح إذن برمجة بذاته.
+
 ## Open O-items
 
 These are **residual scope descriptions**, not a second task-status register. Owner/reviewer/waiting states come only from [project-status](project-status.md); use `npm run status:summary -- --id RAD-045` for the credits task (O102); text queries search task fields only. Partial implementation and later decisions are stated beside the item so the old ledger cannot be mistaken for current instructions.

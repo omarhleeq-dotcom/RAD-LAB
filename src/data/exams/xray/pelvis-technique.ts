@@ -7,7 +7,7 @@ const KEEP = ["di-equation", "brightness", "mas-physics", "kvp-physics", "kvp-ex
 export const pelvisTechnique: AnyExamTechniqueProfile = {
   ...base,
   id: "demo-pelvis-ap-manual",
-  label: { en: "Demo pelvis AP protocol — manual DR with grid (provisional)", ar: "بروتوكول حوض AP تجريبي — DR يدوي مع شبكة (مؤقت)" },
+  label: { en: "Teaching pelvis AP protocol — manual DR with grid", ar: "بروتوكول حوض AP تعليمي — DR يدوي مع شبكة" },
   evidence: { status: "provisional", reference: "BONTRAGER-9 p.279; docs/DECISIONS.md S-PELVIS-1-3", note: "The kV band and SID minimum are source-backed. All model anchors and partial bands are engine teaching choices, not a clinical protocol." },
   system: { ...base.system, label: { en: "Generic digital detector with grid", ar: "كاشف رقمي عام مع شبكة" }, evidence: { status: "vendor-protocol-dependent", reference: "BONTRAGER-9 p.279 (grid); docs/DECISIONS.md S-PELVIS-1-3", note: "Grid specified by the book; detector response 1 is an assumed educational anchor, not a calibrated device." } },
   manual: { reference: { kvp: 85, mas: 2.5, sidCm: 102 }, kvpExponent: 3, evidence: { status: "educational-simplification", reference: "docs/DECISIONS.md S-PELVIS-1-3", note: "85 kV, 2.5 mAs at 102 cm is a model anchor, NOT a recommended clinical exposure. No universal EI/EIT/DI threshold is claimed." } },

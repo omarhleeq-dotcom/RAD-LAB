@@ -103,8 +103,8 @@ export const chestLateralErectExam: ExamDefinition = {
         id: "wrong-side-marker",
         label: { en: "Wrong marker (side against the detector)", ar: "علامة خاطئة (الجانب الملاصق للكاشف)" },
         reason: {
-          en: "Critical finding — wrong marker: the letter does not name the side of the patient against the detector, or the marker is on the wrong side of the display. A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.",
-          ar: "ملاحظة حرجة — علامة خاطئة: الحرف لا يطابق جانب المريض الملاصق للكاشف، أو أن العلامة في الجانب الخطأ من الصورة المعروضة. العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة تُعاد الصورة عادةً.",
+          en: "Critical finding — wrong marker: the letter does not name the side of the patient against the detector, or the marker is on the wrong side of the display. A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image.",
+          ar: "ملاحظة حرجة — علامة خاطئة: الحرف لا يطابق جانب المريض الملاصق للكاشف، أو أن العلامة في الجانب الخطأ من الصورة المعروضة. العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
         },
         concept: {
           status: "common-reference",
@@ -129,13 +129,13 @@ export const chestLateralErectExam: ExamDefinition = {
         id: "arms-over-lungs",
         label: { en: "Arms not raised", ar: "الذراعان غير مرفوعتين" },
         reason: {
-          en: "Critical finding — arms not raised: the soft tissue of the arms is superimposed on the upper lung fields, which hides lung tissue. Such a lateral would normally be repeated, so the attempt is below the pass mark whatever the numeric score.",
-          ar: "ملاحظة حرجة — الذراعان غير مرفوعتين: يتراكب نسيج الذراعين الرخو على الحقلين الرئويين العلويين فيحجب نسيج الرئة. تُعاد الصورة الجانبية عادةً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية.",
+          en: "Critical finding — arms not raised: the soft tissue of the arms is superimposed on the upper lung fields, which hides lung tissue. In this simulator that is a critical error to correct in training, so the attempt is below the pass mark whatever the numeric score.",
+          ar: "ملاحظة حرجة — الذراعان غير مرفوعتين: يتراكب نسيج الذراعين الرخو على الحقلين الرئويين العلويين فيحجب نسيج الرئة. وهذا في هذا المحاكي خطأ مهم يجب تصحيحه في التدريب، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية.",
         },
         concept: {
           status: "common-reference",
           reference: "BONTRAGER-9 p.84-85, 94",
-          note: "Arms raised above the head (a support is allowed); arms not raised superimpose soft tissue on the upper lung fields and the lateral is repeated.",
+          note: "Arms raised above the head (a support is allowed); arms not raised superimpose soft tissue on the upper lung fields and can hide lung tissue.",
         },
         evidence: {
           status: "provisional",
@@ -258,8 +258,8 @@ export const chestLateralErectExam: ExamDefinition = {
       feedback: {
         pass: { en: "Arms raised above the head, clear of the lung fields (an arm support may be used).", ar: "الذراعان مرفوعتان فوق الرأس وبعيدتان عن الحقلين الرئويين (يمكن استخدام مسند للذراعين)." },
         fail: {
-          en: "The arms are not raised, so their soft tissue is superimposed on the upper lung fields. Raise the arms above the head; a lateral like this is normally repeated.",
-          ar: "الذراعان غير مرفوعتين فيتراكب نسيجهما الرخو على الحقلين الرئويين العلويين. ارفع الذراعين فوق الرأس؛ وتُعاد مثل هذه الصورة الجانبية عادةً.",
+          en: "The arms are not raised, so their soft tissue is superimposed on the upper lung fields. Raise the arms above the head. This setup is not suitable for a lateral; its effect is not drawn in this image.",
+          ar: "الذراعان غير مرفوعتين فيتراكب نسيجهما الرخو على الحقلين الرئويين العلويين. ارفع الذراعين فوق الرأس. هذا إعداد غير مناسب للصورة الجانبية؛ وأثره غير ممثَّل في هذه الصورة.",
         },
       },
       evidence: { status: "common-reference", reference: "BONTRAGER-9 p.84-85, 94; S10b-6", note: "Not drawn on the result image in this version (scored only; also a critical finding)." },
@@ -316,8 +316,8 @@ export const chestLateralErectExam: ExamDefinition = {
           ar: "وضعية جانبية حقيقية: الأضلاع الخلفية والزاويتان الضلعيتان الحجابيتان الخلفيتان للجانبين متقاربة (فارق نحو 1 سم طبيعي بسبب تباعد الحزمة).",
         },
         fail: {
-          en: "The patient is rotated. The posterior ribs and costophrenic angles of the two sides are further apart than the roughly 1 cm that beam divergence normally causes. Rotation is judged by that separation; the direction is hard to tell on a lateral, so none is given. A clearly rotated lateral is usually repeated.",
-          ar: "المريض مائل (دوران). الأضلاع الخلفية والزاويتان الضلعيتان الحجابيتان للجانبين أبعد من نحو 1 سم الذي يسببه تباعد الحزمة عادةً. يُحكم على الدوران بمقدار هذا التباعد؛ ويصعب تحديد الاتجاه في الصورة الجانبية فلا يُذكر. وتُعاد الصورة الجانبية المائلة بوضوح عادةً.",
+          en: "The patient is rotated. The posterior ribs and costophrenic angles of the two sides are further apart than the roughly 1 cm that beam divergence normally causes. Rotation is judged by that separation; the direction is hard to tell on a lateral, so none is given. A clearly rotated lateral is a positioning error to correct in training.",
+          ar: "المريض مائل (دوران). الأضلاع الخلفية والزاويتان الضلعيتان الحجابيتان للجانبين أبعد من نحو 1 سم الذي يسببه تباعد الحزمة عادةً. يُحكم على الدوران بمقدار هذا التباعد؛ ويصعب تحديد الاتجاه في الصورة الجانبية فلا يُذكر. والصورة الجانبية المائلة بوضوح خطأ في الوضعية يجب تصحيحه في التدريب.",
         },
       },
       evidence: {
@@ -384,8 +384,8 @@ export const chestLateralErectExam: ExamDefinition = {
       label: { en: "kVp (beam energy / penetration)", ar: "kVp (طاقة الحزمة / الاختراق)" },
       feedback: {
         pass: {
-          en: "kVp is inside the demo target band (110–125 kV). A lateral chest is imaged at a relatively high kVp so that the ribs and lung markings show through the heart and the upper lungs.",
-          ar: "قيمة kVp ضمن النطاق التجريبي (110–125 kV). تُصوَّر الصورة الجانبية للصدر بجهد مرتفع نسبيًا لتظهر الأضلاع والعلامات الرئوية عبر القلب والرئتين العلويتين.",
+          en: "kVp is inside this case's target band (110–125 kV). A lateral chest is imaged at a relatively high kVp so that the ribs and lung markings show through the heart and the upper lungs.",
+          ar: "قيمة kVp ضمن النطاق المستهدف لهذه الحالة (110–125 kV). تُصوَّر الصورة الجانبية للصدر بجهد مرتفع نسبيًا لتظهر الأضلاع والعلامات الرئوية عبر القلب والرئتين العلويتين.",
         },
         low: {
           en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; the 100–109 and 126–150 kV partial credit is an engine teaching choice.)",
@@ -395,7 +395,7 @@ export const chestLateralErectExam: ExamDefinition = {
           en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; the 126–150 kV partial credit is an engine teaching choice.)",
           ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 126–150 kV فهي اختيار تعليمي.)",
         },
-        fail: { en: "kVp is outside the demo protocol's range.", ar: "قيمة kVp خارج نطاق البروتوكول التجريبي." },
+        fail: { en: "kVp is outside this case's protocol range.", ar: "قيمة kVp خارج نطاق بروتوكول هذه الحالة." },
       },
       evidence: {
         status: "provisional",
@@ -418,8 +418,8 @@ export const chestLateralErectExam: ExamDefinition = {
           ar: "الحجرة المركزية مختارة وداخل المجال الضوئي، لذا ينهي AEC التعريض عند الهدف في هذا النموذج التعليمي. تخطيط الحجرات مخطط تعليمي محايد؛ والأنظمة الحقيقية تختلف.",
         },
         high: {
-          en: "The selected chamber(s) include a field over the dense anterior chest wall or the spine. It senses less signal, so the AEC keeps exposing for longer and the lungs receive more than the target. For the lateral, this demo protocol uses the central chamber.",
-          ar: "الحجرات المختارة تشمل حقلًا فوق جدار الصدر الأمامي الكثيف أو العمود الفقري. يستشعر إشارة أقل فيواصل AEC التعريض مدة أطول فتتلقى الرئتان أكثر من الهدف. في الصورة الجانبية يستخدم هذا البروتوكول التجريبي الحجرة المركزية.",
+          en: "The selected chamber(s) include a field over the dense anterior chest wall or the spine. It senses less signal, so the AEC keeps exposing for longer and the lungs receive more than the target. For the lateral, this case's protocol uses the central chamber.",
+          ar: "الحجرات المختارة تشمل حقلًا فوق جدار الصدر الأمامي الكثيف أو العمود الفقري. يستشعر إشارة أقل فيواصل AEC التعريض مدة أطول فتتلقى الرئتان أكثر من الهدف. في الصورة الجانبية يستخدم بروتوكول هذه الحالة الحجرة المركزية.",
         },
         low: {
           en: "The selected chamber(s) see less attenuating regions, so the AEC ends the exposure early and the lungs receive less than the target.",
@@ -456,7 +456,7 @@ export const chestLateralErectExam: ExamDefinition = {
           en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. An AEC compensates in the educational model. (The textbook gives only a minimum; the upper limit is an engine teaching choice.)",
           ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. ويعوّض AEC ذلك في النموذج التعليمي. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى اختيار تعليمي في المحاكي.)",
         },
-        fail: { en: "SID is outside the target band.", ar: "قيمة SID خارج النطاق المستهدف." },
+        fail: { en: "SID is outside this case's target band.", ar: "قيمة SID خارج النطاق المستهدف لهذه الحالة." },
       },
       evidence: {
         status: "provisional",

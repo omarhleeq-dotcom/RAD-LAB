@@ -231,7 +231,7 @@ export interface CriticalFindingRule {
   label: LocalizedText;
   /** Why this forces "below the pass mark" (shown to the learner in both languages). */
   reason: LocalizedText;
-  /** The clinical CONCEPT (a common quality criterion: such an image would be rejected / repeated in practice). */
+  /** The clinical CONCEPT (a common quality criterion: such an image would be an important quality error). */
   concept: Evidence;
   /** The IMPLEMENTATION in this simulator (the gating itself is provisional / educational). */
   evidence: Evidence;

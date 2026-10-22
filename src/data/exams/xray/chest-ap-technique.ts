@@ -16,8 +16,8 @@ export const chestApTechnique: ExamTechniqueProfile = {
   ...chestPaTechnique,
   id: "demo-adult-ap-supine-reference-dr",
   label: {
-    en: "Demo protocol — average adult AP supine, generic DR system (provisional)",
-    ar: "بروتوكول تجريبي — بالغ متوسط AP مستلقيًا، نظام DR عام (مؤقت)",
+    en: "Teaching protocol — average adult AP supine, generic DR system",
+    ar: "بروتوكول تعليمي — بالغ متوسط AP مستلقيًا، نظام DR عام",
   },
   evidence: {
     status: "provisional",
@@ -42,6 +42,6 @@ export const chestApTechnique: ExamTechniqueProfile = {
   // Same lung-field chamber layout as the PA; only the Arabic terminology differs ("الكاشف", S13 terminology rule).
   aec: {
     ...chestPaTechnique.aec,
-    chambers: chestPaTechnique.aec.chambers.map((c) => ({ ...c, label: { ...c.label, ar: c.label.ar.replace("الكاسيت", "الكاشف") } })),
+    chambers: chestPaTechnique.aec.chambers.map((c) => ({ ...c, label: { ...c.label, ar: c.label.ar.replace("الكاشف", "الكاشف") } })),
   },
 };

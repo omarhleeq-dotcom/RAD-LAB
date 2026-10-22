@@ -85,7 +85,7 @@ describe("Session 4 text (patient instructions + radiograph effects)", () => {
     expect(get(en as Tree, "radiograph.margins") as string).toMatch(/not exposure, collimation or anatomy/);
     expect(get(ar as Tree, "radiograph.margins") as string).toMatch(arabic);
     expect(get(en as Tree, "radiograph.magnitudeApprox") as string).toBe("Educational visual approximation");
-    expect(get(en as Tree, "radiograph.effectsIntro") as string).toMatch(/never a validated appearance/);
+    expect(get(en as Tree, "radiograph.effectsIntro") as string).toMatch(/never a measured appearance/);
   });
 
   it("states the marker laterality convention in EN and AR (PA display: patient left = viewer right)", () => {
@@ -99,7 +99,7 @@ describe("Session 4 text (patient instructions + radiograph effects)", () => {
   it("keeps the educational disclaimers: not the case patient, not diagnostic, effects are approximations (EN + AR)", () => {
     const note = get(en as Tree, "radiograph.educationalNote") as string;
     expect(note).toMatch(/not an image of the case patient/);
-    expect(note).toMatch(/not a diagnostic/);
+    expect(note).not.toMatch(/diagnostic|validated|clinically/); // RAD-068 part 2 (B): the "not a diagnostic image" wording stays in the alt texts
     expect(note).toMatch(/educational approximations/);
     expect(get(ar as Tree, "radiograph.educationalNote") as string).toMatch(/ليس|وليس/);
     expect(get(en as Tree, "patient.note") as string).toMatch(/does not measure real breathing or movement/);
@@ -172,8 +172,8 @@ describe("sex-aware Arabic strings", () => {
     const t = createTranslator({ locale: "ar", messages: ar as never }) as unknown as (key: string, values?: Record<string, string | number>) => string;
     const male = { sex: "male" } as const;
     const before: Record<string, string> = {
-      "patient.breathingOptions.deep-inspiration-hold": "«خذ شهيقًا عميقًا واحبس نفسك.»",
-      "patient.breathingOptions.expiration-hold": "«أخرج الزفير واحبس نفسك.»",
+      "patient.breathingOptions.deep-inspiration-hold": "«خذ شهيقًا عميقًا واحبس نَفَسَك.»",
+      "patient.breathingOptions.expiration-hold": "«أخرج الزفير واحبس نَفَسَك.»",
       "patient.breathingOptions.normal-breathing": "«تنفّس بشكل طبيعي.»",
       "patient.motionOptions.remain-still": "«ابقَ ثابتًا ولا تتحرك حتى أخبرك.»",
       "patient.motionOptions.relax-and-move": "«استرخِ — يمكنك التحرك بشكل طبيعي.»",

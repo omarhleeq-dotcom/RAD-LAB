@@ -18,8 +18,8 @@ import type { ExamTechniqueProfile } from "@/domain/exam";
 export const chestPaTechnique: ExamTechniqueProfile = {
   id: "demo-adult-reference-dr",
   label: {
-    en: "Demo protocol — average adult, generic DR system (provisional)",
-    ar: "بروتوكول تجريبي — بالغ متوسط، نظام DR عام (مؤقت)",
+    en: "Teaching protocol — average adult, generic DR system",
+    ar: "بروتوكول تعليمي — بالغ متوسط، نظام DR عام",
   },
   evidence: {
     status: "provisional",
@@ -82,9 +82,9 @@ export const chestPaTechnique: ExamTechniqueProfile = {
     // Vendor-neutral, three-field educational layout in detector-normalized coordinates (view from the tube; left/right
     // follow the detector view). Real chamber number, shape and position vary by system.
     chambers: [
-      { id: "left", label: { en: "Left field (detector view)", ar: "الحقل الأيسر (عرض الكاسيت)" }, region: { x1: -0.62, y1: -0.5, x2: -0.2, y2: -0.05 }, anatomy: "lung" },
+      { id: "left", label: { en: "Left field (detector view)", ar: "الحقل الأيسر (عرض الكاشف)" }, region: { x1: -0.62, y1: -0.5, x2: -0.2, y2: -0.05 }, anatomy: "lung" },
       { id: "center", label: { en: "Central field", ar: "الحقل المركزي" }, region: { x1: -0.11, y1: -0.5, x2: 0.11, y2: 0 }, anatomy: "mediastinum" },
-      { id: "right", label: { en: "Right field (detector view)", ar: "الحقل الأيمن (عرض الكاسيت)" }, region: { x1: 0.2, y1: -0.5, x2: 0.62, y2: -0.05 }, anatomy: "lung" },
+      { id: "right", label: { en: "Right field (detector view)", ar: "الحقل الأيمن (عرض الكاشف)" }, region: { x1: 0.2, y1: -0.5, x2: 0.62, y2: -0.05 }, anatomy: "lung" },
     ],
     minChamberCoverage: 0.5,
     // Lung fields end at the target by definition of the protocol; denser central anatomy makes the AEC run longer.
@@ -145,8 +145,8 @@ export const chestPaTechnique: ExamTechniqueProfile = {
     },
     {
       id: "kvp-target",
-      label: { en: "Demo kVp target band 110–125", ar: "نطاق kVp المستهدف التجريبي 110–125" },
-      value: { en: "Full credit in this demo protocol only.", ar: "درجة كاملة في هذا البروتوكول التجريبي فقط." },
+      label: { en: "Case kVp target band 110–125", ar: "نطاق kVp المستهدف لهذه الحالة 110–125" },
+      value: { en: "Full credit in this case's protocol only.", ar: "درجة كاملة في بروتوكول هذه الحالة فقط." },
       evidence: { status: "provisional", reference: "Technique ref §3.2, §15.1, §15.3" },
     },
     {
@@ -171,8 +171,8 @@ export const chestPaTechnique: ExamTechniqueProfile = {
       id: "inverse-square",
       label: { en: "SID: inverse-square distance–intensity relation", ar: "SID: علاقة المسافة–الشدة بالتربيع العكسي" },
       value: {
-        en: "The physics is validated; how it becomes simulated detector exposure is an educational model that ignores the rest of the imaging chain.",
-        ar: "الفيزياء مثبتة؛ أما تحويلها إلى تعريض كاشف محاكى فنموذج تعليمي يتجاهل بقية سلسلة التصوير.",
+        en: "The physics is source-based; how it becomes simulated detector exposure is an educational model that ignores the rest of the imaging chain.",
+        ar: "الفيزياء مستندة إلى مصدر؛ أما تحويلها إلى تعريض كاشف محاكى فنموذج تعليمي يتجاهل بقية سلسلة التصوير.",
       },
       evidence: { status: "validated", reference: "Technique ref §9", note: "Physics VALIDATED; mapping = EDUCATIONAL MODEL; score tolerance around 180 cm = PROVISIONAL." },
     },
@@ -180,8 +180,8 @@ export const chestPaTechnique: ExamTechniqueProfile = {
       id: "di-bands",
       label: { en: "DI scoring bands ±1 (full) and ±3 (partial)", ar: "نطاقات تقييم DI: ±1 (كاملة) و±3 (جزئية)" },
       value: {
-        en: "Demo scoring tolerances only; there is no universal DI pass/fail limit.",
-        ar: "حدود تقييم تجريبية فقط؛ لا يوجد حدّ نجاح/رسوب عالمي لـ DI.",
+        en: "Teaching scoring tolerances only; there is no universal DI pass/fail limit.",
+        ar: "حدود تقييم تعليمية فقط؛ لا يوجد حدّ نجاح/رسوب عالمي لـ DI.",
       },
       evidence: { status: "provisional", reference: "Technique ref §6.4, §15.5" },
     },
@@ -207,8 +207,8 @@ export const chestPaTechnique: ExamTechniqueProfile = {
       id: "aec-layout",
       label: { en: "Three-field AEC diagram and chamber factors", ar: "مخطط AEC بثلاثة حقول وعوامل الحجرات" },
       value: {
-        en: "Vendor-neutral teaching diagram. Chamber number, position, selection, combination and termination vary by system; the lung-field preference is this demo's choice.",
-        ar: "مخطط تعليمي محايد. يختلف عدد الحجرات وموضعها واختيارها وطريقة دمجها وإنهائها حسب النظام؛ وتفضيل حقلي الرئتين هو اختيار هذا العرض.",
+        en: "Vendor-neutral teaching diagram. Chamber number, position, selection, combination and termination vary by system; the lung-field preference is this case's choice.",
+        ar: "مخطط تعليمي محايد. يختلف عدد الحجرات وموضعها واختيارها وطريقة دمجها وإنهائها حسب النظام؛ وتفضيل حقلي الرئتين هو اختيار هذه الحالة.",
       },
       evidence: { status: "vendor-protocol-dependent", reference: "Technique ref §4, §15.6–15.7" },
     },

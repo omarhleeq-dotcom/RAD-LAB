@@ -116,8 +116,8 @@ export const chestApSupineExam: ExamDefinition = {
         id: "wrong-side-marker",
         label: { en: "Wrong-side marker", ar: "علامة جانب خاطئة" },
         reason: {
-          en: "Critical finding — wrong-side marker: the marker is on the wrong side for the patient's side (in this simulator's display, as for the PA, L belongs on the viewer's right and R on the viewer's left). A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.",
-          ar: "ملاحظة حرجة — علامة جانب خاطئة: العلامة في الجانب الخطأ بالنسبة لجانب المريض (وفق عرض المحاكي، كما في PA: تُوضع L على يمين المشاهد وR على يساره). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة تُعاد الصورة عادةً.",
+          en: "Critical finding — wrong-side marker: the marker is on the wrong side for the patient's side (in this simulator's display, as for the PA, L belongs on the viewer's right and R on the viewer's left). A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image.",
+          ar: "ملاحظة حرجة — علامة جانب خاطئة: العلامة في الجانب الخطأ بالنسبة لجانب المريض (وفق عرض المحاكي، كما في PA: تُوضع L على يمين المشاهد وR على يساره). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
         },
         concept: {
           status: "common-reference",
@@ -339,7 +339,7 @@ export const chestApSupineExam: ExamDefinition = {
       feedback: {
         pass: {
           en: "The central ray is at about the T7 level (8–10 cm below the jugular notch).",
-          ar: "الشعاع المركزي عند مستوى T7 تقريبًا (8–10 سم تحت الشق الوداجي).",
+          ar: "الشعاع المركزي عند مستوى T7 تقريبًا (8–10 سم تحت الثَّلمة الوداجية).",
         },
         fail: { en: "The central ray is off the T7 level. Re-centre it at mid-chest.", ar: "الشعاع المركزي بعيد عن مستوى T7. أعد توسيطه عند منتصف الصدر." },
         low: {
@@ -401,8 +401,8 @@ export const chestApSupineExam: ExamDefinition = {
       label: { en: "kVp (beam energy / penetration)", ar: "kVp (طاقة الحزمة / الاختراق)" },
       feedback: {
         pass: {
-          en: "kVp is inside the demo target band (110–125 kV), the optimal chest band in the textbook, also for the AP supine chest.",
-          ar: "قيمة kVp ضمن النطاق التجريبي (110–125 kV)، وهو النطاق الأمثل للصدر في الكتاب، ومنه صدر AP المستلقي.",
+          en: "kVp is inside this case's target band (110–125 kV), the optimal chest band in the textbook, also for the AP supine chest.",
+          ar: "قيمة kVp ضمن النطاق المستهدف لهذه الحالة (110–125 kV)، وهو النطاق الأمثل للصدر في الكتاب، ومنه صدر AP المستلقي.",
         },
         low: {
           en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; the 100–109 and 126–150 kV partial credit is an engine teaching choice.)",
@@ -412,7 +412,7 @@ export const chestApSupineExam: ExamDefinition = {
           en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; the 126–150 kV partial credit is an engine teaching choice.)",
           ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 126–150 kV فهي اختيار تعليمي.)",
         },
-        fail: { en: "kVp is outside the demo protocol's range.", ar: "قيمة kVp خارج نطاق البروتوكول التجريبي." },
+        fail: { en: "kVp is outside this case's protocol range.", ar: "قيمة kVp خارج نطاق بروتوكول هذه الحالة." },
       },
       evidence: {
         status: "provisional",
@@ -443,7 +443,7 @@ export const chestApSupineExam: ExamDefinition = {
           en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum; the upper limit is an engine teaching choice.)",
           ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى اختيار تعليمي في المحاكي.)",
         },
-        fail: { en: "SID is outside the target band (below about 102 cm or above 200 cm).", ar: "قيمة SID خارج النطاق المستهدف (أقل من نحو 102 سم أو أكثر من 200 سم)." },
+        fail: { en: "SID is outside this case's target band (below about 102 cm or above 200 cm).", ar: "قيمة SID خارج النطاق المستهدف لهذه الحالة (أقل من نحو 102 سم أو أكثر من 200 سم)." },
       },
       evidence: {
         status: "provisional",

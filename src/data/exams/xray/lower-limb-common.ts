@@ -67,7 +67,7 @@ const PER = {
     ),
     rotationFail: T(
       "The leg is rotated: the condyles and the joint space are no longer symmetric and the fibular head is covered by the tibia more or less than about half (Bontrager p.246). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule or tolerance). Value 0 = the interepicondylar line parallel to the detector (Bontrager rotates the leg internally 3°–5° to achieve this). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "الساق مائلة (دوران): لم تعد اللقمتان وحيز المفصل متناظرين وأصبح رأس الشظية مغطى بالظنبوب بأكثر أو بأقل من نحو النصف (Bontrager ص.246). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه ولا حدًّا). القيمة 0 = الخط بين اللقيمتين موازٍ للكاشف (يدير Bontrager الساق إنسيًّا 3°–5° لتحقيق ذلك). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "الساق مائلة (دوران): لم تعد اللقمتان وحيز المفصل متناظرين وأصبح رأس الشظية مغطى بالظنبوب بأكثر أو بأقل من نحو النصف (Bontrager ص.246). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه ولا حدًّا). القيمة 0 = الخط بين اللقمتين موازٍ للكاشف (يدير Bontrager الساق إنسيًّا 3°–5° لتحقيق ذلك). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal femur.", "الحافة العلوية للمجال تقطع عظم الفخذ السفلي."),
@@ -247,7 +247,7 @@ const PER = {
     ),
     clippedSides: {
       top: T("The top of the field cuts off the toes.", "الحافة العلوية للمجال تقطع أصابع القدم."),
-      bottom: T("The bottom of the field cuts off the navicular and the cuboid.", "الحافة السفلية للمجال تقطع الزورقي والنردي."),
+      bottom: T("The bottom of the field cuts off the navicular and the cuboid.", "الحافة السفلية للمجال تقطع الزورقي والمكعبي."),
       left: T("The left side of the field (in the detector view) cuts off the medial side of the foot (the big toe and the 1st metatarsal).", "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الجهة الإنسية للقدم (الإبهام والمشط الأول)."),
       right: T("The right side of the field (in the detector view) cuts off the lateral side of the foot (the little toe and the 5th metatarsal).", "الجانب الأيمن للمجال (في عرض الكاشف) يقطع الجهة الوحشية للقدم (الإصبع الصغير والمشط الخامس)."),
     },
@@ -264,7 +264,7 @@ const PER = {
     ),
     centreYLow: T(
       "The central ray is too far toward the toes (top of the detector view). The navicular and cuboid may be clipped. Move the target down, toward the base of the 3rd metatarsal.",
-      "الشعاع المركزي قريب من الأصابع أكثر من اللازم (أعلى عرض الكاشف). قد يُقطع الزورقي والنردي. حرّك الهدف للأسفل نحو قاعدة المشط الثالث.",
+      "الشعاع المركزي قريب من الأصابع أكثر من اللازم (أعلى عرض الكاشف). قد يُقطع الزورقي والمكعبي. حرّك الهدف للأسفل نحو قاعدة المشط الثالث.",
     ),
     centreYHigh: T(
       "The central ray is too far toward the heel (bottom of the detector view). The toes may be clipped. Move the target up, toward the base of the 3rd metatarsal.",
@@ -297,7 +297,7 @@ const PER = {
     },
     imageCriteria: [
       { id: "rotation", description: T("True AP: nearly equal spacing of metatarsals 2–5; bases of the 1st and 2nd metatarsals separated, bases 2–5 overlapping", "إسقاط AP صحيح: مسافات متقاربة تقريبًا بين مشط القدم 2–5؛ وقاعدتا المشط الأول والثاني منفصلتان وقواعد 2–5 متراكبة") },
-      { id: "coverage", description: T("Whole foot included: all phalanges, metatarsals, navicular, cuneiforms and cuboid; joint between the 1st and 2nd cuneiforms and the sesamoids seen", "القدم كلها ضمن الصورة: جميع السلاميات وعظام مشط القدم والزورقي والإسفينيات والنردي؛ ومفصل الإسفينيين الأول والثاني والسمسمانيات ظاهرة") },
+      { id: "coverage", description: T("Whole foot included: all phalanges, metatarsals, navicular, cuneiforms and cuboid; joint between the 1st and 2nd cuneiforms and the sesamoids seen", "القدم كلها ضمن الصورة: جميع السلاميات وعظام مشط القدم والزورقي والإسفينيات والمكعبي؛ ومفصل الإسفينيين الأول والثاني والسمسمانيات ظاهرة") },
       { id: "sharpness", description: T("No loss of sharpness from patient movement", "لا يوجد فقدان في الحدّة بسبب حركة المريض") },
       { id: "exposure", description: T("Detector exposure near target (judged by DI, not by displayed brightness)", "تعريض كاشف قريب من الهدف (يُحكم عليه من DI وليس من سطوع الصورة المعروضة)") },
     ],
@@ -416,8 +416,8 @@ const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
     id: "wrong-side-marker",
     label: T("Wrong-side marker", "علامة جانب خاطئة"),
     reason: T(
-      `Critical finding — wrong-side marker: the marker letter does not match the patient's side (this is the ${sideWords(k).up} ${PER[k].part.en}). A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. In practice such an image would normally be repeated.`,
-      `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (هذه ${PER[k].part.ar} ${sideWords(k).ar}). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وفي الممارسة تُعاد الصورة عادةً.`,
+      `Critical finding — wrong-side marker: the marker letter does not match the patient's side (this is the ${sideWords(k).up} ${PER[k].part.en}). A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image.`,
+      `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (هذه ${PER[k].part.ar} ${sideWords(k).ar}). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
     ),
     concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, p.224-225, ${PER[k].page}`, "COMMON QUALITY CRITERION: an anatomic side marker is required on every image and must name the side imaged. For a single limb Bontrager gives no viewer-half convention, so only the letter is judged (O21 option A, S14.1c-4, S14.4-2)."),
     evidence: ev("provisional", "S14.4-3, S14.1c-4", "PROVISIONAL / educational: the gate is a simulator rule (educator decision pending, O5). The numeric score is unchanged."),
@@ -426,8 +426,8 @@ const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
     id: "missing-marker",
     label: T("Missing marker", "علامة جانب غير موضوعة"),
     reason: T(
-      `Critical finding — no side marker: the image would not say which ${PER[k].part.en} it shows. The attempt is below the pass mark whatever the numeric score, because an unmarked image is normally repeated.`,
-      `ملاحظة حرجة — لا توجد علامة جانب: لن تبيّن الصورة أي ${PER[k].part.ar} تُظهر. تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية، لأن الصورة بلا علامة تُعاد عادةً.`,
+      `Critical finding — no side marker: the image would not say which ${PER[k].part.en} it shows. The attempt is below the pass mark whatever the numeric score. A missing marker is a critical error to correct in training; this is an educational result, not a clinical decision about the image.`,
+      `ملاحظة حرجة — لا توجد علامة جانب: لن تبيّن الصورة أي ${PER[k].part.ar} تُظهر. تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. غياب العلامة خطأ مهم يجب تصحيحه في التدريب، وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
     ),
     concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, p.224-225, ${PER[k].page}`, "COMMON QUALITY CRITERION: the image must carry a side marker."),
     evidence: ev("provisional", "S14.4-3", "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged."),
@@ -611,7 +611,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           `kVp is above the textbook band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only ${kvLo}–${kvHi} kV is the textbook digital band; the partial credit up to ${pHi} kV is an engine teaching choice.)`,
           `قيمة kVp أعلى من نطاق الكتاب. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ أما الدرجة الجزئية حتى ‎${pHi}‎ kV فهي اختيار تعليمي.)`,
         ),
-        fail: T(`kVp is outside this simulator's range for the ${partEn} (${pLo}–${pHi} kV).`, `قيمة kVp خارج نطاق المحاكي لـ${p.part.ar} (‎${pLo}–${pHi}‎ kV).`),
+        fail: T(`kVp is outside this case's protocol range for the ${partEn} (${pLo}–${pHi} kV).`, `قيمة kVp خارج نطاق بروتوكول هذه الحالة لـ${p.part.ar} (‎${pLo}–${pHi}‎ kV).`),
       },
       evidence: ev("provisional", `BONTRAGER-9 ${pg} (digital ${(kvLo + kvHi) / 2} ± 5 kV); S14.4-3`, `${kvLo}–${kvHi} kV is Bontrager. The partial bands ${pLo}–${kvLo - 1} and ${kvHi + 1}–${pHi} kV are an ENGINE TEACHING CHOICE, NOT Bontrager. kVp physics is validated but never mapped to displayed darkness.`),
     },
@@ -680,7 +680,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           "SID is longer than this simulator's teaching band (102–110 cm); exposure at the detector drops (inverse square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum; the upper limit and the partial band are engine teaching choices.)",
           "قيمة SID أطول من النطاق التعليمي في المحاكي (102–110 سم)؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى والنطاق الجزئي اختياران تعليميان في المحاكي.)",
         ),
-        fail: T(`SID is outside this simulator's range for the ${partEn} (below about 95 cm or above 130 cm).`, `قيمة SID خارج نطاق المحاكي لـ${p.part.ar} (أقل من نحو 95 سم أو أكثر من 130 سم).`),
+        fail: T(`SID is outside this case's protocol range for the ${partEn} (below about 95 cm or above 130 cm).`, `قيمة SID خارج نطاق بروتوكول هذه الحالة لـ${p.part.ar} (أقل من نحو 95 سم أو أكثر من 130 سم).`),
       },
       evidence: ev("provisional", `BONTRAGER-9 p.224-225 (SID minimum 40 in / 102 cm); S14.4-3`, "The 102 cm minimum is Bontrager (inch-to-cm conversion). The 110 cm upper full-credit limit and the 95–130 cm partial band are ENGINE TEACHING CHOICES, NOT Bontrager."),
     },

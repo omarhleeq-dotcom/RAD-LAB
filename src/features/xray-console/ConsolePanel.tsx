@@ -120,6 +120,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           value={settings.projection}
           disabled={locked}
           columns={phone}
+          help={radCase.choiceControls?.some((cc) => cc.projectionLabels) ? t("projectionFollowsPosition") : undefined}
           onSelect={(v) => onChange("projection", v)}
           label={(v) => {
             const own = projectionLabelOf(radCase.choiceControls, settings.choices, v);

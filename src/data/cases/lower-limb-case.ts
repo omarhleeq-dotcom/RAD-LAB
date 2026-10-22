@@ -30,9 +30,9 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
     request: { en: "Knee X-ray, right, AP (leg extended).", ar: "أشعة الركبة، اليمنى، إسقاط AP (الساق ممدودة)." },
     condition: {
       en: "Stable and cooperative. No cast, splint or jewellery on the right leg. The pelvis is level. The patient has arrived with the leg slightly turned.",
-      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الساق اليمنى. الحوض مستوٍ. وصل المريض وساقه مائلة قليلًا.",
+      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الساق اليمنى. الحوض مستوٍ. وصل المريض وساقه ملتفة قليلًا.",
     },
-    attenuationLabel: { en: "Average adult knee (reference attenuation; provisional)", ar: "ركبة بالغ متوسطة (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult knee (reference attenuation)", ar: "ركبة بالغ متوسطة (توهين مرجعي)" },
   },
   "knee-lateral": {
     description: {
@@ -46,9 +46,9 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
     request: { en: "Knee X-ray, right, lateral (lateral recumbent, knee flexed).", ar: "أشعة الركبة، اليمنى، إسقاط جانبي (استلقاء جانبي، الركبة مثنية)." },
     condition: {
       en: "Stable and cooperative. No cast, splint or jewellery on the right leg. The patient has arrived with the leg slightly turned.",
-      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الساق اليمنى. وصل المريض وساقه مائلة قليلًا.",
+      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على الساق اليمنى. وصل المريض وساقه ملتفة قليلًا.",
     },
-    attenuationLabel: { en: "Average adult knee (reference attenuation; provisional)", ar: "ركبة بالغ متوسطة (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult knee (reference attenuation)", ar: "ركبة بالغ متوسطة (توهين مرجعي)" },
   },
   "foot-ap": {
     description: {
@@ -62,9 +62,9 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
     request: { en: "Foot X-ray, right, AP (dorsoplantar).", ar: "أشعة القدم، اليمنى، إسقاط AP (ظهري أخمصي)." },
     condition: {
       en: "Stable and cooperative. No cast, splint or jewellery on the right foot. The patient has arrived with the foot slightly turned.",
-      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على القدم اليمنى. وصل المريض وقدمه مائلة قليلًا.",
+      ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على القدم اليمنى. وصل المريض وقدمه ملتفة قليلًا.",
     },
-    attenuationLabel: { en: "Average adult foot (reference attenuation; provisional)", ar: "قدم بالغ متوسطة (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult foot (reference attenuation)", ar: "قدم بالغ متوسطة (توهين مرجعي)" },
   },
   "foot-oblique": {
     description: {
@@ -80,7 +80,7 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
       en: "Stable and cooperative. No cast, splint or jewellery on the right foot. The patient has arrived with the foot lying flat.",
       ar: "حالته مستقرة ومتعاون. لا جبيرة ولا مجوهرات على القدم اليمنى. وصل المريض وقدمه مسطحة.",
     },
-    attenuationLabel: { en: "Average adult foot (reference attenuation; provisional)", ar: "قدم بالغ متوسطة (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult foot (reference attenuation)", ar: "قدم بالغ متوسطة (توهين مرجعي)" },
   },
   "ankle-ap": {
     description: {
@@ -94,9 +94,9 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
     request: { en: "Ankle X-ray, left, AP (leg extended).", ar: "أشعة الكاحل، اليسرى، إسقاط AP (الساق ممدودة)." },
     condition: {
       en: "Cooperative. The patient has arrived with the leg slightly turned.",
-      ar: "متعاون. وصل المريض وساقه مائلة قليلًا.",
+      ar: "متعاون. وصل المريض وساقه ملتفة قليلًا.",
     },
-    attenuationLabel: { en: "Average adult ankle (reference attenuation; provisional)", ar: "كاحل بالغ متوسط (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult ankle (reference attenuation)", ar: "كاحل بالغ متوسط (توهين مرجعي)" },
   },
   "ankle-lateral": {
     description: {
@@ -110,9 +110,9 @@ const TEXT: Record<LowerLimbKind, { description: CaseText; scenario: CaseText; r
     request: { en: "Ankle X-ray, left, lateral (lateral recumbent, foot dorsiflexed).", ar: "أشعة الكاحل، اليسرى، إسقاط جانبي (استلقاء جانبي، القدم مثنية ظهريًّا)." },
     condition: {
       en: "Cooperative. The patient has arrived with the leg slightly turned.",
-      ar: "متعاون. وصل المريض وساقه مائلة قليلًا.",
+      ar: "متعاون. وصل المريض وساقه ملتفة قليلًا.",
     },
-    attenuationLabel: { en: "Average adult ankle (reference attenuation; provisional)", ar: "كاحل بالغ متوسط (توهين مرجعي؛ مؤقت)" },
+    attenuationLabel: { en: "Average adult ankle (reference attenuation)", ar: "كاحل بالغ متوسط (توهين مرجعي)" },
   },
 };
 
