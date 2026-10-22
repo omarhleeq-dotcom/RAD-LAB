@@ -184,6 +184,15 @@ node scripts/assess/trial-install.mjs --reviewed-pg17-v1
 
 أُضيف [build-trial-tools.mjs](../scripts/assess/build-trial-tools.mjs) بنمط مولد صورة الاتصال: يحزم trial-tools وحدها (يرفض React/Next/job-main/trial-main) مع Dockerfile على base المثبت نفسها وmanifest ببصماته، بلا عملية افتراضية؛ كل تشغيل يحتاج علمًا صريحًا وUUID. محليًا: tools.mjs=`f796d18fd7bbc63b0bee3d3dcb587eea1977a39a94e885a1c162f19845c9cecb`، Dockerfile=`603bc003a96d126ffdc865e6b03f46688a0d6670d668408d2e0b173fa65d3784`؛ خمس حالات (بلا وسائط، UUID خاطئ، علم غير معروف، install وclose بلا ملف سر) أعادت STOP/configuration بلا شبكة؛ اختبارات server-trial-tools نجحت17، وESLint نظيف. حزمة البناء `assess-trial-tools-v1.zip` (SHA256 `2ce02c5eedf75032729f7dc6c1e9395e7aa3ff2f5ec12de3b66bb7ffdec40629`) بنفس أمر البناء المقيد السابق والوسم `tools-f796d18fd7bb`. لم يُبنَ شيء على Google، ولا Job أو LOGIN أو سر. التثبيت الحي يحتاج لاحقًا: إذن بناء، ثم Job بالسر المثبت وحارس صريح، ونافذة LOGIN قصيرة للعامل وإغلاقها، كلٌ بإذنه.
 
+<a id="trial-tools-install-owner-result"></a>
+### بناء صورة الأدوات وتثبيت النسختين — نتائج المالك 2026-10-22 عمّان
+
+أذن المالك صراحةً ثلاث عمليات منفصلة، ونفذها في Cloud Shell/SQL Editor وأرسل النتائج: (1) «أذن ببناء ورفع صورة assess-trial-tools فقط»: build `fbfbacd6-3aa4-47b9-9c2a-e41f1f3a4ccf` بحالة SUCCESS ومدة13s، والوسم `tools-f796d18fd7bb`، وdigest `sha256:799528c51bf1024b70deafef32119a876b3ac43e6139d0da3183ff5773ac439c`؛ (2) «أذن بإنشاء Job assess-trial-install فقط»: Job بالصورة المثبتة بالـdigest، SA assess-job، السر assess-worker-config:1 على `/run/secrets/assess-worker.json`، tasks1/parallelism1/retries0/timeout60s/cpu1/memory512Mi، وdescribe أعاد الصورة المثبتة وmaxRetries=0؛ (3) نافذة التثبيت: فُتح LOGIN العامل (`Success. No rows returned` من استعلام الفتح، حارس البوابة المغلقة داخله)، ثم نفذ المالك Job مرتين بـ`--authorized-install-mixed` وUUID كل نسخة، فاكتمل التنفيذان (`assess-trial-install-nn5rw` وvblnb) بنجاح؛ الأداة تخرج بخطأ عند STOP، فاكتمال التنفيذ يوافق COMPLETE لكل نسخة.
+
+الإغلاق: `rolcanlogin=false` و`expired=true`، وظهرت جلسة backend واحدة بعده مباشرة (NOLOGIN لا يقطع الجلسات القائمة)؛ لم يُنهِ المالك أي جلسة، وبعد إعادة الفحص أفاد أن `backends=0`. بعد ذلك أرجع استعلام النشرات سطرين: hidden وvisible بنشر واحد لكل نسخة. الإرسال السابق للوثيقتين أظهرهما `pending` قبل التثبيت.
+
+الحدود: إفادات المالك لا فحص مستقل من الوكيل؛ لم يُقرأ سجل execution ولا نتيجة الأداة نفسها بل خروجها الناجح. صلاحيات SA assess-job ومنح السر ومنح الصورة لم تُراجع جردًا. إلغاء pooler cache ومراقبة الجلسات الدائمة غير مثبتين. لم يُفعَّل النطاق ولا أُسند شيء ولا فُتحت البوابة، والحارس0 في الـJob الأصلي. هذه ليست تجربة حية مكتملة؛ نافذة LOGIN أُغلقت ضمن الدقائق نفسها ولا تُعاد.
+
 ### سجل الخطوة4 — التركيب الخامل نجح والقبول الحي لم ينفذ
 
 | المجموعة | الدليل المطلوب عند الإذن، وليس دليلًا وصل |
