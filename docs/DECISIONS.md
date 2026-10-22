@@ -242,6 +242,16 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 **الحدود:** لا تغيير في أي درجة أو قيمة أو قاعدة أو رسم أو إصدار محرك. لا يغيّر علامات `provisional` في البيانات (بند مستقل في RAD-068) ولا بنود S (الجزء 3) ولا رسم المشاهد (RAD-072) ولا إعادة تصميم صفحة النتيجة (RAD-069). لا يمنح إذن برمجة بذاته.
 
+<a id="part2-acceptance-owner-2026-10-22"></a>
+### قرارات المالك بعد الجزء 2 (PR #110) — 2026-10-22
+
+**السلطة:** أجوبة المالك في المحادثة بتاريخ 2026-10-22 على الجزء 2 من RAD-068. التفاصيل في [تقرير الجزء 2](RAD-068_PART2_REPORT_2026-10-22.md).
+
+1. **قبول لاحق:** تغييرات توقعات الاختبارات النصية فقط في `critical-findings.test.ts` و`messages.test.ts` و`laterality-audit.test.ts` مقبولة بعد وقوعها، استثناءً من S-STD-2 للنصوص التي قرر المالك تغييرها.
+2. **نصوص «الدليل على هذا الفحص»:** النصوص التي ما زالت تُظهر «provisional» أو «VALIDATED» أو «pending educator review» تُعرض للمستخدم، فينطبق عليها D1. تُعالج مع قرار علامات `provisional`، وهو الجزء الأخير من RAD-068، ويجب حسمها قبل أن يكتمل RAD-068.
+
+**الحدود:** لا يغيّر D1 ولا D4 ولا D5، ولا يوسّع استثناء S-STD-2 لغير ما ذُكر. لا يمنح إذن برمجة بذاته.
+
 ## Open O-items
 
 These are **residual scope descriptions**, not a second task-status register. Owner/reviewer/waiting states come only from [project-status](project-status.md); use `npm run status:summary -- --id RAD-045` for the credits task (O102); text queries search task fields only. Partial implementation and later decisions are stated beside the item so the old ledger cannot be mistaken for current instructions.

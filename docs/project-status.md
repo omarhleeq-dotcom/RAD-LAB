@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 223,
-  "updated_at": "2026-10-22T15:21:00+00:00",
+  "revision": 224,
+  "updated_at": "2026-10-22T17:25:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -633,8 +633,8 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "in_progress",
       "priority": "high",
-      "description": "الجزءان 1 (توحيد الأطراف العليا، علامة النتيجة) و2 (نص T+AR، شارات، D1) منجزان؛ الثاني في PR مسودة. CLN-025: لا في الوقت الحالي. مفتوح: نصوص الأدلة الداخلية، CLN-018. التالي: (3) دفعات S؛ ثم بنود R وعلامات provisional.",
-      "source_ref": "docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
+      "description": "الجزءان 1 و2 مدموجان (#109، #110). الجزء 3 (دفعات S) في PR مسودة. الجزء الأخير: علامات provisional ونصوص الدليل المعروضة (provisional/VALIDATED/pending educator review، D1) ويجب حسمها قبل اكتمال RAD-068؛ ثم بنود R. CLN-025 مؤجل، CLN-018 مفتوح.",
+      "source_ref": "docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#part2-acceptance-owner-2026-10-22؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
     {
