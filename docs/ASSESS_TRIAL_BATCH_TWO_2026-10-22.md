@@ -175,6 +175,15 @@ node scripts/assess/trial-install.mjs --reviewed-pg17-v1
 
 الحدود: إفادة المالك للنتائج، لا اتصال من الوكيل. النطاق **خامل** (`active=false`): لا تفعيل ولا بوابة ولا LOGIN ولا عامل ولا Job ولا محتوى أو إسناد. لا يثبت الصف صحة التعيين الفعلي A/B للأشخاص إلا بما أخبر به المالك. لا تعاد عملية الإدخال؛ التفعيل يحتاج إذنه المستقل بعد المحتوى والإسناد.
 
+<a id="trial-content-and-tools-package"></a>
+### وثيقتا المحتوى وحزمة صورة أدوات التثبيت — 2026-10-22 عمّان
+
+مراجعة المسار: الإرسال `content_submit_v1` من لوحة محتوى المالك بجلسته، والإسناد `assign_v1` من لوحة Assess للمالك؛ أما `content_install_v1` فممنوحة لـ`assess_worker` فقط، وأداة [installOneMixed](../scripts/assess/trial-tools.ts) لم تكن مغلفة في أي صورة (صورة assess-trial تستثنيها). إغلاق الإسناد لا زر له في الواجهة ويبقى عبر closeOneAssignment بملف جلسة مالك آمن، وهو غير محلول. اختار المالك الخيار (أ): صورة أدوات مستقلة بدل SQL إداري يتجاوز المدقق الموثوق.
+
+وُلدت خارج Git وثيقتا `visible` و`hidden` من [trialFixture](../scripts/assess/trial-fixture.ts) بـassessment_id المثبت في النطاق، واجتازتا `validateMixedContent` محليًا (SHA256 visible=`d1bad135df097d46a67974e54320636335983240de5b4f0e522379b087c9bbb5`، hidden=`2003ddfba440a68a86ac03db9b2e67a39e38294ea2dda555bb3bca61b32aaa02`)، وأُرسلتا للمالك لإرسالهما مرة واحدة لكل منهما. تحويان مفاتيح الإجابة ضمن مسار التأليف المعتمد ولا تُعطيان للطلاب.
+
+أُضيف [build-trial-tools.mjs](../scripts/assess/build-trial-tools.mjs) بنمط مولد صورة الاتصال: يحزم trial-tools وحدها (يرفض React/Next/job-main/trial-main) مع Dockerfile على base المثبت نفسها وmanifest ببصماته، بلا عملية افتراضية؛ كل تشغيل يحتاج علمًا صريحًا وUUID. محليًا: tools.mjs=`f796d18fd7bbc63b0bee3d3dcb587eea1977a39a94e885a1c162f19845c9cecb`، Dockerfile=`603bc003a96d126ffdc865e6b03f46688a0d6670d668408d2e0b173fa65d3784`؛ خمس حالات (بلا وسائط، UUID خاطئ، علم غير معروف، install وclose بلا ملف سر) أعادت STOP/configuration بلا شبكة؛ اختبارات server-trial-tools نجحت17، وESLint نظيف. حزمة البناء `assess-trial-tools-v1.zip` (SHA256 `2ce02c5eedf75032729f7dc6c1e9395e7aa3ff2f5ec12de3b66bb7ffdec40629`) بنفس أمر البناء المقيد السابق والوسم `tools-f796d18fd7bb`. لم يُبنَ شيء على Google، ولا Job أو LOGIN أو سر. التثبيت الحي يحتاج لاحقًا: إذن بناء، ثم Job بالسر المثبت وحارس صريح، ونافذة LOGIN قصيرة للعامل وإغلاقها، كلٌ بإذنه.
+
 ### سجل الخطوة4 — التركيب الخامل نجح والقبول الحي لم ينفذ
 
 | المجموعة | الدليل المطلوب عند الإذن، وليس دليلًا وصل |
