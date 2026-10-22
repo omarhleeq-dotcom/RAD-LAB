@@ -204,6 +204,8 @@ Only the word / phrase below was replaced; no other Arabic string was touched. �
 | `positioning.detector` (no longer shown) | الكاسيت / البكي | الكاشف / البكي |
 New draft strings (`scene.*`): `sidValue` «SID {value} سم», `tubeAngle` «زاوية الأنبوب: {angle}° (+ = نحو القدمين)» (numbers isolated with LRM), `rotationReadout` «دوران المريض: {deg}°», `rotationArc` «{deg}°». The old `positioningAp.angleReadout` is no longer used by the scene.
 
+> **RAD-061 batch 5 (2026-10-22):** the unused keys `positioning.cueDetector`, `positioningAp.sideAlt` and `positioningAp.angleReadout` were removed from `messages/en.json` and `messages/ar.json`. Their terminology records above stay as review history and are not deleted; no shown string changed.
+
 ## Session 14.1c — wrist exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
 Keys: `messages/ar.json` → `scene.altWrist*`, `sceneWrist.*`, `positioningWrist.*`, `console.projections.wrist-*`, `radiograph.wrist-pa.*`, `radiograph.wrist-lateral.*`; exam / case text in `src/data/exams/xray/wrist-common.ts`, `src/data/cases/wrist-*.ts`. Rule followed: «الكاشف» for the detector (never «الكاسيت»); left / right of a drawing means the viewer's side; the wrist case patient is male (masculine forms).
 | EN | Draft Arabic | Where |
