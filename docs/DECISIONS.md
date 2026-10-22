@@ -96,6 +96,13 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 [خطة المطابقة](ASSESS_CLOUD_RUN_PLAN_2026-10-21.md) تقترح Cloud Run Jobs لدفعة runAssessJobs المحدودة دون HTTP عام، وتفصل ذلك عن قرار المالك باختيار Cloud Run عمومًا. ما زالت container/entrypoint وهوية التشغيل وACL/TLS وإدارة السر والإلغاء واختبار SIGTERM/القتل/فقد الإقرار والمراقبة والتكلفة والجدولة تحتاج تجهيزًا وأدلة مستقلة. Supabase Auth/Data API للمستخدم وPages للواجهة كما هما، ولا نقل قاعدة البيانات أو انتحال مستخدم/قبول v2. S-ASSESS-15 وقرار النسخة الشاملة المؤجلة وحدود restore وO108 وبوابات القبول الحي محفوظة.
 
+<a id="assess-trial-closeout-owner-2026-10-22"></a>
+### إغلاق تجربة Assess الهندسية وقرارات ما بعدها — 2026-10-22 عمّان
+
+**السلطة:** بعد [التقرير النهائي](ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md) ناقش المالك البنود المفتوحة وقرر: (1) **النطاق** `assess.trial_scope` **يبقى فعّالًا** (`active=true`) حتى قرار مستقل بتشغيل Assess الحقيقي؛ البوابة والإسنادان وLOGIN مغلقة، وتعطيله بأمر واحد مسموح عند غياب محاولات نشطة. (2) **زر إغلاق الإسناد** في الواجهة يُؤجَّل إلى جلسة إصلاحات الواجهة الشاملة؛ يبقى إجراء console للمالك المسار المعتمد حاليًا. (3) **المراقبة والإلغاء** (قناة إنذار، إيقاف طوارئ مجرّب بما فيه إنهاء الجلسات، ومتابعة التكلفة) **شرط مسبق قبل تفعيل Assess لناس حقيقيين**، لا قبله: تُخطط وتُنفذ قبل ذلك التفعيل، ولا تُنشأ جدولة أو قناة تنبيه الآن.
+
+**الحدود:** لا يمنح القرار إذن تشغيل أو جدولة أو فتح بوابة أو دمج #96، ولا يعتمد قبولًا شاملًا لـAssess أو RAD-056. النسخ الاحتياطي/الاستعادة والمراجعات المستقلة (O108، المصادر والتراخيص، الطبي، Marker) ودمج #96 تبقى بنودًا منفصلة بتوجيه المالك. مهام المتابعة: RAD-059 (شرط ما قبل التفعيل الفعلي) وRAD-060 (زر الإغلاق).
+
 ## Open O-items
 
 These are **residual scope descriptions**, not a second task-status register. Owner/reviewer/waiting states come only from [project-status](project-status.md); use `npm run status:summary -- --id RAD-045` for the credits task (O102); text queries search task fields only. Partial implementation and later decisions are stated beside the item so the old ledger cannot be mistaken for current instructions.
