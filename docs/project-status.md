@@ -6,7 +6,7 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066، بانتظار تحقق الهاتف) وUI-3 (RAD-067، مكتمل)، وسُجلت نتائج فحص المالك للصور. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
+- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066، بانتظار تحقق الهاتف) وUI-3 (RAD-067، مكتمل)، وسُجلت نتائج فحص المالك للصور، ونُفذ الجزء 1 من RAD-068 في PR مسودة. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
 - **ينتظر المالك:** تحقق الهاتف لـRAD-066؛ البند 16 من قائمة الصور (بعد RAD-067)؛ موافقة منفصلة لكل جلسة؛ استئناف برمجة Assess.
 - **ينتظر مراجِعًا بشريًا:** لا شيء جديد. RAD-019 أُغلق دون توقيع مرخّص (تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
 - **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 219,
-  "updated_at": "2026-10-22T13:25:00+00:00",
+  "revision": 220,
+  "updated_at": "2026-10-22T13:40:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -631,10 +631,10 @@
     {
       "id": "RAD-068",
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "يبدأ بتوحيد الأطراف العليا (CLN-016/017/025/028). ثم: (1) دفعة نص T+AR مع نصوص D1 الخمسة وتسميات شارات الدليل VALIDATED وPROVISIONAL (تعارض D5؛ صياغة محايدة تُحسم هنا)، وتحديث بصمات scene-dom واللقطات لها مقبول من المالك داخل الدفعة فقط؛ (2) دفعات S بحسب s-items-owner؛ (3) بنود R؛ (4) علامات provisional.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
+      "description": "الجزء 1 في PR مسودة: توحيد الأطراف العليا (CLN-016/017/028) بتطابق بايت، وتدقيق علامة صورة النتيجة لكل الفحوص (عيب المالك لم يتكرر، لا إصلاح). CLN-025 يحتاج استثناء S-STD-2. التالي: (2) دفعة نص T+AR مع نصوص D1 الخمسة وشارات VALIDATED/PROVISIONAL (بصماتها مقبولة داخلها)؛ (3) دفعات S؛ ثم بنود R وعلامات provisional.",
+      "source_ref": "docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
     {
@@ -670,7 +670,7 @@
       "status": "planned",
       "priority": "high",
       "description": "بعد RAD-068 وقبل RAD-069: مناظر مشهد الصدر الجانبي، ورئتا الصدر AP مستلقيًا، وعظام القدم ودورانها، واتجاه رسم الكاحل الجانبي، وعظم اليد الذي يختفي عند الدوران، وغياب تغيّر الكتف مع زاوية الجسم في المنظر الجانبي، والمساحة المخططة الكبيرة في نتيجة الكاحل AP. كل تغيير رسم يحتاج موافقة المالك على بصمة scene-dom.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "code"
     }
   ]
