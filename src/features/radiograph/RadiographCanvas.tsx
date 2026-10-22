@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { RadiographAssetSpec } from "@/domain/radiograph";
 import type { RenderPlan } from "./plan";
-import { renderRadiograph, type LumaImage } from "./pipeline";
+import { renderRadiograph, type LumaImage, type RenderedRadiograph } from "./pipeline";
 
 /** Working resolution of the canvas: output pixels per detector cm (display scales it with CSS). */
 const PX_PER_CM = 24;
@@ -16,6 +16,11 @@ export function resultPxPerCm(spec: RadiographAssetSpec, areaCm2: number): numbe
   const want = spec.render?.pxPerCm;
   if (want === undefined) return PX_PER_CM;
   return Math.max(PX_PER_CM, Math.min(want, Math.sqrt(MAX_CANVAS_PIXELS / areaCm2)));
+}
+
+/** Canvas pixel of the marker's centre: its detector position relative to the canvas origin (the same orientation as the scene). */
+export function markerCanvasPoint(centerCm: { x: number; y: number }, out: Pick<RenderedRadiograph, "originCm" | "pxPerCm">): { x: number; y: number } {
+  return { x: (centerCm.x - out.originCm.x) * out.pxPerCm, y: (centerCm.y - out.originCm.y) * out.pxPerCm };
 }
 
 const lumaCache = new Map<string, Promise<LumaImage>>();
@@ -64,6 +69,9 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
   const t = useTranslations("radiograph");
   const ref = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  // Where the canvas sits on the detector (QA hook for the result-marker audit; display only).
+  // Set only after the client render, so the server-rendered markup is unchanged.
+  const [placement, setPlacement] = useState<{ originCm: { x: number; y: number }; pxPerCm: number; detector: { widthCm: number; heightCm: number } } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,7 +108,7 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
           ctx.textAlign = "center";
           ctx.textBaseline = "middle";
           ctx.font = `700 ${Math.round(m.sizeCm * out.pxPerCm * 0.95)}px ui-sans-serif, "Segoe UI", Arial, sans-serif`;
-          const x = (m.centerCm.x - out.originCm.x) * out.pxPerCm, y = (m.centerCm.y - out.originCm.y) * out.pxPerCm;
+          const { x, y } = markerCanvasPoint(m.centerCm, out);
           ctx.lineWidth = (4 * out.pxPerCm) / PX_PER_CM;
           ctx.strokeStyle = "rgba(0,0,0,0.65)";
           ctx.strokeText(m.side, x, y);
@@ -108,6 +116,7 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
           ctx.fillText(m.side, x, y);
           ctx.restore();
         }
+        setPlacement({ originCm: out.originCm, pxPerCm: out.pxPerCm, detector: plan.detector });
         setStatus("ready");
       })
       .catch(() => {
@@ -120,7 +129,14 @@ export function RadiographCanvas({ plan, spec, alt }: Props) {
 
   const aspect = plan.view ? `${plan.view.x2 - plan.view.x1} / ${plan.view.y2 - plan.view.y1}` : `${plan.detector.widthCm} / ${plan.detector.heightCm}`;
   return (
-    <div className="relative" style={{ aspectRatio: aspect }} data-testid="radiograph" data-status={status}>
+    <div className="relative" style={{ aspectRatio: aspect }} data-testid="radiograph"
+      data-status={status}
+      data-detector-w={placement?.detector.widthCm}
+      data-detector-h={placement?.detector.heightCm}
+      data-origin-x={placement?.originCm.x}
+      data-origin-y={placement?.originCm.y}
+      data-px-per-cm={placement?.pxPerCm}
+    >
       <canvas
         ref={ref}
         role="img"
