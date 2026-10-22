@@ -18465,8 +18465,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
-     "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
+     "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
+     "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
      "ar": "علامة الجانب (غير محسوبة)",
@@ -19242,8 +19242,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
-      "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
+      "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
+      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
       "ar": "علامة الجانب (غير محسوبة)",
@@ -23501,8 +23501,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
-     "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
+     "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
+     "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
      "ar": "علامة الجانب (غير محسوبة)",
@@ -24035,8 +24035,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
-      "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
+      "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً. العلامة خارج المجال المحدَّد فلن تُسجَّل على الصورة. انقلها إلى داخل المجال.",
+      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
       "ar": "علامة الجانب (غير محسوبة)",
@@ -38710,8 +38710,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
-     "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side."
+     "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
+     "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
     },
     "label": {
      "ar": "علامة الجانب (غير محسوبة)",
@@ -39231,8 +39231,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
-      "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side."
+      "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
+      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
      },
      "label": {
       "ar": "علامة الجانب (غير محسوبة)",
@@ -39849,8 +39849,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
-     "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side."
+     "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
+     "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
     },
     "label": {
      "ar": "علامة الجانب (غير محسوبة)",
@@ -40370,8 +40370,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
-      "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side."
+      "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
+      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
      },
      "label": {
       "ar": "علامة الجانب (غير محسوبة)",

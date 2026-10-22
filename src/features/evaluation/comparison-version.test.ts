@@ -42,7 +42,7 @@ it("separates rule/weight/gate/geometry/model changes and evaluator semantics wi
     (c) => { c.requiredProjection = "AP"; },
   ];
   for (const edit of edits) { const c = fixture(); edit(c); expect(await identity(c)).not.toBe(base); }
-  expect(await comparisonVersion(original, "radlab-practice-evaluation/2")).not.toBe(base);
+  expect(await comparisonVersion(original, "radlab-practice-evaluation/999")).not.toBe(base);
   expect(await comparisonVersion(original, "unknown")).toBeNull();
   // New fields are conservative until classified; no generic label/text stripping.
   const future = { ...original, futureRule: { label: "semantic-id", threshold: 1 } };

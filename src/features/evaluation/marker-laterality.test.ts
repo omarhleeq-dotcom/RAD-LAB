@@ -69,6 +69,9 @@ describe("marker scoring: correct side passes, wrong side is flagged", () => {
       expect(c.feedback.en, side).toMatch(/patient's left appears on the viewer's right/);
       expect(c.feedback.ar, side).toMatch(/[؀-ۿ]/);
       expect(c.feedback.ar, side).toMatch(/الجانب الخطأ/);
+      // S3 option D: still a wrong-side finding, but the text says the letter sits over the other side's anatomy.
+      expect(c.feedback.en, side).toMatch(/over the anatomy of the opposite side, even if the letter itself is the correct one/);
+      expect(c.feedback.ar, side).toMatch(/فوق تشريح الجانب المقابل/);
     }
   });
 

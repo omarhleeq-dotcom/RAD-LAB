@@ -87,7 +87,7 @@ it("persists two genuine logger attempts and reads chart-eligible scores through
     // Simulate stored history from a later evaluator/case and missing old stamps.
     // Change metadata only; saved totals never get recomputed or rewritten.
     const second = saved[1]!;
-    for (const [column, value] of [["engine_version", "radlab-practice-evaluation/2"], ["case_id", "other"], ["producer_version", "other-writer"], ["engine_version", "unknown"], ["producer_version", "unknown"], ["definition_version", "unknown"]]) {
+    for (const [column, value] of [["engine_version", "radlab-practice-evaluation/1"], ["engine_version", "radlab-practice-evaluation/999"], ["case_id", "other"], ["producer_version", "other-writer"], ["engine_version", "unknown"], ["producer_version", "unknown"], ["definition_version", "unknown"]]) {
       await db.exec("reset role");
       await db.query(`update attempts set ${column}=$1 where id=$2`, [value, second]);
       await login(a);

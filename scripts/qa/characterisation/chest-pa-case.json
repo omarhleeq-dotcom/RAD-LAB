@@ -549,8 +549,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "wrongSide": {
-     "ar": "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
-     "en": "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side."
+     "ar": "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
+     "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
     }
    },
    "id": "side-marker",

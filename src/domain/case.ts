@@ -148,7 +148,13 @@ export interface CenteringRule extends RuleBase {
 export interface MarkerRule extends RuleBase {
   kind: "marker";
   /** `fail` = nothing placed. */
-  feedback: RuleFeedback & { overlap: LocalizedText; outsideField: LocalizedText; wrongSide: LocalizedText };
+  feedback: RuleFeedback & {
+    overlap: LocalizedText;
+    outsideField: LocalizedText;
+    wrongSide: LocalizedText;
+    /** Detector-side rule only: non-critical note when the right letter sits in the other display half (S3 option D). Absent = the pass text. */
+    displayHalf?: LocalizedText;
+  };
 }
 
 export type CheckRule = EqualsRule | RangeRule | CoverageRule | CenteringRule | MarkerRule | TechniqueRule;

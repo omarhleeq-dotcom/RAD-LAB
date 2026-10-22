@@ -21,7 +21,7 @@ import {
   rectsOverlap,
   regionToRect,
 } from "@/features/simulation/geometry";
-import { isMarkerWrongSide } from "@/features/simulation/marker-rule";
+import { isMarkerDisplayHalfNote, isMarkerWrongSide } from "@/features/simulation/marker-rule";
 import { derivePatientResponse } from "@/features/patient/response";
 import { computeDetectorExposure } from "@/features/technique/model";
 import { centeringOnAxis } from "./centering";
@@ -120,8 +120,11 @@ function evalMarker(rule: MarkerRule, s: SimulationSettings, c: RadCase): Partia
   } else if ((c.positioning.markerKeepOut ?? [c.requiredAnatomy]).some((zone) => rectsOverlap(rect, regionToRect(zone)))) {
     issues.push(rule.feedback.overlap);
   }
-  if (issues.length === 0) return { outcome: "pass", observed, feedback: rule.feedback.pass };
-  return { outcome: "partial", observed, feedback: issues.length === 1 ? issues[0]! : joinText(issues) };
+  // Display-half convention (detector-side rule only): a note, never an issue. It adds no deduction and no fail.
+  const note = isMarkerDisplayHalfNote(c.positioning, { side: s.sideMarker, position: s.markerPosition }, s.choices) && rule.feedback.displayHalf;
+  if (issues.length === 0) return { outcome: "pass", observed, feedback: note || rule.feedback.pass };
+  const parts = note ? [...issues, note] : issues;
+  return { outcome: "partial", observed, feedback: parts.length === 1 ? parts[0]! : joinText(parts) };
 }
 
 const fmtDI = (di: number) => `${di > 0 ? "+" : ""}${fmt(di)} DI`;

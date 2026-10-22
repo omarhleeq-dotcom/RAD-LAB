@@ -103,8 +103,8 @@ export const chestLateralErectExam: ExamDefinition = {
         id: "wrong-side-marker",
         label: { en: "Wrong marker (side against the detector)", ar: "علامة خاطئة (الجانب الملاصق للكاشف)" },
         reason: {
-          en: "Critical finding — wrong marker: the letter does not name the side of the patient against the detector, or the marker is on the wrong side of the display. A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image.",
-          ar: "ملاحظة حرجة — علامة خاطئة: الحرف لا يطابق جانب المريض الملاصق للكاشف، أو أن العلامة في الجانب الخطأ من الصورة المعروضة. العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
+          en: "Critical finding — wrong marker: the letter does not name the side of the patient against the detector. A wrong marker misidentifies the patient's side, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image.",
+          ar: "ملاحظة حرجة — علامة خاطئة: الحرف لا يطابق جانب المريض الملاصق للكاشف. العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
         },
         concept: {
           status: "common-reference",
@@ -284,8 +284,12 @@ export const chestLateralErectExam: ExamDefinition = {
           ar: "العلامة تغطي الرئتين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
         },
         wrongSide: {
-          en: "The marker is wrong. Its letter must be the side of the patient closest to the detector, and it belongs in the margin this simulator's display assigns to that letter (L on the viewer's left, R on the right; departments differ).",
-          ar: "العلامة خاطئة. يجب أن يكون الحرف جانب المريض الأقرب إلى الكاشف، وتُوضع في الهامش الذي يخصصه عرض المحاكي لهذا الحرف (L يسار المشاهد وR يمينه؛ وتختلف الأقسام).",
+          en: "The marker letter is wrong. It must name the side of the patient closest to the detector, as set in \"Side against the detector\".",
+          ar: "حرف العلامة خاطئ. يجب أن يكون جانب المريض الأقرب إلى الكاشف، كما هو محدد في «الجانب الملاصق للكاشف».",
+        },
+        displayHalf: {
+          en: "Note, not scored: the letter names the side closest to the detector correctly. This simulator's display convention puts L in the viewer's left margin and R in the right margin, but departments differ, so the half you chose has no deduction.",
+          ar: "ملاحظة غير محسوبة: الحرف يطابق الجانب الأقرب إلى الكاشف. يضع عرض المحاكي L في هامش يسار المشاهد وR في هامش يمينه، لكن الأقسام تختلف، فلا يُخصم شيء بسبب النصف الذي اخترته.",
         },
         outsideField: {
           en: "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field.",

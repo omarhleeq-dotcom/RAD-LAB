@@ -265,8 +265,8 @@ export const chestApSupineExam: ExamDefinition = {
           ar: "العلامة تغطي الرئتين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
         },
         wrongSide: {
-          en: "The marker is on the wrong side of the image. In this display the patient's left appears on the viewer's right, as in a PA, so L belongs on the viewer's right and R on the viewer's left, in the lateral edge of the field. A wrong marker misidentifies the patient's side.",
-          ar: "العلامة على الجانب الخطأ من الصورة. في هذا العرض يظهر يسار المريض على يمين المشاهد كما في PA، لذا تُوضع L على يمين المشاهد وR على يساره، عند الحافة الجانبية للمجال. العلامة الخاطئة تُحدِّد جانب المريض خطأً.",
+          en: "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In this display the patient's left appears on the viewer's right, as in a PA, so L belongs on the viewer's right and R on the viewer's left, in the lateral edge of the field. A marker over the other side's anatomy misidentifies the patient's side.",
+          ar: "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في هذا العرض يظهر يسار المريض على يمين المشاهد كما في PA، لذا تُوضع L على يمين المشاهد وR على يساره، عند الحافة الجانبية للمجال. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
         },
         outsideField: {
           en: "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field.",
