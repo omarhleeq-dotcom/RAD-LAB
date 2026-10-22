@@ -2,6 +2,7 @@ import type { CheckRule, CriticalFindingRule, PositioningSpec } from "@/domain/c
 import type { AnyExamDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
 import type { Evidence } from "@/domain/technique";
+import { patientMotionFinding, wrongProjectionFinding } from "./critical-common";
 import { LOWER_LIMB_DETECTOR, lowerLimbRegion, type LowerLimbKind } from "./lower-limb-geometry";
 import { lowerLimbTechnique } from "./lower-limb-technique";
 import { ANKLE_PER } from "./lower-limb-ankle-texts";
@@ -412,6 +413,8 @@ const positioning = (k: LowerLimbKind): PositioningSpec => ({
 });
 
 const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
+  wrongProjectionFinding(PER[k].page),
+  patientMotionFinding(PER[k].page),
   {
     id: "wrong-side-marker",
     label: T("Wrong-side marker", "علامة جانب خاطئة"),

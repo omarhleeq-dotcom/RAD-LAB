@@ -1,6 +1,7 @@
 import type { CheckRule } from "@/domain/case";
 import type { AnyExamDefinition } from "@/domain/exam";
 import type { Evidence } from "@/domain/technique";
+import { patientMotionFinding } from "./critical-common";
 import { pelvisTechnique } from "./pelvis-technique";
 import { PELVIS_DETECTOR, PELVIS_MARKER_KEEP_OUT, PELVIS_REGION } from "./pelvis-geometry";
 const t = (en: string, ar: string) => ({ en, ar });
@@ -36,7 +37,7 @@ export const pelvisApSupineExam: AnyExamDefinition = {
   technique: pelvisTechnique,
   positioning: { centering: { target: { x: 0, y: 0 }, idealTolerance: { x: 2 / 43, y: 2 / 35 }, acceptableTolerance: { x: 5 / 43, y: 5 / 35 } }, minCollimation: 0.2, markerSizeCm: 2.8, markerSide: { R: "viewer-left", L: "viewer-right" }, defaultMarkerPosition: { R: { x: -0.86, y: -0.743 }, L: { x: -0.86, y: -0.743 } }, markerRule: { kind: "fixed-side", side: "R" }, markerKeepOut: PELVIS_MARKER_KEEP_OUT },
   rules,
-  scoring: { categoryWeights: { positioning: 25, rotation: 20, centering: 15, exposure: 20, sid: 10, respiration: 10 }, categoryLabels: { respiration: t("Respiration instruction", "تعليمات التنفس") }, passThreshold: 70, criticalFindings: (["missing-marker", "wrong-side-marker"] as const).map(id => ({ id, label: id === "missing-marker" ? t("Missing side marker", "علامة جانب غير موضوعة") : t("Wrong-side marker", "علامة جانب خاطئة"), reason: t("Critical marker finding: the attempt is below the educational pass mark regardless of its numeric score.", "ملاحظة حرجة في العلامة: المحاولة دون حد النجاح التعليمي مهما كانت درجتها الرقمية."), concept: { status: "common-reference", reference: "BONTRAGER-9 p.32-33; pelvis reference §5" }, evidence })) },
+  scoring: { categoryWeights: { positioning: 25, rotation: 20, centering: 15, exposure: 20, sid: 10, respiration: 10 }, categoryLabels: { respiration: t("Respiration instruction", "تعليمات التنفس") }, passThreshold: 70, criticalFindings: [patientMotionFinding("p.279"), ...(["missing-marker", "wrong-side-marker"] as const).map(id => ({ id, label: id === "missing-marker" ? t("Missing side marker", "علامة جانب غير موضوعة") : t("Wrong-side marker", "علامة جانب خاطئة"), reason: t("Critical marker finding: the attempt is below the educational pass mark regardless of its numeric score.", "ملاحظة حرجة في العلامة: المحاولة دون حد النجاح التعليمي مهما كانت درجتها الرقمية."), concept: { status: "common-reference" as const, reference: "BONTRAGER-9 p.32-33; pelvis reference §5" }, evidence }))] },
   possibleErrors: [{ id: "rotated", variant: "rotated", description: t("Pelvic rotation (one-image educational approximation)", "دوران الحوض (تقريب تعليمي من صورة واحدة)") }, { id: "clipped", variant: "clipped", description: t("Required anatomy clipped", "التشريح المطلوب مقطوع") }, { id: "motion", variant: "motion", description: t("Patient movement", "حركة المريض") }],
   imageCriteria: [{ id: "coverage", description: t("Pelvic girdle, L5, sacrum/coccyx and proximal femora within the field", "الحزام الحوضي وL5 والعجز والعصعص وأعلى الفخذين ضمن المجال") }, { id: "rotation", description: t("Symmetric pelvic structures; no motion; exposure retains bone detail", "تراكيب الحوض متناظرة؛ دون حركة؛ التعريض يحافظ على التفاصيل العظمية") }],
   scene: { id: "pelvis-ap-supine" }, render: { renderer: "radiograph-2d" },
