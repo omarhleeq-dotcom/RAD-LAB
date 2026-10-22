@@ -7,7 +7,10 @@
  * (set per exam in its scoring categories) are unchanged. The gating itself is a PROVISIONAL / educational implementation.
  *
  *  - wrong-projection : the selected projection is not the one requested on the exam order.
- *  - patient-motion   : the simulated patient moved (loss of sharpness) — from the patient-response model.
+ *  - patient-motion   : the simulated patient moved (loss of sharpness) — from the patient-response model, but NOT when the only
+ *                       cause is a missing "stay still" instruction (S5, owner 2026-10-22): that is assessed as its own
+ *                       instruction item (`motion-instruction`) and the assumed movement still shows in the image, but it
+ *                       does not gate the pass mark by itself. An instruction that asks for movement still gates.
  *  - wrong-side-marker: a placed marker sits on the wrong side for the case's laterality convention (an EDUCATIONAL
  *                       display convention, PA: patient left = viewer right). Same flag as the marker check's
  *                       "wrong side" feedback and the renderer's `marker.wrongSide`, so score, feedback and picture agree.
@@ -30,7 +33,7 @@ type Detector = (c: RadCase, s: SimulationSettings, response: PatientResponse) =
  */
 export const CRITICAL_DETECTORS: Record<string, Detector> = {
   "wrong-projection": (c, s) => s.projection !== c.requiredProjection,
-  "patient-motion": (_c, _s, response) => response.motion === "motion",
+  "patient-motion": (_c, _s, response) => response.motion === "motion" && response.instructions.motion !== "none",
   "missing-marker": (_c, s) => isMarkerMissing(s.sideMarker),
   // S12 (S10b-13, BONTRAGER-9 p.84-85, 94): Lateral only; present when the exam's `arms` choice is not "raised".
   "arms-over-lungs": (_c, s) => s.choices?.arms !== undefined && s.choices.arms !== "raised",

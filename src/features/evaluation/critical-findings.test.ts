@@ -73,7 +73,6 @@ describe("1 · a wrong projection must not pass", () => {
 describe("2 · critical findings gate the pass mark without changing the numeric score or the weights", () => {
   const cases: [string, Partial<SimulationSettings>, string][] = [
     ["wrong projection", { projection: "ap-erect" }, "wrong-projection"],
-    ["visible patient motion (no instruction)", { motionInstruction: "none" }, "patient-motion"],
     ["visible patient motion (relax and move)", { motionInstruction: "relax-and-move" }, "patient-motion"],
     ["wrong-side marker (L on the viewer's left)", { sideMarker: "L", markerPosition: { x: -0.84, y: -0.44 } }, "wrong-side-marker"],
     ["wrong-side marker (R on the viewer's right)", { sideMarker: "R", markerPosition: { x: 0.84, y: -0.44 } }, "wrong-side-marker"],
@@ -101,7 +100,7 @@ describe("2 · critical findings gate the pass mark without changing the numeric
   });
 
   it("several critical findings are all reported, in the case's order, and are deterministic", () => {
-    const patch: Partial<SimulationSettings> = { projection: "lateral-left", motionInstruction: "none", sideMarker: "R", markerPosition: { x: 0.84, y: -0.44 } };
+    const patch: Partial<SimulationSettings> = { projection: "lateral-left", motionInstruction: "relax-and-move", sideMarker: "R", markerPosition: { x: 0.84, y: -0.44 } };
     const r = run(patch);
     expect(ids(r)).toEqual(["wrong-projection", "patient-motion", "wrong-side-marker"]);
     expect(run(patch).criticalFindings).toEqual(r.criticalFindings);
@@ -187,14 +186,24 @@ describe("wrong-side marker", () => {
 });
 
 describe("visible patient motion", () => {
-  it("only the simulated motion response triggers it", () => {
+  it("is triggered by simulated motion that follows an instruction to move, not by a missing instruction alone (S5)", () => {
     expect(ids(run({ motionInstruction: "remain-still" }))).toEqual([]);
-    expect(ids(run({ motionInstruction: "none" }))).toEqual(["patient-motion"]);
+    expect(ids(run({ motionInstruction: "none" }))).toEqual([]);
     expect(ids(run({ motionInstruction: "relax-and-move" }))).toEqual(["patient-motion"]);
   });
 
-  it("agrees with the renderer-facing state (the same response drives the image and the gate)", () => {
+  it("a missing instruction is assessed as its own item and still shows the assumed motion, but does not gate the pass mark (S5)", () => {
     const r = run({ motionInstruction: "none" });
+    expect(r.resultState.patientResponse.motion).toBe("motion");
+    expect(r.variants).toContain("motion");
+    const instruction = r.checks.find((c) => c.ruleId === "motion-instruction")!;
+    expect([instruction.outcome, instruction.scored]).toEqual(["fail", false]);
+    expect(r.score.passed).toBe(run({ motionInstruction: "remain-still" }).score.passed);
+    expect(r.score).toEqual(run({ motionInstruction: "remain-still" }).score);
+  });
+
+  it("agrees with the renderer-facing state when the learner instructs movement (the same response drives the image and the gate)", () => {
+    const r = run({ motionInstruction: "relax-and-move" });
     expect(r.resultState.patientResponse.motion).toBe("motion");
     expect(r.variants).toContain("motion");
   });

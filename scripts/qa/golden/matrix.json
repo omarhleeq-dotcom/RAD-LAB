@@ -1411,10 +1411,8 @@
  },
  "motion-none": {
   "score": 100,
-  "passed": false,
-  "critical": [
-   "patient-motion"
-  ],
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
@@ -1593,10 +1591,8 @@
  },
  "combo-preparation": {
   "score": 82.9,
-  "passed": false,
-  "critical": [
-   "patient-motion"
-  ],
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -1790,7 +1786,6 @@
   "passed": false,
   "critical": [
    "wrong-projection",
-   "patient-motion",
    "wrong-side-marker"
   ],
   "categories": {
@@ -1858,7 +1853,6 @@
   "passed": false,
   "critical": [
    "wrong-projection",
-   "patient-motion",
    "missing-marker"
   ],
   "categories": {

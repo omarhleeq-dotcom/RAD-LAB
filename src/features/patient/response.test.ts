@@ -113,7 +113,7 @@ describe("scoring integration is conservative", () => {
     expect(chestPaErect.scoring.categoryWeights).toEqual({ positioning: 25, rotation: 20, centering: 15, exposure: 20, sid: 10, breathing: 10 });
   });
 
-  it("the remain-still instruction never changes the NUMERIC score (it can only trigger the critical-finding gate)", () => {
+  it("the remain-still instruction never changes the NUMERIC score (an instruction to move can trigger the critical-finding gate; a missing one cannot, S5)", () => {
     const base = evaluate(chestPaErect, ideal);
     expect(base.score.total).toBe(100);
     expect(base.score.passed).toBe(true);
@@ -122,9 +122,10 @@ describe("scoring integration is conservative", () => {
       expect(r.score.total).toBe(base.score.total);
       expect(r.score.categories).toEqual(base.score.categories);
       expect(r.score.thresholdMet).toBe(true);
-      // Visible motion is a critical finding: below the pass mark despite the unchanged 100.
-      expect(r.score.passed).toBe(false);
-      expect(r.criticalFindings.map((f) => f.id)).toEqual(["patient-motion"]);
+      // Motion after an instruction to move is a critical finding: below the pass mark despite the unchanged 100.
+      // A missing instruction (S5) leaves the attempt passing: the assumed motion is drawn, not gated.
+      expect(r.score.passed).toBe(m === "none");
+      expect(r.criticalFindings.map((f) => f.id)).toEqual(m === "none" ? [] : ["patient-motion"]);
       const check = r.checks.find((c) => c.ruleId === "motion-instruction")!;
       expect(check.outcome).toBe("fail");
       expect(check.scored).toBe(false);

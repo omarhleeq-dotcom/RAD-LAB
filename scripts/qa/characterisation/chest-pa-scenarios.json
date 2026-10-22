@@ -19485,27 +19485,6 @@
     },
     {
      "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    },
-    {
-     "concept": {
       "note": "COMMON QUALITY CRITERION: the image must identify the correct patient side. Which viewer side L / R belongs on is this simulator's EDUCATIONAL display convention (no validated orientation mapping is adopted in the references).",
       "reference": "Image-quality ref — Side marker and annotations (side identification must be visible)",
       "status": "common-reference"
@@ -19832,27 +19811,6 @@
      "reason": {
       "ar": "ملاحظة حرجة — إسقاط خاطئ: أُجري إسقاط مختلف عن المطلوب. إجراء الفحص الخاطئ خطأ جوهري وليس مسألة درجات، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
       "en": "Critical finding — wrong projection: a different projection from the one requested was performed. Performing the wrong examination is a fundamental error, not a matter of degree, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    },
-    {
-     "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
      }
     },
     {
@@ -24935,8 +24893,6 @@
    "radiograph.effects.motion.title",
    "radiograph.effects.scapulae.desc",
    "radiograph.effects.scapulae.title",
-   "result.criticalNote",
-   "result.criticalTitle",
    "result.failed",
    "result.notScored",
    "result.outcome.fail",
@@ -24964,8 +24920,6 @@
    "radiograph.effects.motion.title": "حركة المريض ← فقدان الحدّة",
    "radiograph.effects.scapulae.desc": "يتراكب لوحان تخطيطيان على الحقلين الرئويين الجانبيين ويحجبان نسيج الرئة. تدوير الكتفين للأمام يُبعد اللوحين عن الحقلين الرئويين (معيار شائع لجودة صورة صدر PA). التراكب رسم تخطيطي وليس لوحًا حقيقيًا من الصورة المرجعية.",
    "radiograph.effects.scapulae.title": "الكتفان غير مدوَّرين للأمام ← اللوحان فوق الرئتين",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (82.9) وأوزان الفئات لا تتغير.",
-   "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
    "result.outcome.fail": "خاطئ",
@@ -24993,8 +24947,6 @@
    "radiograph.effects.motion.title": "Patient movement → loss of sharpness",
    "radiograph.effects.scapulae.desc": "Schematic scapulae overlap the lateral lung fields and hide lung tissue. Rolling the shoulders forward moves the scapulae out of the lung fields (a common PA chest quality criterion). The overlay is a schematic, not a real scapula from the reference image.",
    "radiograph.effects.scapulae.title": "Shoulders not rolled forward → scapulae over the lungs",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (82.9) and the category weights are unchanged.",
-   "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
    "result.outcome.fail": "Incorrect",
@@ -25488,29 +25440,7 @@
      "weight": 0
     }
    ],
-   "criticalFindings": [
-    {
-     "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    }
-   ],
+   "criticalFindings": [],
    "exposure": {
     "aec": null,
     "deliveredMas": 3.2,
@@ -25675,7 +25605,7 @@
       "weight": 10
      }
     ],
-    "passed": false,
+    "passed": true,
     "thresholdMet": true,
     "total": 82.9
    },
@@ -25731,33 +25661,11 @@
      "weight": 10
     }
    ],
-   "criticalFindings": [
-    {
-     "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    }
-   ],
-   "passed": false,
+   "criticalFindings": [],
+   "passed": true,
    "thresholdMet": true,
    "total": 82.9,
-   "verdictLabel": "below-educational-pass-mark"
+   "verdictLabel": "meets-educational-pass-mark"
   }
  },
  "combo-rotation-clip": {
@@ -34825,27 +34733,6 @@
     },
     {
      "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    },
-    {
-     "concept": {
       "note": "COMMON QUALITY CRITERION: the image must carry a side marker (S10b-8: presence required for PA).",
       "reference": "BONTRAGER-9 p.32–33; ACR-CHEST Sec IV; WHO-TECH p.6, 8, 10",
       "status": "common-reference"
@@ -35177,27 +35064,6 @@
      "reason": {
       "ar": "ملاحظة حرجة — إسقاط خاطئ: أُجري إسقاط مختلف عن المطلوب. إجراء الفحص الخاطئ خطأ جوهري وليس مسألة درجات، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
       "en": "Critical finding — wrong projection: a different projection from the one requested was performed. Performing the wrong examination is a fundamental error, not a matter of degree, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    },
-    {
-     "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
      }
     },
     {
@@ -47864,8 +47730,6 @@
    "radiograph.effects.marker.title",
    "radiograph.effects.motion.desc",
    "radiograph.effects.motion.title",
-   "result.criticalNote",
-   "result.criticalTitle",
    "result.failed",
    "result.notScored",
    "result.outcome.fail",
@@ -47884,8 +47748,6 @@
    "radiograph.effects.marker.title": "علامة الجانب الخاصة بك",
    "radiograph.effects.motion.desc": "لأن تعليمات الثبات غابت أو كانت خاطئة، تحركت المريضة المحاكاة: الحواف ضبابية. حجم الضبابية تقريب تعليمي وليس مسافة حركة.",
    "radiograph.effects.motion.title": "حركة المريض ← فقدان الحدّة",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (100) وأوزان الفئات لا تتغير.",
-   "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
    "result.outcome.fail": "خاطئ",
@@ -47904,8 +47766,6 @@
    "radiograph.effects.marker.title": "Your side marker",
    "radiograph.effects.motion.desc": "Because the stay-still instruction was missing or wrong, the simulated patient moved: edges are blurred. The blur size is an educational approximation, not a movement distance.",
    "radiograph.effects.motion.title": "Patient movement → loss of sharpness",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (100) and the category weights are unchanged.",
-   "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
    "result.outcome.fail": "Incorrect",
@@ -48343,29 +48203,7 @@
      "weight": 0
     }
    ],
-   "criticalFindings": [
-    {
-     "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    }
-   ],
+   "criticalFindings": [],
    "exposure": {
     "aec": null,
     "deliveredMas": 3.2,
@@ -48509,7 +48347,7 @@
       "weight": 10
      }
     ],
-    "passed": false,
+    "passed": true,
     "thresholdMet": true,
     "total": 100
    },
@@ -48559,33 +48397,11 @@
      "weight": 10
     }
    ],
-   "criticalFindings": [
-    {
-     "concept": {
-      "note": "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
-      "reference": "Image-quality ref — Motion",
-      "status": "common-reference"
-     },
-     "evidence": {
-      "note": "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
-      "reference": "Positioning ref §Image rejection",
-      "status": "provisional"
-     },
-     "id": "patient-motion",
-     "label": {
-      "ar": "حركة مرئية للمريض",
-      "en": "Visible patient motion"
-     },
-     "reason": {
-      "ar": "ملاحظة حرجة — حركة مرئية للمريض: في هذه المحاكاة تحرّك المريض أثناء التعريض مما سبّب ضبابية في الصورة (فقدان الحدّة). لا يمكن تصحيح ضبابية الحركة لاحقًا، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.",
-      "en": "Critical finding — visible patient motion: in this simulation the patient moved during the exposure, which blurs the image (loss of sharpness). Motion blur cannot be corrected afterwards, so the attempt is below the pass mark whatever the numeric score. This is an educational result, not a clinical decision about the image."
-     }
-    }
-   ],
-   "passed": false,
+   "criticalFindings": [],
+   "passed": true,
    "thresholdMet": true,
    "total": 100,
-   "verdictLabel": "below-educational-pass-mark"
+   "verdictLabel": "meets-educational-pass-mark"
   }
  },
  "motion-relax": {

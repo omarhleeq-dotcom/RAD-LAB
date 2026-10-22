@@ -113,7 +113,7 @@ describe("scenario matrix: cross-scenario expectations", () => {
       const st = r.result.resultState;
       const expected = [
         ...(st.geometry.projection !== "pa-erect" ? ["wrong-projection"] : []),
-        ...(st.patientResponse.motion === "motion" ? ["patient-motion"] : []),
+        ...(st.patientResponse.motion === "motion" && st.patientResponse.instructions.motion !== "none" ? ["patient-motion"] : []),
         ...(r.plan.marker?.wrongSide ? ["wrong-side-marker"] : []),
         ...(r.plan.marker === null ? ["missing-marker"] : []),
       ];
@@ -125,7 +125,7 @@ describe("scenario matrix: cross-scenario expectations", () => {
   });
 
   it("wrong projection, visible motion and a wrong-side marker are below the pass mark although their numbers are high", () => {
-    for (const id of ["projection-ap", "projection-lateral", "motion-none", "motion-relax", "marker-L-wrong-side", "marker-R-wrong-side"]) {
+    for (const id of ["projection-ap", "projection-lateral", "motion-relax", "marker-L-wrong-side", "marker-R-wrong-side"]) {
       expect(by(id).result.score.passed, id).toBe(false);
       expect(by(id).result.criticalFindings.length, id).toBeGreaterThan(0);
     }
@@ -134,6 +134,10 @@ describe("scenario matrix: cross-scenario expectations", () => {
       expect(by(id).result.score.passed, id).toBe(true);
       expect(by(id).result.criticalFindings, id).toEqual([]);
     }
+    // S5: a missing "stay still" instruction shows the assumed motion but does not gate by itself.
+    expect(by("motion-none").result.score.passed).toBe(true);
+    expect(by("motion-none").result.criticalFindings).toEqual([]);
+    expect(by("motion-none").result.variants).toContain("motion");
     // S11b-1: a missing marker gates the pass mark like a wrong-side one; the number stays 100.
     expect(by("marker-none").result.score.passed).toBe(false);
     expect(by("marker-none").result.criticalFindings.map((f) => f.id)).toEqual(["missing-marker"]);
