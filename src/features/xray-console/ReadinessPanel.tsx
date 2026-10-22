@@ -4,7 +4,8 @@ import clsx from "clsx";
 import { useTranslations } from "next-intl";
 import type { ExposureReadiness } from "@/features/technique/readiness";
 
-const LED: Record<ExposureReadiness["level"], string> = {
+/** Readiness lamp colours (also used by the phone bottom bar). */
+export const LED: Record<ExposureReadiness["level"], string> = {
   ready: "bg-[#4ade80] shadow-[0_0_8px_#4ade80]",
   caution: "bg-signal shadow-[0_0_8px_#f2b134]",
   blocked: "bg-[#ff6b61] shadow-[0_0_8px_#ff6b61]",

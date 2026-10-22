@@ -34,7 +34,7 @@ export default async function PracticePage({ params }: PageProps<"/[locale]/[mod
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 pt-6">
+      <div className="workspace-breadcrumb mx-auto max-w-7xl px-4 pt-6">
         <Breadcrumb
           items={[
             { label: localize(m.name, locale), href: modalityPath(m.id) },

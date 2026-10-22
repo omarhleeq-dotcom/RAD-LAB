@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { NotFoundView } from "@/components/shell/NotFoundView";
 import { SimulationWorkspace } from "@/features/simulation/SimulationWorkspace";
+import { categoryLibraryPath } from "./library";
 import { examPath } from "./routes";
 import { findExam, resolveRadCase } from "./resolve";
 
@@ -20,5 +21,5 @@ export function PracticeEntry({ modality, examId }: { modality: string; examId: 
   if (!exam || !radCase) {
     return <NotFoundView title={t("caseTitle")} body={t("caseBody")} linkLabel={t("backToExam")} href={examPath(modality, examId)} />;
   }
-  return <SimulationWorkspace caseId={radCase.id} />;
+  return <SimulationWorkspace caseId={radCase.id} backHref={categoryLibraryPath(modality, exam.bodyPart)} />;
 }

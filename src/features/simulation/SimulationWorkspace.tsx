@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { localize } from "@/lib/localized";
 import { ResultPanel } from "@/features/evaluation/ResultPanel";
@@ -11,14 +11,25 @@ import { FeedbackBox } from "@/features/pilot/FeedbackBox";
 import { splitCaseId } from "@/features/pilot/attempt-record";
 import { ConsolePanel } from "@/features/xray-console/ConsolePanel";
 import { useSimulationStore } from "@/stores/simulation-store";
+import { PhoneWorkspace } from "./PhoneWorkspace";
 
-export function SimulationWorkspace({ caseId }: { caseId: string }) {
+// Below the site's desktop breakpoint (the side navigation's 1024px) the simulator uses the tabbed phone layout (UI-3, F3).
+const PHONE_QUERY = "(max-width: 1023px)";
+const subscribePhone = (onChange: () => void) => {
+  const query = matchMedia(PHONE_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+};
+const usePhoneLayout = () => useSyncExternalStore(subscribePhone, () => matchMedia(PHONE_QUERY).matches, () => false);
+
+export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string; backHref?: string }) {
   const t = useTranslations("workspace");
   const ts = useTranslations("sex");
   const locale = useLocale();
   const { activeCase, settings, mode, phase, result, attempt, loadCase, setSetting, expose, retry, reset } =
     useSimulationStore();
   const resultRef = useRef<HTMLDivElement>(null);
+  const phone = usePhoneLayout();
 
   useEffect(() => loadCase(caseId), [caseId, loadCase]);
   useEffect(() => {
@@ -28,6 +39,23 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
   if (!activeCase || !settings || activeCase.id !== caseId) return null;
   const c = activeCase;
   const locked = phase === "result";
+
+  const resultPanels = result && (
+    <>
+      <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
+      <FeedbackBox examId={splitCaseId(c.id).examId} />
+    </>
+  );
+
+  // Phone: a full-screen app view; the result replaces the controls inside it (the page itself does not scroll).
+  if (phone) {
+    return (
+      <>
+        <AttemptRecorder />
+        <PhoneWorkspace radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} backHref={backHref} result={resultPanels} />
+      </>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 px-4 py-6">
@@ -75,10 +103,7 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
       </div>
 
       <div ref={resultRef} className="scroll-mt-4">
-        {result && (
-          <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
-        )}
-        {result && <FeedbackBox examId={splitCaseId(c.id).examId} />}
+        {resultPanels}
       </div>
     </div>
   );

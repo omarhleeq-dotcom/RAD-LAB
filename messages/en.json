@@ -34,7 +34,27 @@
     "condition": "Patient condition",
     "modePractice": "Practice mode",
     "attempt": "Attempt {n}",
-    "practiceHint": "Adjust the patient and equipment so the image meets the request, then press Expose. Detailed feedback is shown afterwards."
+    "practiceHint": "Adjust the patient and equipment so the image meets the request, then press Expose. Detailed feedback is shown afterwards.",
+    "tabsLabel": "Simulator controls",
+    "tabs": {
+      "positioning": "Positioning",
+      "centring": "Centring",
+      "patient": "Patient",
+      "technique": "Technique"
+    },
+    "needsAttention": "has an item that is not ready",
+    "sceneViews": "Scene view",
+    "readinessDetails": "Readiness details",
+    "closeSheet": "Close",
+    "backToLibrary": "Back to library",
+    "caseDetails": "Case details",
+    "startCase": "Start",
+    "viewDetector": "Detector",
+    "viewTop": "Top view",
+    "viewSide": "Side view",
+    "phoneMenu": "Menu",
+    "enlargeScene": "Enlarge scene",
+    "wholeDetector": "Whole detector"
   },
   "positioning": {
     "detector": "Detector / Bucky",
@@ -91,7 +111,9 @@
     },
     "scapula": "Scapula",
     "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
-    "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left."
+    "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left.",
+    "touchHint": "Drag the crosshair and handles on the detector",
+    "fineAdjustPhone": "Fine adjustment"
   },
   "console": {
     "title": "X-ray console",

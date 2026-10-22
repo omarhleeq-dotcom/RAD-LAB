@@ -18,6 +18,8 @@ interface Props {
   readout?: string;
   /** Extra help text shown under the control. */
   help?: string;
+  /** Phone layout (UI-3): one row — label, − value + — with the slider as a thin line below. Same controls and ranges. */
+  compact?: boolean;
 }
 
 const REPEAT_DELAY_MS = 380;
@@ -95,7 +97,7 @@ function StepButton({
  * - Mouse/touch: tap = one step, press-and-hold repeats. Keyboard: Enter/Space on the buttons, native slider keys.
  * - 44 px touch targets. The control row is always LTR so − / + never swap sides in Arabic and numbers stay LTR.
  */
-export function StepField({ label, hint, unit, value, spec, onChange, disabled, readout, help }: Props) {
+export function StepField({ label, hint, unit, value, spec, onChange, disabled, readout, help, compact = false }: Props) {
   const t = useTranslations("console");
   const id = useId();
   const off = disabled || readout !== undefined;
@@ -117,6 +119,65 @@ export function StepField({ label, hint, unit, value, spec, onChange, disabled, 
   const sliderMin = spec.stations?.length ? 0 : spec.min;
   const sliderStep = spec.stations?.length ? 1 : spec.step;
 
+  const buttons = (
+    <div dir="ltr" className="flex items-stretch gap-2">
+      <StepButton dir={-1} label={t("decrease", { name: label })} disabled={off || atMin} onStep={step}>
+        −
+      </StepButton>
+      <output
+        htmlFor={`${id}-slider`}
+        aria-live="off"
+        className={clsx(
+          "flex min-w-0 flex-1 items-baseline justify-center gap-1.5 rounded border border-black bg-black/60 px-2",
+          compact ? "min-w-20 py-1" : "py-1.5",
+          "font-mono tabular-nums shadow-inner",
+          off ? "text-signal/50" : "text-signal",
+        )}
+      >
+        <span className={clsx("font-bold leading-none", readout === undefined && !compact ? "text-3xl tracking-wider" : "text-2xl")}>{readout ?? value}</span>
+        {readout === undefined && <span className="text-xs text-console-text/70">{unit}</span>}
+      </output>
+      <StepButton dir={1} label={t("increase", { name: label })} disabled={off || atMax} onStep={step}>
+        +
+      </StepButton>
+    </div>
+  );
+  const slider = (
+    <input
+      id={`${id}-slider`}
+      type="range"
+      // Numeric dial: always low → high from left to right (same as the − / + row), even in the RTL page.
+      dir="ltr"
+      aria-label={label}
+      aria-valuetext={readout ?? `${value} ${unit}`}
+      className={compact ? "block h-4 w-full disabled:opacity-40" : "block h-6 w-full disabled:opacity-40"}
+      min={sliderMin}
+      max={sliderMax}
+      step={sliderStep}
+      value={toSliderPosition(spec, value)}
+      disabled={off}
+      onChange={(e) => onChange(fromSliderPosition(spec, Number(e.target.value)))}
+    />
+  );
+
+  if (compact) {
+    return (
+      <div className="space-y-0.5" role="group" aria-labelledby={`${id}-label`}>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <span id={`${id}-label`} className="block text-sm font-semibold text-white">
+              {label}
+            </span>
+            {hint && <span className="block truncate text-xs text-console-text/70">{hint}</span>}
+          </div>
+          {buttons}
+        </div>
+        {slider}
+        {help && <p className="text-xs text-console-text/70">{help}</p>}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-1.5" role="group" aria-labelledby={`${id}-label`}>
       <div className="flex items-baseline justify-between gap-2">
@@ -125,40 +186,8 @@ export function StepField({ label, hint, unit, value, spec, onChange, disabled, 
         </span>
         {hint && <span className="text-xs text-console-text/70">{hint}</span>}
       </div>
-      <div dir="ltr" className="flex items-stretch gap-2">
-        <StepButton dir={-1} label={t("decrease", { name: label })} disabled={off || atMin} onStep={step}>
-          −
-        </StepButton>
-        <output
-          htmlFor={`${id}-slider`}
-          aria-live="off"
-          className={clsx(
-            "flex min-w-0 flex-1 items-baseline justify-center gap-1.5 rounded border border-black bg-black/60 px-2 py-1.5 font-mono tabular-nums shadow-inner",
-            off ? "text-signal/50" : "text-signal",
-          )}
-        >
-          <span className={clsx("font-bold leading-none", readout === undefined ? "text-3xl tracking-wider" : "text-2xl")}>{readout ?? value}</span>
-          {readout === undefined && <span className="text-xs text-console-text/70">{unit}</span>}
-        </output>
-        <StepButton dir={1} label={t("increase", { name: label })} disabled={off || atMax} onStep={step}>
-          +
-        </StepButton>
-      </div>
-      <input
-        id={`${id}-slider`}
-        type="range"
-        // Numeric dial: always low → high from left to right (same as the − / + row), even in the RTL page.
-        dir="ltr"
-        aria-label={label}
-        aria-valuetext={readout ?? `${value} ${unit}`}
-        className="block h-6 w-full disabled:opacity-40"
-        min={sliderMin}
-        max={sliderMax}
-        step={sliderStep}
-        value={toSliderPosition(spec, value)}
-        disabled={off}
-        onChange={(e) => onChange(fromSliderPosition(spec, Number(e.target.value)))}
-      />
+      {buttons}
+      {slider}
       {help && <p className="text-xs text-console-text/70">{help}</p>}
     </div>
   );

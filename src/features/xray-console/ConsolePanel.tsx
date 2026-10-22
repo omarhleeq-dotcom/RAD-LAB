@@ -19,6 +19,8 @@ interface Props {
   onChange: <K extends keyof SimulationSettings>(key: K, value: SimulationSettings[K]) => void;
   onExpose: () => void;
   locked: boolean;
+  /** Phone layout (UI-3): the exam's choice controls move to the Positioning tab and readiness / Expose to the bottom bar. */
+  phone?: boolean;
 }
 
 function Segmented<T extends string>({
@@ -65,12 +67,29 @@ function Segmented<T extends string>({
   );
 }
 
+/** Optional controls an exam declares (S11): absent for Chest PA. On desktop they stay in the console; on a phone they sit in the Positioning tab. */
+export function ChoiceControls({ radCase, settings, onChange, locked }: Pick<Props, "radCase" | "settings" | "onChange" | "locked">) {
+  const locale = useLocale();
+  return radCase.choiceControls?.map((cc) => (
+    <Segmented
+      key={cc.id}
+      legend={localize(cc.label, locale)}
+      options={cc.options.map((o) => o.id)}
+      value={settings.choices?.[cc.id] ?? ""}
+      disabled={locked}
+      onSelect={(v) => onChange("choices", { ...settings.choices, [cc.id]: v })}
+      label={(v) => localize(cc.options.find((o) => o.id === v)!.label, locale)}
+      help={cc.hint ? localize(cc.hint, locale) : undefined}
+    />
+  ));
+}
+
 /**
  * Educational, vendor-neutral X-ray console. It only collects settings and shows workflow status;
  * every exposure calculation lives in `features/technique` (pure) and is evaluated on Expose.
  * No live DI / "correct value" is shown before the exposure, so Practice Mode guides without solving.
  */
-export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, locked }: Props) {
+export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, locked, phone = false }: Props) {
   const t = useTranslations("console");
   const locale = useLocale();
   const c = radCase.controls;
@@ -80,8 +99,8 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
   const canExpose = readiness.canExpose;
 
   return (
-    <section aria-labelledby="console-heading" className="rounded-lg border border-console-line bg-console p-4 text-console-text">
-      <div className="mb-4 border-b border-console-line pb-3">
+    <section aria-labelledby="console-heading" className={phone ? "rounded-lg border border-console-line bg-console p-3 text-console-text" : "rounded-lg border border-console-line bg-console p-4 text-console-text"}>
+      <div className={phone ? "sr-only" : "mb-4 border-b border-console-line pb-3"}>
         <h2 id="console-heading" className="font-semibold text-white">
           {t("title")}
         </h2>
@@ -94,31 +113,20 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
         )}
       </div>
 
-      <div className="space-y-5">
+      <div className={phone ? "space-y-3" : "space-y-5"}>
         <Segmented
           legend={t("projection")}
           options={radCase.availableProjections}
           value={settings.projection}
           disabled={locked}
+          columns={phone}
           onSelect={(v) => onChange("projection", v)}
           label={(v) => {
             const own = projectionLabelOf(radCase.choiceControls, settings.choices, v);
             return own ? localize(own, locale) : t(`projections.${v}`);
           }}
         />
-        {/* Optional controls an exam declares (S11): absent for Chest PA, so its console is unchanged. */}
-        {radCase.choiceControls?.map((cc) => (
-          <Segmented
-            key={cc.id}
-            legend={localize(cc.label, locale)}
-            options={cc.options.map((o) => o.id)}
-            value={settings.choices?.[cc.id] ?? ""}
-            disabled={locked}
-            onSelect={(v) => onChange("choices", { ...settings.choices, [cc.id]: v })}
-            label={(v) => localize(cc.options.find((o) => o.id === v)!.label, locale)}
-            help={cc.hint ? localize(cc.hint, locale) : undefined}
-          />
-        ))}
+        {!phone && <ChoiceControls radCase={radCase} settings={settings} onChange={onChange} locked={locked} />}
         {c.tubeAngulationDeg && (
           <StepField
             label={t("tubeAngulation")}
@@ -127,6 +135,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
             spec={c.tubeAngulationDeg}
             value={settings.tubeAngulationDeg ?? 0}
             disabled={locked}
+            compact={phone}
             onChange={(v) => onChange("tubeAngulationDeg", v)}
           />
         )}
@@ -137,6 +146,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           spec={c.sidCm}
           value={settings.sidCm}
           disabled={locked}
+          compact={phone}
           onChange={(v) => onChange("sidCm", v)}
         />
         <StepField
@@ -146,6 +156,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           spec={c.kvp}
           value={settings.kvp}
           disabled={locked}
+          compact={phone}
           onChange={(v) => onChange("kvp", v)}
         />
 
@@ -169,6 +180,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           disabled={locked}
           readout={aec ? t("masAuto") : undefined}
           help={aec ? t("masAutoHelp") : undefined}
+          compact={phone}
           onChange={(v) => onChange("mas", v)}
         />
 
@@ -176,20 +188,22 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           <AecPanel radCase={radCase} settings={settings} disabled={locked} onChange={(ch) => onChange("aecChambers", ch)} />
         )}
 
-        <p className="keyboard-hint text-xs text-console-text/60">{t("adjustHint")}</p>
+        {!phone && <p className="keyboard-hint text-xs text-console-text/60">{t("adjustHint")}</p>}
 
         {/* After the exposure the readiness box only repeats "not ready"; the result panel offers Retry / Restart (S-VIS-1-3). */}
-        {!locked && <ReadinessPanel readiness={readiness} id={readinessId} />}
+        {!phone && !locked && <ReadinessPanel readiness={readiness} id={readinessId} />}
 
-        <button
-          type="button"
-          onClick={onExpose}
-          disabled={!canExpose}
-          aria-describedby={locked ? undefined : readinessId}
-          className="min-h-12 w-full rounded-md bg-signal px-4 py-3 text-lg font-bold tracking-widest text-ink hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text"
-        >
-          {locked ? t("locked") : t("expose")}
-        </button>
+        {!phone && (
+          <button
+            type="button"
+            onClick={onExpose}
+            disabled={!canExpose}
+            aria-describedby={locked ? undefined : readinessId}
+            className="min-h-12 w-full rounded-md bg-signal px-4 py-3 text-lg font-bold tracking-widest text-ink hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text"
+          >
+            {locked ? t("locked") : t("expose")}
+          </button>
+        )}
       </div>
     </section>
   );
