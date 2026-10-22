@@ -7,7 +7,10 @@
 // the canvas) and check that it lies where it was placed, in the same image orientation:
 //  - the canvas covers the detector, or (exams with a result `view`) a detector rectangle given by data-origin-cm / data-px-per-cm;
 //  - the letter's centre, converted back to detector cm, must be within TOL_CM of the placed position;
+//  - the drag must place the drawn marker where it was aimed (within 0.02 of the half-detector);
 //  - the drawn letter must be the chosen one (L or R are told apart by their glyph shape: L has its ink at the left and bottom).
+// On the phone each placement runs in the default fitted view and, where the exam offers it, in the "Whole detector" view (RAD-068: at that
+// small scale the enlarged hit areas overlap; one placement sits next to the crosshair to exercise it).
 // Prints a table exam x placement: expected vs observed (normalised detector coordinates -1..1). Exit code 1 on any failure.
 import { chromium } from "playwright";
 import { mkdirSync, readFileSync } from "node:fs";
@@ -26,6 +29,7 @@ const DEV = { desktop: { viewport: { width: 1440, height: 900 } }, phone: { view
 const PLACES = [
   { side: "L", x: -0.55, y: -0.5 }, { side: "L", x: 0.55, y: 0.5 },
   { side: "R", x: 0.55, y: -0.5 }, { side: "R", x: -0.55, y: 0.5 },
+  { side: "L", x: 0.18, y: 0.12 }, // next to the centred crosshair
 ];
 const TOL_CM = 1.0;
 let failed = 0, checks = 0;
@@ -72,15 +76,21 @@ const glyph = (page) => page.locator("[data-testid=radiograph]").first().evaluat
   };
 });
 
-for (const device of DEVICES) for (const loc of LOCALES) for (const exam of EXAMS) {
+for (const device of DEVICES) for (const loc of LOCALES) for (const exam of EXAMS) for (const zoom of device === "phone" ? ["fit", "whole"] : ["fit"]) {
   const ctx = await browser.newContext(DEV[device]);
   const page = await ctx.newPage();
   const m = MSGS[loc];
   for (const place of PLACES) {
-    const tag = `${device} ${loc} ${exam} ${place.side}(${place.x},${place.y})`;
+    const tag = `${device} ${zoom} ${loc} ${exam} ${place.side}(${place.x},${place.y})`;
     await page.goto(`${BASE}/${loc}/xray/${exam}/practice`, { waitUntil: "networkidle" });
     if (device === "phone") {
       await page.keyboard.press("Escape");
+      if (zoom === "whole") {
+        const whole = page.getByRole("button", { name: m.workspace.wholeDetector, exact: true });
+        if (!(await whole.count())) break; // no toggle: the fitted view already shows the whole detector
+        await whole.click();
+        await page.waitForTimeout(150);
+      }
       await page.getByRole("tab", { name: new RegExp(`^${m.workspace.tabs.centring}`) }).click();
       const details = page.locator("details", { hasText: m.positioning.fineAdjustPhone });
       if (await details.count()) await details.first().evaluate((d) => { d.open = true; });
@@ -122,8 +132,10 @@ for (const device of DEVICES) for (const loc of LOCALES) for (const exam of EXAM
       const exp = { x: ((placed.x + 1) / 2) * det.w, y: ((placed.y + 1) / 2) * det.h };
       ok = Math.hypot(cm.x - exp.x, cm.y - exp.y) <= TOL_CM && gl.letter === place.side;
     }
+    // The drag itself must put the drawn marker where the finger aimed (a touch taken by the crosshair or a handle leaves it behind).
+    if (Math.abs(placed.x - place.x) > 0.02 || Math.abs(placed.y - place.y) > 0.02) ok = false;
     if (!ok) { failed++; console.log("  FAIL", tag, JSON.stringify({ placed, observed, letter: gl?.letter })); }
-    rows.push({ device, loc, exam, side: place.side, expected: placed, observed, letter: gl?.letter ?? "-", ok });
+    rows.push({ device: device === "phone" ? `phone ${zoom}` : device, loc, exam, side: place.side, expected: placed, observed, letter: gl?.letter ?? "-", ok });
   }
   await ctx.close();
 }

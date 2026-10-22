@@ -35,3 +35,32 @@ export function markerBox(centre: { x: number; y: number }, sizeUnits: number, m
   const size = sizeUnits * markerScale;
   return { x: centre.x - size / 2, y: centre.y - size / 2, size };
 }
+
+/** A touchable control of the scene: its visible centre and its hit area (a square of side `size`, or a circle of `radius`), in scene units. */
+export interface TouchCandidate<T> {
+  target: T;
+  x: number;
+  y: number;
+  size?: number;
+  radius?: number;
+}
+
+/**
+ * The control a touch at `p` is meant for (RAD-068): among the controls whose hit area contains the point, the one whose VISIBLE centre is
+ * nearest. On a phone the hit areas are >= 44 CSS px, so at a small on-screen scale (the whole-detector view) they overlap; without this the
+ * control drawn last (the crosshair) took a touch aimed at the marker or a field handle. Null when no hit area contains the point.
+ */
+export function nearestTouchTarget<T>(p: { x: number; y: number }, candidates: readonly TouchCandidate<T>[]): T | null {
+  let best: T | null = null;
+  let bestD = Infinity;
+  for (const c of candidates) {
+    const dx = p.x - c.x, dy = p.y - c.y;
+    const inside = c.radius !== undefined ? Math.hypot(dx, dy) <= c.radius : c.size !== undefined && Math.abs(dx) <= c.size / 2 && Math.abs(dy) <= c.size / 2;
+    const d = Math.hypot(dx, dy);
+    if (inside && d < bestD) {
+      best = c.target;
+      bestD = d;
+    }
+  }
+  return best;
+}

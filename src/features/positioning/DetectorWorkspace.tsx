@@ -20,7 +20,7 @@ import { CHEST_PA_FIGURE, DETECTOR_FIGURES, U, type DetectorFigure } from "./det
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, UNDER } from "./scene-style";
 import { detectorViewBox, phoneFit } from "./fit-view";
-import { markerBox, touchGeometry } from "./touch-geometry";
+import { markerBox, nearestTouchTarget, touchGeometry, type TouchCandidate } from "./touch-geometry";
 
 const KEY_STEP = 0.02;
 const KEY_STEP_LARGE = 0.1;
@@ -143,8 +143,11 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       e.currentTarget.setPointerCapture(e.pointerId);
       if (phone && fit) setFrozen(viewBox);
       const p = toNorm(e);
-      const origin = target.kind === "ray" ? settings.centralRay : target.kind === "marker" ? settings.markerPosition : p;
-      setDrag({ target, grab: { x: origin.x - p.x, y: origin.y - p.y } });
+      // Phone: the enlarged hit areas overlap at a small on-screen scale (the whole-detector view); the touch goes to the control whose
+      // visible centre is nearest, never to the one merely drawn last (RAD-068). Desktop keeps the element that was hit.
+      const aimed = phone ? (nearestTouchTarget(normToView(p, frame), touchCandidates()) ?? target) : target;
+      const origin = aimed.kind === "ray" ? settings.centralRay : aimed.kind === "marker" ? settings.markerPosition : p;
+      setDrag({ target: aimed, grab: { x: origin.x - p.x, y: origin.y - p.y } });
     },
     onPointerMove: (e: PointerEvent<SVGElement>) => {
       const d = drag;
@@ -193,6 +196,12 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
   const marker = settings.sideMarker;
   const mv = normToView(settings.markerPosition, frame);
   const mBox = markerBox(mv, positioning.markerSizeCm * U, markerScale);
+  // Every touchable control with its visible centre and hit area (scene units), for the phone's overlap rule.
+  const touchCandidates = (): TouchCandidate<DragTarget>[] => [
+    ...edges.map(({ edge, x, y }) => ({ target: { kind: "edge" as const, edge }, x, y, size: hit })),
+    ...(marker ? [{ target: { kind: "marker" as const }, x: mv.x, y: mv.y, size: hit }] : []),
+    { target: { kind: "ray" }, x: ray.x, y: ray.y, radius: rayHit },
+  ];
 
   // The marker is drawn before the field handles on desktop; on a phone after them, so a handle's (larger) hit area never covers the marker.
   const markerNode = marker && (
