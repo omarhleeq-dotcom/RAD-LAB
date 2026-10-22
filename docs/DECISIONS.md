@@ -183,6 +183,30 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 
 **الحدود:** لا يمنح القرار إذن برمجة الآن؛ كل جلسة بموافقة منفصلة. لا ادعاء بأن المحتوى مصادق سريريًا (D5). لا يرفع تجميد الفحوص والصور ولا تأجيل برمجة Assess. `noindex` والترويسات الأخرى دون تغيير.
 
+<a id="review-closure-owner-2026-10-22"></a>
+### إغلاق مراجعة RAD-019 (O5) — 2026-10-22
+
+**السلطة:** رد حزمة المراجعة [مراجعة بحثية مساعدة بالذكاء الاصطناعي](RAD-019_AI_ASSISTED_REVIEW_2026-10-22.md) زوّد بها المالك وراجعها. بحسب §1 منها: لم تشاهد الصور ولا المحاكي ولا الكود، ولم تقابل صفحات Bontrager بالأصل. الفرز صفًا صفًا في [تقرير RAD-065](RAD-065_REVIEW_TRIAGE_2026-10-22.md).
+
+**بيان المالك (2026-10-22)، كما ورد:**
+> - the owner, the project's first-line content reviewer (S10b-20, radiography degree), reviewed the material himself with a research assistant;
+> - all values are correct, and he verified them against their sources;
+> - where further research is needed in future, the owner will do it himself.
+
+**الوصف المعتمد:** «owner-verified, with an AI-assisted research review». لا يُوصف بأنه مراجعة معلّم أو فيزيائي طبي، ولا توقيع مرخّص، ولا «مصادق سريريًا» (D5).
+
+**أساس الإغلاق:** قاعدة RAD-019 نفسها في [REVIEW_PACKAGE](REVIEW_PACKAGE.md): يُغلق عند تسجيل جواب كل صف، أو تسجيل المالك تركه غير مراجَع.
+- القيم: تحقق منها المالك مقابل مصادرها. أرقام صفحات Bontrager لم تُقابَل بالأصل (لا من المراجعة ولا من المالك)، وتبقى كما هي في السجل.
+- صفوف الصور والمعالم والجهات: «متروكة دون مراجعة بقرار المالك» حتى يؤكد المالك كل بند من [قائمة الصور](RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist)؛ التأكيد يُسجل لاحقًا بتحديث وثائق، ولا يُسجل أي منها كمعتمد.
+- بقية الصفوف: الحكم والتصنيف في تقرير الفرز.
+
+**الحدود:**
+- لا ادعاء مصادقة سريرية.
+- توصيات المراجعة في قواعد التصحيح (مثل G2 وG6 وG7 وG11 و§13 D) ليست مشمولة بتحقق القيم؛ كل منها يحتاج نعم/لا منفصلة من المالك قبل RAD-068.
+- علامات `provisional: true` في الكود والبيانات لا تتغير في هذا القرار؛ رفعها بند مستقل في RAD-068 بموافقة المالك، لأن لقطات التوصيف قد تتضمنها (استثناء S-STD-2).
+- البند H في المراجعة (الإبقاء على الشريط التعليمي) يخالف D1 في [قرار جرد الواجهة](#ui-inventory-owner-2026-10-22)؛ قرار المالك قائم دون تغيير، والخلاف مسجل في تقرير الفرز.
+- لا يغيّر [S10b-20](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s10b-20) (المراجعة ليست بوابة) ولا [O5](#decision-o5) إلا بإغلاق مهمة RAD-019؛ لا يرفع تجميدًا ولا يمنح إذن برمجة.
+
 ## Open O-items
 
 These are **residual scope descriptions**, not a second task-status register. Owner/reviewer/waiting states come only from [project-status](project-status.md); use `npm run status:summary -- --id RAD-045` for the credits task (O102); text queries search task fields only. Partial implementation and later decisions are stated beside the item so the old ledger cannot be mistaken for current instructions.
@@ -192,7 +216,7 @@ These are **residual scope descriptions**, not a second task-status register. Ow
 | <a id="decision-o2"></a> `O2` | مراجعة منطقة الصدر التجريبية وملاءمة القياس؛ تبقى provisional إلى مراجعة المحتوى. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o2) |
 | <a id="decision-o3"></a> `O3` | تقييم rubric الماركر سريريًا؛ PA check weight0 مع بوابات حرجة، وبقية الفحوص وفق تعريفها. لا تعميم للأوزان. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o3) |
 | <a id="decision-o4"></a> `O4` | قراءة المصادر المتبقية فقط من سجل المصادر، لا إعادة قراءة ما ثبتت قراءته أو اعتبار تعليمات «قبل S12» موعدًا حاليًا. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o4) |
-| <a id="decision-o5"></a> `O5` | مراجعة المعلم/الفيزيائي والنص العربي واللافتة. ليست بوابة للجلسات؛ موصى بها قبل الإصدار/التدريس (S10b-20). | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o5) |
+| <a id="decision-o5"></a> `O5` | مراجعة المعلم/الفيزيائي والنص العربي واللافتة. ليست بوابة للجلسات؛ موصى بها قبل الإصدار/التدريس (S10b-20). أُغلقت مهمتها RAD-019 بـ[قرار إغلاق المراجعة](#review-closure-owner-2026-10-22): تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي، لا توقيع مرخّص؛ صفوف الصور متروكة بقرار المالك حتى تأكيدها. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o5) |
 | <a id="decision-o9"></a> `O9` | Supine AP وآلية state منفذان؛ المتبقي نطاق/تمثيل البدائل المستقبلية، لا إعادة بناء AP الحالي. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o9) |
 | <a id="decision-o15"></a> `O15` | مراجعة حدود نتيجة Lateral وcritical list والتوهين2×؛ رسم المشهد لا يثبت تنفيذ overlays في صورة النتيجة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o15) |
 | <a id="decision-o16"></a> `O16` | شروط NIH الرسمية ومطابقة الأصل قبل الإصدار؛ قبول الاستخدام الثانوي الحالي لا يثبت الشروط الرسمية (O101). | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o16) |

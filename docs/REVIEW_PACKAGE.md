@@ -4,6 +4,8 @@
 
 **Status (reading guide updated 2026-10-17, docs only):** everything below is **provisional**: nothing is validated, and this guide changes no value, rule or code. The package began in Session 10b and has grown with every exam (Chest, wrist, hand, elbow, knee/foot, ankle, pelvis, shoulder). Decisions are in [`DECISIONS.md`](DECISIONS.md), sources in [`sources/REGISTER.md`](sources/REGISTER.md), the long Chest PA list in [`REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md`](REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md). The task is RAD-019 (`npm run status:summary -- --id RAD-019`).
 
+**Reply and closure (2026-10-22, RAD-065):** the reply is an [AI-assisted research review](RAD-019_AI_ASSISTED_REVIEW_2026-10-22.md), owner-verified; RAD-019 is closed by the [owner decision](DECISIONS.md#review-closure-owner-2026-10-22) (no licensed human sign-off; image rows left unreviewed by owner decision until confirmed); per-row triage in the [RAD-065 report](RAD-065_REVIEW_TRIAGE_2026-10-22.md).
+
 **Which version is current?** Each row keeps the question and the basis at the time it was written. If a row conflicts with the applicable rule in [`DECISIONS.md`](DECISIONS.md) (current index; the dated originals are in the [ledger](archive/decisions/DECISIONS-until-2026-10-16.md)), the index governs and the row is context, not a rule. Rows about frozen items (new exams/images, Shoulder Y) stay informational until the owner resumes them.
 
 | You are | Start here | You answer | Return to the owner |
