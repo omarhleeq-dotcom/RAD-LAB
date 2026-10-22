@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 199,
-  "updated_at": "2026-10-22T07:00:00+00:00",
+  "revision": 200,
+  "updated_at": "2026-10-22T08:00:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-061",
+  "next_id": "RAD-063",
   "tasks": [
     {
       "id": "RAD-001",
@@ -564,6 +564,24 @@
       "description": "زر إغلاق نهائي للإسناد في لوحة المالك مع تأكيد وEN/AR واختبارات. يُدمج في جلسة إصلاحات الواجهة الشاملة؛ إجراء console الحالي يبقى المسار المعتمد.",
       "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js",
       "defer_reason": "قرار المالك 2026-10-22: يؤجل إلى جلسة إصلاحات الواجهة الشاملة."
+    },
+    {
+      "id": "RAD-061",
+      "title": "تدقيق وتنظيف الكود قبل ميزات Assess الكبيرة",
+      "status": "planned",
+      "priority": "medium",
+      "description": "جلسة إصلاحات تبدأ بتدقيق قراءة فقط للكود الميت والمكرر يراجعه المالك قبل أي حذف. لا حذف لأدوات الأدلة الخاملة ولا تغيير توقعات أو بصمات قائمة؛ تتبع دمج #96 وتشمل زر إغلاق الإسناد (RAD-060) مع إصلاحات الواجهة.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-062",
+      "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
+      "status": "planned",
+      "priority": "high",
+      "description": "أسئلة اختيار وكتابية (تصحيح الأستاذ مع اقتراح تطابق قريب) وجزء محاكي، بالإنجليزية. دور مشرف من الصفر، وأداة جدول→JSON، والصور مؤجلة لحين تحقق المالك من حصص Supabase Storage. خطة على الورق أولًا؛ لا برمجة قبل استئناف المالك.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11",
+      "waiting_on": "owner"
     }
   ]
 }
