@@ -11,7 +11,7 @@ import { PILOT } from "./config";
 import { CsvBar, ParticipantActivity } from "./OwnerActivity";
 import { EMPTY_FILTERS, type Cursor, type OwnerFilters } from "./owner-data";
 import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, type Participant, parseParticipants } from "./owner-state";
-import { useAccount } from "./useAccount";
+import { useSessionAccount } from "./SessionGate";
 import { useOwnerData } from "./useOwnerData";
 import { OwnerAssessPanel } from "@/features/assess/OwnerAssessPanel";
 
@@ -21,7 +21,7 @@ const btn = "rounded-md border border-line px-3 py-1.5 text-sm font-medium hover
 export function OwnerPanel() {
   const t = useTranslations("owner");
   const tt = useTranslations("training");
-  const { state } = useAccount("");
+  const { state } = useSessionAccount();
   const [filters, setFilters] = useState<OwnerFilters>(EMPTY_FILTERS);
   const [cursor, setCursor] = useState<Cursor | null>(null);
   const [boundary, setBoundary] = useState<string | null>(null);

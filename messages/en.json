@@ -1632,7 +1632,24 @@
     "oneExposure": "One exposure only. Settings lock when the server records it.",
     "expose": "Expose once",
     "sections": "Assess sections",
-    "history": "Assessment history"
+    "history": "Assessment history",
+    "chooseOne": "Choose one answer",
+    "clearAnswer": "Clear answer",
+    "part": {
+      "settings": "Settings",
+      "sceneElements": "Selected scene elements",
+      "diagram": "Settings diagram"
+    },
+    "scene": {
+      "caption": "Positioning scene. Schematic anatomy follows the existing simulation model.",
+      "detectorPatient": "Detector and patient",
+      "moveMarker": "Move marker {marker} with arrow keys or drag",
+      "moveBeam": "Move beam with arrow keys or drag",
+      "equipment": "Equipment: SID {sid} cm; tube angle {angle} degrees",
+      "equipmentTitle": "Current equipment settings",
+      "dragHelp": "Drag the beam, field edges or marker; beam and marker also use arrow keys. All settings are available below.",
+      "settingsText": "Current settings in text"
+    }
   },
   "assessContent": {
     "title": "Mixed assessment content and templates",
