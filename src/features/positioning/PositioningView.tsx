@@ -105,8 +105,8 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
     </fieldset>
   );
   const centringControls = (
-    <details className="sm:col-span-2" open>
-      <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{t("fineAdjust")}</summary>
+    <details className="sm:col-span-2" open={!phone}>
+      <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{phone ? t("fineAdjustPhone") : t("fineAdjust")}</summary>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <RangeField label={t("centerX")} unit="cm" min={-W / 2} max={W / 2} step={0.5} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: roundTo(v / (W / 2)) })} />
         <RangeField label={t("centerY")} unit="cm" min={0} max={H} step={0.5} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: roundTo((v / H) * 2 - 1) })} />
@@ -120,12 +120,12 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
 
   return (
     <section aria-labelledby="pos-heading" className="rounded-lg border border-line bg-panel">
-      <div className={clsx("flex flex-wrap items-center justify-between", phone ? "gap-2 px-3 py-1.5" : "gap-3 border-b border-line px-4 py-3")}>
+      <div className={phone ? "flex items-center justify-between gap-2 px-2 py-1" : "flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3"}>
         <h2 id="pos-heading" className={phone ? "sr-only" : "font-semibold"}>
           {t("title")}
         </h2>
         {phone && (
-          <div role="group" aria-label={tw("sceneViews")} className="flex gap-1">
+          <div role="group" aria-label={tw("sceneViews")} className="flex min-w-0 rounded-lg border border-line p-0.5">
             {(["detector", "second"] as const).map((v) => (
               <button
                 key={v}
@@ -133,24 +133,36 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
                 aria-pressed={view === v}
                 onClick={() => setView(v)}
                 className={clsx(
-                  "min-h-11 rounded border px-2 text-xs font-semibold",
-                  view === v ? "border-brand bg-brand/10 text-brand-strong" : "border-line hover:bg-paper",
+                  "min-h-11 min-w-20 rounded-md px-3 text-sm font-semibold",
+                  view === v ? "bg-brand text-white" : "text-ink hover:bg-paper",
                 )}
               >
-                {tAny(v === "detector" ? texts.detectorCaption : texts.secondViewCaption)}
+                {v === "detector" ? tw("viewDetector") : layout.secondViewIsTop ? tw("viewTop") : tw("viewSide")}
               </button>
             ))}
           </div>
         )}
-        {mode === "practice" && (
-          <label className={clsx("flex cursor-pointer items-center gap-2 text-sm has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal", phone && "min-h-11")}>
-            <input type="checkbox" className="accent-signal" checked={guidesOn} onChange={(e) => setGuidesOn(e.target.checked)} />
-            {t("guides")}
-          </label>
-        )}
+        {mode === "practice" &&
+          (phone ? (
+            // Compact icon toggle on the same row; still the same checkbox with the same accessible label.
+            <label className={clsx("relative grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg border has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal", guidesOn ? "border-brand bg-brand/10 text-brand-strong" : "border-line text-muted")}>
+              <input type="checkbox" className="sr-only" checked={guidesOn} onChange={(e) => setGuidesOn(e.target.checked)} />
+              <span className="sr-only">{t("guides")}</span>
+              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+                {!guidesOn && <path d="M4 4l16 16" />}
+              </svg>
+            </label>
+          ) : (
+            <label className="flex cursor-pointer items-center gap-2 text-sm has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal">
+              <input type="checkbox" className="accent-signal" checked={guidesOn} onChange={(e) => setGuidesOn(e.target.checked)} />
+              {t("guides")}
+            </label>
+          ))}
       </div>
 
-      <div className={phone ? "relative grid bg-console p-2 [&_svg]:max-h-[30svh]" : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
+      <div className={phone ? "relative grid bg-console p-2 [&_svg]:max-h-[min(24svh,13rem)]" : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
         <figure className={clsx("m-0", phone && view !== "detector" && offView)}>
           <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} />
           <figcaption className={phone ? "sr-only" : "mt-1 text-center text-xs text-console-text/80"}>{tAny(texts.detectorCaption)}</figcaption>
@@ -183,7 +195,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
           )}
           {place(
             <div className="grid gap-4">
-              <p className="text-xs text-muted">{t("workspaceHint")}</p>
+              <p className="text-sm text-muted">{t("touchHint")}</p>
               {centringControls}
             </div>,
             slots.centring,

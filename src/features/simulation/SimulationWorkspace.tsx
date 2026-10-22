@@ -22,7 +22,7 @@ const subscribePhone = (onChange: () => void) => {
 };
 const usePhoneLayout = () => useSyncExternalStore(subscribePhone, () => matchMedia(PHONE_QUERY).matches, () => false);
 
-export function SimulationWorkspace({ caseId }: { caseId: string }) {
+export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string; backHref?: string }) {
   const t = useTranslations("workspace");
   const ts = useTranslations("sex");
   const locale = useLocale();
@@ -39,6 +39,23 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
   if (!activeCase || !settings || activeCase.id !== caseId) return null;
   const c = activeCase;
   const locked = phase === "result";
+
+  const resultPanels = result && (
+    <>
+      <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
+      <FeedbackBox examId={splitCaseId(c.id).examId} />
+    </>
+  );
+
+  // Phone: a full-screen app view; the result replaces the controls inside it (the page itself does not scroll).
+  if (phone) {
+    return (
+      <>
+        <AttemptRecorder />
+        <PhoneWorkspace radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} backHref={backHref} result={resultPanels} />
+      </>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 px-4 py-6">
@@ -77,23 +94,16 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
         <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
       </section>
 
-      {phone ? (
-        <PhoneWorkspace radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
-      ) : (
-        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-          <div className="min-w-0 space-y-5">
-            <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
-            <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
-          </div>
-          <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
+      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
+        <div className="min-w-0 space-y-5">
+          <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
+          <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
         </div>
-      )}
+        <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
+      </div>
 
       <div ref={resultRef} className="scroll-mt-4">
-        {result && (
-          <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
-        )}
-        {result && <FeedbackBox examId={splitCaseId(c.id).examId} />}
+        {resultPanels}
       </div>
     </div>
   );

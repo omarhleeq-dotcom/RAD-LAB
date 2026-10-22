@@ -65,6 +65,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     return () => { observer.disconnect(); root.style.removeProperty("--site-bar-height"); };
   }, []);
   useEffect(() => {
+    // The phone simulator hides this shell's top bar and opens the same navigation dialog from its own bar.
+    const openMenu = () => { dialog.current?.showModal(); setOpen(true); };
+    window.addEventListener("radlab:open-menu", openMenu);
+    return () => window.removeEventListener("radlab:open-menu", openMenu);
+  }, []);
+  useEffect(() => {
     const desktop = matchMedia("(min-width: 1024px)");
     const resized = () => { if (desktop.matches) dialog.current?.close(); };
     desktop.addEventListener("change", resized);

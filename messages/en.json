@@ -45,7 +45,14 @@
     "needsAttention": "has an item that is not ready",
     "sceneViews": "Scene view",
     "readinessDetails": "Readiness details",
-    "closeSheet": "Close"
+    "closeSheet": "Close",
+    "backToLibrary": "Back to library",
+    "caseDetails": "Case details",
+    "startCase": "Start",
+    "viewDetector": "Detector",
+    "viewTop": "Top view",
+    "viewSide": "Side view",
+    "phoneMenu": "Menu"
   },
   "positioning": {
     "detector": "Detector / Bucky",
@@ -102,7 +109,9 @@
     },
     "scapula": "Scapula",
     "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
-    "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left."
+    "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left.",
+    "touchHint": "Drag the crosshair and handles on the detector",
+    "fineAdjustPhone": "Fine adjustment"
   },
   "console": {
     "title": "X-ray console",

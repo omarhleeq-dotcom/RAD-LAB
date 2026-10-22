@@ -99,8 +99,8 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
   const canExpose = readiness.canExpose;
 
   return (
-    <section aria-labelledby="console-heading" className="rounded-lg border border-console-line bg-console p-4 text-console-text">
-      <div className="mb-4 border-b border-console-line pb-3">
+    <section aria-labelledby="console-heading" className={phone ? "rounded-lg border border-console-line bg-console p-3 text-console-text" : "rounded-lg border border-console-line bg-console p-4 text-console-text"}>
+      <div className={phone ? "sr-only" : "mb-4 border-b border-console-line pb-3"}>
         <h2 id="console-heading" className="font-semibold text-white">
           {t("title")}
         </h2>
@@ -113,12 +113,13 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
         )}
       </div>
 
-      <div className="space-y-5">
+      <div className={phone ? "space-y-3" : "space-y-5"}>
         <Segmented
           legend={t("projection")}
           options={radCase.availableProjections}
           value={settings.projection}
           disabled={locked}
+          columns={phone}
           onSelect={(v) => onChange("projection", v)}
           label={(v) => {
             const own = projectionLabelOf(radCase.choiceControls, settings.choices, v);
@@ -134,6 +135,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
             spec={c.tubeAngulationDeg}
             value={settings.tubeAngulationDeg ?? 0}
             disabled={locked}
+            compact={phone}
             onChange={(v) => onChange("tubeAngulationDeg", v)}
           />
         )}
@@ -144,6 +146,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           spec={c.sidCm}
           value={settings.sidCm}
           disabled={locked}
+          compact={phone}
           onChange={(v) => onChange("sidCm", v)}
         />
         <StepField
@@ -153,6 +156,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           spec={c.kvp}
           value={settings.kvp}
           disabled={locked}
+          compact={phone}
           onChange={(v) => onChange("kvp", v)}
         />
 
@@ -176,6 +180,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           disabled={locked}
           readout={aec ? t("masAuto") : undefined}
           help={aec ? t("masAutoHelp") : undefined}
+          compact={phone}
           onChange={(v) => onChange("mas", v)}
         />
 
@@ -183,7 +188,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           <AecPanel radCase={radCase} settings={settings} disabled={locked} onChange={(ch) => onChange("aecChambers", ch)} />
         )}
 
-        <p className="keyboard-hint text-xs text-console-text/60">{t("adjustHint")}</p>
+        {!phone && <p className="keyboard-hint text-xs text-console-text/60">{t("adjustHint")}</p>}
 
         {/* After the exposure the readiness box only repeats "not ready"; the result panel offers Retry / Restart (S-VIS-1-3). */}
         {!phone && !locked && <ReadinessPanel readiness={readiness} id={readinessId} />}

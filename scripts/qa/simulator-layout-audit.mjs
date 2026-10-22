@@ -4,8 +4,11 @@
 // EN/AR x desktop 1440 / phone 390, per exam: axe on the set-up and result screens, no horizontal overflow, and
 //  - the scene SVGs are the same drawings on both layouts (outerHTML compared with React ids removed);
 //  - every form control of the desktop layout exists on the phone layout with the same accessible label, in the same order per group;
-//  - phone: tablist/tab/tabpanel roles, arrow keys follow the visual order (mirrored in RTL), the "not ready" dot,
-//    44px targets, sticky scene and bottom bar, the readiness sheet takes and returns focus, Expose shows the result;
+//  - phone (a full-screen app view): the document never scrolls; tablist/tab/tabpanel roles, arrow keys follow the visual order
+//    (mirrored in RTL), the "not ready" dot, 44px targets, tabs and bottom bar visible without scrolling, a one-row scene
+//    header, no keyboard-hint text, fine adjustment collapsed, compact technique rows, the schematic note once (in the case
+//    sheet), the case-details (i) sheet auto-opens once and takes/returns focus like the readiness sheet, Expose shows the
+//    result inside the view, Retry does not reopen the case sheet;
 //  - desktop: no tablist, the console keeps its readiness box and Expose button.
 // Screenshots in OUT (default /tmp/rad-lab-qa-ui3). Exit code 1 on any failure.
 import { chromium } from "playwright";
@@ -29,7 +32,7 @@ const snapshot = (page) => page.evaluate(() => {
   const clean = (s) => s.replace(/_R_[A-Za-z0-9_]+_/g, "ID").replace(/\s(?:hidden|aria-hidden)="[^"]*"/g, "")
     .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( rx="5" fill="#06101a" opacity="0.82")/g, "<rect PILL$1");
   const svgs = [...document.querySelectorAll("main svg")].filter((s) => s.closest("section[aria-labelledby='pos-heading']") || s.closest("[role='tabpanel']"))
-    .filter((s) => !s.closest("button")).map((s) => clean(s.outerHTML)).sort();
+    .filter((s) => !s.closest("button") && !s.hasAttribute("data-ui-icon")).map((s) => clean(s.outerHTML)).sort();
   const label = (el) => {
     if (el.labels?.length) return [...el.labels].map((l) => l.textContent.trim()).join(" ");
     return el.getAttribute("aria-label") ?? el.closest("label")?.textContent.trim() ?? "";
@@ -74,10 +77,47 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} same scene drawings as desktop`, JSON.stringify(snap.svgs) === JSON.stringify(ref.svgs), `${snap.svgs.length} vs ${ref.svgs.length}`);
       ok(`${tag} every control kept (labels, ids/names, order)`, JSON.stringify(snap.controls.slice().sort()) === JSON.stringify(ref.controls.slice().sort()),
         JSON.stringify({ phoneOnly: snap.controls.filter((c) => !ref.controls.includes(c)), desktopOnly: ref.controls.filter((c) => !snap.controls.includes(c)) }));
-      // Order inside each group: the desktop order of the controls, restricted to those in one tab panel, is the panel's order.
+      // Case-details sheet: it auto-opened once when the case loaded; "Start" closes it and focus returns to the (i) button.
+      const caseDialog = page.getByRole("dialog", { name: m.workspace.caseDetails });
+      const caseButton = page.getByRole("button", { name: m.workspace.caseDetails, exact: true });
+      ok(`${tag} case sheet auto-opens on load`, await caseDialog.isVisible());
+      ok(`${tag} case sheet focus inside`, await page.evaluate(() => !!document.activeElement?.closest("dialog")));
+      const note = await caseDialog.evaluate((d) => d.querySelector("div.\\[\\&_p\\]\\:px-0 p")?.textContent ?? "");
+      ok(`${tag} schematic note is in the case sheet`, note.length > 10);
+      ok(`${tag} schematic note appears once`, (await page.evaluate((n) => [...document.querySelectorAll("p")].filter((p) => p.textContent === n).length, note)) === 1);
+      await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-case-sheet.png` });
+      await axe("case sheet");
+      await caseDialog.getByRole("button", { name: m.workspace.startCase, exact: true }).click();
+      ok(`${tag} case sheet closed by Start`, !(await caseDialog.isVisible()));
+      ok(`${tag} focus back on (i)`, await page.evaluate(() => document.activeElement?.getAttribute("aria-label")) === m.workspace.caseDetails);
+      await caseButton.click();
+      ok(`${tag} (i) reopens the sheet`, await caseDialog.isVisible());
+      await page.keyboard.press("Escape");
+      ok(`${tag} Escape closes the case sheet`, !(await caseDialog.isVisible()));
+
+      // Full-screen app view: the document never scrolls.
+      const noScroll = async (area) => {
+        await page.evaluate(() => window.scrollTo(0, 600));
+        const r = await page.evaluate(() => ({ y: window.scrollY, sh: document.documentElement.scrollHeight, vh: window.innerHeight }));
+        ok(`${tag} no document scroll (${area})`, r.y === 0 && r.sh <= r.vh + 1, JSON.stringify(r));
+      };
+      await noScroll("setup");
+      // Top bar: back, title, (i), menu; the site header is hidden.
+      ok(`${tag} top bar controls`, (await page.getByRole("link", { name: m.workspace.backToLibrary }).isVisible()) && (await caseButton.isVisible())
+        && (await page.getByRole("button", { name: m.shell.openMenu, exact: true }).isVisible()) && (await page.getByRole("heading", { level: 1 }).isVisible()));
+      ok(`${tag} site header hidden`, !(await page.locator(".site-header").isVisible()));
+      // Scene header on one row: the view switch and the guides toggle share a line.
+      const sw = await page.getByRole("group", { name: m.workspace.sceneViews }).boundingBox();
+      const gt = await page.getByLabel(m.positioning.guides).locator("xpath=..").boundingBox();
+      ok(`${tag} scene header is one row`, Math.abs((sw.y + sw.height / 2) - (gt.y + gt.height / 2)) < 6 && sw.height < 60, JSON.stringify({ sw, gt }));
+      const switchNames = await page.getByRole("group", { name: m.workspace.sceneViews }).getByRole("button").allTextContents();
+      ok(`${tag} short view switch labels`, switchNames[0] === m.workspace.viewDetector && [m.workspace.viewTop, m.workspace.viewSide].includes(switchNames[1]), switchNames.join("|"));
+      ok(`${tag} guides toggle 44px + labelled`, (await gt.height) >= 44 && (await page.getByLabel(m.positioning.guides).count()) === 1);
+
       const tabs = page.getByRole("tab");
       ok(`${tag} four tabs`, (await tabs.count()) === 4);
       const names = Object.values(m.workspace.tabs);
+      const hintRe = /arrow keys|page up|keyboard|home and end|مفاتيح الأسهم|لوحة المفاتيح/i;
       for (let i = 0; i < 4; i++) {
         const tab = tabs.nth(i);
         ok(`${tag} tab ${i} label`, (await tab.textContent()).startsWith(names[i]));
@@ -91,8 +131,27 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
         const desktopOrder = ref.controls.filter((c) => inPanel.includes(c));
         ok(`${tag} panel ${i} order as desktop`, JSON.stringify(inPanel.filter((c) => ref.controls.includes(c))) === JSON.stringify(desktopOrder));
         ok(`${tag} panel ${i} has controls`, inPanel.length > 0);
+        // No keyboard instructions anywhere in the phone view (only the visible text of the open panel counts).
+        const visible = await page.evaluate(() => document.querySelector("[data-phone-app]").innerText);
+        ok(`${tag} tab ${i} no keyboard-hint text`, !hintRe.test(visible) && !visible.includes(m.console.adjustHint) && !visible.includes(m.positioning.workspaceHint), (visible.match(hintRe) ?? [""])[0]);
+        // Tabs and bottom bar are in view without scrolling; the panel scrolls inside only when needed.
+        const frame = await page.evaluate(() => {
+          const vh = innerHeight, r = (el) => el.getBoundingClientRect();
+          const tab = document.querySelector("[role=tablist]"), bar = document.querySelector("[aria-controls$='-sheet']").parentElement;
+          return { vh, tabsBottom: r(tab).bottom, barTop: r(bar).top, barBottom: r(bar).bottom };
+        });
+        ok(`${tag} tab ${i} tabs + bottom bar visible without scrolling`, frame.tabsBottom <= frame.barTop && frame.barBottom <= frame.vh + 1 && frame.tabsBottom > 0, JSON.stringify(frame));
+        await noScroll(`tab ${i}`);
         await noOverflow(`tab ${i}`);
         await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-tab${i}.png` });
+        if (i === 1) {
+          ok(`${tag} fine adjustment collapsed by default`, await panel.locator("details").evaluate((d) => !d.open));
+          ok(`${tag} touch hint in Centring`, (await panel.innerText()).includes(m.positioning.touchHint));
+        }
+        if (i === 3) {
+          const heights = await panel.locator("[role=group][aria-labelledby]").evaluateAll((els) => els.filter((e) => e.querySelector("input[type=range]")).map((e) => e.getBoundingClientRect().height));
+          ok(`${tag} technique rows are compact`, heights.length >= 3 && heights.every((h) => h <= 84), heights.join(","));
+        }
       }
       // Keyboard: arrows follow the visual order (RTL mirrored), focus moves with the selection.
       await tabs.nth(0).focus();
@@ -104,18 +163,6 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} Home -> first tab`, (await tabs.nth(0).getAttribute("aria-selected")) === "true");
       // Dot: the initial case has an unready item (no marker yet); the dot is announced in the tab name.
       ok(`${tag} attention dot`, (await page.locator("[role=tab]", { hasText: m.workspace.needsAttention }).count()) > 0);
-      // Sticky scene + bottom bar after scrolling into the longest panel (Technique).
-      await tabs.nth(3).click();
-      await page.evaluate(() => window.scrollTo(0, document.querySelector("[role=tablist]").closest(".sticky").previousElementSibling.getBoundingClientRect().top + scrollY + 250));
-      await page.waitForTimeout(200);
-      const pos = await page.evaluate(() => {
-        const s = document.querySelector("section[aria-labelledby='pos-heading']").getBoundingClientRect();
-        const bar = document.querySelector("[aria-controls$='-sheet']")?.closest("div").getBoundingClientRect();
-        return { sceneTop: s.top, sceneBottom: s.bottom, barBottom: bar?.bottom, vh: innerHeight };
-      });
-      ok(`${tag} sticky scene`, pos.sceneTop >= 0 && pos.sceneTop < 140 && pos.sceneBottom < pos.vh * 0.62, JSON.stringify(pos));
-      ok(`${tag} sticky bottom bar`, Math.abs(pos.barBottom - pos.vh) < 2, JSON.stringify(pos));
-      await tabs.nth(0).click();
       // Readiness sheet: opens as a modal, focus moves in, Escape closes and returns focus to the trigger.
       const trigger = page.locator("[aria-controls$='-sheet']");
       for (const b of [trigger, page.getByRole("button", { name: m.console.expose, exact: true })]) {
@@ -123,7 +170,7 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
         ok(`${tag} bar button 44px`, box.height >= 44, String(box.height));
       }
       await trigger.click();
-      const dialog = page.getByRole("dialog");
+      const dialog = page.getByRole("dialog", { name: m.workspace.readinessDetails });
       ok(`${tag} sheet open`, await dialog.isVisible());
       ok(`${tag} sheet focus inside`, await page.evaluate(() => !!document.activeElement?.closest("dialog")));
       ok(`${tag} sheet lists readiness`, await dialog.getByText(`${m.console.readiness.title}:`).isVisible());
@@ -131,7 +178,11 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       await axe("readiness sheet");
       await page.keyboard.press("Escape");
       ok(`${tag} sheet closed`, !(await dialog.isVisible()));
-      ok(`${tag} focus back on trigger`, await page.evaluate(() => document.activeElement?.getAttribute("aria-haspopup") === "dialog"));
+      ok(`${tag} focus back on trigger`, await page.evaluate(() => document.activeElement?.getAttribute("aria-haspopup") === "dialog" && document.activeElement?.getAttribute("aria-controls")?.endsWith("-sheet")));
+      // The menu button opens the site navigation (side menu + language switch).
+      await page.getByRole("button", { name: m.shell.openMenu, exact: true }).click();
+      ok(`${tag} menu reachable from the top bar`, await page.locator("#mobile-navigation").isVisible());
+      await page.keyboard.press("Escape");
     }
 
     // Expose from where the learner is (bar on the phone, console on desktop): the result appears; the radiograph only after Expose.
@@ -141,7 +192,13 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
     ok(`${tag} result shown`, (await page.locator("canvas, img[alt]").count()) > 0);
     await axe("result");
     await noOverflow("result");
-    await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-result.png`, fullPage: true });
+    if (dev === "phone") {
+      ok(`${tag} result inside the view (document still does not scroll)`, await page.evaluate(() => { window.scrollTo(0, 600); return scrollY === 0 && document.documentElement.scrollHeight <= innerHeight + 1; }));
+      await page.getByRole("button", { name: m.result.retry }).click();
+      await page.waitForTimeout(300);
+      ok(`${tag} Retry does not reopen the case sheet`, !(await page.getByRole("dialog", { name: m.workspace.caseDetails }).isVisible()));
+    }
+    await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-result.png`, fullPage: dev === "desktop" });
     ok(`${tag} no page errors`, errors.length === 0, errors.join(" | "));
     await ctx.close();
   }
