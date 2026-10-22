@@ -7,7 +7,7 @@
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
 - **الاتجاه الحالي:** بعد دمج #96 وإغلاق التجربة الهندسية اكتمل تدقيق RAD-061 القرائي؛ الترتيب بحسب [قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22): الدفعات 1 و2 و3 و5 و6 وحد الوقت (مدموجة) ← الدفعة 4 (Draft PR) ← جرد RAD-064 ← RAD-062 ← جلسة المحاكي بعد رد RAD-019 ← RAD-059 ← RAD-057 ← RAD-063.
-- **ينتظر المالك:** مراجعة Draft PR الدفعة 4 ([تقريرها](RAD-061_BATCH4_REPORT_2026-10-22.md))، وقرار مسار زر الإغلاق RAD-060 المحجوب لأن قراءة الإسنادات لا تعيد حالة الإغلاق؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
+- **ينتظر المالك:** مراجعة Draft PR الدفعة 4 ([تقريرها](RAD-061_BATCH4_REPORT_2026-10-22.md))، وزر الإغلاق RAD-060 مؤجل إلى أول migration في RAD-062 بقرار المالك؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
 - **ينتظر مراجِعًا بشريًا:** RAD-019 ومعها بنود التدقيق CLN-018/027/034، ويجوز إرسالها الآن؛ O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
 - **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ تقرير RAD-061 و[قرار ترتيب المراحل](DECISIONS.md#assess-authoring-owner-2026-10-22).
 - **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال (24 ملفًا بعد الدفعة 2) دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (السبب المقاس تنافس على إنشاء PGlite، وحد صريح 30000 مدموج في #101؛ الخيار (ب) مؤجل بمحفّزيه في RAD-061)؛ نطاق التجربة يبقى فعّالًا بقرار الإغلاق دون تشغيل أو قبول حي.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 207,
-  "updated_at": "2026-10-22T10:16:00+00:00",
+  "revision": 208,
+  "updated_at": "2026-10-22T10:17:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-065",
   "tasks": [
@@ -559,19 +559,18 @@
     {
       "id": "RAD-060",
       "title": "زر إغلاق إسناد Assess ضمن جلسة إصلاحات الواجهة",
-      "status": "blocked",
+      "status": "deferred",
       "priority": "medium",
-      "description": "زر إغلاق نهائي للإسناد في لوحة المالك يستدعي close_assignment_v1 مع تأكيد وEN/AR واختبارات. لم يُنفَّذ في الدفعة 4. إجراء console يبقى المسار المعتمد حتى قرار المالك.",
-      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js",
-      "blocker": "owner_page_v1('assignments') لا يعيد حالة الإغلاق، والمالك لا يقرأ الجدول؛ فلا تميّز الواجهة الإسناد المفتوح من المغلق. يلزم قرار المالك: migration تضيف الحالة للقراءة، أو قبول علامة جلسة فقط.",
-      "waiting_on": "owner"
+      "description": "زر إغلاق نهائي للإسناد في لوحة المالك يستدعي close_assignment_v1 مع تأكيد وEN/AR واختبارات، وإضافة closed_at إلى owner_page_v1('assignments')، ضمن دورة migration أول خطوة في RAD-062. إجراء console يبقى المسار المعتمد.",
+      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js",
+      "defer_reason": "قرار المالك 2026-10-22: يُنفذ مع أول migration في RAD-062؛ قائمة التكليفات لا تعرض حالة الإغلاق."
     },
     {
       "id": "RAD-061",
       "title": "تدقيق وتنظيف الكود قبل ميزات Assess الكبيرة",
       "status": "review",
       "priority": "medium",
-      "description": "الدفعات 1 و2 و3 و5 و6 وحد الوقت مدموجة (#100 و#101). الدفعة 4 (CLN-030 وCLN-037 وتعليقا pipeline.ts) في Draft PR تنتظر مراجعة المالك (RAD-061_BATCH4_REPORT_2026-10-22.md)؛ زرها RAD-060 محجوب بقرار. يبقى: CLN-042 والمؤجلات بمحفّزاتها، ومنها الخيار (ب) لحد الوقت. كل دفعة بموافقة منفصلة.",
+      "description": "الدفعات 1 و2 و3 و5 و6 وحد الوقت مدموجة (#100 و#101). الدفعة 4 (CLN-030 وCLN-037 وتعليقا pipeline.ts) في Draft PR تنتظر مراجعة المالك (RAD-061_BATCH4_REPORT_2026-10-22.md)؛ زرها RAD-060 مؤجل إلى RAD-062. يبقى: CLN-042 والمؤجلات بمحفّزاتها، ومنها الخيار (ب) لحد الوقت. كل دفعة بموافقة منفصلة.",
       "source_ref": "docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md؛ docs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md؛ docs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "owner"
     },
@@ -580,7 +579,7 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "بعد جرد RAD-064، وبعد تحقق المالك من حصص Supabase (الملفات والقاعدة) في Usage. أول خطوة تصميم الاحتفاظ والأدوار (المشرف وRLS)، ثم أداة جدول→JSON، ثم الكتابي بتصحيح الأستاذ واقتراح تطابق قريب، ثم الصور (Supabase Storage خاص)، ثم واجهة الكتابة. يشمل CLN-035/036. بالإنجليزية. لا برمجة قبل استئناف المالك.",
+      "description": "بعد جرد RAD-064 وتحقق المالك من حصص Supabase في Usage. أول خطوة تصميم الاحتفاظ والأدوار (المشرف وRLS)، ومعها RAD-060: يُنفذ مع أول migration في RAD-062؛ قائمة التكليفات لا تعرض حالة الإغلاق. ثم أداة جدول→JSON، ثم الكتابي بتصحيح الأستاذ وتطابق قريب، ثم الصور (Storage خاص)، ثم واجهة الكتابة. يشمل CLN-035/036. بالإنجليزية. لا برمجة قبل استئناف المالك.",
       "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "owner"
     },
