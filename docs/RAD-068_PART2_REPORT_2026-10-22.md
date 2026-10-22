@@ -88,7 +88,14 @@
 
 **مُشغَّل:** أثناء العمل: اختبارات `src/features/exam` و`src/features/qa` و`src/i18n`. في النهاية مرة واحدة: `npm run check` (typecheck وlint وvitest)، `npm run build`، `npm run build:pages`، `simulator-layout-audit.mjs` و`result-marker-audit.mjs` (390 و1440، EN/AR). وثائق: `docs:check -- --base origin/main`، `status:check -- --base origin/main --require-previous`، `git diff --check`.
 
-**النتائج:** (تُستكمل في آخر commit بعد التشغيل النهائي.)
+**النتائج:**
+- `npm run check`: typecheck نظيف؛ lint: تحذيران قديمان في `simulator-layout-audit.mjs` (موجودان على `main`)؛ vitest: 153 ملفًا، 2424 اختبارًا (2423 نجحت في التشغيل الكامل؛ **فشل `scene-dom.test.ts` مرة واحدة تحت الحمل الكامل**، وأُعيد تشغيله وحده مرة واحدة فنجح، دون تغيير الاختبار — الهشاشة السابقة المعروفة).
+- `npm run build` و`npm run build:pages`: ناجحان.
+- `simulator-layout-audit.mjs` (390 و1440، EN/AR، الفحوص الافتراضية الستة): **1520 فحصًا، 84 تشغيل axe، 0 إخفاق**. (لم تُشغَّل الفحوص الخمسة الإضافية التي شملها الجزء 1.)
+- `result-marker-audit.mjs` (كل الفحوص الـ17، سطح المكتب والهاتف الملائم والهاتف «الكاشف كاملًا»، EN/AR): **510/510** مطابقًا.
+- سطر مساعدة AP: تحقق بعرض `ConsolePanel` أنه يظهر في الصدر AP (EN وAR) ولا يظهر في الصدر PA؛ لم يُفحص بصريًا في المتصفح.
+- وثائق: `docs:check` (0 أخطاء، 0 تحذيرات)، `status:check -- --require-previous` سليم (تنبيه RAD-024 قديم)، `git diff --check` نظيف.
+- اختبار الكلمات المحظورة: ينجح على الشجرة الجديدة، وفشل على `HEAD` (164 موضعًا) ما يثبت أنه يكشف.
 
 **غير مُشغَّل:** `qa:golden` (لا تغيير في صور) و`qa:visual` و`qa:a11y` (لا تغيير مرئي سوى سطر المساعدة). لا معاينة مستضافة (المالك يفحص من هاتفه). `qa:characterise` شُغّل بالصيغة المسموحة فقط (`UPDATE_CHARACTERISATION=1` على اختبار التوصيف) بعد إثبات أن الفرق نص فقط.
 
