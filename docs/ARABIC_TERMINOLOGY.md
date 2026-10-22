@@ -381,3 +381,20 @@ Visual direction approved in S-UI-054-1…6; exact new Arabic UI text remains ma
 ## Assess E — 2026-10-20 (DRAFT, machine-assisted; pending Arabic review)
 
 نصوص المنصة الجديدة في `messages/ar.json`: «مسارات الاختبار»، «الفحوصات الكاملة»، «سُجل التعريض. هذا البند مقفل.» و«تعريض واحد فقط». أسماء الأدوات والمحتوى الامتحاني بالإنجليزية؛ لا نص تصحيح أو معيار طبي جديد. تعليمات القفل والتعريض نص منصة عربي/إنجليزي، مع وسم اللغة المناسب داخل البند الإنجليزي.
+
+## RAD-061 batch 4 — CLN-037 Assess platform labels (2026-10-22, DRAFT, machine-assisted; pending Arabic review)
+
+Platform UI/ARIA text moved from `AssessPanel.tsx`, `PartControls.tsx` and `PracticalScene.tsx` into `messages/*.json` → `assess.chooseOne`, `assess.clearAnswer`, `assess.part.*`, `assess.scene.*` (S-ASSESS-7). The mixed runner reuses the existing `assess.locked`, `assess.oneExposure` and `assess.expose`. Exam content, `CONTROL_LABELS` and `choices.*` stay English. No medical, scoring or existing Arabic string changed. Receptor = «الكاشف».
+
+| English | العربية (DRAFT) | Question for the reviewer |
+|---|---|---|
+| Choose one answer / Clear answer | اختر إجابة واحدة / مسح الإجابة | |
+| Settings / Settings diagram | الإعدادات / مخطط الإعدادات | |
+| Selected scene elements | عناصر المشهد المحددة | |
+| Positioning scene. Schematic anatomy follows the existing simulation model. | مشهد الوضعية. التشريح التخطيطي يتبع نموذج المحاكاة الحالي. | |
+| Detector and patient | الكاشف والمريض | |
+| Move beam with arrow keys or drag | حرّك الشعاع المركزي بمفاتيح الأسهم أو بالسحب | the handle is the central-ray crosshair: «الشعاع المركزي» rather than «الحزمة»? |
+| Move marker {marker} with arrow keys or drag | حرّك علامة الجانب {marker} بمفاتيح الأسهم أو بالسحب | |
+| Equipment: SID {sid} cm; tube angle {angle} degrees / Current equipment settings | الجهاز: SID ‏{sid} سم؛ زاوية الأنبوب {angle} درجة / إعدادات الجهاز الحالية | |
+| Drag the beam, field edges or marker; … All settings are available below. | اسحب الشعاع المركزي أو حواف المجال أو العلامة؛ … كل الإعدادات متاحة أدناه. | |
+| Current settings in text | الإعدادات الحالية نصًا | |

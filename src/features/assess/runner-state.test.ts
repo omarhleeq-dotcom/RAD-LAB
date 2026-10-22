@@ -1,13 +1,17 @@
 import {createClient} from "@supabase/supabase-js";
 import { afterEach,expect,it,vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { createElement } from "react";
+import { createElement,type ComponentType,type ReactNode } from "react";
+import { NextIntlClientProvider } from "next-intl";
+import en from "../../../messages/en.json";
 import { MixedRunner } from "./runner-state";
 import { RunnerError,parseSession,runnerPort,type MixedSession,type RunnerPort } from "./runner-data";
 import { PartControls } from "./PartControls";
 import { validateMixedContent } from "./server-presentation";
 import { mixedFixture,fixtureId as id } from "../../../scripts/assess/d-fixture";
 import type { AttemptCommand,SimulatorPartItem } from "./contracts";
+// PartControls reads its platform labels from messages (CLN-037); render it as the app does, in English.
+const english=(node:ReactNode)=>createElement(NextIntlClientProvider as ComponentType<Record<string,unknown>>,{locale:"en",messages:en,timeZone:"UTC"},node);
 const sessions:MixedRunner[]=[];
 afterEach(()=>{sessions.forEach(c=>c.dispose());sessions.length=0;vi.useRealTimers();});
 function fixture(){
@@ -59,10 +63,10 @@ it("whitelists the public DTO and fails closed on unsupported types, controls an
 });
 it("renders only SID for a SID item and only explicitly selected scene inputs, with no grading hints in markup/ARIA",()=>{
  const s=fixture(),item=s.assessment!.items[1] as SimulatorPartItem;
- const markup=renderToStaticMarkup(createElement(PartControls,{item,view:s.views!.distance!,values:{sidCm:130},disabled:false,onChange:()=>{}}));
+ const markup=renderToStaticMarkup(english(createElement(PartControls,{item,view:s.views!.distance!,values:{sidCm:130},disabled:false,onChange:()=>{}})));
  expect(markup).toContain("SID (cm)");expect(markup).not.toMatch(/kVp|Marker|svg|correct|target|rubric|criteria|readiness|title=/i);
  const marker=s.assessment!.items[2] as SimulatorPartItem;
- const scene=renderToStaticMarkup(createElement(PartControls,{item:marker,view:s.views!.marker!,values:{kvp:100,sideMarker:"R","markerPosition.x":0.4,"markerPosition.y":0.3},disabled:true,onChange:()=>{}}));
+ const scene=renderToStaticMarkup(english(createElement(PartControls,{item:marker,view:s.views!.marker!,values:{kvp:100,sideMarker:"R","markerPosition.x":0.4,"markerPosition.y":0.3},disabled:true,onChange:()=>{}})));
  expect(scene).toContain("Marker letter");expect(scene).not.toMatch(/SID \(cm\)|correct|rubric|target|criteria/i);
 });
 it("D authoring rejects unmatched mutable controls, unknown scene elements and full-practical candidates",()=>{

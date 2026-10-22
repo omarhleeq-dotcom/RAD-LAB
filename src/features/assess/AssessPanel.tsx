@@ -1,8 +1,9 @@
 "use client";
 import { useEffect,useReducer,useRef,useState,useSyncExternalStore } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale,useTranslations } from "next-intl";
 import { useSessionAccount } from "@/features/pilot/SessionGate";
 import { getPilotClient } from "@/features/pilot/client";
+import { dirFor } from "@/i18n/routing";
 import { assignedPage,isUuid,runnerPort,type Listing,type RunnerPort } from "./runner-data";
 import { MixedRunner } from "./runner-state";
 import { practicalAssignedPage,practicalPort } from "./practical-data";
@@ -12,7 +13,7 @@ import {HistoryPanel} from "./HistoryPanel";
 import {AssessConsent} from "./AssessConsent";
 const button="min-h-11 rounded border border-line px-4 py-2 text-sm disabled:opacity-50";
 function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>void}) {
-  const t=useTranslations("assess");const [,render]=useReducer(n=>n+1,0);
+  const t=useTranslations("assess"),locale=useLocale();const [,render]=useReducer(n=>n+1,0);
   const [c]=useState(()=>new MixedRunner(port,render));
   useEffect(()=>{void c.open(attempt);return ()=>c.dispose();},[c,attempt]);
   const s=c.session;
@@ -24,6 +25,8 @@ function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>v
     return ()=>clearTimeout(timer);
   },[c,s]);
   const [confirm,setConfirm]=useState(false);
+  // Platform text inside the English exam item carries its own language and direction (S-ASSESS-7).
+  const dir=dirFor(locale);
 
   const issue=c.issue;
   return <section className="mt-6 space-y-5" data-testid="assess-runner">
@@ -41,13 +44,13 @@ function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>v
         {(()=>{const item=s.assessment!.items[c.index]!,locked=s.ack.lockedItemIds.includes(item.ref.id),answer=c.drafts[item.ref.id];
           return <article className="space-y-4 rounded border border-line bg-panel p-4" dir="ltr" lang="en" aria-labelledby="assess-prompt">
             <h3 id="assess-prompt" className="font-semibold">{item.prompt}</h3>
-            {item.type==="single-choice"?<fieldset disabled={c.busy||!!issue||!!c.pending} className="space-y-3"><legend className="sr-only">Choose one answer</legend>
+            {item.type==="single-choice"?<fieldset disabled={c.busy||!!issue||!!c.pending} className="space-y-3"><legend className="sr-only" lang={locale} dir={dir}>{t("chooseOne")}</legend>
               {item.options.map(o=><label key={o.id} className="flex min-h-11 items-center gap-3"><input className="size-5 shrink-0" type="radio" name="assess-choice" checked={answer?.type==="single-choice"&&answer.optionId===o.id} onChange={()=>c.edit(item.ref.id,{type:"single-choice",optionId:o.id})}/>{o.text}</label>)}
-              <button className={button} onClick={()=>c.edit(item.ref.id,{type:"single-choice",optionId:null})}>Clear answer</button>
+              <button lang={locale} dir={dir} className={button} onClick={()=>c.edit(item.ref.id,{type:"single-choice",optionId:null})}>{t("clearAnswer")}</button>
             </fieldset>:<>
               <PartControls item={item} view={s.views![item.ref.id]!} values={answer?.type==="simulator-part"?answer.values:s.views![item.ref.id]!.initial} disabled={locked||c.busy||!!issue||!!c.pending} onChange={values=>c.edit(item.ref.id,{type:"simulator-part",values})}/>
-              <p>{locked?"Exposure recorded. This item is locked.":"One exposure only. Settings lock when the server records it."}</p>
-              <button className={button} disabled={locked||c.busy||!!issue||!!c.pending} onClick={()=>void c.expose()}>Expose once</button>
+              <p lang={locale} dir={dir}>{locked?t("locked"):t("oneExposure")}</p>
+              <button className={button} disabled={locked||c.busy||!!issue||!!c.pending} lang={locale} dir={dir} onClick={()=>void c.expose()}>{t("expose")}</button>
             </>}
           </article>;})()}
         <button className={button} disabled={c.busy||!!issue||!!c.pending} onClick={()=>{void c.flush().then(ok=>{if(ok)setConfirm(true);});}}>{t("submit")}</button>
