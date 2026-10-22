@@ -1,0 +1,50 @@
+// Disposable synthetic data only. No provider URL, login, secret or live selector.
+import assert from 'node:assert/strict';
+import { buildScopeArmSql } from './trial-scope-arm.mjs';
+import { buildTrialInstallPackage } from './trial-install.mjs';
+import { openLocalDatabase } from './local-database.mjs';
+let db,phase='configuration',outcome='STOP',cleanup=true;const checks=[];
+const id=n=>`00000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
+try{
+ const args=process.argv.slice(2);
+ assert.equal(args.length,2);assert(args.includes('--synthetic-disposable'));
+ const backend=args.find(a=>a.startsWith('--backend='))?.slice(10);assert(['pglite','postgres'].includes(backend));
+ phase='setup';db=await openLocalDatabase(backend);
+ await db.exec("create role assess_job_a nologin noinherit valid until '2000-01-01';grant assess_worker to assess_job_a");
+ for(const n of [1,2,3,5])await db.query('insert into auth.users values($1,$2,now(),$3)',[id(n),`synthetic${n}@example.test`,JSON.stringify({display_name:'Synthetic'})]);
+ await db.exec(`update public.profiles set status='approved' where user_id<>'${id(5)}';update public.profiles set role='owner' where user_id='${id(1)}'`);
+ for(const n of [2,3])await db.port('authenticated',id(n)).call('consent_v2',{p_version:'assess-pilot-2026-10-20-v2'});
+ const consents=await db.query('select * from assess.consents order by user_id,version');
+ const files=await buildTrialInstallPackage();await db.exec(files['install.sql']);
+ const input={controller:id(90),assessment:id(10),owner:id(1),student:id(2),outsider:id(3)};
+ const scopes=async()=>(await db.query('select count(*)::int n from assess.trial_scope'))[0].n;
+ const reject=async(sql,code)=>{await assert.rejects(()=>db.exec(sql),e=>e.code===code||code===undefined);await db.exec('rollback');assert.equal(await scopes(),0);};
+ phase='rejected';
+ await reject(buildScopeArmSql({controller:id(90),assessment:id(10)}),'22P02');checks.push('unedited-placeholders');
+ await reject(buildScopeArmSql({...input,student:id(5)}),'42501');checks.push('unapproved-or-unknown-identity');
+ await reject(buildScopeArmSql({...input,student:id(1)}),'42501');checks.push('duplicate-identities');
+ await db.exec('update assess.launch_gate set enabled=true');
+ await reject(buildScopeArmSql(input),'55000');await db.exec('update assess.launch_gate set enabled=false');checks.push('open-gate');
+ for(const bad of [{controller:'x'},{assessment:'x'},{assessment:id(90)},{owner:"x';--"}])assert.throws(()=>buildScopeArmSql({...input,...bad}));
+ checks.push('invalid-input-rejected');
+ phase='arm';
+ const sql=buildScopeArmSql(input);
+ await db.exec(sql);
+ assert.equal(await scopes(),1);
+ const row=(await db.query('select active,version_labels from assess.trial_scope'))[0];
+ assert.equal(row.active,false);assert.deepEqual(row.version_labels,['visible','hidden']);
+ assert(!/00000000-0000-0000-0000-0000000000/.test(sql.match(/select jsonb_build_object[^\n]*/)[0]));
+ for(const who of ['anon','authenticated','assess_worker'])assert.equal((await db.query("select has_table_privilege($1,'assess.trial_scope','SELECT') allowed",[who]))[0].allowed,false);
+ await assert.rejects(()=>db.port('assess_worker').call('trial_health_v1',{p_trial:id(90)}),{code:'55000'});
+ assert.equal((await db.query('select count(*)::int n from assess.launch_gate where enabled'))[0].n,0);
+ checks.push('dormant-scope-written','result-row-without-identifiers','worker-still-stops','gate-and-privileges-unchanged');
+ phase='replay';
+ await assert.rejects(()=>db.exec(sql),{code:'55000'});await db.exec('rollback');assert.equal(await scopes(),1);
+ await assert.rejects(()=>db.exec('update assess.trial_scope set student_id=$1'.replace('$1',`'${id(3)}'`)),{code:'42501'});await db.exec('rollback');
+ checks.push('replay-and-mutation-rejected');
+ assert.deepEqual(await db.query('select * from assess.consents order by user_id,version'),consents);checks.push('existing-consents-unchanged');
+ phase='complete';outcome='PASS';
+}catch{/* No raw SQL, fixture or private fields in witness. */}
+finally{try{if(db)await db.close();}catch{cleanup=false;phase='cleanup_failed';outcome='STOP';}}
+console.log(JSON.stringify({contract:'assess-trial-scope-arm-rehearsal/1',outcome,code:phase,checks,cleanup,runtimeOrLaunchVerified:false}));
+if(outcome!=='PASS')process.exitCode=1;

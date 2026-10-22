@@ -1,5 +1,7 @@
 import type {SupabaseClient} from "@supabase/supabase-js";
 import type {AssessHistoryRow} from "./contracts";
+import {ASSESS_RETENTION_CONSENT_VERSION} from "./retention-consent";
+// Historical F contract; never change text under this version.
 export const ASSESS_CONSENT_VERSION="assess-pilot-2026-10-20-v1";
 export interface HistoryPage {rows:AssessHistoryRow[];next:string|null}
 const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==="object"&&!Array.isArray(v);
@@ -26,6 +28,6 @@ export async function historyPage(client:SupabaseClient,after:string|null=null):
   return parseHistoryPage(await request(signal=>client.schema("assess").rpc("history_page_v1",{p_after:after,p_limit:20}).abortSignal(signal)));
 }
 export async function assessConsent(client:SupabaseClient,accept=false):Promise<boolean>{
-  const r=await request(signal=>client.schema("assess").rpc("consent_v1",{p_version:accept?ASSESS_CONSENT_VERSION:null}).abortSignal(signal));
+  const r=await request(signal=>client.schema("assess").rpc("consent_v2",{p_version:accept?ASSESS_RETENTION_CONSENT_VERSION:null}).abortSignal(signal));
   if(!object(r)||!exact(r,["accepted"])||typeof r.accepted!=="boolean")return invalid();return r.accepted;
 }

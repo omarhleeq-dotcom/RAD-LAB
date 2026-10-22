@@ -600,3 +600,106 @@ pilot-v1:79416f28ed75826571ed08c6bc9732e5278280ffa0a48437830c2b0d685a054d
 في GitHub Settings → Secrets and variables → Actions → Variables، طابق NEXT_PUBLIC_SUPABASE_URL مع `https://vlacestfruxooznrcjqc.supabase.co`، ثم حدّث **PILOT_SCHEMA_VERIFIED وحدها** بالقيمة أعلاه؛ لا تغير URL/المفتاح العام أو pins. أعد Deploy Pages لآخر رأس مسودة #94 المقصود وتحقق من CI وDeploy لذلك الرأس ثم عرض الهاتف ضمن الحالة المأذونة. لا إفادة تحديث Variable أو نجاح نشر F بعد، ولا كتابة إعدادات من الوكيل. لا تنشئ موافقة أو محتوى أو محاولة لتوفير شاهد؛ البوابة مغلقة والتشغيل ما زال يحتاج إذنًا وتجهيزًا مستقلين. لا نشر runtime/عامل/schedule أو ready/merge هنا.
 
 هذا الإثبات شهادة توافق يدوية للمشروع ومحتويات المتطلبات فقط؛ لا حارس يتصل بالقاعدة أو يتحقق من runtime/launch/recovery. نتيجة CI للرأس الأحدث تتحقق مستقلة، وفشل Require verified pilot schema قبل تحديث الإثبات متوقع ولا يُعالج بتغيير الحارس. O106/O108 والمراقبة والموافقة والاحتفاظ والنسخ والاستعادة مستقلة؛ لا نقل للقيمة إلى مشروع آخر أو بعد تغير المخطط/المنح/restore دون تحقق مناسب.
+
+<a id="assess-retention-preinstall"></a>
+### إنفاذ S-ASSESS-15 — نقطة SQL اليدوي للقراءة فقط
+
+هذه المتابعة أحدث من شهادة F التاريخية أعلاه. إنفاذ الإغلاق والتعطيل وموافقة v2 وتنظيف metadata محلي في المسودة فقط؛ لا تحديث PILOT_SCHEMA_VERIFIED أو إعادة نشر من قيمة F القديمة. طلب المالك متابعة العمل ثم التوقف عندما نحتاج SQL يدويًا. أُعدت الخطوة التالية دون اتصال إدارة أو تطبيق من الوكيل؛ [التقرير](ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md) يحفظ اختبارات التشخيص وحدودها.
+
+1. افتح SQL Editor في المشروع الأصلي **vlacestfruxooznrcjqc** وطابق اسم المشروع/محدده بنفسك؛ SQL لا تثبت الهوية أو النسخ/الاسترداد.
+2. شغّل [assess-retention-preinstall.sql](../supabase/checks/assess-retention-preinstall.sql) **كاملة فقط**. هي READ ONLY وتنتهي rollback، بلا إنشاء/تعديل/حذف أو تشغيل محاولة أو عامل. لا تشغّل الترحيل الخام أو حزم B/C/D/E/F القديمة.
+3. أرسل صف **assess-retention-preinstall/1** فقط. baseline_matches=true تعني تطابق F وغياب إضافة الاحتفاظ وفق الفحص؛ ليست إذن تطبيق. apply_authorized=false وmanual_review_required=true مقصودتان دائمًا، وكذلك أعلام backup/recovery/provider_backups/runtime غير مثبتة بهذا الاستعلام. لا تغيّرها إلى true.
+4. عند error أو baseline_matches=false نتوقف ونراجع الفرق المنقح؛ لا DROP أو إعادة ترحيل أو تعديل hashes أو normalization أو grants لتجاوز الفشل. قد تكون الإضافة موجودة/جزئية أو المخطط تغير، فلا تفترض أنها تحتاج إعادة.
+5. بعد قراءة النتيجة نراجع معًا شروط النسخة قبل التغيير والاسترداد والمزود وإجراء التطبيق الإضافي المناسب، ثم التحقق بعده والخدمة المغلقة قبل أي إثبات واجهة. لا استثناء نسخ موروث للعملية الجديدة، ولا فتح gate أو نشر runtime/عامل/schedule أو تغيير PR state. لا إنشاء موافقة/محاولة حقيقية لإنتاج شاهد.
+
+هذا حاجز يدوي مقروء، لا installer أو دورة restore أو قبول حي. لا يغير سياسة S-ASSESS-15 أو Practice؛ بقية بوابات O106/O108 والتشغيل والنسخ والاستعادة مستقلة.
+
+
+<a id="assess-retention-preinstall-owner-result"></a>
+### نتيجة فحص الاحتفاظ — توقف سابق ثم توجيه أحدث من المالك
+
+أرسل المالك صف assess-retention-preinstall/1 مطابقًا: جميع مؤشرات baseline والمخطط والمصدر والصلاحيات وtrigger والبوابة المغلقة وغياب الإضافة true؛ manual_review_required=true، وapply_authorized وbackup/recovery/provider/runtime غير مثبتة (false). [التقرير](ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md#retention-preinstall-owner-result) يحفظ الصف وحدوده. انتهى انتظار الفحص المقروء؛ لا تعِده أو تشغّل أدوات حسابين لمجرد توفير شاهد آخر.
+
+أفاد المالك بأنه لا توجد نسخة حديثة مثبتة أو لا يعرف، فتوقفت الكتابة آنذاك. **وجّه لاحقًا بالمتابعة على الأصلية دون نسخة الآن وتأجيل نسخة شاملة إلى نهاية العمل**؛ [التوجيه الأحدث](DECISIONS.md#assess-retention-original-no-backup-2026-10-20) يحكم العملية الحالية، و[الحزمة المحروسة أدناه](#assess-retention-original-install) هي الخطوة التالية. لا ترفع dump أو كلمات مرور إلى Git/المحادثة. دليل §8 تاريخي لنسخته ومخططه؛ لا يثبت B–F الحالية ولا يجيز إعادة حزمة منح/استعادة قديمة أو الكتابة فوق مشروع اختبار قائم.
+
+نسخة ما قبل التغيير لا تمنح وحدها اعتماد تشغيل Assess أو restore بعد السياسة؛ يلزم حجر الوصول وإعادة الآثار الأحدث وفحص الصلاحيات، والتحقق المستقل من نسخ المزود. لا يستعمل استثناء F السابق لهذه العملية، ولا يغير PILOT_SCHEMA_VERIFIED أو pins أو launch_gate من نتيجة التشخيص. بقية بوابات السياسة والتشغيل وO108 محفوظة.
+
+
+<a id="assess-retention-windows-backup-readiness"></a>
+### Windows — فحص أدوات سابق؛ مسار النسخ مؤجل الآن
+
+أكد المالك Windows وأن تطبيق SQL مطلوب على الأصلية **vlacestfruxooznrcjqc**. هذا هو الهدف المقصود أصلًا؛ النسخة المشفرة أرشيف للاسترجاع قبل تعديل الأصلية وليست وجهة تطبيق الإضافة. لا ربط للموقع بمشروع آخر أو استبدال الإنتاج بنسخة.
+
+كان المقطع المقترح في PowerShell يتحقق من وجود الأدوات فقط؛ لا اتصال بقاعدة أو أسرار أو تثبيت برامج أو SQL:
+
+```powershell
+$radlabToolNames = 'node', 'npm', 'npx', 'docker', 'supabase'
+foreach ($radlabToolName in $radlabToolNames) {
+    [pscustomobject]@{
+        Tool = $radlabToolName
+        Available = [bool](Get-Command $radlabToolName -ErrorAction SilentlyContinue)
+    }
+}
+$radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
+[pscustomobject]@{
+    Tool = '7-Zip'
+    Available = ([bool]$radlabSevenZip -or (Test-Path "$env:ProgramFiles\7-Zip\7z.exe"))
+}
+```
+
+هذا مقطع تاريخي، لا طلب إعادة الآن. false لـsupabase قد يعني أن CLI تُشغل عبر npx، وfalse لـ7-Zip قد يعني أنها في مسار مخصص؛ ليست النتيجة إذن تثبيت أو إعادة تهيئة تلقائيًا. بعد تحديد المتوفر تراجع إصدارات الأدوات وتشغيل Docker وطريقة الاتصال الآمنة وحفظ الأرشيف المشفر والتحقق منه. لا تشارك ملفات اتصال أو مفاتيح/كلمات مرور أو dumps. لم يصل ناتج هذا المقطع بعينه. وصل بدلًا منه تحقق المالك من Supabase CLI2.121.0 وDocker Server29.8.2 ووجود 7-Zip في المسار الافتراضي. هذه جاهزية أدوات فقط؛ لم تُنتج نسخة. أوقف مسار النسخ بطلب المالك اللاحق، ولا نطلب اتصال pooler أو كلمة مرور لتنفيذ SQL Editor.
+
+
+<a id="assess-retention-original-install"></a>
+### إضافة الاحتفاظ على الأصلية — ملف يدوي محروس واحد
+
+السلطة هي [توجيه المالك الأحدث](DECISIONS.md#assess-retention-original-no-backup-2026-10-20): الأصلية الآن، دون نسخة حديثة مثبتة، ونسخة شاملة بعد إنهاء العمل. لا حاجة لتثبيت CLI أو تشغيل Docker/7-Zip لهذه الخطوة. [تقرير التجربة المحلية](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md) يفرق بين PGlite وPostgreSQL والمزود؛ وصلت نتيجة التطبيق لاحقًا؛ [الصف الحالي](#assess-retention-install-owner-result) يحكم المتابعة، ولا تعاد هذه الخطوات.
+
+1. افتح SQL Editor للمشروع الأصلي **vlacestfruxooznrcjqc** وطابق محدده يدويًا؛ SQL نفسها لا تثبت هويته. استخدم جلسة مشغّل واحدة دون تغييرات SQL متزامنة.
+2. انسخ [assess-original-retention-install.sql](../supabase/manual/assess-original-retention-install.sql) **كاملًا** من مسودة العمل وشغّله مرة واحدة. لا تحدد جزءًا ولا تعِد B/C/D/E/F أو الترحيل الخام أو أي حزمة منح/استعادة قديمة.
+3. الملف يعيد baseline ما قبل الإضافة داخل معاملته؛ يقفل الجداول المتأثرة، ويراجع مخطط F ومصادره وصلاحياته وغياب الإضافة والبوابة المغلقة، ثم ينفذ إضافة الاحتفاظ وحدها ويفحصها قبل COMMIT. اختلاف read_only داخل حارسي الكتابة متوقع؛ لا يدخل في catalogue_ready هناك لأن المعاملة تكتب. بقية شروط القراءة نفسها محفوظة. لا تغيير للمهل: lock5s/statement60s؛ انتهاء المهلة توقف يحتاج تشخيصًا.
+4. عند أي خطأ توقف وأرسل رمز الخطأ ورسالة منقحة فقط، دون صفوف أو bodies أو أسرار. لا تعِد التشغيل أو DROP لتجاوز الخطأ. الخطأ قبل COMMIT يلغي كامل الإضافة، لكن rollback ليست نسخة أو recovery بعد COMMIT. إذا فشل الفحص النهائي أو ضاعت الاستجابة بعد COMMIT، استخدم [assess-retention-postinstall.sql](../supabase/checks/assess-retention-postinstall.sql) للقراءة فقط؛ لا تعِد installer.
+5. أرسل الصف الأخير **assess-retention-install/1** بعد COMMIT فقط. المتوقع: read_only وretention_catalogue_ready وretention_source_bodies_match وschema_shape_matches وno_direct_column_grants وtrigger_contract_matches وlaunch_gate_closed وinstallation_valid كلها true؛ backup_verified وrecovery_verified وprovider_backups_verified وruntime_or_launch_verified تبقى false. صف قفل advisory أو “Success” وحده لا يثبت التثبيت.
+
+الحزمة لا تشغّل maintain أو التصحيح أو محاولة ولا تضيف قبولًا لمستخدم، ولا تغيّر profiles/Practice أو البوابة. بعد النتيجة تراجع جاهزية الخدمة المغلقة وعقد الواجهة بحسب الاتصال الفعلي قبل أي attestation؛ لا تُغيّر pins أو PILOT_SCHEMA_VERIFIED لمجرد تمرير deploy. يبقى النشر والتشغيل وO108 وباقي المراجعات والنسخ/الاستعادة بوابات منفصلة. النسخة الشاملة اللاحقة عمل باقٍ، لا ضمان بأن dump قاعدة وحدها يشمل Auth/Storage/إعدادات النظام وتبعياته.
+
+
+<a id="assess-retention-install-owner-result"></a>
+### نتيجة التثبيت — نجح فحص SQL النهائي وفق إفادة المالك
+
+وصل صف assess-retention-install/1 النهائي بعد COMMIT؛ جميع شروط المصدر والمخطط والصلاحيات والtrigger وinstallation_valid والبوابة المغلقة true، والنسخ/recovery/provider/runtime false. [التقرير](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result) يحفظ النتيجة وحدودها. **انتهى انتظار التثبيت؛ لا تعِد الملف أو preinstall/postinstall الآن.** النص السابق يصف خطوات العملية التي أتمها المالك؛ التالي فحص الخدمة المغلقة أدناه. لا يثبت الصف قبول v2 لأي حساب أو تشغيل محاولة/صيانة أو restore، ولا يجيز تحديث PILOT_SCHEMA_VERIFIED/pins أو فتح gate.
+
+<a id="assess-retention-closed-service"></a>
+### فحص الخدمة المغلقة الجديد — v2 وخصوصية metadata
+
+أداة F السابقة وزوجها يخصان v1 فقط؛ لا تعِدهما لهذه الخطوة. [أداة retention الجديدة](../scripts/pilot/assess-retention-closed-service-check.js) تقرأ حالة v2 بإرسال null صريحًا، دون قبول، وتراجع منع القراءة المباشرة لبيانات الحجز والتعطيل والموافقة والنتائج. لا SQL كتابة/حذف أو start/read-session/command أو تشغيل عامل؛ بقاء launch_gate مغلقة مثبت بصف SQL السابق، والأداة لا تعدّلها أو تزعم قياس قيمتها عبر JWT.
+
+1. افتح التطبيق الحالي الذي تستخدمه وسجّل الدخول كمالك معتمد. افتح Console والصق الأداة الجديدة كاملة مرة واحدة.
+2. عند الطلب أدخل **المفتاح العام sb_publishable_ للمشروع الأصلي فقط**، ثم UUID المشارك المعتمد الآخر. تبقى هذه القيم محليًا؛ لا ترسلها في المحادثة، ولا تدخل secret/service-role/password. يتحقق المالك من وجود المشارك واعتماده.
+3. سجّل الدخول كمشارك معتمد وشغّل الأداة نفسها مرة واحدة، وأدخل المفتاح العام نفسه وUUID المالك الآخر محليًا. لا حاجة لقبول v2 أو إنشاء محاولة لهذا الفحص.
+4. أرسل فقط السطرين البادئين **RADLAB_ASSESS_RETENTION_CLOSED_CHECK**. المتوقع contract=assess-retention-closed-service/1، ودورا owner/participant، وoutcome=PASS وpair متطابق، وruntimeOrLaunchVerified=false. زوج F لا ينوب عنه حتى للحسابين نفسيهما. عند STOP أرسل السطر المنقح ونتوقف؛ لا تعِد SQL أو تتجاوز الحارس.
+
+نتيجة PASS تثبت الطلبات المحدودة من جلستي المالك والمشارك حسب الأداة، ولا تثبت مسارات تشغيل حية أو worker/maintenance أو عزل نتائج حقيقية قائمة أو نشرًا أو طبًا. لا موافقة تُسجّل بالنيابة، ولا إعدادات إنتاج أو marker تتغير. النسخة الشاملة ما زالت مؤجلة حسب قرار المالك؛ بقية البوابات مستقلة.
+
+
+<a id="assess-retention-closed-pair-owner-result"></a>
+### وصل الزوج المطابق — لا إعادة SQL أو الحسابين
+
+وصل owner=PASS وparticipant=PASS لعقد assess-retention-closed-service/1، وبنفس pair، عند00:04و00:05 يوم2026-10-21 بتوقيت عمّان؛ runtimeOrLaunchVerified=false في كليهما. [النتيجتان وحدودهما](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result) محفوظتان. انتهى إجراء الحسابين أعلاه؛ لا تكرره لمجرد شاهد إضافي. هذا يضيف دليل الطلبات المحدودة من الجلستين إلى صف SQL السابق؛ لا قبول v2 نيابة عن أحد أو start/عامل/صيانة/حذف حي أو نشر. التالي مراجعة الحزمة وأدلتها، مع بقاء launch_gate مغلقة وفق آخر صف SQL، والنسخ والاسترداد وبقية بوابات التشغيل والنشر مستقلة. لا marker/attestation أو إعدادات إنتاج تتغير، والنسخة الشاملة مؤجلة إلى نهاية العمل بتوجيه المالك.
+
+<a id="assess-retention-schema-attestation"></a>
+### معالجة حظر نشر #96 — إثبات retention المجهز، 2026-10-21 عمّان
+
+أبلغ المالك برسالة الحارس وطلب معالجة الحظر قبل المرحلة التالية. راجعت الحزمة واتصال الواجهة، وصف SQL النهائي بعد COMMIT وزوج retention المغلق المكتملين أعلاه؛ لا إعادة installer أو SQL أو أدوات الحسابين. أحدث main المتحقق بقي ff68413042e6e8414ad70884efcfa71cac7443a7، و#96 مفتوحة/مسودة عند563af8d4a3f57d48a888cab722f902800f0430e0. هذا الرأس نجح CI وفشل Deploy؛ الرسالة التي أرسلها المالك تثبت رفض إثبات التوافق، لا عطلًا في SQL.
+
+عقد الواجهة المراجع هو pilot-through-assess-retention/1 ويحتاج consent_v2 والترحيل الإضافي وفحوصه. قيمة F التاريخية لا تطابقه. حُسبت القيمة بأمر --print-marker القائم، وطابقت حساب SHA-256 مستقلًا للمشروع وبايتات requiredMigrations/checks؛ قبلها الحارس محليًا بمفتاح عام اصطناعي ورفض قيمة F القديمة. لم يتغير كود الحارس أو pins أو SQL أو المتغيرات. للأصلية **vlacestfruxooznrcjqc فقط**، مع بقاء المتطلبات نفسها:
+
+```text
+pilot-v1:0bc3743c707cff0fcef456d00096f6e186b759390708d2d963a6eabea55e5d52
+```
+
+الإجراء المتبقي للمالك في GitHub: **Settings → Secrets and variables → Actions → Variables → Repository variables → PILOT_SCHEMA_VERIFIED → Edit**، ثم استبدال القيمة كاملة بالسطر أعلاه وحفظها. ليست Secret ولا متغير NEXT_PUBLIC. طابق NEXT_PUBLIC_SUPABASE_URL مع `https://vlacestfruxooznrcjqc.supabase.co`؛ عند اختلاف المشروع توقف، ولا تغيّر URL أو المفتاح لتجاوز المشكلة. لا إعادة موافقة أو محاولة أو SQL لإنتاج شاهد.
+
+**لم يُحدّث الوكيل المتغير ولم يشغّل نشرًا.** يبقى منع تغيير الإعدادات/النشر من الإذن السابق قائمًا؛ القيمة جهزت للمراجعة والتطبيق من المالك. بعد تحديثه وفي نطاق إذن نشر الواجهة فقط: اختر تشغيل Deploy Pages المرتبط بأحدث رأس #96 المقصود ثم Re-run all jobs، وتحقق من CI وDeploy لذلك الرأس وعرض الهاتف. إعادة تشغيل رأس قديم لا تثبت أحدث رأس، وتحديث Variable وحده لا ينشر أو يثبت نجاح البناء. لا merge/ready أو نشر runtime/عامل/schedule أو فتح launch_gate من هذه الخطوة.
+
+الإثبات شهادة توافق يدوية محدودة بدليل المخطط والخدمة للطلبات المحددة؛ ليس قبول v2 أو تشغيل محاولات/عامل/صيانة أو backup/restore/provider proof. لا تغيير لقرار النسخة المؤجلة أو O108 وبوابات المراجعة والمراقبة والنسخ والاستعادة والتصدير والتشغيل المستقلة. [دليل التشخيص المحلي](ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md#retention-deploy-block-followup).
