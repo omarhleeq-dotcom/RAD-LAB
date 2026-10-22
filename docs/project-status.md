@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22). الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
-- **ينتظر المالك:** نعم/لا على بنود S في [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) قبل RAD-068؛ قائمة الصور الاختيارية؛ تواريخ إرسال مراجعة RAD-019 والرد عليها؛ موافقة منفصلة لكل جلسة؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
+- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ونُفذ UI-1 (RAD-066) في PR مسودة بانتظار تحقق المالك من الهاتف. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
+- **ينتظر المالك:** تحقق الهاتف لـRAD-066؛ قبول تحديث بصمات scene-dom واللقطات لنصوص D1 المتبقية (RAD-068)؛ قائمة الصور الاختيارية؛ تواريخ إرسال مراجعة RAD-019 والرد عليها؛ موافقة منفصلة لكل جلسة؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
 - **ينتظر مراجِعًا بشريًا:** لا شيء جديد. RAD-019 أُغلق دون توقيع مرخّص (تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
 - **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
 - **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ تخطيط المحاكي قد يغيّر بصمات scene-dom وتحديثها بموافقة المالك فقط؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 211,
-  "updated_at": "2026-10-22T10:20:00+00:00",
+  "revision": 213,
+  "updated_at": "2026-10-22T10:22:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-071",
+  "next_id": "RAD-072",
   "tasks": [
     {
       "id": "RAD-001",
@@ -579,7 +579,7 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "بعد UI-4 (F9) وتحقق المالك من حصص Supabase. أولًا الاحتفاظ والأدوار (مشرف/RLS) وRAD-060 في أول migration؛ ثم جدول→JSON فالكتابي بتصحيح الأستاذ، فالصور فواجهة الكتابة. يشمل CLN-035/036 وF4 ولوحة المالك. لا برمجة قبل الاستئناف. PGlite test-time option (b) from RAD-061: reconsider if `npm test` in CI exceeds ~5 minutes or PGlite test files exceed ~40.",
+      "description": "بعد UI-4 (F9) وتحقق المالك من حصص Supabase. أولًا الاحتفاظ والأدوار (RLS) وRAD-060 في أول migration؛ ثم جدول→JSON فالكتابي فالصور. يشمل CLN-035/036 وF4 ولوحة المالك وفرض الاسم الكامل في الخادم. لا برمجة قبل الاستئناف. PGlite option (b) من RAD-061: يُراجع إن تجاوز CI نحو 5 دقائق أو ملفات PGlite نحو 40.",
       "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
       "waiting_on": "owner"
     },
@@ -615,8 +615,8 @@
       "title": "UI-1: تنظيف تجربة الواجهة",
       "status": "planned",
       "priority": "high",
-      "description": "D1–D3: حذف العبارات والشريط؛ النص القانوني في الشروط والمصادر. دخول مستقل، واسم ≥3 كلمات عند التسجيل، وطلب اسم مرة واحدة على مستوى الحساب. الموافقة والانتظار عند الحاجة فقط؛ الخروج في القائمة الجانبية. حذف عنوان المكتبة الفرعي والفقرات المكررة؛ زر الأعلى لا يغطي المحتوى، ومفتاح لغة مدمج، وإخفاء تلميح المفاتيح باللمس. حسم CLN-010 والمفاتيح الثمانية.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "description": "نُفذ في PR مسودة: حذف الشريط والعبارات (D1) ونقل القانوني إلى الشروط والمصادر، دخول مستقل، اسم ≥3 كلمات (عميل)، موافقة وانتظار عند الحاجة، خروج في القائمة، المكتبة واللمس، CLN-010 والمفاتيح الثمانية. المتبقي في تقرير RAD-066 (لوحة النتيجة، الخادم).",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md",
       "waiting_on": "code"
     },
     {
@@ -633,8 +633,8 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "planned",
       "priority": "high",
-      "description": "يبدأ بتوحيد الأطراف العليا (CLN-016/017/025/028، البند 7أ): الفرز يمس نصوصها المشتركة. ثم: (1) دفعة نص T+AR؛ (2) دفعات S بحسب القاعدة، كل منها بنعم المالك ورفع إصدار المحرك؛ (3) بنود R بعد قائمة الصور؛ (4) قرار علامات provisional (استثناء S-STD-2). التفاصيل في تقرير RAD-065.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "description": "يبدأ بتوحيد الأطراف العليا (CLN-016/017/025/028). ثم: (1) دفعة نص T+AR مع نصوص D1 المحجوبة ببصمات scene-dom واللقطات؛ (2) دفعات S بحسب أجوبة المالك (s-items-owner)، كل منها برفع إصدار المحرك؛ (3) بنود R بعد قائمة الصور؛ (4) قرار علامات provisional.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
       "waiting_on": "code"
     },
     {
@@ -654,6 +654,15 @@
       "description": "مهمة مستقبلية (F10): تغيّر الصورة لحظيًا مع kVp وmAs. تحتاج مرجعًا ومراجعة الفيزيائي؛ لا أثر بصري مخترع.",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
       "defer_reason": "قرار المالك F10: بعد UI-3 والتصحيحات الطبية؛ يحتاج مرجعًا ومراجعة الفيزيائي."
+    },
+    {
+      "id": "RAD-071",
+      "title": "اليد: تقييم وضع الأصابع وبسطها (S10)",
+      "status": "deferred",
+      "priority": "low",
+      "description": "مهمة مستقبلية (S10، S14.2b-R11): تقييم وضع الأصابع وبسطها في فحوص اليد. تحتاج تحكمًا جديدًا في المحاكي ونطاقًا مرجعيًا مستقلًا.",
+      "source_ref": "docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md",
+      "defer_reason": "قرار المالك S10: يحتاج تحكمًا جديدًا في المحاكي؛ ليس الآن."
     }
   ]
 }

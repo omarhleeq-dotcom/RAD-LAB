@@ -76,10 +76,8 @@ input[type="range"] {
 .site-brand-group, .site-top-actions { display: flex; align-items: center; gap: .75rem; }
 .site-logo { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-brand-strong); font-family: "RAD Inter", sans-serif; font-weight: 750; font-size: 1.45rem; letter-spacing: -.04em; white-space: nowrap; }
 .site-logo span span { color: var(--color-brand); padding-inline: .12em; }
-.site-preview { margin: 0 1.5rem .8rem; padding: .45rem .8rem; border: 1px solid #edcf95; border-radius: .65rem; background: #fff7e7; color: #744615; text-align: center; font-size: .875rem; line-height: 1.5; }
-.site-preview > span { font-weight: 700; margin-inline-end: .35rem; }
-.language-switcher { direction: ltr; flex-shrink: 0; display: inline-flex; gap: .2rem; padding: .15rem; border: 1px solid var(--color-line); border-radius: .65rem; font-family: "RAD Inter", sans-serif; background: #fff; font-size: .875rem; }
-.language-switcher a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: .3rem .55rem; border-radius: .45rem; }
+.language-switcher { direction: ltr; flex-shrink: 0; display: inline-flex; gap: .1rem; padding: .1rem; border: 1px solid var(--color-line); border-radius: .65rem; font-family: "RAD Inter", sans-serif; background: #fff; font-size: .8125rem; }
+.language-switcher a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px; padding: .3rem .45rem; border-radius: .45rem; }
 .language-switcher a[aria-current] { background: var(--color-brand); color: white; }
 .language-switcher a:not([aria-current]) { color: var(--color-ink); }
 .language-switcher a:not([aria-current]):hover { background: var(--platform-soft); }
@@ -91,6 +89,11 @@ input[type="range"] {
 .site-nav > a[aria-current] { background: var(--platform-soft); color: var(--color-brand-strong); font-weight: 600; box-shadow: inset 3px 0 var(--color-brand); }
 [dir="rtl"] .site-nav > a[aria-current] { box-shadow: inset -3px 0 var(--color-brand); }
 .nav-planned { color: var(--color-muted); }
+.nav-signout { margin-block-start: 1rem; min-height: 50px; padding: .7rem .8rem; border: 0; border-block-start: 1px solid var(--color-line); border-radius: .75rem; background: transparent; display: flex; align-items: center; gap: .65rem; font: inherit; font-size: .9375rem; color: var(--color-ink); cursor: pointer; text-align: start; }
+.nav-signout:hover { background: var(--color-paper); }
+.site-layout[data-standalone] .site-main, .site-layout[data-standalone] .site-footer { margin-inline-start: 0; }
+/* Keyboard-only hints mean nothing on touch screens. */
+@media (hover: none) and (pointer: coarse) { .keyboard-hint { display: none; } }
 .nav-planned small { margin-inline-start: auto; border: 1px solid var(--color-line); padding: .1rem .35rem; border-radius: 1rem; font-size: .875rem; white-space: nowrap; }
 .site-main, .site-footer { margin-inline-start: 15.5rem; }
 .site-main { min-width: 0; }
@@ -155,7 +158,6 @@ body:has(.mobile-drawer[open]) { overflow: hidden; }
   .site-main, .site-footer { margin-inline-start: 0; }
   .menu-toggle { display: inline-flex; }
   .site-topbar { padding: .65rem 1rem; gap: .4rem; }
-  .site-preview { margin-inline: 1rem; }
   .site-logo { font-size: 1.25rem; }
   .platform-page { padding: 1.25rem 1rem; }
   .platform-page h1 { font-size: 1.625rem; }
@@ -173,7 +175,7 @@ body:has(.mobile-drawer[open]) { overflow: hidden; }
   .drawer-top .language-switcher a { padding-inline: .3rem; }
 }
 
-/* The measured toolbar stays reachable while the preview notice scrolls normally. */
+/* The measured toolbar stays reachable. */
 html { scroll-padding-block-start: calc(var(--site-bar-height, 4.75rem) + .75rem); }
 .category-soon { display: inline-flex; color: var(--color-muted); background: #eef3f6; padding: .25rem .7rem; border-radius: 2rem; font-size: .875rem; }
 .library-categories > h2 { margin-bottom: 1rem; }

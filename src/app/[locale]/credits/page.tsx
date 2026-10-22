@@ -21,7 +21,7 @@ export default async function CreditsPage({ params }: PageProps<"/[locale]/credi
   const text = (value: Parameters<typeof localize>[0]) => localize(value, locale);
   return (
     <div className="mx-auto max-w-3xl space-y-10 px-4 py-10 wrap-anywhere">
-      <div><h1 className="text-3xl font-bold">{t("title")}</h1><p className="mt-4 text-lg">{t("lead")}</p></div>
+      <div><h1 className="text-3xl font-bold">{t("title")}</h1><p className="mt-4 text-lg">{t("lead")}</p><p data-testid="credits-notice" className="mt-3 rounded-md border border-line bg-paper px-3 py-2 text-sm">{t("notice")}</p></div>
       <section aria-labelledby="credits-images">
         <h2 id="credits-images" className="text-2xl font-semibold">{t("images")}</h2>
         <p className="mt-3 text-sm text-muted">{t("sourceLinkNote")}</p>

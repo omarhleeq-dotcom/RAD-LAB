@@ -56,8 +56,7 @@ for (const loc of ["en", "ar"]) {
   page.on("request", (q) => { if (!q.url().startsWith(BASE) && !q.url().startsWith("data:") && !q.url().startsWith("blob:") && !(ALLOWED_ORIGIN && new URL(q.url()).origin === ALLOWED_ORIGIN)) external.push(q.url()); });
   for (const path of ROUTES(loc)) {
     await page.goto(`${BASE}${path}`, { waitUntil: "networkidle" });
-    const banner = page.locator('[data-testid="preview-banner"]');
-    ok(`${loc} ${path}: banner visible with the exact text`, (await banner.isVisible()) && (await banner.innerText()).trim() === msgs[loc].common.previewBanner);
+    ok(`${loc} ${path}: no top banner (D1)`, (await page.locator('[data-testid="preview-banner"]').count()) === 0);
     ok(`${loc} ${path}: meta robots noindex`, /noindex/.test((await page.locator('meta[name="robots"]').first().getAttribute("content")) ?? ""));
     ok(`${loc} ${path}: html lang/dir`, (await page.getAttribute("html", "lang")) === loc && (await page.getAttribute("html", "dir")) === (loc === "ar" ? "rtl" : "ltr"));
     ok(`${loc} ${path}: no horizontal overflow at 390 px`, await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth));
@@ -90,15 +89,14 @@ for (const loc of ["en", "ar"]) {
   const other = loc === "en" ? "ar" : "en";
   await page.locator(`nav a[lang="${other}"]`).tap();
   await page.waitForURL(`**/${other}/xray/chest-pa-erect/practice?case=nope`);
-  ok(`${loc}→${other} switch keeps the page and ?case=; banner now ${other}`, (await page.locator('[data-testid="preview-banner"]').innerText()).trim() === msgs[other].common.previewBanner);
+  ok(`${loc}→${other} switch keeps the page and ?case=; html lang now ${other}`, (await page.getAttribute("html", "lang")) === other);
   // Old link (host redirect) and the unknown-URL 404 page (bilingual, banner, noindex).
   await page.goto(`${BASE}/${loc}/simulation/chest-pa-erect`, { waitUntil: "networkidle" });
   ok(`${loc}: old URL lands on the new Practice URL`, new URL(page.url()).pathname === `/${loc}/xray/chest-pa-erect/practice`, page.url());
   const nf = await ctx.newPage(); // separate page: a 404 document legitimately logs "Failed to load resource"
   await nf.goto(`${BASE}/${loc}/no-such-page`, { waitUntil: "networkidle" });
-  const banners = await nf.locator('[data-testid="preview-banner"]').allInnerTexts();
-  ok(`${loc}: 404 page is bilingual and keeps the banner (EN + AR) and noindex`,
-    banners.length === 2 && banners.includes(msgs.en.common.previewBanner) && banners.includes(msgs.ar.common.previewBanner) &&
+  ok(`${loc}: 404 page is bilingual, has no banner and keeps noindex`,
+    (await nf.locator('[data-testid="preview-banner"]').count()) === 0 &&
     (await nf.locator('[data-testid="not-found-en"]').isVisible()) && (await nf.locator('[data-testid="not-found-ar"]').isVisible()) &&
     /noindex/.test((await nf.locator('meta[name="robots"]').first().getAttribute("content")) ?? ""));
   ok(`${loc}: every request same-origin`, external.length === 0, external.join(","));

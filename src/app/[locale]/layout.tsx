@@ -4,7 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { AppShell } from "@/components/shell/AppShell";
 import { RouteFocus } from "@/components/shell/RouteFocus";
-import { SessionGate } from "@/features/pilot/SessionGate";
+import { SessionGate, SessionProvider } from "@/features/pilot/SessionGate";
 import { dirFor, routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -36,12 +36,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           >
             {t("skipToContent")}
           </a>
-          <AppShell>
-            <RouteFocus />
-            <main id="main-content" tabIndex={-1} className="outline-none">
-              <SessionGate>{children}</SessionGate>
-            </main>
-          </AppShell>
+          <SessionProvider>
+            <AppShell>
+              <RouteFocus />
+              <main id="main-content" tabIndex={-1} className="outline-none">
+                <SessionGate>{children}</SessionGate>
+              </main>
+            </AppShell>
+          </SessionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

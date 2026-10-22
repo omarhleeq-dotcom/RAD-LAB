@@ -98,7 +98,10 @@ try {
   await s.page.screenshot({path:`/tmp/pilot-schema/${role}-${locale}-${width}-old.png`,fullPage:true});
   assert.deepEqual(s.errors,[]);
   if(locale==="ar"&&width===1440)held.push(s);else {
-   await card.getByRole("button",{name:messages[locale].account.signOut,exact:true}).click();
+   // Sign-out lives in the side menu for approved accounts (UI-1); the panel keeps it for the others.
+   const signOutButton=s.page.getByRole("button",{name:messages[locale].account.signOut,exact:true});
+   if(!(await signOutButton.count()))await s.page.getByTestId("menu-toggle").click();
+   await signOutButton.click();
    await s.page.getByRole("tab",{name:messages[locale].account.tabs.signIn,exact:true}).waitFor();checks++;await s.context.close();
   }
  }

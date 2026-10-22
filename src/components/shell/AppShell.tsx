@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { MODALITIES } from "@/data/modalities";
 import { PILOT } from "@/features/pilot/config";
+import { useOptionalSessionAccount } from "@/features/pilot/SessionGate";
 import { Link, usePathname } from "@/i18n/navigation";
 import { localize } from "@/lib/localized";
 
@@ -15,6 +16,7 @@ function Icon({ kind }: { kind: string }) {
     account: "M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-3a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v3",
     assess: "M6 3h9l4 4v14H5V3h1M14 3v5h5M8 12h8M8 16h6",
     learn: "M3 4h7l2 2 2-2h7v16h-7l-2 2-2-2H3zM12 6v16",
+    signout: "M9 4H5v16h4M16 8l4 4-4 4M20 12H9",
     credits: "M6 3h9l4 4v14H5V3h1M14 3v5h5M8 12h8M8 16h8",
   };
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[kind] ?? paths.library} /></svg>;
@@ -22,12 +24,17 @@ function Icon({ kind }: { kind: string }) {
 export function AppShell({ children }: { children: ReactNode }) {
   const t = useTranslations("shell");
   const tc = useTranslations("common");
+  const ta = useTranslations("account");
   const locale = useLocale();
   const pathname = usePathname();
+  const account = useOptionalSessionAccount();
   const dialog = useRef<HTMLDialogElement>(null);
   const topbar = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const workspace = pathname.endsWith("/practice") || pathname.startsWith("/simulation/");
+  // The login page is standalone: logo, language and the form only, until an approved account exists.
+  const approved = account?.state.kind === "signedIn" && account.state.profile.status === "approved";
+  const standalone = PILOT && pathname === "/account" && !approved;
   const available = MODALITIES.filter((modality) => modality.status === "available");
   const entries = [
     { href: "/", label: tc("home"), icon: "home" },
@@ -38,6 +45,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { href: "/credits", label: tc("creditsLink"), icon: "credits" },
   ];
   const close = () => dialog.current?.close();
+  const signOut = () => { close(); void account?.signOut(); };
   const trapFocus = (event: KeyboardEvent<HTMLDialogElement>) => {
     if (event.key !== "Tab") return;
     const controls = [...event.currentTarget.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex="0"]')].filter((node) => node.getClientRects().length > 0);
@@ -68,7 +76,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     return entry.href ? <Link key={entry.href} href={entry.href} aria-current={active ? "page" : undefined} onClick={close} data-testid={entry.href === "/account" ? "account-link" : undefined}>
       <Icon kind={entry.icon} /><span>{entry.label}</span>
     </Link> : <span key={entry.icon} className="nav-planned" aria-disabled="true"><Icon kind={entry.icon} /><span>{entry.label}</span><small>{tc("comingSoon")}</small></span>;
-  })}</nav>;
+  })}{approved && <button type="button" className="nav-signout" data-testid="sign-out" onClick={signOut}><Icon kind="signout" /><span>{ta("signOut")}</span></button>}</nav>;
+  if (standalone) return <div className="site-layout" data-standalone="true">
+    <header className="site-header site-chrome"><div className="site-topbar"><div className="site-brand-group">{logo}</div><div className="site-top-actions"><LanguageSwitcher /></div></div></header>
+    <div className="site-main">{children}</div>
+    <footer className="site-footer site-chrome"><p><Link href="/credits">{tc("creditsLink")}</Link></p></footer>
+  </div>;
   return <div className="site-layout" data-workspace={workspace || undefined}>
     <header className="site-header site-chrome">
       <div ref={topbar} className="site-topbar">
@@ -78,7 +91,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         <div className="site-top-actions">{workspace && <Link href={available[0] ? `/${available[0].id}` : "/"} className="workspace-library">{t("library")}</Link>}<LanguageSwitcher /></div>
       </div>
-      <p role="note" data-testid="preview-banner" className="site-preview"><span aria-hidden="true">ⓘ</span> {tc("previewBanner")}</p>
     </header>
     <aside className="desktop-sidebar site-chrome">{navigation}</aside>
     <dialog ref={dialog} id="mobile-navigation" className="mobile-drawer site-chrome" aria-labelledby="mobile-nav-title" onKeyDown={trapFocus} onClose={() => setOpen(false)} onClick={(event) => { if (event.target === event.currentTarget) close(); }}>
@@ -89,6 +101,6 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
     </dialog>
     <div className="site-main">{children}</div>
-    <footer className="site-footer site-chrome"><p role="note">{tc("disclaimer")} <Link href="/credits">{tc("creditsLink")}</Link></p></footer>
+    <footer className="site-footer site-chrome"><p><Link href="/credits">{tc("creditsLink")}</Link></p></footer>
   </div>;
 }

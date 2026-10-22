@@ -14,7 +14,6 @@ import { useSimulationStore } from "@/stores/simulation-store";
 
 export function SimulationWorkspace({ caseId }: { caseId: string }) {
   const t = useTranslations("workspace");
-  const tc = useTranslations("common");
   const ts = useTranslations("sex");
   const locale = useLocale();
   const { activeCase, settings, mode, phase, result, attempt, loadCase, setSetting, expose, retry, reset } =
@@ -37,7 +36,6 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
         <div className="flex flex-wrap items-center gap-2 text-xs font-medium">
           <span className="rounded bg-brand/10 px-2 py-1 text-brand-strong">{t("modePractice")}</span>
           <span className="rounded bg-paper px-2 py-1 text-muted">{t("attempt", { n: attempt })}</span>
-          {c.provisional && <span className="rounded bg-signal/25 px-2 py-1 text-warn">{tc("provisionalBadge")}</span>}
         </div>
       </div>
 
