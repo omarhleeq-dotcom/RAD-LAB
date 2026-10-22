@@ -203,6 +203,7 @@ export const chestPaErectExam: ExamDefinition = {
       weight: 2,
       maxMarginCm: 5,
       variantOnClipped: "clipped",
+      landmarkBoxOnly: true, // S2: a cut that takes only the anatomy-free strip beside the region passes.
       label: { en: "Collimation — anatomy coverage", ar: "التحديد — تغطية التشريح" },
       clippedSides: {
         top: {
@@ -231,6 +232,10 @@ export const chestPaErectExam: ExamDefinition = {
           en: "Anatomy outside the field is missing from the image. Open the field or re-centre the central ray.",
           ar: "التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
         },
+        marginOnly: {
+          en: "The field cuts only the spare margin at the edge of the required region, which holds no anatomy in the reference image; the apices, both lungs and the costophrenic angles are still included. The reference image cannot show what lies beyond its own edge.",
+          ar: "المجال يقطع فقط الهامش الاحتياطي عند حافة المنطقة المطلوبة، وهو لا يحوي تشريحًا في الصورة المرجعية؛ وقمم الرئتين والرئتان معًا والزوايا الضلعية الحجابية ما زالت مشمولة. والصورة المرجعية لا تُظهر ما يقع خارج حافتها.",
+        },
       },
       evidence: {
         status: "educational-simplification",
@@ -245,6 +250,7 @@ export const chestPaErectExam: ExamDefinition = {
       category: "positioning",
       weight: 1,
       maxMarginCm: 5,
+      beyondNeeded: true, // S2: an opening the geometry forces or the marker needs is not excess.
       label: { en: "Collimation — field size", ar: "التحديد — حجم المجال" },
       feedback: {
         pass: {

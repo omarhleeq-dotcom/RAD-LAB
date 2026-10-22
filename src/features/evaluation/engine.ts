@@ -16,10 +16,14 @@ import {
   clippedSides,
   collimatedField,
   coverageMargins,
+  fieldCutsLandmarkBox,
+  fitAnatomyBox,
   markerRect,
+  minimalFieldAround,
   rectInside,
   rectsOverlap,
   regionToRect,
+  unionRect,
 } from "@/features/simulation/geometry";
 import { isMarkerDisplayHalfNote, isMarkerWrongSide } from "@/features/simulation/marker-rule";
 import { derivePatientResponse } from "@/features/patient/response";
@@ -70,13 +74,26 @@ const joinText = (parts: LocalizedText[]): LocalizedText => ({
   ar: parts.map((p) => p.ar).join(" "),
 });
 
+/** Per side, how far the smallest field centred on the ray that covers anatomy + marker reaches beyond the required region (cm, ≥ 0 when it must). */
+function neededMargins(s: SimulationSettings, c: RadCase) {
+  const region = regionToRect(c.requiredAnatomy);
+  const detectorRect = { x1: 0, y1: 0, x2: c.detector.widthCm, y2: c.detector.heightCm };
+  const marker = s.sideMarker ? markerRect(s.markerPosition, c.positioning.markerSizeCm, c.detector) : null;
+  const target = marker && rectInside(marker, detectorRect) ? unionRect(region, marker) : region;
+  return coverageMargins(minimalFieldAround(s, target, c.detector), region);
+}
+
 function evalCoverage(rule: CoverageRule, s: SimulationSettings, c: RadCase): Partial<CheckResult> {
   const field = collimatedField(s, c.detector);
   const margins = coverageMargins(field, regionToRect(c.requiredAnatomy));
   const observed = `${fmt(field.x2 - field.x1)} × ${fmt(field.y2 - field.y1)} cm`;
   if (rule.check === "clipping") {
-    const sides = clippedSides(margins);
-    if (sides.length === 0) return { outcome: "pass", observed, feedback: rule.feedback.pass };
+    const cut = clippedSides(margins);
+    if (cut.length === 0) return { outcome: "pass", observed, feedback: rule.feedback.pass };
+    // S2: with `landmarkBoxOnly`, only a side on which the field also reaches the drawn anatomy is lost anatomy.
+    const { landmarkCm } = fitAnatomyBox(c.radiograph, c.requiredAnatomy);
+    const sides = rule.landmarkBoxOnly ? cut.filter((side) => fieldCutsLandmarkBox(side, field, landmarkCm)) : cut;
+    if (sides.length === 0) return { outcome: "pass", observed, feedback: rule.feedback.marginOnly ?? rule.feedback.pass };
     const detail = sides.flatMap((side) => (rule.clippedSides?.[side] ? [rule.clippedSides[side]] : []));
     return {
       outcome: "fail",
@@ -85,7 +102,10 @@ function evalCoverage(rule: CoverageRule, s: SimulationSettings, c: RadCase): Pa
       variant: rule.variantOnClipped,
     };
   }
-  const excessive = Object.values(margins).some((v) => v > rule.maxMarginCm);
+  // S2: with `beyondNeeded`, only the opening beyond the smallest field centred on the ray that still covers the required
+  // anatomy and the placed marker counts: what the geometry forces or the marker needs is not excess.
+  const needed = rule.beyondNeeded ? neededMargins(s, c) : null;
+  const excessive = (Object.keys(margins) as (keyof typeof margins)[]).some((side) => margins[side] - (needed?.[side] ?? 0) > rule.maxMarginCm);
   return excessive
     ? { outcome: "partial", observed, feedback: rule.feedback.high ?? rule.feedback.fail }
     : { outcome: "pass", observed, feedback: rule.feedback.pass };

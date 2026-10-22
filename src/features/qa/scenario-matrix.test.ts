@@ -171,7 +171,8 @@ describe("scenario matrix: cross-scenario expectations", () => {
   it("clipped scores and clipped anatomy agree in every scenario", () => {
     for (const [id, , r] of reports) {
       const clipScore = r.result.checks.find((k) => k.ruleId === "collimation-clipping")!.outcome === "fail";
-      expect(r.plan.clippedSides.length > 0, id).toBe(clipScore);
+      // S2: Chest PA scores (and draws) a cut only when the field reaches the drawn anatomy; a margin-only cut passes.
+      expect(r.plan.landmarkClippedSides.length > 0, id).toBe(clipScore);
       expect(r.effects.includes("collimation-clipping"), id).toBe(clipScore);
     }
   });

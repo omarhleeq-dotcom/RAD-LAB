@@ -130,6 +130,22 @@ export interface CoverageRule extends RuleBase {
   variantOnClipped?: ImageVariantId;
   /** Clipping only: which anatomy is lost when the field cuts off this side of the required region. */
   clippedSides?: Record<"left" | "right" | "top" | "bottom", LocalizedText>;
+  /**
+   * Clipping only (S2, owner 2026-10-22). Absent/false = any cut into `requiredAnatomy` fails. True = a cut counts as lost
+   * anatomy only on a side where the field also reaches the baseline's landmark box (the anatomy the image shows); a cut that
+   * takes only the anatomy-free strip between the region and that box passes, with `feedback.marginOnly` as the remark.
+   */
+  landmarkBoxOnly?: boolean;
+  /**
+   * Excess only (S2). Absent/false = the margin is measured beyond `requiredAnatomy`. True = it is measured beyond the smallest
+   * field, centred on the actual central ray, that still covers the required anatomy and the placed marker, so an opening the
+   * geometry forces (off-centre ray) or the marker needs is not excess; only the avoidable opening is compared with `maxMarginCm`.
+   */
+  beyondNeeded?: boolean;
+  feedback: RuleFeedback & {
+    /** Clipping with `landmarkBoxOnly`: the field cuts only the anatomy-free margin. Absent = the pass text. */
+    marginOnly?: LocalizedText;
+  };
 }
 
 /**

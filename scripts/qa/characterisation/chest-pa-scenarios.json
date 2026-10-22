@@ -8013,26 +8013,24 @@
      "radiograph.alt",
      "radiograph.altFindings.collimation-clipping",
      "radiograph.altSides.top",
-     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altFindingsLead",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. النتائج الظاهرة: تشريح مقطوع بحافة المجال المحدَّد عند الأعلى ومجال تعريض أكبر من اللازم والمنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
+    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. النتائج الظاهرة: تشريح مقطوع بحافة المجال المحدَّد عند الأعلى والمنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
    },
    "en": {
     "keys": [
      "radiograph.alt",
      "radiograph.altFindings.collimation-clipping",
      "radiograph.altSides.top",
-     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altFindingsLead",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. Visible findings: anatomy cut off by the collimated field at the top, a larger exposed field, and exposed area shifted by the off-centre central ray. Side marker L is drawn in the viewer's right half of the image."
+    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. Visible findings: anatomy cut off by the collimated field at the top and exposed area shifted by the off-centre central ray. Side marker L is drawn in the viewer's right half of the image."
    }
   },
   "checks": [
@@ -8089,16 +8087,16 @@
    },
    {
     "category": "positioning",
-    "credit": 0.5,
-    "drawn": true,
+    "credit": 1,
+    "drawn": false,
     "evidence": {
      "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
      "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-     "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+     "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
+     "en": "The field is not larger than necessary for the required anatomy."
     },
     "label": {
      "ar": "التحديد — حجم المجال",
@@ -8107,7 +8105,7 @@
     "notDrawnLabel": false,
     "observed": "33 × 35 cm",
     "observedKind": null,
-    "outcome": "partial",
+    "outcome": "pass",
     "ruleId": "collimation-excess",
     "scored": true,
     "variant": null,
@@ -8434,14 +8432,11 @@
    "radiograph.effects.centering.title",
    "radiograph.effects.collimation-clipping.desc",
    "radiograph.effects.collimation-clipping.title",
-   "radiograph.effects.excess-field.desc",
-   "radiograph.effects.excess-field.title",
    "radiograph.effects.marker.desc",
    "radiograph.effects.marker.title",
    "result.failed",
    "result.notScored",
    "result.outcome.fail",
-   "result.outcome.partial",
    "result.outcome.pass",
    "result.passed",
    "result.variants.clipped"
@@ -8457,14 +8452,11 @@
    "radiograph.effects.centering.title": "الشعاع المركزي غير متمركز ← المجال منزاح",
    "radiograph.effects.collimation-clipping.desc": "التشريح الواقع خارج المجال المحدَّد لا يتعرض للأشعة فيغيب عن الصورة في الجهة (الجهات) التي يقطع فيها المجال المنطقة المطلوبة. يتبع المجال إعدادات الشعاع المركزي والتحديد.",
    "radiograph.effects.collimation-clipping.title": "حواف المجال تقطع التشريح",
-   "radiograph.effects.excess-field.desc": "المجال الأكبر يُعرِّض ويُظهر نسيجًا أكثر. لا يُرسم أي أثر للتشتت أو التباين لأن هذا المحاكي لا يملك نموذجًا فيزيائيًا لذلك؛ والكلفة الحقيقية هي التعريض غير الضروري.",
-   "radiograph.effects.excess-field.title": "مجال تعريض أكبر",
    "radiograph.effects.marker.desc": "تُرسم علامتك حيث وضعتها على الكاشف ويقطعها المجال كأي محتوى آخر في الصورة. لا تُصحَّح نيابةً عنك.",
    "radiograph.effects.marker.title": "علامة الجانب الخاصة بك",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
    "result.outcome.fail": "خاطئ",
-   "result.outcome.partial": "صحيح جزئيًا",
    "result.outcome.pass": "صحيح",
    "result.passed": "يبلغ درجة النجاح التعليمية",
    "result.variants.clipped": "قطع جزء من التشريح المطلوب"
@@ -8480,14 +8472,11 @@
    "radiograph.effects.centering.title": "Central ray off-centre → field shifted",
    "radiograph.effects.collimation-clipping.desc": "Anatomy outside the collimated field is not exposed, so it is missing from the image on the side(s) where the field cuts the required region. The field follows your central-ray and collimation settings.",
    "radiograph.effects.collimation-clipping.title": "Field edges clip anatomy",
-   "radiograph.effects.excess-field.desc": "A larger field exposes and shows more tissue. No scatter or contrast penalty is drawn, because this simulator has no physical model for it; the real cost is unnecessary exposure.",
-   "radiograph.effects.excess-field.title": "Larger exposed field",
    "radiograph.effects.marker.desc": "Your marker is drawn where you placed it on the detector and is cut off by the field like any other image content. It is not corrected for you.",
    "radiograph.effects.marker.title": "Your side marker",
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
    "result.outcome.fail": "Incorrect",
-   "result.outcome.partial": "Partly correct",
    "result.outcome.pass": "Correct",
    "result.passed": "Meets the educational pass mark",
    "result.variants.clipped": "Required anatomy clipped"
@@ -8522,22 +8511,6 @@
      "magnitude": {
       "kind": "educational-visual-approximation",
       "note": "The field edge is exact geometry; where the anatomy lies under it follows an approximate landmark mapping."
-     }
-    },
-    {
-     "changesPixels": false,
-     "concept": {
-      "note": "Larger exposed region only; exact scatter/contrast penalty is provisional and not drawn.",
-      "reference": "Image-quality ref — Anatomical coverage and collimation",
-      "status": "educational-simplification"
-     },
-     "drivers": [
-      "geometry.fieldCm"
-     ],
-     "id": "excess-field",
-     "magnitude": {
-      "kind": "none",
-      "note": "Only a larger exposed region; no scatter / contrast penalty is drawn."
      }
     },
     {
@@ -8671,22 +8644,22 @@
     },
     {
      "category": "positioning",
-     "credit": 0.5,
+     "credit": 1,
      "evidence": {
       "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
       "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-      "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+      "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
+      "en": "The field is not larger than necessary for the required anatomy."
      },
      "label": {
       "ar": "التحديد — حجم المجال",
       "en": "Collimation — field size"
      },
      "observed": "33 × 35 cm",
-     "outcome": "partial",
+     "outcome": "pass",
      "ruleId": "collimation-excess",
      "scored": true,
      "weight": 1
@@ -9013,11 +8986,6 @@
       "variant": "clipped"
      },
      {
-      "category": "positioning",
-      "outcome": "partial",
-      "ruleId": "collimation-excess"
-     },
-     {
       "category": "centering",
       "outcome": "fail",
       "ruleId": "centering-vertical"
@@ -9078,8 +9046,8 @@
     "categories": [
      {
       "category": "positioning",
-      "earned": 16.1,
-      "ratio": 0.6428571428571429,
+      "earned": 17.9,
+      "ratio": 0.7142857142857143,
       "weight": 25
      },
      {
@@ -9115,7 +9083,7 @@
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 83.6
+    "total": 85.4
    },
    "variants": [
     "clipped"
@@ -9128,8 +9096,8 @@
    "categories": [
     {
      "category": "positioning",
-     "earned": 16.1,
-     "ratio": 0.6428571428571429,
+     "earned": 17.9,
+     "ratio": 0.7142857142857143,
      "weight": 25
     },
     {
@@ -9166,7 +9134,7 @@
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 83.6,
+   "total": 85.4,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -13664,32 +13632,26 @@
    "ar": {
     "keys": [
      "radiograph.alt",
-     "radiograph.altFindings.collimation-clipping",
-     "radiograph.altSides.top",
-     "radiograph.altSides.bottom",
      "radiograph.altClippingMargin",
      "radiograph.altSides.top",
      "radiograph.altSides.bottom",
-     "radiograph.altFindingsLead",
+     "radiograph.altReference",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. عند الأعلى والأسفل يقطع المجال هامش المنطقة المطلوبة فقط؛ الرئتان المعروضتان كاملتان. النتائج الظاهرة: تشريح مقطوع بحافة المجال المحدَّد عند الأعلى والأسفل. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
+    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. عند الأعلى والأسفل يقطع المجال هامش المنطقة المطلوبة فقط؛ الرئتان المعروضتان كاملتان. لا يظهر أي خطأ محاكى في جودة الصورة: هذا هو المظهر المرجعي. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
    },
    "en": {
     "keys": [
      "radiograph.alt",
-     "radiograph.altFindings.collimation-clipping",
-     "radiograph.altSides.top",
-     "radiograph.altSides.bottom",
      "radiograph.altClippingMargin",
      "radiograph.altSides.top",
      "radiograph.altSides.bottom",
-     "radiograph.altFindingsLead",
+     "radiograph.altReference",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. At the top and the bottom the field cuts only the margin of the required region; the lungs shown are complete. Visible findings: anatomy cut off by the collimated field at the top and the bottom. Side marker L is drawn in the viewer's right half of the image."
+    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. At the top and the bottom the field cuts only the margin of the required region; the lungs shown are complete. No simulated image-quality fault is visible: this is the reference appearance. Side marker L is drawn in the viewer's right half of the image."
    }
   },
   "checks": [
@@ -13720,16 +13682,16 @@
    },
    {
     "category": "positioning",
-    "credit": 0,
-    "drawn": true,
+    "credit": 1,
+    "drawn": false,
     "evidence": {
      "note": "Required anatomy (apices, both lungs, costophrenic angles) is validated; the demo region size in cm is provisional.",
      "reference": "§2 Coverage / collimation outcome; §3D",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The top of the field cuts off the lung apices. The bottom of the field cuts off the costophrenic angles and the lower lungs. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "المجال يقطع فقط الهامش الاحتياطي عند حافة المنطقة المطلوبة، وهو لا يحوي تشريحًا في الصورة المرجعية؛ وقمم الرئتين والرئتان معًا والزوايا الضلعية الحجابية ما زالت مشمولة. والصورة المرجعية لا تُظهر ما يقع خارج حافتها.",
+     "en": "The field cuts only the spare margin at the edge of the required region, which holds no anatomy in the reference image; the apices, both lungs and the costophrenic angles are still included. The reference image cannot show what lies beyond its own edge."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -13738,10 +13700,10 @@
     "notDrawnLabel": false,
     "observed": "33 × 29.58 cm",
     "observedKind": null,
-    "outcome": "fail",
+    "outcome": "pass",
     "ruleId": "collimation-clipping",
     "scored": true,
-    "variant": "clipped",
+    "variant": null,
     "weight": 2
    },
    {
@@ -14088,16 +14050,15 @@
    "categories.rotation",
    "categories.sid",
    "radiograph.clippingMarginNote",
-   "radiograph.effects.collimation-clipping.desc",
-   "radiograph.effects.collimation-clipping.title",
+   "radiograph.effects.baseline.desc",
+   "radiograph.effects.baseline.title",
    "radiograph.effects.marker.desc",
    "radiograph.effects.marker.title",
    "result.failed",
    "result.notScored",
-   "result.outcome.fail",
    "result.outcome.pass",
    "result.passed",
-   "result.variants.clipped"
+   "result.variants.correct"
   ],
   "messagesAr": {
    "categories.breathing": "التنفس",
@@ -14107,16 +14068,15 @@
    "categories.rotation": "الدوران",
    "categories.sid": "SID / التجهيز",
    "radiograph.clippingMarginNote": "هامش فقط عند الأعلى / الأسفل: يقطع المجال هامش المنطقة المطلوبة فقط، خلف الرئتين والأضلاع والزاويتين الضلعيتين الحجابيتين المرسومة في هذه الصورة المرجعية. ما زالت الدرجة تطبّق المنطقة، لكن الصورة تُظهر تلك البنى كاملة.",
-   "radiograph.effects.collimation-clipping.desc": "التشريح الواقع خارج المجال المحدَّد لا يتعرض للأشعة فيغيب عن الصورة في الجهة (الجهات) التي يقطع فيها المجال المنطقة المطلوبة. يتبع المجال إعدادات الشعاع المركزي والتحديد.",
-   "radiograph.effects.collimation-clipping.title": "حواف المجال تقطع التشريح",
+   "radiograph.effects.baseline.desc": "يُعرض المظهر المرجعي PA دون عيوب مُحاكاة. هو أساس تعليمي وليس معيارًا ينطبق على كل مريض.",
+   "radiograph.effects.baseline.title": "المظهر المرجعي",
    "radiograph.effects.marker.desc": "تُرسم علامتك حيث وضعتها على الكاشف ويقطعها المجال كأي محتوى آخر في الصورة. لا تُصحَّح نيابةً عنك.",
    "radiograph.effects.marker.title": "علامة الجانب الخاصة بك",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
-   "result.outcome.fail": "خاطئ",
    "result.outcome.pass": "صحيح",
    "result.passed": "يبلغ درجة النجاح التعليمية",
-   "result.variants.clipped": "قطع جزء من التشريح المطلوب"
+   "result.variants.correct": "لا توجد عيوب فنية ظاهرة"
   },
   "messagesEn": {
    "categories.breathing": "Breathing",
@@ -14126,16 +14086,15 @@
    "categories.rotation": "Rotation",
    "categories.sid": "SID / setup",
    "radiograph.clippingMarginNote": "Margin only at the top / the bottom: the field cuts only the margin of the required region, beyond the lungs, ribs and costophrenic angles drawn in this baseline picture. The score still applies the region, but the picture shows those structures complete.",
-   "radiograph.effects.collimation-clipping.desc": "Anatomy outside the collimated field is not exposed, so it is missing from the image on the side(s) where the field cuts the required region. The field follows your central-ray and collimation settings.",
-   "radiograph.effects.collimation-clipping.title": "Field edges clip anatomy",
+   "radiograph.effects.baseline.desc": "The reference PA appearance is shown with no simulated faults. It is an educational baseline, not a standard every patient will match.",
+   "radiograph.effects.baseline.title": "Reference appearance",
    "radiograph.effects.marker.desc": "Your marker is drawn where you placed it on the detector and is cut off by the field like any other image content. It is not corrected for you.",
    "radiograph.effects.marker.title": "Your side marker",
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
-   "result.outcome.fail": "Incorrect",
    "result.outcome.pass": "Correct",
    "result.passed": "Meets the educational pass mark",
-   "result.variants.clipped": "Required anatomy clipped"
+   "result.variants.correct": "No technical faults demonstrated"
   },
   "plan": {
    "anatomy": {
@@ -14154,20 +14113,17 @@
    },
    "effects": [
     {
-     "changesPixels": true,
+     "changesPixels": false,
      "concept": {
-      "note": "Anatomy outside the field is not imaged (geometry).",
-      "reference": "Image-quality ref — Anatomical coverage and collimation",
-      "status": "validated"
+      "note": "Educational appearance baseline, not clinical ground truth.",
+      "reference": "Image-quality ref — Asset requirements",
+      "status": "educational-simplification"
      },
-     "drivers": [
-      "geometry.fieldCm",
-      "geometry.clippedSides"
-     ],
-     "id": "collimation-clipping",
+     "drivers": [],
+     "id": "baseline",
      "magnitude": {
-      "kind": "educational-visual-approximation",
-      "note": "The field edge is exact geometry; where the anatomy lies under it follows an approximate landmark mapping."
+      "kind": "none",
+      "note": "Reference appearance only; no effect applied."
      }
     },
     {
@@ -14230,7 +14186,7 @@
     "penetrationContrastKept": null
    }
   },
-  "primaryVariant": "clipped",
+  "primaryVariant": "correct",
   "render": {
    "height": 258,
    "sha256": "fb2bd57f7e9e92516e064a85107d4a1d74033edab1e9b7f6a37204a7d1966601",
@@ -14262,25 +14218,24 @@
     },
     {
      "category": "positioning",
-     "credit": 0,
+     "credit": 1,
      "evidence": {
       "note": "Required anatomy (apices, both lungs, costophrenic angles) is validated; the demo region size in cm is provisional.",
       "reference": "§2 Coverage / collimation outcome; §3D",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The top of the field cuts off the lung apices. The bottom of the field cuts off the costophrenic angles and the lower lungs. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "المجال يقطع فقط الهامش الاحتياطي عند حافة المنطقة المطلوبة، وهو لا يحوي تشريحًا في الصورة المرجعية؛ وقمم الرئتين والرئتان معًا والزوايا الضلعية الحجابية ما زالت مشمولة. والصورة المرجعية لا تُظهر ما يقع خارج حافتها.",
+      "en": "The field cuts only the spare margin at the edge of the required region, which holds no anatomy in the reference image; the apices, both lungs and the costophrenic angles are still included. The reference image cannot show what lies beyond its own edge."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
       "en": "Collimation — anatomy coverage"
      },
      "observed": "33 × 29.58 cm",
-     "outcome": "fail",
+     "outcome": "pass",
      "ruleId": "collimation-clipping",
      "scored": true,
-     "variant": "clipped",
      "weight": 2
     },
     {
@@ -14594,7 +14549,7 @@
     "targetMas": 3.6358017588559215,
     "tendency": "target-range"
    },
-   "primaryVariant": "clipped",
+   "primaryVariant": "correct",
    "resultState": {
     "caseId": "chest-pa-erect",
     "exposure": {
@@ -14619,14 +14574,7 @@
      "targetMas": 3.6358017588559215,
      "tendency": "target-range"
     },
-    "findings": [
-     {
-      "category": "positioning",
-      "outcome": "fail",
-      "ruleId": "collimation-clipping",
-      "variant": "clipped"
-     }
-    ],
+    "findings": [],
     "geometry": {
      "anatomyFullyIncluded": false,
      "centralRay": {
@@ -14676,15 +14624,15 @@
      "mode": "manual"
     },
     "variants": [
-     "clipped"
+     "correct"
     ]
    },
    "score": {
     "categories": [
      {
       "category": "positioning",
-      "earned": 17.9,
-      "ratio": 0.7142857142857143,
+      "earned": 25,
+      "ratio": 1,
       "weight": 25
      },
      {
@@ -14720,21 +14668,21 @@
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 92.9
+    "total": 100
    },
    "variants": [
-    "clipped"
+    "correct"
    ]
   },
   "variants": [
-   "clipped"
+   "correct"
   ],
   "verdict": {
    "categories": [
     {
      "category": "positioning",
-     "earned": 17.9,
-     "ratio": 0.7142857142857143,
+     "earned": 25,
+     "ratio": 1,
      "weight": 25
     },
     {
@@ -14771,7 +14719,7 @@
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 92.9,
+   "total": 100,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -32400,26 +32348,24 @@
    "ar": {
     "keys": [
      "radiograph.alt",
-     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altReference",
      "radiograph.altFindingsLead",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. لا يظهر أي خطأ محاكى في جودة الصورة: هذا هو المظهر المرجعي. النتائج الظاهرة: مجال تعريض أكبر من اللازم والمنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
+    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. لا يظهر أي خطأ محاكى في جودة الصورة: هذا هو المظهر المرجعي. النتائج الظاهرة: المنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
    },
    "en": {
     "keys": [
      "radiograph.alt",
-     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altReference",
      "radiograph.altFindingsLead",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. No simulated image-quality fault is visible: this is the reference appearance. Visible findings: a larger exposed field and exposed area shifted by the off-centre central ray. Side marker L is drawn in the viewer's right half of the image."
+    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. No simulated image-quality fault is visible: this is the reference appearance. Visible findings: exposed area shifted by the off-centre central ray. Side marker L is drawn in the viewer's right half of the image."
    }
   },
   "checks": [
@@ -32476,16 +32422,16 @@
    },
    {
     "category": "positioning",
-    "credit": 0.5,
-    "drawn": true,
+    "credit": 1,
+    "drawn": false,
     "evidence": {
      "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
      "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-     "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+     "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
+     "en": "The field is not larger than necessary for the required anatomy."
     },
     "label": {
      "ar": "التحديد — حجم المجال",
@@ -32494,7 +32440,7 @@
     "notDrawnLabel": false,
     "observed": "35 × 43 cm",
     "observedKind": null,
-    "outcome": "partial",
+    "outcome": "pass",
     "ruleId": "collimation-excess",
     "scored": true,
     "variant": null,
@@ -32821,8 +32767,6 @@
    "radiograph.effects.baseline.title",
    "radiograph.effects.centering.desc",
    "radiograph.effects.centering.title",
-   "radiograph.effects.excess-field.desc",
-   "radiograph.effects.excess-field.title",
    "radiograph.effects.marker.desc",
    "radiograph.effects.marker.title",
    "result.failed",
@@ -32843,8 +32787,6 @@
    "radiograph.effects.baseline.title": "المظهر المرجعي",
    "radiograph.effects.centering.desc": "يتمركز المجال حول الشعاع المركزي، لذا يُزيح خطأ الشعاع المركزي المنطقة المعرَّضة عبر التشريح. أما التشريح نفسه فيبقى في موضعه على الكاشف.",
    "radiograph.effects.centering.title": "الشعاع المركزي غير متمركز ← المجال منزاح",
-   "radiograph.effects.excess-field.desc": "المجال الأكبر يُعرِّض ويُظهر نسيجًا أكثر. لا يُرسم أي أثر للتشتت أو التباين لأن هذا المحاكي لا يملك نموذجًا فيزيائيًا لذلك؛ والكلفة الحقيقية هي التعريض غير الضروري.",
-   "radiograph.effects.excess-field.title": "مجال تعريض أكبر",
    "radiograph.effects.marker.desc": "تُرسم علامتك حيث وضعتها على الكاشف ويقطعها المجال كأي محتوى آخر في الصورة. لا تُصحَّح نيابةً عنك.",
    "radiograph.effects.marker.title": "علامة الجانب الخاصة بك",
    "result.failed": "دون درجة النجاح التعليمية",
@@ -32865,8 +32807,6 @@
    "radiograph.effects.baseline.title": "Reference appearance",
    "radiograph.effects.centering.desc": "The field is centred on your central ray, so a central-ray error moves the exposed area across the anatomy. The anatomy itself stays where it is on the detector.",
    "radiograph.effects.centering.title": "Central ray off-centre → field shifted",
-   "radiograph.effects.excess-field.desc": "A larger field exposes and shows more tissue. No scatter or contrast penalty is drawn, because this simulator has no physical model for it; the real cost is unnecessary exposure.",
-   "radiograph.effects.excess-field.title": "Larger exposed field",
    "radiograph.effects.marker.desc": "Your marker is drawn where you placed it on the detector and is cut off by the field like any other image content. It is not corrected for you.",
    "radiograph.effects.marker.title": "Your side marker",
    "result.failed": "Below the educational pass mark",
@@ -32901,22 +32841,6 @@
      "magnitude": {
       "kind": "none",
       "note": "Reference appearance only; no effect applied."
-     }
-    },
-    {
-     "changesPixels": false,
-     "concept": {
-      "note": "Larger exposed region only; exact scatter/contrast penalty is provisional and not drawn.",
-      "reference": "Image-quality ref — Anatomical coverage and collimation",
-      "status": "educational-simplification"
-     },
-     "drivers": [
-      "geometry.fieldCm"
-     ],
-     "id": "excess-field",
-     "magnitude": {
-      "kind": "none",
-      "note": "Only a larger exposed region; no scatter / contrast penalty is drawn."
      }
     },
     {
@@ -33047,22 +32971,22 @@
     },
     {
      "category": "positioning",
-     "credit": 0.5,
+     "credit": 1,
      "evidence": {
       "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
       "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-      "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+      "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
+      "en": "The field is not larger than necessary for the required anatomy."
      },
      "label": {
       "ar": "التحديد — حجم المجال",
       "en": "Collimation — field size"
      },
      "observed": "35 × 43 cm",
-     "outcome": "partial",
+     "outcome": "pass",
      "ruleId": "collimation-excess",
      "scored": true,
      "weight": 1
@@ -33383,11 +33307,6 @@
     },
     "findings": [
      {
-      "category": "positioning",
-      "outcome": "partial",
-      "ruleId": "collimation-excess"
-     },
-     {
       "category": "centering",
       "outcome": "partial",
       "ruleId": "centering-vertical"
@@ -33446,8 +33365,8 @@
     "categories": [
      {
       "category": "positioning",
-      "earned": 23.2,
-      "ratio": 0.9285714285714286,
+      "earned": 25,
+      "ratio": 1,
       "weight": 25
      },
      {
@@ -33483,7 +33402,7 @@
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 94.5
+    "total": 96.3
    },
    "variants": [
     "correct"
@@ -33496,8 +33415,8 @@
    "categories": [
     {
      "category": "positioning",
-     "earned": 23.2,
-     "ratio": 0.9285714285714286,
+     "earned": 25,
+     "ratio": 1,
      "weight": 25
     },
     {
@@ -33534,7 +33453,7 @@
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 94.5,
+   "total": 96.3,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -33548,7 +33467,6 @@
      "radiograph.altFindings.collimation-clipping",
      "radiograph.altSides.left",
      "radiograph.altSides.top",
-     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altFindings.scapulae",
      "radiograph.altFindings.chin",
@@ -33559,7 +33477,7 @@
      "radiograph.altFindingsLead",
      "radiograph.altMarkerNone"
     ],
-    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. النتائج الظاهرة: الإسقاط المختار غير مُحاكى؛ يُعرض مظهر PA للتخطيط فقط وعدم تناظر الصدر بسبب الدوران وتشريح مقطوع بحافة المجال المحدَّد عند الجانب الأيسر للمشاهد والأعلى ومجال تعريض أكبر من اللازم والمنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي ولوحان كتفيان فوق الحقلين الرئويين وظل الفك فوق قمم الرئتين ورئتان أقل تمددًا وحجاب حاجز مرتفع وحواف ضبابية بسبب حركة المريض ولا تغيّر ظاهر رغم زيادة تعريض الكاشف وانخفاض الوضوح خلف القلب وفي المنصف. لا توجد علامة جانب مسجَّلة."
+    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. النتائج الظاهرة: الإسقاط المختار غير مُحاكى؛ يُعرض مظهر PA للتخطيط فقط وعدم تناظر الصدر بسبب الدوران وتشريح مقطوع بحافة المجال المحدَّد عند الجانب الأيسر للمشاهد والأعلى والمنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي ولوحان كتفيان فوق الحقلين الرئويين وظل الفك فوق قمم الرئتين ورئتان أقل تمددًا وحجاب حاجز مرتفع وحواف ضبابية بسبب حركة المريض ولا تغيّر ظاهر رغم زيادة تعريض الكاشف وانخفاض الوضوح خلف القلب وفي المنصف. لا توجد علامة جانب مسجَّلة."
    },
    "en": {
     "keys": [
@@ -33569,7 +33487,6 @@
      "radiograph.altFindings.collimation-clipping",
      "radiograph.altSides.left",
      "radiograph.altSides.top",
-     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altFindings.scapulae",
      "radiograph.altFindings.chin",
@@ -33580,7 +33497,7 @@
      "radiograph.altFindingsLead",
      "radiograph.altMarkerNone"
     ],
-    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. Visible findings: the selected projection is not simulated; the PA appearance is shown for layout only, asymmetric thorax from rotation, anatomy cut off by the collimated field at the viewer's left side and the top, a larger exposed field, exposed area shifted by the off-centre central ray, scapulae overlapping the lung fields, jaw shadow over the lung apices, less expanded lungs and raised diaphragm, blurred edges from patient movement, no visible change despite excess detector exposure, and reduced visibility behind the heart and in the mediastinum. No side marker is recorded."
+    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. Visible findings: the selected projection is not simulated; the PA appearance is shown for layout only, asymmetric thorax from rotation, anatomy cut off by the collimated field at the viewer's left side and the top, exposed area shifted by the off-centre central ray, scapulae overlapping the lung fields, jaw shadow over the lung apices, less expanded lungs and raised diaphragm, blurred edges from patient movement, no visible change despite excess detector exposure, and reduced visibility behind the heart and in the mediastinum. No side marker is recorded."
    }
   },
   "checks": [
@@ -33637,16 +33554,16 @@
    },
    {
     "category": "positioning",
-    "credit": 0.5,
-    "drawn": true,
+    "credit": 1,
+    "drawn": false,
     "evidence": {
      "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
      "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-     "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+     "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
+     "en": "The field is not larger than necessary for the required anatomy."
     },
     "label": {
      "ar": "التحديد — حجم المجال",
@@ -33655,7 +33572,7 @@
     "notDrawnLabel": false,
     "observed": "30.98 × 36.55 cm",
     "observedKind": null,
-    "outcome": "partial",
+    "outcome": "pass",
     "ruleId": "collimation-excess",
     "scored": true,
     "variant": null,
@@ -33986,8 +33903,6 @@
    "radiograph.effects.collimation-clipping.title",
    "radiograph.effects.excess-exposure.desc",
    "radiograph.effects.excess-exposure.title",
-   "radiograph.effects.excess-field.desc",
-   "radiograph.effects.excess-field.title",
    "radiograph.effects.inspiration.desc",
    "radiograph.effects.inspiration.title",
    "radiograph.effects.low-penetration.desc",
@@ -34036,8 +33951,6 @@
    "radiograph.effects.collimation-clipping.title": "حواف المجال تقطع التشريح",
    "radiograph.effects.excess-exposure.desc": "قد يعطي تعريض الكاشف فوق الهدف صورة تبدو مقبولة بعد المعالجة الرقمية، والصورة ليست أغمق. تظهر المشكلة (زحف الجرعة) في DI وملاحظات الوعي بالجرعة وليس في الصورة. زيادة mAs لا تُكافأ.",
    "radiograph.effects.excess-exposure.title": "تعريض كاشف زائد ← لا تغيّر واضح",
-   "radiograph.effects.excess-field.desc": "المجال الأكبر يُعرِّض ويُظهر نسيجًا أكثر. لا يُرسم أي أثر للتشتت أو التباين لأن هذا المحاكي لا يملك نموذجًا فيزيائيًا لذلك؛ والكلفة الحقيقية هي التعريض غير الضروري.",
-   "radiograph.effects.excess-field.title": "مجال تعريض أكبر",
    "radiograph.effects.inspiration.desc": "بعد تعليمات التنفس التي أعطيتها، لم تأخذ المريضة المحاكاة شهيقًا كاملًا: تبدو الرئتان أقل تمددًا ويرتفع الحجاب الحاجز وتقصر الحقول الرئوية. لا تقيس RAD-LAB الشهيق الحقيقي ولا تستخدم قاعدة عدّ الأضلاع.",
    "radiograph.effects.inspiration.title": "شهيق غير كافٍ ← حجاب حاجز مرتفع",
    "radiograph.effects.low-penetration.desc": "مع kVp منخفض تقل رؤية البنى الواقعة خلف المناطق الكثيفة (العمود الفقري والرئة خلف القلب والمنصف). هذا منفصل عن تعريض الكاشف، وزيادة mAs لا تعالجه. التغير في الوضوح تقريب تعليمي وليس قياسًا.",
@@ -34050,7 +33963,7 @@
    "radiograph.effects.rotation.title": "الدوران ← عدم تناظر الصدر",
    "radiograph.effects.scapulae.desc": "يتراكب لوحان تخطيطيان على الحقلين الرئويين الجانبيين ويحجبان نسيج الرئة. تدوير الكتفين للأمام يُبعد اللوحين عن الحقلين الرئويين (معيار شائع لجودة صورة صدر PA). التراكب رسم تخطيطي وليس لوحًا حقيقيًا من الصورة المرجعية.",
    "radiograph.effects.scapulae.title": "الكتفان غير مدوَّرين للأمام ← اللوحان فوق الرئتين",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (13.8) وأوزان الفئات لا تتغير.",
+   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (15.6) وأوزان الفئات لا تتغير.",
    "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notDrawn": "تُحتسب من إعداداتك — غير مرسومة في هذه الصورة",
@@ -34086,8 +33999,6 @@
    "radiograph.effects.collimation-clipping.title": "Field edges clip anatomy",
    "radiograph.effects.excess-exposure.desc": "Detector exposure above the target can still give an acceptable-looking image after digital processing, and the image is not darker. The problem (dose creep) shows in the DI and dose-awareness feedback, not in the picture. More mAs is not rewarded.",
    "radiograph.effects.excess-exposure.title": "Excess detector exposure → no obvious change",
-   "radiograph.effects.excess-field.desc": "A larger field exposes and shows more tissue. No scatter or contrast penalty is drawn, because this simulator has no physical model for it; the real cost is unnecessary exposure.",
-   "radiograph.effects.excess-field.title": "Larger exposed field",
    "radiograph.effects.inspiration.desc": "After your breathing instruction, the simulated patient did not take a full breath in: the lungs look less expanded, the diaphragm sits higher and the lung fields are shorter. RAD-LAB does not measure real inspiration and uses no rib-count rule.",
    "radiograph.effects.inspiration.title": "Reduced inspiration → raised diaphragm",
    "radiograph.effects.low-penetration.desc": "With low kVp, structures behind dense regions (the spine and retrocardiac lung behind the heart, the mediastinum) are less visible. This is separate from detector exposure, and more mAs does not fix it. The change in visibility is an educational approximation, not a measurement.",
@@ -34100,7 +34011,7 @@
    "radiograph.effects.rotation.title": "Rotation → thoracic asymmetry",
    "radiograph.effects.scapulae.desc": "Schematic scapulae overlap the lateral lung fields and hide lung tissue. Rolling the shoulders forward moves the scapulae out of the lung fields (a common PA chest quality criterion). The overlay is a schematic, not a real scapula from the reference image.",
    "radiograph.effects.scapulae.title": "Shoulders not rolled forward → scapulae over the lungs",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (13.8) and the category weights are unchanged.",
+   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (15.6) and the category weights are unchanged.",
    "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notDrawn": "Scored from your settings — not drawn in this image",
@@ -34191,22 +34102,6 @@
      "magnitude": {
       "kind": "educational-visual-approximation",
       "note": "The field edge is exact geometry; where the anatomy lies under it follows an approximate landmark mapping."
-     }
-    },
-    {
-     "changesPixels": false,
-     "concept": {
-      "note": "Larger exposed region only; exact scatter/contrast penalty is provisional and not drawn.",
-      "reference": "Image-quality ref — Anatomical coverage and collimation",
-      "status": "educational-simplification"
-     },
-     "drivers": [
-      "geometry.fieldCm"
-     ],
-     "id": "excess-field",
-     "magnitude": {
-      "kind": "none",
-      "note": "Only a larger exposed region; no scatter / contrast penalty is drawn."
      }
     },
     {
@@ -34415,22 +34310,22 @@
     },
     {
      "category": "positioning",
-     "credit": 0.5,
+     "credit": 1,
      "evidence": {
       "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
       "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-      "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+      "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
+      "en": "The field is not larger than necessary for the required anatomy."
      },
      "label": {
       "ar": "التحديد — حجم المجال",
       "en": "Collimation — field size"
      },
      "observed": "30.98 × 36.55 cm",
-     "outcome": "partial",
+     "outcome": "pass",
      "ruleId": "collimation-excess",
      "scored": true,
      "weight": 1
@@ -34815,11 +34710,6 @@
      },
      {
       "category": "positioning",
-      "outcome": "partial",
-      "ruleId": "collimation-excess"
-     },
-     {
-      "category": "positioning",
       "outcome": "fail",
       "ruleId": "chin",
       "variant": "chin-overlap"
@@ -34941,8 +34831,8 @@
     "categories": [
      {
       "category": "positioning",
-      "earned": 1.8,
-      "ratio": 0.07142857142857142,
+      "earned": 3.6,
+      "ratio": 0.14285714285714285,
       "weight": 25
      },
      {
@@ -34978,7 +34868,7 @@
     ],
     "passed": false,
     "thresholdMet": false,
-    "total": 13.8
+    "total": 15.6
    },
    "variants": [
     "wrong-projection",
@@ -35009,8 +34899,8 @@
    "categories": [
     {
      "category": "positioning",
-     "earned": 1.8,
-     "ratio": 0.07142857142857142,
+     "earned": 3.6,
+     "ratio": 0.14285714285714285,
      "weight": 25
     },
     {
@@ -35090,7 +34980,7 @@
    ],
    "passed": false,
    "thresholdMet": false,
-   "total": 13.8,
+   "total": 15.6,
    "verdictLabel": "below-educational-pass-mark"
   }
  },

@@ -1,4 +1,4 @@
-import type { CheckRule, CriticalFindingRule } from "@/domain/case";
+import type { CheckRule, CoverageRule, CriticalFindingRule } from "@/domain/case";
 import type { ExamDefinition } from "@/domain/exam";
 import { chestApTechnique } from "./chest-ap-technique";
 import { chestPaErectExam } from "./chest-pa-erect";
@@ -223,7 +223,7 @@ export const chestApSupineExam: ExamDefinition = {
         note: "The required anatomy is Bontrager's criterion; the 27 × 31 cm demo region is provisional (S10b-15, O2).",
       },
     },
-    { ...pa("collimation-excess"), evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.96 (collimate to the lung fields)", note: "Principle validated; the 5 cm margin limit is provisional / configurable." } },
+    { ...(pa("collimation-excess") as CoverageRule), beyondNeeded: false /* S2 is enabled for Chest PA first, then the limbs (owner 2026-10-22) */, evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.96 (collimate to the lung fields)", note: "Principle validated; the 5 cm margin limit is provisional / configurable." } },
     {
       id: "shoulders",
       kind: "equals",

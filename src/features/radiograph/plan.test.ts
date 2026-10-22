@@ -103,7 +103,8 @@ describe("render plan from RadiographResultState", () => {
   });
 
   it("excess field: larger exposed region only, no invented scatter/contrast penalty", () => {
-    const p = plan({ collimation: { width: 1, height: 1 } });
+    // No marker placed: S2 does not count the opening a placed marker needs as excess.
+    const p = plan({ collimation: { width: 1, height: 1 }, sideMarker: null });
     expect(ids(p)).toContain("excess-field");
     expect(p.technique).toMatchObject({ noiseSigma: 0, detailGain: 1, penetrationContrastKept: null });
     expect(p.effects.find((e) => e.id === "excess-field")?.changesPixels).toBe(false);

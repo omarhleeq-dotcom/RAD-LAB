@@ -1,5 +1,6 @@
 import type { DetectorRegion, DetectorSpec } from "@/domain/case";
 import type { SimulationSettings, ViewerSide } from "@/domain/simulation";
+import type { RadiographAssetSpec } from "@/domain/radiograph";
 
 export interface Rect {
   x1: number;
@@ -71,3 +72,71 @@ export function viewerSideOf(position: SimulationSettings["markerPosition"]): Vi
 export function rectInside(inner: Rect, outer: Rect): boolean {
   return inner.x1 >= outer.x1 && inner.x2 <= outer.x2 && inner.y1 >= outer.y1 && inner.y2 <= outer.y2;
 }
+
+/**
+ * Where the baseline image and its anatomy landmark box lie on the detector (cm). ONE uniform "contain" scale fits the
+ * landmark box inside the required-anatomy region, centred on it, so a region larger than the box leaves anatomy-free strips
+ * on its limiting-axis neighbours. The picture (`buildRenderPlan`) and the coverage score (S2) both read this single fit.
+ */
+export function fitAnatomyBox(
+  spec: Pick<RadiographAssetSpec, "widthPx" | "heightPx" | "anatomyBox">,
+  req: DetectorRegion,
+): { image: { x1: number; y1: number; widthCm: number; heightCm: number }; landmarkCm: Rect } {
+  const box = spec.anatomyBox;
+  const boxWpx = (box.u2 - box.u1) * spec.widthPx;
+  const boxHpx = (box.v2 - box.v1) * spec.heightPx;
+  const cmPerPx = Math.min(req.widthCm / boxWpx, req.heightCm / boxHpx);
+  const widthCm = spec.widthPx * cmPerPx;
+  const heightCm = spec.heightPx * cmPerPx;
+  const boxLeft = req.xCm + (req.widthCm - boxWpx * cmPerPx) / 2;
+  const boxTop = req.yCm + (req.heightCm - boxHpx * cmPerPx) / 2;
+  const image = { x1: boxLeft - box.u1 * widthCm, y1: boxTop - box.v1 * heightCm, widthCm, heightCm };
+  const landmarkCm = {
+    x1: image.x1 + box.u1 * widthCm,
+    x2: image.x1 + box.u2 * widthCm,
+    y1: image.y1 + box.v1 * heightCm,
+    y2: image.y1 + box.v2 * heightCm,
+  };
+  return { image, landmarkCm };
+}
+
+/** Tolerance 1e-6 cm: the box is fitted flush to the region on the limiting axis (floating-point noise only). */
+const LANDMARK_EPS = 1e-6;
+
+/** True when the field edge on this side reaches into the landmark box (the anatomy drawn in the baseline), not just the spare margin. */
+export function fieldCutsLandmarkBox(side: Side, field: Rect, landmark: Rect): boolean {
+  return side === "left" ? field.x1 > landmark.x1 + LANDMARK_EPS
+    : side === "right" ? field.x2 < landmark.x2 - LANDMARK_EPS
+    : side === "top" ? field.y1 > landmark.y1 + LANDMARK_EPS
+    : field.y2 < landmark.y2 - LANDMARK_EPS;
+}
+
+/**
+ * The smallest field that can cover `target` when it must stay centred on the central ray (a real collimator opens
+ * symmetrically about the ray in this simulator), clamped to the detector. How far a field is opened beyond it is the part of
+ * the enlargement the learner could have avoided with the ray where it is (S2): what the geometry or the marker forces is not.
+ */
+export function minimalFieldAround(
+  s: Pick<SimulationSettings, "centralRay">,
+  target: Rect,
+  detector: DetectorSpec,
+): Rect {
+  const cx = ((s.centralRay.x + 1) / 2) * detector.widthCm;
+  const cy = ((s.centralRay.y + 1) / 2) * detector.heightCm;
+  const halfW = Math.max(cx - target.x1, target.x2 - cx, 0);
+  const halfH = Math.max(cy - target.y1, target.y2 - cy, 0);
+  return {
+    x1: Math.max(0, cx - halfW),
+    x2: Math.min(detector.widthCm, cx + halfW),
+    y1: Math.max(0, cy - halfH),
+    y2: Math.min(detector.heightCm, cy + halfH),
+  };
+}
+
+/** Bounding box of two rects. */
+export const unionRect = (a: Rect, b: Rect): Rect => ({
+  x1: Math.min(a.x1, b.x1),
+  y1: Math.min(a.y1, b.y1),
+  x2: Math.max(a.x2, b.x2),
+  y2: Math.max(a.y2, b.y2),
+});

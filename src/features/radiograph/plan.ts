@@ -7,11 +7,11 @@
  * Layer order is fixed and documented in `pipeline.ts`. The plan holds no pixels, no DOM and no randomness
  * (the noise seed is derived from the case id), so the same state always yields the same plan.
  */
-import type { RadCase } from "@/domain/case";
+import type { CoverageRule, RadCase } from "@/domain/case";
 import type { RadiographResultState } from "@/domain/result-state";
 import type { ViewerSide } from "@/domain/simulation";
 import type { Evidence } from "@/domain/technique";
-import { viewerSideOf } from "@/features/simulation/geometry";
+import { fieldCutsLandmarkBox, fitAnatomyBox, viewerSideOf } from "@/features/simulation/geometry";
 import { expectedViewerSide as expectedViewerSideOf, isMarkerWrongSide } from "@/features/simulation/marker-rule";
 import { LIMB_ROTATION_EFFECT } from "./limb-effects";
 import { TUNING } from "./tuning";
@@ -250,36 +250,17 @@ export function markerVisibleFraction(center: { x: number; y: number }, sizeCm: 
 export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, extraEffects: readonly EffectDefinition[] = EXTRA_EFFECTS): RenderPlan {
   const { radiograph: spec, detector, requiredAnatomy: req, positioning } = radCase;
   const { geometry, patient, exposure, patientResponse } = state;
-  const box = spec.anatomyBox;
   // Fit the anatomy landmark box INSIDE the required-anatomy region with ONE uniform scale ("contain": no
   // anisotropic distortion of anatomical proportions), centred on the region. The clinical region comes from the
   // case/references and is never adapted to the picture; whatever of the region or detector the baseline does not
-  // cover is drawn as the "no reference data" hatch by the pipeline.
-  const boxWpx = (box.u2 - box.u1) * spec.widthPx;
-  const boxHpx = (box.v2 - box.v1) * spec.heightPx;
-  const cmPerPx = Math.min(req.widthCm / boxWpx, req.heightCm / boxHpx);
-  const widthCm = spec.widthPx * cmPerPx;
-  const heightCm = spec.heightPx * cmPerPx;
-  const boxLeft = req.xCm + (req.widthCm - boxWpx * cmPerPx) / 2;
-  const boxTop = req.yCm + (req.heightCm - boxHpx * cmPerPx) / 2;
-  const image = { x1: boxLeft - box.u1 * widthCm, y1: boxTop - box.v1 * heightCm, widthCm, heightCm };
-
-  // The baseline's landmark box (apices → costophrenic angles, lateral lung margins) on the detector, in cm.
-  const landmarkCm = {
-    x1: image.x1 + box.u1 * widthCm,
-    x2: image.x1 + box.u2 * widthCm,
-    y1: image.y1 + box.v1 * heightCm,
-    y2: image.y1 + box.v2 * heightCm,
-  };
-  // Tolerance 1e-6 cm: the box is fitted flush to the region on the limiting axis (floating-point noise only).
-  const EPS = 1e-6;
-  const landmarkCut = (side: "left" | "right" | "top" | "bottom") =>
-    side === "left" ? geometry.fieldCm.x1 > landmarkCm.x1 + EPS
-    : side === "right" ? geometry.fieldCm.x2 < landmarkCm.x2 - EPS
-    : side === "top" ? geometry.fieldCm.y1 > landmarkCm.y1 + EPS
-    : geometry.fieldCm.y2 < landmarkCm.y2 - EPS;
+  // cover is drawn as the "no reference data" hatch by the pipeline. The fit is shared with the coverage score (S2).
+  const { image, landmarkCm } = fitAnatomyBox(spec, req);
+  const landmarkCut = (side: "left" | "right" | "top" | "bottom") => fieldCutsLandmarkBox(side, geometry.fieldCm, landmarkCm);
   const landmarkClippedSides = geometry.clippedSides.filter(landmarkCut);
   const marginOnlySides = geometry.clippedSides.filter((side) => !landmarkCut(side));
+  // S2: an exam whose clipping rule is `landmarkBoxOnly` scores (and so draws as a finding) only a cut into the landmark box.
+  const clipRule = radCase.rules.find((r): r is CoverageRule => r.kind === "coverage" && r.check === "clipping");
+  const clippingFinding = (clipRule?.landmarkBoxOnly ? landmarkClippedSides : geometry.clippedSides).length > 0;
 
   const has = (ruleId: string) => state.findings.some((f) => f.ruleId === ruleId);
   const deg = clamp(geometry.rotationDeg, -TUNING.rotation.maxDeg, TUNING.rotation.maxDeg);
@@ -348,7 +329,7 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
   const active: [CoreEffectId, boolean, string[], boolean][] = [
     ["projection", !representative, ["geometry.projection"], false],
     ["rotation", rotation !== null, ["geometry.rotationDeg"], true],
-    ["collimation-clipping", geometry.clippedSides.length > 0, ["geometry.fieldCm", "geometry.clippedSides"], true],
+    ["collimation-clipping", clippingFinding, ["geometry.fieldCm", "geometry.clippedSides"], true],
     ["excess-field", has("collimation-excess"), ["geometry.fieldCm"], false],
     ["centering", has("centering-lateral") || has("centering-vertical"), ["geometry.centralRay", "geometry.fieldCm"], false],
     ["scapulae", scapulaeOverlap, ["patient.shoulders"], true],

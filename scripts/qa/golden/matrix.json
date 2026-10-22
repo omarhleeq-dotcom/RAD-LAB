@@ -394,11 +394,11 @@
   "hash": "412bf01f8bd2be10"
  },
  "centering-y-high": {
-  "score": 83.6,
+  "score": 85.4,
   "passed": true,
   "critical": [],
   "categories": {
-   "positioning": 16.1,
+   "positioning": 17.9,
    "rotation": 20,
    "centering": 7.5,
    "exposure": 20,
@@ -407,7 +407,6 @@
   },
   "outcomes": {
    "collimation-clipping": "fail",
-   "collimation-excess": "partial",
    "centering-vertical": "fail"
   },
   "variants": [
@@ -415,7 +414,6 @@
   ],
   "effects": [
    "collimation-clipping",
-   "excess-field",
    "centering",
    "marker"
   ],
@@ -620,25 +618,23 @@
   "hash": "eba0bc6fb2465db9"
  },
  "clip-margin-only": {
-  "score": 92.9,
+  "score": 100,
   "passed": true,
   "critical": [],
   "categories": {
-   "positioning": 17.9,
+   "positioning": 25,
    "rotation": 20,
    "centering": 15,
    "exposure": 20,
    "sid": 10,
    "breathing": 10
   },
-  "outcomes": {
-   "collimation-clipping": "fail"
-  },
+  "outcomes": {},
   "variants": [
-   "clipped"
+   "correct"
   ],
   "effects": [
-   "collimation-clipping",
+   "baseline",
    "marker"
   ],
   "notDrawn": 0,
@@ -659,11 +655,11 @@
   "hash": "dad1b1b197755ced"
  },
  "excess-field": {
-  "score": 94.5,
+  "score": 96.3,
   "passed": true,
   "critical": [],
   "categories": {
-   "positioning": 23.2,
+   "positioning": 25,
    "rotation": 20,
    "centering": 11.3,
    "exposure": 20,
@@ -671,7 +667,6 @@
    "breathing": 10
   },
   "outcomes": {
-   "collimation-excess": "partial",
    "centering-vertical": "partial"
   },
   "variants": [
@@ -679,7 +674,6 @@
   ],
   "effects": [
    "baseline",
-   "excess-field",
    "centering",
    "marker"
   ],
@@ -1849,14 +1843,14 @@
   "hash": "9b180cb7fa54222c"
  },
  "initial-state": {
-  "score": 13.8,
+  "score": 15.6,
   "passed": false,
   "critical": [
    "wrong-projection",
    "missing-marker"
   ],
   "categories": {
-   "positioning": 1.8,
+   "positioning": 3.6,
    "rotation": 0,
    "centering": 0,
    "exposure": 12,
@@ -1866,7 +1860,6 @@
   "outcomes": {
    "projection": "fail",
    "collimation-clipping": "fail",
-   "collimation-excess": "partial",
    "chin": "fail",
    "shoulders": "fail",
    "side-marker": "fail",
@@ -1895,7 +1888,6 @@
    "projection",
    "rotation",
    "collimation-clipping",
-   "excess-field",
    "centering",
    "scapulae",
    "chin",

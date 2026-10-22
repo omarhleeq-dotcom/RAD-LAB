@@ -12,13 +12,15 @@ import { comparisonVersion } from "./comparison-version";
  * See docs/PILOT_SUPABASE_SETUP.md#practice-evaluation-version.
  *
  * Version history (newest first; each entry names the rule that changed saved outcomes):
+ *  - /4: RAD-068 part 3 batch 4 (S2). Coverage and margins: a cut that takes only an anatomy-free strip no longer fails clipping, and
+ *    the field opening that the ray position or the placed marker forces is not excess. Chest PA first (4a), then the limbs (4b).
  *  - /3: RAD-068 part 3 batch 3 (S5). A missing "stay still" instruction no longer creates the critical patient-motion gate by itself;
  *    the instruction stays its own check and the assumed motion is still drawn.
  *  - /2: RAD-068 part 3 batch 2 (S3 option D). Chest Lateral: the marker letter's display half no longer fails or gates; only a
  *    letter that differs from the side against the detector is a wrong marker.
  *  - /1: first declared identity of the evaluation contract.
  */
-export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/3";
+export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/4";
 
 // Capture provenance at evaluation time, without changing result/score JSON bytes.
 // Weak keys retain no history; clones/deserialised/unidentified results fail closed.
