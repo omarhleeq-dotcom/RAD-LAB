@@ -27,7 +27,7 @@ const isEvidence = (e: Evidence | undefined) => !!e && (EVIDENCE_CLASSES as read
 function ruleTexts(r: CheckRule): [string, LocalizedText | undefined][] {
   const fb = r.feedback as unknown as Record<string, LocalizedText | undefined>;
   const base: [string, LocalizedText | undefined][] = [[`${r.id}.label`, r.label], [`${r.id}.feedback.pass`, fb.pass], [`${r.id}.feedback.fail`, fb.fail]];
-  for (const k of ["low", "high", "overlap", "outsideField", "wrongSide"]) if (k in fb) base.push([`${r.id}.feedback.${k}`, fb[k]]);
+  for (const k of ["low", "high", "overlap", "outsideField", "wrongSide", "displayHalf", "marginOnly"]) if (k in fb) base.push([`${r.id}.feedback.${k}`, fb[k]]);
   return base;
 }
 

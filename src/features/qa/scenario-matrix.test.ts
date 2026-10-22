@@ -104,6 +104,8 @@ describe("scenario matrix: cross-scenario expectations", () => {
     }
     expect(by("rotation-pos12").result.score.categories.find((x) => x.category === "rotation")!.ratio).toBe(0);
     expect(by("sid-120").result.score.categories.find((x) => x.category === "sid")!.ratio).toBe(0);
+    // The "stay still" item caps the breathing category and passes here: a wrong breathing instruction still loses the whole category.
+    expect(by("breathing-none").result.checks.find((k) => k.ruleId === "breathing")!.credit).toBe(0);
     expect(by("breathing-none").result.score.categories.find((x) => x.category === "breathing")!.ratio).toBe(0);
     expect(by("centering-x-off").result.score.categories.find((x) => x.category === "centering")!.ratio).toBeLessThan(1);
   });
@@ -113,7 +115,7 @@ describe("scenario matrix: cross-scenario expectations", () => {
       const st = r.result.resultState;
       const expected = [
         ...(st.geometry.projection !== "pa-erect" ? ["wrong-projection"] : []),
-        ...(st.patientResponse.motion === "motion" ? ["patient-motion"] : []),
+        ...(st.patientResponse.motion === "motion" && st.patientResponse.instructions.motion !== "none" ? ["patient-motion"] : []),
         ...(r.plan.marker?.wrongSide ? ["wrong-side-marker"] : []),
         ...(r.plan.marker === null ? ["missing-marker"] : []),
       ];
@@ -125,7 +127,7 @@ describe("scenario matrix: cross-scenario expectations", () => {
   });
 
   it("wrong projection, visible motion and a wrong-side marker are below the pass mark although their numbers are high", () => {
-    for (const id of ["projection-ap", "projection-lateral", "motion-none", "motion-relax", "marker-L-wrong-side", "marker-R-wrong-side"]) {
+    for (const id of ["projection-ap", "projection-lateral", "motion-relax", "marker-L-wrong-side", "marker-R-wrong-side"]) {
       expect(by(id).result.score.passed, id).toBe(false);
       expect(by(id).result.criticalFindings.length, id).toBeGreaterThan(0);
     }
@@ -134,13 +136,22 @@ describe("scenario matrix: cross-scenario expectations", () => {
       expect(by(id).result.score.passed, id).toBe(true);
       expect(by(id).result.criticalFindings, id).toEqual([]);
     }
+    // S5: a missing "stay still" instruction shows the assumed motion but does not gate by itself.
+    expect(by("motion-none").result.score.passed).toBe(true);
+    expect(by("motion-none").result.criticalFindings).toEqual([]);
+    expect(by("motion-none").result.variants).toContain("motion");
     // S11b-1: a missing marker gates the pass mark like a wrong-side one; the number stays 100.
     expect(by("marker-none").result.score.passed).toBe(false);
     expect(by("marker-none").result.criticalFindings.map((f) => f.id)).toEqual(["missing-marker"]);
   });
 
-  it("unscored checks (marker, keep-still) never change the total", () => {
-    for (const id of ["marker-none", "marker-L-wrong-side", "marker-R-wrong-side", "marker-cut-by-field", "motion-none", "motion-relax"]) {
+  it("the stay-still item costs partial credit when missing and all of it when the learner asks for movement", () => {
+    expect(score("motion-none")).toBe(95);
+    expect(score("motion-relax")).toBe(90);
+  });
+
+  it("unscored checks (the Chest PA marker) never change the total", () => {
+    for (const id of ["marker-none", "marker-L-wrong-side", "marker-R-wrong-side", "marker-cut-by-field"]) {
       expect(score(id), id).toBe(100);
     }
   });
@@ -167,7 +178,8 @@ describe("scenario matrix: cross-scenario expectations", () => {
   it("clipped scores and clipped anatomy agree in every scenario", () => {
     for (const [id, , r] of reports) {
       const clipScore = r.result.checks.find((k) => k.ruleId === "collimation-clipping")!.outcome === "fail";
-      expect(r.plan.clippedSides.length > 0, id).toBe(clipScore);
+      // S2: Chest PA scores (and draws) a cut only when the field reaches the drawn anatomy; a margin-only cut passes.
+      expect(r.plan.landmarkClippedSides.length > 0, id).toBe(clipScore);
       expect(r.effects.includes("collimation-clipping"), id).toBe(clipScore);
     }
   });

@@ -394,11 +394,11 @@
   "hash": "412bf01f8bd2be10"
  },
  "centering-y-high": {
-  "score": 83.6,
+  "score": 85.4,
   "passed": true,
   "critical": [],
   "categories": {
-   "positioning": 16.1,
+   "positioning": 17.9,
    "rotation": 20,
    "centering": 7.5,
    "exposure": 20,
@@ -407,7 +407,6 @@
   },
   "outcomes": {
    "collimation-clipping": "fail",
-   "collimation-excess": "partial",
    "centering-vertical": "fail"
   },
   "variants": [
@@ -415,7 +414,6 @@
   ],
   "effects": [
    "collimation-clipping",
-   "excess-field",
    "centering",
    "marker"
   ],
@@ -620,25 +618,23 @@
   "hash": "eba0bc6fb2465db9"
  },
  "clip-margin-only": {
-  "score": 92.9,
+  "score": 100,
   "passed": true,
   "critical": [],
   "categories": {
-   "positioning": 17.9,
+   "positioning": 25,
    "rotation": 20,
    "centering": 15,
    "exposure": 20,
    "sid": 10,
    "breathing": 10
   },
-  "outcomes": {
-   "collimation-clipping": "fail"
-  },
+  "outcomes": {},
   "variants": [
-   "clipped"
+   "correct"
   ],
   "effects": [
-   "collimation-clipping",
+   "baseline",
    "marker"
   ],
   "notDrawn": 0,
@@ -1410,21 +1406,19 @@
   "hash": "b4234a1007520655"
  },
  "motion-none": {
-  "score": 100,
-  "passed": false,
-  "critical": [
-   "patient-motion"
-  ],
+  "score": 95,
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 25,
    "rotation": 20,
    "centering": 15,
    "exposure": 20,
    "sid": 10,
-   "breathing": 10
+   "breathing": 5
   },
   "outcomes": {
-   "motion-instruction": "fail"
+   "motion-instruction": "partial"
   },
   "variants": [
    "motion"
@@ -1445,7 +1439,7 @@
   "hash": "8696beb219e0aca2"
  },
  "motion-relax": {
-  "score": 100,
+  "score": 90,
   "passed": false,
   "critical": [
    "patient-motion"
@@ -1456,7 +1450,7 @@
    "centering": 15,
    "exposure": 20,
    "sid": 10,
-   "breathing": 10
+   "breathing": 0
   },
   "outcomes": {
    "motion-instruction": "fail"
@@ -1593,10 +1587,8 @@
  },
  "combo-preparation": {
   "score": 82.9,
-  "passed": false,
-  "critical": [
-   "patient-motion"
-  ],
+  "passed": true,
+  "critical": [],
   "categories": {
    "positioning": 17.9,
    "rotation": 20,
@@ -1609,7 +1601,7 @@
    "chin": "fail",
    "shoulders": "fail",
    "breathing": "fail",
-   "motion-instruction": "fail"
+   "motion-instruction": "partial"
   },
   "variants": [
    "chin-overlap",
@@ -1790,7 +1782,6 @@
   "passed": false,
   "critical": [
    "wrong-projection",
-   "patient-motion",
    "wrong-side-marker"
   ],
   "categories": {
@@ -1813,7 +1804,7 @@
    "exposure-adequacy": "fail",
    "sid": "fail",
    "breathing": "fail",
-   "motion-instruction": "fail"
+   "motion-instruction": "partial"
   },
   "variants": [
    "wrong-projection",
@@ -1854,15 +1845,14 @@
   "hash": "9b180cb7fa54222c"
  },
  "initial-state": {
-  "score": 13.8,
+  "score": 15.6,
   "passed": false,
   "critical": [
    "wrong-projection",
-   "patient-motion",
    "missing-marker"
   ],
   "categories": {
-   "positioning": 1.8,
+   "positioning": 3.6,
    "rotation": 0,
    "centering": 0,
    "exposure": 12,
@@ -1872,7 +1862,6 @@
   "outcomes": {
    "projection": "fail",
    "collimation-clipping": "fail",
-   "collimation-excess": "partial",
    "chin": "fail",
    "shoulders": "fail",
    "side-marker": "fail",
@@ -1883,7 +1872,7 @@
    "dose-optimization": "partial",
    "sid": "fail",
    "breathing": "fail",
-   "motion-instruction": "fail"
+   "motion-instruction": "partial"
   },
   "variants": [
    "wrong-projection",
@@ -1894,14 +1883,13 @@
    "low-penetration",
    "magnified-geometry",
    "poor-inspiration",
-   "motion",
-   "excess-exposure"
+   "excess-exposure",
+   "motion"
   ],
   "effects": [
    "projection",
    "rotation",
    "collimation-clipping",
-   "excess-field",
    "centering",
    "scapulae",
    "chin",

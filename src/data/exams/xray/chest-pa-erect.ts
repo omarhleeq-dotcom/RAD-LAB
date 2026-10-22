@@ -203,6 +203,7 @@ export const chestPaErectExam: ExamDefinition = {
       weight: 2,
       maxMarginCm: 5,
       variantOnClipped: "clipped",
+      landmarkBoxOnly: true, // S2: a cut that takes only the anatomy-free strip beside the region passes.
       label: { en: "Collimation — anatomy coverage", ar: "التحديد — تغطية التشريح" },
       clippedSides: {
         top: {
@@ -231,6 +232,10 @@ export const chestPaErectExam: ExamDefinition = {
           en: "Anatomy outside the field is missing from the image. Open the field or re-centre the central ray.",
           ar: "التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
         },
+        marginOnly: {
+          en: "The field cuts only the spare margin at the edge of the required region, which holds no anatomy in the reference image; the apices, both lungs and the costophrenic angles are still included. The reference image cannot show what lies beyond its own edge.",
+          ar: "المجال يقطع فقط الهامش الاحتياطي عند حافة المنطقة المطلوبة، وهو لا يحوي تشريحًا في الصورة المرجعية؛ وقمم الرئتين والرئتان معًا والزوايا الضلعية الحجابية ما زالت مشمولة. والصورة المرجعية لا تُظهر ما يقع خارج حافتها.",
+        },
       },
       evidence: {
         status: "educational-simplification",
@@ -245,6 +250,7 @@ export const chestPaErectExam: ExamDefinition = {
       category: "positioning",
       weight: 1,
       maxMarginCm: 5,
+      beyondNeeded: true, // S2: an opening the geometry forces or the marker needs is not excess.
       label: { en: "Collimation — field size", ar: "التحديد — حجم المجال" },
       feedback: {
         pass: {
@@ -328,8 +334,8 @@ export const chestPaErectExam: ExamDefinition = {
           ar: "العلامة تغطي الحقلين الرئويين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
         },
         wrongSide: {
-          en: "The marker is on the wrong side of the image. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker on the wrong side misidentifies the patient's side.",
-          ar: "العلامة على الجانب الخطأ من الصورة. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة على الجانب الخطأ تُحدِّد جانب المريض خطأً.",
+          en: "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side.",
+          ar: "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
         },
         outsideField: {
           en: "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field.",
@@ -621,31 +627,33 @@ export const chestPaErectExam: ExamDefinition = {
       },
     },
     {
-      // Session 4. Unscored on purpose: the Image-quality reference supports "motion → loss of sharpness"
-      // (validated) but defines no scoring rule for the instruction itself, and re-weighting the Breathing
-      // category (10 %) would be an unsupported change. The consequence is shown in the result image instead.
+      // Session 4 added the instruction as a check with weight 0. Since the owner's S5 follow-up (2026-10-22) it caps the breathing
+      // category (`capsCategory`) instead of being averaged into it: a missing instruction (`none`) leaves half of the category's credit,
+      // an instruction to move (`relax-and-move`) none; a wrong breathing instruction still loses the whole category as before, whatever
+      // this item says. The motion gate is separate (critical.ts) and unchanged.
       id: "motion-instruction",
       kind: "equals",
       category: "breathing",
-      weight: 0,
       setting: "motionInstruction",
       expected: "remain-still",
+      partialValues: ["none"],
+      capsCategory: true,
       variantOnFail: "motion",
-      label: { en: "Instruction to stay still (not scored)", ar: "تعليمات الثبات (غير محسوبة)" },
+      label: { en: "Instruction to stay still", ar: "تعليمات الثبات" },
       feedback: {
         pass: {
           en: "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement.",
           ar: "طلبتَ من المريض أن يبقى ثابتًا. في هذه المحاكاة يلتزم المريض المتعاون بالثبات فلا تتشوه الصورة بالحركة.",
         },
         fail: {
-          en: "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction.",
-          ar: "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
+          en: "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark.",
+          ar: "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
         },
       },
       evidence: {
         status: "educational-simplification",
         reference: "Image-quality ref (Motion)",
-        note: "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+        note: "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       },
     },
   ],

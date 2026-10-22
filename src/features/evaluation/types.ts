@@ -26,6 +26,8 @@ export interface CheckResult {
   weight: number;
   /** False for educational-only checks (weight 0) that never affect the score. */
   scored: boolean;
+  /** Set when the check caps its category's ratio instead of being averaged into it (see `RuleBase.capsCategory`). */
+  capsCategory?: true;
   /** What the student set, formatted for display (e.g. "8 °"). */
   observed: string;
   /** Set when `observed` is an enum id that the UI should translate. */

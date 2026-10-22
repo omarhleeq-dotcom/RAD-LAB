@@ -49,8 +49,8 @@ describe("Hand PA exam data (S14.2b)", () => {
     expect(handPaAdultDemo.initialSettings.chinPosition).toBeUndefined();
     expect(handPaAdultDemo.initialSettings.breathing).toBeUndefined();
   });
-  it("critical findings are exactly the two marker ones (educator decision, provisional)", () => {
-    expect(handPaExam.scoring.criticalFindings.map((f) => f.id)).toEqual(["wrong-side-marker", "missing-marker"]);
+  it("critical findings are the S6 set: wrong projection and visible motion, then the two marker ones (owner 2026-10-22)", () => {
+    expect(handPaExam.scoring.criticalFindings.map((f) => f.id)).toEqual(["wrong-projection", "patient-motion", "wrong-side-marker", "missing-marker"]);
   });
   it("starts in a state that is not the answer", () => {
     const r = evaluate(handPa, handPa.initialSettings);
@@ -158,7 +158,7 @@ describe("result image", () => {
     const wrong = run({ projection: "hand-lateral" });
     expect(buildRenderPlan(wrong.resultState, handPa).representative).toBe(false);
     expect(check(wrong, "projection").outcome).toBe("fail");
-    expect(ids(wrong)).toEqual([]); // no wrong-projection critical finding in v1 (O24)
+    expect(ids(wrong)).toEqual(["wrong-projection"]); // S6: the engine labels the unsimulated projection and now gates on it
   });
   it("renders deterministically on a synthetic baseline and the rotation changes the pixels", () => {
     const spec = handPa.radiograph;

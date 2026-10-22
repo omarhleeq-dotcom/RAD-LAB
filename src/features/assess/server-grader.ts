@@ -35,11 +35,15 @@ export function markerPartCredit(c:RadCase,s:SimulationSettings,part:string):Fra
 export function fullPractical(c:RadCase,s:SimulationSettings):{credit:Fraction;passed:boolean;critical:boolean} {
   const evaluation=evaluate(c,s);let earned=zero(),available=zero();
   for(const [category,weight] of Object.entries(c.scoring.categoryWeights)) {
-    const checks=evaluation.checks.filter(check=>check.category===category);if(!checks.length)continue;
+    const all=evaluation.checks.filter(check=>check.category===category);if(!all.length)continue;
+    // Same rule as the Practice score: a capping check (stay-still) is not averaged in; its credit is the ceiling of the ratio.
+    const checks=all.filter(check=>!check.capsCategory),caps=all.filter(check=>check.capsCategory);
     const max=checks.reduce((sum,check)=>add(sum,decimalPoints(String(check.weight))),zero());
     const points=checks.reduce((sum,check)=>add(sum,multiply(decimalPoints(String(check.weight)),credit(check.credit))),zero());
     const w=decimalPoints(String(weight));available=add(available,w);
-    if(max.numerator)earned=add(earned,multiply(w,divide(points,max)));
+    let ratio=max.numerator?divide(points,max):zero();
+    for(const cap of caps){const c=credit(cap.credit);if(c.numerator*ratio.denominator<ratio.numerator*c.denominator)ratio=c;}
+    earned=add(earned,multiply(w,ratio));
   }
   return {credit:available.numerator?divide(earned,available):zero(),passed:evaluation.score.passed,critical:evaluation.criticalFindings.length>0};
 }

@@ -2,6 +2,7 @@ import type { CheckRule, CriticalFindingRule, PositioningSpec } from "@/domain/c
 import type { AnyExamDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
 import type { Evidence } from "@/domain/technique";
+import { patientMotionFinding, wrongProjectionFinding } from "./critical-common";
 import { ELBOW_DETECTOR, elbowRegion } from "./elbow-geometry";
 import { HAND_DETECTOR, handRegion } from "./hand-geometry";
 import { upperLimbTechnique } from "./upper-limb-technique";
@@ -534,6 +535,8 @@ const positioning = (k: UpperLimbKind): PositioningSpec => {
 const criticalFindings = (k: UpperLimbKind): CriticalFindingRule[] => {
   const f = FAMILY[familyOf(k)];
   return [
+    wrongProjectionFinding(PER[k].page),
+    patientMotionFinding(PER[k].page),
     {
       id: "wrong-side-marker",
       label: T("Wrong-side marker", "علامة جانب خاطئة"),
@@ -599,6 +602,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       category: "positioning",
       weight: 1,
       maxMarginCm: p.excessCm,
+      beyondNeeded: true, // S2: an opening the geometry forces (field centred on the ray) or the marker needs is not excess.
       label: T("Collimation — field size", "التحديد — حجم المجال"),
       feedback: {
         pass: T("The field is not larger than necessary for the required anatomy.", "المجال ليس أكبر من اللازم للتشريح المطلوب."),

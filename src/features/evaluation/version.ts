@@ -10,8 +10,22 @@ import { comparisonVersion } from "./comparison-version";
  * historical records without it retain definition_version separation.
  * Maintenance is reviewed manually; tests do not detect every semantic change.
  * See docs/PILOT_SUPABASE_SETUP.md#practice-evaluation-version.
+ *
+ * Version history (newest first; each entry names the rule that changed saved outcomes):
+ *  - /6: RAD-068 part 3 batch 6 (S5 follow-up). Chest exams: the "stay still" instruction caps the breathing category's credit: missing leaves the
+ *    engine's partial credit (half), an instruction to move leaves none; a wrong breathing instruction still loses the whole category. The motion
+ *    gate is unchanged.
+ *  - /5: RAD-068 part 3 batch 5 (S6). The limb exams gain the wrong-projection and visible-motion critical findings; pelvis and
+ *    shoulder gain visible motion. Lost required anatomy was assessed and not added.
+ *  - /4: RAD-068 part 3 batch 4 (S2). Coverage and margins: a cut that takes only an anatomy-free strip no longer fails clipping, and
+ *    the field opening that the ray position or the placed marker forces is not excess (the allowance is the extra actually needed, never added on top of the maximum margin: a fully open field stays excess). Chest PA first (4a), then the limbs (4b).
+ *  - /3: RAD-068 part 3 batch 3 (S5). A missing "stay still" instruction no longer creates the critical patient-motion gate by itself;
+ *    the instruction stays its own check and the assumed motion is still drawn.
+ *  - /2: RAD-068 part 3 batch 2 (S3 option D). Chest Lateral: the marker letter's display half no longer fails or gates; only a
+ *    letter that differs from the side against the detector is a wrong marker.
+ *  - /1: first declared identity of the evaluation contract.
  */
-export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/1";
+export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/6";
 
 // Capture provenance at evaluation time, without changing result/score JSON bytes.
 // Weak keys retain no history; clones/deserialised/unidentified results fail closed.

@@ -74,6 +74,12 @@ interface RuleBase {
   category: CategoryId;
   /** Relative weight inside its category. Defaults to 1. */
   weight?: number;
+  /**
+   * Optional: this check does not enter its category's weighted average; its credit instead caps the category's ratio
+   * (ratio = min(average of the other checks, this credit)). Used by the "stay still" instruction (owner 2026-10-22): a missing
+   * instruction leaves half of the breathing category, and a wrong breathing instruction still loses all of it.
+   */
+  capsCategory?: boolean;
   /** Short name of what is being checked. */
   label: LocalizedText;
   feedback: RuleFeedback;
@@ -104,6 +110,12 @@ export interface EqualsRule extends RuleBase {
   setting: EnumSettingKey | ChoiceSettingKey;
   expected: string;
   variantOnFail?: ImageVariantId;
+  /**
+   * Optional: setting values (other than `expected`) that earn the engine's partial credit instead of failing, with the same
+   * feedback and `variantOnFail`. Absent = any other value fails. Used by the "stay still" instruction (owner 2026-10-22):
+   * a missing instruction (`none`) costs half the item, an instruction to move costs all of it.
+   */
+  partialValues?: string[];
 }
 
 /** Numeric setting inside an ideal band (full credit) or acceptable band (half credit). */
@@ -130,6 +142,23 @@ export interface CoverageRule extends RuleBase {
   variantOnClipped?: ImageVariantId;
   /** Clipping only: which anatomy is lost when the field cuts off this side of the required region. */
   clippedSides?: Record<"left" | "right" | "top" | "bottom", LocalizedText>;
+  /**
+   * Clipping only (S2, owner 2026-10-22). Absent/false = any cut into `requiredAnatomy` fails. True = a cut counts as lost
+   * anatomy only on a side where the field also reaches the baseline's landmark box (the anatomy the image shows); a cut that
+   * takes only the anatomy-free strip between the region and that box passes, with `feedback.marginOnly` as the remark.
+   */
+  landmarkBoxOnly?: boolean;
+  /**
+   * Excess only (S2). Absent/false = the margin is measured beyond `requiredAnatomy`. True = on each side the allowed margin is the
+   * larger of `maxMarginCm` and the opening that side actually needs: the smallest field, centred on the actual central ray, that
+   * still covers the required anatomy and the placed marker. So an opening the geometry forces (off-centre ray) or the marker
+   * needs is not excess, but it is never added on top of `maxMarginCm`: a fully open field stays excess.
+   */
+  beyondNeeded?: boolean;
+  feedback: RuleFeedback & {
+    /** Clipping with `landmarkBoxOnly`: the field cuts only the anatomy-free margin. Absent = the pass text. */
+    marginOnly?: LocalizedText;
+  };
 }
 
 /**
@@ -148,7 +177,13 @@ export interface CenteringRule extends RuleBase {
 export interface MarkerRule extends RuleBase {
   kind: "marker";
   /** `fail` = nothing placed. */
-  feedback: RuleFeedback & { overlap: LocalizedText; outsideField: LocalizedText; wrongSide: LocalizedText };
+  feedback: RuleFeedback & {
+    overlap: LocalizedText;
+    outsideField: LocalizedText;
+    wrongSide: LocalizedText;
+    /** Detector-side rule only: non-critical note when the right letter sits in the other display half (S3 option D). Absent = the pass text. */
+    displayHalf?: LocalizedText;
+  };
 }
 
 export type CheckRule = EqualsRule | RangeRule | CoverageRule | CenteringRule | MarkerRule | TechniqueRule;

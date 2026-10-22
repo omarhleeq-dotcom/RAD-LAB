@@ -88,8 +88,26 @@ describe("side against the detector (S10b-4)", () => {
     expect(check(r, "side-marker").outcome).toBe("partial");
     expect(r.score.passed).toBe(false);
   });
-  it("the right letter on the wrong display half is a wrong marker as well", () => {
-    expect(ids(run({ markerPosition: { x: 0.84, y: -0.44 } }))).toEqual(["wrong-side-marker"]);
+  it("the right letter on the other display half is only a non-critical display note: no fail, no deduction (S3 option D)", () => {
+    const r = run({ markerPosition: { x: 0.84, y: -0.44 } });
+    expect(ids(r)).toEqual([]);
+    expect(check(r, "side-marker").outcome).toBe("pass");
+    expect(check(r, "side-marker").credit).toBe(1);
+    expect(text(r, "side-marker")).toMatch(/Note, not scored/);
+    expect(r.score).toEqual(run().score);
+    expect(r.score.passed).toBe(true);
+  });
+  it("the display-half note comes with another marker issue instead of hiding it, and a wrong letter stays critical in either half", () => {
+    const outside = run({ markerPosition: { x: 0.84, y: -0.44 }, collimation: { width: 0.5, height: 0.86 } });
+    expect(check(outside, "side-marker").outcome).toBe("partial");
+    expect(text(outside, "side-marker")).toMatch(/outside the collimated field/);
+    expect(text(outside, "side-marker")).toMatch(/Note, not scored/);
+    for (const x of [-0.84, 0.84]) {
+      const r = run({ sideMarker: "R", markerPosition: { x, y: -0.44 } }, { side: "L" });
+      expect(ids(r), `R@${x}`).toEqual(["wrong-side-marker"]);
+      expect(check(r, "side-marker").outcome, `R@${x}`).toBe("partial");
+      expect(text(r, "side-marker"), `R@${x}`).toMatch(/marker letter is wrong/);
+    }
   });
   it("a missing marker is a critical finding of its own (S11b mechanism), the numeric score is unchanged by the gate", () => {
     const r = run({ sideMarker: null });

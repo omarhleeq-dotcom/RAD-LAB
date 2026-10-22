@@ -19,7 +19,7 @@ import { renderRadiograph } from "@/features/radiograph/pipeline";
 import { buildRenderPlan } from "@/features/radiograph/plan";
 import { makePhantom, PX_PER_CM, REFERENCE } from "@/features/radiograph/test-utils";
 import { SCENES } from "@/features/positioning/scenes";
-import { isMarkerWrongSide } from "@/features/simulation/marker-rule";
+import { isMarkerDisplayHalfNote, isMarkerWrongSide } from "@/features/simulation/marker-rule";
 import { targetMas } from "@/features/technique/model";
 import { composeCase } from "./compose";
 import { validateCase, validateExam } from "./validate";
@@ -114,11 +114,14 @@ describe("fixture exam / case validate with the new optional data", () => {
 describe("S11-1 detector-side marker rule", () => {
   const pos = fixtureExam.positioning;
   const right = { x: 0.6, y: 0.6 }; // viewer-right half = "L" in the display convention data
-  it("letter must match the side against the detector (and sit on its display half)", () => {
+  it("letter must match the side against the detector; its display half is only a note (S3 option D)", () => {
     expect(isMarkerWrongSide(pos, { side: "L", position: right }, { side: "L" })).toBe(false);
     expect(isMarkerWrongSide(pos, { side: "L", position: right }, { side: "R" })).toBe(true); // wrong letter, right half
     expect(isMarkerWrongSide(pos, { side: "R", position: { x: -0.6, y: 0.6 } }, { side: "R" })).toBe(false);
-    expect(isMarkerWrongSide(pos, { side: "L", position: { x: -0.6, y: 0.6 } }, { side: "L" })).toBe(true); // right letter, wrong half
+    expect(isMarkerWrongSide(pos, { side: "L", position: { x: -0.6, y: 0.6 } }, { side: "L" })).toBe(false); // right letter, other half: not wrong
+    expect(isMarkerDisplayHalfNote(pos, { side: "L", position: { x: -0.6, y: 0.6 } }, { side: "L" })).toBe(true);
+    expect(isMarkerDisplayHalfNote(pos, { side: "L", position: right }, { side: "L" })).toBe(false);
+    expect(isMarkerDisplayHalfNote(pos, { side: "L", position: { x: -0.6, y: 0.6 } }, { side: "R" })).toBe(false); // wrong letter: critical, no note
   });
   it("score, critical finding, result state and render plan agree", () => {
     for (const [letter, choice, wrong] of [["L", "L", false], ["L", "R", true], ["R", "R", false]] as const) {

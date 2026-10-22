@@ -78,7 +78,8 @@ describe("evaluate — Adult Chest PA Erect", () => {
   });
 
   it("only gives partial credit for an excessively open field", () => {
-    const r = withChange({ centralRay: { x: 0, y: -0.07 }, collimation: { width: 1, height: 1 } });
+    // S2: centred on the region, so none of the opening below is forced by the ray position (an off-centre ray now forces part of it).
+    const r = withChange({ centralRay: { x: 0, y: -0.14 }, collimation: { width: 1, height: 1 } });
     expect(r.checks.find((c) => c.ruleId === "collimation-excess")?.outcome).toBe("partial");
     expect(r.checks.find((c) => c.ruleId === "collimation-clipping")?.outcome).toBe("pass");
     expect(r.variants).toEqual(["correct"]);
@@ -95,6 +96,8 @@ describe("evaluate — Adult Chest PA Erect", () => {
 
   it("fails breathing for any instruction other than deep inspiration hold", () => {
     const r = withChange({ breathing: "expiration-hold" });
+    // A wrong breathing instruction loses the whole category (owner 2026-10-22), whatever the passing "stay still" item says.
+    expect(r.checks.find((c) => c.ruleId === "breathing")?.credit).toBe(0);
     expect(category(r, "breathing")?.ratio).toBe(0);
     expect(r.primaryVariant).toBe("poor-inspiration");
   });
@@ -281,9 +284,9 @@ describe("Session 5 regressions", () => {
   it("a field that clips the costophrenic angles / lower lungs still fails the clipping check", () => {
     const a = chestPaErect.requiredAnatomy;
     const detH = chestPaErect.detector.heightCm;
-    // Field bottom 0.5 cm above the bottom of the required region (= inside the costophrenic angles), same centre.
+    // Field bottom 2.5 cm above the bottom of the required region (S2: past the 1.5 cm anatomy-free strip, so inside the costophrenic angles), same centre.
     const centreY = ((a.yCm + a.heightCm / 2) / detH) * 2 - 1;
-    const halfNeeded = a.heightCm / 2 - 0.5;
+    const halfNeeded = a.heightCm / 2 - 2.5;
     const r = withChange({ centralRay: { x: 0, y: centreY }, collimation: { width: 0.94, height: (halfNeeded * 2) / detH } });
     expect(check(r, "collimation-clipping").outcome).toBe("fail");
     expect(check(r, "collimation-clipping").feedback.en).toMatch(/costophrenic/);

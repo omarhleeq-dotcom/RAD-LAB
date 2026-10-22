@@ -16,10 +16,14 @@ it.each(CASES.map(c=>[c.id,c] as const))("preserves exact rubric, exclusions and
  for(const s of states){
   const e=evaluate(c,s),actual=fullPractical(c,s);let earned=[0n,1n],available=[0n,1n];
   for(const [category,w] of Object.entries(c.scoring.categoryWeights)){
-   const checks=e.checks.filter(x=>x.category===category);if(!checks.length)continue;
+   const all=e.checks.filter(x=>x.category===category);if(!all.length)continue;
+   // A capping check (stay-still, owner 2026-10-22) is not averaged in; its credit is the ceiling of the category ratio.
+   const checks=all.filter(x=>!x.capsCategory),caps=all.filter(x=>x.capsCategory);
    const max=checks.reduce((a,x)=>add(a,num(x.weight)),[0n,1n]);
    const points=checks.reduce((a,x)=>add(a,mul(num(x.weight),num(x.credit))),[0n,1n]);
-   available=add(available,num(w));if(max[0])earned=add(earned,mul(num(w),mul(points,[max[1]!,max[0]!])));
+   let ratio=max[0]?mul(points,[max[1]!,max[0]!]):[0n,1n];
+   for(const k of caps){const c=num(k.credit);if(c[0]!*ratio[1]!<ratio[0]!*c[1]!)ratio=c;}
+   available=add(available,num(w));earned=add(earned,mul(num(w),ratio));
   }
   expect(actual.credit.numerator*earned[1]!*available[0]!).toBe(earned[0]!*available[1]!*actual.credit.denominator);
   expect(actual.passed).toBe(e.score.passed);expect(actual.critical).toBe(e.criticalFindings.length>0);

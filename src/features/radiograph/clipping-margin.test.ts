@@ -4,7 +4,8 @@
  * The score clips against `RadCase.requiredAnatomy` (27 × 31 cm demo region, case data, NOT derived from the
  * baseline). The baseline's landmark box (apices → costophrenic angles) is 27 × ~28 cm and sits centred inside it,
  * leaving ≈ 1.5 cm strips above and below. These tests pin down, for a field edge in those strips:
- *   - the CLINICAL criterion / score are unchanged (the region is still 27 × 31, the check still fails);
+ *   - the region is unchanged (still 27 × 31) but, since S2 (owner 2026-10-22), a cut that takes only an anatomy-free strip
+ *     no longer fails the clipping check; a cut that reaches the drawn lungs / costophrenic angles still does;
  *   - the plan reports honestly that only the margin is cut (`marginOnlySides`), not the drawn lungs;
  *   - the pixels agree with that report: the field mask cuts exactly at the field edge (strip content is removed),
  *     the drawn lungs / costophrenic angles are fully exposed, and a deeper cut that does reach them is reported
@@ -39,10 +40,17 @@ describe("the clinical criterion is not adapted to the baseline picture", () => 
     expect(regionBottom - landmarkBottom).toBeGreaterThan(1.2);
   });
 
-  it("a field edge that cuts only a strip still FAILS the clipping check (same as the references' 'include the whole region')", () => {
-    expect(check(regionTop + 0.5, 40).outcome).toBe("fail");
-    expect(check(0, regionBottom - 0.5).outcome).toBe("fail");
+  it("a field edge that cuts only an anatomy-free strip passes with a margin remark (S2); one that reaches the drawn lungs still FAILS", () => {
+    for (const c of [check(regionTop + 0.5, 40), check(0, regionBottom - 0.5)]) {
+      expect(c.outcome).toBe("pass");
+      expect(c.credit).toBe(1);
+      expect(c.feedback.en).toMatch(/only the spare margin/);
+      expect(c.feedback.ar).toMatch(/الهامش الاحتياطي/);
+    }
+    expect(check(landmarkTop + 0.5, 40).outcome).toBe("fail");
+    expect(check(0, landmarkBottom - 0.5).outcome).toBe("fail");
     expect(check(regionTop - 0.2, regionBottom + 0.2).outcome).toBe("pass");
+    expect(check(regionTop - 0.2, regionBottom + 0.2).feedback.en).not.toMatch(/spare margin/);
   });
 });
 
@@ -52,7 +60,9 @@ describe("plan: margin-only vs landmark clipping", () => {
     expect(p.clippedSides).toEqual(["top"]);
     expect(p.marginOnlySides).toEqual(["top"]);
     expect(p.landmarkClippedSides).toEqual([]);
-    expect(p.effects.map((e) => e.id)).toContain("collimation-clipping");
+    // S2: a margin-only cut is not a finding, so the picture lists no clipping effect (landmark clipping still does).
+    expect(p.effects.map((e) => e.id)).not.toContain("collimation-clipping");
+    expect(plan(field(landmarkTop + 1, 40)).effects.map((e) => e.id)).toContain("collimation-clipping");
   });
 
   it("bottom edge inside the bottom strip → clipped bottom, margin only", () => {
