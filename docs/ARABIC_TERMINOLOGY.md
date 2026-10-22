@@ -207,7 +207,7 @@ New draft strings (`scene.*`): `sidValue` «SID {value} سم», `tubeAngle` «ز
 > **RAD-061 batch 5 (2026-10-22):** the unused keys `positioning.cueDetector`, `positioningAp.sideAlt` and `positioningAp.angleReadout` were removed from `messages/en.json` and `messages/ar.json`. Their terminology records above stay as review history and are not deleted; no shown string changed.
 
 ## Session 14.1c — wrist exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
-Keys: `messages/ar.json` → `scene.altWrist*`, `sceneWrist.*`, `positioningWrist.*`, `console.projections.wrist-*`, `radiograph.wrist-pa.*`, `radiograph.wrist-lateral.*`; exam / case text in `src/data/exams/xray/wrist-common.ts`, `src/data/cases/wrist-*.ts`. Rule followed: «الكاشف» for the detector (never «الكاسيت»); left / right of a drawing means the viewer's side; the wrist case patient is male (masculine forms).
+Keys: `messages/ar.json` → `scene.altWrist*`, `sceneWrist.*`, `positioningWrist.*`, `console.projections.wrist-*`, `radiograph.wrist-pa.*`, `radiograph.wrist-lateral.*`; exam / case text in `src/data/exams/xray/upper-limb-common.ts` and `upper-limb-technique.ts`, `src/data/cases/upper-limb-case.ts` (one builder for the wrist, hand and elbow since RAD-068). Rule followed: «الكاشف» for the detector (never «الكاسيت»); left / right of a drawing means the viewer's side; the wrist case patient is male (masculine forms).
 | EN | Draft Arabic | Where |
 |---|---|---|
 | Wrist | الرسغ | titles, request, labels |
@@ -225,7 +225,7 @@ Keys: `messages/ar.json` → `scene.altWrist*`, `sceneWrist.*`, `positioningWris
 Questions for the AR reviewer: «مشط اليد» vs «مشط»; «الكعبرة والزند»; the unit-isolated numbers (‎LRM‎) in the alt texts; «نموذج بصري تعليمي».
 
 ## Session 14.2b — hand exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
-Keys: `messages/ar.json` → `scene.altHand*`, `sceneHand.*`, `positioningHand.*`, `console.projections.hand-*`, `radiograph.hand-pa.*`, `radiograph.hand-lateral.*`; exam / case text in `src/data/exams/xray/hand-common.ts`, `src/data/cases/hand-*.ts`. Male forms for the male patient (ذكر، جالس، قادر، حالته مستقرة ومتعاون). Detector = «الكاشف».
+Keys: `messages/ar.json` → `scene.altHand*`, `sceneHand.*`, `positioningHand.*`, `console.projections.hand-*`, `radiograph.hand-pa.*`, `radiograph.hand-lateral.*`; exam / case text in `src/data/exams/xray/upper-limb-common.ts` and `upper-limb-technique.ts`, `src/data/cases/upper-limb-case.ts` (one builder for the wrist, hand and elbow since RAD-068). Male forms for the male patient (ذكر، جالس، قادر، حالته مستقرة ومتعاون). Detector = «الكاشف».
 | EN | Draft Arabic | Where |
 |---|---|---|
 | Hand | اليد | titles, request, labels |
@@ -243,7 +243,7 @@ Questions for the AR reviewer: «السلاميات» vs «عظام الأصاب
 
 
 ## Session 14.3 — elbow exam strings added to the UI (DRAFT, machine-assisted, pending owner / educator review)
-Keys: `messages/ar.json` → `scene.altElbow*`, `sceneElbow.*`, `positioningElbow.*`, `console.projections.elbow-*`, `radiograph.elbow-ap.*`, `radiograph.elbow-lateral.*`; exam / case text in `src/data/exams/xray/elbow-common.ts`, `src/data/cases/elbow-*.ts`. Receptor = «الكاشف»; male forms for the male patient.
+Keys: `messages/ar.json` → `scene.altElbow*`, `sceneElbow.*`, `positioningElbow.*`, `console.projections.elbow-*`, `radiograph.elbow-ap.*`, `radiograph.elbow-lateral.*`; exam / case text in `src/data/exams/xray/upper-limb-common.ts` and `upper-limb-technique.ts`, `src/data/cases/upper-limb-case.ts` (one builder for the wrist, hand and elbow since RAD-068). Receptor = «الكاشف»; male forms for the male patient.
 | EN | Draft Arabic | Where |
 |---|---|---|
 | Elbow | المرفق | titles, request, labels |

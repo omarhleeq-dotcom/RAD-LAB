@@ -30,9 +30,9 @@
 | PA | `src/data/exams/xray/chest-pa-erect.ts`، `chest-pa-technique.ts`؛ الحالة `src/data/cases/chest-pa-erect.ts`، `chest-pa-patient.ts`، `chest-pa-radiograph.ts` |
 | LAT | `chest-lateral-erect.ts`، `chest-lateral-technique.ts`، وحالاتها `src/data/cases/chest-lateral-*` |
 | AP | `chest-ap-supine.ts`، `chest-ap-technique.ts`، وحالاتها `src/data/cases/chest-ap-*` |
-| WR | `wrist-common.ts`، `wrist-technique.ts`، `wrist-pa.ts`، `wrist-lateral.ts`؛ `src/features/wrist-model/wrist-model.ts` |
-| HD | `hand-common.ts`، `hand-geometry.ts`، `hand-technique.ts`؛ `src/features/hand-model/hand-model.ts` |
-| EL | `elbow-common.ts`، `elbow-geometry.ts`، `elbow-technique.ts`؛ `src/features/elbow-model/elbow-model.ts` |
+| WR | `upper-limb-common.ts` و`upper-limb-technique.ts` (الرسغ)، `wrist-pa.ts`، `wrist-lateral.ts`؛ `src/features/wrist-model/wrist-model.ts` |
+| HD | `upper-limb-common.ts` و`upper-limb-technique.ts` (اليد)، `hand-geometry.ts`؛ `src/features/hand-model/hand-model.ts` |
+| EL | `upper-limb-common.ts` و`upper-limb-technique.ts` (المرفق)، `elbow-geometry.ts`؛ `src/features/elbow-model/elbow-model.ts` |
 | LL | `lower-limb-common.ts`، `lower-limb-geometry.ts`، `lower-limb-technique.ts`، `lower-limb-ankle-texts.ts`، `knee-*`، `foot-*`، `ankle-*`؛ `src/features/lower-limb-model/lower-limb-model.ts` |
 | PV | `pelvis-ap-supine.ts`، `pelvis-geometry.ts`، `pelvis-technique.ts`؛ `src/features/pelvis-model/pelvis-model.ts` |
 | SH | `shoulder-grashey-erect.ts`، `shoulder-geometry.ts`، `shoulder-technique.ts`؛ `src/features/shoulder-model/shoulder-model.ts` |
@@ -427,7 +427,7 @@
 | §13 E: غياب العلامة تنبيه لا افتراض إعادة | S11b-1 (غياب العلامة بوابة حرجة) | قائم؛ التوصية S7 إبقاء البوابة وتعديل النص |
 
 ### (و) النصوص المشتركة للأطراف العليا
-**نعم.** بنود T وAR وS تمس الملفات المشتركة `wrist-common.ts` و`hand-common.ts` و`elbow-common.ts`: نص G8 الحرج («normally repeated»)، مصطلحات §12.5، قواعد SID (G2)، الهوامش (G6)، والقوائم الحرجة (S6). لذلك **يبدأ RAD-068 بتوحيد الأطراف العليا (CLN-016/017/025/028)** وفق البند 7(أ) من [قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
+**نعم.** بنود T وAR وS تمس الملفات المشتركة `wrist-common.ts` و`hand-common.ts` و`elbow-common.ts` (وُحّدت في RAD-068 الجزء 1 في `upper-limb-common.ts`): نص G8 الحرج («normally repeated»)، مصطلحات §12.5، قواعد SID (G2)، الهوامش (G6)، والقوائم الحرجة (S6). لذلك **يبدأ RAD-068 بتوحيد الأطراف العليا (CLN-016/017/025/028)** وفق البند 7(أ) من [قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
 
 ## دفعات RAD-068 المقترحة (اقتراح فقط)
 0. **التوحيد أولًا:** CLN-016/017 (بيانات) ثم CLN-025/028 حسب البند 7، دون تغيير سلوك؛ إثبات تطابق البايت.
