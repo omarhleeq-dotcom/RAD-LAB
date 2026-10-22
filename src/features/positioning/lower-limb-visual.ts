@@ -4,7 +4,6 @@
  * view comes from the lower-limb model (`features/lower-limb-model`), which is also the source of the result image's displacements.
  */
 import type { ImageBand } from "@/domain/radiograph";
-import { LOWER_LIMB_MODEL } from "@/features/lower-limb-model/lower-limb-model";
 import { bandWeight } from "@/features/radiograph/pipeline";
 import { interpolateAnchors, type WarpAnchor } from "@/features/lower-limb-model/lower-limb-model";
 import outlines from "./lower-limb-outlines.json";
@@ -30,9 +29,6 @@ export function footShiftPx(x: number, y: number, widthPx: number, heightPx: num
   });
   return shift * widthPx;
 }
-
-/** Drawn degrees limit shared with the model (so the scene never exceeds the picture). */
-export const MAX_DRAWN_DEG = LOWER_LIMB_MODEL.maxDeg;
 
 /**
  * Side view of the table set-up. The detector's long axis (30 cm) lies along the table, the patient's head at the LEFT, the feet at the RIGHT.

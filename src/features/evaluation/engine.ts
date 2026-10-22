@@ -104,8 +104,9 @@ function evalCentering(rule: CenteringRule, s: SimulationSettings, c: RadCase): 
 
 /**
  * Marker placement + laterality. The side convention comes from case data (`positioning.markerSide`) and is the
- * same one the renderer draws with (PA display: patient left = viewer right); the rule KIND is exam data (S11-1). Unscored (weight 0) like the rest of
- * this rule; the issues found are reported together so a wrong-side marker is never hidden by another remark.
+ * same one the renderer draws with (PA display: patient left = viewer right; never mirrored by UI language / RTL); the rule KIND is exam
+ * data (S11-1). Its numeric weight and critical-finding status are exam data too (e.g. Chest PA weight 0 with critical gates; limb exams
+ * weighted). The issues found are reported together so a wrong-side marker is never hidden by another remark.
  */
 function evalMarker(rule: MarkerRule, s: SimulationSettings, c: RadCase): Partial<CheckResult> {
   if (!s.sideMarker) return { outcome: "fail", observed: "—", feedback: rule.feedback.fail };

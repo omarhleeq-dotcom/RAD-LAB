@@ -37,7 +37,6 @@ const IMAGE = {
 } as const;
 
 export const lowerLimbImage = (k: LowerLimbKind) => IMAGE[k];
-export const lowerLimbCmPerPx = (k: LowerLimbKind) => IMAGE[k].cmPerPx;
 
 /** The required-anatomy region (cm on the detector) of the exam: the baseline's anatomy box at its scale, placed so the target sits at the detector centre. */
 export function lowerLimbRegion(k: LowerLimbKind) {

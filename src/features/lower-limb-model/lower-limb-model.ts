@@ -29,7 +29,6 @@
  * ANKLE LATERAL (p.242: distal fibula over the posterior half of the tibia; tibiotalar joint open with a uniform space): TWO copies (far side 40 % / near side
  * 60 %) of the distal fibula / posterior tibia window and of the tibiotalar joint window, as the knee lateral; ghosting of whole windows, not occlusion.
  */
-import type { LowerLimbModelId } from "@/domain/radiograph";
 import { TUNING } from "@/features/radiograph/tuning";
 
 export const LOWER_LIMB_MODEL = {
@@ -208,6 +207,3 @@ export function ankleLateralCopies(value: number): { malleolus: ModelCopy[]; joi
   ];
   return { malleolus: pair(ANKLE_LATERAL_HALF_PX.malleolus), joint: pair(ANKLE_LATERAL_HALF_PX.joint) };
 }
-
-/** True for the models whose console value is the absolute angle rather than a turn about 0 (the foot oblique). */
-export const modelUsesReference = (model: LowerLimbModelId): boolean => model === "foot-oblique";

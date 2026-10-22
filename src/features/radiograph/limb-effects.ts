@@ -1,11 +1,11 @@
 import { pelvisAnchors } from "@/features/pelvis-model/pelvis-model";
 import { shoulderAnchors, shoulderValue } from "@/features/shoulder-model/shoulder-model";
 /**
- * Limb rotation effect (S14.1c, the first registered `EffectDefinition`): the wrist's true-PA / true-lateral criteria drawn from
- * ONE baseline image. Pure: it only reads the result state and the case; the pixel step lives in `pipeline.ts`, every size in
+ * Limb rotation effect (S14.1c, the registered `EffectDefinition` shared by every limb exam): each exam's true-position criteria
+ * (wrist, hand, elbow, lower limb, shoulder, pelvis) drawn from ONE baseline image. Pure: it only reads the result state and the case; the pixel step lives in `pipeline.ts`, every size in
  * `tuning.ts`. Reuses the effect id "rotation" (rule id "rotation", variant "rotated"), so the score, the feedback, the
  * consistency registry and the picture keep describing the same finding; the exam's result wording namespace
- * (`radiograph.wrist-pa.*` / `radiograph.wrist-lateral.*`) supplies the wrist text, and the core chest rotation effect stays off
+ * (e.g. `radiograph.wrist-pa.*`) supplies each exam's text, and the core chest rotation effect stays off
  * for an asset that declares `limbRotation` (see `buildRenderPlan`).
  *
  * WHAT IS DRAWN (EDUCATIONAL VISUAL APPROXIMATION, not a kinematic model; BONTRAGER-9 p.156 / p.158 criteria):
@@ -36,7 +36,7 @@ import { TUNING } from "./tuning";
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-/** Concept records of the four lower-limb models (S14.4). */
+/** Concept records of the limb models that carry a `LowerLimbModelId` (S14.4; shoulder, pelvis, foot, knee, ankle). */
 const lowerLimbConcept = (model: LowerLimbModelId): Evidence =>
   model === "shoulder-grashey"
     ? { status: "common-reference", reference: "BONTRAGER-9 p.196 (AP oblique glenoid, Grashey)", note: "Glenoid in profile without humeral-head superimposition and an open joint space; the body is turned 35°–45° toward the affected side. One-image educational cue only: the joint space closes outside the 35°–45° band; the glenoid rims, head overlap and arm posture are not drawn. Provisional pending O5." }
@@ -202,7 +202,7 @@ export function limbRotationPlan(
 
 const failedRotation = (findings: { ruleId: string }[]) => findings.some((f) => f.ruleId === "rotation");
 
-/** One definition for the wrist and hand exams: the asset's landmark group says which drawing applies. */
+/** One definition for every limb exam: the asset's landmark group says which drawing applies. */
 export const LIMB_ROTATION_EFFECT: EffectDefinition = {
   id: "rotation",
   drivers: ["geometry.rotationDeg"],
