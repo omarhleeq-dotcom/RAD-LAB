@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { localize } from "@/lib/localized";
 import { ResultPanel } from "@/features/evaluation/ResultPanel";
@@ -11,6 +11,16 @@ import { FeedbackBox } from "@/features/pilot/FeedbackBox";
 import { splitCaseId } from "@/features/pilot/attempt-record";
 import { ConsolePanel } from "@/features/xray-console/ConsolePanel";
 import { useSimulationStore } from "@/stores/simulation-store";
+import { PhoneWorkspace } from "./PhoneWorkspace";
+
+// Below the site's desktop breakpoint (the side navigation's 1024px) the simulator uses the tabbed phone layout (UI-3, F3).
+const PHONE_QUERY = "(max-width: 1023px)";
+const subscribePhone = (onChange: () => void) => {
+  const query = matchMedia(PHONE_QUERY);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+};
+const usePhoneLayout = () => useSyncExternalStore(subscribePhone, () => matchMedia(PHONE_QUERY).matches, () => false);
 
 export function SimulationWorkspace({ caseId }: { caseId: string }) {
   const t = useTranslations("workspace");
@@ -19,6 +29,7 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
   const { activeCase, settings, mode, phase, result, attempt, loadCase, setSetting, expose, retry, reset } =
     useSimulationStore();
   const resultRef = useRef<HTMLDivElement>(null);
+  const phone = usePhoneLayout();
 
   useEffect(() => loadCase(caseId), [caseId, loadCase]);
   useEffect(() => {
@@ -66,13 +77,17 @@ export function SimulationWorkspace({ caseId }: { caseId: string }) {
         <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
       </section>
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <div className="min-w-0 space-y-5">
-          <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
-          <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+      {phone ? (
+        <PhoneWorkspace radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
+      ) : (
+        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="min-w-0 space-y-5">
+            <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
+            <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+          </div>
+          <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
         </div>
-        <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
-      </div>
+      )}
 
       <div ref={resultRef} className="scroll-mt-4">
         {result && (

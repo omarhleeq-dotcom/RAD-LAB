@@ -34,7 +34,18 @@
     "condition": "Patient condition",
     "modePractice": "Practice mode",
     "attempt": "Attempt {n}",
-    "practiceHint": "Adjust the patient and equipment so the image meets the request, then press Expose. Detailed feedback is shown afterwards."
+    "practiceHint": "Adjust the patient and equipment so the image meets the request, then press Expose. Detailed feedback is shown afterwards.",
+    "tabsLabel": "Simulator controls",
+    "tabs": {
+      "positioning": "Positioning",
+      "centring": "Centring",
+      "patient": "Patient",
+      "technique": "Technique"
+    },
+    "needsAttention": "has an item that is not ready",
+    "sceneViews": "Scene view",
+    "readinessDetails": "Readiness details",
+    "closeSheet": "Close"
   },
   "positioning": {
     "detector": "Detector / Bucky",

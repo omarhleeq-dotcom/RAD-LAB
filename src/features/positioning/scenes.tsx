@@ -12,7 +12,7 @@ import type { SceneId } from "@/domain/exam";
 import type { SimulationMode, SimulationSettings } from "@/domain/simulation";
 import { PelvisScene } from "./PelvisScene";
 import { ShoulderScene } from "./ShoulderScene";
-import { PositioningView } from "./PositioningView";
+import { PositioningView, type SceneSlots } from "./PositioningView";
 import { ANKLE_AP_LAYOUT, ANKLE_LATERAL_LAYOUT, CHEST_AP_SUPINE_LAYOUT, CHEST_LATERAL_LAYOUT, CHEST_PA_LAYOUT, ELBOW_AP_LAYOUT, ELBOW_LATERAL_LAYOUT, HAND_LATERAL_LAYOUT, HAND_PA_LAYOUT, WRIST_LATERAL_LAYOUT, WRIST_PA_LAYOUT, FOOT_AP_LAYOUT, FOOT_OBLIQUE_LAYOUT, KNEE_AP_LAYOUT, KNEE_LATERAL_LAYOUT, type SceneLayout } from "./scene-layouts";
 
 export interface SceneProps {
@@ -21,6 +21,8 @@ export interface SceneProps {
   mode: SimulationMode;
   onChange: <K extends keyof SimulationSettings>(key: K, value: SimulationSettings[K]) => void;
   disabled: boolean;
+  /** Phone layout (UI-3): portal targets for the control groups; omitted on desktop and in the scene-dom guards. */
+  slots?: SceneSlots;
 }
 
 /**

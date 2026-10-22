@@ -14,7 +14,7 @@ const supa = "https://abcdefghijklmnop.supabase.co";
 const user = { id: "00000000-0000-0000-0000-000000000001", aud: "authenticated", role: "authenticated", email: "test@example.test", app_metadata: {}, user_metadata: {}, created_at: "2026-10-15T00:00:00Z" };
 const b64 = (x) => Buffer.from(JSON.stringify(x)).toString("base64url");
 const session = { access_token: `${b64({ alg: "HS256", typ: "JWT" })}.${b64({ sub: user.id, role: "authenticated", aud: "authenticated", exp: 4102444800 })}.sig`, refresh_token: "synthetic", token_type: "bearer", expires_in: 3600, expires_at: 4102444800, user };
-const browser = await chromium.launch({ executablePath: "/usr/bin/chromium", args: ["--no-sandbox"] });
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? "/opt/pw-browsers/chromium", args: ["--no-sandbox"] });
 mkdirSync("/tmp/rad-054-r1", { recursive: true });
 let checks = 0, audits = 0;
 const ok = (value, label) => { assert.ok(value, label); checks++; };
@@ -30,7 +30,7 @@ async function setup(loc, width) {
     assert.ok(!disabled && url.origin === supa, `Unexpected external origin ${url.origin}`);
     const headers = { "access-control-allow-origin": "*", "access-control-allow-headers": "*", "access-control-allow-methods": "*" };
     if (req.method() === "OPTIONS") return route.fulfill({ status: 204, headers });
-    if (url.pathname === "/rest/v1/profiles") return route.fulfill({ status: 200, headers, contentType: "application/json", body: JSON.stringify({ status: "approved", role: "participant", participant_code: "P-test", consent_version: consent }) });
+    if (url.pathname === "/rest/v1/profiles") return route.fulfill({ status: 200, headers, contentType: "application/json", body: JSON.stringify({ status: "approved", role: "participant", participant_code: "P-test", consent_version: consent, display_name: "Synthetic Test Learner" }) });
     if (url.pathname === "/rest/v1/events" || url.pathname === "/rest/v1/rpc/touch_last_seen") return route.fulfill({ status: 201, headers });
     assert.fail(`Unexpected mocked request ${req.method()} ${url.pathname}`);
   });
@@ -123,7 +123,7 @@ try {
       shapes.push(...await cards.locator("svg").evaluateAll((nodes) => nodes.map((node) => node.innerHTML)));
       await audit(page, `${tag}/${id}`);
       await page.screenshot({ path: `/tmp/rad-054-r1/${disabled ? "off" : "on"}-${loc}-${width}-${id}.png`, fullPage: true });
-      await page.getByTestId("back-to-categories").click();
+      await page.goBack();
       await page.getByTestId("library-categories").waitFor();
       ok(await cards.count() === 0, "back unmounts exam cards");
       ok(await page.locator(`[data-region="${id}"]`).evaluate((node) => node === document.activeElement), "back restores chosen category focus");
@@ -160,7 +160,7 @@ try {
       ok(await menu.boundingBox().then((box) => box.y >= 0 && box.y + box.height < 950), "menu remains reachable at 200 percent");
     }
     await audit(page, `${tag}/200percent`);
-    await page.getByTestId("back-to-categories").click();
+    await page.goBack();
     await page.getByTestId("library-categories").waitFor();
     await audit(page, `${tag}/categories-200percent`);
     await page.evaluate(() => document.documentElement.style.fontSize = "");
