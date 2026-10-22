@@ -197,11 +197,11 @@ describe("visible patient motion", () => {
     expect(r.resultState.patientResponse.motion).toBe("motion");
     expect(r.variants).toContain("motion");
     const instruction = r.checks.find((c) => c.ruleId === "motion-instruction")!;
-    // Owner follow-up (2026-10-22): the missing instruction costs the engine's partial credit in its own category, nothing else.
+    // Owner follow-up (2026-10-22): the missing instruction leaves the engine's partial credit of its own category (breathing ratio 0.5), nothing else.
     expect([instruction.outcome, instruction.credit, instruction.scored]).toEqual(["partial", 0.5, true]);
     const still = run({ motionInstruction: "remain-still" });
     expect(r.score.passed).toBe(still.score.passed);
-    expect(r.score.total).toBe(97.5);
+    expect(r.score.total).toBe(95);
     expect(r.score.categories.filter((c) => c.category !== "breathing")).toEqual(still.score.categories.filter((c) => c.category !== "breathing"));
   });
 

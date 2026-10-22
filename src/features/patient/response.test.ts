@@ -119,10 +119,10 @@ describe("scoring integration is conservative", () => {
     expect(base.score.passed).toBe(true);
     for (const m of ["none", "relax-and-move"] as const) {
       const r = evaluate(chestPaErect, { ...ideal, motionInstruction: m });
-      // Breathing category weight 10 shared equally by the breathing and the stay-still items: partial costs 2.5, fail costs 5.
-      expect(r.score.total).toBe(m === "none" ? 97.5 : 95);
+      // The stay-still item caps the breathing category (weight 10): partial leaves half (costs 5), fail leaves none (costs 10).
+      expect(r.score.total).toBe(m === "none" ? 95 : 90);
       expect(r.score.categories.filter((c) => c.category !== "breathing")).toEqual(base.score.categories.filter((c) => c.category !== "breathing"));
-      expect(r.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(m === "none" ? 0.75 : 0.5);
+      expect(r.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(m === "none" ? 0.5 : 0);
       expect(r.score.thresholdMet).toBe(true);
       // Motion after an instruction to move is a critical finding: below the pass mark despite the unchanged 100.
       // A missing instruction (S5) leaves the attempt passing: the assumed motion is drawn, not gated.
@@ -141,7 +141,12 @@ describe("scoring integration is conservative", () => {
   it("the breathing instruction is still scored exactly as before and gives the reduced-inspiration variant", () => {
     const r = evaluate(chestPaErect, { ...ideal, breathing: "expiration-hold" });
     expect(r.checks.find((c) => c.ruleId === "breathing")?.credit).toBe(0);
-    expect(r.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(0.5); // the passing "stay still" item shares the category
+    expect(r.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(0); // the whole category, as before the stay-still item was scored
+    expect(r.score.total).toBe(90);
+    // Wrong breathing and a missing instruction together: the category is lost once, never below 0.
+    const both = evaluate(chestPaErect, { ...ideal, breathing: "expiration-hold", motionInstruction: "none" });
+    expect(both.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(0);
+    expect(both.score.total).toBe(90);
     expect(r.variants).toContain("poor-inspiration");
     expect(r.resultState.patientResponse.inspiration).toBe("reduced");
   });

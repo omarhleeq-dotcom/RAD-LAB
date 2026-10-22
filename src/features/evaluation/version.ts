@@ -12,8 +12,9 @@ import { comparisonVersion } from "./comparison-version";
  * See docs/PILOT_SUPABASE_SETUP.md#practice-evaluation-version.
  *
  * Version history (newest first; each entry names the rule that changed saved outcomes):
- *  - /6: RAD-068 part 3 batch 6 (S5 follow-up). Chest exams: a missing "stay still" instruction costs the engine's partial credit (half) inside
- *    the breathing / instruction category, an instruction to move costs all of it; the motion gate is unchanged.
+ *  - /6: RAD-068 part 3 batch 6 (S5 follow-up). Chest exams: the "stay still" instruction caps the breathing category's credit: missing leaves the
+ *    engine's partial credit (half), an instruction to move leaves none; a wrong breathing instruction still loses the whole category. The motion
+ *    gate is unchanged.
  *  - /5: RAD-068 part 3 batch 5 (S6). The limb exams gain the wrong-projection and visible-motion critical findings; pelvis and
  *    shoulder gain visible motion. Lost required anatomy was assessed and not added.
  *  - /4: RAD-068 part 3 batch 4 (S2). Coverage and margins: a cut that takes only an anatomy-free strip no longer fails clipping, and

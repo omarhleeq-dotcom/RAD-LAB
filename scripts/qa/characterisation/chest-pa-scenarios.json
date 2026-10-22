@@ -416,7 +416,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -945,10 +945,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -1647,7 +1648,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -2192,10 +2193,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -2882,7 +2884,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -3364,10 +3366,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -3526,14 +3529,14 @@
      },
      {
       "category": "breathing",
-      "earned": 5,
-      "ratio": 0.5,
+      "earned": 0,
+      "ratio": 0,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 95
+    "total": 90
    },
    "variants": [
     "poor-inspiration"
@@ -3576,15 +3579,15 @@
     },
     {
      "category": "breathing",
-     "earned": 5,
-     "ratio": 0.5,
+     "earned": 0,
+     "ratio": 0,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 95,
+   "total": 90,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -3977,7 +3980,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -4459,10 +4462,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -4621,14 +4625,14 @@
      },
      {
       "category": "breathing",
-      "earned": 5,
-      "ratio": 0.5,
+      "earned": 0,
+      "ratio": 0,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 95
+    "total": 90
    },
    "variants": [
     "poor-inspiration"
@@ -4671,15 +4675,15 @@
     },
     {
      "category": "breathing",
-     "earned": 5,
-     "ratio": 0.5,
+     "earned": 0,
+     "ratio": 0,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 95,
+   "total": 90,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -5072,7 +5076,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -5554,10 +5558,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -5716,14 +5721,14 @@
      },
      {
       "category": "breathing",
-      "earned": 5,
-      "ratio": 0.5,
+      "earned": 0,
+      "ratio": 0,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 95
+    "total": 90
    },
    "variants": [
     "poor-inspiration"
@@ -5766,15 +5771,15 @@
     },
     {
      "category": "breathing",
-     "earned": 5,
-     "ratio": 0.5,
+     "earned": 0,
+     "ratio": 0,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 95,
+   "total": 90,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -6169,7 +6174,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -6669,10 +6674,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -7283,7 +7289,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -7783,10 +7789,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -8399,7 +8406,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -8907,10 +8914,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -9531,7 +9539,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -10039,10 +10047,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -10659,7 +10668,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -11139,10 +11148,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -11756,7 +11766,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -12264,10 +12274,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -12888,7 +12899,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -13396,10 +13407,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -14020,7 +14032,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -14503,10 +14515,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -15114,7 +15127,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -15625,10 +15638,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -16252,7 +16266,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -16763,10 +16777,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -17418,7 +17433,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -17948,10 +17963,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -18641,13 +18657,13 @@
     "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
     },
     "label": {
      "ar": "تعليمات الثبات",
@@ -18742,7 +18758,7 @@
    "radiograph.effects.rotation.title": "الدوران ← عدم تناظر الصدر",
    "radiograph.effects.scapulae.desc": "يتراكب لوحان تخطيطيان على الحقلين الرئويين الجانبيين ويحجبان نسيج الرئة. تدوير الكتفين للأمام يُبعد اللوحين عن الحقلين الرئويين (معيار شائع لجودة صورة صدر PA). التراكب رسم تخطيطي وليس لوحًا حقيقيًا من الصورة المرجعية.",
    "radiograph.effects.scapulae.title": "الكتفان غير مدوَّرين للأمام ← اللوحان فوق الرئتين",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (21.6) وأوزان الفئات لا تتغير.",
+   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (19.1) وأوزان الفئات لا تتغير.",
    "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notDrawn": "تُحتسب من إعداداتك — غير مرسومة في هذه الصورة",
@@ -18792,7 +18808,7 @@
    "radiograph.effects.rotation.title": "Rotation → thoracic asymmetry",
    "radiograph.effects.scapulae.desc": "Schematic scapulae overlap the lateral lung fields and hide lung tissue. Rolling the shoulders forward moves the scapulae out of the lung fields (a common PA chest quality criterion). The overlay is a schematic, not a real scapula from the reference image.",
    "radiograph.effects.scapulae.title": "Shoulders not rolled forward → scapulae over the lungs",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (21.6) and the category weights are unchanged.",
+   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (19.1) and the category weights are unchanged.",
    "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notDrawn": "Scored from your settings — not drawn in this image",
@@ -19385,16 +19401,17 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 0.5,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
      },
      "label": {
       "ar": "تعليمات الثبات",
@@ -19666,14 +19683,14 @@
      },
      {
       "category": "breathing",
-      "earned": 2.5,
-      "ratio": 0.25,
+      "earned": 0,
+      "ratio": 0,
       "weight": 10
      }
     ],
     "passed": false,
     "thresholdMet": false,
-    "total": 21.6
+    "total": 19.1
    },
    "variants": [
     "wrong-projection",
@@ -19734,8 +19751,8 @@
     },
     {
      "category": "breathing",
-     "earned": 2.5,
-     "ratio": 0.25,
+     "earned": 0,
+     "ratio": 0,
      "weight": 10
     }
    ],
@@ -19785,7 +19802,7 @@
    ],
    "passed": false,
    "thresholdMet": false,
-   "total": 21.6,
+   "total": 19.1,
    "verdictLabel": "below-educational-pass-mark"
   }
  },
@@ -20180,7 +20197,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -20697,10 +20714,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -21365,7 +21383,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -21881,10 +21899,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -22505,7 +22524,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -23011,10 +23030,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -23635,7 +23655,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -24131,10 +24151,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -24802,13 +24823,13 @@
     "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
     },
     "label": {
      "ar": "تعليمات الثبات",
@@ -25367,16 +25388,17 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 0.5,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
      },
      "label": {
       "ar": "تعليمات الثبات",
@@ -25551,14 +25573,14 @@
      },
      {
       "category": "breathing",
-      "earned": 2.5,
-      "ratio": 0.25,
+      "earned": 0,
+      "ratio": 0,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 85.4
+    "total": 82.9
    },
    "variants": [
     "chin-overlap",
@@ -25607,15 +25629,15 @@
     },
     {
      "category": "breathing",
-     "earned": 2.5,
-     "ratio": 0.25,
+     "earned": 0,
+     "ratio": 0,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 85.4,
+   "total": 82.9,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -26014,7 +26036,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -26553,10 +26575,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -27184,7 +27207,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -27698,10 +27721,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -28318,7 +28342,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -28792,10 +28816,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -29396,7 +29421,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -29870,10 +29895,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -30500,7 +30526,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -30996,10 +31022,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -31655,7 +31682,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -32129,10 +32156,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -32739,7 +32767,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -33261,10 +33289,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -33898,13 +33927,13 @@
     "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
     },
     "label": {
      "ar": "تعليمات الثبات",
@@ -33995,7 +34024,7 @@
    "radiograph.effects.rotation.title": "الدوران ← عدم تناظر الصدر",
    "radiograph.effects.scapulae.desc": "يتراكب لوحان تخطيطيان على الحقلين الرئويين الجانبيين ويحجبان نسيج الرئة. تدوير الكتفين للأمام يُبعد اللوحين عن الحقلين الرئويين (معيار شائع لجودة صورة صدر PA). التراكب رسم تخطيطي وليس لوحًا حقيقيًا من الصورة المرجعية.",
    "radiograph.effects.scapulae.title": "الكتفان غير مدوَّرين للأمام ← اللوحان فوق الرئتين",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (18.1) وأوزان الفئات لا تتغير.",
+   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (15.6) وأوزان الفئات لا تتغير.",
    "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notDrawn": "تُحتسب من إعداداتك — غير مرسومة في هذه الصورة",
@@ -34043,7 +34072,7 @@
    "radiograph.effects.rotation.title": "Rotation → thoracic asymmetry",
    "radiograph.effects.scapulae.desc": "Schematic scapulae overlap the lateral lung fields and hide lung tissue. Rolling the shoulders forward moves the scapulae out of the lung fields (a common PA chest quality criterion). The overlay is a schematic, not a real scapula from the reference image.",
    "radiograph.effects.scapulae.title": "Shoulders not rolled forward → scapulae over the lungs",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (18.1) and the category weights are unchanged.",
+   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (15.6) and the category weights are unchanged.",
    "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notDrawn": "Scored from your settings — not drawn in this image",
@@ -34612,16 +34641,17 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 0.5,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
      },
      "label": {
       "ar": "تعليمات الثبات",
@@ -34893,14 +34923,14 @@
      },
      {
       "category": "breathing",
-      "earned": 2.5,
-      "ratio": 0.25,
+      "earned": 0,
+      "ratio": 0,
       "weight": 10
      }
     ],
     "passed": false,
     "thresholdMet": false,
-    "total": 18.1
+    "total": 15.6
    },
    "variants": [
     "wrong-projection",
@@ -34961,8 +34991,8 @@
     },
     {
      "category": "breathing",
-     "earned": 2.5,
-     "ratio": 0.25,
+     "earned": 0,
+     "ratio": 0,
      "weight": 10
     }
    ],
@@ -35012,7 +35042,7 @@
    ],
    "passed": false,
    "thresholdMet": false,
-   "total": 18.1,
+   "total": 15.6,
    "verdictLabel": "below-educational-pass-mark"
   }
  },
@@ -35405,7 +35435,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -35888,10 +35918,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -36508,7 +36539,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -37015,10 +37046,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -37633,7 +37665,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -38113,10 +38145,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -38726,7 +38759,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -39209,10 +39242,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -39865,7 +39899,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -40348,10 +40382,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -41004,7 +41039,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -41481,10 +41516,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -42089,7 +42125,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -42539,10 +42575,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -43191,7 +43228,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -43698,10 +43735,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -44313,7 +44351,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -44820,10 +44858,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -45433,7 +45472,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -45913,10 +45952,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -46526,7 +46566,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -47006,10 +47046,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -47619,13 +47660,13 @@
     "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
     },
     "label": {
      "ar": "تعليمات الثبات",
@@ -48101,16 +48142,17 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 0.5,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
      },
      "label": {
       "ar": "تعليمات الثبات",
@@ -48264,14 +48306,14 @@
      },
      {
       "category": "breathing",
-      "earned": 7.5,
-      "ratio": 0.75,
+      "earned": 5,
+      "ratio": 0.5,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 97.5
+    "total": 95
    },
    "variants": [
     "motion"
@@ -48314,15 +48356,15 @@
     },
     {
      "category": "breathing",
-     "earned": 7.5,
-     "ratio": 0.75,
+     "earned": 5,
+     "ratio": 0.5,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 97.5,
+   "total": 95,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -48715,13 +48757,13 @@
     "credit": 0,
     "drawn": true,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
     },
     "label": {
      "ar": "تعليمات الثبات",
@@ -48768,7 +48810,7 @@
    "radiograph.effects.marker.title": "علامة الجانب الخاصة بك",
    "radiograph.effects.motion.desc": "لأن تعليمات الثبات غابت أو كانت خاطئة، تحركت المريضة المحاكاة: الحواف ضبابية. حجم الضبابية تقريب تعليمي وليس مسافة حركة.",
    "radiograph.effects.motion.title": "حركة المريض ← فقدان الحدّة",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (95) وأوزان الفئات لا تتغير.",
+   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (90) وأوزان الفئات لا تتغير.",
    "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
@@ -48788,7 +48830,7 @@
    "radiograph.effects.marker.title": "Your side marker",
    "radiograph.effects.motion.desc": "Because the stay-still instruction was missing or wrong, the simulated patient moved: edges are blurred. The blur size is an educational approximation, not a movement distance.",
    "radiograph.effects.motion.title": "Patient movement → loss of sharpness",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (95) and the category weights are unchanged.",
+   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (90) and the category weights are unchanged.",
    "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
@@ -49203,16 +49245,17 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 0,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
      },
      "label": {
       "ar": "تعليمات الثبات",
@@ -49388,14 +49431,14 @@
      },
      {
       "category": "breathing",
-      "earned": 5,
-      "ratio": 0.5,
+      "earned": 0,
+      "ratio": 0,
       "weight": 10
      }
     ],
     "passed": false,
     "thresholdMet": true,
-    "total": 95
+    "total": 90
    },
    "variants": [
     "motion"
@@ -49438,8 +49481,8 @@
     },
     {
      "category": "breathing",
-     "earned": 5,
-     "ratio": 0.5,
+     "earned": 0,
+     "ratio": 0,
      "weight": 10
     }
    ],
@@ -49468,7 +49511,7 @@
    ],
    "passed": false,
    "thresholdMet": true,
-   "total": 95,
+   "total": 90,
    "verdictLabel": "below-educational-pass-mark"
   }
  },
@@ -49861,7 +49904,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -50347,10 +50390,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -51004,7 +51048,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -51490,10 +51534,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -52147,7 +52192,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -52632,10 +52677,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -53245,7 +53291,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -53730,10 +53776,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -54343,7 +54390,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -54828,10 +54875,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -55441,7 +55489,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -55926,10 +55974,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -56539,7 +56588,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -57019,10 +57068,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -57634,7 +57684,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -58148,10 +58198,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -58772,7 +58823,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -59283,10 +59334,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -59905,7 +59957,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -60388,10 +60440,11 @@
      "weight": 1
     },
     {
+     "capsCategory": true,
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },

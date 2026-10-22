@@ -882,17 +882,18 @@
    "variantOnFail": "poor-inspiration"
   },
   {
+   "capsCategory": true,
    "category": "breathing",
    "evidence": {
-    "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+    "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
     "reference": "Image-quality ref (Motion)",
     "status": "educational-simplification"
    },
    "expected": "remain-still",
    "feedback": {
     "fail": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark."
     },
     "pass": {
      "ar": "طلبتَ من المريض أن يبقى ثابتًا. في هذه المحاكاة يلتزم المريض المتعاون بالثبات فلا تتشوه الصورة بالحركة.",

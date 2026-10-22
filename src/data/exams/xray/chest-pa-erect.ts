@@ -627,15 +627,17 @@ export const chestPaErectExam: ExamDefinition = {
       },
     },
     {
-      // Session 4 added the instruction as a check with weight 0. Since the owner's S5 follow-up (2026-10-22) it is scored inside the
-      // breathing / instruction category with the engine's existing partial credit: a missing instruction (`none`) costs half of
-      // this item, an instruction to move (`relax-and-move`) costs all of it; the motion gate is separate (critical.ts) and unchanged.
+      // Session 4 added the instruction as a check with weight 0. Since the owner's S5 follow-up (2026-10-22) it caps the breathing
+      // category (`capsCategory`) instead of being averaged into it: a missing instruction (`none`) leaves half of the category's credit,
+      // an instruction to move (`relax-and-move`) none; a wrong breathing instruction still loses the whole category as before, whatever
+      // this item says. The motion gate is separate (critical.ts) and unchanged.
       id: "motion-instruction",
       kind: "equals",
       category: "breathing",
       setting: "motionInstruction",
       expected: "remain-still",
       partialValues: ["none"],
+      capsCategory: true,
       variantOnFail: "motion",
       label: { en: "Instruction to stay still", ar: "تعليمات الثبات" },
       feedback: {
@@ -644,14 +646,14 @@ export const chestPaErectExam: ExamDefinition = {
           ar: "طلبتَ من المريض أن يبقى ثابتًا. في هذه المحاكاة يلتزم المريض المتعاون بالثبات فلا تتشوه الصورة بالحركة.",
         },
         fail: {
-          en: "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark.",
-          ar: "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+          en: "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking leaves only half of the breathing category's credit; asking the patient to move leaves none of it and also gates the pass mark.",
+          ar: "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يُبقي نصف درجة فئة التنفس فقط، وطلب الحركة لا يُبقي منها شيئًا ويمنع النجاح أيضًا.",
         },
       },
       evidence: {
         status: "educational-simplification",
         reference: "Image-quality ref (Motion)",
-        note: "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+        note: "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       },
     },
   ],

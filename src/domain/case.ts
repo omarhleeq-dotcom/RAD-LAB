@@ -74,6 +74,12 @@ interface RuleBase {
   category: CategoryId;
   /** Relative weight inside its category. Defaults to 1. */
   weight?: number;
+  /**
+   * Optional: this check does not enter its category's weighted average; its credit instead caps the category's ratio
+   * (ratio = min(average of the other checks, this credit)). Used by the "stay still" instruction (owner 2026-10-22): a missing
+   * instruction leaves half of the breathing category, and a wrong breathing instruction still loses all of it.
+   */
+  capsCategory?: boolean;
   /** Short name of what is being checked. */
   label: LocalizedText;
   feedback: RuleFeedback;

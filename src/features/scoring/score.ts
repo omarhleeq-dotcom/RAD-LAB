@@ -36,10 +36,14 @@ const round1 = (n: number) => Math.round(n * 10) / 10;
 export function computeScore(checks: CheckResult[], rules: ScoringRules): ScoreSummary {
   const categories: CategoryScore[] = [];
   for (const category of Object.keys(rules.categoryWeights)) {
-    const inCat = checks.filter((c) => c.category === category);
-    if (inCat.length === 0) continue;
+    const all = checks.filter((c) => c.category === category);
+    if (all.length === 0) continue;
+    // A check that caps its category (e.g. the stay-still instruction) is not averaged in; its credit is the ceiling of the ratio.
+    const caps = all.filter((c) => c.capsCategory);
+    const inCat = all.filter((c) => !c.capsCategory);
     const totalWeight = inCat.reduce((sum, c) => sum + c.weight, 0);
-    const ratio = totalWeight === 0 ? 0 : inCat.reduce((sum, c) => sum + c.credit * c.weight, 0) / totalWeight;
+    const average = inCat.length === 0 ? 1 : totalWeight === 0 ? 0 : inCat.reduce((sum, c) => sum + c.credit * c.weight, 0) / totalWeight;
+    const ratio = Math.min(average, ...caps.map((c) => c.credit));
     const weight = rules.categoryWeights[category] ?? 0;
     categories.push({ category, weight, earned: weight * ratio, ratio });
   }
