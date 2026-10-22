@@ -130,6 +130,15 @@ node scripts/assess/trial-install.mjs --reviewed-pg17-v1
 
 تبقى خطوة فعلية لازمة قبل التشغيل: Auth getUser ثم profiles وفق RLS ومطابقة الهويات الثلاث المختلفة privately، ومسار جلسة مالك مؤقتة آمنة للإغلاق، ومراجعة/إذن نطاق SQL ومحتوى/إسناد، وبناء/نشر الصورة المقيدة وربطها والتحقق من digest الفعلية والسر الثابت ونافذة وإغلاق. قراءة useAccount أكدت أنه يبدأ بـgetSession ثم قراءة profiles؛ لا ننسب إليه Auth getUser غير الموجود أو نعتبر رقم الموافقة إثبات هوية. لا طلب tokens بالمحادثة أو auth.uid مصطنع أو قبول موافقة نيابة عن أحد. Scale ما زال controller1/ثلاث هويات/نسختين/حد1، وليس تشغيلًا دائمًا أو scheduler. القرارات السابقة وروابطها محفوظة، ولا تتوسع أذونات التشغيل من ظهور v2.
 
+<a id="trial-image-built-owner-result"></a>
+### بناء ورفع صورة assess-trial ونتيجة المالك — 2026-10-22 عمّان
+
+ضاعت حزمة `assess-task4-bound-5U8KIz` مع مساحة العمل السابقة ولم توجد على جهاز المالك؛ الملفات الثلاثة التي رفعها لاحقًا كانت أداتي فحص الاتصال القديمتين (مطابقتين لما في المستودع) وZIP المصدر القديم، لا الحزمة. أُعيد توليد الحزمة خارج Git بالمولد نفسه (`build-trial.mjs --scope-file`) على مصدر HEAD الحالي: بصمة `trial.mjs`=`3439c9ad1f2436967af4918bdfaa275f88cda5ca15162eafb317904cc11b211f` و`Dockerfile`=`991c6e3330a04b5388dc20f25c3b70ae681c46d5b1930e1cbc662fa66701b36d` طابقتا المسجلتين سابقًا. **تغير ملف النطاق فقط**: controller UUID جديد (بصمة `assess-trial.json`=`46aeb601019feb015dd11f27ebda77732ea240290a865ea3db7f8586c52556d5` بدل `42c14ae2…`) لأن القديم لم يُحفظ ولم يُربط بأي SQL أو صورة. رُسل ZIP جديد (`assess-task4-bound-v2.zip`، SHA256 `7071373f1e01fe70fcc9ee3d5fb3cc1657e960fe182b97724fe3c6bb86cbe667`) وكُتبت `cloudbuild.yaml` وbuild-image.sh وSHA256SUMS من وصف هذا التقرير؛ راجعها المالك في Cloud Shell بعد `sha256sum -c` (ست ملفات OK). لا UUID في المحادثة.
+
+أذن المالك صراحةً: «أذن ببناء ورفع صورة assess-trial فقط». نفذ `build-image.sh --authorized-image-build` في Cloud Shell: build `50f67c5f-f3fc-459c-a1c6-167737af0225` بحالة SUCCESS ومدة14s، والوسم `trial-46aeb601019f-3439c9ad1f24`. بعد `gcloud builds describe` أعاد المالك digest الصورة: `sha256:e08b7ec6f77cf1d7686d8fa9ce798581a4df75b656fd6cff2da31abd5b384050` في `europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-trial`.
+
+الحدود: هذا شاهد بناء ورفع صورة فقط، من إفادة المالك دون تحقق مستقل من الوكيل. لم يُنشأ Job ولا IAM/secret/SQL/LOGIN/gate ولم يُشغَّل شيء؛ الحارس0، وruntimeOrLaunchVerified=false. digest الصورة لا يثبت أن controller UUID داخلها مطابق لنطاق SQL، ولا يوجد نطاق SQL مفعّل أو مقابل له بعد. لا تُعاد عملية البناء. إذن البناء لا يشمل إنشاء Job أو ربط سر أو تفعيل نطاق أو هويات أو محتوى أو نافذة؛ كل منها يحتاج إذنه المستقل.
+
 ### سجل الخطوة4 — التركيب الخامل نجح والقبول الحي لم ينفذ
 
 | المجموعة | الدليل المطلوب عند الإذن، وليس دليلًا وصل |
@@ -196,7 +205,7 @@ node scripts/assess/trial-install.mjs --reviewed-pg17-v1
 
 ## 8. تسليم المالك والتوقف
 
-المتابعة الحالية في [نتيجة التركيب](#trial-reviewed-install-owner-pass): وصلت PASS بعد إذن المالك والتطبيق؛ لا إعادة install أو preinstall أو postinstall أو جرد/probe. وصلت [إفادة الحسابات الثلاثة](#trial-three-accounts-owner-report) و[صورة النسخة القديمة](#trial-main-ui-owner-screenshot)؛ وصل [سطر v2](#trial-v2-visible-bound-local-artifact) وجُهزت حزمة محلية ذات نطاق مقترح ثابت؛ أكد المالك اعتماد الطالبين؛ التالي إذن بناء/رفع الصورة المحددة من الحزمة المراجعة، مع بقاء إثبات الهوية/نسخة الواجهة ومسار إغلاق مالك آمن، ثم إعداد النطاق والصورة المقيدة والمحتوى/الإسنادات ضمن أذوناتها المحددة. لا UUID أو بريد أو JWT/OTP/password في التقرير أو المحادثة. **المالك في Cloud Shell** لا ينفذ run/update/push من هذه النتيجة؛ تجهيز artifact مقيدة ومراجعة مصدرها وصورتها ثم إذن تجهيزها/تشغيلها خطوات باقية. لا تغيير main أو pins/Variables أو secret لتجاوز نقص النسخة.
+المتابعة الحالية في [نتيجة التركيب](#trial-reviewed-install-owner-pass): وصلت PASS بعد إذن المالك والتطبيق؛ لا إعادة install أو preinstall أو postinstall أو جرد/probe. وصلت [إفادة الحسابات الثلاثة](#trial-three-accounts-owner-report) و[صورة النسخة القديمة](#trial-main-ui-owner-screenshot)؛ وصل [سطر v2](#trial-v2-visible-bound-local-artifact) وجُهزت حزمة محلية ذات نطاق مقترح ثابت؛ أكد المالك اعتماد الطالبين؛ بُنيت الصورة المقيدة ورُفعت بإذنه ([النتيجة والـdigest](#trial-image-built-owner-result))؛ يبقى إثبات الهوية/نسخة الواجهة ومسار إغلاق مالك آمن، ثم إعداد النطاق والصورة المقيدة والمحتوى/الإسنادات ضمن أذوناتها المحددة. لا UUID أو بريد أو JWT/OTP/password في التقرير أو المحادثة. **المالك في Cloud Shell** لا ينفذ run/update/push من هذه النتيجة؛ تجهيز artifact مقيدة ومراجعة مصدرها وصورتها ثم إذن تجهيزها/تشغيلها خطوات باقية. لا تغيير main أو pins/Variables أو secret لتجاوز نقص النسخة.
 
 التجهيز المحلي قابل للمراجعة ودُفع للمسودة؛ الخطوة4 ما زالت معلّقة. عند طلب المتابعة الحية نحتاج إذن العملية المحددة بعد تحقق شروطها، ولا تُجمع كل العمليات في إذن ضمني واحد. لا تطلب إعادة قرارات التصميم/الاحتفاظ/النسخة المؤجلة.
 
