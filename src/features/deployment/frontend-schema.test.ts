@@ -112,3 +112,21 @@ it("keeps the deployment gate ahead of upload with no bypass or SQL execution",(
   expect(workflow.indexOf("run: node scripts/pages/pilot-schema-gate.mjs")).toBeLessThan(workflow.indexOf("name: Build static export"));
   expect(workflow).not.toMatch(/continue-on-error|supabase db push|psql|--skip-schema/);
 });
+it("does not treat typed-array .from as a database boundary",()=>{
+  edit("src/features/assess/TypedArrays.tsx",()=>`"use client";export const typed=()=>[Float32Array.from([1]),Float64Array.from([1]),Int8Array.from([1]),Int16Array.from([1]),Int32Array.from([1]),Uint8Array.from([1]),Uint16Array.from([1]),Uint32Array.from([1]),Uint8ClampedArray.from([1]),BigInt64Array.from([1n]),BigUint64Array.from([1n])];`,()=>expect(gate().status).toBe(0));
+});
+it("keeps an explicitly included adapter pinned without boundary calls",()=>{
+  const adapter="src/features/pilot/owner-data.ts";
+  mkdirSync(join(root,"src/features/pilot"),{recursive:true});
+  edit(adapter,()=>"export const ownerFilters=(range: {start: string})=>range.start;",()=>{
+    edit("src/features/pilot/OwnerRoot.tsx",()=>`"use client";import {ownerFilters} from "./owner-data";export const Root=ownerFilters;`,()=>{
+      expect(gate().status).toBe(0);
+      manifest(m=>{m.explicitBoundaries=[adapter];},()=>expect(gate().stderr).toContain("database boundary changed"));
+      manifest(m=>{m.explicitBoundaries=[adapter];(m.browserBoundaries as Record<string,string>)[adapter]=createHash("sha256").update(readFileSync(join(root,adapter))).digest("hex");},()=>{
+        expect(gate().status).toBe(0);
+        edit(adapter,s=>s+"\n// changed adapter requires review\n",()=>expect(gate().stderr).toContain("database boundary changed"));
+      });
+    });
+    manifest(m=>{m.explicitBoundaries=[adapter];},()=>expect(gate().stderr).toContain("Explicit boundary is not reachable"));
+  });
+},20000);

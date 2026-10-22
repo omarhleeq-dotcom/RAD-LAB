@@ -39,9 +39,6 @@
     "condition": "Patient condition",
     "modePractice": "Practice mode",
     "attempt": "Attempt {n}",
-    "step1": "1 · Position",
-    "step2": "2 · Technique",
-    "step3": "3 · Result",
     "practiceHint": "Adjust the patient and equipment so the image meets the request, then press Expose. Detailed feedback is shown afterwards."
   },
   "positioning": {
@@ -64,7 +61,6 @@
     "midline": "Receptor midline",
     "rayHandle": "Central ray target. Arrow keys move it; Shift for larger steps.",
     "markerHandle": "Side marker {side}. Arrow keys move it; Shift for larger steps.",
-    "fieldHandle": "Collimator handle",
     "centeringTitle": "Central-ray centering",
     "centeringOk": "Centered appropriately",
     "centeringXLow": "Shifted left",
@@ -80,8 +76,6 @@
     "collHeight": "Field height",
     "rotationHelp": "Educational visual model: the internal rotation value is scored, not the drawn appearance. Real clavicle appearance varies with body build.",
     "markerLegend": "Side marker",
-    "markerL": "L",
-    "markerR": "R",
     "markerNone": "None",
     "markerHint": "Choose a marker, then drag it into the image margin, clear of the lung fields.",
     "cuesTitle": "Patient position cues",
@@ -90,7 +84,6 @@
     "cueAnterior": "Anterior chest toward the detector",
     "cueChin": "Chin elevated and clear of the apices",
     "cueShoulders": "Shoulders rolled forward, scapulae out of the lung fields",
-    "cueDetector": "Detector",
     "cueSideAlt": "Side view of the patient standing erect facing the detector, showing the current chin and shoulder position.",
     "chinLegend": "Chin",
     "shoulderLegend": "Shoulders",
@@ -102,7 +95,6 @@
       "relaxed": "Shoulders relaxed",
       "rolled-forward": "Shoulders rolled forward"
     },
-    "chinOverlay": "Chin over apices",
     "scapula": "Scapula",
     "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
     "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left."
@@ -138,7 +130,6 @@
     "subtitle": "Educational · vendor-neutral",
     "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
     "digitalHint": "On a digital system the displayed brightness is processed and is not an exposure meter. After the exposure, technique is judged from the target-relative detector exposure (DI), noise and dose awareness.",
-    "patientPrep": "Patient preparation",
     "kvpHint": "Beam energy / penetration",
     "masHint": "X-ray quantity",
     "sidHint": "Shared with the positioning view",
@@ -291,7 +282,6 @@
     },
     "gaugeTitle": "Detector exposure relative to the target",
     "gaugeAlt": "Scale of the deviation index from −6 to +6 with the target at 0 and your exposure marked.",
-    "gaugeTarget": "Target",
     "gaugeNote": "DI = 10 × log10(EI / EIT). +3 ≈ twice the target exposure, −3 ≈ half. The ±1 and ±3 scoring bands are provisional demo values, not universal limits. EI is not patient dose.",
     "whyTitle": "Why",
     "why": {
@@ -306,8 +296,6 @@
     },
     "aecTitle": "AEC outcome (educational model)",
     "aecBackup": "No selected chamber was inside the field: the AEC ran to its backup limit.",
-    "aecChamber": "Chamber",
-    "aecState": "State",
     "aecActive": "Active — sensed",
     "aecNotSelected": "Not selected",
     "aecOutside": "Selected but not irradiated",
@@ -911,11 +899,9 @@
     "cueStraight": "Standing straight: no rotation and no leaning sideways"
   },
   "positioningAp": {
-    "sideAlt": "Schematic side view of the supine patient on the bed with the detector under the back, the tube above and the tube angle.",
     "sideViewCaption": "Side view (head end on the viewer's left)",
     "head": "Head",
     "feet": "Feet",
-    "angleReadout": "Tube angle: {angle}° (+ = toward the feet)",
     "frontView": "Detector view as displayed (AP: patient's left on the viewer's right)",
     "schematicNote": "Schematic illustration — not to scale and not anatomically exact. Left/right here mean the left/right of the detector view. The side view is a drawing of the set-up, not a measurement.",
     "rotationHelp": "Educational visual model: the internal rotation value is scored, not the drawn appearance. For the AP only the amount of rotation is given, not its direction.",
@@ -941,7 +927,6 @@
     "armsOverLungs": "Arms over the lungs",
     "altFrontal": "Patient drawn from the front as displayed: head, neck, shoulders, trunk and arms at the sides. Chin {chin}; shoulders {shoulders}.",
     "altLateral": "Patient drawn from the side, facing the viewer's left (anterior left, posterior right): head, neck, trunk and arms. Arms {arms}; chin {chin}.",
-    "altPlan": "Patient seen from above with the head, shoulders and arms, the tube, the detector and the beam.",
     "altSide": "Patient seen from the side, head to the viewer's left, {state}; detector under the back, tube above with the beam {angle}° from the vertical, SID {sid} cm.",
     "chinTucked": "tucked down",
     "chinLifted": "lifted",
@@ -1470,7 +1455,6 @@
     "training": "Training"
   },
   "library": {
-    "backToExams": "Back to exams",
     "title": "Exam library",
     "intro": "Explore {modality} exams by anatomical region.",
     "search": "Search exams",
@@ -1483,8 +1467,7 @@
     "open": "Open exam",
     "emptyTitle": "No matching exams",
     "emptyBody": "Try another search or clear your filters.",
-    "chooseCategory": "Choose an exam category",
-    "backToCategories": "Back to categories"
+    "chooseCategory": "Choose an exam category"
   },
   "training": {
     "title": "Training",

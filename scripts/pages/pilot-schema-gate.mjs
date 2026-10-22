@@ -15,6 +15,10 @@ const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
 const codeExtensions = ["", ".ts", ".tsx", ".mjs", ".js", "/index.ts", "/index.tsx"];
 const sourceFiles = (dir) => readdirSync(dir, { withFileTypes: true }).flatMap((e) => e.isDirectory()
   ? sourceFiles(resolve(dir, e.name)) : /\.(ts|tsx|mjs|js)$/.test(e.name) && !/\.(test|spec|d)\.tsx?$/.test(e.name) ? [resolve(dir, e.name)] : []);
+// Built-in receivers whose static `.from` is never a DB/network call. Shared by the boundary
+// detector and the call collector so both classify these receivers identically.
+const nonClientReceivers = new Set(["Array", "Buffer", "Object", "Float32Array", "Float64Array", "Int8Array", "Int16Array", "Int32Array",
+  "Uint8Array", "Uint16Array", "Uint32Array", "Uint8ClampedArray", "BigInt64Array", "BigUint64Array"]);
 const typeOnly = (node) => node.isTypeOnly || (node.importClause && (node.importClause.isTypeOnly ||
   (!node.importClause.name && node.importClause.namedBindings && ts.isNamedImports(node.importClause.namedBindings) &&
     node.importClause.namedBindings.elements.every((e) => e.isTypeOnly))));
@@ -42,11 +46,15 @@ export function inspectBrowserBoundaries(projectRoot = root) {
     return load(file).statements.some((n) => ts.isExpressionStatement(n) && ts.isStringLiteral(n.expression) && n.expression.text === "use client");
   });
   if (!pending.length) throw new Error("Frontend contract has no client roots.");
+  // Reviewed adapters pinned by name in the contract, independent of how their source happens to read.
+  const manifestPath = resolve(projectRoot, "scripts/pages/frontend-schema.json");
+  const explicit = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")).explicitBoundaries ?? [] : [];
+  if (!Array.isArray(explicit) || explicit.some((f) => typeof f !== "string" || !f.startsWith("src/") || f.includes(".."))) throw new Error("Invalid explicit boundary list.");
   const seen = new Set(), boundaries = {}, calls = [], literals = [];
   while (pending.length) {
     const file = pending.pop(); if (seen.has(file)) continue; seen.add(file);
     const path = relative(projectRoot, file).replaceAll("\\", "/");
-    const tree = load(file); let boundary = false;
+    const tree = load(file); let boundary = explicit.includes(path);
     const follow = (specifier) => {
       if (specifier === "@supabase/supabase-js") boundary = true;
       if (!specifier.startsWith(".") && !specifier.startsWith("@/")) return;
@@ -68,7 +76,7 @@ export function inspectBrowserBoundaries(projectRoot = root) {
       }
       if (ts.isIdentifier(node) && ["getPilotClient", "fetch", "XMLHttpRequest", "WebSocket", "EventSource"].includes(node.text)) boundary = true;
       if (ts.isPropertyAccessExpression(node) && ["rpc", "schema", "from"].includes(node.name.text) &&
-        !["Array", "Buffer", "Object"].includes(node.expression.getText(tree))) boundary = true;
+        !nonClientReceivers.has(node.expression.getText(tree))) boundary = true;
       if (ts.isElementAccessExpression(node) && node.argumentExpression && ts.isStringLiteral(node.argumentExpression) && ["rpc", "schema", "from"].includes(node.argumentExpression.text)) boundary = true;
       ts.forEachChild(node, visit);
     };
@@ -78,7 +86,7 @@ export function inspectBrowserBoundaries(projectRoot = root) {
       const inspect = (node) => {
         if (ts.isStringLiteral(node)) literals.push({ path, name: node.text });
         if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression) && ["rpc", "from"].includes(node.expression.name.text) &&
-          !["Array", "Buffer", "Object", "Float32Array"].includes(node.expression.expression.getText(tree))) {
+          !nonClientReceivers.has(node.expression.expression.getText(tree))) {
           const arg = node.arguments[0];
           if (arg && ts.isStringLiteral(arg)) {
             const receiver = node.expression.expression;
@@ -95,6 +103,7 @@ export function inspectBrowserBoundaries(projectRoot = root) {
       inspect(tree);
     }
   }
+  for (const file of explicit) if (!boundaries[file]) throw new Error(`Explicit boundary is not reachable from the frontend: ${file}`);
   return { reachable: [...seen].map((f) => relative(projectRoot, f).replaceAll("\\", "/")).sort(), boundaries, calls, literals };
 }
 

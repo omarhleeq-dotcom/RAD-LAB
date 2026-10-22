@@ -92,6 +92,7 @@ it("fails closed on idle pool error, without leaking the error or retrying", asy
   expect(pg.connect).not.toHaveBeenCalled(); await worker.close();
 });
 
+// Explicit limit: new PGlite() takes ~2 s and more under CPU contention; see docs/RAD-061_TIMEOUT_DIAGNOSIS_2026-10-22.md.
 it("executes the binding's actual SQL and current maintenance on a new disposable DB under a restricted login", async () => {
   const db = new PGlite();
   try {
@@ -109,7 +110,7 @@ it("executes the binding's actual SQL and current maintenance on a new disposabl
     expect((await db.query<{ role: string }>("select current_user as role")).rows[0]!.role).toBe(config.user);
     await worker.close();
   } finally { await db.close(); }
-});
+}, 30000);
 
 it("builds and imports an inert Node artifact without the reference TS loader or credentials", () => {
   const build = spawnSync(process.execPath, ["scripts/assess/build-runtime.mjs"], { encoding: "utf8", timeout: 15000 });
@@ -193,7 +194,7 @@ it("checks actual session-pooler backend identity and ACL on every transaction, 
     await expect(worker.call("health_v1", {})).rejects.toMatchObject({ code: "denied" });
     await worker.close();
   } finally { await db.close(); }
-});
+}, 30000);
 
 it.each(["acl", "rpc", "commit"])("redacts session-pooler %s failure, discards the backend and never replays", async stage => {
   const worker = createWorkerBinding({ ...config, sessionPoolerProjectRef: "syntheticref" });

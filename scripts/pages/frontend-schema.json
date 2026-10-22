@@ -29,12 +29,14 @@
     "supabase/checks/assess-retention-ready.sql"
   ],
   "deferredMigrations": {},
+  "explicitBoundaries": [
+    "src/features/pilot/owner-data.ts"
+  ],
   "browserBoundaries": {
     "src/features/pilot/FeedbackBox.tsx": "c6ae92fc0d39108fc60f8bac3f4028ca3e6b8bb950061e24166c4de47db4e703",
     "src/features/pilot/client.ts": "e4ad823775d64b2e7a650a61674bdbd00d76cff838397e5274c6ea34971ecdf0",
     "src/features/pilot/AttemptRecorder.tsx": "66548e1e7c1b0eca105f187929a61e6901b9894093d423d81e95d09d70b872e2",
     "src/features/pilot/attempt-logger.ts": "83894d055186a16bc93eef6e7bfcf78d833e81f3a5bb595993d2aaa8c3e85a4a",
-    "src/features/radiograph/pipeline.ts": "ee6a508b1cd24806792c443f9cee9a260d3ee3d193bc651225f92086304987b8",
     "src/features/pilot/useOwnerData.ts": "d32c0364f5ef98a81c8219ffedfc7e89eafcc6260314f0d8aa0098c141857469",
     "src/features/pilot/owner-data.ts": "cf88fe691a8b45d4014db867774df4b343e353971e1e8c2fff847fb595059373",
     "src/features/pilot/useAccount.ts": "b7dabc44751aa31928a5fb0625fb7c6657b856f6071eefd452e6262a3612ffa1",

@@ -23,6 +23,7 @@
 import type { ImageBand, ImageEllipse, RadiographAssetSpec } from "@/domain/radiograph";
 import type { RenderPlan } from "./plan";
 import { TUNING } from "./tuning";
+import { interpolateAnchors as anchorShift } from "@/features/limb-warp/warp";
 
 export interface LumaImage {
   width: number;
@@ -168,18 +169,8 @@ export function bandWeight(band: { v1: number; v2: number }, v: number): number 
   return smoothstep(band.v1 - s, band.v1 + s, v) * (1 - smoothstep(band.v2 - s, band.v2 + s, v));
 }
 
-/** Piecewise-linear interpolation through anchors sorted by u (constant beyond the outer ones). */
-export function anchorShift(anchors: { u: number; du: number }[], u: number): number {
-  const n = anchors.length;
-  if (n === 0) return 0;
-  if (u <= anchors[0]!.u) return anchors[0]!.du;
-  if (u >= anchors[n - 1]!.u) return anchors[n - 1]!.du;
-  for (let k = 0; k < n - 1; k++) {
-    const p = anchors[k]!, q = anchors[k + 1]!;
-    if (u <= q.u) return q.u === p.u ? p.du : p.du + ((u - p.u) / (q.u - p.u)) * (q.du - p.du);
-  }
-  return 0;
-}
+/** Piecewise-linear interpolation through anchors sorted by u (constant beyond the outer ones): the shared limb warp math. */
+export { anchorShift };
 
 /** Hand PA (S14.2b-FIX): displacement (fraction of the image width) of the source content at (u, v): the band-weighted anchor interpolation of the 2.5D hand model. */
 export function handPaShiftU(u: number, v: number, rot: NonNullable<RenderPlan["limb"]>["rotation"], lm: { bands: (ImageBand & { u1?: number; u2?: number })[] }): number {
@@ -233,8 +224,11 @@ export function elbowApValue(
 }
 
 /**
- * Value of one output pixel under a limb rotation effect, from the backward-mapped sample function. Pure and deterministic.
- *  - wrist PA / lateral (S-VIS-1b): the elbow AP / lateral steps, driven by the wrist model.
+ * Value of one output pixel under a limb rotation effect, from the backward-mapped sample function. Pure and deterministic. Covers every limb exam:
+ *  - hand PA and `limb-warp` (foot, ankle AP, shoulder Grashey, pelvis AP): the band-weighted anchor warp;
+ *  - hand lateral: one copy per structure inside each band;
+ *  - elbow AP, wrist PA (S-VIS-1b) and `limb-layers` (knee AP): the warp plus two forearm/leg layers (`elbowApValue`);
+ *  - elbow lateral, wrist lateral (S-VIS-1b) and `limb-copies` (knee and ankle lateral): weighted far-/near-side copies per band.
  */
 export function limbRotationValue(
   rot: NonNullable<RenderPlan["limb"]>["rotation"],

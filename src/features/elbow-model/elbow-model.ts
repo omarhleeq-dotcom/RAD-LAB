@@ -25,6 +25,7 @@
  * sulcus or the double ridges (one baseline image cannot show them honestly).
  */
 import { TUNING } from "@/features/radiograph/tuning";
+import { interpolateAnchors, monotone, type WarpAnchor } from "@/features/limb-warp/warp";
 
 export const ELBOW_MODEL = {
   /** Drawn degrees per degree of the internal rotation value (the value lives in `features/radiograph/tuning.ts`). */
@@ -38,7 +39,7 @@ const clampDeg = (r: number) => Math.max(-ELBOW_MODEL.maxDeg, Math.min(ELBOW_MOD
 /** Drawn angle (radians) for an internal rotation value. */
 export const elbowDrawnRad = (rotationDeg: number): number => (clampDeg(rotationDeg) * ELBOW_MODEL.gain * Math.PI) / 180;
 
-export interface WarpAnchor { u: number; du: number }
+export { interpolateAnchors, type WarpAnchor };
 
 // ───────────────────────── AP ─────────────────────────
 
@@ -55,18 +56,6 @@ function apShiftPx(col: { x: number; Z: number }, rotationDeg: number): number {
   const th = elbowDrawnRad(rotationDeg);
   const X = col.x - ELBOW_MODEL.ap.axis;
   return X * (Math.cos(th) - 1) + col.Z * Math.sin(th);
-}
-
-/** A warp must not fold: keep the displaced anchors in order, each at least `MIN_SLOPE` of its original spacing apart. */
-const MIN_SLOPE = 0.2;
-function monotone(a: WarpAnchor[]): WarpAnchor[] {
-  const out = a.map((x) => ({ ...x }));
-  for (let k = 1; k < out.length; k++) {
-    const p = out[k - 1]!, q = out[k]!;
-    const min = p.u + p.du + MIN_SLOPE * (q.u - p.u);
-    if (q.u + q.du < min) q.du = min - q.u;
-  }
-  return out;
 }
 
 /**
@@ -86,19 +75,6 @@ export function elbowApShifts(rotationDeg: number): { anchors: WarpAnchor[]; uln
     ulna: apShiftPx(AP_COLUMNS.ulna, rotationDeg) / W,
     radius: apShiftPx(AP_COLUMNS.radius, rotationDeg) / W,
   };
-}
-
-/** Piecewise-linear interpolation through anchors sorted by u (constant beyond the outer ones). */
-export function interpolateAnchors(anchors: WarpAnchor[], u: number): number {
-  const n = anchors.length;
-  if (n === 0) return 0;
-  if (u <= anchors[0]!.u) return anchors[0]!.du;
-  if (u >= anchors[n - 1]!.u) return anchors[n - 1]!.du;
-  for (let k = 0; k < n - 1; k++) {
-    const p = anchors[k]!, q = anchors[k + 1]!;
-    if (u <= q.u) return q.u === p.u ? p.du : p.du + ((u - p.u) / (q.u - p.u)) * (q.du - p.du);
-  }
-  return 0;
 }
 
 // ───────────────────────── lateral ─────────────────────────
