@@ -21,6 +21,7 @@
  * ulna toward the viewer's RIGHT and the radial side toward the left (a fan). A negative value is the mirror image of the odd part.
  */
 import { TUNING } from "@/features/radiograph/tuning";
+import { monotone, oddPart, type WarpAnchor } from "@/features/limb-warp/warp";
 
 export type HandKind = "pa" | "lateral";
 
@@ -147,7 +148,7 @@ export function projectHand(kind: HandKind, rotationDeg: number): Projected[] {
 
 // ───────────────────────── result-image anchors (the pixel step's input) ─────────────────────────
 
-export interface WarpAnchor { u: number; du: number }
+export { oddPart, type WarpAnchor };
 
 /** Displacement (fraction of the image width) of a tube's centre between the base pose and the rotated pose. */
 function shiftOf(kind: HandKind, t: Tube, rotationDeg: number): { u0: number; du: number } {
@@ -159,25 +160,10 @@ function shiftOf(kind: HandKind, t: Tube, rotationDeg: number): { u0: number; du
   return { u0: (A[kind] + x0) / W, du: (x1 - x0) / W };
 }
 
-/** The part of a displacement that is odd in the rotation value (the even part, the narrowing by cos θ, is the same for both signs): defines the SIGN. */
-export const oddPart = (f: (r: number) => number, r: number): number => (f(r) - f(-r)) / 2;
-
-/**
- * A warp must not fold the image over itself: keep the displaced anchors in order, each at least `MIN_SLOPE` of its original spacing
- * apart (only bites at the extremes of the range, where the thumb would otherwise slide under digit 2). The scene is not clamped.
- */
-const MIN_SLOPE = 0.2;
+// `monotone` (shared warp math) keeps the anchors from folding: it only bites at the extremes of the range, where the thumb would otherwise
+// slide under digit 2. The scene is not clamped.
 /** Cap of the thumb's displacement in the result image (fraction of the image width, ≈ 0.9 cm). */
 const THUMB_CAP = 0.06;
-function monotone(a: WarpAnchor[]): WarpAnchor[] {
-  const out = a.map((x) => ({ ...x }));
-  for (let k = 1; k < out.length; k++) {
-    const p = out[k - 1]!, q = out[k]!;
-    const min = p.u + p.du + MIN_SLOPE * (q.u - p.u);
-    if (q.u + q.du < min) q.du = min - q.u;
-  }
-  return out;
-}
 
 /**
  * PA: displacement anchors of the PHALANGEAL band (digits 5…2, middle phalanx), the METACARPAL band (digits 5…2) and the THUMB band
