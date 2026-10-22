@@ -47,11 +47,22 @@ describe("S2 clipping: an anatomy-free strip is not lost anatomy (Chest PA)", ()
     expect(check(mixed, "collimation-clipping").feedback.en).toMatch(/costophrenic/);
     expect(check(mixed, "collimation-clipping").feedback.en).not.toMatch(/apices/);
   });
-  it("is opt-in: Chest Lateral and AP keep failing any cut into their required region", () => {
-    const lat: SimulationSettings = { ...chestLateralErect.initialSettings, ...field(region.yCm + 0.6, 40) };
-    expect(check(evaluate(chestLateralErect, lat), "collimation-clipping").outcome).toBe("fail");
-    const ap: SimulationSettings = { ...chestApSupine.initialSettings, ...field(region.yCm + 0.6, 40) };
-    expect(check(evaluate(chestApSupine, ap), "collimation-clipping").outcome).toBe("fail");
+  it("Chest Lateral and AP follow the same rule: a strip-only cut passes, one that reaches their drawn anatomy fails", () => {
+    for (const c of [chestLateralErect, chestApSupine]) {
+      const { landmarkCm } = fitAnatomyBox(c.radiograph, c.requiredAnatomy);
+      const r = c.requiredAnatomy;
+      const side = landmarkCm.y1 - r.yCm > 0.5 ? "top" : "left"; // the strips: top / bottom (AP), left / right (lateral)
+      const cut = (depth: number): Partial<SimulationSettings> =>
+        side === "top"
+          ? { centralRay: { x: 0, y: (((r.yCm + depth + 43) / 2) / D.heightCm) * 2 - 1 }, collimation: { width: 1, height: (43 - r.yCm - depth) / D.heightCm } }
+          : { centralRay: { x: (((r.xCm + depth + 35) / 2) / D.widthCm) * 2 - 1, y: -0.14 }, collimation: { width: (35 - r.xCm - depth) / D.widthCm, height: 0.86 } };
+      const strip = (side === "top" ? landmarkCm.y1 : landmarkCm.x1) - (side === "top" ? r.yCm : r.xCm);
+      const base = { ...c.initialSettings, sideMarker: null } as SimulationSettings;
+      const inStrip = check(evaluate(c, { ...base, ...cut(strip / 2) }), "collimation-clipping");
+      expect([c.id, inStrip.outcome]).toEqual([c.id, "pass"]);
+      expect(inStrip.feedback.en).toMatch(/only the spare margin/);
+      expect(check(evaluate(c, { ...base, ...cut(strip + 1) }), "collimation-clipping").outcome).toBe("fail");
+    }
   });
 });
 
@@ -69,7 +80,7 @@ describe("S2 excess: the allowance for what the marker or the ray forces is the 
   it("a field opened exactly as far as an off-centre ray forces is not excess (centering is judged on its own)", () => {
     const ray = { x: 0, y: 0.02 }; // ≈ 3.4 cm below the target level
     const needed = neededField(chestPaErect, { ...ok, centralRay: ray, sideMarker: null });
-    const r = run(chestPaErect, { centralRay: ray, sideMarker: null, ...needed });
+    const r = run(chestPaErect, { sideMarker: null, ...needed });
     expect(check(r, "collimation-excess").outcome).toBe("pass");
     expect(check(r, "centering-vertical").outcome).not.toBe("pass");
   });
@@ -101,22 +112,28 @@ function neededField(c: RadCase, base: SimulationSettings): Pick<SimulationSetti
 describe("S2 per exam: a fully open field is still excess; a field opened only as needed is not", () => {
   const excessRule = (c: RadCase) => c.rules.find((r) => r.kind === "coverage" && r.check === "excess") as { beyondNeeded?: boolean } | undefined;
   it.each(CASES.map((c) => [c.id, c] as const))("%s", (_id, c) => {
-    if (excessRule(c)?.beyondNeeded !== true) return; // not yet opted in
+    expect(excessRule(c)?.beyondNeeded, "opted in").toBe(true);
     const marker = c.positioning.markerRule?.kind === "fixed-side" ? c.positioning.markerRule.side : "L";
     const base = { ...c.initialSettings, sideMarker: marker, markerPosition: c.positioning.defaultMarkerPosition[marker], motionInstruction: "remain-still" } as SimulationSettings;
     const target = c.positioning.centering.target;
     const excess = (s: SimulationSettings) => check(evaluate(c, s), "collimation-excess").outcome;
-    // The ray where the exam wants it, and a ray moved off it (the geometry then forces more opening on one side).
-    for (const ray of [target, { x: Math.max(-1, Math.min(1, target.x + 0.12)), y: Math.max(-1, Math.min(1, target.y + 0.12)) }]) {
+    // The ray where the exam wants it, and a ray moved 1 cm off it in both directions (the geometry then forces more opening on one side;
+    // a much larger move would let a fully open field be forced, e.g. in the pelvis whose region nearly fills the detector).
+    for (const ray of [target, { x: target.x + 1 / (c.detector.widthCm / 2), y: target.y + 1 / (c.detector.heightCm / 2) }]) {
       const at = { ...base, centralRay: ray };
       expect(excess({ ...at, ...neededField(c, at) }), `needed only, ray ${JSON.stringify(ray)}`).toBe("pass");
-      expect(excess({ ...at, collimation: { width: 1, height: 1 } }), `fully open, ray ${JSON.stringify(ray)}`).toBe("partial");
-      expect(excess({ ...at, sideMarker: null, collimation: { width: 1, height: 1 } }), `fully open, no marker, ray ${JSON.stringify(ray)}`).toBe("partial");
+      // A fully open field is excess with the ray where the exam wants it. With the ray moved off, a field opened to the detector is
+      // clamped on the near side and can fall inside the opening the geometry forces (the pelvis region nearly fills the detector), so
+      // "fully open" is only asserted at the target ray; the off-ray case asserts that the needed-only field passes.
+      if (ray === target) {
+        expect(excess({ ...at, collimation: { width: 1, height: 1 } }), "fully open").toBe("partial");
+        expect(excess({ ...at, sideMarker: null, collimation: { width: 1, height: 1 } }), "fully open, no marker").toBe("partial");
+      }
     }
   });
-  it("the strip rule is opted in for Chest PA (limb baselines are fitted flush, < 0.01 cm)", () => {
+  it("the strip rule is opted in for the three chest exams, whose baselines leave spare strips; limb, pelvis and shoulder baselines are fitted flush (< 0.01 cm)", () => {
     const clipRule = (c: RadCase) => c.rules.find((r) => r.kind === "coverage" && r.check === "clipping") as { landmarkBoxOnly?: boolean } | undefined;
-    expect(CASES.filter((c) => clipRule(c)?.landmarkBoxOnly === true).map((c) => c.id)).toEqual(["chest-pa-erect"]);
+    expect(CASES.filter((c) => clipRule(c)?.landmarkBoxOnly === true).map((c) => c.id)).toEqual(["chest-pa-erect", "chest-lateral-erect", "chest-ap-supine"]);
     for (const c of CASES.filter((x) => !x.id.startsWith("chest"))) {
       const { landmarkCm } = fitAnatomyBox(c.radiograph, c.requiredAnatomy);
       const r = c.requiredAnatomy;
