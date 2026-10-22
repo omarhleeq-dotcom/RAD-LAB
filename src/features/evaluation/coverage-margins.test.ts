@@ -6,6 +6,7 @@
  * Enabled for Chest PA first; the other chest exams still reuse the old behaviour until the owner enables them.
  */
 import { describe, expect, it } from "vitest";
+import { CASES } from "@/data/cases";
 import { chestApSupine } from "@/data/cases/chest-ap-supine";
 import { chestLateralErect } from "@/data/cases/chest-lateral-erect";
 import { chestPaErect } from "@/data/cases/chest-pa-erect";
@@ -87,5 +88,32 @@ describe("S2 geometry helpers", () => {
     expect(m.y2).toBeCloseTo(36.99, 2);
     const edge = minimalFieldAround({ centralRay: { x: 0, y: 0.9 } }, target, D);
     expect(edge.y2).toBe(D.heightCm);
+  });
+});
+
+describe("S2 per exam (4b: limbs after Chest PA)", () => {
+  const excessRule = (c: RadCase) => c.rules.find((r) => r.kind === "coverage" && r.check === "excess") as { beyondNeeded?: boolean } | undefined;
+  const clipRule = (c: RadCase) => c.rules.find((r) => r.kind === "coverage" && r.check === "clipping") as { landmarkBoxOnly?: boolean } | undefined;
+  it("the excess rule is opted in for Chest PA and the six limb exams, and for no other exam", () => {
+    const on = CASES.filter((c) => excessRule(c)?.beyondNeeded === true).map((c) => c.id).sort();
+    expect(on).toEqual(["ankle-ap", "ankle-lateral", "chest-pa-erect", "elbow-ap", "elbow-lateral", "foot-ap", "foot-oblique", "hand-lateral", "hand-pa", "knee-ap", "knee-lateral", "wrist-lateral", "wrist-pa"]);
+  });
+  it("the strip rule is opted in for Chest PA only: no limb region has an anatomy-free strip (the baseline box is fitted flush, < 0.01 cm)", () => {
+    expect(CASES.filter((c) => clipRule(c)?.landmarkBoxOnly === true).map((c) => c.id)).toEqual(["chest-pa-erect"]);
+    for (const c of CASES.filter((x) => x.id !== "chest-pa-erect" && x.id !== "chest-lateral-erect" && x.id !== "chest-ap-supine")) {
+      const { landmarkCm } = fitAnatomyBox(c.radiograph, c.requiredAnatomy);
+      const r = c.requiredAnatomy;
+      for (const strip of [landmarkCm.x1 - r.xCm, r.xCm + r.widthCm - landmarkCm.x2, landmarkCm.y1 - r.yCm, r.yCm + r.heightCm - landmarkCm.y2]) {
+        expect(Math.abs(strip), c.id).toBeLessThan(0.01);
+      }
+    }
+  });
+  it("a limb field at the minimal size around the ray passes whatever the ray offset forces, and an avoidable over-opening is still partial", () => {
+    const wrist = CASES.find((c) => c.id === "wrist-pa")!;
+    const t = wrist.positioning.centering.target;
+    const tight = { ...wrist.initialSettings, centralRay: t, collimation: { width: 0.5, height: 0.6 }, sideMarker: null } as SimulationSettings;
+    expect(check(evaluate(wrist, tight), "collimation-excess").outcome).toBe("pass");
+    const wide = { ...tight, collimation: { width: 1, height: 1 } } as SimulationSettings;
+    expect(check(evaluate(wrist, wide), "collimation-excess").outcome).toBe("partial");
   });
 });

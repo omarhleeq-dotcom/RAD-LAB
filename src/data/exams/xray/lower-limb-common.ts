@@ -498,6 +498,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
       category: "positioning",
       weight: 1,
       maxMarginCm: p.excessCm,
+      beyondNeeded: true, // S2: an opening the geometry forces (field centred on the ray) or the marker needs is not excess.
       label: T("Collimation — field size", "التحديد — حجم المجال"),
       feedback: {
         pass: T("The field is not larger than necessary for the required anatomy.", "المجال ليس أكبر من اللازم للتشريح المطلوب."),
