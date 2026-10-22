@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** بعد دمج #96 وإغلاق التجربة الهندسية اكتمل تدقيق RAD-061 القرائي؛ التنظيف على خمس دفعات بموافقة المالك دفعةً دفعة، ثم RAD-062، وRAD-059 قبل التفعيل الحقيقي، وRAD-063 آخرًا.
-- **ينتظر المالك:** مراجعة Draft PR الدفعة 1 من [تقرير RAD-061](RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#batches) ثم موافقة الدفعة 2؛ قرارات P4 المؤجلة بعد الدفعات الخمس؛ استئناف برمجة Assess.
-- **ينتظر مراجِعًا بشريًا:** RAD-019 ومعها بنود التدقيق CLN-018/027/034؛ O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
+- **الاتجاه الحالي:** بعد دمج #96 وإغلاق التجربة الهندسية اكتمل تدقيق RAD-061 القرائي؛ الترتيب بحسب [قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22): الدفعة 1 ← تشخيص حد الوقت ← الدفعات 2–6 ← جرد RAD-064 ← RAD-062 ← جلسة المحاكي بعد رد RAD-019 ← RAD-059 ← RAD-057 ← RAD-063.
+- **ينتظر المالك:** مراجعة Draft PR الدفعة 1، ثم قرار [تشخيص حد الوقت](RAD-061_TIMEOUT_DIAGNOSIS_2026-10-22.md)، ثم موافقة الدفعة 2 من [تقرير RAD-061](RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#batches)؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
+- **ينتظر مراجِعًا بشريًا:** RAD-019 ومعها بنود التدقيق CLN-018/027/034، ويجوز إرسالها الآن؛ O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
 - **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ تقرير RAD-061 و[قرار ترتيب المراحل](DECISIONS.md#assess-authoring-owner-2026-10-22).
-- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب؛ نطاق التجربة يبقى فعّالًا بقرار الإغلاق دون تشغيل أو قبول حي.
+- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (السبب المقاس تنافس على إنشاء PGlite، والحل ينتظر المالك)؛ نطاق التجربة يبقى فعّالًا بقرار الإغلاق دون تشغيل أو قبول حي.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 203,
-  "updated_at": "2026-10-22T09:45:00+00:00",
+  "revision": 204,
+  "updated_at": "2026-10-22T09:55:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-064",
+  "next_id": "RAD-065",
   "tasks": [
     {
       "id": "RAD-001",
@@ -191,8 +191,8 @@
       "title": "مراجعة المعلّم والفيزيائي الطبي لكل القيم المؤقتة والنص العربي (O5)",
       "status": "review",
       "priority": "high",
-      "description": "حزمة المراجعة (docs/REVIEW_PACKAGE.md) جاهزة وتنتظر معلّمًا وفيزيائيًا طبيًا: قيم Chest وفحوص الأطراف والحوض والكتف، النص العربي، وحدود الصور والمقياس (بنود O في DECISIONS). ليست بوابة للجلسات (S10b-20) لكنها موصى بها قبل الإصدار أو التدريس. يُغلق عند جواب كل بند أو تسجيل المالك أن بندًا يُترك غير مراجَع.",
-      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#rad-019-review-items (CLN-018/027/034)",
+      "description": "حزمة المراجعة (docs/REVIEW_PACKAGE.md) جاهزة وتنتظر معلّمًا وفيزيائيًا طبيًا: قيم Chest والأطراف والحوض والكتف، النص العربي، وحدود الصور والمقياس (بنود O). يجوز إرسالها الآن مع بنود CLN-018/027/034 (البند 6 من قرار ترتيب التنظيف). ليست بوابة للجلسات (S10b-20). يُغلق عند جواب كل بند أو تسجيل المالك تركه غير مراجَع.",
+      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#rad-019-review-items (CLN-018/027/034)؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "reviewer"
     },
     {
@@ -209,8 +209,8 @@
       "title": "نقل الكود إلى modalities/xray/* وإخراج المستهلكين من RadCase (مؤجَّل منذ S7/S11)",
       "status": "deferred",
       "priority": "low",
-      "description": "ما زال RadCase عرض توافق، ولا يوجد src/modalities. يبقى مؤجلاً حتى يحتاجه فحص أو نمط جديد فعلاً.",
-      "source_ref": "DECISIONS.md S7-2، S7-4؛ docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md (صفوف deferred)؛ docs/archive/sessions/session-11-generalisation.md",
+      "description": "ما زال RadCase عرض توافق، ولا يوجد src/modalities. يبقى مؤجلاً حتى يحتاجه فحص أو نمط جديد فعلاً، وإن احتيج يأتي بعد جلسة تعميم الأطراف العليا (CLN-016/017/025/028) لا قبلها، كي لا تُعاد هيكلة الملفات نفسها مرتين (البند 7).",
+      "source_ref": "DECISIONS.md S7-2، S7-4؛ docs/archive/analysis/SESSION_11_NEEDS_SUMMARY.md (صفوف deferred)؛ docs/archive/sessions/session-11-generalisation.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "defer_reason": "قاعدة الثلاثة (rule of three): لا حاجة ملموسة؛ التغيير كبير ويصعب إثبات عدم تغيّر السلوك فيه."
     },
     {
@@ -264,8 +264,8 @@
       "title": "مرجع Forearm AP + Lateral وقسم Needs فقط",
       "status": "deferred",
       "priority": "high",
-      "description": "مرجع الساعد AP/Lateral لم يُكتب؛ O37 لغياب الصور المناسبة باقٍ. تأجيل الساعد وتجميد الصور والفحوص الجديدة حاكمان الآن؛ توفر Bontrager لا يرفع التجميد.",
-      "source_ref": "DECISIONS.md O37، S10-2، S-SHOULDER-Y-6؛ docs/archive/sessions/session-continuity-2026-10-15.md؛ S-PELVIS-REF-1",
+      "description": "مرجع الساعد AP/Lateral لم يُكتب؛ O37 لغياب الصور المناسبة باقٍ. تأجيل الساعد وتجميد الصور والفحوص الجديدة حاكمان الآن؛ توفر Bontrager لا يرفع التجميد. عند رفعه الترتيب: هذا المرجع مدموجًا (S10-2) ← جلسة تعميم الأطراف العليا (CLN-016/017/025/028) ← فحص forearm (البند 7).",
+      "source_ref": "DECISIONS.md O37، S10-2، S-SHOULDER-Y-6؛ docs/archive/sessions/session-continuity-2026-10-15.md؛ S-PELVIS-REF-1؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "defer_reason": "تأجيل الساعد مسجل في O37، وقرار المالك S-SHOULDER-Y-6 يجمّد الصور والفحوص الجديدة."
     },
     {
@@ -534,9 +534,9 @@
       "title": "تحسين الواجهة بصريًا: الرسوم والألوان والخطوط",
       "status": "deferred",
       "priority": "low",
-      "description": "المالك (2026-10-17): الواجهة تعمل جيدًا وتحتاج تحسينًا بصريًا لكنه ليس أولوية. يُستأنف بقرار المالك بعد الأولويات الأعلى؛ لا يمس المشاهد وhashes. التفاصيل في مراجعة RAD-054.",
-      "source_ref": "محادثة المالك 2026-10-17؛ DECISIONS S-UI-054-1…13",
-      "defer_reason": "قرار المالك: ليست أولوية الآن؛ تُستأنف بعد التحقق الخارجي والمراجعات."
+      "description": "المالك (2026-10-17): الواجهة تعمل جيدًا وتحتاج تحسينًا بصريًا لكنه ليس أولوية. توقيته بعد RAD-062 كي يشمل شاشاته مرة واحدة (البند 8 من قرار ترتيب التنظيف)، ويبقى مؤجلًا حتى قرار المالك؛ لا يمس المشاهد وhashes. التفاصيل في مراجعة RAD-054.",
+      "source_ref": "محادثة المالك 2026-10-17؛ DECISIONS S-UI-054-1…13؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
+      "defer_reason": "قرار المالك: ليست أولوية الآن؛ تُستأنف بعد RAD-062 وقبل RAD-063 وفق البند 8 من قرار ترتيب التنظيف."
     },
     {
       "id": "RAD-058",
@@ -570,8 +570,8 @@
       "title": "تدقيق وتنظيف الكود قبل ميزات Assess الكبيرة",
       "status": "review",
       "priority": "medium",
-      "description": "التدقيق القرائي مكتمل. الدفعة 1 (تنظيف P1) في Draft PR بموافقة المالك وتنتظر مراجعته؛ الدفعات 2–5 تنتظر موافقة المالك دفعةً دفعة. مفتوح: حد وقت server-runtime.test.ts (تشخيص قبل أي تعديل) وCLN-042 بند أمان منفصل. مؤجلات بمحفّز: CLN-016/017/025/028 عند forearm أو تصحيح النصوص المشتركة، وCLN-035/036/037 مع RAD-060/062. التفاصيل والمحفّزات في التقرير.",
-      "source_ref": "docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md؛ docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor",
+      "description": "التدقيق مكتمل؛ الدفعة 1 في Draft PR تنتظر مراجعة المالك. الترتيب بقرار المالك: تشخيص حد الوقت (docs/RAD-061_TIMEOUT_DIAGNOSIS_2026-10-22.md) ينتظر قراره، ثم الدفعات 2–5 (CLN-037 في الدفعة 4)، ثم الدفعة 6 (CLN-005/006/011)، ثم CLN-042 دفعة أمان. كل دفعة بموافقة منفصلة. المؤجلات ومحفّزاتها في التقرير والقرار.",
+      "source_ref": "docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md؛ docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "owner"
     },
     {
@@ -579,8 +579,8 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "بعد التنظيف: أداة جدول→JSON، ثم أسئلة كتابية بتصحيح الأستاذ مع اقتراح تطابق قريب ودور مشرف من الصفر، ثم صور (Supabase Storage خاص بعد تحقق المالك من الحصص)، ثم واجهة الكتابة. بالإنجليزية. لا برمجة قبل استئناف المالك.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11",
+      "description": "بعد جرد RAD-064، وبعد تحقق المالك من حصص Supabase (الملفات والقاعدة) في Usage. أول خطوة تصميم الاحتفاظ والأدوار (المشرف وRLS)، ثم أداة جدول→JSON، ثم الكتابي بتصحيح الأستاذ واقتراح تطابق قريب، ثم الصور (Supabase Storage خاص)، ثم واجهة الكتابة. يشمل CLN-035/036. بالإنجليزية. لا برمجة قبل استئناف المالك.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "owner"
     },
     {
@@ -590,6 +590,15 @@
       "priority": "high",
       "description": "آخر خطوة بعد دمج #96 واكتمال المراحل: نسخة احتياطية شاملة واستعادة مجربة، ومراجعات O108 والمصادر والتراخيص والطبي وMarker. بقرار المالك 2026-10-22.",
       "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md#assess-retention-original-no-backup-2026-10-20",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-064",
+      "title": "جرد قراءة فقط للواجهة والمحاكي قبل RAD-062",
+      "status": "planned",
+      "priority": "medium",
+      "description": "بعد الدفعة 6 من RAD-061 وقبل RAD-062: يمرّ المالك على كل فحص وصفحة (EN/AR، هاتف وحاسوب) ويسجّل الملاحظات؛ تصنّف الجلسة كل ملاحظة وظيفي/بصري/محاكي بصري/محاكي يمس التصحيح أو الطب، وتحدد توقيتها وفق البند 8. قراءة فقط، دون تعديل كود.",
+      "source_ref": "docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "owner"
     }
   ]
