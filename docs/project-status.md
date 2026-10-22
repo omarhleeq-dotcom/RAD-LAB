@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 221,
-  "updated_at": "2026-10-22T13:59:00+00:00",
+  "revision": 222,
+  "updated_at": "2026-10-22T14:55:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -570,7 +570,7 @@
       "title": "تدقيق وتنظيف الكود قبل ميزات Assess الكبيرة",
       "status": "done",
       "priority": "medium",
-      "description": "الدفعات 1 إلى 6 وحد الوقت وCLN-042 مدموجة. المؤجل منقول إلى مهامه: CLN-016/017/025/028 في RAD-021/RAD-027/RAD-057 وRAD-068؛ CLN-035/036 وRAD-060 في RAD-062؛ CLN-010 والمفاتيح الشائعة الثمانية في RAD-066.",
+      "description": "الدفعات 1 إلى 6 وحد الوقت وCLN-042 مدموجة. المؤجل منقول إلى مهامه: CLN-016/017/025/028 في RAD-021/RAD-027/RAD-057 وRAD-068 (CLN-016/017/028 نُفذت في RAD-068 الجزء 1؛ CLN-025 مؤجل بقرار المالك 2026-10-22: لا في الوقت الحالي لأنه يحتاج استثناء S-STD-2 لمكسب تسمية فقط)؛ CLN-035/036 وRAD-060 في RAD-062؛ CLN-010 والمفاتيح الشائعة الثمانية في RAD-066.",
       "source_ref": "docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md؛ docs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md؛ docs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ .github/workflows/deploy-pages.yml؛ .github/workflows/ci.yml",
       "completion_evidence": "PRs مدموجة #100 و#101 و#102 و#103 (CLN-042)؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md وdocs/RAD-061_BATCH1_REPORT_2026-10-22.md وdocs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md وdocs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ الخيار (ب) لحد الوقت موثق بمحفّزاته في تقرير الدفعات. الدمج لا يثبت نتيجة deploy."
     },
@@ -633,7 +633,7 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "in_progress",
       "priority": "high",
-      "description": "الجزء 1 في PR مسودة: توحيد الأطراف العليا (CLN-016/017/028) بتطابق بايت، وتدقيق علامة النتيجة لكل الفحوص، وإصلاح التقاط اللمس على الهاتف بعرض «الكاشف كاملًا» (سبب عيب العلامة). CLN-025 يحتاج استثناء S-STD-2. التالي: (2) دفعة نص T+AR مع نصوص D1 الخمسة وشارات VALIDATED/PROVISIONAL (بصماتها مقبولة داخلها)؛ (3) دفعات S؛ ثم بنود R وعلامات provisional.",
+      "description": "الجزء 1 مدموج (#109): توحيد الأطراف العليا وإصلاح التقاط اللمس. الجزء 2 (نص T+AR وD1 والشارات) في PR مسودة. CLN-025: لا في الوقت الحالي (استثناء S-STD-2 لمكسب تسمية). التالي: (3) دفعات S؛ ثم بنود R وعلامات provisional.",
       "source_ref": "docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
