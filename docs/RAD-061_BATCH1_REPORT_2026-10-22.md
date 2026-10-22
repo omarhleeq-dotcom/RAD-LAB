@@ -24,6 +24,8 @@
 | CLN-020 | `critical.ts` | 1/1: أوزان الفئات «تُحدَّد لكل فحص» بدل ربطها بأوزان الصدر |
 | CLN-020 | `engine.ts` | 1/1: اتجاه العلامة «لا يُعكس بلغة الواجهة/RTL» بدل ربطه بعرض PA الصدر |
 | CLN-020 | `domain/exam.ts` | 2/2: مسار الأرشيف `docs/archive/planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md`، وأمثلة الفحوص الحالية |
+| CLN-020 (تصحيح) | `engine.ts` | 3/2: أُعيدت «PA display: patient left = viewer right» وجُمعت مع «never mirrored by UI language / RTL»؛ واستُبدلت «Unscored (weight 0) like the rest of this rule» الخاطئة بأن الوزن وحالة الاكتشاف الحرج بيانات الفحص (الصدر PA وزن 0 مع بوابات حرجة، والأطراف موزونة) |
+| CLN-001 (تصحيح) | `wrist-visual.ts` | 2/1: الرأس يقول الآن إن `WristFigure.tsx` يرسم إشارات الدوران من `features/wrist-model` (S-VIS-1b) بالدوال نفسها التي تزيح الصورة الناتجة، بدل «تُرسم في الصورة الناتجة» غير الدقيقة |
 | CLN-026 | `plan.ts` | 4/4: لم يعد «لا تأثير مسجّلًا» صحيحًا؛ الخطوة المرسومة في `pipeline.ts`؛ التأثير مشترك بين فحوص الأطراف |
 | CLN-026 | `limb-effects.ts` | 5/5: التأثير مشترك بين كل فحوص الأطراف لا الرسغ واليد فقط؛ نماذج `LowerLimbModelId` تشمل الكتف والحوض والقدم والركبة والكاحل |
 
@@ -42,6 +44,7 @@
 - بصمات الحدود: 25/25 مطابقة (`inspectBrowserBoundaries()` مقارَنة بـ`frontend-schema.json`)، و`frontend-schema.test.ts` نجح.
 - `npm run build`: نجح مرة واحدة.
 - `docs:check`: 0 أخطاء و0 تحذيرات مراجعة. `status:check -- --base origin/main --require-previous`: OK (مع إشعار تعارض مصدر مفتوح على RAD-024 لا يخص هذا العمل). `git diff --check`: نظيف.
+- **بعد تصحيح التعليقين (commit إضافي، تعليقات فقط):** `npm run check`: typecheck وlint نجحا؛ 147 ملفًا نجح وفشل `server-runtime.test.ts` وحده بالمهلة نفسها (5000ms)، وعبر منفردًا 18/18. `docs:check` و`status:check` و`git diff --check` نظيفة. لم يُعَد `npm run build` (تعليقات فقط).
 - لم تُشغَّل فحوص المتصفح/axe (لا تغيير مرئي؛ مفاتيح الرسائل لا يصل إليها أي مسار).
 
 ## 7. بنود مفتوحة

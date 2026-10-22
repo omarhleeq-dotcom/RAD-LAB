@@ -1,6 +1,7 @@
 /**
  * Geometry of the wrist side view (S14.1c). These numbers only drive DRAWING of the set-up; scoring uses the internal rotation
- * value (`rotationDeg`). The rotation cues themselves are drawn by the result image (`features/radiograph/limb-effects.ts`).
+ * value (`rotationDeg`). The rotation cues in the figure are drawn by `WristFigure.tsx` from the 2.5D wrist model (`features/wrist-model`,
+ * S-VIS-1b), with the same functions that displace the result image.
  */
 /** Geometry of the side view (drawing units). Not to scale: a schematic of the set-up, never a measurement. */
 export const WRIST_SIDE = {
