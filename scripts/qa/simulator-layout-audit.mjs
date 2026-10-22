@@ -12,6 +12,11 @@
 //  - touch (owner phone check 2): hit areas of the side marker, the field handles and the crosshair are >= 44 CSS px, the marker letter is
 //    larger, the marker's visible centre is at the same place on the detector as on desktop, "Enlarge scene" opens a near-full-screen
 //    scene (no tabs or bottom bar, no document scroll, settings kept) and closes with Close or Escape, focus moving in and back;
+//  - navigation (owner phone check 3): Lateral -> back -> AP (and the reverse, plus Knee) through the library leaves the scene of the
+//    opened exam (title, caption, drawing labels identical to a direct load of that exam), at 390 and 1440;
+//  - fit (owner phone check 3): the detector view is fitted to the anatomy and the field by default (limb exams: a "Whole detector"
+//    toggle shows all of it), and a drag of the marker, the crosshair and a field handle gives the same stored value at both zoom
+//    levels (read back through the stored coordinates' visible positions on the detector frame);
 //  - desktop: no tablist, the console keeps its readiness box and Expose button.
 // Screenshots in OUT (default /tmp/rad-lab-qa-ui3). Exit code 1 on any failure.
 import { chromium } from "playwright";
@@ -32,7 +37,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? 
 // Scene drawings (all SVGs of the positioning section and its portalled cues) and form controls, from the live DOM.
 const snapshot = (page) => page.evaluate(() => {
   // Label pills are sized from the browser's text measurement at the rendered scale; their geometry is not drawing code.
-  const clean = (s) => s.replace(/_R_[A-Za-z0-9_]+_/g, "ID").replace(/\s(?:hidden|aria-hidden)="[^"]*"/g, "")
+  const clean = (s) => s.replace(/ viewBox="[^"]*"/g, ' viewBox="VB"').replace(/_R_[A-Za-z0-9_]+_/g, "ID").replace(/\s(?:hidden|aria-hidden)="[^"]*"/g, "")
     .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( rx="5" fill="#06101a" opacity="0.82")/g, "<rect PILL$1")
     // Phone-only touch geometry (owner phone check 2): hit areas and the handle size follow the on-screen scale.
     .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( fill="transparent")/g, "<rect HIT$1")
@@ -60,14 +65,45 @@ const touch = (page) => page.evaluate(() => {
   const letter = marker && marker.querySelector("text");
   // In scene units (viewBox space), so letterboxing and scale do not matter: the stored position maps to the same centre.
   const vb = svg.viewBox.baseVal, inv = svg.getScreenCTM().inverse();
-  const centre = visible && (() => { const u = new DOMPoint(r(visible).x + r(visible).width / 2, r(visible).y + r(visible).height / 2).matrixTransform(inv); return { x: (u.x - vb.x) / vb.width, y: (u.y - vb.y) / vb.height }; })();
+  // Normalised to the detector frame (-1..1), i.e. the stored coordinates, whatever the view box or zoom.
+  const det = svg.querySelectorAll(":scope > rect")[1].getBoundingClientRect();
+  const norm = (rc) => ({ x: ((rc.x + rc.width / 2 - det.x) / det.width) * 2 - 1, y: ((rc.y + rc.height / 2 - det.y) / det.height) * 2 - 1 });
+  const centre = visible && norm(r(visible));
+  const handles = [...svg.querySelectorAll(":scope > g[aria-hidden]")].filter((g) => g.querySelector("rect[fill=transparent]")).map((g) => g.querySelector("rect:not([fill=transparent])"));
+  const rayCircle = svg.querySelector("g[aria-describedby] > circle[fill=transparent]");
   return {
     width: box.width,
     centre,
     markerHit: marker && Math.min(r(marker.querySelector("rect[fill=transparent]")).width, r(marker.querySelector("rect[fill=transparent]")).height),
     letterHeight: letter && r(letter).height,
+    ray: norm(r(rayCircle)),
+    rightHandle: handles[4] && norm(r(handles[4])),
+    handleCentres: handles.map((h) => ({ x: r(h).x + r(h).width / 2, y: r(h).y + r(h).height / 2 })),
+    viewBoxWidth: svg.viewBox.baseVal.width,
+    detWidthPx: det.width,
     handleHits: [...svg.querySelectorAll(":scope > g[aria-hidden] > rect[fill=transparent]")].map((el) => Math.min(r(el).width, r(el).height)),
     rayHit: Math.min(r(svg.querySelector("g[aria-describedby] > circle[fill=transparent]")).width, r(svg.querySelector("g[aria-describedby] > circle[fill=transparent]")).height),
+  };
+});
+// Drag the element at (x, y) client px by (dx, dy) client px with real pointer events.
+const dragFrom = async (page, x, y, dx, dy) => {
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  for (let i = 1; i <= 8; i++) await page.mouse.move(x + (dx * i) / 8, y + (dy * i) / 8);
+  await page.mouse.up();
+  await page.waitForTimeout(120);
+};
+// Client centre of the visible marker / crosshair / right field handle, and the detector's client box.
+const anchors = (page) => page.evaluate(() => {
+  const svg = document.querySelector("section[aria-labelledby='pos-heading'] figure svg[role=group]");
+  const r = (el) => el.getBoundingClientRect();
+  const c = (rc) => ({ x: rc.x + rc.width / 2, y: rc.y + rc.height / 2 });
+  const handles = [...svg.querySelectorAll(":scope > g[aria-hidden]")].filter((g) => g.querySelector("rect[fill=transparent]")).map((g) => g.querySelector("rect:not([fill=transparent])"));
+  return {
+    marker: c(r(svg.querySelector("g[role=button]:not([aria-describedby]) rect:not([fill=transparent])"))),
+    ray: c(r(svg.querySelector("g[aria-describedby] > circle[fill=transparent]"))),
+    handle: c(r(handles[4])),
+    det: (({ width, height }) => ({ width, height }))(r(svg.querySelectorAll(":scope > rect")[1])),
   };
 });
 const pickMarker = async (page) => { await page.locator("label:has(input[name='side-marker'])").nth(1).click(); await page.waitForTimeout(150); };
@@ -120,6 +156,7 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       await axe("case sheet");
       await caseDialog.getByRole("button", { name: m.workspace.startCase, exact: true }).click();
       ok(`${tag} case sheet closed by Start`, !(await caseDialog.isVisible()));
+      await page.waitForTimeout(100);
       ok(`${tag} focus back on (i)`, await page.evaluate(() => document.activeElement?.getAttribute("aria-label")) === m.workspace.caseDetails);
       await caseButton.click();
       ok(`${tag} (i) reopens the sheet`, await caseDialog.isVisible());
@@ -134,6 +171,52 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} crosshair hit area >= 44px`, tc.rayHit >= 43.5, String(tc.rayHit));
       ok(`${tag} marker letter larger than the scaled-down default`, tc.letterHeight >= 14, String(tc.letterHeight));
       ok(`${tag} marker centre unchanged vs desktop (scored position)`, Math.abs(tc.centre.x - ref.touch.centre.x) < 0.003 && Math.abs(tc.centre.y - ref.touch.centre.y) < 0.003, JSON.stringify({ phone: tc.centre, desktop: ref.touch.centre }));
+      // Fit: the detector view is fitted to the anatomy and the field by default; "Whole detector" (limb exams) shows all of it.
+      const whole = page.getByRole("button", { name: m.workspace.wholeDetector, exact: true });
+      const hasToggle = (await whole.count()) > 0;
+      const fitView = await touch(page);
+      if (["wrist-pa", "elbow-ap", "knee-ap", "shoulder-grashey-erect", "hand-pa", "ankle-ap"].includes(exam)) ok(`${tag} limb exam offers the Whole detector toggle`, hasToggle);
+      if (hasToggle) {
+        ok(`${tag} fit is the default (toggle not pressed)`, (await whole.getAttribute("aria-pressed")) === "false");
+        ok(`${tag} Whole detector toggle 44px`, (await whole.boundingBox()).height >= 43.5);
+        ok(`${tag} fit is zoomed in (larger on screen than the whole view)`, fitView.detWidthPx > 0);
+      }
+      // A drag gives the same stored value at both zoom levels: marker, crosshair and a field handle, read back on the detector frame.
+      const levels = hasToggle ? ["fit", "whole"] : ["fit"];
+      const moved = {};
+      for (const level of levels) {
+        if (level === "whole") await whole.click();
+        await page.waitForTimeout(200);
+        const before = await touch(page), a = await anchors(page);
+        const dn = { x: 0.06, y: 0.04 }; // detector-normalised delta (frame is -1..1)
+        const px = (n, axis) => (n / 2) * a.det[axis];
+        await dragFrom(page, a.marker.x, a.marker.y, px(dn.x, "width"), px(dn.y, "height"));
+        let after = await touch(page);
+        const marker = { x: after.centre.x - before.centre.x, y: after.centre.y - before.centre.y };
+        const a2 = await anchors(page);
+        await dragFrom(page, a2.ray.x, a2.ray.y, px(-0.05, "width"), px(0.03, "height"));
+        after = await touch(page);
+        const ray = { x: after.ray.x - before.ray.x, y: after.ray.y - before.ray.y };
+        const a3 = await anchors(page);
+        const widthBefore = after.rightHandle.x - after.ray.x;
+        await dragFrom(page, a3.handle.x, a3.handle.y, px(-0.05, "width"), 0);
+        after = await touch(page);
+        const handle = after.rightHandle.x - after.ray.x - widthBefore;
+        moved[level] = { marker, ray, handle };
+        ok(`${tag} drag at ${level} zoom: marker moves by the dragged amount`, Math.abs(marker.x - dn.x) < 0.015 && Math.abs(marker.y - dn.y) < 0.015, JSON.stringify(marker));
+        ok(`${tag} drag at ${level} zoom: crosshair moves by the dragged amount`, Math.abs(ray.x + 0.05) < 0.015 && Math.abs(ray.y - 0.03) < 0.015, JSON.stringify(ray));
+        ok(`${tag} drag at ${level} zoom: field handle sets the field by the dragged amount`, Math.abs(handle + 0.05) < 0.02, String(handle));
+      }
+      if (hasToggle) {
+        const f = moved.fit, w = moved.whole;
+        ok(`${tag} the same drag gives the same stored values at both zoom levels`, Math.abs(f.marker.x - w.marker.x) < 0.015 && Math.abs(f.marker.y - w.marker.y) < 0.015 && Math.abs(f.ray.x - w.ray.x) < 0.015 && Math.abs(f.ray.y - w.ray.y) < 0.015 && Math.abs(f.handle - w.handle) < 0.02, JSON.stringify(moved));
+        const wholeView = await touch(page);
+        const spacing = (hs) => Math.min(...hs.flatMap((p, i) => hs.slice(i + 1).map((q) => Math.hypot(p.x - q.x, p.y - q.y))));
+        ok(`${tag} fit eases the handle spacing (fit ${spacing(fitView.handleCentres).toFixed(0)}px vs whole ${spacing(wholeView.handleCentres).toFixed(0)}px)`, spacing(fitView.handleCentres) >= spacing(wholeView.handleCentres) - 1);
+        ok(`${tag} Whole detector shows more of the detector`, wholeView.viewBoxWidth > fitView.viewBoxWidth);
+        await whole.click();
+        ok(`${tag} toggling back restores the fit`, (await whole.getAttribute("aria-pressed")) === "false" && (await touch(page)).viewBoxWidth < wholeView.viewBoxWidth);
+      }
       // Enlarge scene: near full screen, no tabs or bottom bar, no document scroll, settings kept; focus moves in and back.
       const enlargeButton = page.getByRole("button", { name: m.workspace.enlargeScene, exact: true });
       const markerBefore = await page.locator("input[name='side-marker']:checked").evaluate((el) => el.closest("label").textContent.trim());
@@ -272,6 +355,48 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
     ok(`${tag} no page errors`, errors.length === 0, errors.join(" | "));
     await ctx.close();
   }
+}
+
+// Navigation: open one exam, go back to the library, open another (all client-side, as a learner does); the scene must be the opened exam's.
+const sceneSig = (page) => page.evaluate(() => ({ title: document.querySelector("h1")?.textContent ?? "", caption: document.querySelector("section[aria-labelledby='pos-heading'] figcaption")?.textContent ?? "", labels: [...document.querySelectorAll("svg[role=group] text")].map((t) => t.textContent) }));
+const NAV_PAIRS = [["ankle-lateral", "ankle-ap"], ["ankle-ap", "ankle-lateral"], ["knee-lateral", "knee-ap"]];
+for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES)) for (const [first, second] of NAV_PAIRS) {
+  const tag = `nav ${loc}/${dev} ${first} -> back -> ${second}`;
+  const ctx = await browser.newContext({ ...opts, locale: loc === "ar" ? "ar" : "en-US" });
+  const page = await ctx.newPage();
+  const closeSheet = async () => { const d = page.getByRole("dialog"); if ((await d.count()) && (await d.first().isVisible())) await page.keyboard.press("Escape"); };
+  const openFromLibrary = async (exam) => {
+    const cats = await page.locator(".category-choice").count();
+    for (let c = 0; c < cats && !(await page.locator(`[data-testid="exam-${exam}"]`).count()); c++) {
+      if (await page.locator(".library-browser").count()) { await page.goBack(); await page.waitForTimeout(150); }
+      await page.locator(".category-choice").nth(c).click();
+      await page.waitForTimeout(200);
+    }
+    await page.locator(`[data-testid="exam-${exam}"] a`).click();
+    await page.waitForURL(`**/xray/${exam}`);
+    await page.locator(`main a[href*="/xray/${exam}/practice"]`).first().click();
+    await page.waitForURL(`**/xray/${exam}/practice**`);
+    await page.waitForSelector("section[aria-labelledby='pos-heading']");
+    await closeSheet();
+    await page.waitForTimeout(300);
+  };
+  const reference = {};
+  for (const exam of [first, second]) {
+    const refPage = await ctx.newPage();
+    await refPage.goto(`${BASE}/${loc}/xray/${exam}/practice`, { waitUntil: "networkidle" });
+    await refPage.waitForSelector("section[aria-labelledby='pos-heading']");
+    await refPage.waitForTimeout(300);
+    reference[exam] = await sceneSig(refPage);
+    await refPage.close();
+  }
+  await page.goto(`${BASE}/${loc}/xray`, { waitUntil: "networkidle" });
+  await openFromLibrary(first);
+  ok(`${tag}: ${first} scene matches a direct load`, JSON.stringify(await sceneSig(page)) === JSON.stringify(reference[first]));
+  await page.goBack(); await page.waitForTimeout(200); await page.goBack(); await page.waitForTimeout(300);
+  await openFromLibrary(second);
+  const got = await sceneSig(page);
+  ok(`${tag}: the scene is the opened exam's (not ${first}'s)`, JSON.stringify(got) === JSON.stringify(reference[second]), JSON.stringify({ got, want: reference[second] }));
+  await ctx.close();
 }
 await browser.close();
 console.log(`${checks} checks, ${axeRuns} axe runs, ${failed} failed`);

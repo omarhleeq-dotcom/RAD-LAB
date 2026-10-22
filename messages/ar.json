@@ -53,7 +53,8 @@
     "viewTop": "منظر علوي",
     "viewSide": "منظر جانبي",
     "phoneMenu": "القائمة",
-    "enlargeScene": "تكبير المشهد"
+    "enlargeScene": "تكبير المشهد",
+    "wholeDetector": "الكاشف كاملًا"
   },
   "positioning": {
     "detector": "الكاشف / البكي",

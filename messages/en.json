@@ -53,7 +53,8 @@
     "viewTop": "Top view",
     "viewSide": "Side view",
     "phoneMenu": "Menu",
-    "enlargeScene": "Enlarge scene"
+    "enlargeScene": "Enlarge scene",
+    "wholeDetector": "Whole detector"
   },
   "positioning": {
     "detector": "Detector / Bucky",

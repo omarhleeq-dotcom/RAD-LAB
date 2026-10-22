@@ -19,6 +19,7 @@ import { collimatedField } from "@/features/simulation/geometry";
 import { CHEST_PA_FIGURE, DETECTOR_FIGURES, U, type DetectorFigure } from "./detector-figures";
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, UNDER } from "./scene-style";
+import { detectorViewBox, phoneFit } from "./fit-view";
 import { markerBox, touchGeometry } from "./touch-geometry";
 
 const KEY_STEP = 0.02;
@@ -39,6 +40,8 @@ interface Props {
   figure?: DetectorFigure;
   /** Phone layout (UI-3): measures the on-screen scale and draws the touch hit areas at >= 44 CSS px and a larger marker letter. Omitted on desktop: the DOM is unchanged. */
   phone?: boolean;
+  /** Phone only: show the detector fitted to the anatomy and the field (the viewBox only; stored coordinates are unaffected). Omitted/false = the whole detector. */
+  fit?: boolean;
 }
 
 const EDGE_CURSOR: Record<FieldEdge, string> = {
@@ -75,7 +78,7 @@ function keyDelta(e: KeyboardEvent): [number, number] | null {
  * Touch: Chromium only honours `touch-action` on the root <svg>, not on SVG children, so the workspace
  * suppresses touch panning while editable (and releases it once locked); the surrounding gutter still scrolls.
  */
-export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = CHEST_PA_FIGURE, phone = false }: Props) {
+export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = CHEST_PA_FIGURE, phone = false, fit = false }: Props) {
   const t = useTranslations("positioning");
   const tAny = useTranslations() as unknown as (key: string) => string;
   const ts = useTranslations("scene");
@@ -93,11 +96,12 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
   const W = detector.widthCm * U;
   const H = detector.heightCm * U;
   const frame: DetectorFrame = { x: 0, y: 0, width: W, height: H };
-  // A figure with margin guide labels (S-VIS-1-4) gets two more label rows above the orientation labels.
-  const top = figure.marginGuideLabels ? 148 : 90;
-  // ... and the bottom axis label sits 5 units lower, so it clears the bottom collimation handle at the default field (S-VIS-1b-3, O53); the frame grows by 8.
-  const bottom = figure.marginGuideLabels ? 38 : 30;
-  const viewBox: Box = { x: -30, y: -top, width: W + 60, height: H + bottom + top };
+  // The whole-detector view: a figure with margin guide labels (S-VIS-1-4) gets two more label rows above the orientation labels, and the bottom
+  // axis label sits 5 units lower to clear the bottom collimation handle (S-VIS-1b-3, O53) — see `detectorViewBox`.
+  const whole: Box = detectorViewBox(W, H, !!figure.marginGuideLabels);
+  // Phone: the fitted view (anatomy + field). It is held still while a drag is in progress, so the picture does not move under the finger.
+  const [frozen, setFrozen] = useState<Box | null>(null);
+  const viewBox: Box = frozen ?? (phone && fit ? phoneFit(radCase, settings, !!figure.marginGuideLabels).box : whole);
 
   const field = collimatedField(settings, detector);
   const fx = field.x1 * U, fy = field.y1 * U, fw = (field.x2 - field.x1) * U, fh = (field.y2 - field.y1) * U;
@@ -137,6 +141,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       if (disabled) return;
       e.preventDefault();
       e.currentTarget.setPointerCapture(e.pointerId);
+      if (phone && fit) setFrozen(viewBox);
       const p = toNorm(e);
       const origin = target.kind === "ray" ? settings.centralRay : target.kind === "marker" ? settings.markerPosition : p;
       setDrag({ target, grab: { x: origin.x - p.x, y: origin.y - p.y } });
@@ -155,10 +160,12 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
     },
     onPointerUp: (e: PointerEvent<SVGElement>) => {
       setDrag(null);
+      setFrozen(null);
       if (e.currentTarget.hasPointerCapture(e.pointerId)) e.currentTarget.releasePointerCapture(e.pointerId);
     },
     onPointerCancel: () => {
       setDrag(null);
+      setFrozen(null);
     },
   });
 
@@ -186,6 +193,28 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
   const marker = settings.sideMarker;
   const mv = normToView(settings.markerPosition, frame);
   const mBox = markerBox(mv, positioning.markerSizeCm * U, markerScale);
+
+  // The marker is drawn before the field handles on desktop; on a phone after them, so a handle's (larger) hit area never covers the marker.
+  const markerNode = marker && (
+        <g {...dragProps({ kind: "marker" })} {...keyProps(settings.markerPosition, "markerPosition")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("markerHandle", { side: marker })} style={{ cursor: disabled ? "default" : "grab" }}>
+          <rect x={mv.x - hit / 2} y={mv.y - hit / 2} width={hit} height={hit} fill="transparent" />
+          {figure.crispMarker ? (
+            <>
+              <rect x={mBox.x} y={mBox.y} width={mBox.size} height={mBox.size} rx={2} fill="#e8edf1" stroke="#0b141b" strokeWidth={1} shapeRendering="crispEdges" />
+              <text x={mv.x} y={mv.y + 7 * markerScale} textAnchor="middle" fontSize={20 * markerScale} fontWeight={800} fill={SCENE.bg}>
+                {marker}
+              </text>
+            </>
+          ) : (
+            <>
+              <rect x={mBox.x} y={mBox.y} width={mBox.size} height={mBox.size} rx={4} fill="#e8edf1" stroke="#0b141b" strokeWidth={1.5} />
+              <text x={mv.x} y={mv.y + 10 * markerScale} textAnchor="middle" fontSize={28 * markerScale} fontWeight={800} fill={SCENE.bg}>
+                {marker}
+              </text>
+            </>
+          )}
+        </g>
+  );
 
   return (
     <svg
@@ -246,26 +275,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       )}
 
-      {marker && (
-        <g {...dragProps({ kind: "marker" })} {...keyProps(settings.markerPosition, "markerPosition")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("markerHandle", { side: marker })} style={{ cursor: disabled ? "default" : "grab" }}>
-          <rect x={mv.x - hit / 2} y={mv.y - hit / 2} width={hit} height={hit} fill="transparent" />
-          {figure.crispMarker ? (
-            <>
-              <rect x={mBox.x} y={mBox.y} width={mBox.size} height={mBox.size} rx={2} fill="#e8edf1" stroke="#0b141b" strokeWidth={1} shapeRendering="crispEdges" />
-              <text x={mv.x} y={mv.y + 7 * markerScale} textAnchor="middle" fontSize={20 * markerScale} fontWeight={800} fill={SCENE.bg}>
-                {marker}
-              </text>
-            </>
-          ) : (
-            <>
-              <rect x={mBox.x} y={mBox.y} width={mBox.size} height={mBox.size} rx={4} fill="#e8edf1" stroke="#0b141b" strokeWidth={1.5} />
-              <text x={mv.x} y={mv.y + 10 * markerScale} textAnchor="middle" fontSize={28 * markerScale} fontWeight={800} fill={SCENE.bg}>
-                {marker}
-              </text>
-            </>
-          )}
-        </g>
-      )}
+      {!phone && markerNode}
 
       {/* outside the collimated field the detector receives no beam */}
       <path fillRule="evenodd" fill="#000" opacity={0.5} d={`M0 0H${W}V${H}H0Z M${fx} ${fy}h${fw}v${fh}h${-fw}Z`} style={{ pointerEvents: "none" }} />
@@ -290,6 +300,8 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
           <rect x={x - handle / 2} y={y - handle / 2} width={handle} height={handle} rx={3} fill={SCENE.beam} stroke={SCENE.underStroke} strokeWidth={2} />
         </g>
       ))}
+
+      {phone && markerNode}
 
       <g {...dragProps({ kind: "ray" })} {...keyProps(settings.centralRay, "centralRay")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("rayHandle")} aria-describedby="ray-status" style={{ cursor: disabled ? "default" : "grab" }}>
         <circle cx={ray.x} cy={ray.y} r={rayHit} fill="transparent" />

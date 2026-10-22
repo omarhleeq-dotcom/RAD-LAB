@@ -10,6 +10,7 @@ import type { SimulationMode, SimulationSettings, SideMarkerId } from "@/domain/
 import { centeringStatus } from "@/features/evaluation/centering";
 import { roundTo } from "@/features/simulation/coords";
 import { DetectorWorkspace } from "./DetectorWorkspace";
+import { phoneFit } from "./fit-view";
 import { CHEST_PA_LAYOUT, type SceneLayout } from "./scene-layouts";
 
 interface Props {
@@ -50,6 +51,8 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
   // Phone only: one of the two views is shown at a time, so the sticky scene stays short. The drawings themselves are unchanged.
   const [view, setView] = useState<"detector" | "second">("detector");
   const phone = slots !== undefined;
+  // Phone: the detector view is fitted to the anatomy and the field by default; "Whole detector" shows all of it (the viewBox only).
+  const [showWhole, setShowWhole] = useState(false);
   // The view not shown stays laid out (invisible, out of flow): its label pills are measured with getBBox, which a display:none view cannot do.
   const offView = "invisible absolute inset-x-2 top-2";
   const place = (node: ReactNode, target: Element | null | undefined) => (phone ? target && createPortal(node, target) : node);
@@ -128,6 +131,16 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
   const workspaceHint = <p className="mt-1 text-center text-xs text-console-text/80">{t("workspaceHint")}</p>;
   const schematicNote = <p className="px-4 pt-2 text-xs text-muted">{tAny(texts.schematicNote)}</p>;
 
+  const statusLine = (
+    <p
+      id="ray-status"
+      className={clsx(phone ? "mt-1" : "mt-2", "text-center text-sm font-medium", showGuides ? "text-signal" : "sr-only")}
+    >
+      {showGuides ? `${t("centeringTitle")}: ${statusText}` : t("guidesOff")}
+    </p>
+  );
+  const fitInfo = phone ? phoneFit(radCase, settings, !!figure.marginGuideLabels) : null;
+
   return (
     <section aria-labelledby="pos-heading" className="rounded-lg border border-line bg-panel">
       <div className={phone ? "flex items-center justify-between gap-2 px-2 py-1" : "flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3"}>
@@ -189,17 +202,26 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
           ))}
       </div>
 
-      <div className={phone ? clsx("relative grid bg-console p-2", enlarge?.active ? "[&_svg]:max-h-[calc(100dvh-10rem)]" : "[&_svg]:max-h-[min(24svh,13rem)]") : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
+      <div className={phone ? clsx("relative grid bg-console p-2", enlarge?.active ? "[&_svg]:max-h-[calc(100dvh-10rem)]" : fitInfo?.meaningful && !showWhole ? "[&_svg]:max-h-[min(34svh,18rem)]" : "[&_svg]:max-h-[min(24svh,13rem)]") : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
         <figure className={clsx("m-0", phone && view !== "detector" && offView)}>
-          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} phone={phone} />
+          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} phone={phone} fit={phone && !showWhole} />
           <figcaption className={phone ? "sr-only" : "mt-1 text-center text-xs text-console-text/80"}>{tAny(texts.detectorCaption)}</figcaption>
           {!phone && workspaceHint}
-          <p
-            id="ray-status"
-            className={clsx(phone ? "mt-1" : "mt-2", "text-center text-sm font-medium", showGuides ? "text-signal" : "sr-only")}
-          >
-            {showGuides ? `${t("centeringTitle")}: ${statusText}` : t("guidesOff")}
-          </p>
+          {phone && (fitInfo?.meaningful || showWhole) ? (
+            <div className="mt-1 flex items-center justify-between gap-2">
+              {statusLine}
+              <button
+                type="button"
+                aria-pressed={showWhole}
+                onClick={() => setShowWhole((v) => !v)}
+                className={clsx("min-h-11 shrink-0 rounded-lg border px-3 text-xs font-semibold", showWhole ? "border-signal bg-signal/20 text-white" : "border-console-line text-console-text hover:bg-console-raise")}
+              >
+                {tw("wholeDetector")}
+              </button>
+            </div>
+          ) : (
+            statusLine
+          )}
         </figure>
         <div className={clsx("space-y-4", phone && view !== "second" && offView)}>
           <figure className="m-0">
