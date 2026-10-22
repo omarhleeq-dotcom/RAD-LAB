@@ -176,7 +176,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
           <AecPanel radCase={radCase} settings={settings} disabled={locked} onChange={(ch) => onChange("aecChambers", ch)} />
         )}
 
-        <p className="text-xs text-console-text/60">{t("adjustHint")}</p>
+        <p className="keyboard-hint text-xs text-console-text/60">{t("adjustHint")}</p>
 
         {/* After the exposure the readiness box only repeats "not ready"; the result panel offers Retry / Restart (S-VIS-1-3). */}
         {!locked && <ReadinessPanel readiness={readiness} id={readinessId} />}

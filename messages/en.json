@@ -3,23 +3,18 @@
     "appName": "RAD-LAB",
     "tagline": "Radiography simulation lab",
     "language": "Language",
-    "provisionalBadge": "Provisional demo data",
     "comingSoon": "Coming soon",
     "backHome": "Back to home",
     "home": "Home",
     "breadcrumb": "Breadcrumb",
     "skipToContent": "Skip to main content",
     "loading": "Loading…",
-    "previewBanner": "Educational prototype — not for clinical use; values pending educator/physicist review",
-    "disclaimer": "Educational simulator — not a diagnostic or clinically validated system. Do not use it for patient care. Technique and tolerance values are provisional demonstration data until reviewed by an educator or medical physicist.",
     "creditsLink": "Sources and Credits"
   },
   "home": {
     "title": "Practice radiography before the real patient.",
     "subtitle": "RAD-LAB is an educational simulator for radiologic technology students. Position the patient, set the technique, expose, then learn from precise feedback.",
-    "catalogTitle": "Choose an imaging modality",
     "mvpNote": "Practice mode",
-    "provisionalNotice": "Technique values in this MVP are provisional demo data and have not been clinically validated. Do not use them as clinical guidance.",
     "patientLine": "{age}-year-old {sexLabel}",
     "dashboardTitle": "Home",
     "dashboardIntro": "Your learning space in RAD·LAB.",
@@ -45,7 +40,6 @@
     "detector": "Detector / Bucky",
     "tube": "X-ray tube",
     "patient": "Patient",
-    "field": "Collimated field",
     "centralRay": "Central ray",
     "rotation": "Patient rotation",
     "sid": "SID",
@@ -106,7 +100,6 @@
     "mas": "mAs",
     "sid": "SID",
     "expose": "EXPOSE",
-    "exposing": "Exposing…",
     "locked": "Exposure complete",
     "projections": {
       "pa-erect": "PA erect",
@@ -128,7 +121,7 @@
       "shoulder-grashey": "Shoulder AP oblique (Grashey)"
     },
     "subtitle": "Educational · vendor-neutral",
-    "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface. Technique values here are provisional demo values.",
+    "vendorNeutral": "Educational, vendor-neutral console — it does not copy any manufacturer's interface.",
     "digitalHint": "On a digital system the displayed brightness is processed and is not an exposure meter. After the exposure, technique is judged from the target-relative detector exposure (DI), noise and dose awareness.",
     "kvpHint": "Beam energy / penetration",
     "masHint": "X-ray quantity",
@@ -919,7 +912,6 @@
     "feet": "Feet",
     "tube": "Tube",
     "detector": "Detector",
-    "bed": "Bed",
     "heart": "Heart",
     "patientRight": "Patient's right",
     "patientLeft": "Patient's left",
@@ -1176,7 +1168,6 @@
     "external": "at the side, externally rotated"
   },
   "account": {
-    "nav": "Account",
     "title": "Your account",
     "intro": "Create an account to take part in the pilot. The owner approves each new account before it can be used.",
     "notEnabled": "Accounts are not enabled in this preview.",
@@ -1231,7 +1222,8 @@
       "passwordShort": "The password must be at least 8 characters.",
       "passwordClasses": "The password needs a lower-case letter, an upper-case letter, a digit and a symbol.",
       "passwordMismatch": "The two passwords do not match.",
-      "samePassword": "Choose a password different from the current one."
+      "samePassword": "Choose a password different from the current one.",
+      "fullName": "Enter your full name: at least three names."
     },
     "ownerLink": "Owner dashboard",
     "agreePrefix": "I agree to the",
@@ -1241,7 +1233,8 @@
       "body": "To save your practice attempts we need your agreement to the Terms and Privacy page. Until then nothing from your practice is saved.",
       "agree": "I have read and agree to the Terms and Privacy.",
       "accept": "Agree and continue",
-      "failed": "Could not save your agreement. Please try again."
+      "failed": "Could not save your agreement. Please try again.",
+      "accepted": "Terms and Privacy accepted."
     },
     "survey": {
       "title": "Survey",
@@ -1415,7 +1408,8 @@
     "patients": {
       "title": "Patient data and usage rules",
       "p1": "Never enter real patient data or images. RAD-LAB is an experimental educational simulator and is not for clinical use or medical decision-making.",
-      "p2": "Your account is for personal use and must not be shared with others. Training content must not be republished. You may share a screenshot of your result or talk about your experience. You must not attempt to disrupt the operation of the website."
+      "p2": "Your account is for personal use and must not be shared with others. Training content must not be republished. You may share a screenshot of your result or talk about your experience. You must not attempt to disrupt the operation of the website.",
+      "p3": "The simulator does not assess radiation shielding (such as gonad or thyroid shields). This does not replace your local radiation-protection policy."
     },
     "closing": "By ticking “I agree”, you confirm that you have read this page and agree to participate as described."
   },
@@ -1433,7 +1427,7 @@
     "deferred": "Owner-verified basis; official NIH terms remain unverified. Earlier terms were recorded from a secondary source. Commercial-use permission is not established; review is deferred until before release.",
     "pendingLicense": "Official terms pending verification",
     "science": "Textbooks, guidelines and scientific references",
-    "scienceLead": "Bontrager, 9th edition, governs X-ray positioning and technique; other sources support it. Facts are paraphrased and cited. No book pages, tables, figures or text are reproduced. Inclusion does not imply institutional endorsement. Clinical values and teaching approximations remain subject to educator / physicist review.",
+    "scienceLead": "Bontrager, 9th edition, governs X-ray positioning and technique; other sources support it. Facts are paraphrased and cited. No book pages, tables, figures or text are reproduced. Inclusion does not imply institutional endorsement.",
     "provenance": "The library notes record reading by the owner’s advisor, without independent rechecking of the originals in repository sessions. Bontrager shoulder / pelvis pages were also read directly in a later session. Clark is used only at p.10; its chest chapter is unread. StatPearls revision and licence were not recorded; only paraphrased facts are used.",
     "governing": "Governing reference",
     "supporting": "Supporting reference — library reading recorded",
@@ -1442,7 +1436,7 @@
     "unread": "Merrill’s atlas, Clark’s chest chapter, additional ACR / RCR / AIR guidance and abstract-only papers are not presented as support for implemented rules. Further IAEA documents remain unobtained beyond the material already cited in the PA references.",
     "originals": "Original educational drawings",
     "originalsBody": "The project’s positioning schematics, procedural overlays and learner-controlled side markers are original RAD-LAB work according to the asset record. The external radiographs credited above retain their own provenance and licence status.",
-    "details": "Full sources and credits"
+    "notice": "RAD-LAB is an educational simulator. It is not a diagnostic system and is not for clinical use. Do not enter real patient data."
   },
   "shell": {
     "navigation": "Main navigation",
@@ -1456,10 +1450,8 @@
   },
   "library": {
     "title": "Exam library",
-    "intro": "Explore {modality} exams by anatomical region.",
     "search": "Search exams",
     "searchPlaceholder": "Search by exam, projection or region",
-    "regions": "Anatomical regions",
     "all": "All",
     "clear": "Clear filters",
     "resultCount": "{count, plural, =0 {No exams found} one {# exam found} other {# exams found}}",
@@ -1477,14 +1469,14 @@
     "open": "View my training",
     "personal": "Personal information",
     "name": "Name",
-    "nameHint": "Use the name you want your reviewer to see (up to 100 characters). Arabic and English are welcome.",
+    "nameHint": "Enter your full name: at least three names, in Arabic or English (up to 100 characters).",
     "email": "Email (read-only):",
     "save": "Save name",
     "saving": "Saving…",
     "saved": "Your name has been saved.",
     "saveError": "We could not save your name. Check your session and try again.",
     "welcome": "Welcome, {name}",
-    "completeName": "Add your name so your reviewer can recognise you.",
+    "completeName": "Add your full name (at least three names).",
     "loading": "Loading saved training…",
     "error": "Training could not be loaded. Please try again.",
     "expired": "Your session has expired. Sign in again to view your training.",
@@ -1668,9 +1660,7 @@
   "assessHistory": {
     "title": "Assessment history",
     "privacyTitle": "Assess pilot privacy and consent",
-    "privacy": "Your Assess record contains the assessment name and type, submission date, and grade and maximum. Your grade is shown only if the assessment policy allows it. Results are deleted six calendar months after submission; activity does not extend this period.",
     "temporary": "Answers and simulator settings are stored temporarily to resume and grade your attempt. They are deleted when the result is successfully finalized. Failed grading retains the frozen attempt for recovery for up to seven days after submission, then deletes the details without inventing a grade.",
-    "limits": "Untimed attempts are unavailable until their retention policy is settled. No answer review, criterion review or regrading is available after details are deleted. Practice has its own unchanged policy.",
     "recovery": "Minimal account-linked consent and attempt-limit records are separate from results. Their retention and the backup and restore deletion process require review before pilot storage is opened. Deletion from the active service does not immediately erase an older backup.",
     "agree": "I have read this Assess notice and agree to the described processing.",
     "accept": "Save Assess consent",

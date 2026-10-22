@@ -122,7 +122,10 @@ try {
         ok(page.url() === `${base}${path}`, `${tag}: password login returns exactly`);
         await audit(page, `${tag}-returned`);
         await page.goto(`${base}/${locale}/account`, { waitUntil: "networkidle" });
-        await page.getByRole("button", { name: m.account.signOut, exact: true }).click();
+        // Sign-out moved to the side menu for approved accounts (UI-1); open the menu on narrow screens.
+        const signOutButton = page.getByRole("button", { name: m.account.signOut, exact: true });
+        if (!(await signOutButton.count())) await page.getByTestId("menu-toggle").click();
+        await signOutButton.click();
         await page.getByRole("tab", { name: m.account.tabs.signIn }).waitFor();
         await page.goto(`${base}/${locale}/credits`, { waitUntil: "networkidle" });
         ok(new URL(page.url()).pathname === `/${locale}/account`, `${tag}: signout revokes UI access`);

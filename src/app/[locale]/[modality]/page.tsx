@@ -37,7 +37,6 @@ export default async function ModalityPage({ params }: PageProps<"/[locale]/[mod
     <div className="platform-page">
       <Breadcrumb items={[{ label: localize(m.name, locale) }]} />
       <div className="platform-heading"><h1>{t("title")}</h1><span className="practice-chip">{th("mvpNote")}</span></div>
-      <p className="platform-intro">{t("intro", { modality: localize(m.name, locale) })}</p>
       <ExamCatalogue sections={sections} />
     </div>
   );

@@ -27,7 +27,7 @@ async function audit(page, label) {
   ok(`${label}: one main`, await page.locator("main").count() === 1 && await page.locator("main main").count() === 0);
   ok(`${label}: overflow`, await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
   ok(`${label}: noindex`, await page.locator('meta[name="robots"]').evaluateAll((nodes) => nodes.length > 0 && nodes.every((node) => node.content.includes("noindex"))));
-  ok(`${label}: banner`, await page.getByTestId("preview-banner").first().isVisible());
+  ok(`${label}: no top banner (D1)`, await page.getByTestId("preview-banner").count() === 0);
   await page.evaluate(axeSrc);
   const result = await page.evaluate(() => axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] } }));
   assert.deepEqual(result.violations.map((v) => ({ id: v.id, nodes: v.nodes.map((n) => n.target) })), [], label);

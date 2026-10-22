@@ -18,18 +18,6 @@ export default function GlobalNotFound() {
     <html lang="en">
       <body className="antialiased">
         <header className="site-chrome border-b border-line bg-panel">
-          {langs.map(({ code, dir, m }) => (
-            <p
-              key={code}
-              role="note"
-              lang={code}
-              dir={dir}
-              data-testid="preview-banner"
-              className="border-b border-signal/60 bg-signal/25 px-4 py-1.5 text-center text-sm font-semibold text-ink"
-            >
-              {m.common.previewBanner}
-            </p>
-          ))}
           <div className="mx-auto max-w-7xl px-4 py-3">
             <span dir="ltr" className="text-xl font-bold tracking-wide text-brand-strong">
               RAD<span className="text-signal">·</span>LAB
@@ -52,8 +40,7 @@ export default function GlobalNotFound() {
         <footer className="site-chrome border-t border-line bg-panel">
           {langs.map(({ code, dir, m }) => (
             <p key={code} role="note" lang={code} dir={dir} className="mx-auto max-w-7xl px-4 py-3 text-sm text-muted">
-              {m.common.disclaimer}
-              <a href={`/${code}/credits`} className="ms-3 inline-block min-h-6 text-brand underline">{m.common.creditsLink}</a>
+              <a href={`/${code}/credits`} className="inline-block min-h-6 text-brand underline">{m.common.creditsLink}</a>
             </p>
           ))}
         </footer>

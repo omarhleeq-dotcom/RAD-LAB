@@ -95,8 +95,8 @@ try {
       ok(await planned.isVisible() && await planned.innerText().then((text) => text.includes(m.common.comingSoon)), `${id} coming soon`);
       ok(await planned.locator("a,button").count() === 0, `${id} has no fake exam route`);
     }
-    ok(await page.getByTestId("preview-banner").innerText() === `ⓘ ${m.common.previewBanner}`, "preview wording kept");
-    ok((await page.locator("footer").innerText()).includes(m.common.disclaimer), "medical footer wording kept");
+    ok(await page.getByTestId("preview-banner").count() === 0, "no top banner (D1)");
+    ok(!(await page.locator("footer").innerText()).includes("clinical"), "no legal wording in the footer (D2)");
     ok(await page.locator('footer .language-switcher').count() === 0, "no footer language");
     ok(await page.locator('.site-topbar .language-switcher').boundingBox().then((box) => box.y < 100), "language stays on top");
     ok(await page.locator('.site-nav .nav-planned').first().getAttribute("aria-disabled") === "true", "future entries inactive");
@@ -115,7 +115,7 @@ try {
       ok(await page.locator('[data-testid^="library-region-"]').count() === 1 && await section.isVisible(), "only chosen category exams mounted");
       ok(await section.locator("h2").evaluate((node) => node === document.activeElement), "category heading receives focus");
       ok(await cards.locator("svg").count() === await cards.count(), "each exam has a graphic");
-      ok((await page.locator('.library-notice').innerText()) === m.home.provisionalNotice, "shared provisional warning");
+      ok(await page.locator('.library-notice').count() === 0, "no provisional notice (D1)");
       if (id === "body") ok(await section.locator('li[data-testid^="exam-chest-"]').count() === 3 && await section.locator('li[data-testid^="exam-pelvis-"]').count() === 1, "Body contains chest and pelvis");
       hrefs.push(...await cards.locator("a").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href"))));
       const svgs = await cards.evaluateAll((nodes) => nodes.map((node) => [node.dataset.testid, node.querySelector("svg").outerHTML]));
@@ -184,7 +184,7 @@ try {
     await page.screenshot({ path: `/tmp/rad-054-r1/${disabled ? "off" : "on"}-${loc}-${width}-home.png`, fullPage: true });
     await audit(page, `${tag}/home`);
     await page.goto(`${base}/not-a-real-route`, { waitUntil: "networkidle" });
-    ok(disabled ? await page.getByTestId("preview-banner").count() >= 1 : await page.getByTestId("preview-banner").count() === 2, disabled ? "server 404 keeps preview notice" : "static 404 bilingual notices");
+    ok(await page.getByTestId("preview-banner").count() === 0, "404 page has no banner (D1)");
     await audit(page, `${tag}/404`);
     if (disabled) ok(external.length === 0, "accounts off: no external requests");
     ok(errors.length === 0, `${tag}: page errors ${errors.join(", ")}`);

@@ -8,7 +8,7 @@ import { type AuthErrorKey, passwordProblem, recoveryFromHash } from "./account-
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
 import { ProfileName } from "./ProfileName";
-import { validName } from "./training";
+import { validFullName } from "./full-name";
 import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
 import { SURVEY_URL, surveyHref } from "./survey";
 import { useSessionAccount } from "./SessionGate";
@@ -30,7 +30,7 @@ export function AccountPanel() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<AuthErrorKey | "passwordShort" | "passwordClasses" | "passwordMismatch" | null>(null);
+  const [error, setError] = useState<AuthErrorKey | "passwordShort" | "passwordClasses" | "passwordMismatch" | "fullName" | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
   const [acceptFailed, setAcceptFailed] = useState(false);
@@ -53,7 +53,8 @@ export function AccountPanel() {
     e.preventDefault();
     setError(null);
     if (mode === "signUp") {
-      if (!agreed || !validName(name)) return;
+      if (!agreed) return;
+      if (!validFullName(name)) return setError("fullName");
       const problem = passwordProblem(password);
       if (problem) return setError(problem === "short" ? "passwordShort" : "passwordClasses");
       if (password !== confirm) return setError("passwordMismatch");
@@ -107,6 +108,7 @@ export function AccountPanel() {
           <button type="button" disabled={!agreed} className={`mt-3 ${primary}`} onClick={() => void acceptTerms().then((ok) => setAcceptFailed(!ok))}>{t("consent.accept")}</button>
         </section>
       )}
+      {!needsConsent(state.consentVersion) && status === "approved" && <p data-testid="consent-done" className="mb-4 text-sm text-muted">{t("consent.accepted")} <Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>}
       {SURVEY_URL && status === "approved" && (
         <section className="mb-4 rounded-lg border border-line bg-panel p-5" data-testid="survey-card" aria-labelledby="survey-title">
           <h2 id="survey-title" className="text-lg font-semibold">{t("survey.title")}</h2>
@@ -123,18 +125,20 @@ export function AccountPanel() {
           </a>
         </section>
       )}
-      <section className="rounded-lg border border-line bg-panel p-5" data-testid={`account-${status}`} aria-labelledby="acct-status">
+      <section className="rounded-lg border border-line bg-panel p-5" data-testid={`account-${status}`} {...(status === "approved" ? { "aria-label": t("title") } : { "aria-labelledby": "acct-status" })}>
         <p className="text-sm text-muted">{t("signedInAs")} <span dir="ltr" className="font-medium text-ink">{state.email}</span></p>
-        <h2 id="acct-status" className="mt-2 text-xl font-semibold">{t(`status.${status}.title`)}</h2>
-        <p className="mt-2">{t(`status.${status}.body`)}</p>
+        {status !== "approved" && <>
+          <h2 id="acct-status" className="mt-2 text-xl font-semibold">{t(`status.${status}.title`)}</h2>
+          <p className="mt-2">{t(`status.${status}.body`)}</p>
+        </>}
         <p className="mt-3 text-sm">{t("codeLabel")} <span dir="ltr" className="rounded bg-paper px-2 py-0.5 font-mono">{code}</span></p>
         <div className="mt-5 flex flex-wrap items-center gap-3">
-          <button type="button" className="rounded-md border border-line px-4 py-2" onClick={() => void signOut()}>{t("signOut")}</button>
+          {status !== "approved" && <button type="button" className="rounded-md border border-line px-4 py-2" onClick={() => void signOut()}>{t("signOut")}</button>}
           {state.profile.role === "owner" && status === "approved" && (
             <Link href="/owner" data-testid="owner-link" className="text-brand underline">{t("ownerLink")}</Link>
           )}
         </div>
-        <p className="mt-4 text-sm"><Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>
+        {status !== "approved" && <p className="mt-4 text-sm"><Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>}
       </section>
       <ProfileName key={state.userId} name={state.displayName ?? null} email={state.email} save={saveName} />
       {status === "approved" && <p className="mt-4"><Link href="/training" className="text-brand underline">{tt("open")}</Link></p>}
@@ -172,6 +176,7 @@ export function AccountPanel() {
         ))}
       </div>
       <h2 id="acct-form" className="sr-only">{t(`tabs.${mode}`)}</h2>
+      {mode === "signUp" && <p className="mb-4 text-muted">{t("intro")}</p>}
       <form onSubmit={(e) => void submit(e)} noValidate className="max-w-md space-y-4">
         {mode === "signUp" && <label className="block">{tt("name")}<input name="displayName" dir="auto" autoComplete="name" required maxLength={100} value={name} onChange={(e) => setName(e.target.value)} className={field} aria-describedby="signup-name-hint" /><span id="signup-name-hint" className="mt-1 block text-sm text-muted">{tt("nameHint")}</span></label>}
         <label className="block">
@@ -196,7 +201,7 @@ export function AccountPanel() {
           </>
         )}
         {error && <p role="alert" data-testid="account-error" className="rounded-md border border-bad/40 bg-bad/10 px-3 py-2 text-bad">{t(`errors.${error}`)}</p>}
-        <button type="submit" disabled={busy || !email || !password || (mode === "signUp" && (!agreed || !validName(name)))} className={primary}>{busy ? t("working") : t(`submit.${mode}`)}</button>
+        <button type="submit" disabled={busy || !email || !password || (mode === "signUp" && (!agreed || !validFullName(name)))} className={primary}>{busy ? t("working") : t(`submit.${mode}`)}</button>
       </form>
       {mode === "signIn" && (
         <p className="mt-4"><button type="button" data-testid="forgot-link" className="text-brand underline" onClick={() => { setError(null); setView("forgot"); }}>{t("forgot.link")}</button></p>

@@ -29,7 +29,6 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
   const exam = findExam(modality, examId);
   if (!m || !exam) notFound();
   const t = await getTranslations("exam");
-  const tc = await getTranslations("common");
   const ts = await getTranslations("sex");
   const th = await getTranslations("home");
   const cases = casesOf(exam);
@@ -40,7 +39,6 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
       <Breadcrumb items={[{ label: localize(m.name, locale), href: libraryHref }, { label: localize(exam.title, locale) }]} />
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-3xl font-bold">{localize(exam.title, locale)}</h1>
-        {exam.provisional && <span className="rounded bg-signal/20 px-2 py-1 text-sm font-medium text-warn">{tc("provisionalBadge")}</span>}
       </div>
 
       {MODES.map((mode) => (
@@ -62,14 +60,12 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
                   >
                     {t("startCase")}
                   </Link>
-                  {c.provisional && !exam.provisional && <span className="rounded bg-signal/20 px-2 py-1 text-sm font-medium text-warn">{tc("provisionalBadge")}</span>}
                 </div>
               </li>
             ))}
           </ul>
         </section>
       ))}
-      <p className="max-w-3xl text-sm text-muted">{th("provisionalNotice")}</p>
     </div>
   );
 }
