@@ -161,7 +161,7 @@ export function lateralSeparation(u: number, rot: NonNullable<RenderPlan["anatom
   return { shiftU: rot.thoraxShiftU, weight: TUNING.rotation.separationBlend * smoothstep(0.35, 0.95, x) };
 }
 
-// ───────────────────────── limb rotation (wrist, S14.1c) ─────────────────────────
+// ───────────────────────── limb rotation (every limb exam; see limbRotationValue) ─────────────────────────
 
 /** Weight (0–1) of a horizontal band of the image with a soft edge, v = fraction of the image height. */
 export function bandWeight(band: { v1: number; v2: number }, v: number): number {
@@ -238,7 +238,7 @@ export function limbRotationValue(
   v: number,
 ): number {
   if ((lm.kind === "hand-pa" && rot.kind === "hand-pa") || (lm.kind === "limb-warp" && rot.kind === "limb-warp")) {
-    // (limb-warp = the foot exams, S14.4: the same band-weighted anchor warp)
+    // (limb-warp = foot, ankle AP, shoulder Grashey and pelvis AP: the same band-weighted anchor warp as hand PA)
     // Backward map u_out → u_src by fixed-point iteration (the model's displacement field is smooth and slowly varying).
     let us = u;
     for (let k = 0; k < 4; k++) us = u - handPaShiftU(us, v, rot, lm);
