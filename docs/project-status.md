@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 200,
-  "updated_at": "2026-10-22T08:00:00+00:00",
+  "revision": 201,
+  "updated_at": "2026-10-22T09:00:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-063",
+  "next_id": "RAD-064",
   "tasks": [
     {
       "id": "RAD-001",
@@ -570,7 +570,7 @@
       "title": "تدقيق وتنظيف الكود قبل ميزات Assess الكبيرة",
       "status": "planned",
       "priority": "medium",
-      "description": "جلسة إصلاحات تبدأ بتدقيق قراءة فقط للكود الميت والمكرر يراجعه المالك قبل أي حذف. لا حذف لأدوات الأدلة الخاملة ولا تغيير توقعات أو بصمات قائمة؛ تتبع دمج #96 وتشمل زر إغلاق الإسناد (RAD-060) مع إصلاحات الواجهة.",
+      "description": "المرحلة التالية مباشرة بعد دمج #96: جلسة إصلاحات تبدأ بتدقيق قراءة فقط للكود الميت والمكرر يراجعه المالك قبل أي حذف. لا حذف لأدوات الأدلة الخاملة ولا تغيير توقعات أو بصمات؛ تشمل زر إغلاق الإسناد (RAD-060).",
       "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor",
       "waiting_on": "owner"
     },
@@ -579,8 +579,17 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "أسئلة اختيار وكتابية (تصحيح الأستاذ مع اقتراح تطابق قريب) وجزء محاكي، بالإنجليزية. دور مشرف من الصفر، وأداة جدول→JSON، والصور مؤجلة لحين تحقق المالك من حصص Supabase Storage. خطة على الورق أولًا؛ لا برمجة قبل استئناف المالك.",
+      "description": "بعد التنظيف: أداة جدول→JSON، ثم أسئلة كتابية بتصحيح الأستاذ مع اقتراح تطابق قريب ودور مشرف من الصفر، ثم صور (Supabase Storage خاص بعد تحقق المالك من الحصص)، ثم واجهة الكتابة. بالإنجليزية. لا برمجة قبل استئناف المالك.",
       "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-063",
+      "title": "النسخ الاحتياطي والمراجعات المستقلة لـAssess: آخر خطوة",
+      "status": "planned",
+      "priority": "high",
+      "description": "آخر خطوة بعد دمج #96 واكتمال المراحل: نسخة احتياطية شاملة واستعادة مجربة، ومراجعات O108 والمصادر والتراخيص والطبي وMarker. بقرار المالك 2026-10-22.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md#assess-retention-original-no-backup-2026-10-20",
       "waiting_on": "owner"
     }
   ]
