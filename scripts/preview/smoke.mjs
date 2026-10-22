@@ -87,7 +87,9 @@ for (const loc of ["en", "ar"]) {
   await page.goto(`${BASE}/${loc}/xray/chest-pa-erect/practice?case=nope`, { waitUntil: "networkidle" });
   ok(`${loc}: unknown ?case= shows the not-found state (${m.notFound.caseTitle})`, (await page.locator('[data-testid="not-found"] h1').innerText()) === m.notFound.caseTitle);
   const other = loc === "en" ? "ar" : "en";
-  await page.locator(`nav a[lang="${other}"]`).tap();
+  // The language switch is in the side menu now (phone drawer): open it first.
+  if (await page.getByTestId("menu-toggle").isVisible()) await page.getByTestId("menu-toggle").tap();
+  await page.locator(`.language-switcher a[lang="${other}"]:visible`).tap();
   await page.waitForURL(`**/${other}/xray/chest-pa-erect/practice?case=nope`);
   ok(`${loc}→${other} switch keeps the page and ?case=; html lang now ${other}`, (await page.getAttribute("html", "lang")) === other);
   // Old link (host redirect) and the unknown-URL 404 page (bilingual, banner, noindex).

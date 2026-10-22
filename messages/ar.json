@@ -42,8 +42,8 @@
       "patient": "المريض",
       "technique": "التقنية"
     },
-    "needsAttention": "فيه بند غير جاهز",
-    "sceneViews": "منظر المشهد",
+    "needsAttention": "به بند غير جاهز",
+    "sceneViews": "عرض المشهد",
     "readinessDetails": "تفاصيل الجاهزية",
     "closeSheet": "إغلاق",
     "backToLibrary": "العودة إلى المكتبة",
@@ -52,7 +52,8 @@
     "viewDetector": "الكاشف",
     "viewTop": "منظر علوي",
     "viewSide": "منظر جانبي",
-    "phoneMenu": "القائمة"
+    "phoneMenu": "القائمة",
+    "enlargeScene": "تكبير المشهد"
   },
   "positioning": {
     "detector": "الكاشف / البكي",

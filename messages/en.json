@@ -52,7 +52,8 @@
     "viewDetector": "Detector",
     "viewTop": "Top view",
     "viewSide": "Side view",
-    "phoneMenu": "Menu"
+    "phoneMenu": "Menu",
+    "enlargeScene": "Enlarge scene"
   },
   "positioning": {
     "detector": "Detector / Bucky",

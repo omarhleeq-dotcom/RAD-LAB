@@ -98,7 +98,7 @@ try {
     ok(await page.getByTestId("preview-banner").count() === 0, "no top banner (D1)");
     ok(!(await page.locator("footer").innerText()).includes("clinical"), "no legal wording in the footer (D2)");
     ok(await page.locator('footer .language-switcher').count() === 0, "no footer language");
-    ok(await page.locator('.site-topbar .language-switcher').boundingBox().then((box) => box.y < 100), "language stays on top");
+    ok(await page.locator('.site-topbar .language-switcher').count() === 0, "no language switch in the top bar (it is in the side menu)");
     ok(await page.locator('.site-nav .nav-planned').first().getAttribute("aria-disabled") === "true", "future entries inactive");
     ok(await page.locator('.nav-planned a, .nav-planned button').count() === 0, "future entries have no action");
     ok(fonts.some((font) => font.includes(loc === "ar" ? "IBMPlex" : "inter-latin")), "fonts loaded locally");

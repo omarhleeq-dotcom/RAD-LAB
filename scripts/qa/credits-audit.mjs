@@ -82,7 +82,10 @@ try {
     ok(`${tag}: keyboard reaches footer`, await footer.evaluate((el) => el === document.activeElement));
     ok(`${tag}: focus visible`, await footer.evaluate((el) => { const s = getComputedStyle(el); return el.matches(":focus-visible") && s.outlineStyle !== "none" && s.outlineWidth !== "0px"; }));
     const other = loc === "en" ? "ar" : "en";
-    await page.locator(`header nav a[lang="${other}"]`).click();
+    // The language switch lives in the side menu (phone drawer) and the desktop sidebar, not in the top bar.
+    ok(`${tag}: no language switch in the top bar`, (await page.locator(".site-topbar .language-switcher").count()) === 0);
+    if (await page.getByTestId("menu-toggle").isVisible()) await page.getByTestId("menu-toggle").click();
+    await page.locator(`.language-switcher a[lang="${other}"]:visible`).click();
     await page.getByRole("heading", { level: 1, name: messages[other].credits.title }).waitFor();
     ok(`${tag}: language keeps route`, new URL(page.url()).pathname === `/${other}/credits`);
     await page.goto(`${base}/${loc}`, { waitUntil: "networkidle" });
@@ -100,6 +103,9 @@ try {
     for (const file of practicePaths) {
       const path = file.slice(3, -5);
       await page.goto(`${base}${path}`, { waitUntil: "networkidle" });
+      // Phone: the case-details sheet opens once on load; close it with "Start" before using the controls.
+      const caseSheet = page.getByRole("dialog", { name: m.workspace.caseDetails });
+      if (await caseSheet.isVisible()) await caseSheet.getByRole("button", { name: m.workspace.startCase, exact: true }).click();
       await page.getByRole("button", { name: m.console.expose, exact: true }).click();
       await page.locator("#result-heading").waitFor();
       const credit = page.locator('section[aria-labelledby="result-heading"] figure figcaption');

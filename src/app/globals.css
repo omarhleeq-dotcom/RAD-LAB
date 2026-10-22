@@ -89,6 +89,7 @@ input[type="range"] {
 .site-nav > a[aria-current] { background: var(--platform-soft); color: var(--color-brand-strong); font-weight: 600; box-shadow: inset 3px 0 var(--color-brand); }
 [dir="rtl"] .site-nav > a[aria-current] { box-shadow: inset -3px 0 var(--color-brand); }
 .nav-planned { color: var(--color-muted); }
+.sidebar-language { margin-block-start: 1.25rem; padding-inline: .8rem; }
 .nav-signout { margin-block-start: 1rem; min-height: 50px; padding: .7rem .8rem; border: 0; border-block-start: 1px solid var(--color-line); border-radius: .75rem; background: transparent; display: flex; align-items: center; gap: .65rem; font: inherit; font-size: .9375rem; color: var(--color-ink); cursor: pointer; text-align: start; }
 .nav-signout:hover { background: var(--color-paper); }
 .site-layout[data-standalone] .site-main, .site-layout[data-standalone] .site-footer { margin-inline-start: 0; }

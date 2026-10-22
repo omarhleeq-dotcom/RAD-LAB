@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 216,
-  "updated_at": "2026-10-22T10:25:00+00:00",
+  "revision": 217,
+  "updated_at": "2026-10-22T10:26:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-072",
   "tasks": [
@@ -624,7 +624,7 @@
       "title": "UI-3: تخطيط المحاكي على الهاتف",
       "status": "review",
       "priority": "high",
-      "description": "نُفذ في PR مسودة (تخطيط فقط) وعُدّل بعد تحقق المالك الأول: عرض تطبيق بملء الشاشة على الهاتف بلا تمرير للصفحة (شريط علوي، مشهد، 4 تبويبات، شريط سفلي، وورقة (i) لتفاصيل الحالة)؛ الحاسوب كما هو. لا تغيير في التصحيح أو القيم أو الرسم أو الإصدار أو بصمات scene-dom. ينتظر تحقق المالك؛ التفاصيل في تقرير RAD-067.",
+      "description": "نُفذ في PR مسودة (تخطيط فقط) وعُدّل بعد تحقق المالك مرتين: عرض تطبيق بملء الشاشة على الهاتف بلا تمرير (شريط علوي، مشهد، 4 تبويبات، شريط سفلي، ورقة (i))، ومناطق لمس ≥44px وتكبير المشهد، ومفتاح اللغة خارج الشريط العلوي. الحاسوب كما هو؛ لا تصحيح ولا بصمات. ينتظر تحقق المالك (تقرير RAD-067).",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-067_UI3_REPORT_2026-10-22.md؛ scripts/qa/simulator-layout-audit.mjs",
       "waiting_on": "owner"
     },
@@ -633,7 +633,7 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "planned",
       "priority": "high",
-      "description": "يبدأ بتوحيد الأطراف العليا (CLN-016/017/025/028). ثم: (1) دفعة نص T+AR مع نصوص D1 الخمسة، وتحديث بصمات scene-dom ولقطات الصدر PA لها مقبول من المالك (2026-10-22) داخل هذه الدفعة فقط؛ (2) دفعات S بحسب أجوبة المالك (s-items-owner)، كل منها برفع إصدار المحرك؛ (3) بنود R بعد قائمة الصور؛ (4) قرار علامات provisional.",
+      "description": "يبدأ بتوحيد الأطراف العليا (CLN-016/017/025/028). ثم: (1) دفعة نص T+AR مع نصوص D1 الخمسة وتسميات شارات الدليل VALIDATED وPROVISIONAL (تعارض D5؛ صياغة محايدة تُحسم هنا)، وتحديث بصمات scene-dom واللقطات لها مقبول من المالك داخل الدفعة فقط؛ (2) دفعات S بحسب s-items-owner؛ (3) بنود R؛ (4) علامات provisional.",
       "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
@@ -642,7 +642,7 @@
       "title": "UI-4: المكتبة والتدريب والثيم والرسومات",
       "status": "planned",
       "priority": "medium",
-      "description": "بعد RAD-068: شبكة المكتبة (F1)، وصفحتا التدريب والنتيجة (F5)، وثيم داكن/فاتح بزر في الشريط العلوي، الافتراضي داكن ومحفوظ على الجهاز (F7)، ورسومات SVG من عمل المشروع مسجلة في سجل الأصول (F8).",
+      "description": "بعد RAD-068: شبكة المكتبة (F1)، وصفحتا التدريب والنتيجة (F5: صفحة النتيجة كثيفة على الهاتف بتأكيد المالك، فالملخص أولًا والتفاصيل مطوية)، وثيم داكن/فاتح بزر في الشريط العلوي، الافتراضي داكن ومحفوظ (F7)، ورسومات SVG من عمل المشروع مسجلة في سجل الأصول (F8).",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
       "waiting_on": "code"
     },

@@ -9,6 +9,9 @@
 //    header, no keyboard-hint text, fine adjustment collapsed, compact technique rows, the schematic note once (in the case
 //    sheet), the case-details (i) sheet auto-opens once and takes/returns focus like the readiness sheet, Expose shows the
 //    result inside the view, Retry does not reopen the case sheet;
+//  - touch (owner phone check 2): hit areas of the side marker, the field handles and the crosshair are >= 44 CSS px, the marker letter is
+//    larger, the marker's visible centre is at the same place on the detector as on desktop, "Enlarge scene" opens a near-full-screen
+//    scene (no tabs or bottom bar, no document scroll, settings kept) and closes with Close or Escape, focus moving in and back;
 //  - desktop: no tablist, the console keeps its readiness box and Expose button.
 // Screenshots in OUT (default /tmp/rad-lab-qa-ui3). Exit code 1 on any failure.
 import { chromium } from "playwright";
@@ -30,7 +33,11 @@ const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? 
 const snapshot = (page) => page.evaluate(() => {
   // Label pills are sized from the browser's text measurement at the rendered scale; their geometry is not drawing code.
   const clean = (s) => s.replace(/_R_[A-Za-z0-9_]+_/g, "ID").replace(/\s(?:hidden|aria-hidden)="[^"]*"/g, "")
-    .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( rx="5" fill="#06101a" opacity="0.82")/g, "<rect PILL$1");
+    .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( rx="5" fill="#06101a" opacity="0.82")/g, "<rect PILL$1")
+    // Phone-only touch geometry (owner phone check 2): hit areas and the handle size follow the on-screen scale.
+    .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( fill="transparent")/g, "<rect HIT$1")
+    .replace(/<circle cx="([^"]*)" cy="([^"]*)" r="[^"]*" fill="transparent"/g, '<circle cx="$1" cy="$2" r="HIT" fill="transparent"')
+    .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( rx="3")/g, "<rect HANDLE$1");
   const svgs = [...document.querySelectorAll("main svg")].filter((s) => s.closest("section[aria-labelledby='pos-heading']") || s.closest("[role='tabpanel']"))
     .filter((s) => !s.closest("button") && !s.hasAttribute("data-ui-icon")).map((s) => clean(s.outerHTML)).sort();
   const label = (el) => {
@@ -42,6 +49,28 @@ const snapshot = (page) => page.evaluate(() => {
     .map((el) => `${el.type}|${el.name}|${label(el)}`);
   return { svgs, controls };
 });
+
+// Visible marker centre (normalised to the detector SVG box) and the hit areas of the marker, the field handles and the crosshair.
+const touch = (page) => page.evaluate(() => {
+  const svg = document.querySelector("section[aria-labelledby='pos-heading'] figure svg[role=group]");
+  const box = svg.getBoundingClientRect();
+  const r = (el) => el.getBoundingClientRect();
+  const marker = svg.querySelector("g[role=button]:not([aria-describedby])");
+  const visible = marker && marker.querySelector("rect:not([fill=transparent])");
+  const letter = marker && marker.querySelector("text");
+  // In scene units (viewBox space), so letterboxing and scale do not matter: the stored position maps to the same centre.
+  const vb = svg.viewBox.baseVal, inv = svg.getScreenCTM().inverse();
+  const centre = visible && (() => { const u = new DOMPoint(r(visible).x + r(visible).width / 2, r(visible).y + r(visible).height / 2).matrixTransform(inv); return { x: (u.x - vb.x) / vb.width, y: (u.y - vb.y) / vb.height }; })();
+  return {
+    width: box.width,
+    centre,
+    markerHit: marker && Math.min(r(marker.querySelector("rect[fill=transparent]")).width, r(marker.querySelector("rect[fill=transparent]")).height),
+    letterHeight: letter && r(letter).height,
+    handleHits: [...svg.querySelectorAll(":scope > g[aria-hidden] > rect[fill=transparent]")].map((el) => Math.min(r(el).width, r(el).height)),
+    rayHit: Math.min(r(svg.querySelector("g[aria-describedby] > circle[fill=transparent]")).width, r(svg.querySelector("g[aria-describedby] > circle[fill=transparent]")).height),
+  };
+});
+const pickMarker = async (page) => { await page.locator("label:has(input[name='side-marker'])").nth(1).click(); await page.waitForTimeout(150); };
 
 for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
   const m = MSGS[loc];
@@ -70,6 +99,8 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
 
     if (dev === "desktop") {
       Object.assign(ref, snap);
+      await pickMarker(page);
+      ref.touch = await touch(page);
       ok(`${tag} no tablist on desktop`, (await tablist.count()) === 0);
       ok(`${tag} console Expose`, await page.getByRole("button", { name: m.console.expose, exact: true }).isVisible());
       ok(`${tag} console readiness`, await page.getByText(`${m.console.readiness.title}:`).first().isVisible());
@@ -94,6 +125,45 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} (i) reopens the sheet`, await caseDialog.isVisible());
       await page.keyboard.press("Escape");
       ok(`${tag} Escape closes the case sheet`, !(await caseDialog.isVisible()));
+
+      // Touch: hit areas >= 44 CSS px, a larger marker letter, and the marker's visible centre where it is on desktop.
+      await pickMarker(page);
+      const tc = await touch(page);
+      ok(`${tag} marker hit area >= 44px`, tc.markerHit >= 43.5, String(tc.markerHit));
+      ok(`${tag} every field handle hit area >= 44px`, tc.handleHits.length === 8 && tc.handleHits.every((h) => h >= 43.5), tc.handleHits.join(","));
+      ok(`${tag} crosshair hit area >= 44px`, tc.rayHit >= 43.5, String(tc.rayHit));
+      ok(`${tag} marker letter larger than the scaled-down default`, tc.letterHeight >= 14, String(tc.letterHeight));
+      ok(`${tag} marker centre unchanged vs desktop (scored position)`, Math.abs(tc.centre.x - ref.touch.centre.x) < 0.003 && Math.abs(tc.centre.y - ref.touch.centre.y) < 0.003, JSON.stringify({ phone: tc.centre, desktop: ref.touch.centre }));
+      // Enlarge scene: near full screen, no tabs or bottom bar, no document scroll, settings kept; focus moves in and back.
+      const enlargeButton = page.getByRole("button", { name: m.workspace.enlargeScene, exact: true });
+      const markerBefore = await page.locator("input[name='side-marker']:checked").evaluate((el) => el.closest("label").textContent.trim());
+      await enlargeButton.click();
+      const big = page.getByRole("dialog", { name: m.workspace.enlargeScene });
+      ok(`${tag} enlarge opens a dialog`, await big.isVisible());
+      ok(`${tag} enlarged: tabs hidden and the bottom bar is covered`, !(await page.getByRole("tablist").isVisible()) && await page.evaluate(() => {
+        const e = [...document.querySelectorAll("button")].find((b) => b.closest("[inert]") && b.textContent.trim().length > 0 && b.getBoundingClientRect().bottom > innerHeight - 80);
+        if (!e) return true;
+        const r = e.getBoundingClientRect(), top = document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+        return !!top?.closest("[role=dialog][aria-modal]");
+      }));
+      ok(`${tag} enlarged: focus on Close`, await page.evaluate((c) => document.activeElement?.textContent?.trim() === c, m.workspace.closeSheet));
+      const te = await touch(page);
+      ok(`${tag} enlarged: scene wider than the small one`, te.width >= tc.width * 0.99, `${te.width} vs ${tc.width}`);
+      ok(`${tag} enlarged: hit areas still >= 44px`, te.markerHit >= 43.5 && te.rayHit >= 43.5 && te.handleHits.every((h) => h >= 43.5));
+      const enlargedFrame = await page.evaluate(() => { const d = document.querySelector("[role=dialog][aria-modal]").getBoundingClientRect(); return { top: d.top, left: d.left, w: d.width, h: d.height, vw: innerWidth, vh: innerHeight }; });
+      ok(`${tag} enlarged: covers the screen`, enlargedFrame.w >= enlargedFrame.vw - 1 && enlargedFrame.h >= enlargedFrame.vh - 1, JSON.stringify(enlargedFrame));
+      await page.evaluate(() => window.scrollTo(0, 600));
+      ok(`${tag} no document scroll (enlarged)`, await page.evaluate(() => scrollY === 0 && document.documentElement.scrollHeight <= innerHeight + 1));
+      await noOverflow("enlarged");
+      await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-enlarged.png` });
+      await axe("enlarged scene");
+      await page.keyboard.press("Escape");
+      ok(`${tag} Escape closes the enlarged scene`, !(await big.isVisible()) && (await page.getByRole("tablist").isVisible()));
+      ok(`${tag} focus back on Enlarge`, await page.evaluate((c) => document.activeElement?.getAttribute("aria-label") === c, m.workspace.enlargeScene));
+      ok(`${tag} settings kept after closing`, (await page.locator("input[name='side-marker']:checked").evaluate((el) => el.closest("label").textContent.trim())) === markerBefore);
+      await enlargeButton.click();
+      await page.getByRole("button", { name: m.workspace.closeSheet, exact: true }).click();
+      ok(`${tag} Close button closes the enlarged scene`, !(await big.isVisible()) && (await page.getByRole("tablist").isVisible()));
 
       // Full-screen app view: the document never scrolls.
       const noScroll = async (area) => {

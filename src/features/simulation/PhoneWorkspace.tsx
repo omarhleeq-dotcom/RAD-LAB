@@ -73,6 +73,12 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
   const caseStart = useRef<HTMLButtonElement>(null);
   const caseTrigger = useRef<HTMLButtonElement>(null);
   const autoOpened = useRef<string | null>(null);
+  // "Enlarge scene": the same scene near full screen (tabs and bar hidden) for precise dragging; the settings live in the store, so closing keeps them.
+  const [enlargedState, setEnlarged] = useState(false);
+  const enlarged = enlargedState && !result;
+  const enlargeOpen = useRef<HTMLButtonElement>(null);
+  const enlargeClose = useRef<HTMLButtonElement>(null);
+  const wasEnlarged = useRef(false);
 
   const readiness = assessReadiness(radCase, settings, locked ? "result" : "setup");
   const attention = tabsNeedingAttention(readiness);
@@ -87,6 +93,13 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
       caseStart.current?.focus();
     }
   }, [radCase.id, result]);
+
+  // Same focus handling as the sheets: focus moves to Close when it opens and back to the Enlarge button when it closes.
+  useEffect(() => {
+    if (enlarged) enlargeClose.current?.focus();
+    else if (wasEnlarged.current) enlargeOpen.current?.focus();
+    wasEnlarged.current = enlarged;
+  }, [enlarged]);
 
   const select = (id: WorkspaceTab, focus = false) => {
     setTab(id);
@@ -117,7 +130,7 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
 
   return (
     <div data-phone-app className="relative flex h-dvh flex-col overflow-hidden bg-paper">
-      <header className="flex shrink-0 items-center gap-1 border-b border-line bg-panel px-2 py-1">
+      <header inert={enlarged} className="flex shrink-0 items-center gap-1 border-b border-line bg-panel px-2 py-1">
         <Link href={backHref} aria-label={t("backToLibrary")} className={barButton}>
           <span className="rtl:-scale-x-100">
             <Icon d="M15 5l-7 7 7 7" />
@@ -141,9 +154,25 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4">{result}</div>
       ) : (
         <>
-          <div className="shrink-0 border-b border-line bg-paper">
-            <PositioningScene radCase={radCase} settings={settings} mode={mode} onChange={onChange} disabled={locked} slots={slots} />
-            <div role="tablist" aria-label={t("tabsLabel")} className="grid grid-cols-4">
+          <div
+            role={enlarged ? "dialog" : undefined}
+            aria-modal={enlarged || undefined}
+            aria-label={enlarged ? t("enlargeScene") : undefined}
+            onKeyDown={(e) => {
+              if (enlarged && e.key === "Escape") setEnlarged(false);
+            }}
+            className={enlarged ? "fixed inset-0 z-40 flex flex-col overflow-y-auto bg-paper" : "shrink-0 border-b border-line bg-paper"}
+          >
+            <PositioningScene
+              radCase={radCase}
+              settings={settings}
+              mode={mode}
+              onChange={onChange}
+              disabled={locked}
+              slots={slots}
+              enlarge={{ active: enlarged, onToggle: () => setEnlarged(!enlarged), openRef: enlargeOpen, closeRef: enlargeClose }}
+            />
+            <div role="tablist" aria-label={t("tabsLabel")} className={clsx("grid-cols-4", enlarged ? "hidden" : "grid")}>
               {WORKSPACE_TABS.map((id) => (
                 <button
                   key={id}
@@ -175,7 +204,7 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
             </div>
           </div>
 
-          <div ref={panels} className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3">
+          <div ref={panels} inert={enlarged} className="relative min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-3">
             <div {...panel("positioning")} className="space-y-3">
               <div ref={attachPositioning} className="rounded-lg border border-line bg-panel p-3" />
               {/* After the scene's own group, as in the desktop reading order (scene, then console). */}
@@ -196,7 +225,7 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
             </div>
           </div>
 
-          <div className="flex shrink-0 items-center gap-2 border-t border-console-line bg-console px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-console-text">
+          <div inert={enlarged} className="flex shrink-0 items-center gap-2 border-t border-console-line bg-console px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-console-text">
             {!locked && (
               <button
                 ref={sheetTrigger}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode, type Ref } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import clsx from "clsx";
@@ -22,6 +22,16 @@ interface Props {
   layout?: SceneLayout;
   /** Phone layout (UI-3, F3): where the control groups and notes are portalled; omitted = the unchanged single-section layout. */
   slots?: SceneSlots;
+  /** Phone layout: the scene header's "Enlarge scene" / "Close" toggle (the enlarged view itself is the workspace's). */
+  enlarge?: SceneEnlarge;
+}
+
+/** Phone "Enlarge scene": the state lives in the workspace (it hides the tabs and the bar); the buttons are the scene header's. */
+export interface SceneEnlarge {
+  active: boolean;
+  onToggle: () => void;
+  openRef: Ref<HTMLButtonElement>;
+  closeRef: Ref<HTMLButtonElement>;
 }
 
 /** Tab-panel targets of the phone workspace. A target that is not mounted yet renders nothing until it is. */
@@ -31,7 +41,7 @@ export interface SceneSlots {
   notes: Element | null;
 }
 
-export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots }: Props) {
+export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots, enlarge }: Props) {
   const t = useTranslations("positioning");
   const tw = useTranslations("workspace");
   const tAny = useTranslations() as unknown as (key: string) => string;
@@ -142,6 +152,23 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
             ))}
           </div>
         )}
+        {phone && enlarge && (
+          <button
+            ref={enlarge.active ? enlarge.closeRef : enlarge.openRef}
+            type="button"
+            onClick={enlarge.onToggle}
+            aria-label={enlarge.active ? undefined : tw("enlargeScene")}
+            className={clsx("grid min-h-11 shrink-0 place-items-center rounded-lg border", enlarge.active ? "border-brand bg-brand px-3 text-sm font-bold text-white" : "size-11 border-line text-ink hover:bg-paper")}
+          >
+            {enlarge.active ? (
+              tw("closeSheet")
+            ) : (
+              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+              </svg>
+            )}
+          </button>
+        )}
         {mode === "practice" &&
           (phone ? (
             // Compact icon toggle on the same row; still the same checkbox with the same accessible label.
@@ -162,9 +189,9 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
           ))}
       </div>
 
-      <div className={phone ? "relative grid bg-console p-2 [&_svg]:max-h-[min(24svh,13rem)]" : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
+      <div className={phone ? clsx("relative grid bg-console p-2", enlarge?.active ? "[&_svg]:max-h-[calc(100dvh-10rem)]" : "[&_svg]:max-h-[min(24svh,13rem)]") : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
         <figure className={clsx("m-0", phone && view !== "detector" && offView)}>
-          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} />
+          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} phone={phone} />
           <figcaption className={phone ? "sr-only" : "mt-1 text-center text-xs text-console-text/80"}>{tAny(texts.detectorCaption)}</figcaption>
           {!phone && workspaceHint}
           <p
