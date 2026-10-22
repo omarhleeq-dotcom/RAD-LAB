@@ -23,7 +23,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets/source/chest-pa/Normal_posteroanterior_(PA)_chest_radiograph_(X-ray).jpg"
-DST = ROOT / "public/images/chest-pa/chest-pa-baseline.jpg"
+DST = ROOT / "assets/source/chest-pa/chest-pa-baseline.jpg"  # full-resolution derivative, kept as provenance; not served
 WEB = ROOT / "public/images/chest-pa/chest-pa-baseline-1000.jpg"
 WEB_WIDTH = 1000
 COMMONS_SHA1 = "3124c4cf4c55eb3d2defa9b909f08f94e941ec43"

@@ -90,7 +90,7 @@ Rules for entries:
 | Redistribution permitted | Yes |
 | Commercial use permitted | Yes |
 | Attribution legally required | No. Preserved voluntarily (see A-001) and shown on the result image's credit line. |
-| Local project path | `public/images/chest-pa/chest-pa-baseline.jpg` (served by the app) |
+| Local project path | `assets/source/chest-pa/chest-pa-baseline.jpg` (full-resolution derivative kept for provenance; **not** served by the app — the app loads A-003. Moved from `public/images/chest-pa/` in RAD-061 batch 6, bytes unchanged) |
 | RAD-LAB modifications | See "Derivation record" below. |
 | Date / method of verification | 2026-10-06. Derivation reproducible: `python3 -I scripts/derive-chest-pa-baseline.py` (numpy + Pillow; verifies the A-001 SHA-1 before running; fixed RNG seed). Output inspected visually (before/after crops of both regions; whole image). Pixel diff against A-001 checked: every pixel that differs by more than 12 grey levels lies inside the two annotation boxes (4,251 px, all inside the boxes). |
 | Checksum | SHA-1 `c9010f963f51dd8ea31c500e52aacae7b79e1bb1` (reproducible by the script; if the Pillow/libjpeg version changes the checksum may change, the pixel statistics below do not) |
@@ -768,7 +768,7 @@ Criteria: S10-3 (own work, public domain / CC0, CC BY or purchased licence; NC /
 | Entry | Source / licence | Commercial-compatible | In repo | Result |
 |---|---|---|---|---|
 | A-001 master (PA chest, Häggström) | Wikimedia Commons, CC0 1.0, verified 2026-10-06 directly against Commons (see entry) | Yes | `assets/source/chest-pa/` (not served) | Pass. Nothing to revisit; no attribution legally required, voluntary credit kept. |
-| A-002 derived (annotations neutralised) | CC0 (inherited) | Yes | `public/images/chest-pa/` | Pass |
+| A-002 derived (annotations neutralised) | CC0 (inherited) | Yes | `assets/source/chest-pa/` (not served) | Pass |
 | A-003 web copy | CC0 (inherited) | Yes | `public/images/chest-pa/` | Pass |
 | A-004 doc screenshots | CC0 (derived from A-003 + RAD-LAB output) | Yes | `docs/session-4-renders/` | Pass |
 | A-005 goldens / contact sheet | CC0 (derived from A-003 + RAD-LAB output) | Yes | `scripts/qa/golden/`, `docs/session-5-renders/` | Pass |
