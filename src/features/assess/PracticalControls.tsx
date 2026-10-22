@@ -1,9 +1,12 @@
+import { useLocale, useTranslations } from "next-intl";
+import { dirFor } from "@/i18n/routing";
 import type { PracticalView } from "./practical-presentation";
 /** Every declared setting, with neutral labels and selectable bounds; no Practice help or computed readiness. */
 export function PracticalControls({view,values,disabled,onChange}:{view:PracticalView;values:Readonly<Record<string,unknown>>;disabled:boolean;onChange:(v:Record<string,unknown>)=>void}){
+  const t=useTranslations("assess.part"),locale=useLocale();
   const aec=view.controls.exposureMode?.kind==="enum"&&view.controls.exposureMode.values.includes("aec");
   return <fieldset disabled={disabled} className="grid gap-4 sm:grid-cols-2" dir="ltr" lang="en">
-    <legend className="mb-3 font-semibold">Settings</legend>
+    <legend className="mb-3 font-semibold" lang={locale} dir={dirFor(locale)}>{t("settings")}</legend>
     {Object.entries(view.controls).filter(([p])=>p!=="aecChambers"||aec).map(([path,s])=>{
       const id=`practical-control-${path}`,increment=view.increments[path],stations=increment?.stations;
       return <div key={path} className="min-w-0 text-sm"><label htmlFor={id}>{view.labels[path]}</label>

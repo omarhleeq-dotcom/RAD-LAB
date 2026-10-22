@@ -11,13 +11,13 @@ import {parsePracticalSession} from "./practical-data";
 import {parseSession} from "./runner-data";
 import {PracticalScene} from "./PracticalScene";
 import {PracticalControls} from "./PracticalControls";
-// PracticalScene reads its platform labels from messages (CLN-037); render it as the app does, in English.
+// PracticalScene and PracticalControls read their platform labels from messages (CLN-037); render it as the app does, in English.
 const english=(node:ReactNode)=>createElement(NextIntlClientProvider as ComponentType<Record<string,unknown>>,{locale:"en",messages:en,timeZone:"UTC"},node);
 it.each(CASES.map(c=>[c.id,c] as const))("renders all supported controls and existing anatomy without hints or private metadata: %s",(_id,c)=>{
  const {views,specs}=validatePracticalContent(practicalFixture("1",[c]));
  const view=views["full-0"]!,values=view.initial;
  expect(Object.keys(view.controls)).toEqual(Object.keys(specs["full-0"]!));
- const controls=renderToStaticMarkup(createElement(PracticalControls,{view,values,disabled:false,onChange:()=>{}}));
+ const controls=renderToStaticMarkup(english(createElement(PracticalControls,{view,values,disabled:false,onChange:()=>{}})));
  const scene=renderToStaticMarkup(english(createElement(PracticalScene,{view,values,disabled:false,onChange:()=>{}})));
  expect(controls).toContain('practical-control-kvp');expect(controls).toContain('practical-control-sidCm');
  expect(controls.includes('practical-control-breathing')).toBe(!!c.availableBreathing);

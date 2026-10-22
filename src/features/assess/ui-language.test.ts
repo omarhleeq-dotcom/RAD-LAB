@@ -9,6 +9,7 @@ import { mixedFixture } from "../../../scripts/assess/d-fixture";
 import { practicalFixture } from "../../../scripts/assess/e-fixture";
 import type { SimulatorPartItem } from "./contracts";
 import { PartControls } from "./PartControls";
+import { PracticalControls } from "./PracticalControls";
 import { PracticalScene } from "./PracticalScene";
 import { CONTROL_LABELS } from "./presentation";
 import { validatePracticalContent } from "./server-practical";
@@ -60,4 +61,15 @@ it("practical scene: Arabic captions and ARIA follow the interface; the English 
   expect(arabic).toContain(`aria-label="${ar.assess.scene.moveBeam}"`);
   expect(arabic).toContain(`aria-label="${ar.assess.scene.moveMarker.replace("{marker}", "R")}"`);
   for (const text of MOVED) expect(arabic).not.toContain(text);
+});
+
+it("practical controls: the Settings legend follows the interface language; setting labels stay English", () => {
+  const c = CASES[0]!, { views } = validatePracticalContent(practicalFixture("1", [c]));
+  const view = views["full-0"]!, props = { view, values: view.initial, disabled: false, onChange: () => {} };
+  const english = render("en", createElement(PracticalControls, props)), arabic = render("ar", createElement(PracticalControls, props));
+  expect(english).toContain(`<legend class="mb-3 font-semibold" lang="en" dir="ltr">${en.assess.part.settings}</legend>`);
+  expect(arabic).toContain(`<legend class="mb-3 font-semibold" lang="ar" dir="rtl">${ar.assess.part.settings}</legend>`);
+  expect(arabic).toMatch(/^<fieldset class="grid gap-4 sm:grid-cols-2" dir="ltr" lang="en">/);
+  expect(arabic).toContain(view.labels.kvp!);
+  expect(arabic).not.toContain(">Settings<");
 });
