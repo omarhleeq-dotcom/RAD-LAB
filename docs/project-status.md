@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** بعد دمج #96 وإغلاق التجربة الهندسية اكتمل تدقيق RAD-061 القرائي؛ الترتيب بحسب [قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22): الدفعات 1 إلى 6 وحد الوقت (مدموجة) ← CLN-042 (Draft PR) ← جرد RAD-064 ← RAD-062 ← جلسة المحاكي بعد رد RAD-019 ← RAD-059 ← RAD-057 ← RAD-063.
-- **ينتظر المالك:** مراجعة Draft PR الخاص بـCLN-042 (تثبيت wrangler والـactions؛ تقريره في وصف الـPR، ونتيجتا check وdeploy عليه غير مؤكدتين بعد)، وزر الإغلاق RAD-060 مؤجل إلى أول migration في RAD-062 بقرار المالك؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
-- **ينتظر مراجِعًا بشريًا:** RAD-019 ومعها بنود التدقيق CLN-018/027/034، ويجوز إرسالها الآن؛ O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
-- **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ تقرير RAD-061 و[قرار ترتيب المراحل](DECISIONS.md#assess-authoring-owner-2026-10-22).
-- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال (24 ملفًا بعد الدفعة 2) دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (السبب المقاس تنافس على إنشاء PGlite، وحد صريح 30000 مدموج في #101؛ الخيار (ب) مؤجل بمحفّزيه في RAD-061)؛ نطاق التجربة يبقى فعّالًا بقرار الإغلاق دون تشغيل أو قبول حي؛ إصدار wrangler (`WRANGLER_VERSION` في deploy-pages.yml) وSHAs الـactions تُحدَّث يدويًا وبقرار صريح، ولا Dependabot/Renovate دون قرار المالك.
+- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064. الترتيب بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22) (F9): فرز تقرير المختص RAD-065 ← UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
+- **ينتظر المالك:** تواريخ إرسال مراجعة RAD-019 والرد عليها؛ موافقة منفصلة لكل جلسة؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
+- **ينتظر مراجِعًا بشريًا:** لا شيء جديد؛ رد المختص على RAD-019 وصل وينتظر الفرز (RAD-065). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
+- **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الجرد](RAD-064_UI_INVENTORY_REPORT_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
+- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) موثق بمحفّزاته في تقرير دفعات RAD-061)؛ تخطيط المحاكي قد يغيّر بصمات scene-dom وتحديثها بموافقة المالك فقط؛ القيم تبقى `provisional` داخليًا رغم إزالة الوسم من الواجهة (D4)، ولا ادعاء مصادقة سريرية (D5)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 209,
-  "updated_at": "2026-10-22T10:18:00+00:00",
+  "revision": 210,
+  "updated_at": "2026-10-22T10:19:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-065",
+  "next_id": "RAD-071",
   "tasks": [
     {
       "id": "RAD-001",
@@ -191,9 +191,9 @@
       "title": "مراجعة المعلّم والفيزيائي الطبي لكل القيم المؤقتة والنص العربي (O5)",
       "status": "review",
       "priority": "high",
-      "description": "حزمة المراجعة (docs/REVIEW_PACKAGE.md) جاهزة وتنتظر معلّمًا وفيزيائيًا طبيًا: قيم Chest والأطراف والحوض والكتف، النص العربي، وحدود الصور والمقياس (بنود O). يجوز إرسالها الآن مع بنود CLN-018/027/034 (البند 6 من قرار ترتيب التنظيف). ليست بوابة للجلسات (S10b-20). يُغلق عند جواب كل بند أو تسجيل المالك تركه غير مراجَع.",
-      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#rad-019-review-items (CLN-018/027/034)؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
-      "waiting_on": "reviewer"
+      "description": "وصل رد المختص على حزمة المراجعة (F11). المتبقي: فرزه وتسجيل كل جواب في RAD-065 قبل أي تغيير طبي. تواريخ الإرسال والرد يضيفها المالك لاحقًا. ليست بوابة للجلسات (S10b-20). يُغلق عند تسجيل جواب كل بند أو تسجيل المالك تركه غير مراجَع.",
+      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#rad-019-review-items (CLN-018/027/034)؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
+      "waiting_on": "code"
     },
     {
       "id": "RAD-020",
@@ -534,9 +534,9 @@
       "title": "تحسين الواجهة بصريًا: الرسوم والألوان والخطوط",
       "status": "deferred",
       "priority": "low",
-      "description": "المالك (2026-10-17): الواجهة تعمل جيدًا وتحتاج تحسينًا بصريًا لكنه ليس أولوية. توقيته بعد RAD-062 كي يشمل شاشاته مرة واحدة (البند 8 من قرار ترتيب التنظيف)، ويبقى مؤجلًا حتى قرار المالك؛ لا يمس المشاهد وhashes. التفاصيل في مراجعة RAD-054.",
-      "source_ref": "محادثة المالك 2026-10-17؛ DECISIONS S-UI-054-1…13؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
-      "defer_reason": "قرار المالك: ليست أولوية الآن؛ تُستأنف بعد RAD-062 وقبل RAD-063 وفق البند 8 من قرار ترتيب التنظيف."
+      "description": "المتبقي التلميع البصري الشامل فقط بعد RAD-062؛ المكتبة والتدريب والثيم والرسومات انتقلت إلى RAD-066 وRAD-069 بترتيب F9. CLN-028 قبل إعادة رسم أي مشهد (البند 7). لا يمس المشاهد والبصمات دون موافقة المالك.",
+      "source_ref": "محادثة المالك 2026-10-17؛ DECISIONS S-UI-054-1…13؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
+      "defer_reason": "قرار المالك: التلميع المتبقي بعد RAD-062 وقبل RAD-063 (البند 8 معدّلًا بقرار جرد الواجهة F9)."
     },
     {
       "id": "RAD-058",
@@ -568,19 +568,19 @@
     {
       "id": "RAD-061",
       "title": "تدقيق وتنظيف الكود قبل ميزات Assess الكبيرة",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "الدفعات 1 إلى 6 وحد الوقت مدموجة (#100 و#101 و#102). CLN-042 (تثبيت wrangler والـactions) في Draft PR تنتظر مراجعة المالك؛ نتيجتا check وdeploy عليه غير مؤكدتين بعد. يبقى المؤجل بمحفّزاته: CLN-016/017/025/028 وCLN-035/036 وRAD-060 مع RAD-062 وCLN-010 ومفاتيح RAD-064 الشائعة الثمانية، والخيار (ب) لحد الوقت.",
+      "description": "الدفعات 1 إلى 6 وحد الوقت وCLN-042 مدموجة. المؤجل منقول إلى مهامه: CLN-016/017/025/028 في RAD-021/RAD-027/RAD-057 وRAD-068؛ CLN-035/036 وRAD-060 في RAD-062؛ CLN-010 والمفاتيح الشائعة الثمانية في RAD-066.",
       "source_ref": "docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md؛ docs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md؛ docs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ AGENTS.md قواعد refactor؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ .github/workflows/deploy-pages.yml؛ .github/workflows/ci.yml",
-      "waiting_on": "owner"
+      "completion_evidence": "PRs مدموجة #100 و#101 و#102 و#103 (CLN-042)؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md وdocs/RAD-061_BATCH1_REPORT_2026-10-22.md وdocs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md وdocs/RAD-061_BATCH4_REPORT_2026-10-22.md؛ الخيار (ب) لحد الوقت موثق بمحفّزاته في تقرير الدفعات. الدمج لا يثبت نتيجة deploy."
     },
     {
       "id": "RAD-062",
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "بعد جرد RAD-064 وتحقق المالك من حصص Supabase في Usage. أول خطوة تصميم الاحتفاظ والأدوار (المشرف وRLS)، ومعها RAD-060: يُنفذ مع أول migration في RAD-062؛ قائمة التكليفات لا تعرض حالة الإغلاق. ثم أداة جدول→JSON، ثم الكتابي بتصحيح الأستاذ وتطابق قريب، ثم الصور (Storage خاص)، ثم واجهة الكتابة. يشمل CLN-035/036. بالإنجليزية. لا برمجة قبل استئناف المالك.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
+      "description": "بعد UI-4 بترتيب F9 وتحقق المالك من حصص Supabase. أولًا تصميم الاحتفاظ والأدوار (المشرف وRLS) ومعه RAD-060 في أول migration. ثم أداة جدول→JSON، فالكتابي بتصحيح الأستاذ، فالصور، فواجهة الكتابة. يشمل CLN-035/036، وتنقل التبويبات الإجباري بالترتيب في Assess (F4)، وإعادة تصميم لوحة المالك. لا برمجة قبل استئناف المالك.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
       "waiting_on": "owner"
     },
     {
@@ -595,11 +595,65 @@
     {
       "id": "RAD-064",
       "title": "جرد قراءة فقط للواجهة والمحاكي قبل RAD-062",
+      "status": "done",
+      "priority": "medium",
+      "description": "جرد الواجهة والمحاكي (لقطات المالك الخاصة، EN/AR هاتفًا) مع تصنيف الملاحظات وتوقيتها، وقرارات المالك D1–D5 وF1–F11. التنفيذ في RAD-065 إلى RAD-070 بترتيب F9.",
+      "source_ref": "docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
+      "completion_evidence": "تقرير الجرد docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md (بلا روابط لقطات ولا بيانات مشاركين)؛ قرار المالك docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ توثيق فقط، لا يثبت صحة أي محتوى طبي."
+    },
+    {
+      "id": "RAD-065",
+      "title": "فرز تقرير المختص لمراجعة RAD-019 (وثائق فقط)",
+      "status": "planned",
+      "priority": "high",
+      "description": "قبل أي تغيير طبي: تسجيل كل جواب للمختص، وتصنيفه (قيمة / نص / رسم / يحتاج مصدرًا)، وتحديد ما يتغير ومتى. وثائق فقط، ولا ادعاء مصادقة سريرية (D5). الخطوة الثانية في F9.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-066",
+      "title": "UI-1: تنظيف تجربة الواجهة",
+      "status": "planned",
+      "priority": "high",
+      "description": "D1–D3: حذف العبارات والشريط؛ النص القانوني في الشروط والمصادر. دخول مستقل، واسم ≥3 كلمات عند التسجيل، وطلب اسم مرة واحدة على مستوى الحساب. الموافقة والانتظار عند الحاجة فقط؛ الخروج في القائمة الجانبية. حذف عنوان المكتبة الفرعي والفقرات المكررة؛ زر الأعلى لا يغطي المحتوى، ومفتاح لغة مدمج، وإخفاء تلميح المفاتيح باللمس. حسم CLN-010 والمفاتيح الثمانية.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-067",
+      "title": "UI-3: تخطيط المحاكي على الهاتف",
+      "status": "planned",
+      "priority": "high",
+      "description": "F3 والتنقل الحر في Practice من F4: تخطيط فقط. لا تغيير في التصحيح أو القيم أو رسم المشاهد، ولا رفع لإصدار المحرك؛ تحديث بصمات scene-dom بموافقة المالك فقط. بعد RAD-066 بترتيب F9.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-068",
+      "title": "تصحيحات المحاكي الطبية بعد الفرز",
+      "status": "planned",
+      "priority": "high",
+      "description": "بعد RAD-065: تطبيق ما قرره الفرز. توحيد الأطراف العليا (CLN-016/017/025/028) أولًا إن مسّت التصحيحات نصوصها المشتركة (البند 7). كل تغيير في التصحيح أو قيمة طبية بمصدر أو قرار مسجل ورفع إصدار المحرك وموافقة المالك.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-069",
+      "title": "UI-4: المكتبة والتدريب والثيم والرسومات",
       "status": "planned",
       "priority": "medium",
-      "description": "بعد الدفعة 6 من RAD-061 وقبل RAD-062: يمرّ المالك على كل فحص وصفحة (EN/AR، هاتف وحاسوب) ويسجّل الملاحظات؛ تصنّف الجلسة كل ملاحظة وظيفي/بصري/محاكي بصري/محاكي يمس التصحيح أو الطب، وتحدد توقيتها وفق البند 8. قراءة فقط، دون تعديل كود.",
-      "source_ref": "docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
-      "waiting_on": "owner"
+      "description": "بعد RAD-068: شبكة المكتبة (F1)، وصفحتا التدريب والنتيجة (F5)، وثيم داكن/فاتح بزر في الشريط العلوي، الافتراضي داكن ومحفوظ على الجهاز (F7)، ورسومات SVG من عمل المشروع مسجلة في سجل الأصول (F8).",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "waiting_on": "code"
+    },
+    {
+      "id": "RAD-070",
+      "title": "محرك تغيّر صورة الأشعة اللحظي مع kVp وmAs",
+      "status": "deferred",
+      "priority": "low",
+      "description": "مهمة مستقبلية (F10): تغيّر الصورة لحظيًا مع kVp وmAs. تحتاج مرجعًا ومراجعة الفيزيائي؛ لا أثر بصري مخترع.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "defer_reason": "قرار المالك F10: بعد UI-3 والتصحيحات الطبية؛ يحتاج مرجعًا ومراجعة الفيزيائي."
     }
   ]
 }
