@@ -15,7 +15,7 @@ import { comparisonVersion } from "./comparison-version";
  *  - /5: RAD-068 part 3 batch 5 (S6). The limb exams gain the wrong-projection and visible-motion critical findings; pelvis and
  *    shoulder gain visible motion. Lost required anatomy was assessed and not added.
  *  - /4: RAD-068 part 3 batch 4 (S2). Coverage and margins: a cut that takes only an anatomy-free strip no longer fails clipping, and
- *    the field opening that the ray position or the placed marker forces is not excess. Chest PA first (4a), then the limbs (4b).
+ *    the field opening that the ray position or the placed marker forces is not excess (the allowance is the extra actually needed, never added on top of the maximum margin: a fully open field stays excess). Chest PA first (4a), then the limbs (4b).
  *  - /3: RAD-068 part 3 batch 3 (S5). A missing "stay still" instruction no longer creates the critical patient-motion gate by itself;
  *    the instruction stays its own check and the assumed motion is still drawn.
  *  - /2: RAD-068 part 3 batch 2 (S3 option D). Chest Lateral: the marker letter's display half no longer fails or gates; only a

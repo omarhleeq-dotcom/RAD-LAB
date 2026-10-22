@@ -12,7 +12,7 @@ import { chestLateralErect } from "@/data/cases/chest-lateral-erect";
 import { chestPaErect } from "@/data/cases/chest-pa-erect";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
-import { fitAnatomyBox, minimalFieldAround } from "@/features/simulation/geometry";
+import { fitAnatomyBox, markerRect, minimalFieldAround, regionToRect, unionRect } from "@/features/simulation/geometry";
 import { evaluate } from "./engine";
 
 const D = chestPaErect.detector;
@@ -55,28 +55,23 @@ describe("S2 clipping: an anatomy-free strip is not lost anatomy (Chest PA)", ()
   });
 });
 
-describe("S2 excess: only the avoidable opening counts (Chest PA)", () => {
+describe("S2 excess: the allowance for what the marker or the ray forces is the extra actually required, not added to the maximum (Chest PA)", () => {
   const open = { collimation: { width: 1, height: 1 } };
-  it("a full-open field with the ray on the region and nothing forcing it is still excess", () => {
+  it("a full-open field is still excess, with or without a marker, ray centred on the region", () => {
     expect(check(run(chestPaErect, { ...open, sideMarker: null }), "collimation-excess").outcome).toBe("partial");
     expect(check(run(chestPaErect, open), "collimation-excess").outcome).toBe("partial");
   });
-  it("the opening a marker placed low needs is not excess", () => {
-    expect(check(run(chestPaErect, { ...open, markerPosition: { x: 0.84, y: 0.8 } }), "collimation-excess").outcome).toBe("pass");
+  it("a field opened exactly as far as a marker placed low needs is not excess", () => {
+    const marker = { x: 0.84, y: 0.8 };
+    const needed = neededField(chestPaErect, { ...ok, markerPosition: marker });
+    expect(check(run(chestPaErect, { markerPosition: marker, ...needed }), "collimation-excess").outcome).toBe("pass");
   });
-  it("the opening forced by an off-centre ray is not excess (centering is judged on its own)", () => {
-    const r = run(chestPaErect, { ...open, centralRay: { x: 0, y: 0.02 }, sideMarker: null }); // ≈ 3.4 cm below the target level
+  it("a field opened exactly as far as an off-centre ray forces is not excess (centering is judged on its own)", () => {
+    const ray = { x: 0, y: 0.02 }; // ≈ 3.4 cm below the target level
+    const needed = neededField(chestPaErect, { ...ok, centralRay: ray, sideMarker: null });
+    const r = run(chestPaErect, { centralRay: ray, sideMarker: null, ...needed });
     expect(check(r, "collimation-excess").outcome).toBe("pass");
     expect(check(r, "centering-vertical").outcome).not.toBe("pass");
-  });
-  it("a field opened clearly beyond what is needed is still partial, whatever the ray", () => {
-    expect(check(run(chestPaErect, { centralRay: { x: 0, y: -0.14 }, collimation: { width: 1, height: 1 }, sideMarker: null }), "collimation-excess").outcome).toBe("partial");
-  });
-  it("is opt-in: Chest Lateral and AP keep measuring the margin beyond the required region", () => {
-    const lat = { ...chestLateralErect.initialSettings, centralRay: { x: 0, y: -0.07 }, ...open, sideMarker: null };
-    expect(check(evaluate(chestLateralErect, lat as SimulationSettings), "collimation-excess").outcome).toBe("partial");
-    const ap = { ...chestApSupine.initialSettings, centralRay: { x: 0, y: -0.07 }, ...open, sideMarker: null };
-    expect(check(evaluate(chestApSupine, ap as SimulationSettings), "collimation-excess").outcome).toBe("partial");
   });
 });
 
@@ -91,29 +86,43 @@ describe("S2 geometry helpers", () => {
   });
 });
 
-describe("S2 per exam (4b: limbs after Chest PA)", () => {
+/** Settings that open the field exactly as far as the required anatomy and the placed marker need around the given ray (the smallest allowed). */
+function neededField(c: RadCase, base: SimulationSettings): Pick<SimulationSettings, "centralRay" | "collimation"> {
+  const marker = markerRect(base.markerPosition, c.positioning.markerSizeCm, c.detector);
+  const target = base.sideMarker ? unionRect(regionToRect(c.requiredAnatomy), marker) : regionToRect(c.requiredAnatomy);
+  const min = minimalFieldAround(base, target, c.detector);
+  const cx = ((base.centralRay.x + 1) / 2) * c.detector.widthCm, cy = ((base.centralRay.y + 1) / 2) * c.detector.heightCm;
+  return {
+    centralRay: base.centralRay,
+    collimation: { width: (2 * Math.max(cx - min.x1, min.x2 - cx)) / c.detector.widthCm, height: (2 * Math.max(cy - min.y1, min.y2 - cy)) / c.detector.heightCm },
+  };
+}
+
+describe("S2 per exam: a fully open field is still excess; a field opened only as needed is not", () => {
   const excessRule = (c: RadCase) => c.rules.find((r) => r.kind === "coverage" && r.check === "excess") as { beyondNeeded?: boolean } | undefined;
-  const clipRule = (c: RadCase) => c.rules.find((r) => r.kind === "coverage" && r.check === "clipping") as { landmarkBoxOnly?: boolean } | undefined;
-  it("the excess rule is opted in for Chest PA and the six limb exams, and for no other exam", () => {
-    const on = CASES.filter((c) => excessRule(c)?.beyondNeeded === true).map((c) => c.id).sort();
-    expect(on).toEqual(["ankle-ap", "ankle-lateral", "chest-pa-erect", "elbow-ap", "elbow-lateral", "foot-ap", "foot-oblique", "hand-lateral", "hand-pa", "knee-ap", "knee-lateral", "wrist-lateral", "wrist-pa"]);
+  it.each(CASES.map((c) => [c.id, c] as const))("%s", (_id, c) => {
+    if (excessRule(c)?.beyondNeeded !== true) return; // not yet opted in
+    const marker = c.positioning.markerRule?.kind === "fixed-side" ? c.positioning.markerRule.side : "L";
+    const base = { ...c.initialSettings, sideMarker: marker, markerPosition: c.positioning.defaultMarkerPosition[marker], motionInstruction: "remain-still" } as SimulationSettings;
+    const target = c.positioning.centering.target;
+    const excess = (s: SimulationSettings) => check(evaluate(c, s), "collimation-excess").outcome;
+    // The ray where the exam wants it, and a ray moved off it (the geometry then forces more opening on one side).
+    for (const ray of [target, { x: Math.max(-1, Math.min(1, target.x + 0.12)), y: Math.max(-1, Math.min(1, target.y + 0.12)) }]) {
+      const at = { ...base, centralRay: ray };
+      expect(excess({ ...at, ...neededField(c, at) }), `needed only, ray ${JSON.stringify(ray)}`).toBe("pass");
+      expect(excess({ ...at, collimation: { width: 1, height: 1 } }), `fully open, ray ${JSON.stringify(ray)}`).toBe("partial");
+      expect(excess({ ...at, sideMarker: null, collimation: { width: 1, height: 1 } }), `fully open, no marker, ray ${JSON.stringify(ray)}`).toBe("partial");
+    }
   });
-  it("the strip rule is opted in for Chest PA only: no limb region has an anatomy-free strip (the baseline box is fitted flush, < 0.01 cm)", () => {
+  it("the strip rule is opted in for Chest PA (limb baselines are fitted flush, < 0.01 cm)", () => {
+    const clipRule = (c: RadCase) => c.rules.find((r) => r.kind === "coverage" && r.check === "clipping") as { landmarkBoxOnly?: boolean } | undefined;
     expect(CASES.filter((c) => clipRule(c)?.landmarkBoxOnly === true).map((c) => c.id)).toEqual(["chest-pa-erect"]);
-    for (const c of CASES.filter((x) => x.id !== "chest-pa-erect" && x.id !== "chest-lateral-erect" && x.id !== "chest-ap-supine")) {
+    for (const c of CASES.filter((x) => !x.id.startsWith("chest"))) {
       const { landmarkCm } = fitAnatomyBox(c.radiograph, c.requiredAnatomy);
       const r = c.requiredAnatomy;
       for (const strip of [landmarkCm.x1 - r.xCm, r.xCm + r.widthCm - landmarkCm.x2, landmarkCm.y1 - r.yCm, r.yCm + r.heightCm - landmarkCm.y2]) {
         expect(Math.abs(strip), c.id).toBeLessThan(0.01);
       }
     }
-  });
-  it("a limb field at the minimal size around the ray passes whatever the ray offset forces, and an avoidable over-opening is still partial", () => {
-    const wrist = CASES.find((c) => c.id === "wrist-pa")!;
-    const t = wrist.positioning.centering.target;
-    const tight = { ...wrist.initialSettings, centralRay: t, collimation: { width: 0.5, height: 0.6 }, sideMarker: null } as SimulationSettings;
-    expect(check(evaluate(wrist, tight), "collimation-excess").outcome).toBe("pass");
-    const wide = { ...tight, collimation: { width: 1, height: 1 } } as SimulationSettings;
-    expect(check(evaluate(wrist, wide), "collimation-excess").outcome).toBe("partial");
   });
 });

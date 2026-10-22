@@ -102,10 +102,11 @@ function evalCoverage(rule: CoverageRule, s: SimulationSettings, c: RadCase): Pa
       variant: rule.variantOnClipped,
     };
   }
-  // S2: with `beyondNeeded`, only the opening beyond the smallest field centred on the ray that still covers the required
-  // anatomy and the placed marker counts: what the geometry forces or the marker needs is not excess.
+  // S2: with `beyondNeeded`, on each side the allowed margin is the larger of `maxMarginCm` and the opening that side actually
+  // needs (the smallest field centred on the ray that still covers the required anatomy and the placed marker). What the geometry
+  // forces or the marker needs is not excess, but it is never added on top of the maximum margin (owner 2026-10-22).
   const needed = rule.beyondNeeded ? neededMargins(s, c) : null;
-  const excessive = (Object.keys(margins) as (keyof typeof margins)[]).some((side) => margins[side] - (needed?.[side] ?? 0) > rule.maxMarginCm);
+  const excessive = (Object.keys(margins) as (keyof typeof margins)[]).some((side) => margins[side] > Math.max(rule.maxMarginCm, needed?.[side] ?? 0));
   return excessive
     ? { outcome: "partial", observed, feedback: rule.feedback.high ?? rule.feedback.fail }
     : { outcome: "pass", observed, feedback: rule.feedback.pass };

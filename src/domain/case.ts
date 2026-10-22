@@ -137,9 +137,10 @@ export interface CoverageRule extends RuleBase {
    */
   landmarkBoxOnly?: boolean;
   /**
-   * Excess only (S2). Absent/false = the margin is measured beyond `requiredAnatomy`. True = it is measured beyond the smallest
-   * field, centred on the actual central ray, that still covers the required anatomy and the placed marker, so an opening the
-   * geometry forces (off-centre ray) or the marker needs is not excess; only the avoidable opening is compared with `maxMarginCm`.
+   * Excess only (S2). Absent/false = the margin is measured beyond `requiredAnatomy`. True = on each side the allowed margin is the
+   * larger of `maxMarginCm` and the opening that side actually needs: the smallest field, centred on the actual central ray, that
+   * still covers the required anatomy and the placed marker. So an opening the geometry forces (off-centre ray) or the marker
+   * needs is not excess, but it is never added on top of `maxMarginCm`: a fully open field stays excess.
    */
   beyondNeeded?: boolean;
   feedback: RuleFeedback & {

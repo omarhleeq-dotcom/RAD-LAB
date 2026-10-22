@@ -32348,24 +32348,26 @@
    "ar": {
     "keys": [
      "radiograph.alt",
+     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altReference",
      "radiograph.altFindingsLead",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. لا يظهر أي خطأ محاكى في جودة الصورة: هذا هو المظهر المرجعي. النتائج الظاهرة: المنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
+    "text": "صورة أشعة صدر PA تعليمية محاكاة بُنيت من إعداداتك؛ وليست صورة تشخيصية. لا يظهر أي خطأ محاكى في جودة الصورة: هذا هو المظهر المرجعي. النتائج الظاهرة: مجال تعريض أكبر من اللازم والمنطقة المعرَّضة مزاحة بسبب إزاحة الشعاع المركزي. علامة الجانب L مرسومة في النصف الأيمن (يمين المشاهد) من الصورة."
    },
    "en": {
     "keys": [
      "radiograph.alt",
+     "radiograph.altFindings.excess-field",
      "radiograph.altFindings.centering",
      "radiograph.altReference",
      "radiograph.altFindingsLead",
      "radiograph.altMarkerPlaced",
      "radiograph.altMarkerSides.right"
     ],
-    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. No simulated image-quality fault is visible: this is the reference appearance. Visible findings: exposed area shifted by the off-centre central ray. Side marker L is drawn in the viewer's right half of the image."
+    "text": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image. No simulated image-quality fault is visible: this is the reference appearance. Visible findings: a larger exposed field and exposed area shifted by the off-centre central ray. Side marker L is drawn in the viewer's right half of the image."
    }
   },
   "checks": [
@@ -32422,16 +32424,16 @@
    },
    {
     "category": "positioning",
-    "credit": 1,
-    "drawn": false,
+    "credit": 0.5,
+    "drawn": true,
     "evidence": {
      "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
      "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
-     "en": "The field is not larger than necessary for the required anatomy."
+     "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
+     "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
     },
     "label": {
      "ar": "التحديد — حجم المجال",
@@ -32440,7 +32442,7 @@
     "notDrawnLabel": false,
     "observed": "35 × 43 cm",
     "observedKind": null,
-    "outcome": "pass",
+    "outcome": "partial",
     "ruleId": "collimation-excess",
     "scored": true,
     "variant": null,
@@ -32767,6 +32769,8 @@
    "radiograph.effects.baseline.title",
    "radiograph.effects.centering.desc",
    "radiograph.effects.centering.title",
+   "radiograph.effects.excess-field.desc",
+   "radiograph.effects.excess-field.title",
    "radiograph.effects.marker.desc",
    "radiograph.effects.marker.title",
    "result.failed",
@@ -32787,6 +32791,8 @@
    "radiograph.effects.baseline.title": "المظهر المرجعي",
    "radiograph.effects.centering.desc": "يتمركز المجال حول الشعاع المركزي، لذا يُزيح خطأ الشعاع المركزي المنطقة المعرَّضة عبر التشريح. أما التشريح نفسه فيبقى في موضعه على الكاشف.",
    "radiograph.effects.centering.title": "الشعاع المركزي غير متمركز ← المجال منزاح",
+   "radiograph.effects.excess-field.desc": "المجال الأكبر يُعرِّض ويُظهر نسيجًا أكثر. لا يُرسم أي أثر للتشتت أو التباين لأن هذا المحاكي لا يملك نموذجًا فيزيائيًا لذلك؛ والكلفة الحقيقية هي التعريض غير الضروري.",
+   "radiograph.effects.excess-field.title": "مجال تعريض أكبر",
    "radiograph.effects.marker.desc": "تُرسم علامتك حيث وضعتها على الكاشف ويقطعها المجال كأي محتوى آخر في الصورة. لا تُصحَّح نيابةً عنك.",
    "radiograph.effects.marker.title": "علامة الجانب الخاصة بك",
    "result.failed": "دون درجة النجاح التعليمية",
@@ -32807,6 +32813,8 @@
    "radiograph.effects.baseline.title": "Reference appearance",
    "radiograph.effects.centering.desc": "The field is centred on your central ray, so a central-ray error moves the exposed area across the anatomy. The anatomy itself stays where it is on the detector.",
    "radiograph.effects.centering.title": "Central ray off-centre → field shifted",
+   "radiograph.effects.excess-field.desc": "A larger field exposes and shows more tissue. No scatter or contrast penalty is drawn, because this simulator has no physical model for it; the real cost is unnecessary exposure.",
+   "radiograph.effects.excess-field.title": "Larger exposed field",
    "radiograph.effects.marker.desc": "Your marker is drawn where you placed it on the detector and is cut off by the field like any other image content. It is not corrected for you.",
    "radiograph.effects.marker.title": "Your side marker",
    "result.failed": "Below the educational pass mark",
@@ -32841,6 +32849,22 @@
      "magnitude": {
       "kind": "none",
       "note": "Reference appearance only; no effect applied."
+     }
+    },
+    {
+     "changesPixels": false,
+     "concept": {
+      "note": "Larger exposed region only; exact scatter/contrast penalty is provisional and not drawn.",
+      "reference": "Image-quality ref — Anatomical coverage and collimation",
+      "status": "educational-simplification"
+     },
+     "drivers": [
+      "geometry.fieldCm"
+     ],
+     "id": "excess-field",
+     "magnitude": {
+      "kind": "none",
+      "note": "Only a larger exposed region; no scatter / contrast penalty is drawn."
      }
     },
     {
@@ -32971,22 +32995,22 @@
     },
     {
      "category": "positioning",
-     "credit": 1,
+     "credit": 0.5,
      "evidence": {
       "note": "Principle validated; the 5 cm margin limit is provisional/configurable.",
       "reference": "§2 Coverage (avoid unnecessarily large field); §3D",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "المجال ليس أكبر من اللازم للتشريح المطلوب.",
-      "en": "The field is not larger than necessary for the required anatomy."
+      "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
+      "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
      },
      "label": {
       "ar": "التحديد — حجم المجال",
       "en": "Collimation — field size"
      },
      "observed": "35 × 43 cm",
-     "outcome": "pass",
+     "outcome": "partial",
      "ruleId": "collimation-excess",
      "scored": true,
      "weight": 1
@@ -33307,6 +33331,11 @@
     },
     "findings": [
      {
+      "category": "positioning",
+      "outcome": "partial",
+      "ruleId": "collimation-excess"
+     },
+     {
       "category": "centering",
       "outcome": "partial",
       "ruleId": "centering-vertical"
@@ -33365,8 +33394,8 @@
     "categories": [
      {
       "category": "positioning",
-      "earned": 25,
-      "ratio": 1,
+      "earned": 23.2,
+      "ratio": 0.9285714285714286,
       "weight": 25
      },
      {
@@ -33402,7 +33431,7 @@
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 96.3
+    "total": 94.5
    },
    "variants": [
     "correct"
@@ -33415,8 +33444,8 @@
    "categories": [
     {
      "category": "positioning",
-     "earned": 25,
-     "ratio": 1,
+     "earned": 23.2,
+     "ratio": 0.9285714285714286,
      "weight": 25
     },
     {
@@ -33453,7 +33482,7 @@
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 96.3,
+   "total": 94.5,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },

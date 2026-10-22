@@ -160,13 +160,11 @@ describe("centring and collimation", () => {
     expect(check(run({ centralRay: { x: 0, y: 0.6 } }), "centering-vertical").outcome).toBe("fail");
     expect(check(run({ centralRay: { x: 0.8, y: 0 } }), "centering-lateral").outcome).toBe("fail");
   });
-  it("a tight field clips the required anatomy and is drawn; a wide-open field is no longer excess when only forced / marker-needed opening remains (S2)", () => {
+  it("a tight field clips the required anatomy and is drawn; a wide-open field is excess", () => {
     const tight = run({ collimation: { width: 0.3, height: 0.3 } });
     expect(check(tight, "collimation-clipping").outcome).toBe("fail");
     expect(buildRenderPlan(tight.resultState, footOblique).effects.map((e) => e.id)).toContain("collimation-clipping");
-    // S2: the opening of a full-open field beyond what the ray position and the marker force is within this exam's margin, so it no
-    // longer scores as excess (the margin value is an owner decision; see the RAD-068 part 3 report).
-    expect(check(run({ collimation: { width: 1, height: 1 } }), "collimation-excess").outcome).toBe("pass");
+    expect(check(run({ collimation: { width: 1, height: 1 } }), "collimation-excess").outcome).not.toBe("pass");
   });
 });
 

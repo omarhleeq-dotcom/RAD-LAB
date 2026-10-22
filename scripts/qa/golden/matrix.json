@@ -655,11 +655,11 @@
   "hash": "dad1b1b197755ced"
  },
  "excess-field": {
-  "score": 96.3,
+  "score": 94.5,
   "passed": true,
   "critical": [],
   "categories": {
-   "positioning": 25,
+   "positioning": 23.2,
    "rotation": 20,
    "centering": 11.3,
    "exposure": 20,
@@ -667,6 +667,7 @@
    "breathing": 10
   },
   "outcomes": {
+   "collimation-excess": "partial",
    "centering-vertical": "partial"
   },
   "variants": [
@@ -674,6 +675,7 @@
   ],
   "effects": [
    "baseline",
+   "excess-field",
    "centering",
    "marker"
   ],
