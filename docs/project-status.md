@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064. الترتيب بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22) (F9): فرز تقرير المختص RAD-065 ← UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
-- **ينتظر المالك:** تواريخ إرسال مراجعة RAD-019 والرد عليها؛ موافقة منفصلة لكل جلسة؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
-- **ينتظر مراجِعًا بشريًا:** لا شيء جديد؛ رد المختص على RAD-019 وصل وينتظر الفرز (RAD-065). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
-- **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الجرد](RAD-064_UI_INVENTORY_REPORT_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
-- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) موثق بمحفّزاته في تقرير دفعات RAD-061)؛ تخطيط المحاكي قد يغيّر بصمات scene-dom وتحديثها بموافقة المالك فقط؛ القيم تبقى `provisional` داخليًا رغم إزالة الوسم من الواجهة (D4)، ولا ادعاء مصادقة سريرية (D5)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
+- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22). الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
+- **ينتظر المالك:** نعم/لا على بنود S في [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) قبل RAD-068؛ قائمة الصور الاختيارية؛ تواريخ إرسال مراجعة RAD-019 والرد عليها؛ موافقة منفصلة لكل جلسة؛ تحقق حصص Supabase قبل RAD-062؛ استئناف برمجة Assess.
+- **ينتظر مراجِعًا بشريًا:** لا شيء جديد. RAD-019 أُغلق دون توقيع مرخّص (تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
+- **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
+- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ تخطيط المحاكي قد يغيّر بصمات scene-dom وتحديثها بموافقة المالك فقط؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 210,
-  "updated_at": "2026-10-22T10:19:00+00:00",
+  "revision": 211,
+  "updated_at": "2026-10-22T10:20:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-071",
   "tasks": [
@@ -188,12 +188,12 @@
     },
     {
       "id": "RAD-019",
-      "title": "مراجعة المعلّم والفيزيائي الطبي لكل القيم المؤقتة والنص العربي (O5)",
-      "status": "review",
+      "title": "مراجعة القيم المؤقتة والنص العربي (O5)",
+      "status": "done",
       "priority": "high",
-      "description": "وصل رد المختص على حزمة المراجعة (F11). المتبقي: فرزه وتسجيل كل جواب في RAD-065 قبل أي تغيير طبي. تواريخ الإرسال والرد يضيفها المالك لاحقًا. ليست بوابة للجلسات (S10b-20). يُغلق عند تسجيل جواب كل بند أو تسجيل المالك تركه غير مراجَع.",
-      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#rad-019-review-items (CLN-018/027/034)؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
-      "waiting_on": "code"
+      "description": "أُغلق بقرار المالك: owner-verified with an AI-assisted research review; no licensed human sign-off; image rows left unreviewed by owner decision until confirmed. قواعد التصحيح المقترحة بنود منفصلة بموافقة المالك في RAD-068. بلا تواريخ إرسال ورد حتى يرسلها المالك. ليست بوابة للجلسات (S10b-20).",
+      "source_ref": "docs/REVIEW_PACKAGE.md؛ docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md؛ DECISIONS.md O5، S10b-20؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md#rad-019-review-items (CLN-018/027/034)؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
+      "completion_evidence": "المراجعة المحفوظة docs/RAD-019_AI_ASSISTED_REVIEW_2026-10-22.md؛ قرار المالك docs/DECISIONS.md#review-closure-owner-2026-10-22؛ تقرير الفرز وقائمة الصور docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md. توثيق فقط؛ لا مراجعة معلّم أو فيزيائي مرخّص ولا مصادقة سريرية (D5)."
     },
     {
       "id": "RAD-020",
@@ -579,7 +579,7 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "بعد UI-4 بترتيب F9 وتحقق المالك من حصص Supabase. أولًا تصميم الاحتفاظ والأدوار (المشرف وRLS) ومعه RAD-060 في أول migration. ثم أداة جدول→JSON، فالكتابي بتصحيح الأستاذ، فالصور، فواجهة الكتابة. يشمل CLN-035/036، وتنقل التبويبات الإجباري بالترتيب في Assess (F4)، وإعادة تصميم لوحة المالك. لا برمجة قبل استئناف المالك.",
+      "description": "بعد UI-4 (F9) وتحقق المالك من حصص Supabase. أولًا الاحتفاظ والأدوار (مشرف/RLS) وRAD-060 في أول migration؛ ثم جدول→JSON فالكتابي بتصحيح الأستاذ، فالصور فواجهة الكتابة. يشمل CLN-035/036 وF4 ولوحة المالك. لا برمجة قبل الاستئناف. PGlite test-time option (b) from RAD-061: reconsider if `npm test` in CI exceeds ~5 minutes or PGlite test files exceed ~40.",
       "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
       "waiting_on": "owner"
     },
@@ -604,11 +604,11 @@
     {
       "id": "RAD-065",
       "title": "فرز تقرير المختص لمراجعة RAD-019 (وثائق فقط)",
-      "status": "planned",
+      "status": "done",
       "priority": "high",
-      "description": "قبل أي تغيير طبي: تسجيل كل جواب للمختص، وتصنيفه (قيمة / نص / رسم / يحتاج مصدرًا)، وتحديد ما يتغير ومتى. وثائق فقط، ولا ادعاء مصادقة سريرية (D5). الخطوة الثانية في F9.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
-      "waiting_on": "code"
+      "description": "فرز كل صف من رد RAD-019: الحكم والفئة (T/S/R/AR/P/N) والملفات اللاحقة والخطر واستثناء S-STD-2، مع جداول بنود S وT وAR والتعارضات، ودفعات RAD-068 المقترحة، وقائمة صور اختيارية للمالك. وثائق فقط، دون تغيير كود أو قيمة.",
+      "source_ref": "docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "completion_evidence": "تقرير الفرز docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ المراجعة المحفوظة docs/RAD-019_AI_ASSISTED_REVIEW_2026-10-22.md؛ قرار المالك docs/DECISIONS.md#review-closure-owner-2026-10-22؛ توثيق فقط، لا يثبت صحة أي محتوى طبي."
     },
     {
       "id": "RAD-066",
@@ -633,8 +633,8 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "planned",
       "priority": "high",
-      "description": "بعد RAD-065: تطبيق ما قرره الفرز. توحيد الأطراف العليا (CLN-016/017/025/028) أولًا إن مسّت التصحيحات نصوصها المشتركة (البند 7). كل تغيير في التصحيح أو قيمة طبية بمصدر أو قرار مسجل ورفع إصدار المحرك وموافقة المالك.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
+      "description": "يبدأ بتوحيد الأطراف العليا (CLN-016/017/025/028، البند 7أ): الفرز يمس نصوصها المشتركة. ثم: (1) دفعة نص T+AR؛ (2) دفعات S بحسب القاعدة، كل منها بنعم المالك ورفع إصدار المحرك؛ (3) بنود R بعد قائمة الصور؛ (4) قرار علامات provisional (استثناء S-STD-2). التفاصيل في تقرير RAD-065.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
       "waiting_on": "code"
     },
     {
