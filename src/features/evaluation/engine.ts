@@ -41,9 +41,10 @@ const fmt = (n: number) => String(Math.round(n * 100) / 100);
 function evalEquals(rule: EqualsRule, s: SimulationSettings): Partial<CheckResult> {
   const value = enumSetting(s, rule.setting);
   const ok = value === rule.expected;
+  const partial = !ok && value !== undefined && (rule.partialValues ?? []).includes(value);
   const isChoice = rule.setting.startsWith("choices.");
   return {
-    outcome: ok ? "pass" : "fail",
+    outcome: ok ? "pass" : partial ? "partial" : "fail",
     observed: String(value),
     // Built-in enums are translated by the UI from their message keys; an exam-declared choice is shown as its raw id
     // (its bilingual label lives in `choiceControls`, resolved by the UI).

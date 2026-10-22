@@ -197,9 +197,12 @@ describe("visible patient motion", () => {
     expect(r.resultState.patientResponse.motion).toBe("motion");
     expect(r.variants).toContain("motion");
     const instruction = r.checks.find((c) => c.ruleId === "motion-instruction")!;
-    expect([instruction.outcome, instruction.scored]).toEqual(["fail", false]);
-    expect(r.score.passed).toBe(run({ motionInstruction: "remain-still" }).score.passed);
-    expect(r.score).toEqual(run({ motionInstruction: "remain-still" }).score);
+    // Owner follow-up (2026-10-22): the missing instruction costs the engine's partial credit in its own category, nothing else.
+    expect([instruction.outcome, instruction.credit, instruction.scored]).toEqual(["partial", 0.5, true]);
+    const still = run({ motionInstruction: "remain-still" });
+    expect(r.score.passed).toBe(still.score.passed);
+    expect(r.score.total).toBe(97.5);
+    expect(r.score.categories.filter((c) => c.category !== "breathing")).toEqual(still.score.categories.filter((c) => c.category !== "breathing"));
   });
 
   it("agrees with the renderer-facing state when the learner instructs movement (the same response drives the image and the gate)", () => {

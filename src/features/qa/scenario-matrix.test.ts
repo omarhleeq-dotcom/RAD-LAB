@@ -104,7 +104,9 @@ describe("scenario matrix: cross-scenario expectations", () => {
     }
     expect(by("rotation-pos12").result.score.categories.find((x) => x.category === "rotation")!.ratio).toBe(0);
     expect(by("sid-120").result.score.categories.find((x) => x.category === "sid")!.ratio).toBe(0);
-    expect(by("breathing-none").result.score.categories.find((x) => x.category === "breathing")!.ratio).toBe(0);
+    // The breathing category also holds the "stay still" item (passing here): the breathing instruction scores 0, the category 0.5.
+    expect(by("breathing-none").result.checks.find((k) => k.ruleId === "breathing")!.credit).toBe(0);
+    expect(by("breathing-none").result.score.categories.find((x) => x.category === "breathing")!.ratio).toBe(0.5);
     expect(by("centering-x-off").result.score.categories.find((x) => x.category === "centering")!.ratio).toBeLessThan(1);
   });
 
@@ -143,8 +145,13 @@ describe("scenario matrix: cross-scenario expectations", () => {
     expect(by("marker-none").result.criticalFindings.map((f) => f.id)).toEqual(["missing-marker"]);
   });
 
-  it("unscored checks (marker, keep-still) never change the total", () => {
-    for (const id of ["marker-none", "marker-L-wrong-side", "marker-R-wrong-side", "marker-cut-by-field", "motion-none", "motion-relax"]) {
+  it("the stay-still item costs partial credit when missing and all of it when the learner asks for movement", () => {
+    expect(score("motion-none")).toBe(97.5);
+    expect(score("motion-relax")).toBe(95);
+  });
+
+  it("unscored checks (the Chest PA marker) never change the total", () => {
+    for (const id of ["marker-none", "marker-L-wrong-side", "marker-R-wrong-side", "marker-cut-by-field"]) {
       expect(score(id), id).toBe(100);
     }
   });

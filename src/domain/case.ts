@@ -104,6 +104,12 @@ export interface EqualsRule extends RuleBase {
   setting: EnumSettingKey | ChoiceSettingKey;
   expected: string;
   variantOnFail?: ImageVariantId;
+  /**
+   * Optional: setting values (other than `expected`) that earn the engine's partial credit instead of failing, with the same
+   * feedback and `variantOnFail`. Absent = any other value fails. Used by the "stay still" instruction (owner 2026-10-22):
+   * a missing instruction (`none`) costs half the item, an instruction to move costs all of it.
+   */
+  partialValues?: string[];
 }
 
 /** Numeric setting inside an ideal band (full credit) or acceptable band (half credit). */

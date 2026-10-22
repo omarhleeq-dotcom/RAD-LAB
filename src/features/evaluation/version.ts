@@ -12,6 +12,8 @@ import { comparisonVersion } from "./comparison-version";
  * See docs/PILOT_SUPABASE_SETUP.md#practice-evaluation-version.
  *
  * Version history (newest first; each entry names the rule that changed saved outcomes):
+ *  - /6: RAD-068 part 3 batch 6 (S5 follow-up). Chest exams: a missing "stay still" instruction costs the engine's partial credit (half) inside
+ *    the breathing / instruction category, an instruction to move costs all of it; the motion gate is unchanged.
  *  - /5: RAD-068 part 3 batch 5 (S6). The limb exams gain the wrong-projection and visible-motion critical findings; pelvis and
  *    shoulder gain visible motion. Lost required anatomy was assessed and not added.
  *  - /4: RAD-068 part 3 batch 4 (S2). Coverage and margins: a cut that takes only an anatomy-free strip no longer fails clipping, and
@@ -22,7 +24,7 @@ import { comparisonVersion } from "./comparison-version";
  *    letter that differs from the side against the detector is a wrong marker.
  *  - /1: first declared identity of the evaluation contract.
  */
-export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/5";
+export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/6";
 
 // Capture provenance at evaluation time, without changing result/score JSON bytes.
 // Weak keys retain no history; clones/deserialised/unidentified results fail closed.

@@ -96,7 +96,9 @@ describe("evaluate — Adult Chest PA Erect", () => {
 
   it("fails breathing for any instruction other than deep inspiration hold", () => {
     const r = withChange({ breathing: "expiration-hold" });
-    expect(category(r, "breathing")?.ratio).toBe(0);
+    // The breathing instruction scores 0; the category also holds the "stay still" item, which passes here (ratio 0.5).
+    expect(r.checks.find((c) => c.ruleId === "breathing")?.credit).toBe(0);
+    expect(category(r, "breathing")?.ratio).toBe(0.5);
     expect(r.primaryVariant).toBe("poor-inspiration");
   });
 

@@ -416,7 +416,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -425,17 +425,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -948,7 +948,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -957,15 +957,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -1647,7 +1647,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -1656,17 +1656,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -2195,7 +2195,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -2204,15 +2204,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -2882,7 +2882,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -2891,17 +2891,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -3367,7 +3367,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -3376,15 +3376,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -3526,14 +3526,14 @@
      },
      {
       "category": "breathing",
-      "earned": 0,
-      "ratio": 0,
+      "earned": 5,
+      "ratio": 0.5,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 90
+    "total": 95
    },
    "variants": [
     "poor-inspiration"
@@ -3576,15 +3576,15 @@
     },
     {
      "category": "breathing",
-     "earned": 0,
-     "ratio": 0,
+     "earned": 5,
+     "ratio": 0.5,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 90,
+   "total": 95,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -3977,7 +3977,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -3986,17 +3986,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -4462,7 +4462,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -4471,15 +4471,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -4621,14 +4621,14 @@
      },
      {
       "category": "breathing",
-      "earned": 0,
-      "ratio": 0,
+      "earned": 5,
+      "ratio": 0.5,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 90
+    "total": 95
    },
    "variants": [
     "poor-inspiration"
@@ -4671,15 +4671,15 @@
     },
     {
      "category": "breathing",
-     "earned": 0,
-     "ratio": 0,
+     "earned": 5,
+     "ratio": 0.5,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 90,
+   "total": 95,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -5072,7 +5072,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -5081,17 +5081,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -5557,7 +5557,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -5566,15 +5566,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -5716,14 +5716,14 @@
      },
      {
       "category": "breathing",
-      "earned": 0,
-      "ratio": 0,
+      "earned": 5,
+      "ratio": 0.5,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 90
+    "total": 95
    },
    "variants": [
     "poor-inspiration"
@@ -5766,15 +5766,15 @@
     },
     {
      "category": "breathing",
-     "earned": 0,
-     "ratio": 0,
+     "earned": 5,
+     "ratio": 0.5,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 90,
+   "total": 95,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -6169,7 +6169,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -6178,17 +6178,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -6672,7 +6672,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -6681,15 +6681,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -7283,7 +7283,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -7292,17 +7292,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -7786,7 +7786,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -7795,15 +7795,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -8399,7 +8399,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -8408,17 +8408,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -8910,7 +8910,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -8919,15 +8919,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -9531,7 +9531,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -9540,17 +9540,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -10042,7 +10042,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -10051,15 +10051,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -10659,7 +10659,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -10668,17 +10668,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -11142,7 +11142,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -11151,15 +11151,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -11756,7 +11756,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -11765,17 +11765,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -12267,7 +12267,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -12276,15 +12276,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -12888,7 +12888,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -12897,17 +12897,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -13399,7 +13399,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -13408,15 +13408,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -14020,7 +14020,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -14029,17 +14029,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -14506,7 +14506,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -14515,15 +14515,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -15114,7 +15114,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -15123,17 +15123,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -15628,7 +15628,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -15637,15 +15637,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -16252,7 +16252,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -16261,17 +16261,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -16766,7 +16766,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -16775,15 +16775,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -17418,7 +17418,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -17427,17 +17427,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -17951,7 +17951,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -17960,15 +17960,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -18638,29 +18638,29 @@
    },
    {
     "category": "breathing",
-    "credit": 0,
+    "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "none",
     "observedKind": "motionInstruction",
-    "outcome": "fail",
+    "outcome": "partial",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": "motion",
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -18742,7 +18742,7 @@
    "radiograph.effects.rotation.title": "الدوران ← عدم تناظر الصدر",
    "radiograph.effects.scapulae.desc": "يتراكب لوحان تخطيطيان على الحقلين الرئويين الجانبيين ويحجبان نسيج الرئة. تدوير الكتفين للأمام يُبعد اللوحين عن الحقلين الرئويين (معيار شائع لجودة صورة صدر PA). التراكب رسم تخطيطي وليس لوحًا حقيقيًا من الصورة المرجعية.",
    "radiograph.effects.scapulae.title": "الكتفان غير مدوَّرين للأمام ← اللوحان فوق الرئتين",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (19.1) وأوزان الفئات لا تتغير.",
+   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (21.6) وأوزان الفئات لا تتغير.",
    "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notDrawn": "تُحتسب من إعداداتك — غير مرسومة في هذه الصورة",
@@ -18792,7 +18792,7 @@
    "radiograph.effects.rotation.title": "Rotation → thoracic asymmetry",
    "radiograph.effects.scapulae.desc": "Schematic scapulae overlap the lateral lung fields and hide lung tissue. Rolling the shoulders forward moves the scapulae out of the lung fields (a common PA chest quality criterion). The overlay is a schematic, not a real scapula from the reference image.",
    "radiograph.effects.scapulae.title": "Shoulders not rolled forward → scapulae over the lungs",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (19.1) and the category weights are unchanged.",
+   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (21.6) and the category weights are unchanged.",
    "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notDrawn": "Scored from your settings — not drawn in this image",
@@ -19386,27 +19386,27 @@
     },
     {
      "category": "breathing",
-     "credit": 0,
+     "credit": 0.5,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "none",
      "observedKind": "motionInstruction",
-     "outcome": "fail",
+     "outcome": "partial",
      "ruleId": "motion-instruction",
-     "scored": false,
+     "scored": true,
      "variant": "motion",
-     "weight": 0
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -19567,7 +19567,7 @@
      },
      {
       "category": "breathing",
-      "outcome": "fail",
+      "outcome": "partial",
       "ruleId": "motion-instruction",
       "variant": "motion"
      }
@@ -19666,14 +19666,14 @@
      },
      {
       "category": "breathing",
-      "earned": 0,
-      "ratio": 0,
+      "earned": 2.5,
+      "ratio": 0.25,
       "weight": 10
      }
     ],
     "passed": false,
     "thresholdMet": false,
-    "total": 19.1
+    "total": 21.6
    },
    "variants": [
     "wrong-projection",
@@ -19734,8 +19734,8 @@
     },
     {
      "category": "breathing",
-     "earned": 0,
-     "ratio": 0,
+     "earned": 2.5,
+     "ratio": 0.25,
      "weight": 10
     }
    ],
@@ -19785,7 +19785,7 @@
    ],
    "passed": false,
    "thresholdMet": false,
-   "total": 19.1,
+   "total": 21.6,
    "verdictLabel": "below-educational-pass-mark"
   }
  },
@@ -20180,7 +20180,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -20189,17 +20189,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -20700,7 +20700,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -20709,15 +20709,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -21365,7 +21365,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -21374,17 +21374,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -21884,7 +21884,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -21893,15 +21893,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -22505,7 +22505,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -22514,17 +22514,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -23014,7 +23014,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -23023,15 +23023,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -23635,7 +23635,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -23644,17 +23644,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -24134,7 +24134,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -24143,15 +24143,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -24799,29 +24799,29 @@
    },
    {
     "category": "breathing",
-    "credit": 0,
+    "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "none",
     "observedKind": "motionInstruction",
-    "outcome": "fail",
+    "outcome": "partial",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": "motion",
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -24844,6 +24844,7 @@
    "result.failed",
    "result.notScored",
    "result.outcome.fail",
+   "result.outcome.partial",
    "result.outcome.pass",
    "result.passed",
    "result.variants.chin-overlap",
@@ -24871,6 +24872,7 @@
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
    "result.outcome.fail": "خاطئ",
+   "result.outcome.partial": "صحيح جزئيًا",
    "result.outcome.pass": "صحيح",
    "result.passed": "يبلغ درجة النجاح التعليمية",
    "result.variants.chin-overlap": "الذقن ظاهرة فوق قمم الرئتين",
@@ -24898,6 +24900,7 @@
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
    "result.outcome.fail": "Incorrect",
+   "result.outcome.partial": "Partly correct",
    "result.outcome.pass": "Correct",
    "result.passed": "Meets the educational pass mark",
    "result.variants.chin-overlap": "Chin projected over the lung apices",
@@ -25365,27 +25368,27 @@
     },
     {
      "category": "breathing",
-     "credit": 0,
+     "credit": 0.5,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "none",
      "observedKind": "motionInstruction",
-     "outcome": "fail",
+     "outcome": "partial",
      "ruleId": "motion-instruction",
-     "scored": false,
+     "scored": true,
      "variant": "motion",
-     "weight": 0
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -25457,7 +25460,7 @@
      },
      {
       "category": "breathing",
-      "outcome": "fail",
+      "outcome": "partial",
       "ruleId": "motion-instruction",
       "variant": "motion"
      }
@@ -25548,14 +25551,14 @@
      },
      {
       "category": "breathing",
-      "earned": 0,
-      "ratio": 0,
+      "earned": 2.5,
+      "ratio": 0.25,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 82.9
+    "total": 85.4
    },
    "variants": [
     "chin-overlap",
@@ -25604,15 +25607,15 @@
     },
     {
      "category": "breathing",
-     "earned": 0,
-     "ratio": 0,
+     "earned": 2.5,
+     "ratio": 0.25,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 82.9,
+   "total": 85.4,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -26011,7 +26014,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -26020,17 +26023,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -26553,7 +26556,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -26562,15 +26565,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -27181,7 +27184,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -27190,17 +27193,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -27698,7 +27701,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -27707,15 +27710,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -28315,7 +28318,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -28324,17 +28327,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -28792,7 +28795,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -28801,15 +28804,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -29393,7 +29396,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -29402,17 +29405,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -29870,7 +29873,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -29879,15 +29882,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -30497,7 +30500,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -30506,17 +30509,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -30996,7 +30999,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -31005,15 +31008,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -31652,7 +31655,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -31661,17 +31664,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -32129,7 +32132,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -32138,15 +32141,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -32736,7 +32739,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -32745,17 +32748,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -33261,7 +33264,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -33270,15 +33273,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -33892,29 +33895,29 @@
    },
    {
     "category": "breathing",
-    "credit": 0,
+    "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "none",
     "observedKind": "motionInstruction",
-    "outcome": "fail",
+    "outcome": "partial",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": "motion",
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -33992,7 +33995,7 @@
    "radiograph.effects.rotation.title": "الدوران ← عدم تناظر الصدر",
    "radiograph.effects.scapulae.desc": "يتراكب لوحان تخطيطيان على الحقلين الرئويين الجانبيين ويحجبان نسيج الرئة. تدوير الكتفين للأمام يُبعد اللوحين عن الحقلين الرئويين (معيار شائع لجودة صورة صدر PA). التراكب رسم تخطيطي وليس لوحًا حقيقيًا من الصورة المرجعية.",
    "radiograph.effects.scapulae.title": "الكتفان غير مدوَّرين للأمام ← اللوحان فوق الرئتين",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (15.6) وأوزان الفئات لا تتغير.",
+   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (18.1) وأوزان الفئات لا تتغير.",
    "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notDrawn": "تُحتسب من إعداداتك — غير مرسومة في هذه الصورة",
@@ -34040,7 +34043,7 @@
    "radiograph.effects.rotation.title": "Rotation → thoracic asymmetry",
    "radiograph.effects.scapulae.desc": "Schematic scapulae overlap the lateral lung fields and hide lung tissue. Rolling the shoulders forward moves the scapulae out of the lung fields (a common PA chest quality criterion). The overlay is a schematic, not a real scapula from the reference image.",
    "radiograph.effects.scapulae.title": "Shoulders not rolled forward → scapulae over the lungs",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (15.6) and the category weights are unchanged.",
+   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (18.1) and the category weights are unchanged.",
    "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notDrawn": "Scored from your settings — not drawn in this image",
@@ -34610,27 +34613,27 @@
     },
     {
      "category": "breathing",
-     "credit": 0,
+     "credit": 0.5,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "none",
      "observedKind": "motionInstruction",
-     "outcome": "fail",
+     "outcome": "partial",
      "ruleId": "motion-instruction",
-     "scored": false,
+     "scored": true,
      "variant": "motion",
-     "weight": 0
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -34796,7 +34799,7 @@
      },
      {
       "category": "breathing",
-      "outcome": "fail",
+      "outcome": "partial",
       "ruleId": "motion-instruction",
       "variant": "motion"
      }
@@ -34852,8 +34855,8 @@
      "low-penetration",
      "magnified-geometry",
      "poor-inspiration",
-     "motion",
-     "excess-exposure"
+     "excess-exposure",
+     "motion"
     ]
    },
    "score": {
@@ -34890,14 +34893,14 @@
      },
      {
       "category": "breathing",
-      "earned": 0,
-      "ratio": 0,
+      "earned": 2.5,
+      "ratio": 0.25,
       "weight": 10
      }
     ],
     "passed": false,
     "thresholdMet": false,
-    "total": 15.6
+    "total": 18.1
    },
    "variants": [
     "wrong-projection",
@@ -34908,8 +34911,8 @@
     "low-penetration",
     "magnified-geometry",
     "poor-inspiration",
-    "motion",
-    "excess-exposure"
+    "excess-exposure",
+    "motion"
    ]
   },
   "variants": [
@@ -34921,8 +34924,8 @@
    "low-penetration",
    "magnified-geometry",
    "poor-inspiration",
-   "motion",
-   "excess-exposure"
+   "excess-exposure",
+   "motion"
   ],
   "verdict": {
    "categories": [
@@ -34958,8 +34961,8 @@
     },
     {
      "category": "breathing",
-     "earned": 0,
-     "ratio": 0,
+     "earned": 2.5,
+     "ratio": 0.25,
      "weight": 10
     }
    ],
@@ -35009,7 +35012,7 @@
    ],
    "passed": false,
    "thresholdMet": false,
-   "total": 15.6,
+   "total": 18.1,
    "verdictLabel": "below-educational-pass-mark"
   }
  },
@@ -35402,7 +35405,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -35411,17 +35414,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -35888,7 +35891,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -35897,15 +35900,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -36505,7 +36508,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -36514,17 +36517,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -37015,7 +37018,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -37024,15 +37027,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -37630,7 +37633,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -37639,17 +37642,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -38113,7 +38116,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -38122,15 +38125,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -38723,7 +38726,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -38732,17 +38735,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -39209,7 +39212,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -39218,15 +39221,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -39862,7 +39865,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -39871,17 +39874,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -40348,7 +40351,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -40357,15 +40360,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -41001,7 +41004,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -41010,17 +41013,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -41481,7 +41484,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -41490,15 +41493,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -42086,7 +42089,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -42095,17 +42098,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -42539,7 +42542,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -42548,15 +42551,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -43188,7 +43191,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -43197,17 +43200,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -43698,7 +43701,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -43707,15 +43710,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -44310,7 +44313,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -44319,17 +44322,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -44820,7 +44823,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -44829,15 +44832,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -45430,7 +45433,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -45439,17 +45442,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -45913,7 +45916,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -45922,15 +45925,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -46523,7 +46526,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -46532,17 +46535,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -47006,7 +47009,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -47015,15 +47018,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -47613,29 +47616,29 @@
    },
    {
     "category": "breathing",
-    "credit": 0,
+    "credit": 0.5,
     "drawn": true,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "none",
     "observedKind": "motionInstruction",
-    "outcome": "fail",
+    "outcome": "partial",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": "motion",
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -47651,7 +47654,7 @@
    "radiograph.effects.motion.title",
    "result.failed",
    "result.notScored",
-   "result.outcome.fail",
+   "result.outcome.partial",
    "result.outcome.pass",
    "result.passed",
    "result.variants.motion"
@@ -47669,7 +47672,7 @@
    "radiograph.effects.motion.title": "حركة المريض ← فقدان الحدّة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
-   "result.outcome.fail": "خاطئ",
+   "result.outcome.partial": "صحيح جزئيًا",
    "result.outcome.pass": "صحيح",
    "result.passed": "يبلغ درجة النجاح التعليمية",
    "result.variants.motion": "حركة المريض — فقدان الحدّة"
@@ -47687,7 +47690,7 @@
    "radiograph.effects.motion.title": "Patient movement → loss of sharpness",
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
-   "result.outcome.fail": "Incorrect",
+   "result.outcome.partial": "Partly correct",
    "result.outcome.pass": "Correct",
    "result.passed": "Meets the educational pass mark",
    "result.variants.motion": "Patient motion — loss of sharpness"
@@ -48099,27 +48102,27 @@
     },
     {
      "category": "breathing",
-     "credit": 0,
+     "credit": 0.5,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "none",
      "observedKind": "motionInstruction",
-     "outcome": "fail",
+     "outcome": "partial",
      "ruleId": "motion-instruction",
-     "scored": false,
+     "scored": true,
      "variant": "motion",
-     "weight": 0
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -48173,7 +48176,7 @@
     "findings": [
      {
       "category": "breathing",
-      "outcome": "fail",
+      "outcome": "partial",
       "ruleId": "motion-instruction",
       "variant": "motion"
      }
@@ -48261,14 +48264,14 @@
      },
      {
       "category": "breathing",
-      "earned": 10,
-      "ratio": 1,
+      "earned": 7.5,
+      "ratio": 0.75,
       "weight": 10
      }
     ],
     "passed": true,
     "thresholdMet": true,
-    "total": 100
+    "total": 97.5
    },
    "variants": [
     "motion"
@@ -48311,15 +48314,15 @@
     },
     {
      "category": "breathing",
-     "earned": 10,
-     "ratio": 1,
+     "earned": 7.5,
+     "ratio": 0.75,
      "weight": 10
     }
    ],
    "criticalFindings": [],
    "passed": true,
    "thresholdMet": true,
-   "total": 100,
+   "total": 97.5,
    "verdictLabel": "meets-educational-pass-mark"
   }
  },
@@ -48712,26 +48715,26 @@
     "credit": 0,
     "drawn": true,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+     "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+     "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "relax-and-move",
     "observedKind": "motionInstruction",
     "outcome": "fail",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": "motion",
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -48765,7 +48768,7 @@
    "radiograph.effects.marker.title": "علامة الجانب الخاصة بك",
    "radiograph.effects.motion.desc": "لأن تعليمات الثبات غابت أو كانت خاطئة، تحركت المريضة المحاكاة: الحواف ضبابية. حجم الضبابية تقريب تعليمي وليس مسافة حركة.",
    "radiograph.effects.motion.title": "حركة المريض ← فقدان الحدّة",
-   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (100) وأوزان الفئات لا تتغير.",
+   "result.criticalNote": "أي ملاحظة حرجة تجعل النتيجة «دون درجة النجاح التعليمية» مهما كانت الدرجة الرقمية. وهي خطأ مهم يجب تصحيحه في التدريب وليست قرارًا سريريًا بشأن الصورة. الدرجة الرقمية (95) وأوزان الفئات لا تتغير.",
    "result.criticalTitle": "ملاحظات حرجة",
    "result.failed": "دون درجة النجاح التعليمية",
    "result.notScored": "غير محسوبة",
@@ -48785,7 +48788,7 @@
    "radiograph.effects.marker.title": "Your side marker",
    "radiograph.effects.motion.desc": "Because the stay-still instruction was missing or wrong, the simulated patient moved: edges are blurred. The blur size is an educational approximation, not a movement distance.",
    "radiograph.effects.motion.title": "Patient movement → loss of sharpness",
-   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (100) and the category weights are unchanged.",
+   "result.criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score (95) and the category weights are unchanged.",
    "result.criticalTitle": "Critical findings",
    "result.failed": "Below the educational pass mark",
    "result.notScored": "not scored",
@@ -49203,25 +49206,25 @@
      "category": "breathing",
      "credit": 0,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس.",
-      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction."
+      "ar": "لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فيتحرك المريض أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل الدقيقة. اطلب من المريض الثبات مع تعليمات التنفس. عدم الطلب يكلّف نصف درجة هذا البند، وطلب الحركة يكلّف درجته كلها ويمنع النجاح أيضًا.",
+      "en": "The patient was not clearly asked to stay still, so in this simulation the patient moves during the exposure. Movement causes a loss of sharpness (blur) that can hide fine detail. Ask the patient to stay still, together with the breathing instruction. Not asking costs half of this item's credit; asking the patient to move costs all of it and also gates the pass mark."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "relax-and-move",
      "observedKind": "motionInstruction",
      "outcome": "fail",
      "ruleId": "motion-instruction",
-     "scored": false,
+     "scored": true,
      "variant": "motion",
-     "weight": 0
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -49385,14 +49388,14 @@
      },
      {
       "category": "breathing",
-      "earned": 10,
-      "ratio": 1,
+      "earned": 5,
+      "ratio": 0.5,
       "weight": 10
      }
     ],
     "passed": false,
     "thresholdMet": true,
-    "total": 100
+    "total": 95
    },
    "variants": [
     "motion"
@@ -49435,8 +49438,8 @@
     },
     {
      "category": "breathing",
-     "earned": 10,
-     "ratio": 1,
+     "earned": 5,
+     "ratio": 0.5,
      "weight": 10
     }
    ],
@@ -49465,7 +49468,7 @@
    ],
    "passed": false,
    "thresholdMet": true,
-   "total": 100,
+   "total": 95,
    "verdictLabel": "below-educational-pass-mark"
   }
  },
@@ -49858,7 +49861,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -49867,17 +49870,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -50347,7 +50350,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -50356,15 +50359,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -51001,7 +51004,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -51010,17 +51013,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -51490,7 +51493,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -51499,15 +51502,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [
@@ -52144,7 +52147,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -52153,17 +52156,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -52632,7 +52635,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -52641,15 +52644,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -53242,7 +53245,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -53251,17 +53254,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -53730,7 +53733,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -53739,15 +53742,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -54340,7 +54343,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -54349,17 +54352,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -54828,7 +54831,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -54837,15 +54840,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -55438,7 +55441,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -55447,17 +55450,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -55926,7 +55929,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -55935,15 +55938,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -56536,7 +56539,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -56545,17 +56548,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -57019,7 +57022,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -57028,15 +57031,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -57631,7 +57634,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -57640,17 +57643,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -58148,7 +58151,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -58157,15 +58160,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -58769,7 +58772,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -58778,17 +58781,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -59283,7 +59286,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -59292,15 +59295,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],
@@ -59902,7 +59905,7 @@
     "credit": 1,
     "drawn": false,
     "evidence": {
-     "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+     "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
      "reference": "Image-quality ref (Motion)",
      "status": "educational-simplification"
     },
@@ -59911,17 +59914,17 @@
      "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
     },
     "label": {
-     "ar": "تعليمات الثبات (غير محسوبة)",
-     "en": "Instruction to stay still (not scored)"
+     "ar": "تعليمات الثبات",
+     "en": "Instruction to stay still"
     },
     "notDrawnLabel": false,
     "observed": "remain-still",
     "observedKind": "motionInstruction",
     "outcome": "pass",
     "ruleId": "motion-instruction",
-    "scored": false,
+    "scored": true,
     "variant": null,
-    "weight": 0
+    "weight": 1
    }
   ],
   "messageKeys": [
@@ -60388,7 +60391,7 @@
      "category": "breathing",
      "credit": 1,
      "evidence": {
-      "note": "VALIDATED: patient/respiratory motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored; no instruction-quality rule exists in the references.",
+      "note": "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Scored with the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       "reference": "Image-quality ref (Motion)",
       "status": "educational-simplification"
      },
@@ -60397,15 +60400,15 @@
       "en": "You asked the patient to stay still. In this simulation a cooperative patient then holds still, so the image is not blurred by movement."
      },
      "label": {
-      "ar": "تعليمات الثبات (غير محسوبة)",
-      "en": "Instruction to stay still (not scored)"
+      "ar": "تعليمات الثبات",
+      "en": "Instruction to stay still"
      },
      "observed": "remain-still",
      "observedKind": "motionInstruction",
      "outcome": "pass",
      "ruleId": "motion-instruction",
-     "scored": false,
-     "weight": 0
+     "scored": true,
+     "weight": 1
     }
    ],
    "criticalFindings": [],

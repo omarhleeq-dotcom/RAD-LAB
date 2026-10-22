@@ -113,23 +113,26 @@ describe("scoring integration is conservative", () => {
     expect(chestPaErect.scoring.categoryWeights).toEqual({ positioning: 25, rotation: 20, centering: 15, exposure: 20, sid: 10, breathing: 10 });
   });
 
-  it("the remain-still instruction never changes the NUMERIC score (an instruction to move can trigger the critical-finding gate; a missing one cannot, S5)", () => {
+  it("the stay-still instruction is scored inside the breathing category only: a missing one costs the partial credit, an instruction to move all of it, and only the latter gates (S5)", () => {
     const base = evaluate(chestPaErect, ideal);
     expect(base.score.total).toBe(100);
     expect(base.score.passed).toBe(true);
     for (const m of ["none", "relax-and-move"] as const) {
       const r = evaluate(chestPaErect, { ...ideal, motionInstruction: m });
-      expect(r.score.total).toBe(base.score.total);
-      expect(r.score.categories).toEqual(base.score.categories);
+      // Breathing category weight 10 shared equally by the breathing and the stay-still items: partial costs 2.5, fail costs 5.
+      expect(r.score.total).toBe(m === "none" ? 97.5 : 95);
+      expect(r.score.categories.filter((c) => c.category !== "breathing")).toEqual(base.score.categories.filter((c) => c.category !== "breathing"));
+      expect(r.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(m === "none" ? 0.75 : 0.5);
       expect(r.score.thresholdMet).toBe(true);
       // Motion after an instruction to move is a critical finding: below the pass mark despite the unchanged 100.
       // A missing instruction (S5) leaves the attempt passing: the assumed motion is drawn, not gated.
       expect(r.score.passed).toBe(m === "none");
       expect(r.criticalFindings.map((f) => f.id)).toEqual(m === "none" ? [] : ["patient-motion"]);
       const check = r.checks.find((c) => c.ruleId === "motion-instruction")!;
-      expect(check.outcome).toBe("fail");
-      expect(check.scored).toBe(false);
-      expect(check.weight).toBe(0);
+      expect(check.outcome).toBe(m === "none" ? "partial" : "fail");
+      expect(check.credit).toBe(m === "none" ? 0.5 : 0);
+      expect(check.scored).toBe(true);
+      expect(check.weight).toBe(1);
       expect(r.variants).toContain("motion");
     }
     expect(base.checks.find((c) => c.ruleId === "motion-instruction")?.outcome).toBe("pass");
@@ -137,7 +140,8 @@ describe("scoring integration is conservative", () => {
 
   it("the breathing instruction is still scored exactly as before and gives the reduced-inspiration variant", () => {
     const r = evaluate(chestPaErect, { ...ideal, breathing: "expiration-hold" });
-    expect(r.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(0);
+    expect(r.checks.find((c) => c.ruleId === "breathing")?.credit).toBe(0);
+    expect(r.score.categories.find((c) => c.category === "breathing")?.ratio).toBe(0.5); // the passing "stay still" item shares the category
     expect(r.variants).toContain("poor-inspiration");
     expect(r.resultState.patientResponse.inspiration).toBe("reduced");
   });
