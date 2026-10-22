@@ -22,7 +22,7 @@ export const chestLateralAdultDemo: CaseDefinition = {
     sex: "female",
     description: {
       en: "21-year-old female, ambulant, able to stand, raise both arms and follow breathing instructions.",
-      ar: "أنثى عمرها ٢١ عامًا، قادرة على المشي والوقوف ورفع الذراعين واتباع تعليمات التنفس.",
+      ar: "أنثى عمرها ٢١ عامًا، قادرة على الوقوف ورفع الذراعين واتباع تعليمات التنفس.",
     },
   },
   clinicalScenario: {
@@ -40,7 +40,7 @@ export const chestLateralAdultDemo: CaseDefinition = {
   patientTechnique: {
     attenuation: 1,
     attenuationByProjection: { "lateral-left": 2 },
-    label: { en: "Average adult (lateral path about 2× the PA exposure; provisional)", ar: "بالغ متوسط (مسار جانبي نحو ضعف تعريض PA؛ مؤقت)" },
+    label: { en: "Average adult (lateral path about 2× the PA exposure; teaching value)", ar: "بالغ متوسط (مسار جانبي نحو ضعف تعريض PA؛ قيمة تعليمية)" },
     evidence: {
       status: "provisional",
       reference: "S10b-9; WHO-TECH p.6-7; EC16260 p.21",

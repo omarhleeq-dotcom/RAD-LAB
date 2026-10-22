@@ -1,7 +1,7 @@
 /**
  * Critical findings (Session 5 fix pass). Pure and deterministic.
  *
- * A critical finding is one that would get a radiograph rejected / repeated in practice (concept: a COMMON QUALITY
+ * A critical finding is an important error that must be corrected in training (concept: a COMMON QUALITY
  * CRITERION). Each one that is present forces "below the educational pass mark", REGARDLESS of the numeric score.
  * They are a gate on `score.passed` only: the numeric total, the checks' credits and every category weight
  * (set per exam in its scoring categories) are unchanged. The gating itself is a PROVISIONAL / educational implementation.

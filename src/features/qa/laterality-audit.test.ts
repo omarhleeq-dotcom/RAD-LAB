@@ -55,7 +55,7 @@ describe("laterality audit", () => {
         if (mentions.length === 0) continue;
         if (rule.id === "side-marker") continue; // explains the convention explicitly
         expect(en, rule.id).toMatch(/detector view|viewer/);
-        expect(text.ar, rule.id).toMatch(/عرض الكاسيت|المشاهد/);
+        expect(text.ar, rule.id).toMatch(/عرض الكاشف|المشاهد/);
         expect(en, rule.id).not.toMatch(/patient'?s? (left|right)/);
       }
     }

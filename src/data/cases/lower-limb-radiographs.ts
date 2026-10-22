@@ -43,8 +43,8 @@ export const KNEE_AP_RADIOGRAPH: RadiographAssetSpec = {
   projection: "knee-ap",
   registryIds: ["A-022", "A-023"],
   credit: credit(
-    "Reference radiograph: a normal adult right knee, AP, Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text burned into the original was removed (a fill). A real right knee (a 31-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
-    "الصورة المرجعية: ركبة يمنى طبيعية لشخص بالغ، إسقاط AP، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية المطبوعة على الصورة الأصلية (بملء). ركبة يمنى حقيقية (ذكر عمره 31 عامًا بحسب وصف الملف) تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+    "Reference radiograph: an adult right knee (the source description mentions no trauma), AP, Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text burned into the original was removed (a fill). A real right knee (a 31-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: ركبة يمنى لشخص بالغ (لا تظهر إصابة في وصف المصدر)، إسقاط AP، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية المطبوعة على الصورة الأصلية (بملء). ركبة يمنى حقيقية (ذكر عمره 31 عامًا بحسب وصف الملف) تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
   ),
   ...common("knee-ap"),
   // the femoral condyles and the tibial plateau (rows ≈ 520–1050 of 1913): the dense zone that low penetration makes less visible.
@@ -65,8 +65,8 @@ export const KNEE_LATERAL_RADIOGRAPH: RadiographAssetSpec = {
   projection: "knee-lateral",
   registryIds: ["A-024", "A-025"],
   credit: credit(
-    "Reference radiograph: a normal adult right knee, lateral, Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text burned into the original was removed (a fill). A real right knee (a 31-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
-    "الصورة المرجعية: ركبة يمنى طبيعية لشخص بالغ، إسقاط جانبي، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية المطبوعة على الصورة الأصلية (بملء). ركبة يمنى حقيقية (ذكر عمره 31 عامًا بحسب وصف الملف) تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+    "Reference radiograph: an adult right knee (the source description mentions no trauma), lateral, Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text burned into the original was removed (a fill). A real right knee (a 31-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: ركبة يمنى لشخص بالغ (لا تظهر إصابة في وصف المصدر)، إسقاط جانبي، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية المطبوعة على الصورة الأصلية (بملء). ركبة يمنى حقيقية (ذكر عمره 31 عامًا بحسب وصف الملف) تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
   ),
   ...common("knee-lateral"),
   denseZones: [zone(0.48, 0.38, 0.28, 0.13)],
@@ -90,8 +90,8 @@ export const FOOT_AP_RADIOGRAPH: RadiographAssetSpec = {
   projection: "foot-ap",
   registryIds: ["A-026", "A-027"],
   credit: credit(
-    "Reference radiograph: a normal adult right foot, AP (dorsoplantar), Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text burned into the original was removed (a fill). A real right foot used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
-    "الصورة المرجعية: قدم يمنى طبيعية لشخص بالغ، إسقاط AP (ظهري أخمصي)، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية المطبوعة على الصورة الأصلية (بملء). قدم يمنى حقيقية تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+    "Reference radiograph: an adult right foot (the source description mentions no trauma), AP (dorsoplantar), Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text burned into the original was removed (a fill). A real right foot used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: قدم يمنى لشخص بالغ (لا تظهر إصابة في وصف المصدر)، إسقاط AP (ظهري أخمصي)، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية المطبوعة على الصورة الأصلية (بملء). قدم يمنى حقيقية تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
   ),
   ...common("foot-ap"),
   // the tarsal bones (rows ≈ 1500–2300 of 2405).
@@ -115,8 +115,8 @@ export const FOOT_OBLIQUE_RADIOGRAPH: RadiographAssetSpec = {
   projection: "foot-oblique",
   registryIds: ["A-028", "A-029"],
   credit: credit(
-    "Reference radiograph: a normal adult right foot, AP medial oblique, Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text, a small mark and a frame line at the bottom edge burned into the original were removed (a fill and a crop). A real right foot used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
-    "الصورة المرجعية: قدم يمنى طبيعية لشخص بالغ، إسقاط AP المائل الإنسي، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية وعلامة صغيرة وخط إطار عند الحافة السفلية كانت مطبوعة على الصورة الأصلية (بملء وقص). قدم يمنى حقيقية تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+    "Reference radiograph: an adult right foot (the source description mentions no trauma), AP medial oblique, Mikael Häggström, M.D., Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The side text, a small mark and a frame line at the bottom edge burned into the original were removed (a fill and a crop). A real right foot used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: قدم يمنى لشخص بالغ (لا تظهر إصابة في وصف المصدر)، إسقاط AP المائل الإنسي، Mikael Häggström, M.D.، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُزيلت الكتابة الجانبية وعلامة صغيرة وخط إطار عند الحافة السفلية كانت مطبوعة على الصورة الأصلية (بملء وقص). قدم يمنى حقيقية تُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
   ),
   ...common("foot-oblique"),
   denseZones: [zone(0.5, 0.85, 0.4, 0.12)],
@@ -139,8 +139,8 @@ export const ANKLE_AP_RADIOGRAPH: RadiographAssetSpec = {
   projection: "ankle-ap",
   registryIds: ["A-030", "A-031"],
   credit: credit(
-    "Reference radiograph: a normal adult ankle, AP (frontal), Mikael Häggström, Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The edge artefacts of the original were repaired. A real ankle (a 24-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
-    "الصورة المرجعية: كاحل طبيعي لشخص بالغ، إسقاط AP (أمامي)، Mikael Häggström، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُصلحت عيوب الحواف في الصورة الأصلية. كاحل حقيقي (ذكر عمره 24 عامًا بحسب وصف الملف) يُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+    "Reference radiograph: an adult ankle (the source description mentions no trauma), AP (frontal), Mikael Häggström, Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The edge artefacts of the original were repaired. A real ankle (a 24-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: كاحل لشخص بالغ (لا تظهر إصابة في وصف المصدر)، إسقاط AP (أمامي)، Mikael Häggström، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُصلحت عيوب الحواف في الصورة الأصلية. كاحل حقيقي (ذكر عمره 24 عامًا بحسب وصف الملف) يُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
   ),
   ...common("ankle-ap"),
   // the talus and the upper calcaneus (rows ≈ 1100–1631 of 1631): the dense zone that low penetration makes less visible.
@@ -161,8 +161,8 @@ export const ANKLE_LATERAL_RADIOGRAPH: RadiographAssetSpec = {
   projection: "ankle-lateral",
   registryIds: ["A-032", "A-033"],
   credit: credit(
-    "Reference radiograph: a normal adult ankle, lateral, Mikael Häggström, Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The edge artefacts of the original were repaired. A real ankle (a 24-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
-    "الصورة المرجعية: كاحل طبيعي لشخص بالغ، إسقاط جانبي، Mikael Häggström، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُصلحت عيوب الحواف في الصورة الأصلية. كاحل حقيقي (ذكر عمره 24 عامًا بحسب وصف الملف) يُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
+    "Reference radiograph: an adult ankle (the source description mentions no trauma), lateral, Mikael Häggström, Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The edge artefacts of the original were repaired. A real ankle (a 24-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",
+    "الصورة المرجعية: كاحل لشخص بالغ (لا تظهر إصابة في وصف المصدر)، إسقاط جانبي، Mikael Häggström، ويكيميديا كومنز، CC0 1.0 (الترخيص أكده مالك المشروع). أُصلحت عيوب الحواف في الصورة الأصلية. كاحل حقيقي (ذكر عمره 24 عامًا بحسب وصف الملف) يُستخدم كتقريب تعليمي: وليست صورة تشخيصية وليست لأحد من حالات الصدر.",
   ),
   ...common("ankle-lateral"),
   // the talus and the calcaneus (rows ≈ 900–1450 of 1678).

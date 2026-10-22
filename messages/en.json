@@ -118,6 +118,7 @@
   "console": {
     "title": "X-ray console",
     "projection": "Projection / view",
+    "projectionFollowsPosition": "The AP label follows the patient position currently selected (supine or semi-erect); it does not change the projection.",
     "kvp": "kVp",
     "mas": "mAs",
     "sid": "SID",
@@ -231,10 +232,10 @@
     "drawn": "shown in the image",
     "notDrawnNote": "Some findings are scored from your settings but are not visible in the picture by design (for example SID, a kVp inside the reference range, or excess exposure — digital images can look acceptable at excess exposure).",
     "criticalTitle": "Critical findings",
-    "criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. The numeric score ({total}) and the category weights are unchanged.",
+    "criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score ({total}) and the category weights are unchanged.",
     "criticalEvidence": "Evidence for this critical finding",
     "criticalConcept": "Concept (common quality criterion)",
-    "criticalImplementation": "Implementation (provisional / educational)"
+    "criticalImplementation": "Implementation (educational simulator rule)"
   },
   "categories": {
     "positioning": "Positioning",
@@ -247,15 +248,15 @@
   "evidence": {
     "label": "Evidence",
     "reference": "Reference",
-    "validated": "VALIDATED",
+    "validated": "SOURCE-BASED",
     "common-reference": "COMMON REFERENCE / NOT UNIVERSAL",
     "vendor-protocol-dependent": "VENDOR / LOCAL-PROTOCOL DEPENDENT",
     "educational-simplification": "EDUCATIONAL SIMPLIFICATION",
-    "provisional": "PROVISIONAL"
+    "provisional": "TEACHING VALUE"
   },
   "technique": {
     "title": "Technique & exposure analysis",
-    "model": "Educational model — it does not predict a real detector's exposure index or any patient dose, and its DI bands are provisional.",
+    "model": "Educational model — the simulated exposure indicator is not a real detector's exposure index, and the model does not predict any patient dose.",
     "brightnessTitle": "Brightness is not an exposure meter",
     "brightness": "On digital radiography, image processing normalises the displayed brightness and contrast, so an image can look acceptable even when detector exposure is too low or too high. Judge exposure by the detector exposure (DI), noise and dose awareness — not by how light or dark the image looks.",
     "modeLabel": "Exposure mode",
@@ -266,7 +267,7 @@
     "masDelivered": "mAs delivered by the AEC (model)",
     "sid": "SID",
     "relativeExposure": "Detector exposure vs target",
-    "di": "Deviation index (DI-like)",
+    "di": "Deviation index (simulated)",
     "tendency": "Exposure tendency",
     "noise": "Quantum-noise tendency",
     "penetration": "Penetration tendency",
@@ -297,7 +298,7 @@
     },
     "gaugeTitle": "Detector exposure relative to the target",
     "gaugeAlt": "Scale of the deviation index from −6 to +6 with the target at 0 and your exposure marked.",
-    "gaugeNote": "DI = 10 × log10(EI / EIT). +3 ≈ twice the target exposure, −3 ≈ half. The ±1 and ±3 scoring bands are provisional demo values, not universal limits. EI is not patient dose.",
+    "gaugeNote": "DI = 10 × log10(EI / EIT). +3 ≈ twice the target exposure, −3 ≈ half. The ±1 and ±3 scoring bands are teaching choices of this simulator, not universal limits. EI here is a simulated exposure indicator, not patient dose.",
     "whyTitle": "Why",
     "why": {
       "kvp": "kVp sets the energy spectrum of the beam: it changes penetration and X-ray output. It is not a brightness control — on digital systems processing sets the displayed brightness.",
@@ -321,7 +322,7 @@
       "outside-patient": "outside the patient"
     },
     "assumptionsTitle": "Model assumptions & evidence",
-    "assumptionsIntro": "Every medical rule behind this feedback is classified. Only “validated” items are claims of fact; the rest are protocol- or demo-specific.",
+    "assumptionsIntro": "Every medical rule behind this feedback is classified. Only “source-based” items are claims taken from a cited source; the rest are protocol-specific or teaching choices.",
     "profile": "Protocol profile"
   },
   "patient": {
@@ -345,12 +346,12 @@
   "radiograph": {
     "title": "Simulated educational radiograph",
     "alt": "Simulated educational PA chest radiograph rendered from your settings; not a diagnostic image.",
-    "educationalNote": "Educational reference appearance — not an image of the case patient, and not a diagnostic or clinically validated radiograph. The visual effects are educational approximations: their size does not measure real rotation, movement, noise or dose.",
+    "educationalNote": "Educational reference appearance — not an image of the case patient. The visual effects are educational approximations: their size does not measure real rotation, movement, noise or dose.",
     "notRepresentative": "This projection is not simulated yet. The PA reference appearance is shown for layout only and does not represent your selected projection.",
     "loading": "Rendering the radiograph…",
     "failed": "The reference image could not be loaded.",
     "effectsTitle": "What shaped this image",
-    "effectsIntro": "Each item links something you did to a visible effect. The clinical concept and the amount drawn are classified separately: the amount drawn is always an educational approximation, never a validated appearance.",
+    "effectsIntro": "Each item links something you did to a visible effect. The clinical concept and the amount drawn are classified separately: the amount drawn is always an educational approximation, never a measured appearance.",
     "effects": {
       "baseline": {
         "title": "Reference appearance",
@@ -358,7 +359,7 @@
       },
       "rotation": {
         "title": "Rotation → thoracic asymmetry",
-        "desc": "The line of the spinous processes moves relative to the medial ends of the clavicles, one hemithorax looks wider than the other and the lungs differ slightly in transradiancy. The direction is supported by the literature; the amount drawn is an educational approximation, not a measurement of degrees of rotation (body build changes this appearance)."
+        "desc": "The line of the spinous processes moves relative to the medial ends of the clavicles, one hemithorax looks wider than the other and the lungs differ slightly in transradiancy. The direction is supported by the literature; the amount drawn is an educational approximation, not a measurement of degrees of rotation (body build changes this appearance). A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
       },
       "collimation-clipping": {
         "title": "Field edges clip anatomy",
@@ -366,7 +367,7 @@
       },
       "excess-field": {
         "title": "Larger exposed field",
-        "desc": "A larger field exposes and shows more tissue. No scatter or contrast penalty is drawn, because there is no validated physical model for it here; the real cost is unnecessary exposure."
+        "desc": "A larger field exposes and shows more tissue. No scatter or contrast penalty is drawn, because this simulator has no physical model for it; the real cost is unnecessary exposure."
       },
       "centering": {
         "title": "Central ray off-centre → field shifted",
@@ -414,7 +415,7 @@
     "magnitudeApprox": "Educational visual approximation",
     "magnitudeNone": "Nothing drawn (by design)",
     "margins": "Dark margins lie outside the collimated field. Grey hatched areas inside the field have no reference-image data: they are not exposure, collimation or anatomy.",
-    "clippingMarginNote": "Margin only at {sides}: the field cuts only the margin of the provisional required region (a demo size awaiting educator review), beyond the lungs, ribs and costophrenic angles drawn in this baseline picture. The score still applies the region, but the picture shows those structures complete.",
+    "clippingMarginNote": "Margin only at {sides}: the field cuts only the margin of the required region, beyond the lungs, ribs and costophrenic angles drawn in this baseline picture. The score still applies the region, but the picture shows those structures complete.",
     "altClippingMargin": "At {sides} the field cuts only the margin of the required region; the lungs shown are complete.",
     "altReference": "No simulated image-quality fault is visible: this is the reference appearance.",
     "altFindingsLead": "Visible findings: {list}.",
@@ -463,7 +464,7 @@
         },
         "rotation": {
           "title": "Rotation → posterior ribs apart",
-          "desc": "The posterior ribs and costophrenic angles of the two sides are drawn apart. A small separation is normal on a lateral because of beam divergence; more than that indicates rotation. Only the amount is scored, because the direction is hard to judge. The amount drawn is an educational approximation, not a measurement."
+          "desc": "The posterior ribs and costophrenic angles of the two sides are drawn apart. A small separation is normal on a lateral because of beam divergence; more than that indicates rotation. Only the amount is scored, because the direction is hard to judge. The amount drawn is an educational approximation, not a measurement. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "chin": {
           "title": "Chin down",
@@ -489,7 +490,7 @@
         },
         "rotation": {
           "title": "Rotation → thoracic asymmetry",
-          "desc": "The line of the spine moves relative to the sternoclavicular joints and the lateral rib borders, so the two sides no longer look equal. Only the amount is scored for the AP, not the direction. The amount drawn is an educational approximation, not a measurement of degrees of rotation (body build changes this appearance)."
+          "desc": "The line of the spine moves relative to the sternoclavicular joints and the lateral rib borders, so the two sides no longer look equal. Only the amount is scored for the AP, not the direction. The amount drawn is an educational approximation, not a measurement of degrees of rotation (body build changes this appearance). A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "projection": {
           "title": "Projection not simulated",
@@ -513,7 +514,7 @@
         },
         "rotation": {
           "title": "Rotation → unequal metacarpal spacing, radius and ulna overlap",
-          "desc": "In a true PA wrist the spaces between the proximal metacarpals are near-equal, their shafts show equal concavity on both sides, and the distal radius and ulna are separated (Bontrager p.156). With rotation the spaces between the metacarpals become unequal and the ulna and radius move apart or toward each other until they overlap, depending on the direction of the turn. Only the amount of rotation is scored, not its direction. The picture is an educational approximation made from one baseline image with a simple depth model (the turn is drawn exaggerated, about 2.3 times the value), not a measurement of degrees; real carpal movement and the concavity of the shafts are not modelled."
+          "desc": "In a true PA wrist the spaces between the proximal metacarpals are near-equal, their shafts show equal concavity on both sides, and the distal radius and ulna are separated (Bontrager p.156). With rotation the spaces between the metacarpals become unequal and the ulna and radius move apart or toward each other until they overlap, depending on the direction of the turn. Only the amount of rotation is scored, not its direction. The picture is an educational approximation made from one baseline image with a simple depth model (the turn is drawn exaggerated, about 2.3 times the value), not a measurement of degrees; real carpal movement and the concavity of the shafts are not modelled. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -541,7 +542,7 @@
         },
         "rotation": {
           "title": "Rotation → bones not superimposed",
-          "desc": "In a true lateral wrist the ulnar head lies over the distal radius and the proximal 2nd–5th metacarpals are superimposed (Bontrager p.158). With rotation each of these structures is drawn twice, apart: a stronger copy for the side nearer the detector and a weaker one for the side farther from it. Only the amount of rotation is scored, not its direction. The picture is an educational approximation (two blended copies of whole windows, not structures covering one another) made from one baseline image with a simple depth model (the turn is drawn exaggerated, about 2.3 times the value), not a measurement of degrees."
+          "desc": "In a true lateral wrist the ulnar head lies over the distal radius and the proximal 2nd–5th metacarpals are superimposed (Bontrager p.158). With rotation each of these structures is drawn twice, apart: a stronger copy for the side nearer the detector and a weaker one for the side farther from it. Only the amount of rotation is scored, not its direction. The picture is an educational approximation (two blended copies of whole windows, not structures covering one another) made from one baseline image with a simple depth model (the turn is drawn exaggerated, about 2.3 times the value), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -569,7 +570,7 @@
         },
         "rotation": {
           "title": "Rotation → unequal spacing of the metacarpals and digits",
-          "desc": "In a true PA hand the concavities of the metacarpal shafts and phalanges of digits 2–5 are symmetric and the soft tissue on each side of the phalanges is equal (Bontrager p.150). With rotation the spaces between the shafts and the digits become unequal and the soft tissue on the two sides is no longer equal. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp that moves bone and soft tissue together, so the change in concavity itself is not drawn), not a measurement of degrees."
+          "desc": "In a true PA hand the concavities of the metacarpal shafts and phalanges of digits 2–5 are symmetric and the soft tissue on each side of the phalanges is equal (Bontrager p.150). With rotation the spaces between the shafts and the digits become unequal and the soft tissue on the two sides is no longer equal. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp that moves bone and soft tissue together, so the change in concavity itself is not drawn), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -597,7 +598,7 @@
         },
         "rotation": {
           "title": "Rotation → bones not superimposed",
-          "desc": "In a true lateral hand (fingers extended) the metacarpals and phalanges are superimposed and the distal radius and ulna are superimposed (Bontrager p.153). With rotation the bones that should overlap are drawn apart. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image, not a measurement of degrees."
+          "desc": "In a true lateral hand (fingers extended) the metacarpals and phalanges are superimposed and the distal radius and ulna are superimposed (Bontrager p.153). With rotation the bones that should overlap are drawn apart. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image, not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -625,7 +626,7 @@
         },
         "rotation": {
           "title": "Rotation → epicondyles not in profile, radial head and ulna apart or superimposed",
-          "desc": "In a true AP elbow the epicondyles are in profile and the radial head, neck and tubercle are separated from the ulna or only slightly superimposed by it (Bontrager p.166). With rotation the epicondyles move toward each other (the interepicondylar distance narrows) and the radius is drawn apart from, or over, the ulna. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the whole arm plus two forearm layers that may overlap, the superimposition drawn as an average), not a measurement of degrees."
+          "desc": "In a true AP elbow the epicondyles are in profile and the radial head, neck and tubercle are separated from the ulna or only slightly superimposed by it (Bontrager p.166). With rotation the epicondyles move toward each other (the interepicondylar distance narrows) and the radius is drawn apart from, or over, the ulna. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the whole arm plus two forearm layers that may overlap, the superimposition drawn as an average), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -653,7 +654,7 @@
         },
         "rotation": {
           "title": "Rotation → condyle outlines not superimposed",
-          "desc": "In a true lateral elbow (90° flexion) the epicondyles / condyle outlines are superimposed and about half of the radial head is covered by the coronoid process (Bontrager p.172). With rotation the condyle outlines and the radial head / coronoid region are drawn twice, apart: a stronger copy for the side nearer the detector and a weaker one for the side farther from it. Only the amount of rotation is scored, not its direction. The concentric arcs of the trochlear sulcus and the double ridges of the capitulum and trochlea (other Bontrager criteria) are not drawn: one baseline image cannot show them honestly. The amount drawn is an educational approximation (two blended copies, not a model of structures covering one another), not a measurement of degrees."
+          "desc": "In a true lateral elbow (90° flexion) the epicondyles / condyle outlines are superimposed and about half of the radial head is covered by the coronoid process (Bontrager p.172). With rotation the condyle outlines and the radial head / coronoid region are drawn twice, apart: a stronger copy for the side nearer the detector and a weaker one for the side farther from it. Only the amount of rotation is scored, not its direction. The concentric arcs of the trochlear sulcus and the double ridges of the capitulum and trochlea (other Bontrager criteria) are not drawn: one baseline image cannot show them honestly. The amount drawn is an educational approximation (two blended copies, not a model of structures covering one another), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -681,7 +682,7 @@
         },
         "rotation": {
           "title": "Rotation → unequal spacing of metatarsals 2–5",
-          "desc": "In a true AP foot the spacing of metatarsals 2–5 is nearly equal; the bases of the 1st and 2nd metatarsals are generally separated and the bases of 2–5 overlap (Bontrager p.232). With rotation the toes and metatarsals shift sideways by different amounts, so the spaces between them become unequal. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the toes and the metatarsals column by column), not a measurement of degrees."
+          "desc": "In a true AP foot the spacing of metatarsals 2–5 is nearly equal; the bases of the 1st and 2nd metatarsals are generally separated and the bases of 2–5 overlap (Bontrager p.232). With rotation the toes and metatarsals shift sideways by different amounts, so the spaces between them become unequal. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the toes and the metatarsals column by column), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -709,7 +710,7 @@
         },
         "rotation": {
           "title": "Plantar angle → metatarsals 3–5 closer together or further apart",
-          "desc": "In a medial oblique foot the plantar surface is 30°–40° to the detector (40° recommended) and metatarsals 3–5 are free of superimposition (Bontrager p.233). As the angle moves away from 40° the toes and metatarsals are drawn displaced sideways by different amounts, so metatarsals 3–5 move closer together or further apart. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the toes and the metatarsals column by column, taking the picture as 40°), not a measurement of degrees."
+          "desc": "In a medial oblique foot the plantar surface is 30°–40° to the detector (40° recommended) and metatarsals 3–5 are free of superimposition (Bontrager p.233). As the angle moves away from 40° the toes and metatarsals are drawn displaced sideways by different amounts, so metatarsals 3–5 move closer together or further apart. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the toes and the metatarsals column by column, taking the picture as 40°), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -737,7 +738,7 @@
         },
         "rotation": {
           "title": "Rotation → condyles asymmetric, fibular head more or less covered",
-          "desc": "In a true AP knee the femoral condyles and the joint space are symmetric, about the medial half of the fibular head is superimposed by the tibia and the intercondylar eminence is centred in the fossa (Bontrager p.246). With rotation the condyle edges and the eminence move by different amounts, and the fibula and the tibia move as two layers so the fibular head is covered more or less. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the whole leg plus two layers below the joint), not a measurement of degrees."
+          "desc": "In a true AP knee the femoral condyles and the joint space are symmetric, about the medial half of the fibular head is superimposed by the tibia and the intercondylar eminence is centred in the fossa (Bontrager p.246). With rotation the condyle edges and the eminence move by different amounts, and the fibula and the tibia move as two layers so the fibular head is covered more or less. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (a horizontal warp of the whole leg plus two layers below the joint), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -765,7 +766,7 @@
         },
         "rotation": {
           "title": "Rotation → condyle borders not superimposed",
-          "desc": "In a true lateral knee the posterior borders of the femoral condyles are superimposed; with over-rotation less of the fibular head is covered by the tibia and with under-rotation more (Bontrager p.249). With rotation the condyle outline and the fibular head region are drawn twice, a far-side copy and a near-side copy, so the outline is doubled. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (whole windows drawn twice, not occlusion), not a measurement of degrees."
+          "desc": "In a true lateral knee the posterior borders of the femoral condyles are superimposed; with over-rotation less of the fibular head is covered by the tibia and with under-rotation more (Bontrager p.249). With rotation the condyle outline and the fibular head region are drawn twice, a far-side copy and a near-side copy, so the outline is doubled. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (whole windows drawn twice, not occlusion), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -793,7 +794,7 @@
         },
         "rotation": {
           "title": "Rotation → mortise spaces change",
-          "desc": "In a true AP ankle the medial part of the ankle mortise is open, the lateral part is closed and the distal fibula is partly overlapped by the tibia and the talus (Bontrager p.239). With rotation the columns of the malleoli and the plafond edges move by different amounts, so the clear spaces beside the talus open or close. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (one smooth horizontal warp of the leg and ankle together; the overlap of the distal fibula is not drawn), not a measurement of degrees."
+          "desc": "In a true AP ankle the medial part of the ankle mortise is open, the lateral part is closed and the distal fibula is partly overlapped by the tibia and the talus (Bontrager p.239). With rotation the columns of the malleoli and the plafond edges move by different amounts, so the clear spaces beside the talus open or close. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (one smooth horizontal warp of the leg and ankle together; the overlap of the distal fibula is not drawn), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",
@@ -821,7 +822,7 @@
         },
         "rotation": {
           "title": "Rotation → fibula and joint outlines doubled",
-          "desc": "In a true lateral ankle the distal fibula lies over the posterior half of the tibia, the lateral malleolus is seen through the distal tibia and the talus and the tibiotalar joint is open with a uniform space (Bontrager p.242). With rotation the fibula and the joint outline are drawn twice, a far-side copy and a near-side copy, so the outlines are doubled. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (whole windows drawn twice, not occlusion), not a measurement of degrees."
+          "desc": "In a true lateral ankle the distal fibula lies over the posterior half of the tibia, the lateral malleolus is seen through the distal tibia and the talus and the tibiotalar joint is open with a uniform space (Bontrager p.242). With rotation the fibula and the joint outline are drawn twice, a far-side copy and a near-side copy, so the outlines are doubled. Only the amount of rotation is scored, not its direction. The amount drawn is an educational approximation made from one baseline image (whole windows drawn twice, not occlusion), not a measurement of degrees. A warp of one image cannot reconstruct hidden anatomy, so this does not show how real joints open or bones overlap at a different angle."
         },
         "low-penetration": {
           "title": "Low penetration → less bone detail",

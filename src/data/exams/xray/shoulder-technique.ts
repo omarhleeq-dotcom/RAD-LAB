@@ -7,7 +7,7 @@ const KEEP = ["di-equation", "brightness", "mas-physics", "kvp-physics", "kvp-ex
 export const shoulderTechnique: AnyExamTechniqueProfile = {
   ...base,
   id: "demo-shoulder-grashey-manual",
-  label: { en: "Demo shoulder Grashey protocol — manual DR with grid (provisional)", ar: "بروتوكول كتف غراشي تجريبي — DR يدوي مع شبكة (مؤقت)" },
+  label: { en: "Teaching shoulder Grashey protocol — manual DR with grid", ar: "بروتوكول كتف غراشي تعليمي — DR يدوي مع شبكة" },
   evidence: { status: "provisional", reference: "BONTRAGER-9 p.196; docs/DECISIONS.md S-SHOULDER-3-3", note: "The digital kV band and the SID minimum are source-backed. Every model anchor and partial band is an engine teaching choice, not a clinical protocol." },
   system: { ...base.system, label: { en: "Generic digital detector with grid", ar: "كاشف رقمي عام مع شبكة" }, evidence: { status: "vendor-protocol-dependent", reference: "BONTRAGER-9 p.196 (grid); docs/DECISIONS.md S-SHOULDER-3-3", note: "Grid specified by the book; detector response 1 is an assumed educational anchor, not a calibrated device." } },
   manual: { reference: { kvp: 80, mas: 2, sidCm: 102 }, kvpExponent: 3, evidence: { status: "educational-simplification", reference: "docs/DECISIONS.md S-SHOULDER-3-3", note: "80 kV, 2 mAs at 102 cm is a model anchor, NOT a recommended clinical exposure. No universal EI/EIT/DI threshold is claimed (O88)." } },

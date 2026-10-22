@@ -55,8 +55,8 @@ export const upperLimbTechnique = (k: UpperLimbKind): AnyExamTechniqueProfile =>
     ...base,
     id: `demo-adult-${f.en}-${p.code}-reference-dr`,
     label: {
-      en: `Demo protocol — adult ${f.en} ${p.labelName}, generic DR system, manual technique (provisional)`,
-      ar: `بروتوكول تجريبي — ${f.ar} بالغ ${p.labelNameAr}، نظام DR عام، تقنية يدوية (مؤقت)`,
+      en: `Teaching protocol — adult ${f.en} ${p.labelName}, generic DR system, manual technique`,
+      ar: `بروتوكول تعليمي — ${f.ar} بالغ ${p.labelNameAr}، نظام DR عام، تقنية يدوية`,
     },
     evidence: {
       status: "provisional",

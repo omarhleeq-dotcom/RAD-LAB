@@ -133,7 +133,7 @@ describe("2 · critical findings gate the pass mark without changing the numeric
 
   it("is not presented as a real-world automatic reject decision", () => {
     for (const f of chestPaErect.scoring.criticalFindings) expect(f.evidence.reference).toMatch(/Image rejection|Side marker/);
-    for (const f of chestPaErect.scoring.criticalFindings) expect(f.reason.en).toMatch(/normally be repeated/);
+    for (const f of chestPaErect.scoring.criticalFindings) expect(f.reason.en).toMatch(/educational result, not a clinical decision/);
   });
 });
 
