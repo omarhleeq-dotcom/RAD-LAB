@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066) وUI-3 (RAD-067) واكتملا بتحقق المالك، وسُجلت نتائج فحص المالك للصور، ودُمج الجزء 1 من RAD-068 (#109) ونُفذ الجزء 2 (دفعة النص T+AR) في PR مسودة. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
+- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066) وUI-3 (RAD-067) واكتملا بتحقق المالك، وسُجلت نتائج فحص المالك للصور، ودُمج الجزءان 1 و2 من RAD-068 (#109، #110) ونُفذ الجزء 3 (بنود S) في PR مسودة. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
 - **ينتظر المالك:** البند 16 من قائمة الصور (بعد RAD-067)؛ موافقة منفصلة لكل جلسة؛ استئناف برمجة Assess.
 - **ينتظر مراجِعًا بشريًا:** لا شيء جديد. RAD-019 أُغلق دون توقيع مرخّص (تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
 - **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
-- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ بصمات scene-dom تُحدَّث بموافقة المالك فقط (حُدّثت في الجزء 2 لنصوص الدفعة وحدها بإثبات أن الفرق نص فقط)؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)؛ نصوص الأدلة الداخلية المعروضة (`note`) ما زالت تحمل الكلمات ولها قرار مستقل، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
+- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ بصمات scene-dom تُحدَّث بموافقة المالك فقط (حُدّثت في الجزء 2 لنصوص الدفعة وحدها بإثبات أن الفرق نص فقط، وفي الجزء 3 حيث غيّرت قاعدة S النتيجة بقبول المالك المسبق وإثبات الفروق في التقرير)؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)؛ نصوص الأدلة الداخلية المعروضة (`note`) ما زالت تحمل الكلمات ولها قرار مستقل، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 224,
-  "updated_at": "2026-10-22T17:25:00+00:00",
+  "revision": 225,
+  "updated_at": "2026-10-22T18:45:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -633,8 +633,8 @@
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
       "status": "in_progress",
       "priority": "high",
-      "description": "الجزءان 1 و2 مدموجان (#109، #110). الجزء 3 (دفعات S) في PR مسودة. الجزء الأخير: علامات provisional ونصوص الدليل المعروضة (provisional/VALIDATED/pending educator review، D1) ويجب حسمها قبل اكتمال RAD-068؛ ثم بنود R. CLN-025 مؤجل، CLN-018 مفتوح.",
-      "source_ref": "docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#part2-acceptance-owner-2026-10-22؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
+      "description": "الجزءان 1 و2 مدموجان (#109، #110). الجزء 3 (بنود S: S8 فحص، S3، S5، S2، S6) منفذ في PR مسودة. الجزء الأخير: علامات provisional ونصوص الدليل المعروضة (provisional/VALIDATED/pending educator review، D1) تُحسم قبل اكتمال RAD-068؛ ثم بنود R. CLN-025 مؤجل، CLN-018 مفتوح.",
+      "source_ref": "docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#part2-acceptance-owner-2026-10-22؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
       "waiting_on": "code"
     },
     {
