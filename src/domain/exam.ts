@@ -24,11 +24,11 @@ import type {
 
 /**
  * Session 7: the former `RadCase` is split into what an EXAM is and what one CASE on that exam is
- * (docs/PLATFORM_ARCHITECTURE.md §4, ADR-0004).
+ * (docs/archive/planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md §4, ADR-0004).
  *
  *   ExamDefinition  — controls, rules, thresholds, scoring categories and weights, critical findings, technique
  *                     PROTOCOL, positioning conventions, scene and render bindings, evidence classification.
- *                     Written once per exam (Chest PA erect, later Chest Lateral, Chest AP …).
+ *                     Written once per exam (Chest PA erect, Chest Lateral, Chest AP, the limb exams …).
  *   CaseDefinition  — one patient scenario on an exam: patient, order text, condition, baseline radiograph asset,
  *                     patient-cooperation profile, patient attenuation, initial state.
  *                     A paediatric / difficult-to-position patient is a NEW CASE, never a new exam.

@@ -206,9 +206,9 @@ export const EFFECT_MAGNITUDES: Record<CoreEffectId, VisualMagnitude> = {
  * Effect registry HOOK (S14.1b, G6). An exam that needs an effect beyond the core ones (a limb's rotation cue …) registers
  * an `EffectDefinition`: the same three records a core effect has (concept, magnitude, drivers) plus the pure predicate that
  * says when it is active. `buildRenderPlan` adds the active ones after the core effects; a fault effect also suppresses the
- * "baseline" card. The pixel step that draws it is NOT part of the hook yet: it is added with the first limb exam that
- * needs one (S14.1c), together with its landmark group and its `tuning.ts` magnitudes. No effect is registered today, so
- * every chest plan is unchanged.
+ * "baseline" card. The pixel step that draws it is separate (`pipeline.ts`), driven by the effect's `limb` input, with its
+ * landmark group on the asset and its magnitudes in `tuning.ts`. The registered effects are listed in `EXTRA_EFFECTS`; a
+ * chest plan has none active, so it is unchanged.
  */
 export interface EffectDefinition {
   id: EffectId;
@@ -226,7 +226,7 @@ export interface EffectDefinition {
   limb?: (state: RadiographResultState, radCase: RadCase) => LimbRotationPlan | null;
 }
 
-/** Effects registered by exams beyond the core ones: the wrist rotation effect (S14.1c, `limb-effects.ts`). Inactive for any asset without `limbRotation`. */
+/** Effects registered by exams beyond the core ones: the limb rotation effect (S14.1c, `limb-effects.ts`), shared by the wrist, hand, elbow, lower-limb, shoulder and pelvis exams. Inactive for any asset without `limbRotation`. */
 export const EXTRA_EFFECTS: readonly EffectDefinition[] = [LIMB_ROTATION_EFFECT];
 
 /** Stable seed from the case id (FNV-1a), so the noise pattern is fixed per case and never random. */

@@ -1,7 +1,7 @@
 import type { LocalizedText } from "./localized";
 import type { PatientCooperationProfile } from "./patient";
 import type { RadiographAssetSpec } from "./radiograph";
-import type { Evidence, EvidenceClass, TechniqueProfile } from "./technique";
+import type { Evidence, TechniqueProfile } from "./technique";
 import type {
   BodyPartId,
   BreathingId,
@@ -55,12 +55,6 @@ export interface DetectorRegion {
   widthCm: number;
   heightCm: number;
 }
-
-/**
- * How firmly a medical rule is backed by the medical references (docs/RAD-LAB_Medical_Reference_Chest_PA*.md).
- * Session 3 widened this from three to the five classes of the technique reference §2.
- */
-export type EvidenceStatus = EvidenceClass;
 
 /** Traceability for a medically meaningful rule. */
 export type RuleEvidence = Evidence;
