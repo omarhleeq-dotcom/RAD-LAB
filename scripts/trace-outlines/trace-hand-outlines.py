@@ -101,10 +101,10 @@ PA_JOINTS = [
 # joint LINES of the carpus, curated end points + an axial search (the carpus has no single bone pair)
 PA_LINES = [
     # carpometacarpal line of digits 2–5: the metacarpal bases overlap the distal carpal row, so this line is APPROXIMATE
-    {"id": "cmc", "p": (335, 1472), "q": (725, 1512), "dir": (0, 1), "g": 28},
-    {"id": "radiocarpal", "p": (445, 1842), "q": (708, 1742), "dir": (0, 1), "g": 26},
+    {"id": "cmc", "p": (335, 1472), "q": (725, 1512), "dir": (0, 1), "g": 28, "follows": "carpals"},
+    {"id": "radiocarpal", "p": (445, 1842), "q": (708, 1742), "dir": (0, 1), "g": 26, "follows": "radius"},
     # CMC1 re-read at 2× (owner review 2026-10-23): a near-vertical curved gap between the trapezium and the mc1 base
-    {"id": "cmc1", "p": (768, 1538), "q": (792, 1648), "dir": (1, -0.22), "g": 20},
+    {"id": "cmc1", "p": (768, 1538), "q": (792, 1648), "dir": (1, -0.22), "g": 20, "follows": "t-mc"},
 ]
 
 LAT_BONES = [
@@ -120,7 +120,7 @@ LAT_BONES = [
     {"id": "thumb-proximal", "tracer": "radial", "group": "thumb", "a": (132, 893), "b": (173, 1197), "he": 68, "hs": 42, "follows": "t-pp"},
     {"id": "mc1", "tracer": "radial", "group": "thumb", "a": (188, 1214), "b": (285, 1555), "he": 74, "hs": 46, "follows": "t-mc"},
     # radius and ulna superimposed (one outline), proximal end off the image
-    {"id": "radius-ulna", "group": "forearm", "a": (500, 1893), "b": (500, 2123), "he": 118, "hs": 110, "mode": "outer", "open": True, "limits": ["radiocarpal"], "follows": "radius"},
+    {"id": "radius-ulna", "group": "forearm", "a": (500, 1893), "b": (500, 2123), "he": 118, "hs": 110, "mode": "outer", "open": True, "limits": ["radiocarpal"], "follows": "forearm"},
 ]
 LAT_BLOBS = [
     {"id": "carpus", "group": "carpus", "c": (418, 1720), "rx": 165, "ry": 170, "mode": "outer", "limits": ["cmc", "radiocarpal"], "follows": "carpals"},
@@ -131,10 +131,10 @@ LAT_JOINTS = [
     ("thumb-mcp", "thumb-proximal", "mc1"),
 ]
 LAT_LINES = [
-    {"id": "mcp-group", "p": (400, 912), "q": (540, 915), "dir": (0, 1), "g": 22},
+    {"id": "mcp-group", "p": (400, 912), "q": (540, 915), "dir": (0, 1), "g": 22, "follows": "column"},
     # carpometacarpal level of the superimposed metacarpal bases: overlapped, APPROXIMATE
-    {"id": "cmc", "p": (385, 1578), "q": (585, 1572), "dir": (0, 1), "g": 30},
-    {"id": "radiocarpal", "p": (395, 1888), "q": (600, 1885), "dir": (0, 1), "g": 24},
+    {"id": "cmc", "p": (385, 1578), "q": (585, 1572), "dir": (0, 1), "g": 30, "follows": "carpals"},
+    {"id": "radiocarpal", "p": (395, 1888), "q": (600, 1885), "dir": (0, 1), "g": 24, "follows": "radius"},
 ]
 
 SOFT_TOWARD_BG = {"pa": 0.0, "lateral": 0.5}  # curated: the lateral's finger soft tissue is very faint
@@ -620,7 +620,7 @@ def view(kind, img, bones, blobs, joints, lines):
         u = np.array(ln["dir"], float)
         u /= np.hypot(*u)
         jl[ln["id"]] = trace_gap(gap, ln["p"], ln["q"], u, ln["g"])
-        jout.append({"id": ln["id"], "group": "joints", "closed": False, "follows": None, "points": jl[ln["id"]]})
+        jout.append({"id": ln["id"], "group": "joints", "closed": False, "follows": ln["follows"], "points": jl[ln["id"]]})
     touching = {}
     for jid, d, p in joints:
         touching.setdefault(d, []).append(jid)
@@ -709,7 +709,7 @@ def build():
                   "median-filtered and Ramer-Douglas-Peucker simplified; joint spaces = darkest point of axial profiles; soft tissue = Otsu "
                   "threshold boundary. Script: scripts/trace-outlines/trace-hand-outlines.py",
         "coordinates": "image px of the web copy (origin top-left, x right, y down), the space of features/hand-model/hand-model.ts",
-        "follows": "hand-model tube id, or tube group (column, carpals), whose rotation the drawing follows (drawing link only; the model is unchanged)",
+        "follows": "hand-model tube id, or tube group (column = one copy per digit, forearm = radius and ulna copies, carpals), whose rotation the drawing follows (drawing link only; the model is unchanged)",
         "drawn": "absent = drawn; false = kept in the data but not drawn",
         "sources": {k: {**v, "sha256": file_sha256(ROOT / v["file"])} for k, v in SOURCES.items()},
         "views": views,

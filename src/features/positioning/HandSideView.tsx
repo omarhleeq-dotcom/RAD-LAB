@@ -5,7 +5,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { collimatedField } from "@/features/simulation/geometry";
 import { Limb } from "./SceneParts";
-import { HAND_SIDE, handSlabX } from "./hand-visual";
+import { HAND_SIDE, handSideHeights, handSlabX } from "./hand-visual";
 import { SeatedLimbSideView } from "./SeatedLimbSideView";
 
 const S = HAND_SIDE.surfaceY;
@@ -33,8 +33,8 @@ export function HandSideView({ radCase, settings, showGuides }: Props) {
   const targetCm = ((radCase.positioning.centering.target.y + 1) / 2) * detector.heightCm;
   const targetX = handSlabX(targetCm);
   const tipX = handSlabX(radCase.requiredAnatomy.yCm);
-  const handH = lateral ? 34 : 15;
-  const armH = 22;
+  // heights from the traced hand (RAD-072 2a): palm down = the hand's thickness, ulnar edge down = its width
+  const { hand: handH, forearm: armH } = handSideHeights(lateral);
   const level = S - 12 - armH / 2;
   return (
     <SeatedLimbSideView
@@ -52,8 +52,8 @@ export function HandSideView({ radCase, settings, showGuides }: Props) {
       limb={
         <Limb
           pts={[
-            { x: 70, y: level, w: 30 },
-            { x: 140, y: level + 1, w: 24 },
+            { x: 70, y: level, w: armH + 8 },
+            { x: 140, y: level + 1, w: armH + 2 },
             { x: slabL + 20, y: level + 2, w: armH },
             { x: targetX + 70, y: S - 3 - handH / 2 + 1, w: handH + 4 },
             { x: tipX, y: S - 3 - handH / 2 + 1, w: handH },

@@ -46,7 +46,7 @@ lateral the digits and metacarpals are one outline each.
 
 Header: `note`, `region`, `side`, `date`, `method`, `coordinates`, `sources` (asset id, parent, file, SHA-256). Then
 `views.<view>.structures[]`, each `{ id, group, closed, follows, drawn?, note?, points: [[x, y], …] }` in image px of the web copy; `drawn: false` keeps a structure in the data but out of the drawing (the thumb-MCP sesamoid-like densities).
-`follows` names the `features/hand-model` tube (or tube group: `column`, `carpals`) whose rotation the drawing follows (a drawing link; the model is unchanged).
+`follows` names the `features/hand-model` tube (or tube group: `column` = one copy per digit, `forearm` = radius and ulna copies, `carpals`) whose rotation the drawing follows (a drawing link; the model is unchanged).
 
 ## Reuse for other regions
 

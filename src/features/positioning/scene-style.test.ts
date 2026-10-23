@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ANATOMY_FILLS, BODY, CHEST_FILLS, SCENE } from "./scene-style";
+import { ANATOMY_FILLS, BODY, CHEST_FILLS, LIMB, SCENE } from "./scene-style";
 
 const lum = (hex: string) => {
   const c = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
@@ -71,5 +71,26 @@ describe("chest tonal layers (RAD-072 1b)", () => {
     expect(BODY.shoulderW).toBeGreaterThan(BODY.thorax.w);
     expect(BODY.thorax.w).toBeGreaterThan(BODY.thorax.d);
     expect(BODY.head.h).toBeGreaterThan(BODY.head.d);
+  });
+});
+
+// RAD-072 2a limb tonal layers (ENGINE_GUIDE "Limb drawing style"): translucent bone fills over the soft tissue, edges drawn last.
+describe("limb tonal layers (RAD-072 2a)", () => {
+  const one = blend(SCENE.boneFill, SCENE.soft, LIMB.boneFillOpacity);
+  const two = blend(SCENE.boneFill, one, LIMB.boneFillOpacity);
+  it("separates the soft tissue from the detector by fill and by its outline (>= 3:1)", () => {
+    expect(contrast(SCENE.soft, SCENE.detectorFill)).toBeGreaterThanOrEqual(3);
+    for (const fill of [SCENE.soft, SCENE.detectorFill]) expect(contrast(SCENE.outline, fill)).toBeGreaterThanOrEqual(3);
+  });
+  it("reads one bone lighter than the soft tissue and two superimposed bones lighter still (radiograph order)", () => {
+    expect(lum(one)).toBeGreaterThan(lum(SCENE.soft));
+    expect(lum(two)).toBeGreaterThan(lum(one));
+  });
+  it("keeps every bone edge >= 3:1 on soft tissue, on one bone and on two superimposed bones (dark under-stroke + light line)", () => {
+    expect(contrast(SCENE.boneLine, SCENE.underStroke)).toBeGreaterThanOrEqual(7);
+    for (const fill of [SCENE.soft, one, two]) expect(Math.max(contrast(SCENE.underStroke, fill), contrast(SCENE.boneLine, fill)), fill).toBeGreaterThanOrEqual(3);
+  });
+  it("keeps the joint spaces (dark) >= 3:1 against one bone and two superimposed bones", () => {
+    for (const fill of [one, two]) expect(contrast(SCENE.air, fill)).toBeGreaterThanOrEqual(3);
   });
 });

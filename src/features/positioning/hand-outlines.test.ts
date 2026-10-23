@@ -16,7 +16,7 @@ const inPolygon = ([x, y]: Pt, poly: Pt[]) => {
 describe("traced hand outlines (RAD-072 2a)", () => {
   for (const view of ["pa", "lateral"] as const) {
     it(`${view}: no soft-tissue point lies inside any bone outline (owner review)`, () => {
-      const ss = outlines.views[view].structures as Structure[];
+      const ss = outlines.views[view].structures as unknown as Structure[];
       const soft = ss.find((s) => s.group === "soft")!;
       // open bone outlines (forearm, styloid tip) are closed by the chord between their ends; points along each soft segment are sampled too
       const bones = ss.filter((s) => s.group !== "soft" && s.group !== "joints" && s.points.length > 2);

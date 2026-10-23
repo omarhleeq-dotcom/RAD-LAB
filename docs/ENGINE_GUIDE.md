@@ -37,7 +37,7 @@ These are continuing constraints, not a request to add exams. Full source/teachi
 
 ## Scene design and bilingual UI
 
-- Reuse `scene-style.ts` tokens (`SCENE`, `STROKE`, `UNDER`, `LABEL_SIZE`), `SceneParts.tsx` and existing figures. Never invent hex/stroke values. Dark muted anatomy, thin bone/edge lines (chest figures: [chest drawing style](#chest-drawing-style)); ONE amber accent over dark understroke; guides at most green target + sky reference/fault, also distinct by shape/text. Accents ≥3:1 against every fill (`scene-style.test.ts`); labels ≥7:1 on measured dark pills, no stroke halos on Arabic joins.
+- Reuse `scene-style.ts` tokens (`SCENE`, `STROKE`, `UNDER`, `LABEL_SIZE`), `SceneParts.tsx` and existing figures. Never invent hex/stroke values. Dark muted anatomy, thin bone/edge lines (chest figures: [chest drawing style](#chest-drawing-style); hand: [limb drawing style](#limb-drawing-style)); ONE amber accent over dark understroke; guides at most green target + sky reference/fault, also distinct by shape/text. Accents ≥3:1 against every fill (`scene-style.test.ts`); labels ≥7:1 on measured dark pills, no stroke halos on Arabic joins.
 - Draw scored faults visibly by shape, with outlines/labels only when guides ON. If an honest cue cannot be drawn, label/record that limit and apply the honesty gate before implementation. Clip to detector/viewBox, no dead space or unexplained shapes; each drawing has settings-derived text alternative. Keep pointer/keyboard/ARIA semantics. Use family-appropriate axis/hint labels, not universal Head/Feet. Measure overlaps at390/1440 EN/AR, guides ON/OFF and all moving axes ([recipe §4a](exam-recipe.md#4a-label-collision-measurement-reusable-script-s14-0)).
 - UI strings in both `messages/en.json` and `messages/ar.json`, synced keys; data text `LocalizedText`; logical CSS (`ms-`, `ps-`, `border-s-`), numbers/units `dir="ltr"`. New Arabic terms remain machine-assisted DRAFT in [ARABIC_TERMINOLOGY](ARABIC_TERMINOLOGY.md) until reviewed; use «الكاشف». Keep assessment answer separation.
 
@@ -50,6 +50,16 @@ Applies to every chest figure (PA/AP frontal, lateral, plan view, AP side view);
 2. **Tonal layers, back to front:** detector background → soft tissue (`soft`, mid tone) → lung fields (`air`, darkest) → heart/mediastinum (`heart`, filled) → bones (`boneFill`/`boneLine`, lighter, stronger stroke) → guides (accents, dashed, thinner than bones, on under-stroke) → fault overlays (outline/hatch, translucent, never a solid dark fill) → labels.
 3. **Contrast (WCAG 1.4.11 / 1.4.3):** adjacent filled regions ≥3:1; where one luminance axis cannot also keep bones ≥3:1 (heart beside soft tissue) the shared outline is ≥3:1 to both. Meaningful strokes ≥3:1 to the fills they cross; accents ≥3:1 directly or via their under-stroke; label text ≥4.5:1 on its pill over any chest fill. The scene panel is the fixed dark console in both UI themes, so the same tokens hold in dark and light; `scene-style.test.ts` pins every pair.
 4. **Labels** stay fully inside the drawing frame at 390 and 1440, EN and AR, guides ON/OFF; chest guide labels are drawn above the collimation shade.
+
+<a id="limb-drawing-style"></a>
+### Limb drawing style (RAD-072 2a, hand pilot)
+
+Applies to limb figures drawn from traced outlines; today only the hand PA / lateral detector views. Other limb figures keep the rule above until their own owner decision. Owner instruction: [RAD-072 2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23).
+
+1. **Source:** outlines traced from the project's own baselines only (`scripts/trace-outlines/`, `hand-outlines.json`): illustrative, drawing-only, not a measurement. They are moved by the family's existing model (`features/hand-model`, unchanged), each structure following the model part it names, so the drawing turns like the result image. A right-hand case mirrors the drawing; RTL never does.
+2. **Tonal layers, back to front:** detector background → soft tissue (`soft`, `outline` edge) → joint spaces (`air`, thin) → bone fills (`boneFill`, **translucent**, `LIMB.boneFillOpacity`; the copies of a superimposed group share it so they read as one bone at the base pose) → every bone's cortex edge last (`boneLine` on `underStroke`) → guides → fault overlays (outline, never a solid fill) → labels. Tokens: the chest `SCENE` tones plus the `LIMB` widths in `scene-style.ts`; no new colour.
+3. **Superimposed bones stay visible** (radiograph-style): overlapping fills read lighter and every edge is drawn over all fills, so no bone disappears at any rotation (`hand-outline-drawing.test.ts`, full range, both exams). Contrast as in the chest rule 3: edges ≥3:1 on soft tissue, one bone and two bones via the under-stroke; pinned by `scene-style.test.ts`. Guides stay thinner than a bone edge.
+4. Structures marked `drawn: false` in the data (the sesamoid-like densities) and single-point landmarks are not drawn.
 
 ## Pilot, hosting and runtime
 

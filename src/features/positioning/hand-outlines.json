@@ -6,7 +6,7 @@
  "date": "2026-10-23",
  "method": "semi-automatic: curated axis seeds; edges from smoothed intensity profiles (steepest or outermost bright-to-dark step), median-filtered and Ramer-Douglas-Peucker simplified; joint spaces = darkest point of axial profiles; soft tissue = Otsu threshold boundary. Script: scripts/trace-outlines/trace-hand-outlines.py",
  "coordinates": "image px of the web copy (origin top-left, x right, y down), the space of features/hand-model/hand-model.ts",
- "follows": "hand-model tube id, or tube group (column, carpals), whose rotation the drawing follows (drawing link only; the model is unchanged)",
+ "follows": "hand-model tube id, or tube group (column = one copy per digit, forearm = radius and ulna copies, carpals), whose rotation the drawing follows (drawing link only; the model is unchanged)",
  "drawn": "absent = drawn; false = kept in the data but not drawn",
  "sources": {
   "pa": {
@@ -307,21 +307,21 @@
      "id": "cmc",
      "group": "joints",
      "closed": false,
-     "follows": null,
+     "follows": "carpals",
      "points": [[335, 1476], [400, 1458], [465, 1457], [530, 1464], [595, 1492], [660, 1517], [725, 1514]]
     },
     {
      "id": "radiocarpal",
      "group": "joints",
      "closed": false,
-     "follows": null,
+     "follows": "radius",
      "points": [[445, 1844], [489, 1819], [533, 1810], [576, 1787], [620, 1776], [664, 1759], [708, 1746]]
     },
     {
      "id": "cmc1",
      "group": "joints",
      "closed": false,
-     "follows": null,
+     "follows": "t-mc",
      "points": [[780, 1535], [779, 1555], [772, 1576], [776, 1594], [782, 1612], [794, 1628], [800, 1646]]
     },
     {
@@ -391,7 +391,7 @@
      "id": "radius-ulna",
      "group": "forearm",
      "closed": false,
-     "follows": "radius",
+     "follows": "forearm",
      "points": [[608, 2122], [608, 2071], [621, 1998], [623, 1945], [628, 1935], [621, 1919], [607, 1902], [587, 1884], [549, 1869], [500, 1894], [467, 1895], [412, 1883], [393, 1902], [391, 1921], [380, 1936], [380, 1945], [389, 1958], [392, 1978], [406, 1985], [408, 2005], [421, 2025], [431, 2031], [438, 2058], [439, 2122]]
     },
     {
@@ -428,21 +428,21 @@
      "id": "mcp-group",
      "group": "joints",
      "closed": false,
-     "follows": null,
+     "follows": "column",
      "points": [[400, 897], [423, 902], [447, 912], [470, 916], [493, 917], [517, 918], [540, 916]]
     },
     {
      "id": "cmc",
      "group": "joints",
      "closed": false,
-     "follows": null,
+     "follows": "carpals",
      "points": [[385, 1548], [418, 1548], [452, 1557], [485, 1557], [518, 1556], [552, 1555], [585, 1575]]
     },
     {
      "id": "radiocarpal",
      "group": "joints",
      "closed": false,
-     "follows": null,
+     "follows": "radius",
      "points": [[395, 1876], [429, 1888], [463, 1891], [498, 1890], [532, 1866], [566, 1866], [600, 1870]]
     }
    ]
