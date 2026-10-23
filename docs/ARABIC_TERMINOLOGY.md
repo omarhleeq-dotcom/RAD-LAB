@@ -446,3 +446,18 @@ The owner decided the evidence badge labels (D5) and the table (c) corrections o
 | Upper-anterior lung fields | الحقول الرئوية العلوية الأمامية | `scene.armsLowered` | DRAFT |
 
 Source and scope: [owner drawing findings](DECISIONS.md#rad072-chest-owner-2026-10-23), [part report](RAD-072_PART1_REPORT_2026-10-23.md). The existing costophrenic-angle, sternum and diaphragmatic-dome terms are reused.
+
+## RAD-072 part 1b — chest drawing quality pass (2026-10-23)
+
+**DRAFT — machine-assisted wording, pending owner language review.** Scene readouts and text alternatives only; no clinical rule or scoring value. Existing approved terms remain unchanged.
+
+| English | Draft Arabic | Where | Review status |
+|---|---|---|---|
+| (tube angle) measured from the perpendicular to the detector | مقيسة عن العمودي على الكاشف | `scene.tubeAngleRef` | DRAFT |
+| (beam) from the perpendicular to the detector | عن العمودي على الكاشف | `scene.altSide` | DRAFT |
+| Anterior chest wall | جدار الصدر الأمامي | `scene.altLateral` | DRAFT |
+| Vertebral column with disc spaces | عمود فقري بمسافات بين الفقرات | `scene.altLateral` | DRAFT |
+| Shoulder (right–left) axis | محور الكتفين | `scene.altPlanLateral` | DRAFT |
+| The {side} lateral position / the {side} side (left / right) | الوضع الجانبي {الأيسر/الأيمن}، والجانب {الأيسر/الأيمن} | `scene.altPlanLateral`, `scene.sideLeft` / `sideRight` | DRAFT |
+
+Source and scope: [owner decision 1b](DECISIONS.md#rad072-1b-owner-2026-10-23), [part 1b report](RAD-072_PART1B_REPORT_2026-10-23.md).
