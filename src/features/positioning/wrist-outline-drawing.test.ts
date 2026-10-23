@@ -134,6 +134,9 @@ describe("wrist drawing from the traced outlines (RAD-072 2b)", () => {
     // palm down shows the wrist's thickness (the lateral image's width), on the ulnar edge its width (the PA image's width): the wrist is wider than thick
     expect(edge.hand).toBeGreaterThan(flat.hand);
     expect(edge.forearm).toBeGreaterThan(flat.forearm);
-    for (const v of [flat.hand, flat.forearm, edge.hand, edge.forearm]) expect(v).toBeGreaterThan(20), expect(v).toBeLessThan(70);
+    for (const v of [flat.hand, flat.forearm, edge.hand, edge.forearm]) {
+      expect(v).toBeGreaterThan(20);
+      expect(v).toBeLessThan(70);
+    }
   });
 });
