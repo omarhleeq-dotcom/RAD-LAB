@@ -1432,7 +1432,8 @@
       "title": "Patient data and usage rules",
       "p1": "Never enter real patient data or images. RAD-LAB is an experimental educational simulator and is not for clinical use or medical decision-making.",
       "p2": "Your account is for personal use and must not be shared with others. Training content must not be republished. You may share a screenshot of your result or talk about your experience. You must not attempt to disrupt the operation of the website.",
-      "p3": "The simulator does not assess radiation shielding (such as gonad or thyroid shields). This does not replace your local radiation-protection policy."
+      "p3": "The simulator does not assess radiation shielding (such as gonad or thyroid shields). This does not replace your local radiation-protection policy.",
+      "p4": "Values marked “Teaching value” are this simulator's teaching choices (for example tolerance limits, scoring weights, exposure-indicator ranges and the size of visual effects), not universal clinical standards. Facts are taken from the professional sources cited."
     },
     "closing": "By ticking “I agree”, you confirm that you have read this page and agree to participate as described."
   },
