@@ -90,8 +90,8 @@ const lowerLimbProfile = (kind: LowerLimbKind): AnyExamTechniqueProfile => {
         id: `kvp-band-${kind}`,
         label: { en: `${c.part.en} kVp band ${kvLo}–${kvHi} (digital)`, ar: `نطاق kVp لـ${c.part.ar} ‎${kvLo}–${kvHi}‎ (رقمي)` },
         value: {
-          en: `Full credit inside ${kvLo}–${kvHi} kV (Bontrager, digital, ${c.page}); partial credit ${pLo}–${pHi} kV is an engine teaching choice.`,
-          ar: `درجة كاملة ضمن ‎${kvLo}–${kvHi}‎ kV (Bontrager، رقمي، ${c.page.replace("p.", "ص.")})؛ والدرجة الجزئية ضمن ‎${pLo}–${pHi}‎ kV اختيار تعليمي في المحاكي.`,
+          en: `Full credit inside ${kvLo}–${kvHi} kV (Bontrager, digital, ${c.page}); partial credit within ${pLo}–${pHi} kV.`,
+          ar: `درجة كاملة ضمن ‎${kvLo}–${kvHi}‎ kV (Bontrager، رقمي، ${c.page.replace("p.", "ص.")})؛ والدرجة الجزئية ضمن ‎${pLo}–${pHi}‎ kV.`,
         },
         evidence: bandEvidence,
       },

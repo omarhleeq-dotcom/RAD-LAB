@@ -111,7 +111,7 @@ export const chestPaErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "Positioning ref §Image rejection",
-          note: "Forcing the pass mark below the threshold is a simulator rule, not a real-world automatic reject decision. The numeric score is unchanged.",
+          note: "The numeric score is unchanged.",
         },
       },
       {
@@ -124,12 +124,12 @@ export const chestPaErectExam: ExamDefinition = {
         concept: {
           status: "common-reference",
           reference: "Image-quality ref — Motion",
-          note: "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness. That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
+          note: "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness.",
         },
         evidence: {
           status: "provisional",
           reference: "Positioning ref §Image rejection",
-          note: "The gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
+          note: "No blur size or motion distance is claimed. The numeric score is unchanged.",
         },
       },
       {
@@ -165,7 +165,7 @@ export const chestPaErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "Side marker and annotations — S10b-8; S11b-1",
-          note: "The gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged.",
+          note: "Same severity as the wrong-side marker. The numeric score is unchanged.",
         },
       },
     ],
@@ -653,7 +653,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "Image-quality ref (Motion)",
-        note: "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+        note: "Patient or respiratory motion reduces sharpness (principle). Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       },
     },
   ],

@@ -17,6 +17,6 @@ export const pelvisTechnique: AnyExamTechniqueProfile = {
   } },
   assumptions: [
     ...base.assumptions.filter(a => KEEP.includes(a.id)),
-    { id: "pelvis-reference", label: { en: "Pelvis teaching model", ar: "نموذج الحوض التعليمي" }, value: { en: "Bontrager p.279: 80–90 kV, SID at least 102 cm, grid. Manual-only mode, partial bands, 85 kV / 2.5 mAs / 102 cm model anchor, attenuation and tolerances are engine teaching choices, not a clinical technique chart.", ar: "Bontrager ص.279: ‏80–90 kV وSID لا يقل عن 102 سم، مع شبكة. الوضع اليدوي والنطاقات الجزئية ونقطة النموذج 85 kV و2.5 mAs عند 102 سم والتوهين والتسامحات اختيارات تعليمية في المحاكي وليست جدول تعريض سريريًا." }, evidence: { status: "educational-simplification", reference: "docs/DECISIONS.md S-PELVIS-1-3; BONTRAGER-9 p.279" } },
+    { id: "pelvis-reference", label: { en: "Pelvis teaching model", ar: "نموذج الحوض التعليمي" }, value: { en: "Bontrager p.279: 80–90 kV, SID at least 102 cm, grid. Manual-only mode, partial bands, 85 kV / 2.5 mAs / 102 cm model anchor, attenuation and tolerances are not a clinical technique chart.", ar: "Bontrager ص.279: ‏80–90 kV وSID لا يقل عن 102 سم، مع شبكة. الوضع اليدوي والنطاقات الجزئية ونقطة النموذج 85 kV و2.5 mAs عند 102 سم والتوهين والتسامحات وليست جدول تعريض سريريًا." }, evidence: { status: "educational-simplification", reference: "docs/DECISIONS.md S-PELVIS-1-3; BONTRAGER-9 p.279" } },
   ],
 };

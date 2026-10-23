@@ -67,8 +67,8 @@ const PER = {
       "الساق متعامدة مع الكاشف: لقمتا عظم الفخذ وحيز المفصل متناظرتان ونحو النصف الإنسي لرأس الشظية متراكب بالظنبوب والنتوء بين اللقمتين في منتصف الحفرة (Bontrager ص.246).",
     ),
     rotationFail: T(
-      "The leg is rotated: the condyles and the joint space are no longer symmetric and the fibular head is covered by the tibia more or less than about half (Bontrager p.246). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule or tolerance). Value 0 = the interepicondylar line parallel to the detector (Bontrager rotates the leg internally 3°–5° to achieve this). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "الساق مائلة (دوران): لم تعد اللقمتان وحيز المفصل متناظرين وأصبح رأس الشظية مغطى بالظنبوب بأكثر أو بأقل من نحو النصف (Bontrager ص.246). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه ولا حدًّا). القيمة 0 = الخط بين اللقمتين موازٍ للكاشف (يدير Bontrager الساق إنسيًّا 3°–5° لتحقيق ذلك). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The leg is rotated: the condyles and the joint space are no longer symmetric and the fibular head is covered by the tibia more or less than about half (Bontrager p.246). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule or tolerance). Value 0 = the interepicondylar line parallel to the detector (Bontrager rotates the leg internally 3°–5° to achieve this). Full credit within ±2°, partial credit within ±5°.",
+      "الساق مائلة (دوران): لم تعد اللقمتان وحيز المفصل متناظرين وأصبح رأس الشظية مغطى بالظنبوب بأكثر أو بأقل من نحو النصف (Bontrager ص.246). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه ولا حدًّا). القيمة 0 = الخط بين اللقمتين موازٍ للكاشف (يدير Bontrager الساق إنسيًّا 3°–5° لتحقيق ذلك). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal femur.", "الحافة العلوية للمجال تقطع عظم الفخذ السفلي."),
@@ -154,8 +154,8 @@ const PER = {
       "الركبة بإسقاط جانبي صحيح: الحدود الخلفية للقمتي عظم الفخذ متراكبة والرضفة في وضع جانبي (بروفايل) ورأس الشظية مغطى بالظنبوب كما في الإسقاط الجانبي الصحيح (Bontrager ص.249).",
     ),
     rotationFail: T(
-      "The knee is rotated: the posterior borders of the femoral condyles are no longer superimposed and the fibular head is covered by the tibia more or less than in a true lateral (over-rotation = less covered, under-rotation = more; Bontrager p.249). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "الركبة مائلة (دوران): لم تعد الحدود الخلفية للقمتي عظم الفخذ متراكبة وأصبح رأس الشظية مغطى بالظنبوب بأكثر أو بأقل مما في الإسقاط الجانبي الصحيح (الدوران الزائد = تغطية أقل، والناقص = أكثر؛ Bontrager ص.249). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager حدًّا). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The knee is rotated: the posterior borders of the femoral condyles are no longer superimposed and the fibular head is covered by the tibia more or less than in a true lateral (over-rotation = less covered, under-rotation = more; Bontrager p.249). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). Full credit within ±2°, partial credit within ±5°.",
+      "الركبة مائلة (دوران): لم تعد الحدود الخلفية للقمتي عظم الفخذ متراكبة وأصبح رأس الشظية مغطى بالظنبوب بأكثر أو بأقل مما في الإسقاط الجانبي الصحيح (الدوران الزائد = تغطية أقل، والناقص = أكثر؛ Bontrager ص.249). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager حدًّا). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal femur.", "الحافة العلوية للمجال تقطع عظم الفخذ السفلي."),
@@ -198,12 +198,12 @@ const PER = {
         "ميل الأنبوب بعيد عن 5°–7° نحو الرأس (Bontrager ص.249).",
       ),
       low: T(
-        "More cephalad than 5°–7°. Bontrager gives 7°–10° only for a short patient with a wide pelvis; this patient is average. (The 3°–10° partial-credit band is an engine teaching choice.)",
-        "ميل نحو الرأس أكبر من 5°–7°. يذكر Bontrager 7°–10° لمريض قصير ذي حوض عريض فقط؛ وهذا المريض متوسط. (نطاق الدرجة الجزئية 3°–10° اختيار تعليمي في المحاكي.)",
+        "More cephalad than 5°–7°. Bontrager gives 7°–10° only for a short patient with a wide pelvis; this patient is average. (Partial credit applies within 3°–10°.)",
+        "ميل نحو الرأس أكبر من 5°–7°. يذكر Bontrager 7°–10° لمريض قصير ذي حوض عريض فقط؛ وهذا المريض متوسط. (وتُمنح درجة جزئية ضمن 3°–10°.)",
       ),
       high: T(
-        "Too little cephalad angle (a perpendicular beam is used only when the lower leg can be raised to the plane of the femur). Angle the tube 5°–7° cephalad. (The 3°–10° partial-credit band is an engine teaching choice.)",
-        "ميل نحو الرأس أقل من اللازم (يُستخدم الشعاع العمودي فقط إذا أمكن رفع الساق إلى مستوى عظم الفخذ). أمِل الأنبوب 5°–7° نحو الرأس. (نطاق الدرجة الجزئية 3°–10° اختيار تعليمي في المحاكي.)",
+        "Too little cephalad angle (a perpendicular beam is used only when the lower leg can be raised to the plane of the femur). Angle the tube 5°–7° cephalad. (Partial credit applies within 3°–10°.)",
+        "ميل نحو الرأس أقل من اللازم (يُستخدم الشعاع العمودي فقط إذا أمكن رفع الساق إلى مستوى عظم الفخذ). أمِل الأنبوب 5°–7° نحو الرأس. (وتُمنح درجة جزئية ضمن 3°–10°.)",
       ),
       evidenceNote: "5°–7° cephalad (7–10° for a short patient with a wide pelvis, about 5° for a tall male with a narrow pelvis, perpendicular if the lower leg can be raised to the femur's plane) is Bontrager. Feedback only: the tube angle is NOT drawn on the result image.",
     },
@@ -243,8 +243,8 @@ const PER = {
       "القدم متعامدة مع الكاشف: المسافات بين مشط القدم 2–5 متقاربة تقريبًا وقاعدتا المشط الأول والثاني منفصلتان عمومًا وقواعد 2–5 متراكبة (Bontrager ص.232).",
     ),
     rotationFail: T(
-      "The foot is rotated: the spacing of metatarsals 2–5 is no longer nearly equal (Bontrager p.232). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule or tolerance). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "القدم مائلة (دوران): لم تعد المسافات بين مشط القدم 2–5 متقاربة تقريبًا (Bontrager ص.232). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه ولا حدًّا). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The foot is rotated: the spacing of metatarsals 2–5 is no longer nearly equal (Bontrager p.232). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule or tolerance). Full credit within ±2°, partial credit within ±5°.",
+      "القدم مائلة (دوران): لم تعد المسافات بين مشط القدم 2–5 متقاربة تقريبًا (Bontrager ص.232). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه ولا حدًّا). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the toes.", "الحافة العلوية للمجال تقطع أصابع القدم."),
@@ -287,12 +287,12 @@ const PER = {
         "ميل الأنبوب بعيد عن نحو 10° باتجاه العقب (نحو الرأس). لقوس متوسط يكون الشعاع عموديًا على عظام مشط القدم (Bontrager ص.232).",
       ),
       low: T(
-        "More than about 10° toward the heel. Bontrager gives about 15° only for a high arch; this foot has an average arch. (The 5°–15° partial-credit band is an engine teaching choice.)",
-        "أكثر من نحو 10° باتجاه العقب. يذكر Bontrager نحو 15° لقوس عالٍ فقط؛ وهذه القدم ذات قوس متوسط. (نطاق الدرجة الجزئية 5°–15° اختيار تعليمي في المحاكي.)",
+        "More than about 10° toward the heel. Bontrager gives about 15° only for a high arch; this foot has an average arch. (Partial credit applies within 5°–15°.)",
+        "أكثر من نحو 10° باتجاه العقب. يذكر Bontrager نحو 15° لقوس عالٍ فقط؛ وهذه القدم ذات قوس متوسط. (وتُمنح درجة جزئية ضمن 5°–15°.)",
       ),
       high: T(
-        "Less than about 10° toward the heel (or angled toward the toes). The beam is not perpendicular to the metatarsals; Bontrager angles it about 10° toward the heel for an average arch. (The 5°–15° partial-credit band is an engine teaching choice.)",
-        "أقل من نحو 10° باتجاه العقب (أو مائل نحو الأصابع). الشعاع ليس عموديًا على عظام مشط القدم؛ يميله Bontrager نحو 10° باتجاه العقب لقوس متوسط. (نطاق الدرجة الجزئية 5°–15° اختيار تعليمي في المحاكي.)",
+        "Less than about 10° toward the heel (or angled toward the toes). The beam is not perpendicular to the metatarsals; Bontrager angles it about 10° toward the heel for an average arch. (Partial credit applies within 5°–15°.)",
+        "أقل من نحو 10° باتجاه العقب (أو مائل نحو الأصابع). الشعاع ليس عموديًا على عظام مشط القدم؛ يميله Bontrager نحو 10° باتجاه العقب لقوس متوسط. (وتُمنح درجة جزئية ضمن 5°–15°.)",
       ),
       evidenceNote: "About 10° toward the heel (about 15° for a high arch, about 5° for a low arch, no angle for a foreign body) is Bontrager; toward the heel = cephalad = negative on the control. Feedback only: the tube angle is NOT drawn on the result image.",
     },
@@ -331,16 +331,16 @@ const PER = {
       "الأخمص بزاوية 30°–40° مع الكاشف (Bontrager ص.233؛ يوصى بـ40°): عظام مشط القدم 3–5 غير متراكبة والحدبة المشطية الخامسة ظاهرة بالجانب (بروفايل).",
     ),
     rotationFail: T(
-      "The plantar surface is outside the 30°–40° Bontrager gives (p.233), so metatarsals 3–5 are not free of superimposition as required. The 25°–45° partial-credit band is an engine teaching choice.",
-      "الأخمص خارج الزاوية 30°–40° التي يذكرها Bontrager (ص.233) فلا تكون عظام مشط القدم 3–5 غير متراكبة كما هو مطلوب. نطاق الدرجة الجزئية 25°–45° اختيار تعليمي في المحاكي.",
+      "The plantar surface is outside the 30°–40° Bontrager gives (p.233), so metatarsals 3–5 are not free of superimposition as required. Partial credit applies within 25°–45°.",
+      "الأخمص خارج الزاوية 30°–40° التي يذكرها Bontrager (ص.233) فلا تكون عظام مشط القدم 3–5 غير متراكبة كما هو مطلوب. وتُمنح درجة جزئية ضمن 25°–45°.",
     ),
     rotationLow: T(
-      "The foot is turned less than the 30°–40° Bontrager gives (p.233): the plantar surface is too close to the detector. Turn the foot further medially (40° is recommended). The 25°–45° partial-credit band is an engine teaching choice.",
-      "القدم مدارة أقل من 30°–40° التي يذكرها Bontrager (ص.233): الأخمص قريب جدًّا من الكاشف. أدِر القدم إنسيًّا أكثر (يوصى بـ40°). نطاق الدرجة الجزئية 25°–45° اختيار تعليمي في المحاكي.",
+      "The foot is turned less than the 30°–40° Bontrager gives (p.233): the plantar surface is too close to the detector. Turn the foot further medially (40° is recommended). Partial credit applies within 25°–45°.",
+      "القدم مدارة أقل من 30°–40° التي يذكرها Bontrager (ص.233): الأخمص قريب جدًّا من الكاشف. أدِر القدم إنسيًّا أكثر (يوصى بـ40°). وتُمنح درجة جزئية ضمن 25°–45°.",
     ),
     rotationHigh: T(
-      "The foot is turned more than the 30°–40° Bontrager gives (p.233). Turn the foot back toward 40°. The 25°–45° partial-credit band is an engine teaching choice.",
-      "القدم مدارة أكثر من 30°–40° التي يذكرها Bontrager (ص.233). أعد القدم نحو 40°. نطاق الدرجة الجزئية 25°–45° اختيار تعليمي في المحاكي.",
+      "The foot is turned more than the 30°–40° Bontrager gives (p.233). Turn the foot back toward 40°. Partial credit applies within 25°–45°.",
+      "القدم مدارة أكثر من 30°–40° التي يذكرها Bontrager (ص.233). أعد القدم نحو 40°. وتُمنح درجة جزئية ضمن 25°–45°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the toes.", "الحافة العلوية للمجال تقطع أصابع القدم."),
@@ -423,7 +423,7 @@ const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
       `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (هذه ${PER[k].part.ar} ${sideWords(k).ar}). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
     ),
     concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, p.224-225, ${PER[k].page}`, "COMMON QUALITY CRITERION: an anatomic side marker is required on every image and must name the side imaged. For a single limb Bontrager gives no viewer-half convention, so only the letter is judged (O21 option A, S14.1c-4, S14.4-2)."),
-    evidence: ev("provisional", "S14.4-3, S14.1c-4", "The gate is a simulator rule. The numeric score is unchanged."),
+    evidence: ev("provisional", "S14.4-3, S14.1c-4", "The numeric score is unchanged."),
   },
   {
     id: "missing-marker",
@@ -433,7 +433,7 @@ const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
       `ملاحظة حرجة — لا توجد علامة جانب: لن تبيّن الصورة أي ${PER[k].part.ar} تُظهر. تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. غياب العلامة خطأ مهم يجب تصحيحه في التدريب، وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
     ),
     concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, p.224-225, ${PER[k].page}`, "COMMON QUALITY CRITERION: the image must carry a side marker."),
-    evidence: ev("provisional", "S14.4-3", "The gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged."),
+    evidence: ev("provisional", "S14.4-3", "Same severity as the wrong-side marker. The numeric score is unchanged."),
   },
 ];
 
@@ -507,8 +507,8 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
         pass: T("The field is not larger than necessary for the required anatomy.", "المجال ليس أكبر من اللازم للتشريح المطلوب."),
         fail: T("The field is opened wider than necessary.", "المجال مفتوح أكثر من اللازم."),
         high: T(
-          `The field is opened wider than necessary. Bontrager asks for collimation on all four sides to the area of interest (p.224-225); a larger field exposes more tissue and adds scatter. Close the field toward the ${partEn}, without cutting off the required anatomy. (The ${p.excessCm} cm margin limit is an engine teaching choice; the field must still include the marker.)`,
-          `المجال مفتوح أكثر من اللازم. يطلب Bontrager التحديد من الجهات الأربع إلى منطقة الاهتمام (ص.224-225)؛ والمجال الأكبر يعرّض أنسجة أكثر ويزيد التشتت. قرّب حواف المجال من ${p.part.ar} دون أن تقطع التشريح المطلوب. (حدّ الهامش ‎${p.excessCm}‎ سم اختيار تعليمي في المحاكي؛ ويجب أن يشمل المجال العلامة.)`,
+          `The field is opened wider than necessary. Bontrager asks for collimation on all four sides to the area of interest (p.224-225); a larger field exposes more tissue and adds scatter. Close the field toward the ${partEn}, without cutting off the required anatomy. (Margin limit: ${p.excessCm} cm; the field must still include the marker.)`,
+          `المجال مفتوح أكثر من اللازم. يطلب Bontrager التحديد من الجهات الأربع إلى منطقة الاهتمام (ص.224-225)؛ والمجال الأكبر يعرّض أنسجة أكثر ويزيد التشتت. قرّب حواف المجال من ${p.part.ar} دون أن تقطع التشريح المطلوب. (حدّ الهامش ‎${p.excessCm}‎ سم؛ ويجب أن يشمل المجال العلامة.)`,
         ),
       },
       evidence: ev("educational-simplification", `BONTRAGER-9 p.224-225, ${pg} (collimate to the area of interest)`, `Principle from the textbook. Margin limit: ${p.excessCm} cm. The field is centred on the central ray, so a one-sided margin can be unavoidable.`),
@@ -556,7 +556,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           `لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فتتحرك ${p.part.ar} أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل العظمية الدقيقة. اطلب من المريض إبقاء ${p.part.ar} ثابتة.`,
         ),
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "Motion reduces sharpness. That this instruction decides whether this simulated patient moves is an educational assumption. Deliberately unscored (no rubric exists)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "Motion reduces sharpness. Deliberately unscored (no rubric exists)."),
     },
     rotationRule,
     {
@@ -608,12 +608,12 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           `قيمة kVp ضمن نطاق Bontrager الرقمي لـ${p.part.ar} ${p.name.ar} (‎${kvLo}–${kvHi}‎ kV).`,
         ),
         low: T(
-          `kVp is below the textbook band. A less penetrating beam is absorbed more by the dense bones, so bone detail is harder to see. Extra mAs adds photons, not penetration. (Only ${kvLo}–${kvHi} kV is the textbook digital band; the partial credit between ${pLo} and ${kvLo - 1} kV is an engine teaching choice.)`,
-          `قيمة kVp أقل من نطاق الكتاب. الحزمة الأقل اختراقًا تمتصها العظام الكثيفة أكثر فيصعب رؤية التفاصيل العظمية. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ أما الدرجة الجزئية بين ‎${pLo}‎ و‎${kvLo - 1}‎ kV فهي اختيار تعليمي في المحاكي.)`,
+          `kVp is below the textbook band. A less penetrating beam is absorbed more by the dense bones, so bone detail is harder to see. Extra mAs adds photons, not penetration. (Only ${kvLo}–${kvHi} kV is the textbook digital band; ${pLo}–${kvLo - 1} kV earns partial credit.)`,
+          `قيمة kVp أقل من نطاق الكتاب. الحزمة الأقل اختراقًا تمتصها العظام الكثيفة أكثر فيصعب رؤية التفاصيل العظمية. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ وتُمنح درجة جزئية بين ‎${pLo}‎ و‎${kvLo - 1}‎ kV.)`,
         ),
         high: T(
-          `kVp is above the textbook band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only ${kvLo}–${kvHi} kV is the textbook digital band; the partial credit up to ${pHi} kV is an engine teaching choice.)`,
-          `قيمة kVp أعلى من نطاق الكتاب. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ أما الدرجة الجزئية حتى ‎${pHi}‎ kV فهي اختيار تعليمي.)`,
+          `kVp is above the textbook band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only ${kvLo}–${kvHi} kV is the textbook digital band; partial credit applies up to ${pHi} kV.)`,
+          `قيمة kVp أعلى من نطاق الكتاب. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ وتُمنح درجة جزئية حتى ‎${pHi}‎ kV.)`,
         ),
         fail: T(`kVp is outside this case's protocol range for the ${partEn} (${pLo}–${pHi} kV).`, `قيمة kVp خارج نطاق بروتوكول هذه الحالة لـ${p.part.ar} (‎${pLo}–${pHi}‎ kV).`),
       },
@@ -681,8 +681,8 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           `قيمة SID أقصر من الحد الأدنى 102 سم (40 بوصة) الذي يذكره Bontrager للطرف السفلي (ص.224-225). المسافة الأقصر تزيد التكبير وعدم الحدّة (لا يُرسمان في هذه النسخة) وتزيد التعريض عند الكاشف (قانون التربيع العكسي).`,
         ),
         high: T(
-          "SID is longer than this simulator's teaching band (102–110 cm); exposure at the detector drops (inverse square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum; the upper limit and the partial band are engine teaching choices.)",
-          "قيمة SID أطول من النطاق التعليمي في المحاكي (102–110 سم)؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى والنطاق الجزئي اختياران تعليميان في المحاكي.)",
+          "SID is longer than this simulator's teaching band (102–110 cm); exposure at the detector drops (inverse square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum.)",
+          "قيمة SID أطول من النطاق التعليمي في المحاكي (102–110 سم)؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط.)",
         ),
         fail: T(`SID is outside this case's protocol range for the ${partEn} (below about 95 cm or above 130 cm).`, `قيمة SID خارج نطاق بروتوكول هذه الحالة لـ${p.part.ar} (أقل من نحو 95 سم أو أكثر من 130 سم).`),
       },

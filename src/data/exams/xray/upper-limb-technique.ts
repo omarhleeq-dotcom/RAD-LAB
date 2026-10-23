@@ -101,8 +101,8 @@ export const upperLimbTechnique = (k: UpperLimbKind): AnyExamTechniqueProfile =>
         id: `kvp-band-${f.en}`,
         label: { en: `${f.En} ${p.labelName} kVp band ${kv[0]}–${kv[1]} (digital)`, ar: `نطاق kVp ${f.forAr} ${p.bandNameAr} ‎${kv[0]}–${kv[1]}‎ (رقمي)` },
         value: {
-          en: `Full credit inside ${kv[0]}–${kv[1]} kV (Bontrager, digital, ${page}); partial credit ${partial[0]}–${partial[1]} kV is an engine teaching choice.`,
-          ar: `درجة كاملة ضمن ‎${kv[0]}–${kv[1]}‎ kV (Bontrager، رقمي، ${page.replace("p.", "ص.")})؛ والدرجة الجزئية ضمن ‎${partial[0]}–${partial[1]}‎ kV اختيار تعليمي في المحاكي.`,
+          en: `Full credit inside ${kv[0]}–${kv[1]} kV (Bontrager, digital, ${page}); partial credit within ${partial[0]}–${partial[1]} kV.`,
+          ar: `درجة كاملة ضمن ‎${kv[0]}–${kv[1]}‎ kV (Bontrager، رقمي، ${page.replace("p.", "ص.")})؛ والدرجة الجزئية ضمن ‎${partial[0]}–${partial[1]}‎ kV.`,
         },
         evidence: bandEvidence,
       },

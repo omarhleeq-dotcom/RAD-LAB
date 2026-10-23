@@ -127,7 +127,7 @@ export const chestApSupineExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "S10b-13, S10b-22",
-          note: "The gate is a simulator rule with the same severity as the PA wrong-side marker. The numeric score is unchanged.",
+          note: "Same severity as the PA wrong-side marker. The numeric score is unchanged.",
         },
       },
       {
@@ -410,12 +410,12 @@ export const chestApSupineExam: ExamDefinition = {
           ar: "قيمة kVp ضمن النطاق المستهدف لهذه الحالة (110–125 kV)، وهو النطاق الأمثل للصدر في الكتاب، ومنه صدر AP المستلقي.",
         },
         low: {
-          en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; the 100–109 and 126–150 kV partial credit is an engine teaching choice.)",
-          ar: "قيمة kVp أقل من النطاق المستهدف. الحزمة الأقل اختراقًا تمتصها البنى الكثيفة أكثر (القلب والعمود الفقري) فيصعب رؤية العلامات الرئوية خلفها. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 100–109 و126–150 kV فهي اختيار تعليمي في المحاكي.)",
+          en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; 100–109 and 126–150 kV earns partial credit.)",
+          ar: "قيمة kVp أقل من النطاق المستهدف. الحزمة الأقل اختراقًا تمتصها البنى الكثيفة أكثر (القلب والعمود الفقري) فيصعب رؤية العلامات الرئوية خلفها. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق في الكتاب هو 110–125 kV فقط؛ وتُمنح درجة جزئية لـ 100–109 و126–150 kV.)",
         },
         high: {
-          en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; the 126–150 kV partial credit is an engine teaching choice.)",
-          ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 126–150 kV فهي اختيار تعليمي.)",
+          en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; 126–150 kV earns partial credit.)",
+          ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ وتُمنح درجة جزئية لـ 126–150 kV.)",
         },
         fail: { en: "kVp is outside this case's protocol range.", ar: "قيمة kVp خارج نطاق بروتوكول هذه الحالة." },
       },
@@ -445,8 +445,8 @@ export const chestApSupineExam: ExamDefinition = {
           ar: "قيمة SID أقصر من 183 سم (72 بوصة)، وهو الحد الأدنى حيثما أمكن. يمكن قبول مسافة أقصر لمريض لا يمكن تصويره على تلك المسافة، لكن يجب حينئذٍ كتابة SID المستخدمة على الصورة مع الإسقاط (مثل AP مستلقيًا؛ ولا يحاكي المحاكي هذه البطاقة بعد). كما تجعل القلب يبدو أكبر (للتعليم فقط) وتزيد التعريض عند الكاشف (قانون التربيع العكسي).",
         },
         high: {
-          en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum; the upper limit is an engine teaching choice.)",
-          ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى اختيار تعليمي في المحاكي.)",
+          en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum.)",
+          ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط.)",
         },
         fail: { en: "SID is outside this case's target band (below about 102 cm or above 200 cm).", ar: "قيمة SID خارج النطاق المستهدف لهذه الحالة (أقل من نحو 102 سم أو أكثر من 200 سم)." },
       },

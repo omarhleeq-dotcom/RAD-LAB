@@ -36,8 +36,8 @@ export const ANKLE_PER = {
       "الساق غير مدارة: الجزء الإنسي من تجويف مفصل الكاحل مفتوح والجزء الوحشي مغلق والشظية السفلية متراكبة جزئيًّا بالظنبوب وعظم القَعْب (Bontrager ص.239).",
     ),
     rotationFail: T(
-      "The leg is rotated: the medial and lateral parts of the ankle mortise no longer look as they do in a true AP (medial open, lateral closed) and the overlap of the distal fibula changes (Bontrager p.239). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). Value 0 = the leg not rotated, the line between the malleoli about 15° from parallel to the detector (the lateral malleolus lies further back). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "الساق مدارة: لم يعد الجزءان الإنسي والوحشي من تجويف مفصل الكاحل كما في إسقاط AP الصحيح (الإنسي مفتوح والوحشي مغلق) وتغيّر تراكب الشظية السفلية (Bontrager ص.239). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager حدًّا). القيمة 0 = الساق غير مدارة والخط بين الكعبين يميل نحو 15° عن الموازاة للكاشف (الكعب الوحشي أكثر خلفية). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The leg is rotated: the medial and lateral parts of the ankle mortise no longer look as they do in a true AP (medial open, lateral closed) and the overlap of the distal fibula changes (Bontrager p.239). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). Value 0 = the leg not rotated, the line between the malleoli about 15° from parallel to the detector (the lateral malleolus lies further back). Full credit within ±2°, partial credit within ±5°.",
+      "الساق مدارة: لم يعد الجزءان الإنسي والوحشي من تجويف مفصل الكاحل كما في إسقاط AP الصحيح (الإنسي مفتوح والوحشي مغلق) وتغيّر تراكب الشظية السفلية (Bontrager ص.239). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager حدًّا). القيمة 0 = الساق غير مدارة والخط بين الكعبين يميل نحو 15° عن الموازاة للكاشف (الكعب الوحشي أكثر خلفية). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal tibia and fibula.", "الحافة العلوية للمجال تقطع الظنبوب والشظية السفليين."),
@@ -83,7 +83,7 @@ export const ANKLE_PER = {
         "The tube is angled caudad (toward the toes). The AP ankle needs a perpendicular beam (Bontrager p.239).",
         "الأنبوب مائل نحو القدمين (باتجاه الأصابع). يحتاج الكاحل بإسقاط AP شعاعًا عموديًا (Bontrager ص.239).",
       ),
-      evidenceNote: "CR perpendicular to the detector is Bontrager. The ±2° full-credit and ±5° partial-credit bands are an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
+      evidenceNote: "CR perpendicular to the detector is Bontrager. Full credit within ±2°, partial credit within ±5°. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
       { id: "rotation", description: T("True AP: medial mortise open, lateral mortise closed; some overlap of the distal fibula by the tibia and the talus", "إسقاط AP صحيح: الجزء الإنسي من التجويف مفتوح والوحشي مغلق؛ وبعض التراكب للشظية السفلية بالظنبوب وعظم القَعْب") },
@@ -120,8 +120,8 @@ export const ANKLE_PER = {
       "الكاحل بإسقاط جانبي صحيح: الشظية السفلية فوق النصف الخلفي للظنبوب والكعب الوحشي ظاهر عبر الظنبوب السفلي وعظم القَعْب ومفصل الظنبوب والكاحل مفتوح بحيز منتظم (Bontrager ص.242).",
     ),
     rotationFail: T(
-      "The ankle is rotated: the distal fibula no longer lies over the posterior half of the tibia and the tibiotalar joint space is no longer uniform (Bontrager p.242). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "الكاحل مائل (دوران): لم تعد الشظية السفلية فوق النصف الخلفي للظنبوب ولم يعد حيز مفصل الظنبوب والكاحل منتظمًا (Bontrager ص.242). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager حدًّا). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The ankle is rotated: the distal fibula no longer lies over the posterior half of the tibia and the tibiotalar joint space is no longer uniform (Bontrager p.242). Only the amount of rotation is scored, not its direction (Bontrager gives no tolerance). Full credit within ±2°, partial credit within ±5°.",
+      "الكاحل مائل (دوران): لم تعد الشظية السفلية فوق النصف الخلفي للظنبوب ولم يعد حيز مفصل الظنبوب والكاحل منتظمًا (Bontrager ص.242). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager حدًّا). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal tibia and fibula.", "الحافة العلوية للمجال تقطع الظنبوب والشظية السفليين."),
@@ -167,7 +167,7 @@ export const ANKLE_PER = {
         "The tube is angled caudad (toward the toes). The lateral ankle needs a perpendicular beam (Bontrager p.242).",
         "الأنبوب مائل نحو القدمين (باتجاه الأصابع). يحتاج الكاحل بالإسقاط الجانبي شعاعًا عموديًا (Bontrager ص.242).",
       ),
-      evidenceNote: "CR perpendicular to the detector is Bontrager. The ±2° full-credit and ±5° partial-credit bands are an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
+      evidenceNote: "CR perpendicular to the detector is Bontrager. Full credit within ±2°, partial credit within ±5°. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
       { id: "rotation", description: T("True lateral: distal fibula over the posterior half of the tibia; tibiotalar joint open with a uniform space; lateral malleolus seen through the distal tibia and talus", "إسقاط جانبي صحيح: الشظية السفلية فوق النصف الخلفي للظنبوب؛ ومفصل الظنبوب والكاحل مفتوح بحيز منتظم؛ والكعب الوحشي ظاهر عبر الظنبوب السفلي وعظم القَعْب") },
