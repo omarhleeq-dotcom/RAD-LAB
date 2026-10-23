@@ -127,7 +127,9 @@ export function limbRotationPlan(
   // The shoulder Grashey console value is the absolute body obliquity; its model value is the distance to the 35°–45° band (S-SHOULDER-2-6).
   const value = landmarks && "model" in landmarks && landmarks.model === "foot-oblique" ? footValue("oblique", deg) : landmarks && "model" in landmarks && landmarks.model === "shoulder-grashey" ? shoulderValue(deg) : deg;
   if (!landmarks || !failed || value === 0) return null;
-  const d = clamp(value, -TUNING.limbRotation.maxDeg, TUNING.limbRotation.maxDeg);
+  // the shoulder's closure keeps growing over its whole console range (DECISIONS 2c D2); every other model clamps at the shared limit
+  const cap = landmarks.kind === "limb-warp" && landmarks.model === "shoulder-grashey" ? TUNING.limbRotation.shoulderMaxDeg : TUNING.limbRotation.maxDeg;
+  const d = clamp(value, -cap, cap);
   if (landmarks.kind === "hand-pa") {
     // The 2.5D hand model (S14.2b-FIX): bands in the order of the asset's landmarks [phalanges, metacarpals, thumb]. shiftU = minus the ODD part of the thumb's shift (the sign carrier: rotating narrows the hand for either sign, only the depth term Z·sinθ is odd).
     const a = handPaAnchors(d);

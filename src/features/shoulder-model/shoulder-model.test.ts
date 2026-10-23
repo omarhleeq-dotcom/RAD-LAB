@@ -21,9 +21,11 @@ it("preserves the baseline at zero and never folds over the supported range", ()
     for (let i = 1; i < a.length; i++) expect(a[i]!.u + a[i]!.du - (a[i - 1]!.u + a[i - 1]!.du)).toBeGreaterThan(0.2 * (a[i]!.u - a[i - 1]!.u) - 1e-9);
   }
 });
-it("is the same cue for a deviation on either side (magnitude only) and is capped", () => {
+it("is the same cue for a deviation on either side (magnitude only) and grows over the whole console range (cap lifted, 2c D2)", () => {
   expect(shoulderClosureU(-8)).toBe(shoulderClosureU(8));
-  expect(shoulderClosureU(35)).toBe(shoulderClosureU(15));
+  expect(shoulderClosureU(15)).toBeGreaterThan(shoulderClosureU(10));
+  expect(shoulderClosureU(35)).toBeGreaterThan(shoulderClosureU(15));
+  expect(shoulderClosureU(60)).toBe(shoulderClosureU(35)); // only beyond the console range (0°…60° is at most 35° from the band) does it stop
   expect(shoulderShift(0.6, -8)).toBeCloseTo(shoulderShift(0.6, 8));
   expect(shoulderShift(0.641, 8)).toBeGreaterThan(0);
   expect(shoulderShift(0.9, 8)).toBe(0); // everything medial of the glenoid line stays put
@@ -36,4 +38,23 @@ it("drives the drawing and the pixel sampling from the same displacement", () =>
   const ramp = (u: number) => u * 255;
   expect(limbRotationValue(p, lm, ramp, 0.5, 0.3)).not.toBeCloseTo(ramp(0.5), 4);
   expect(limbRotationValue(p, lm, ramp, 0.5, 0.95)).toBeCloseTo(ramp(0.5), 4); // outside the band of rows
+});
+
+it("the result image keeps changing with the console angle: 0°, 15°, 20° and 30° differ, 35°–45° are the baseline, 60° differs from 50° (2c D2)", () => {
+  const ramp = (u: number) => u * 255;
+  const probe = [0.45, 0.55, 0.62, 0.68];
+  const sig = (deg: number) => {
+    const plan = limbRotationPlan(deg, true, lm);
+    return probe.map((u) => (plan ? limbRotationValue(plan, lm, ramp, u, 0.3) : ramp(u)).toFixed(4)).join("|");
+  };
+  const baseline = probe.map((u) => ramp(u).toFixed(4)).join("|");
+  for (const d of [35, 40, 45]) expect(sig(d)).toBe(baseline);
+  const low = [0, 15, 20, 30].map(sig);
+  expect(new Set(low).size).toBe(4);
+  for (const s of low) expect(s).not.toBe(baseline);
+  expect(sig(60)).not.toBe(sig(50));
+  expect(sig(60)).not.toBe(baseline);
+  // the head stays distinct at the maximum closure: no fold, the strip between the head anchor and the glenoid line keeps at least 20 % of its width
+  const worst = shoulderAnchors(shoulderValue(0));
+  expect(worst[4]!.u + worst[4]!.du - (worst[3]!.u + worst[3]!.du)).toBeGreaterThan(0.2 * (worst[4]!.u - worst[3]!.u));
 });

@@ -50,8 +50,14 @@ export const TUNING = {
     elbowModelGainPerDeg: 2.3,
     /** Knee / foot (S14.4): as the hand's gain, for the lower-limb rotation models (`features/lower-limb-model`); illustrative, scoring never uses it. */
     lowerLimbModelGainPerDeg: 2.3,
-    /** Shoulder Grashey (S-SHOULDER-3): closure of the joint space, as a fraction of the image width per degree of deviation from the 35°–45° band (capped at `maxDeg`); illustrative, scoring never uses it. */
-    shoulderClosurePerDeg: 0.0033,
+    /**
+     * Shoulder Grashey (S-SHOULDER-3; cap lifted by the owner 2026-10-24, DECISIONS #rad072-2c-owner-2026-10-24 D2): closure of the joint space, as a fraction
+     * of the image width per degree of distance from the 35°–45° band, growing out to `shoulderMaxDeg` (35° = the console value 0°; 60° is 15° from the band).
+     * The largest closure (gain × max) must keep the warped strip between the head and the glenoid line above the model's minimum slope (the head stays
+     * distinct, nothing folds). Illustrative, labelled as such; scoring never uses it.
+     */
+    shoulderClosurePerDeg: 0.0016,
+    shoulderMaxDeg: 35,
     /** Wrist (S-VIS-1b): as the hand's gain, for the wrist rotation model (`features/wrist-model`); a labelled teaching exaggeration, scoring never uses it. */
     wristModelGainPerDeg: 2.3,
   },
