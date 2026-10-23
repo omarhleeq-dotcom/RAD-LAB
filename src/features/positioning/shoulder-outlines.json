@@ -1,0 +1,117 @@
+{
+ "format": "rad-lab-traced-outlines/1",
+ "note": "illustrative, drawing-only; not a measurement",
+ "region": "shoulder",
+ "side": "RIGHT (the image is a right shoulder, Grashey / AP glenoid, rotated and cropped; a left case mirrors the drawing, never the RTL layout)",
+ "date": "2026-10-24",
+ "method": "semi-automatic: polygons read by eye at 2-3x from the same image, moved onto the steepest bright-to-dark step along their normals (snap tracer), median-filtered and Ramer-Douglas-Peucker simplified; ridge / gap lines = brightest / darkest point of profiles along the local normal; soft tissue = Otsu threshold boundary united with the grown bone outlines and the frame-margin wedge. Script: scripts/trace-outlines/trace-shoulder-outlines.py",
+ "coordinates": "image px of the web copy A-038 (origin top-left, x right, y down), the space of features/shoulder-model/shoulder-model.ts",
+ "follows": "closure-field = the position-based closing field of shoulder-model.ts; the per-structure choice (moving or static) is made in Phase B (drawing link only; the model is unchanged)",
+ "drawn": "absent = drawn; false = kept in the data but not drawn",
+ "sources": {
+  "grashey": {
+   "asset": "A-038",
+   "derivedFrom": "A-037",
+   "file": "public/images/shoulder/shoulder-grashey-baseline.png",
+   "sha256": "b254bec66a36b304bd8a683c7e7480cf23db1008778efcb68b722730755d7bc2"
+  }
+ },
+ "views": {
+  "grashey": {
+   "widthPx": 1193,
+   "heightPx": 1800,
+   "structures": [
+    {
+     "id": "soft-tissue",
+     "group": "soft",
+     "closed": false,
+     "follows": null,
+     "note": "Otsu threshold 49.7 of the smoothed image, united with the bone outlines grown by 10 px; open where the silhouette (frame edge) leaves the image",
+     "points": [[178, 1794], [207, 1726], [220, 1503], [218, 1494], [209, 1498], [157, 1276], [141, 1122], [141, 1046], [149, 930], [169, 808], [215, 628], [262, 507], [306, 421], [337, 381], [443, 286], [434, 270], [434, 237], [473, 199], [696, 97], [738, 93], [780, 74], [854, 73], [943, 93], [961, 47], [1002, 4]]
+    },
+    {
+     "id": "humerus-proximal",
+     "group": "humerus",
+     "closed": false,
+     "follows": "closure-field",
+     "note": "humeral head, anatomical neck, greater tuberosity and proximal shaft as ONE outline (no edge separates them in the image); open at the bottom of the frame (mid-humerus)",
+     "points": [[325, 1799], [325, 1679], [330, 1614], [350, 1510], [360, 1430], [384, 1300], [389, 1255], [395, 1180], [400, 1000], [383, 856], [364, 780], [337, 701], [327, 661], [320, 606], [320, 516], [338, 494], [400, 441], [426, 402], [449, 381], [500, 357], [560, 348], [629, 356], [667, 369], [703, 387], [748, 422], [784, 465], [812, 530], [820, 597], [804, 690], [729, 733], [698, 759], [665, 807], [644, 859], [620, 970], [591, 1266], [581, 1321], [580, 1366], [561, 1476], [551, 1510], [548, 1555], [538, 1600], [540, 1640], [531, 1695], [533, 1770], [529, 1796], [524, 1799]]
+    },
+    {
+     "id": "acromion",
+     "group": "scapula",
+     "closed": true,
+     "follows": "closure-field",
+     "points": [[445, 270], [443, 243], [468, 223], [479, 211], [566, 167], [592, 164], [609, 151], [675, 125], [709, 104], [751, 105], [773, 88], [793, 83], [810, 88], [820, 95], [830, 97], [855, 99], [870, 93], [881, 94], [908, 110], [907, 141], [912, 165], [909, 195], [901, 219], [902, 245], [896, 254], [876, 263], [861, 277], [851, 282], [794, 280], [720, 288], [690, 287], [651, 281], [615, 284], [560, 283], [526, 274], [500, 279], [476, 273], [460, 273]]
+    },
+    {
+     "id": "clavicle-distal",
+     "group": "clavicle",
+     "closed": false,
+     "follows": "closure-field",
+     "note": "the distal clavicle as far as the frame shows it; open at the right edge of the frame",
+     "points": [[1192, 430], [1166, 414], [1156, 414], [1138, 405], [1098, 401], [1058, 376], [1028, 371], [1001, 348], [987, 333], [959, 321], [951, 308], [949, 292], [944, 283], [936, 276], [928, 262], [927, 257], [938, 228], [926, 210], [925, 205], [929, 169], [950, 170], [980, 159], [1055, 166], [1192, 185]]
+    },
+    {
+     "id": "coracoid",
+     "group": "scapula",
+     "closed": true,
+     "follows": "closure-field",
+     "note": "the ring-shaped density above the glenoid and the line running medially from its lower margin, read visually as the coracoid process; identity not reviewed",
+     "points": [[770, 366], [775, 354], [791, 336], [815, 328], [830, 313], [835, 314], [854, 324], [868, 321], [887, 331], [894, 345], [893, 355], [899, 386], [908, 392], [949, 407], [975, 403], [1008, 405], [1008, 418], [1004, 430], [975, 426], [934, 428], [895, 436], [863, 447], [847, 448], [842, 445], [830, 425], [814, 411], [800, 390]]
+    },
+    {
+     "id": "glenoid-neck",
+     "group": "scapula",
+     "closed": true,
+     "follows": "closure-field",
+     "note": "glenoid face and scapular neck seen on edge as ONE bright band (they cannot be separated in this frame); the band ends at the uniform rectangle (not anatomy)",
+     "points": [[868, 694], [884, 690], [883, 665], [887, 650], [885, 640], [877, 620], [876, 560], [870, 530], [864, 477], [866, 452], [862, 438], [841, 398], [834, 373], [825, 360], [812, 348], [811, 355], [805, 362], [803, 382], [818, 413], [822, 437], [833, 458], [845, 501], [848, 540], [860, 615], [857, 640], [858, 687], [860, 695]]
+    },
+    {
+     "id": "glenohumeral-joint-space",
+     "group": "joints",
+     "closed": false,
+     "follows": "closure-field",
+     "points": [[791, 467], [815, 527], [821, 558], [825, 599], [822, 640], [818, 661], [804, 695]]
+    },
+    {
+     "id": "ac-joint",
+     "group": "joints",
+     "closed": false,
+     "follows": "closure-field",
+     "points": [[914, 126], [925, 142], [932, 170], [922, 200], [915, 240], [914, 263]]
+    },
+    {
+     "id": "greater-tuberosity-line",
+     "group": "joints",
+     "closed": false,
+     "follows": "closure-field",
+     "points": [[424, 406], [443, 432], [468, 451], [503, 498], [505, 520], [495, 570], [497, 600], [493, 640], [500, 690]]
+    },
+    {
+     "id": "scapular-border-inner",
+     "group": "joints",
+     "closed": false,
+     "follows": "closure-field",
+     "points": [[1076, 448], [1066, 509], [1063, 572], [1032, 670], [1014, 772], [1007, 791], [985, 826], [976, 886], [960, 922], [922, 1019], [907, 1068], [889, 1179], [873, 1238], [861, 1351], [854, 1381]]
+    },
+    {
+     "id": "scapular-border-outer",
+     "group": "joints",
+     "closed": false,
+     "follows": "closure-field",
+     "points": [[1125, 519], [1112, 558], [1077, 708], [1063, 758], [1057, 821], [1053, 841], [1024, 893], [1002, 947], [979, 1042], [943, 1122], [924, 1177]]
+    },
+    {
+     "id": "humeral-head-arc",
+     "group": "humerus",
+     "closed": false,
+     "follows": "closure-field",
+     "note": "the articular margin of the head from the tuberosity notch to the medial neck, taken from the humerus outline",
+     "points": [[426, 402], [449, 381], [500, 357], [560, 348], [629, 356], [667, 369], [703, 387], [748, 422], [784, 465], [812, 530], [820, 597], [804, 690]]
+    }
+   ]
+  }
+ }
+}

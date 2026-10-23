@@ -374,8 +374,9 @@ def trace_snap(img, s, limits=()):
         xi = np.arange(n)
         shift = np.interp(xi, np.concatenate([xi[got] - n, xi[got], xi[got] + n]), np.tile(shift[got], 3))
     shift = median_filter_circular(shift, 2, closed=True)
-    k = np.ones(5) / 5
-    shift = np.convolve(np.concatenate([shift[-2:], shift, shift[:2]]), k, mode="valid")
+    for _ in range(s.get("smoothPasses", 1)):  # optional extra smoothing passes (a weak, noisy edge: the humeral shaft)
+        k = np.ones(5) / 5
+        shift = np.convolve(np.concatenate([shift[-2:], shift, shift[:2]]), k, mode="valid")
     shift[border] = 0
     for i in s.get("pin", []):
         shift[int(i)] = 0
@@ -388,8 +389,8 @@ def trace_snap(img, s, limits=()):
         order = [(i0 + j) % n for j in range(n)]
         lead = [i for i in order[: next(j for j, i in enumerate(order) if not border[i])]]
         run = [out[i] for i in order if not border[i]]
-        return ints(rdp(np.array([out[lead[-1]]] + run + [out[i0]]), 1.5)), False
-    return ints(simplify_closed(out, 1.5)), True
+        return ints(rdp(np.array([out[lead[-1]]] + run + [out[i0]]), s.get("eps", 1.5))), False
+    return ints(simplify_closed(out, s.get("eps", 1.5))), True
 
 
 def prior_polygon(s, n=40):
@@ -411,9 +412,10 @@ def prior_polygon(s, n=40):
     return [tuple(prior[i]) for i in idx]
 
 
-def trace_path_gap(img, pts, g, step=10, smooth=0, eps=1.5):
+def trace_path_gap(img, pts, g, step=10, smooth=0, eps=1.5, bright=False):
     """Joint line along a curated polyline: on stations every ~`step` px, the darkest point of the profile along the local normal
-    (±g px); the median-filtered offsets move the polyline's points. Returns the simplified path."""
+    (±g px; `bright`: the brightest point, for a ridge such as a thin cortical line); the median-filtered offsets move the polyline's points.
+    Returns the simplified path."""
     pts = densify(pts, step, False)
     tang = np.gradient(pts, axis=0)
     tang /= np.hypot(*tang.T)[:, None] + 1e-9
@@ -422,7 +424,7 @@ def trace_path_gap(img, pts, g, step=10, smooth=0, eps=1.5):
     off = []
     for p, nv in zip(pts, nrm):
         prof = sample(img, p[0] + rs * nv[0], p[1] + rs * nv[1])
-        off.append(rs[int(np.argmin(prof))])
+        off.append(rs[int(np.argmax(prof) if bright else np.argmin(prof))])
     off = median_filter_circular(off, 1 if not smooth else 2, closed=False)
     off = np.array(off, float)
     for _ in range(smooth):  # optional extra smoothing of the offsets along the line (ends fixed)
@@ -659,7 +661,7 @@ def view(kind, img, bones, blobs, joints, lines, cfg):
         if "along" in ln:
             continue  # traced after the bones (it follows a bone's edge)
         if "pts" in ln:
-            jl[ln["id"]] = trace_path_gap(gap, ln["pts"], ln["g"], smooth=ln.get("smooth", 0), eps=ln.get("eps", 1.5))
+            jl[ln["id"]] = trace_path_gap(gap, ln["pts"], ln["g"], smooth=ln.get("smooth", 0), eps=ln.get("eps", 1.5), bright=ln.get("bright", False))
             jout.append({"id": ln["id"], "group": "joints", "closed": False, "follows": ln["follows"], "points": jl[ln["id"]]})
             continue
         u = np.array(ln["dir"], float)

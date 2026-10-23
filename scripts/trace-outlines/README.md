@@ -74,4 +74,7 @@ python3 -I scripts/trace-outlines/trace-wrist-outlines.py --check-overlays   # J
 - `cfg.soft_runs`: keep up to N soft-tissue runs when the silhouette is cut into several open runs by the image edge (wrist, foot).
 - Where two bones overlap and the image does not separate them the seed names ONE combined outline (`note`), never an invented split.
 
-For the shoulder (2c) the lib works unchanged: add `trace-shoulder-outlines.py` with its seeds, sources, `follows` vocabulary and review list.
+For the shoulder (2c, Phase A) `trace-shoulder-outlines.py` adds one view (`grashey`, A-038) to the same lib, with two optional additions that leave the other
+families byte-identical: `lines[].bright` (a ridge line, the brightest point of the profile, for a thin cortical line) and per-outline `smoothPasses` / `eps` for the snap
+tracer (a weak, noisy edge such as the humeral shaft). The black wedge outside the frame's straight margin is united with the soft tissue (`soft_hint`) so the soft-tissue
+outline is open there; `extras` derives the head arc from the humerus outline.
