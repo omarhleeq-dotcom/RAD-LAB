@@ -18,7 +18,7 @@ import {
 import { collimatedField } from "@/features/simulation/geometry";
 import { CHEST_PA_FIGURE, DETECTOR_FIGURES, U, type DetectorFigure } from "./detector-figures";
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
-import { LABEL_SIZE, SCENE, UNDER } from "./scene-style";
+import { LABEL_SIZE, SCENE, STROKE, UNDER } from "./scene-style";
 import { detectorViewBox, phoneFit } from "./fit-view";
 import { markerBox, nearestTouchTarget, touchGeometry, type TouchCandidate } from "./touch-geometry";
 
@@ -244,9 +244,17 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
 
       {showGuides && (
         <g aria-hidden style={{ pointerEvents: "none" }}>
-          <UnderStroked stroke={SCENE.guide} width={2} dash="3 7">
-            {(p) => <line x1={mid} y1={0} x2={mid} y2={H} {...p} />}
-          </UnderStroked>
+          {figure.marginGuideLabels ? (
+            <UnderStroked stroke={SCENE.guide} width={2} dash="3 7">
+              {(p) => <line x1={mid} y1={0} x2={mid} y2={H} {...p} />}
+            </UnderStroked>
+          ) : (
+            // Chest (RAD-072 1b): a thinner guide on a lighter under-stroke, so it never out-weighs the anatomy it crosses.
+            <>
+              <line x1={mid} y1={0} x2={mid} y2={H} stroke={SCENE.underStroke} strokeWidth={STROKE.guide + UNDER} opacity={0.6} strokeLinecap="round" />
+              <line x1={mid} y1={0} x2={mid} y2={H} stroke={SCENE.guide} strokeWidth={STROKE.guide} strokeDasharray="3 7" />
+            </>
+          )}
           <rect
             x={tgtView.x - (tgt.acceptableTolerance.x * W) / 2}
             y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2}
@@ -275,12 +283,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
               <SceneLabel x={W - 4} y={-122} size={MARGIN_LABEL_SIZE} anchor="end" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
               <SceneLabel x={W - 4} y={-92} size={MARGIN_LABEL_SIZE} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
             </>
-          ) : (
-            <>
-              <SceneLabel x={mid + 8} y={H - 14} size={LABEL_SIZE.detector - 4} fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
-              <SceneLabel x={W - 8} y={tgtView.y - (tgt.acceptableTolerance.y * H) / 2 + 16} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
-            </>
-          )}
+          ) : null}
         </g>
       )}
 
@@ -293,6 +296,15 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
           {(p) => <rect x={fx} y={fy} width={fw} height={fh} {...p} fill="none" />}
         </UnderStroked>
       </g>
+
+      {/* Chest guide labels (RAD-072 1b, G4): above the collimation shade (never dimmed by it), larger, centred on what they name and
+          inside the detector frame: the target-region label just above its region, the midline label on the line near the bottom. */}
+      {showGuides && !figure.marginGuideLabels && (
+        <g aria-hidden style={{ pointerEvents: "none" }}>
+          <SceneLabel x={tgtView.x} y={Math.max(24, tgtView.y - (tgt.acceptableTolerance.y * H) / 2 - 10)} size={LABEL_SIZE.detector + 4} anchor="middle" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
+          <SceneLabel x={mid} y={H - 24} size={LABEL_SIZE.detector + 4} anchor="middle" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
+        </g>
+      )}
 
       {/* orientation labels (image convention, never mirrored by RTL): Head at the top, Feet at the bottom edge; anterior / posterior (lateral) or the patient's sides (frontal, practice guides) */}
       <g aria-hidden style={{ pointerEvents: "none" }}>

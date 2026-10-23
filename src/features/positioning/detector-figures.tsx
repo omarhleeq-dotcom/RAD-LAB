@@ -72,14 +72,14 @@ const chinKey = (s: SimulationSettings) => (s.chinPosition === "tucked" ? "chinT
 
 // The chest drawings read the chin / shoulder cues, which every chest exam declares (S14.1b: optional in the settings for a
 // limb exam); the ideal values below are only the type-level fallback and never apply to a chest exam.
-function PaDrawing({ radCase, settings, H, W }: FigureProps) {
+function PaDrawing({ radCase, settings, H, W, showGuides }: FigureProps) {
   // Practice supplies the reference fit. Frame-only drawing callers retain their explicitly supplied frame.
   const a = radCase.radiograph ? fitAnatomyBox(radCase.radiograph, radCase.requiredAnatomy).landmarkCm : regionToRect(radCase.requiredAnatomy);
   const rv = rotationVisual(settings.rotationDeg);
   // A projection other than the PA drawn in the frontal figure keeps the narrowed thorax (as before the registry).
   const thoraxScale = settings.projection === "lateral-left" ? 0.45 : rv.thoraxScale;
   const lungY = a.y1 * U, lungH = (a.y2 - a.y1) * U, lungW = ((a.x2 - a.x1) * U) / 2 - 8;
-  return <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={scapulaOffset(settings.shoulderPosition ?? "rolled-forward")} chin={settings.chinPosition ?? "elevated"} />;
+  return <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={scapulaOffset(settings.shoulderPosition ?? "rolled-forward")} chin={settings.chinPosition ?? "elevated"} showGuides={showGuides} />;
 }
 
 function PaOrientation({ W, showGuides }: OrientationProps) {
@@ -94,7 +94,11 @@ function PaOrientation({ W, showGuides }: OrientationProps) {
   );
 }
 
-function LateralDrawing({ radCase, settings, H, W, showGuides }: FigureProps) {
+function LateralDrawing(props: FigureProps) {
+  const { radCase, settings, H, W, showGuides } = props;
+  // RAD-072 1b (T1): a projection other than the lateral is drawn as the frontal figure, the same projection check the PA figure
+  // already makes (it narrows its thorax for a lateral); the detector view then matches the plan view of the selected projection.
+  if (settings.projection !== "lateral-left") return <PaDrawing {...props} />;
   // Practice supplies the reference fit. Frame-only drawing callers retain their explicitly supplied frame.
   const a = radCase.radiograph ? fitAnatomyBox(radCase.radiograph, radCase.requiredAnatomy).landmarkCm : regionToRect(radCase.requiredAnatomy);
   const lungY = a.y1 * U, lungH = (a.y2 - a.y1) * U;
@@ -133,7 +137,10 @@ export const CHEST_PA_FIGURE: DetectorFigure = {
 export const CHEST_LATERAL_FIGURE: DetectorFigure = {
   altKey: "positioningLateral.alt",
   midlineKey: "positioningLateral.midline",
-  alt: (ts, s) => ts("altLateral", { arms: ts(s.choices?.arms === "raised" ? "armsRaised" : "armsLowered"), chin: ts(chinKey(s)) }),
+  alt: (ts, s) =>
+    s.projection === "lateral-left"
+      ? ts("altLateral", { arms: ts(s.choices?.arms === "raised" ? "armsRaised" : "armsLowered"), chin: ts(chinKey(s)) })
+      : CHEST_PA_FIGURE.alt(ts, s),
   Drawing: LateralDrawing,
   Orientation: LateralOrientation,
 };
