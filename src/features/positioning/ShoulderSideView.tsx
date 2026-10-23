@@ -25,6 +25,7 @@ export function ShoulderSideView({ settings, showGuides }: SecondViewProps) {
   const [lo, hi] = SHOULDER_BAND_DEG;
   // the turn at the shoulder: the angle between the detector-parallel line through the shoulder (pointing medially, to the left) and the torso's frontal plane (toward the torso centre)
   const arcR = 52, ex = jx - arcR, eyy = jy, fx = jx - arcR * Math.cos(rad), fy = jy - arcR * Math.sin(rad);
+  // the label sits beside the arrow tip on the side away from the beam (left up to 34°, right from 35°), so the beam never crosses it
   const chestTip = { x: cx + 86 * Math.sin(rad), y: cy - 86 * Math.cos(rad) };
   const pt = (d: number, r: number) => `${cx + r * Math.cos(d * Math.PI / 180)} ${cy + r * Math.sin(d * Math.PI / 180)}`;
   return <svg viewBox="0 0 450 340" role="img" aria-label={t("alt", { deg, angle: settings.tubeAngulationDeg ?? 0, arm: t(arm), sid: settings.sidCm })} className="h-auto w-full" style={{ direction: "ltr" }}>
@@ -50,7 +51,7 @@ export function ShoulderSideView({ settings, showGuides }: SecondViewProps) {
       <line x1={0} y1={-40} x2={0} y2={-66} stroke={SCENE.label} strokeWidth={STROKE.medium} strokeLinecap="round" />
       <path d="M-7 -60 L0 -72 L7 -60 Z" fill={SCENE.label} stroke={SCENE.underStroke} strokeWidth={STROKE.thin} strokeLinejoin="round" />
     </g>
-    <SceneLabel x={chestTip.x} y={chestTip.y - 4} anchor={deg > 50 ? "start" : "middle"} size={LABEL_SIZE.view}>{ts("anterior")}</SceneLabel>
+    <SceneLabel x={chestTip.x + (deg >= 35 ? 16 : deg >= 20 ? -8 : 0)} y={chestTip.y - 4} anchor={deg >= 35 ? "start" : deg >= 20 ? "end" : "middle"} size={LABEL_SIZE.view}>{ts("anterior")}</SceneLabel>
     <SceneLabel x={20} y={52} size={LABEL_SIZE.view}>{t("turn", { deg })}</SceneLabel>
     <line x1={tubeX} y1={tubeY} x2={jx} y2={jy} stroke={SCENE.underStroke} strokeWidth={STROKE.medium + UNDER} />
     <line x1={tubeX} y1={tubeY} x2={jx} y2={jy} stroke={SCENE.beam} strokeWidth={STROKE.medium} />
