@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 OUT_JSON = ROOT / "src/features/positioning/hand-outlines.json"
@@ -140,6 +140,7 @@ LAT_LINES = [
 SOFT_TOWARD_BG = {"pa": 0.0, "lateral": 0.5}  # curated: the lateral's finger soft tissue is very faint
 OUTER_STRENGTH = 0.3  # curated: a group outline step must be at least this fraction of the strongest step
 BRIGHT_FACTOR = {"pa": 0.6, "lateral": 0.6}  # curated: fraction of the bone-brightness level a group outline must enclose
+SOFT_MARGIN = 10  # px: the soft-tissue outline keeps at least this margin outside every bone outline
 GAP_HALF = 4  # px: half a joint-space width, between a traced gap line and the bone surface beside it
 
 # ───────────────────────────────────────────────────── image helpers ─────────────────────────────────────────────────────
@@ -492,15 +493,32 @@ def otsu(vals, lo, hi, bins=128):
     return float(thr), float(m0)
 
 
-def soft_tissue(img, toward_background):
-    sm = gauss(img, 3.0)
-    small = sm[::2, ::2]
+def soft_threshold(img, toward_background):
+    small = gauss(img, 3.0)[::2, ::2]
     # Otsu on the darker 75 % of the pixels only (background vs soft tissue; most bone is left out of the split)
     cap = float(np.percentile(small, 75))
     thr, bg = otsu(small[small < cap].ravel(), 0.0, cap)
     # the thin distal soft tissue is fainter than the palm: a curated fraction moves the cut toward the background mean
-    thr = thr - toward_background * (thr - bg)
-    mask = small > thr
+    return thr - toward_background * (thr - bg)
+
+
+def bone_guard(shape, outlines, margin):
+    """Half-resolution mask of every traced bone outline grown by `margin` px. Where the soft tissue is too faint for the
+    threshold (owner review 2026-10-23: the lateral thumb), the soft-tissue region is united with it, so the outline is a
+    smooth margin outside the bone edge and never crosses a bone."""
+    H, W = (shape[0] + 1) // 2, (shape[1] + 1) // 2
+    im = Image.new("L", (W, H), 0)
+    d = ImageDraw.Draw(im)
+    for pts in outlines:
+        d.polygon([(x / 2, y / 2) for x, y in pts], fill=255)
+    r = int(round(margin / 2))
+    im = im.filter(ImageFilter.MaxFilter(2 * r + 1))
+    return np.asarray(im) > 0
+
+
+def soft_tissue(img, thr, guard):
+    small = gauss(img, 3.0)[::2, ::2]
+    mask = (small > thr) | guard
     # largest 4-connected region (iterative flood fill)
     H, W = mask.shape
     lab = np.zeros(mask.shape, dtype=np.int32)
@@ -574,7 +592,7 @@ def soft_tissue(img, toward_background):
             runs.append(curr)
     run = max(runs, key=len)
     seg = pts[run]
-    return ints(rdp(seg, 5.0)), round(float(thr), 1)
+    return ints(rdp(seg, 5.0))
 
 
 # ───────────────────────────────────────────────────── assemble ─────────────────────────────────────────────────────
@@ -585,14 +603,12 @@ def view(kind, img, bones, blobs, joints, lines):
     sm = gauss(img, 2.0)
     gap = gauss(img, 1.2)
     out = []
-    soft, thr = soft_tissue(img, SOFT_TOWARD_BG[kind])
+    thr = soft_threshold(img, SOFT_TOWARD_BG[kind])
     # bone-brightness level for group outlines: Otsu of the smoothed image above the soft-tissue cut
     bone_t, _ = otsu(sm[sm > thr].ravel()[::7], thr, 255.0)
     for item in [*bones, *blobs]:
         if item.get("mode") == "outer" and BRIGHT_FACTOR[kind]:
             item["bright"] = BRIGHT_FACTOR[kind] * bone_t
-    out.append({"id": "soft-tissue", "group": "soft", "closed": False, "follows": None,
-                "note": f"Otsu threshold {thr} of the smoothed image; open where the forearm leaves the image", "points": soft})
     spec = {b["id"]: b for b in bones}
     # joint spaces first (they depend on the seeds only); each bone / blob is then bounded by the joint lines it touches
     jl = {}
@@ -642,7 +658,33 @@ def view(kind, img, bones, blobs, joints, lines):
         ra = np.array(by["radius"]["points"])
         tip = ra[np.argmin(ra[:, 1] - ra[:, 0])]  # top-right extreme: the radial side is the viewer's right (left hand, PA)
         out.append({"id": "radial-styloid", "group": "prominences", "closed": False, "follows": "radius", "points": ints([tip])})
+    # soft tissue last (it is united with the grown bone outlines), stored first
+    bones_px = [st["points"] if st["closed"] else st["points"] + [st["points"][0]]
+                for st in out if st["group"] not in ("joints",) and len(st["points"]) > 2]
+    soft = soft_tissue(img, thr, bone_guard(img.shape, bones_px, SOFT_MARGIN))
+    out.insert(0, {"id": "soft-tissue", "group": "soft", "closed": False, "follows": None,
+                   "note": f"Otsu threshold {round(float(thr), 1)} of the smoothed image, united with the bone outlines grown by "
+                           f"{SOFT_MARGIN} px; open where the forearm leaves the image", "points": soft})
+    bad = soft_inside_bone(out)
+    if bad:
+        sys.exit(f"{kind}: soft-tissue points inside a bone outline: {bad[:5]}")
     return out
+
+
+def point_in_polygon(x, y, poly):
+    inside = False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
+
+
+def soft_inside_bone(structures):
+    """Automated check (owner review 2026-10-23): no soft-tissue point lies inside any bone outline. Open bone outlines
+    (forearm, styloid tip) are closed by the chord between their ends. Returns [(soft point, bone id), …]."""
+    soft = next(st for st in structures if st["group"] == "soft")["points"]
+    bones = [st for st in structures if st["group"] not in ("soft", "joints") and len(st["points"]) > 2]
+    return [(p, b["id"]) for p in soft for b in bones if point_in_polygon(p[0], p[1], b["points"])]
 
 
 def file_sha256(p):

@@ -31,8 +31,11 @@ SHA-256 is written into the JSON header). No textbook, web, Bontrager or generat
    gap, `JOINT_CENTRE` / `JOINT_HALF` give the search centre and half-length (PA thumb MCP). The PA carpus is also capped
    (`ulnarBound`, a search cap, not a joint) by the line from the ulnar end of the radiocarpal line to the ulnar styloid tip,
    and takes the steepest edge in its lower-ulnar sector (`steepSector`), so it stays on the carpal bones.
-4. **Soft tissue**: Otsu threshold of the smoothed image (darker 75 % of pixels), largest region, boundary walk; image-edge runs
-   are cut, so the forearm end is open.
+4. **Soft tissue** (traced last, stored first): Otsu threshold of the smoothed image (darker 75 % of pixels), united with every
+   traced bone outline grown by `SOFT_MARGIN` (10 px), largest region, boundary walk; image-edge runs are cut, so the forearm
+   end is open. Where the soft tissue is too faint to threshold (lateral thumb) the outline is therefore a smooth margin outside
+   the bone. The script exits with an error if any soft-tissue point lies inside a bone outline; the same check runs in
+   `src/features/positioning/hand-outlines.test.ts`.
 5. **Simplify**: Ramer–Douglas–Peucker to a small number of integer control points.
 
 The output is illustrative and drawing-only, **not a measurement**. What the images do not show clearly is simplified, not
