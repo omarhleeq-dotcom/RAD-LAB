@@ -44,45 +44,52 @@ SOURCES = {
 # ─────────────────────────────── curated seeds (image px, read by eye; search windows only) ───────────────────────────────
 # bone: a = distal end centre, b = proximal end centre, he = half-width at the ends, hs = half-width of the shaft.
 # mode "steepest" = single bone; "outer" = superimposed group (outermost strong edge). open = proximal end runs off the image.
+# tracer "radial" = the smoothed radial tracer (bones the owner's Phase A review asked to re-trace); others use the ribbon tracer.
 # follows = the hand-model tube whose rotation the drawing will follow in Phase B (drawing link only; the model is not changed).
 PA_BONES = [
     # digit 5 (little finger, viewer's left)
-    {"id": "d5-distal", "group": "digits", "a": (104, 402), "b": (134, 548), "he": 36, "hs": 22, "follows": "p5-2"},
+    {"id": "d5-distal", "tracer": "radial", "group": "digits", "a": (104, 402), "b": (134, 548), "he": 36, "hs": 22, "follows": "p5-2"},
     {"id": "d5-middle", "group": "digits", "a": (140, 557), "b": (196, 708), "he": 40, "hs": 27, "follows": "p5-1"},
     {"id": "d5-proximal", "group": "digits", "a": (202, 716), "b": (290, 995), "he": 47, "hs": 30, "follows": "p5-0"},
     {"id": "mc5", "group": "metacarpals", "a": (305, 1008), "b": (382, 1495), "he": 50, "hs": 30, "follows": "m5", "limits": ["cmc"]},
     # digit 4
-    {"id": "d4-distal", "group": "digits", "a": (375, 127), "b": (382, 295), "he": 36, "hs": 22, "follows": "p4-2"},
+    {"id": "d4-distal", "tracer": "radial", "group": "digits", "a": (375, 127), "b": (382, 295), "he": 36, "hs": 22, "follows": "p4-2"},
     {"id": "d4-middle", "group": "digits", "a": (395, 306), "b": (416, 545), "he": 46, "hs": 30, "follows": "p4-1"},
     {"id": "d4-proximal", "group": "digits", "a": (422, 556), "b": (450, 935), "he": 56, "hs": 36, "follows": "p4-0"},
     {"id": "mc4", "group": "metacarpals", "a": (458, 950), "b": (455, 1495), "he": 50, "hs": 28, "follows": "m4", "limits": ["cmc"]},
     # digit 3
-    {"id": "d3-distal", "group": "digits", "a": (665, 52), "b": (665, 212), "he": 44, "hs": 24, "follows": "p3-2"},
+    {"id": "d3-distal", "tracer": "radial", "group": "digits", "a": (665, 52), "b": (665, 212), "he": 44, "hs": 24, "follows": "p3-2"},
     {"id": "d3-middle", "group": "digits", "a": (655, 223), "b": (650, 470), "he": 56, "hs": 34, "follows": "p3-1"},
     {"id": "d3-proximal", "group": "digits", "a": (650, 485), "b": (635, 888), "he": 66, "hs": 40, "follows": "p3-0"},
-    {"id": "mc3", "group": "metacarpals", "a": (625, 905), "b": (560, 1500), "he": 62, "hs": 30, "follows": "m3", "limits": ["cmc"]},
+    {"id": "mc3", "tracer": "radial", "group": "metacarpals", "a": (625, 905), "b": (560, 1500), "he": 62, "hs": 30, "follows": "m3", "limits": ["cmc"]},
     # digit 2 (index)
-    {"id": "d2-distal", "group": "digits", "a": (1005, 198), "b": (995, 345), "he": 44, "hs": 26, "follows": "p2-2"},
+    {"id": "d2-distal", "tracer": "radial", "group": "digits", "a": (1005, 198), "b": (995, 345), "he": 44, "hs": 26, "follows": "p2-2"},
     {"id": "d2-middle", "group": "digits", "a": (985, 355), "b": (950, 548), "he": 50, "hs": 32, "follows": "p2-1"},
     {"id": "d2-proximal", "group": "digits", "a": (940, 556), "b": (860, 915), "he": 62, "hs": 38, "follows": "p2-0"},
-    {"id": "mc2", "group": "metacarpals", "a": (822, 928), "b": (690, 1505), "he": 60, "hs": 30, "follows": "m2", "limits": ["cmc"]},
+    {"id": "mc2", "tracer": "radial", "group": "metacarpals", "a": (822, 928), "b": (690, 1505), "he": 60, "hs": 30, "follows": "m2", "limits": ["cmc"]},
     # thumb (viewer's right)
-    {"id": "thumb-distal", "group": "thumb", "a": (1398, 928), "b": (1280, 1058), "he": 50, "hs": 34, "follows": "t-dp"},
-    {"id": "thumb-proximal", "group": "thumb", "a": (1252, 1094), "b": (1098, 1318), "he": 58, "hs": 36, "follows": "t-pp"},
-    {"id": "mc1", "group": "thumb", "a": (1070, 1350), "b": (790, 1605), "he": 62, "hs": 36, "follows": "t-mc", "limits": ["cmc1"]},
+    {"id": "thumb-distal", "tracer": "radial", "harmonics": 6, "group": "thumb", "a": (1400, 926), "b": (1272, 1060), "he": 50, "hs": 34, "follows": "t-dp"},
+    # axis and widths from perpendicular profiles (centres (1102, 1289) … (1246, 1100), shaft ≈ 80 px; owner review 2026-10-23)
+    {"id": "thumb-proximal", "tracer": "radial", "group": "thumb", "a": (1262, 1080), "b": (1092, 1306), "he": 66, "hs": 40, "follows": "t-pp"},
+    # mc1 axis re-read from vertical profiles at x = 850…1000 (owner review 2026-10-23; the first axis ran ≈ 25 px ulnar)
+    {"id": "mc1", "tracer": "radial", "group": "thumb", "a": (1108, 1328), "b": (800, 1628), "he": 62, "hs": 47, "follows": "t-mc", "limits": ["cmc1"]},
     # forearm (proximal ends run off the image)
     # ulna: the head; its styloid process is traced as its own small outline (a narrow process beside the head)
     {"id": "ulna", "group": "forearm", "a": (341, 1845), "b": (338, 2082), "he": 76, "hs": 66, "open": True, "follows": "ulna"},
-    {"id": "ulnar-styloid-process", "group": "prominences", "a": (322, 1793), "b": (323, 1846), "he": 24, "hs": 22, "follows": "ulna"},
+    {"id": "ulnar-styloid-process", "tracer": "radial", "harmonics": 3, "openBelowY": 1842, "group": "prominences", "a": (322, 1793), "b": (323, 1850), "he": 24, "hs": 22, "follows": "ulna"},
     # radius: bounded by the radiocarpal joint line (its distal surface never crosses the joint space)
     {"id": "radius", "group": "forearm", "a": (590, 1812), "b": (585, 2082), "he": 150, "hs": 130, "open": True, "reach": 2.3, "rays": 21, "limits": ["radiocarpal"], "follows": "radius"},
 ]
 PA_BLOBS = [
     # the carpus as ONE simplified outline (individual carpal bones are not separated: they overlap in this projection)
-    {"id": "carpus", "group": "carpus", "c": (548, 1655), "rx": 245, "ry": 160, "mode": "outer", "limits": ["cmc", "cmc1", "radiocarpal"], "follows": "carpals"},
+    {"id": "carpus", "group": "carpus", "c": (548, 1655), "rx": 245, "ry": 160, "mode": "outer", "limits": ["cmc", "cmc1", "radiocarpal"], "ulnarBound": True, "steepSector": (100, 175), "follows": "carpals"},
     # rounded density beside the thumb MCP joint (sesamoid appearance; identity not reviewed)
-    {"id": "thumb-mcp-sesamoid", "group": "prominences", "c": (1010, 1286), "rx": 22, "ry": 20, "mode": "steepest", "follows": "t-mc"},
+    {"id": "thumb-mcp-sesamoid", "group": "prominences", "c": (1010, 1286), "rx": 22, "ry": 20, "mode": "steepest", "drawn": False, "follows": "t-mc"},
 ]
+# joint-space search centre where the midpoint of the two seed ends misses the gap (read at 3×, owner review 2026-10-23)
+JOINT_CENTRE = {("pa", "thumb-mcp"): (1088, 1305)}
+# joint-line half-length where the default (0.8 × the narrower end) stops short of a wide base
+JOINT_HALF = {("pa", "thumb-mcp"): 64}
 # joint spaces: (id, distal bone, proximal bone)
 PA_JOINTS = [
     *[(f"d{n}-dip", f"d{n}-distal", f"d{n}-middle") for n in (5, 4, 3, 2)],
@@ -96,24 +103,28 @@ PA_LINES = [
     # carpometacarpal line of digits 2–5: the metacarpal bases overlap the distal carpal row, so this line is APPROXIMATE
     {"id": "cmc", "p": (335, 1472), "q": (725, 1512), "dir": (0, 1), "g": 28},
     {"id": "radiocarpal", "p": (445, 1842), "q": (708, 1742), "dir": (0, 1), "g": 26},
-    {"id": "cmc1", "p": (735, 1615), "q": (812, 1530), "dir": (1, -0.9), "g": 22},
+    # CMC1 re-read at 2× (owner review 2026-10-23): a near-vertical curved gap between the trapezium and the mc1 base
+    {"id": "cmc1", "p": (768, 1538), "q": (792, 1648), "dir": (1, -0.22), "g": 20},
 ]
 
 LAT_BONES = [
-    # the digits 2–5 are superimposed: ONE outline of the group (tips to the MCP joints)
-    {"id": "digits-group", "group": "digits", "a": (405, 52), "b": (468, 905), "he": 60, "hs": 62, "mode": "outer", "follows": "column"},
+    # the digits 2–5 are superimposed: ONE outline of the group (tips to the MCP joints); the end half-width covers the spread
+    # proximal-phalanx bases (x≈370–545; owner review 2026-10-23: the narrower seed cut one base off at the MCP)
+    {"id": "digits-group", "group": "digits", "a": (405, 52), "b": (468, 905), "he": 88, "hs": 62, "mode": "outer", "limits": ["mcp-group"], "follows": "column"},
     # the metacarpals 2–5, superimposed: ONE outline (heads to bases)
     {"id": "metacarpal-stack", "group": "metacarpals", "a": (452, 925), "b": (488, 1560), "he": 100, "hs": 78, "mode": "outer", "limits": ["cmc"], "follows": "column"},
     # thumb, separated (viewer's left)
-    {"id": "thumb-distal", "group": "thumb", "a": (110, 690), "b": (130, 818), "he": 56, "hs": 40, "follows": "t-dp"},
-    {"id": "thumb-proximal", "group": "thumb", "a": (150, 842), "b": (185, 1212), "he": 66, "hs": 42, "follows": "t-pp"},
-    {"id": "mc1", "group": "thumb", "a": (210, 1240), "b": (285, 1555), "he": 74, "hs": 46, "follows": "t-mc"},
+    # seeds re-read from an intensity profile along the thumb axis (owner review 2026-10-23): bone from y≈688, IP gap at y≈885,
+    # MCP gap at y≈1205 (the first seeds put the IP joint ≈ 75 px too high, inside the distal phalanx)
+    {"id": "thumb-distal", "tracer": "radial", "group": "thumb", "a": (114, 690), "b": (127, 878), "he": 62, "hs": 44, "follows": "t-dp"},
+    {"id": "thumb-proximal", "tracer": "radial", "group": "thumb", "a": (132, 893), "b": (173, 1197), "he": 68, "hs": 42, "follows": "t-pp"},
+    {"id": "mc1", "tracer": "radial", "group": "thumb", "a": (188, 1214), "b": (285, 1555), "he": 74, "hs": 46, "follows": "t-mc"},
     # radius and ulna superimposed (one outline), proximal end off the image
     {"id": "radius-ulna", "group": "forearm", "a": (500, 1893), "b": (500, 2123), "he": 118, "hs": 110, "mode": "outer", "open": True, "limits": ["radiocarpal"], "follows": "radius"},
 ]
 LAT_BLOBS = [
     {"id": "carpus", "group": "carpus", "c": (418, 1720), "rx": 165, "ry": 170, "mode": "outer", "limits": ["cmc", "radiocarpal"], "follows": "carpals"},
-    {"id": "thumb-mcp-sesamoid", "group": "prominences", "c": (128, 1228), "rx": 22, "ry": 22, "mode": "steepest", "follows": "t-mc"},
+    {"id": "thumb-mcp-sesamoid", "group": "prominences", "c": (128, 1228), "rx": 22, "ry": 22, "mode": "steepest", "drawn": False, "follows": "t-mc"},
 ]
 LAT_JOINTS = [
     ("thumb-ip", "thumb-distal", "thumb-proximal"),
@@ -182,16 +193,21 @@ def ray_hit(ox, oy, dx, dy, lines):
     return best
 
 
-def edge_on_ray(img, ox, oy, dx, dy, r0, r1, mode, limits=(), expect=None, bright=None):
+def edge_on_ray(img, ox, oy, dx, dy, r0, r1, mode, limits=(), expect=None, bright=None, clips=()):
     """Distance along the ray (ox,oy)+r·(dx,dy), r in [r0,r1], of the bright→dark edge; None if there is no clear step.
     A traced joint line crossed by the ray (limits) decides the end: the bone ends at the near side of the joint space.
     `expect` (the seed's distance) mildly favours a step near the expected surface over an internal or neighbouring one.
-    `bright` (outer mode): a step only counts if the side inside it is bone-bright, so the soft-tissue edge is never taken."""
+    `bright` (outer mode): a step only counts if the side inside it is bone-bright, so the soft-tissue edge is never taken.
+    `clips`: polylines that only cap the search (the edge is still searched inside them; at worst the cap itself)."""
     lim = ray_hit(ox, oy, dx, dy, limits)
     if lim < r1 + 6:
         # the ray meets a traced joint space inside the window: the bone surface is the near side of that gap
         # (half a typical gap width before the gap's darkest line)
         return float(max(lim - GAP_HALF, 1.0))
+    cap_r = ray_hit(ox, oy, dx, dy, clips)
+    if cap_r < r1:
+        r1 = cap_r - 2
+        r0 = min(r0, 0.5 * r1)
     rs = np.arange(r0, r1 + 0.5, 1.0)
     if len(rs) < 4:
         return None
@@ -231,6 +247,34 @@ def median_filter_circular(v, k=2, closed=True):
         vals = [v[j] for j in idx if not np.isnan(v[j])]
         out[i] = np.median(vals) if vals else np.nan
     return out
+
+
+def robust_fourier(q, fixed, harmonics=7, iters=5):
+    """Smooth a closed sequence of radius ratios: a low-order Fourier series fitted with outlier rejection (samples whose
+    residual exceeds max(0.04, 2.5 robust SD) are dropped and the fit repeated). Samples set by a joint line (`fixed`) always
+    stay in the fit and keep their traced value. Returns smoothed ratios for every sample (gaps filled by interpolation)."""
+    q = np.asarray(q, float)
+    n = len(q)
+    ang = 2 * np.pi * np.arange(n) / n
+    # rays with no clear edge: fill by circular linear interpolation first, so the series never swings across a gap
+    ok = ~np.isnan(q)
+    if ok.sum() >= 3 and not ok.all():
+        xi = np.arange(n)
+        q = q.copy()
+        q[~ok] = np.interp(xi[~ok], np.concatenate([xi[ok] - n, xi[ok], xi[ok] + n]), np.tile(q[ok], 3))
+    A = np.column_stack([np.ones(n)] + [f(k * ang) for k in range(1, harmonics + 1) for f in (np.cos, np.sin)])
+    keep = ~np.isnan(q)
+    fit = q
+    for _ in range(iters):
+        coef = np.linalg.lstsq(A[keep], q[keep], rcond=None)[0]
+        fit = A @ coef
+        res = q - fit
+        mad = np.median(np.abs(res[keep] - np.median(res[keep])))
+        new = ~np.isnan(q) & ((np.abs(res) <= max(0.04, 2.5 * 1.4826 * mad)) | fixed)
+        if new.sum() < 2 * harmonics + 3 or (new == keep).all():
+            break
+        keep = new
+    return np.where(fixed, q, fit)
 
 
 def rdp(points, eps):
@@ -297,6 +341,7 @@ def trace_bone(img, s, h, limits=()):
             w = width(t)
             o = c + t * u
             ds.append(edge_on_ray(img, o[0], o[1], sign * v[0], sign * v[1], 0.45 * w, 1.6 * w, side_mode, limits, w, s.get("bright")) or np.nan)
+        # a single bone's cortex is smooth: robust polynomial; a superimposed group keeps its shape (median only)
         sides[sign] = median_filter_circular(ds, 2, closed=False)
 
     def fan(end_sign):
@@ -336,7 +381,51 @@ def trace_bone(img, s, h, limits=()):
     return ints(simplify_closed(np.array(pts), 2.0)), True
 
 
-def trace_blob(img, s, limits=()):
+def trace_bone_radial(img, s, limits=()):
+    """Radial tracer for one bone (used where the ribbon tracer zig-zagged or notched; owner review 2026-10-23): rays from the
+    bone centre through points spaced evenly along a prior shape (a rounded box with a narrow shaft and wide ends), the edge
+    searched within ±0.6 × the local prior half-width, then the radius ratios smoothed around the whole outline (robust Fourier fit), so the
+    sides and the ends join without a step. Ends at a traced joint line stay on that line."""
+    a, b = np.array(s["a"], float), np.array(s["b"], float)
+    c = (a + b) / 2
+    u = (a - b) / np.hypot(*(a - b))
+    v = np.array([-u[1], u[0]])
+    L = np.hypot(*(a - b)) / 2
+    he, hs = s["he"], s["hs"]
+    phi = np.linspace(0, 2 * np.pi, 720, endpoint=False)
+    p = 4.0
+    tt = L * np.sign(np.cos(phi)) * np.abs(np.cos(phi)) ** (2 / p)
+    ww = (hs + (he - hs) * np.abs(tt / L) ** 2.5) * np.sign(np.sin(phi)) * np.abs(np.sin(phi)) ** (2 / p)
+    prior = c + tt[:, None] * u + ww[:, None] * v
+    seg = np.hypot(*np.diff(np.vstack([prior, prior[:1]]), axis=0).T)
+    cum = np.concatenate([[0], np.cumsum(seg)])[:-1]
+    n = s.get("rays", 72)
+    idx = [int(np.searchsorted(cum, k * cum[-1] / n + 0.0)) % len(prior) for k in range(n)]
+    q, fixed, dirs = [], [], []
+    for k in idx:
+        e = prior[k] - c
+        rP = np.hypot(*e)
+        d = e / rP
+        # window ±0.6 × the prior's local half-width (narrow on the shaft, wider at the ends)
+        half = 0.6 * max(abs(ww[k]), 0.5 * he)
+        r0, r1 = max(0.3 * rP, rP - half), rP + half
+        r = edge_on_ray(img, c[0], c[1], d[0], d[1], r0, r1, s.get("mode", "steepest"), limits, rP, s.get("bright"))
+        q.append(np.nan if r is None else r / rP)
+        fixed.append(r is not None and ray_hit(c[0], c[1], d[0], d[1], limits) < r1 + 6)
+        dirs.append((d, rP))
+    qs = robust_fourier(q, np.array(fixed), s.get("harmonics", 9))
+    pts = [c + qi * rP * d for qi, (d, rP) in zip(qs, dirs)]
+    if "openBelowY" in s:
+        # a process that grows out of a larger bone: keep only the tip (above the base level), as an open curve
+        keep = [p[1] < s["openBelowY"] for p in pts]
+        k = keep.index(False)
+        loop = pts[k:] + pts[:k]
+        kept = [p for p, ok in zip(loop, keep[k:] + keep[:k]) if ok]
+        return ints(rdp(np.array(kept), 1.5)), False
+    return ints(simplify_closed(np.array(pts), 1.5)), True
+
+
+def trace_blob(img, s, limits=(), clips=()):
     c = np.array(s["c"], float)
     rr, dirs, ers = [], [], []
     n = 48
@@ -345,7 +434,11 @@ def trace_blob(img, s, limits=()):
         e = np.array([s["rx"] * np.cos(t), s["ry"] * np.sin(t)])
         rE = np.hypot(*e)
         d = e / rE
-        r = edge_on_ray(img, c[0], c[1], d[0], d[1], 0.55 * rE, 1.35 * rE, s.get("mode", "steepest"), limits, None, s.get("bright"))
+        mode = s.get("mode", "steepest")
+        lo_deg, hi_deg = s.get("steepSector", (999, 999))
+        if lo_deg <= np.degrees(t) <= hi_deg:
+            mode = "steepest"  # a sector where the outermost step would be soft tissue: take the bone's own edge
+        r = edge_on_ray(img, c[0], c[1], d[0], d[1], 0.55 * rE, 1.35 * rE, mode, limits, None, s.get("bright"), clips)
         rr.append(np.nan if r is None else r / rE)
         dirs.append((d, rE, r, ray_hit(c[0], c[1], d[0], d[1], limits) < 1.35 * rE + 6))
     q = median_filter_circular(rr, 2, closed=True)
@@ -371,13 +464,13 @@ def trace_gap(img, p, q, u, g):
     return ints([p + f * (q - p) + r * u for f, r in zip(np.linspace(0, 1, 7), out)])
 
 
-def trace_joint(img, distal, proximal):
+def trace_joint(img, distal, proximal, centre=None, half=None):
     a1, b1, u1 = axis_of(distal)
     a2, b2, u2 = axis_of(proximal)
     u = (u1 + u2) / np.hypot(*(u1 + u2))
     v = np.array([-u[1], u[0]])
-    m = (b1 + a2) / 2
-    w = 0.8 * min(distal["he"], proximal["he"])
+    m = (b1 + a2) / 2 if centre is None else np.array(centre, float)
+    w = 0.8 * min(distal["he"], proximal["he"]) if half is None else half
     return trace_gap(img, m - w * v, m + w * v, -u, 18)
 
 
@@ -505,7 +598,7 @@ def view(kind, img, bones, blobs, joints, lines):
     jl = {}
     jout = []
     for jid, d, p in joints:
-        jl[jid] = trace_joint(gap, spec[d], spec[p])
+        jl[jid] = trace_joint(gap, spec[d], spec[p], JOINT_CENTRE.get((kind, jid)), JOINT_HALF.get((kind, jid)))
         jout.append({"id": jid, "group": "joints", "closed": False, "follows": spec[d]["follows"], "points": jl[jid]})
     for ln in lines:
         u = np.array(ln["dir"], float)
@@ -521,10 +614,24 @@ def view(kind, img, bones, blobs, joints, lines):
             touching.setdefault(item["id"], []).append(jid)
     lim = lambda sid: [np.array(jl[j], float) for j in touching.get(sid, [])]  # noqa: E731
     for b in bones:
-        pts, closed = trace_bone(sm, b, h, lim(b["id"]))
+        pts, closed = trace_bone_radial(sm, b, lim(b["id"])) if b.get("tracer") == "radial" else trace_bone(sm, b, h, lim(b["id"]))
         out.append({"id": b["id"], "group": b["group"], "closed": closed, "follows": b["follows"], "points": pts})
+    traced = {o["id"]: o for o in out}
     for b in blobs:
-        out.append({"id": b["id"], "group": b["group"], "closed": True, "follows": b["follows"], "points": trace_blob(sm, b, lim(b["id"]))})
+        limits, clips = lim(b["id"]), []
+        if b.get("ulnarBound"):
+            # PA carpus (owner review 2026-10-23): the carpal bones end above the line from the ulnar end of the radiocarpal
+            # joint line to the ulnar styloid tip (continued 80 px ulnarward), so the outline never dips into the space
+            # between the ulna and the radius. A drawing bound between two traced landmarks, not a traced joint.
+            tip = min(traced["ulnar-styloid-process"]["points"], key=lambda p: p[1])
+            rc = jl["radiocarpal"][0]
+            clips = [np.array([[tip[0] - 80, tip[1]], tip, rc], float)]
+        item = {"id": b["id"], "group": b["group"], "closed": True, "follows": b["follows"]}
+        if b.get("drawn") is False:
+            # kept as traced, but the scene drawing leaves it out (owner review 2026-10-23)
+            item["drawn"] = False
+            item["note"] = "kept as traced; not drawn (identity not reviewed)"
+        out.append({**item, "points": trace_blob(sm, b, limits, clips)})
     out += jout
     # prominences derived from the traced outlines
     by = {s["id"]: s for s in out}
@@ -561,6 +668,7 @@ def build():
                   "threshold boundary. Script: scripts/trace-outlines/trace-hand-outlines.py",
         "coordinates": "image px of the web copy (origin top-left, x right, y down), the space of features/hand-model/hand-model.ts",
         "follows": "hand-model tube id, or tube group (column, carpals), whose rotation the drawing follows (drawing link only; the model is unchanged)",
+        "drawn": "absent = drawn; false = kept in the data but not drawn",
         "sources": {k: {**v, "sha256": file_sha256(ROOT / v["file"])} for k, v in SOURCES.items()},
         "views": views,
     }
@@ -596,7 +704,7 @@ def overlay(img, structures, groups, box, scale, title, path, labels):
     for s in structures:
         if s["group"] not in groups:
             continue
-        col = COLOURS[s["group"]]
+        col = (150, 150, 150) if s.get("drawn") is False else COLOURS[s["group"]]  # grey: kept in the data, not drawn
         pts = [T(p) for p in s["points"]]
         if len(pts) == 1:
             x, y = pts[0]
@@ -612,7 +720,10 @@ def overlay(img, structures, groups, box, scale, title, path, labels):
             cx, cy = px[:, 0].mean(), px[:, 1].mean()
             if s["group"] == "joints" or len(pts) == 1:
                 cx, cy = px[:, 0].max() + 8, px[:, 1].mean() - 10
-            d.text((cx, cy), s["id"], fill=col, font=f, stroke_width=3, stroke_fill=(0, 0, 0))
+            if s.get("drawn") is False:  # short label under the shape, so it never covers a neighbouring label
+                d.text((px[:, 0].min(), px[:, 1].max() + 4), "sesamoid (not drawn)", fill=col, font=font(15), stroke_width=3, stroke_fill=(0, 0, 0))
+            else:
+                d.text((cx, cy), s["id"], fill=col, font=f, stroke_width=3, stroke_fill=(0, 0, 0))
     ft = font(26)
     page = Image.new("RGB", (base.width, base.height + 44), (0, 0, 0))
     page.paste(base, (0, 44))
