@@ -66,6 +66,10 @@ python3 -I scripts/trace-outlines/trace-wrist-outlines.py --check-overlays   # J
 - **axis-snap** (`"tracer": "axis-snap"`, `a`, `b`, `he`, `hs`): the radial tracer's rounded-box prior built from an axis seed, then snapped
   (default `search` = a third of the shaft half-width). Used for phalanges and metatarsals.
 - **joint path** (`lines[].pts`): the darkest point along the local normal of a curated polyline (±`g` px), for curved joint lines.
+- **along line** (`lines[].along = {bone, from, to, offset}`): a joint line that follows the edge of an already traced bone (e.g. the radius's
+  articular surface), smooth by construction. `lines[].smooth` smooths a darkest-point path; `cfg.joint_g` / `joint_centre` / `joint_half`
+  set a joint space's search for the joints the seed ends do not bracket (foot MTP). `cfg.soft_smooth` (per view or one number) smooths the
+  soft-tissue runs and drops spikes (an interior point whose two segments enclose < 50 degrees). All optional: the hand is unchanged.
 - `cfg.soft_runs`: keep up to N soft-tissue runs when the silhouette is cut into several open runs by the image edge (wrist, foot).
 - Where two bones overlap and the image does not separate them the seed names ONE combined outline (`note`), never an invented split.
 

@@ -44,14 +44,14 @@ PA_BONES = [
     {"id": "hamate", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 10,
      "poly": [(190, 228), (215, 205), (260, 198), (300, 197), (322, 225), (328, 290), (320, 345), (302, 375), (285, 388), (262, 360), (235, 320), (205, 280), (190, 250)]},
     {"id": "capitate", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 10,
-     "poly": [(335, 228), (362, 205), (400, 198), (432, 212), (445, 248), (440, 300), (436, 330), (432, 370), (424, 392), (410, 408), (388, 418), (362, 417), (340, 410), (322, 392), (318, 358), (322, 300), (325, 262)]},
+     "poly": [(335, 228), (362, 205), (400, 198), (432, 212), (445, 248), (437, 300), (434, 330), (430, 370), (422, 392), (410, 408), (388, 418), (362, 417), (340, 410), (322, 392), (318, 358), (322, 300), (325, 262)]},
     {"id": "trapezoid", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 9,
-     "poly": [(447, 225), (470, 213), (505, 211), (525, 216), (535, 258), (545, 300), (530, 322), (500, 332), (470, 322), (450, 292), (443, 255)]},
+     "poly": [(447, 225), (470, 213), (505, 211), (525, 216), (535, 258), (540, 300), (528, 318), (512, 316), (496, 309), (473, 315), (455, 305), (446, 285), (443, 255)]},
     {"id": "trapezium", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 9,
      "poly": [(525, 216), (560, 226), (600, 236), (626, 257), (632, 287), (632, 312), (616, 336), (586, 346), (552, 342), (540, 302), (533, 260)]},
-    {"id": "scaphoid", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 9,
-     "poly": [(437, 304), (470, 298), (500, 309), (526, 336), (546, 366), (550, 392), (536, 412), (512, 432), (492, 458), (468, 482), (440, 498), (410, 512), (402, 490), (401, 450), (412, 425), (428, 400), (432, 350)]},
-    {"id": "lunate", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 9,
+    {"id": "scaphoid", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 5,
+     "poly": [(446, 345), (456, 329), (473, 319), (496, 313), (513, 322), (530, 340), (544, 364), (547, 386), (539, 401), (525, 424), (507, 453), (490, 476), (464, 493), (427, 507), (410, 512), (402, 490), (403, 459), (413, 430), (429, 410), (439, 386), (445, 366)]},
+    {"id": "lunate", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 5,
      "poly": [(300, 430), (328, 421), (360, 420), (392, 424), (400, 445), (399, 490), (392, 518), (372, 530), (335, 527), (300, 520), (272, 505), (266, 485), (272, 465), (286, 448)]},
     {"id": "triquetrum-pisiform", "tracer": "snap", "group": "carpals", "follows": "anchors", "search": 9,
      "note": "triquetrum and pisiform superimposed (the pisiform is the denser oval over the ulnar-proximal part); one combined outline",
@@ -64,7 +64,7 @@ PA_BONES = [
 PA_BLOBS = []
 PA_JOINTS = []
 PA_LINES = [
-    {"id": "radiocarpal", "pts": [(322, 538), (380, 528), (440, 508), (500, 480), (550, 450), (580, 425)], "g": 14, "follows": "anchors"},
+    {"id": "radiocarpal", "along": {"bone": "radius", "from": (322, 540), "to": (588, 413), "offset": 3}, "follows": "anchors"},
     {"id": "distal-radioulnar", "pts": [(308, 545), (312, 580), (320, 610)], "g": 8, "follows": "anchors"},
     {"id": "midcarpal", "pts": [(265, 365), (300, 392), (322, 404), (360, 417), (395, 418), (418, 402), (430, 375), (432, 335), (437, 305), (470, 296), (500, 306), (528, 332), (548, 350)], "g": 5, "follows": "anchors"},
     {"id": "carpometacarpal", "pts": [(215, 236), (260, 205), (330, 197), (400, 200), (450, 207), (520, 212), (595, 207)], "g": 10, "follows": "anchors"},
@@ -122,7 +122,7 @@ SPEC = {
     "out_review": "docs/review/rad-072-wrist",
     "sources": SOURCES,
     "views": {"pa": (PA_BONES, PA_BLOBS, PA_JOINTS, PA_LINES), "lateral": (LAT_BONES, LAT_BLOBS, LAT_JOINTS, LAT_LINES)},
-    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "extras": extras, "soft_runs": 3, "soft_open": "the silhouette"},
+    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "extras": extras, "soft_runs": 2, "soft_smooth": {"pa": 3, "lateral": 12}, "soft_open": "the silhouette"},
     "header": {
         "region": "wrist",
         "side": "LEFT (both images are a left wrist; a right-wrist case mirrors the drawing, never the RTL layout)",

@@ -411,7 +411,7 @@ def prior_polygon(s, n=40):
     return [tuple(prior[i]) for i in idx]
 
 
-def trace_path_gap(img, pts, g, step=10):
+def trace_path_gap(img, pts, g, step=10, smooth=0, eps=1.5):
     """Joint line along a curated polyline: on stations every ~`step` px, the darkest point of the profile along the local normal
     (±g px); the median-filtered offsets move the polyline's points. Returns the simplified path."""
     pts = densify(pts, step, False)
@@ -423,8 +423,33 @@ def trace_path_gap(img, pts, g, step=10):
     for p, nv in zip(pts, nrm):
         prof = sample(img, p[0] + rs * nv[0], p[1] + rs * nv[1])
         off.append(rs[int(np.argmin(prof))])
-    off = median_filter_circular(off, 1, closed=False)
-    return ints(rdp(pts + np.array(off)[:, None] * nrm, 1.5))
+    off = median_filter_circular(off, 1 if not smooth else 2, closed=False)
+    off = np.array(off, float)
+    for _ in range(smooth):  # optional extra smoothing of the offsets along the line (ends fixed)
+        if len(off) > 4:
+            off = np.concatenate([off[:1], np.convolve(off, np.ones(3) / 3, mode="same")[1:-1], off[-1:]])
+    return ints(rdp(pts + off[:, None] * nrm, eps))
+
+
+def trace_along(bone, a, b, offset, step=12, smooth=2):
+    """A joint line that follows the EDGE of an already traced bone between the points nearest to `a` and `b` (e.g. the radius's articular
+    surface): the bone's outline points between them, resampled every `step` px, smoothed, moved `offset` px along the normal toward the
+    side with the smaller y (the neighbouring bones). Always smooth and never off the bone edge."""
+    P = np.array(bone, float)
+    i0 = int(np.argmin(np.hypot(*(P - np.array(a, float)).T)))
+    i1 = int(np.argmin(np.hypot(*(P - np.array(b, float)).T)))
+    seg = P[min(i0, i1): max(i0, i1) + 1]
+    pts = densify(seg, step, False)
+    for _ in range(smooth):  # 3-point moving average along the line, ends fixed
+        if len(pts) > 3:
+            inner = (pts[:-2] + pts[1:-1] + pts[2:]) / 3
+            pts = np.vstack([pts[:1], inner, pts[-1:]])
+    tang = np.gradient(pts, axis=0)
+    tang /= np.hypot(*tang.T)[:, None] + 1e-9
+    nrm = np.stack([-tang[:, 1], tang[:, 0]], axis=1)
+    if nrm[:, 1].mean() > 0:
+        nrm = -nrm
+    return ints(rdp(pts + offset * nrm, 1.0))
 
 
 def axis_of(spec):
@@ -445,14 +470,14 @@ def trace_gap(img, p, q, u, g):
     return ints([p + f * (q - p) + r * u for f, r in zip(np.linspace(0, 1, 7), out)])
 
 
-def trace_joint(img, distal, proximal, centre=None, half=None):
+def trace_joint(img, distal, proximal, centre=None, half=None, g=18):
     a1, b1, u1 = axis_of(distal)
     a2, b2, u2 = axis_of(proximal)
     u = (u1 + u2) / np.hypot(*(u1 + u2))
     v = np.array([-u[1], u[0]])
     m = (b1 + a2) / 2 if centre is None else np.array(centre, float)
     w = 0.8 * min(distal["he"], proximal["he"]) if half is None else half
-    return trace_gap(img, m - w * v, m + w * v, -u, 18)
+    return trace_gap(img, m - w * v, m + w * v, -u, g)
 
 
 def otsu(vals, lo, hi, bins=128):
@@ -496,7 +521,7 @@ def bone_guard(shape, outlines, margin):
     return np.asarray(im) > 0
 
 
-def soft_tissue(img, thr, guard, max_runs=1):
+def soft_tissue(img, thr, guard, max_runs=1, smooth=0):
     small = gauss(img, 3.0)[::2, ::2]
     mask = (small > thr) | guard
     # largest 4-connected region (iterative flood fill)
@@ -573,7 +598,28 @@ def soft_tissue(img, thr, guard, max_runs=1):
     runs.sort(key=len, reverse=True)
     # the longest run, then (max_runs > 1: a silhouette cut into several open runs by the image edge) every run at least a fifth as long
     keep = [r for r in runs[:max_runs] if r is runs[0] or len(r) >= 0.2 * len(runs[0])]
-    return [ints(rdp(pts[r], 5.0)) for r in keep]
+    out = []
+    for r in keep:
+        seg = pts[r]
+        for _ in range(smooth):  # optional: 5-point moving average along the outline (ends fixed), removes spikes and small loops
+            if len(seg) > 6:
+                inner = sum(np.roll(seg, k, axis=0) for k in range(-2, 3))[2:-2] / 5
+                seg = np.vstack([seg[:2], inner, seg[-2:]])
+        simp = ints(rdp(seg, 5.0))
+        if smooth:  # drop spikes: an interior point whose two segments enclose less than 50 degrees (repeated until none is left)
+            changed = True
+            while changed and len(simp) > 3:
+                changed = False
+                for i in range(1, len(simp) - 1):
+                    v1 = np.array(simp[i - 1], float) - simp[i]
+                    v2 = np.array(simp[i + 1], float) - simp[i]
+                    n1, n2 = np.hypot(*v1), np.hypot(*v2)
+                    if n1 and n2 and np.degrees(np.arccos(np.clip(v1 @ v2 / (n1 * n2), -1, 1))) < 50:
+                        del simp[i]
+                        changed = True
+                        break
+        out.append(simp)
+    return out
 
 
 # ───────────────────────────────────────────────────── assemble ─────────────────────────────────────────────────────
@@ -596,11 +642,13 @@ def view(kind, img, bones, blobs, joints, lines, cfg):
     jl = {}
     jout = []
     for jid, d, p in joints:
-        jl[jid] = trace_joint(gap, spec[d], spec[p], cfg.get("joint_centre", {}).get((kind, jid)), cfg.get("joint_half", {}).get((kind, jid)))
+        jl[jid] = trace_joint(gap, spec[d], spec[p], cfg.get("joint_centre", {}).get((kind, jid)), cfg.get("joint_half", {}).get((kind, jid)), cfg.get("joint_g", {}).get((kind, jid), 18))
         jout.append({"id": jid, "group": "joints", "closed": False, "follows": spec[d]["follows"], "points": jl[jid]})
     for ln in lines:
+        if "along" in ln:
+            continue  # traced after the bones (it follows a bone's edge)
         if "pts" in ln:
-            jl[ln["id"]] = trace_path_gap(gap, ln["pts"], ln["g"])
+            jl[ln["id"]] = trace_path_gap(gap, ln["pts"], ln["g"], smooth=ln.get("smooth", 0), eps=ln.get("eps", 1.5))
             jout.append({"id": ln["id"], "group": "joints", "closed": False, "follows": ln["follows"], "points": jl[ln["id"]]})
             continue
         u = np.array(ln["dir"], float)
@@ -637,6 +685,11 @@ def view(kind, img, bones, blobs, joints, lines, cfg):
             item["drawn"] = False
             item["note"] = "kept as traced; not drawn (identity not reviewed)"
         out.append({**item, "points": trace_blob(sm, b, limits, clips)})
+    for ln in lines:
+        if "along" in ln:
+            al = ln["along"]
+            jl[ln["id"]] = trace_along(traced[al["bone"]]["points"], al["from"], al["to"], al.get("offset", 3))
+            jout.append({"id": ln["id"], "group": "joints", "closed": False, "follows": ln["follows"], "points": jl[ln["id"]]})
     out += jout
     # prominences derived from the traced outlines
     by = {s["id"]: s for s in out}
@@ -645,7 +698,7 @@ def view(kind, img, bones, blobs, joints, lines, cfg):
     # soft tissue last (it is united with the grown bone outlines), stored first
     bones_px = [st["points"] if st["closed"] else st["points"] + [st["points"][0]]
                 for st in out if st["group"] not in ("joints",) and len(st["points"]) > 2]
-    softs = soft_tissue(img, thr, bone_guard(img.shape, bones_px, SOFT_MARGIN), cfg.get("soft_runs", 1))
+    softs = soft_tissue(img, thr, bone_guard(img.shape, bones_px, SOFT_MARGIN), cfg.get("soft_runs", 1), (lambda s: s.get(kind, 0) if isinstance(s, dict) else s)(cfg.get("soft_smooth", 0)))
     for i, soft in reversed(list(enumerate(softs))):
         out.insert(0, {"id": "soft-tissue" if i == 0 else f"soft-tissue-{i + 1}", "group": "soft", "closed": False, "follows": None,
                        "note": f"Otsu threshold {round(float(thr), 1)} of the smoothed image, united with the bone outlines grown by "

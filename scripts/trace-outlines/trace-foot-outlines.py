@@ -55,11 +55,11 @@ AP_BONES = [
     tube("t5-distal", "phalanges", (842, 462), (878, 548), 34, 26, "toes"),
     tube("t5-middle", "phalanges", (890, 552), (892, 598), 42, 38, "toes"),
     tube("t5-proximal", "phalanges", (895, 615), (880, 820), 52, 34, "toes"),
-    tube("mt1", "metatarsals", (225, 690), (335, 1270), 104, 75, "metatarsal"),
-    tube("mt2", "metatarsals", (450, 650), (498, 1380), 64, 38, "metatarsal"),
-    tube("mt3", "metatarsals", (585, 655), (625, 1410), 58, 37, "metatarsal"),
-    tube("mt4", "metatarsals", (725, 745), (715, 1450), 66, 38, "metatarsal"),
-    tube("mt5", "metatarsals", (880, 905), (805, 1530), 62, 40, "metatarsal", search=6),
+    tube("mt1", "metatarsals", (228, 618), (335, 1290), 102, 75, "metatarsal", search=6),
+    tube("mt2", "metatarsals", (450, 592), (498, 1385), 62, 38, "metatarsal"),
+    tube("mt3", "metatarsals", (585, 622), (625, 1410), 56, 37, "metatarsal"),
+    tube("mt4", "metatarsals", (725, 690), (715, 1450), 62, 38, "metatarsal"),
+    tube("mt5", "metatarsals", (880, 835), (805, 1530), 62, 40, "metatarsal", search=6),
     snap("medial-cuneiform", "tarsals", [(205, 1330), (225, 1305), (300, 1296), (395, 1310), (405, 1380), (398, 1450), (385, 1540), (300, 1553), (230, 1580), (215, 1560), (205, 1480)], "static"),
     snap("intermediate-cuneiform", "tarsals", [(408, 1392), (450, 1398), (500, 1402), (502, 1480), (498, 1560), (488, 1595), (440, 1578), (412, 1550), (406, 1470)], "static"),
     snap("lateral-cuneiform-cuboid", "tarsals", [(505, 1410), (580, 1430), (650, 1462), (705, 1495), (735, 1525), (738, 1600), (736, 1700), (725, 1790), (660, 1812), (580, 1795), (530, 1700), (505, 1560)], "static",
@@ -101,15 +101,17 @@ OB_BONES = [
     tube("t5-distal", "phalanges", (862, 598), (905, 665), 36, 28, "toes"),
     tube("t5-middle", "phalanges", (905, 662), (925, 718), 42, 38, "toes"),
     tube("t5-proximal", "phalanges", (912, 728), (912, 955), 56, 34, "toes"),
-    tube("mt1", "metatarsals", (250, 690), (282, 1305), 102, 74, "metatarsal"),
-    tube("mt2", "metatarsals", (470, 660), (440, 1400), 62, 38, "metatarsal"),
-    tube("mt3", "metatarsals", (615, 720), (555, 1390), 56, 36, "metatarsal"),
-    tube("mt4", "metatarsals", (755, 800), (670, 1440), 62, 36, "metatarsal"),
-    tube("mt5", "metatarsals", (930, 1000), (790, 1640), 74, 45, "metatarsal", search=6),
+    tube("mt1", "metatarsals", (250, 632), (282, 1310), 100, 74, "metatarsal", search=6),
+    tube("mt2", "metatarsals", (470, 646), (440, 1400), 60, 38, "metatarsal"),
+    tube("mt3", "metatarsals", (615, 706), (555, 1390), 54, 36, "metatarsal"),
+    tube("mt4", "metatarsals", (755, 782), (670, 1440), 60, 36, "metatarsal"),
+    tube("mt5", "metatarsals", (925, 962), (815, 1650), 76, 50, "metatarsal", search=8),
     snap("medial-cuneiform", "tarsals", [(195, 1360), (230, 1350), (300, 1340), (365, 1330), (395, 1380), (385, 1450), (370, 1530), (330, 1580), (250, 1598), (190, 1590), (185, 1500), (190, 1420)], "static"),
     snap("navicular", "tarsals", [(158, 1650), (185, 1612), (240, 1600), (300, 1612), (350, 1650), (390, 1700), (395, 1760), (350, 1800), (290, 1810), (220, 1805), (165, 1790), (150, 1720)], "static"),
-    snap("lateral-tarsal-mass", "tarsals", [(405, 1380), (470, 1440), (560, 1480), (640, 1530), (690, 1600), (700, 1680), (680, 1760), (640, 1830), (570, 1860), (480, 1850), (420, 1800), (400, 1700), (410, 1600), (400, 1500)], "static",
-         note="intermediate cuneiform, lateral cuneiform and cuboid overlap in this oblique view: one combined outline"),
+    snap("intermediate-lateral-cuneiform", "tarsals", [(402, 1400), (450, 1440), (520, 1470), (598, 1520), (552, 1565), (541, 1606), (543, 1660), (525, 1700), (470, 1740), (440, 1735), (412, 1700), (398, 1660), (402, 1540), (398, 1460)], "static",
+         note="intermediate and lateral cuneiforms overlap in this oblique view: one combined outline; the proximal end is approximate"),
+    snap("cuboid", "tarsals", [(595, 1525), (640, 1555), (700, 1590), (748, 1625), (758, 1660), (745, 1720), (725, 1790), (700, 1850), (640, 1880), (580, 1870), (548, 1800), (540, 1700), (542, 1640), (540, 1605), (550, 1565), (580, 1535)], "static",
+         note="separated from the cuneiforms by the joint space seen at x about 540-583 for y 1520-1605 (intensity profiles, README); its proximal end is not seen separately from the talus and calcaneus"),
     snap("talus-calcaneus", "tarsals", [(150, 1815), (200, 1808), (300, 1815), (380, 1832), (470, 1872), (560, 1872), (620, 1852), (640, 1959), (130, 1959), (120, 1885)], "static",
          note="talus and calcaneus (hindfoot, mostly outside the image): one combined outline, open at the bottom edge"),
 ]
@@ -129,6 +131,10 @@ OB_LINES = [
     {"id": "cuneonavicular", "pts": [(190, 1595), (250, 1602), (320, 1612)], "g": 8, "follows": "static"},
 ]
 
+# MTP joint spaces of the DP/AP: the search centre at the joint (the midpoint of the seed ends fell inside the metatarsal head), half-length and a narrow axial search
+JOINT_CENTRE = {("ap", "t1-mtp"): (222, 616), ("ap", "t2-mtp"): (440, 584), ("ap", "t3-mtp"): (590, 632), ("ap", "t4-mtp"): (718, 692), ("ap", "t5-mtp"): (885, 826)}
+JOINT_HALF = {("ap", "t1-mtp"): 90, ("ap", "t2-mtp"): 55, ("ap", "t3-mtp"): 55, ("ap", "t4-mtp"): 60, ("ap", "t5-mtp"): 50}
+JOINT_G = {key: 6 for key in JOINT_CENTRE}
 SOFT_TOWARD_BG = {"ap": 0.6, "oblique": 0.85}  # curated: the toes' soft tissue is faint
 BRIGHT_FACTOR = {"ap": 0.6, "oblique": 0.6}
 
@@ -137,7 +143,7 @@ SPEC = {
     "out_review": "docs/review/rad-072-foot",
     "sources": SOURCES,
     "views": {"ap": (AP_BONES, AP_BLOBS, AP_JOINTS, AP_LINES), "oblique": (OB_BONES, OB_BLOBS, OB_JOINTS, OB_LINES)},
-    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "soft_runs": 3, "soft_open": "the silhouette"},
+    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "joint_centre": JOINT_CENTRE, "joint_half": JOINT_HALF, "joint_g": JOINT_G, "soft_runs": 3, "soft_open": "the silhouette"},
     "header": {
         "region": "foot",
         "side": "RIGHT (both images are a right foot; a left-foot case mirrors the drawing, never the RTL layout)",
