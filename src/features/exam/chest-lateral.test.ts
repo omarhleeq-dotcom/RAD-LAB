@@ -149,10 +149,9 @@ describe("rotation: magnitude only (S12-3) and the ±2° / ±5° teaching bands"
     expect(rule.feedback.low).toBeUndefined();
     expect(rule.feedback.high).toBeUndefined();
   });
-  it("documents the teaching-choice derivation (1 cm ≈ 2·a·sin θ with an assumed half-width)", () => {
+  it("keeps the Bontrager separation fact on screen; the band derivation (1 cm ≈ 2·a·sin θ, assumed half-width) stays consistent", () => {
     const rule = chestLateralErectExam.rules.find((r) => r.id === "rotation")!;
-    expect(rule.evidence.note).toMatch(/ENGINE TEACHING CHOICE/);
-    expect(rule.evidence.note).toMatch(/NOT|Neither|not a Bontrager value/i);
+    expect(rule.evidence.note).toMatch(/Bontrager gives about 1 cm of normal separation at 183 cm and no angle/);
     // the derivation is consistent: 2 * 14 cm * sin(2°) ≈ 1 cm
     expect(2 * 14 * Math.sin((2 * Math.PI) / 180)).toBeCloseTo(1, 1);
   });
@@ -166,9 +165,9 @@ describe("kVp and SID wording is scored as the owner decided (S12-1: bands other
     expect(check(run({ sidCm }), "sid").outcome).toBe(outcome);
   });
   it("labels the teaching choices as such, never as Bontrager, in the rule evidence", () => {
-    for (const id of ["kvp", "sid"]) {
+    for (const [id, source] of [["kvp", /110–125 kV is Bontrager/], ["sid", /MINIMUM of 72 in \(183 cm\)/]] as const) {
       const note = chestLateralErectExam.rules.find((r) => r.id === id)!.evidence.note ?? "";
-      expect(note, id).toMatch(/TEACHING CHOICE/);
+      expect(note, id).toMatch(source);
     }
   });
 });

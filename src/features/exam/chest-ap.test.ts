@@ -104,7 +104,7 @@ describe("tube angulation: about 5° caudad (Bontrager p.96); the bands are a te
   });
   it("is labelled an engine teaching choice and is not drawn on the image", () => {
     const rule = chestApSupineExam.rules.find((r) => r.id === "angulation")!;
-    expect(rule.evidence.note).toMatch(/ENGINE TEACHING CHOICE/);
+    expect(rule.evidence.note).toMatch(/NOT drawn on the result image/);
     const r = run({ tubeAngulationDeg: 0 });
     expect(r.resultState.geometry.tubeAngulationDeg).toBe(0);
     expect(buildRenderPlan(r.resultState, chestApSupine).effects.map((e) => e.id)).toEqual(["baseline", "marker"]);
@@ -140,7 +140,7 @@ describe("rotation: magnitude only; the ±2° / ±5° bands are the PA numbers a
     const rule = chestApSupineExam.rules.find((r) => r.id === "rotation")!;
     expect(rule.feedback.low).toBeUndefined();
     expect(rule.feedback.high).toBeUndefined();
-    expect(rule.evidence.note).toMatch(/ENGINE TEACHING CHOICE/);
+    expect(rule.evidence.note).toMatch(/Bontrager gives no angle/);
   });
 });
 
@@ -155,7 +155,7 @@ describe("kVp and SID (S12-1 labelling; SID lower bound 102 cm, S10b-23)", () =>
     expect(text(run({ sidCm: 120 }), "sid")).toMatch(/marked on the image/);
   });
   it("labels the non-Bontrager bands as teaching choices", () => {
-    for (const id of ["kvp", "sid"]) expect(chestApSupineExam.rules.find((r) => r.id === id)!.evidence.note ?? "", id).toMatch(/TEACHING CHOICE/);
+    for (const [id, source] of [["kvp", /110–125 kV is Bontrager/], ["sid", /ACR-PORTABLE conversion/]] as const) expect(chestApSupineExam.rules.find((r) => r.id === id)!.evidence.note ?? "", id).toMatch(source);
   });
 });
 

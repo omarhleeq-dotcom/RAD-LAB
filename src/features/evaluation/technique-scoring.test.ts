@@ -191,7 +191,7 @@ describe("technique profile separates range / target / tolerance / evidence", ()
 
   it("classifies SID 180 as a common reference (technique reference §3.1), with provisional bands", () => {
     expect(chestPaErect.rules.find((r) => r.id === "sid")?.evidence.status).toBe("common-reference");
-    expect(chestPaErect.rules.find((r) => r.id === "sid")?.evidence.note).toMatch(/PROVISIONAL/);
+    expect(chestPaErect.rules.find((r) => r.id === "sid")?.evidence.note).toMatch(/180 cm is a common reference/);
   });
 
   it("every assumption listed to the learner has a bilingual label/value and an evidence class", () => {
