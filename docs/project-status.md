@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 241,
-  "updated_at": "2026-10-23T23:30:00+00:00",
+  "revision": 242,
+  "updated_at": "2026-10-24T08:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -669,8 +669,8 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "(1) الصدر مدموج في #113. (2) الأطراف: 2a تجربة اليد مدموجة في #114 ومقبولة من المالك (حدّان بسيطان مقبولان دون إصلاح)؛ 2b الرسغ ثم القدم بالطريقة نفسها (الكاحل خرج منه): المرحلة A منجزة على PR مسودة وتنتظر مراجعة المالك للتراكبات قبل B؛ 2c الكتف مع زاوية الجسم في جلسة مستقلة. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md",
+      "description": "(1) الصدر مدموج في #113. (2) الأطراف: 2a تجربة اليد مدموجة في #114 ومقبولة من المالك (حدّان بسيطان مقبولان دون إصلاح)؛ 2b الرسغ ثم القدم مدموج في #115 (فحص الهاتف للمالك باقٍ)؛ 2c الكتف Grashey (شكوى المالك: الرسم ضعيف وتغيير زاوية الجسم لا يُظهر تغييرًا): قيد التنفيذ، المرحلة A (تشخيص وتتبع A-038 فقط، دون كود تطبيق) على PR مسودة ثم توقف لقرار المالك قبل B. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     }
   ]
