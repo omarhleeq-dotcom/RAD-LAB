@@ -312,7 +312,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
         <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
         <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
-        <Orientation W={W} showGuides={showGuides} />
+        <Orientation W={W} showGuides={showGuides} projection={settings.projection} />
       </g>
 
       {edges.map(({ edge, x, y }) => (

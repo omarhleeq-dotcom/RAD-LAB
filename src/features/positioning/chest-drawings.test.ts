@@ -8,6 +8,7 @@ import { CASES } from "@/data/cases";
 import { fitAnatomyBox } from "@/features/simulation/geometry";
 import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, U } from "./detector-figures";
 import { PlanView } from "./PlanView";
+import { DetectorWorkspace } from "./DetectorWorkspace";
 import { AP_SIDE, apSideLayout } from "./visual-model";
 
 const lateral = CASES.find((c) => c.id === "chest-lateral-erect")!;
@@ -102,6 +103,42 @@ describe("Chest Lateral detector view (RAD-072 1b)", () => {
     expect(pa).toContain('data-anatomy="right-lung"');
     expect(pa).not.toContain('data-anatomy="lateral-lung"');
     expect(draw({})).toContain('data-anatomy="lateral-lung"');
+  });
+});
+
+describe("Chest edge labels follow the drawn figure (RAD-072 1b, T1)", () => {
+  const pa = CASES.find((c) => c.id === "chest-pa-erect")!;
+  const esc = (t: string) => t.replace(/'/g, "&#x27;");
+  const L = { right: esc(en.scene.patientRight), left: esc(en.scene.patientLeft), ant: en.scene.anterior, post: en.scene.posterior };
+  const edge = (c: typeof lateral, figure: typeof CHEST_LATERAL_FIGURE, projection: string, locale: "en" | "ar" = "en") =>
+    render(createElement(DetectorWorkspace, { radCase: c, settings: { ...c.initialSettings, projection } as never, onChange: () => {}, disabled: false, showGuides: true, figure }), locale);
+  it("lateral exam, projection PA: the frontal drawing gets the patient's right / left labels, not anterior / posterior", () => {
+    const html = edge(lateral, CHEST_LATERAL_FIGURE, "pa-erect");
+    expect(html).toContain(`>${L.right}<`);
+    expect(html).toContain(`>${L.left}<`);
+    expect(html).not.toContain(`>${L.ant}<`);
+    expect(html).not.toContain(`>${L.post}<`);
+  });
+  it("lateral exam, projection Lateral: anterior / posterior, not right / left", () => {
+    const html = edge(lateral, CHEST_LATERAL_FIGURE, "lateral-left");
+    expect(html).toContain(`>${L.ant}<`);
+    expect(html).toContain(`>${L.post}<`);
+    expect(html).not.toContain(`>${L.right}<`);
+    expect(html).not.toContain(`>${L.left}<`);
+  });
+  it("lateral exam, projection PA, Arabic: the Arabic right / left labels", () => {
+    const html = edge(lateral, CHEST_LATERAL_FIGURE, "pa-erect", "ar");
+    expect(html).toContain(`>${ar.scene.patientRight}<`);
+    expect(html).toContain(`>${ar.scene.patientLeft}<`);
+    expect(html).not.toContain(`>${ar.scene.anterior}<`);
+  });
+  it("PA exam is unchanged: right / left labels for every selected projection, never anterior / posterior", () => {
+    for (const projection of ["pa-erect", "lateral-left", "ap-erect"]) {
+      const html = edge(pa, CHEST_PA_FIGURE, projection);
+      expect(html).toContain(`>${L.right}<`);
+      expect(html).toContain(`>${L.left}<`);
+      expect(html).not.toContain(`>${L.ant}<`);
+    }
   });
 });
 

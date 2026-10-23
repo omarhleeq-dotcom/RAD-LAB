@@ -37,6 +37,8 @@ export interface FigureProps {
 export interface OrientationProps {
   W: number;
   showGuides: boolean;
+  /** The selected projection, for the figures whose drawing follows it (RAD-072 1b, T1: the chest lateral exam). Others ignore it. */
+  projection?: string;
 }
 
 export interface DetectorFigure {
@@ -115,8 +117,12 @@ function LateralDrawing(props: FigureProps) {
   );
 }
 
-function LateralOrientation({ W }: OrientationProps) {
+function LateralOrientation(props: OrientationProps) {
+  const { W, projection } = props;
   const ts = useTranslations("scene");
+  // RAD-072 1b (T1): the edge labels follow the figure drawn. A projection other than the lateral draws the frontal figure
+  // (`LateralDrawing`), so it gets the frontal labels (patient's right / left, practice guides only, as in the PA exam).
+  if (projection !== undefined && projection !== "lateral-left") return <PaOrientation {...props} />;
   return (
     <>
       <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("anterior")}</SceneLabel>
