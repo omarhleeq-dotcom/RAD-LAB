@@ -139,7 +139,8 @@ export function ApSupineView({ radCase, settings, showGuides }: Props) {
         <rect x={tube.x - 24} y={tube.y - 30} width={48} height={26} rx={4} fill={SCENE.tube} stroke={SCENE.underStroke} strokeWidth={1.5} />
         <rect x={tube.x - 14} y={tube.y - 4} width={28} height={9} rx={2} fill={SCENE.detector} stroke={SCENE.underStroke} strokeWidth={1} />
       </g>
-      <SceneLabel x={tube.x} y={tube.y - 40} size={LABEL_SIZE.view} anchor="middle">{ts("tube")}</SceneLabel>
+      {/* the tube label ends at the housing's centre, on the side away from the SID dimension line and its reference label */}
+      <SceneLabel x={tube.x + 12} y={tube.y - 40} size={LABEL_SIZE.view} anchor="end">{ts("tube")}</SceneLabel>
       {/* SID: a dimension line parallel to the central ray from the tube to the detector, ticks across it; the reference tick on the same line */}
       <g aria-hidden>
         <UnderStroked stroke={SCENE.label} width={1.5}>
@@ -166,10 +167,10 @@ export function ApSupineView({ radCase, settings, showGuides }: Props) {
       <SceneArrow x1={14} y1={S + 40} x2={14} y2={S + 74} />
       <SceneLabel x={26} y={S + 76} size={LABEL_SIZE.view}>{ts("posterior")}</SceneLabel>
       <SceneLabel x={L.head.x} y={L.head.y - 42} size={LABEL_SIZE.view} anchor="middle">{ts("head")}</SceneLabel>
-      <SceneLabel x={ankle - 12} y={S - BODY.foot.l * K - 18} size={LABEL_SIZE.view} anchor="middle">{ts("feet")}</SceneLabel>
+      <SceneLabel x={ankle - 4} y={S + 32} size={LABEL_SIZE.view} anchor="middle">{ts("feet")}</SceneLabel>
       <SceneLabel x={L.detectorLabel.x} y={L.detectorLabel.y} size={LABEL_SIZE.view} anchor="middle">{ts("detector")}</SceneLabel>
-      <SceneLabel x={440} y={S + 80} size={LABEL_SIZE.view} anchor="end" fill={SCENE.beam}>{ts("tubeAngle", { angle })}</SceneLabel>
-      <SceneLabel x={440} y={S + 100} size={LABEL_SIZE.view - 2} anchor="end" fill={SCENE.beam}>{ts("tubeAngleRef")}</SceneLabel>
+      <SceneLabel x={440} y={S + 74} size={LABEL_SIZE.view} anchor="end" fill={SCENE.beam}>{ts("tubeAngle", { angle })}</SceneLabel>
+      <SceneLabel x={440} y={S + 99} size={LABEL_SIZE.view - 2} anchor="end" fill={SCENE.beam}>{ts("tubeAngleRef")}</SceneLabel>
     </svg>
   );
 }

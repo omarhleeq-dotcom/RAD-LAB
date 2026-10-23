@@ -64,8 +64,11 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
   const p0 = rot(0, arcSide * arcR, baseAngle);
   const p1 = rot(0, arcSide * arcR, baseAngle + plan);
   const ref = rot(0, arcSide * (arcR + 8), baseAngle);
-  const back = rot(-24, 0, baseAngle + plan);
-  const pm = lateral ? { x: p1.x + back.x, y: p1.y + back.y } : rot(0, arcSide * (arcR + 17), baseAngle + plan / 2);
+  const back = rot(-30, 0, baseAngle + plan);
+  const tubeLabel = { x: tubeX + 14, y: midY + lateralPx - 30 };
+  const atArc = lateral ? { x: ptX + p1.x + back.x, y: midY + p1.y + back.y } : { x: ptX + rot(0, arcSide * (arcR + 17), baseAngle + plan / 2).x, y: midY + rot(0, arcSide * (arcR + 17), baseAngle + plan / 2).y };
+  // Never on the tube's own label: slide toward the patient until clear of it (SID and central-ray offset move the tube).
+  const readout = Math.abs(atArc.y + 5 - tubeLabel.y) < 24 && Math.abs(atArc.x - tubeLabel.x) < 56 ? { x: tubeLabel.x + 58, y: atArc.y } : atArc;
   const front = rot(1, 0, baseAngle);
   const patientLabel = lateral ? { x: ptX - 30, y: midY + front.y * (rx + (armsRaised ? 16 : 7)) * k + 6 } : { x: ptX, y: midY + (ry + 9) * k };
   const ring = { stroke: SCENE.outline, strokeWidth: STROKE.thin / k };
@@ -100,7 +103,7 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
           {(p) => <path d={`M ${ptX + p0.x} ${midY + p0.y} A ${arcR} ${arcR} 0 0 ${plan > 0 ? 1 : 0} ${ptX + p1.x} ${midY + p1.y}`} fill="none" {...p} />}
         </UnderStroked>
       )}
-      <SceneLabel x={ptX + pm.x} y={midY + pm.y + 5} size={LABEL_SIZE.view - 2} anchor="middle">{ts("rotationArc", { deg: settings.rotationDeg })}</SceneLabel>
+      <SceneLabel x={readout.x} y={readout.y + 5} size={LABEL_SIZE.view - 2} anchor="middle">{ts("rotationArc", { deg: settings.rotationDeg })}</SceneLabel>
       {/* patient from above (drawing cm, scaled to the detector bar) */}
       <g transform={`translate(${ptX} ${midY}) rotate(${plan + baseAngle}) scale(${k})`}>
         {/* Local x = anterior–posterior; local y = right–left (anatomical left is −y). In a lateral the chosen side touches the detector. */}
@@ -116,7 +119,7 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
       <SceneLabel x={8} y={46} size={LABEL_SIZE.view}>{ts("rotationReadout", { deg: settings.rotationDeg })}</SceneLabel>
       {showGuides && !lateral && <SceneLabel x={8} y={70} size={LABEL_SIZE.view - 2} fill={SCENE.guide}>{t("rotationGuide")}</SceneLabel>}
       <SceneLabel x={patientLabel.x} y={patientLabel.y} size={LABEL_SIZE.view} anchor="middle">{t("patient")}</SceneLabel>
-      <SceneLabel x={tubeX + 14} y={midY + lateralPx - 30} size={LABEL_SIZE.view} anchor="middle">{ts("tube")}</SceneLabel>
+      <SceneLabel x={tubeLabel.x} y={tubeLabel.y} size={LABEL_SIZE.view} anchor="middle">{ts("tube")}</SceneLabel>
       {/* SID: one axis from the tube to the detector, its reference tick on the same axis */}
       <g aria-hidden>
         <UnderStroked stroke={SCENE.label} width={1.5}>

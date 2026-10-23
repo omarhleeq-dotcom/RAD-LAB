@@ -88,7 +88,7 @@ function PaOrientation({ W, showGuides }: OrientationProps) {
     showGuides && (
       <>
         <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("patientRight")}</SceneLabel>
-        <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("patientLeft")}</SceneLabel>
+        <SceneLabel x={W + 22} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("patientLeft")}</SceneLabel>
       </>
     )
   );
@@ -120,7 +120,7 @@ function LateralOrientation({ W }: OrientationProps) {
   return (
     <>
       <SceneLabel x={-24} y={-22} size={LABEL_SIZE.detector}>{ts("anterior")}</SceneLabel>
-      <SceneLabel x={W + 24} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("posterior")}</SceneLabel>
+      <SceneLabel x={W + 22} y={-22} size={LABEL_SIZE.detector} anchor="end">{ts("posterior")}</SceneLabel>
     </>
   );
 }

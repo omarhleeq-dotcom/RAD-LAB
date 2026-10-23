@@ -206,7 +206,7 @@ export function LateralFigure({ W, H, region, rotationDeg, chin, armsRaised, sho
         {t("heart")}
       </SceneLabel>
       {!armsRaised && showGuides && (
-        <SceneLabel x={x + w * 0.72} y={y + h * 0.22} size={LABEL_SIZE.detector + 2} anchor="middle" fill={SCENE.guide}>
+        <SceneLabel x={x + w * 0.36} y={y + h * 0.47} size={LABEL_SIZE.detector + 2} anchor="middle" fill={SCENE.guide}>
           {t("armsOverLungs")}
         </SceneLabel>
       )}
