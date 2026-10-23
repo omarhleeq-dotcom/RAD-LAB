@@ -51,12 +51,14 @@ export const TUNING = {
     /** Knee / foot (S14.4): as the hand's gain, for the lower-limb rotation models (`features/lower-limb-model`); illustrative, scoring never uses it. */
     lowerLimbModelGainPerDeg: 2.3,
     /**
-     * Shoulder Grashey (S-SHOULDER-3; cap lifted by the owner 2026-10-24, DECISIONS #rad072-2c-owner-2026-10-24 D2): closure of the joint space, as a fraction
-     * of the image width per degree of distance from the 35°–45° band, growing out to `shoulderMaxDeg` (35° = the console value 0°; 60° is 15° from the band).
-     * The largest closure (gain × max) must keep the warped strip between the head and the glenoid line above the model's minimum slope (the head stays
-     * distinct, nothing folds). Illustrative, labelled as such; scoring never uses it.
+     * Shoulder Grashey (S-SHOULDER-3; cap lifted 2026-10-24 and the slope turned into a curve, DECISIONS #rad072-2c-owner-2026-10-24 D2): closure of the joint space as a
+     * fraction of the image width, a MONOTONE SATURATING curve of the distance d from the 35°–45° band edge, steep at the edge and flattening toward the console limits
+     * (35° = console 0°; 60° is 15° from the band): closure(d) = `shoulderClosureMax` × (1 − e^(−d/τ)) / (1 − e^(−`shoulderMaxDeg`/τ)), τ = `shoulderClosureDecayDeg`.
+     * `shoulderClosureMax` is the largest value that keeps the warped strip between the head anchor and the glenoid line (0.08 wide) above the model's minimum slope
+     * 0.2 (nothing folds, the head stays distinct); at 15° from the band the closure is at least the earlier capped value 0.0495. Illustrative, labelled as such; scoring never uses it.
      */
-    shoulderClosurePerDeg: 0.0016,
+    shoulderClosureMax: 0.0625,
+    shoulderClosureDecayDeg: 9,
     shoulderMaxDeg: 35,
     /** Wrist (S-VIS-1b): as the hand's gain, for the wrist rotation model (`features/wrist-model`); a labelled teaching exaggeration, scoring never uses it. */
     wristModelGainPerDeg: 2.3,

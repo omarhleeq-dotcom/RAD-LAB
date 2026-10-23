@@ -58,3 +58,22 @@ it("the result image keeps changing with the console angle: 0°, 15°, 20° and 
   const worst = shoulderAnchors(shoulderValue(0));
   expect(worst[4]!.u + worst[4]!.du - (worst[3]!.u + worst[3]!.du)).toBeGreaterThan(0.2 * (worst[4]!.u - worst[3]!.u));
 });
+
+it("the closure is a monotone saturating curve: strictly increasing from 35° down to 0° and from 45° up to 60°, steep at the band edge, never below the old capped value at 15° from the band, no fold at 0° (2c D2 refinement)", () => {
+  const OLD_CAPPED = 0.0033 * 15; // the closure at 15° from the band under the earlier cap (59 px of 1193)
+  const c = (deg: number) => shoulderClosureU(shoulderValue(deg));
+  for (let d = 34; d >= 0; d--) expect(c(d), `${d}°`).toBeGreaterThan(c(d + 1));
+  for (let d = 46; d <= 60; d++) expect(c(d), `${d}°`).toBeGreaterThan(c(d - 1));
+  expect(c(35)).toBe(0);
+  expect(c(45)).toBe(0);
+  expect(c(20)).toBeGreaterThanOrEqual(OLD_CAPPED);
+  expect(c(60)).toBeGreaterThanOrEqual(OLD_CAPPED);
+  expect(c(20)).toBe(c(60)); // the same cue on both sides
+  expect(c(0)).toBeGreaterThan(c(20));
+  // flattening: the first 10° from the band edge close more than the next 10°, which close more than the last 15°
+  expect(c(25) - c(35)).toBeGreaterThan(c(15) - c(25));
+  expect(c(15) - c(25)).toBeGreaterThan((c(0) - c(15)) * (10 / 15));
+  const a = shoulderAnchors(shoulderValue(0));
+  expect(a[4]!.u + a[4]!.du - (a[3]!.u + a[3]!.du)).toBeGreaterThan(0.2 * (a[4]!.u - a[3]!.u));
+  for (let i = 1; i < a.length; i++) expect(a[i]!.u + a[i]!.du - (a[i - 1]!.u + a[i - 1]!.du)).toBeGreaterThan(0.2 * (a[i]!.u - a[i - 1]!.u) - 1e-9);
+});

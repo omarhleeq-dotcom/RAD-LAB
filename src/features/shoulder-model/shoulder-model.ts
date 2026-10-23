@@ -9,13 +9,13 @@ import { SHOULDER_BAND_DEG } from "@/data/exams/xray/shoulder-geometry";
  *  - The console value is the ABSOLUTE body obliquity toward the affected side. Bontrager p.196 gives 35°–45° (an equal-credit plateau, no 40° optimum).
  *  - DEAD BAND (educational simplification, S-SHOULDER-2-6): the baseline is rendered UNCHANGED anywhere inside 35°–45°; outside it the model value is the
  *    distance to the nearest band edge. The source says the angle needed varies with build, and the baseline's true angle is unknown.
- *  - The closure grows with the distance from the band edge out to the console limits (0° and 60°); the dead band is unchanged.
+ *  - The closure grows with the distance from the band edge out to the console limits (0° and 60°) along a saturating curve; the dead band is unchanged.
  *  - The ONLY cue drawn is the closing of the open joint space (Bontrager p.196: glenoid in profile without humeral-head superimposition, open joint
  *    space): the humeral-head side of the image is shifted toward the glenoid line and the gap between them is compressed by a smooth horizontal warp.
  *    The cue is the SAME for a deviation on either side (the source gives no direction-specific appearance) and the picture's feedback is magnitude-only.
  *  - NOT drawn: the anterior / posterior glenoid rims superimposed (the image has one rim line; a second one would be hidden anatomy), true overlap of the
  *    head over the glenoid (a warp compresses, it does not add densities), the scapular body, any effect of arm posture.
- * The size of the closure per degree and its limit are illustrative (`TUNING.limbRotation.shoulderClosurePerDeg`); scoring never uses them.
+ * The size and shape of the closure and its limit are illustrative (`TUNING.limbRotation.shoulderClosurePerDeg`); scoring never uses them.
  */
 export const SHOULDER_MAX_DEG = TUNING.limbRotation.shoulderMaxDeg;
 
@@ -33,9 +33,15 @@ export const SHOULDER_COLUMNS = [
   { u: 0, k: 0 }, { u: 0.126, k: 0 }, { u: 0.385, k: 0.5 }, { u: 0.641, k: 1 }, { u: 0.721, k: 0 }, { u: 1, k: 0 },
 ] as const;
 
-/** Closure (fraction of the image width) for a model value: grows with the distance from the band edge over the whole console range (0°…60°; cap lifted, DECISIONS 2c D2). */
-export const shoulderClosureU = (value: number): number =>
-  TUNING.limbRotation.shoulderClosurePerDeg * Math.min(SHOULDER_MAX_DEG, Math.abs(value));
+/**
+ * Closure (fraction of the image width) for a model value: a monotone saturating curve of the distance from the band edge, steep at the edge and flattening toward
+ * the console limits (0° and 60°); the same for either sign (magnitude only). Constants in `TUNING.limbRotation` (illustrative; DECISIONS 2c D2).
+ */
+export const shoulderClosureU = (value: number): number => {
+  const { shoulderClosureMax: max, shoulderClosureDecayDeg: tau } = TUNING.limbRotation;
+  const d = Math.min(SHOULDER_MAX_DEG, Math.abs(value));
+  return (max * (1 - Math.exp(-d / tau))) / (1 - Math.exp(-SHOULDER_MAX_DEG / tau));
+};
 
 export function shoulderAnchors(value: number): { u: number; du: number }[] {
   const c = shoulderClosureU(value);
