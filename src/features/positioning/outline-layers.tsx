@@ -7,13 +7,15 @@ import type { DrawnPart } from "./outline-geometry";
  * keep their own edge, as in a radiograph; no bone is hidden by an opaque fill at any rotation (open finding H1). `outlineLayers` is the draw
  * order the full-rotation tests check.
  */
-export type OutlineLayer = "softFill" | "soft" | "joint" | "boneFill" | "edgeUnder" | "edge";
+export type OutlineLayer = "softFill" | "soft" | "joint" | "boneFill" | "line" | "edgeUnder" | "edge";
 
 interface Drawing<P extends DrawnPart = DrawnPart> {
   /** The soft-tissue silhouette edge (one open outline, or several where the image edge cuts the silhouette). */
   soft: P | P[];
   bones: P[];
   joints: P[];
+  /** Optional light interior / neighbouring lines (shoulder 2c: the greater-tuberosity line and the scapular border lines), drawn over the bone fills and under the edges. */
+  lines?: P[];
 }
 
 /** The draw order: soft tissue, joint spaces, all bone fills, then all bone edges (under-strokes before lines). */
@@ -24,6 +26,7 @@ export function outlineLayers<P extends DrawnPart>(d: Drawing<P>): { layer: Outl
     ...(Array.isArray(d.soft) ? d.soft : [d.soft]).map((part) => ({ layer: "soft" as const, part })),
     ...d.joints.map((part) => ({ layer: "joint" as const, part })),
     ...d.bones.map((part) => ({ layer: "boneFill" as const, part })),
+    ...(d.lines ?? []).map((part) => ({ layer: "line" as const, part })),
     ...d.bones.map((part) => ({ layer: "edgeUnder" as const, part })),
     ...d.bones.map((part) => ({ layer: "edge" as const, part })),
   ];
@@ -42,6 +45,7 @@ const STYLE: Record<OutlineLayer, (p: DrawnPart) => Record<string, string | numb
   soft: (p) => ({ fill: p.fillPoints ? "none" : SCENE.soft, stroke: SCENE.outline, strokeWidth: LIMB.softEdge }),
   joint: () => ({ fill: "none", stroke: SCENE.air, strokeWidth: LIMB.joint }),
   boneFill: (p) => ({ fill: SCENE.boneFill, fillOpacity: r(copyOpacity(p.copies), 3), stroke: "none" }),
+  line: () => ({ fill: "none", stroke: SCENE.boneLine, strokeOpacity: 0.42, strokeWidth: LIMB.joint }),
   edgeUnder: () => ({ fill: "none", stroke: SCENE.underStroke, strokeWidth: LIMB.edgeUnder }),
   edge: () => ({ fill: "none", stroke: SCENE.boneLine, strokeWidth: LIMB.edge }),
 };
