@@ -7,7 +7,7 @@ import { collimatedField } from "@/features/simulation/geometry";
 import { Limb, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE } from "./scene-style";
 import { SeatedLimbSideView } from "./SeatedLimbSideView";
-import { slabX, WRIST_SIDE } from "./wrist-visual";
+import { slabX, WRIST_SIDE, wristSideHeights } from "./wrist-visual";
 
 const S = WRIST_SIDE.surfaceY;
 
@@ -34,8 +34,8 @@ export function WristSideView({ radCase, settings, showGuides }: Props) {
   // The wrist as drawn: the midcarpal area of the baseline, where the exam's centring rule aims (fixed anatomy, the learner moves the ray).
   const wristCm = ((radCase.positioning.centering.target.y + 1) / 2) * detector.heightCm;
   const wristX = slabX(wristCm);
-  const handH = lateral ? 34 : 15;
-  const armH = 22;
+  // heights from the traced wrist (RAD-072 2b): palm down = the wrist's thickness, ulnar edge down = its width (proportions only)
+  const { hand: handH, forearm: armH } = wristSideHeights(lateral);
   const level = S - 12 - armH / 2;
   return (
     <SeatedLimbSideView
@@ -53,8 +53,8 @@ export function WristSideView({ radCase, settings, showGuides }: Props) {
       limb={
         <Limb
           pts={[
-            { x: 70, y: level, w: 30 },
-            { x: 140, y: level + 1, w: 24 },
+            { x: 70, y: level, w: armH + 8 },
+            { x: 140, y: level + 1, w: armH + 2 },
             { x: wristX - 22, y: level + 2, w: armH },
             { x: wristX, y: S - 3 - handH / 2 + 1, w: handH + 4 },
             { x: slabX(0) - 36, y: S - 3 - handH / 2 + 1, w: handH },

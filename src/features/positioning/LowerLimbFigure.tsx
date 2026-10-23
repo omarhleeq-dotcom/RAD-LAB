@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
-import { LOWER_LIMB_RADIOGRAPHS } from "@/data/cases/lower-limb-radiographs";
 import { lowerLimbImage, type LowerLimbKind } from "@/data/exams/xray/lower-limb-geometry";
-import { ankleApAnchors, ankleLateralCopies, ANKLE_AP_MODEL, ANKLE_LATERAL_WIDTH_PX, footAnchors, kneeApShifts, kneeLateralCopies, interpolateAnchors, KNEE_AP_MODEL, KNEE_LATERAL_COPY_WEIGHTS, footValue, FOOT_MODEL } from "@/features/lower-limb-model/lower-limb-model";
+import { ankleApAnchors, ankleLateralCopies, ANKLE_AP_MODEL, ANKLE_LATERAL_WIDTH_PX, kneeApShifts, kneeLateralCopies, interpolateAnchors, KNEE_AP_MODEL, KNEE_LATERAL_COPY_WEIGHTS } from "@/features/lower-limb-model/lower-limb-model";
 import { SCENE, STROKE } from "./scene-style";
 import { smoothClosedPath, smoothOpenPath } from "./elbow-visual";
-import { footShiftPx, OUTLINES, type FootOutline, type Pt } from "./lower-limb-visual";
+import { OUTLINES, type Pt } from "./lower-limb-visual";
+import { footOutlineDrawing } from "./foot-outline-drawing";
+import { OutlineLayers, r } from "./outline-layers";
 import { ANKLE_OUTLINES } from "./ankle-outlines";
 import type { FigureProps } from "./detector-figures";
 
@@ -19,9 +20,10 @@ import type { FigureProps } from "./detector-figures";
  *  - ankle AP (S14.5): the whole leg and ankle are warped by the model's column anchors (the malleoli and the plafond edges move by depth), the tibia, fibula,
  *    talus and heel outlines move together; the overlap of the distal fibula is not drawn;
  *  - ankle lateral (S14.5): the fibula outline and the talar-dome arc are drawn twice, a far-side copy and a near-side copy (one outline at the base pose);
- *  - foot AP / oblique: the toes and the metatarsals are displaced column by column (band-weighted, as the result image); the oblique's value is the
- *    deviation of the plantar angle from 40°.
- * The outlines are illustrative (read by eye from the baselines). Anatomy is an image convention and is never mirrored by RTL.
+ *  - foot AP / oblique (RAD-072 2b): drawn from the outlines TRACED from the baselines (`foot-outlines.json`, `foot-outline-drawing.ts`), every bone moved
+ *    as a rigid piece by the model's band-weighted displacement at that bone (the toes and the metatarsals; the oblique's value is the deviation of the
+ *    plantar angle from 40°), in the limb drawing style of the hand (`outline-layers.tsx`).
+ * The knee and ankle outlines are illustrative (read by eye from the baselines). Anatomy is an image convention and is never mirrored by RTL.
  */
 export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: FigureProps) {
   const kind = (["knee-ap", "knee-lateral", "foot-ap", "foot-oblique", "ankle-ap", "ankle-lateral"].includes(settings.projection) ? settings.projection : radCase.requiredProjection) as LowerLimbKind;
@@ -49,14 +51,9 @@ export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: Figure
   if (kind === "knee-lateral") return clip(<KneeLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
   if (kind === "ankle-ap") return clip(<AnkleAp X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
   if (kind === "ankle-lateral") return clip(<AnkleLateral X={X} Y={Y} rotationDeg={rot} showGuides={showGuides} />);
-  return clip(<Foot kind={kind === "foot-ap" ? "ap" : "oblique"} X={X} Y={Y} k={k} rotationDeg={rot} bands={footBands(kind)} />);
+  const toSvg = ([px, py]: [number, number]) => `${r(X(px))},${r(Y(py))}`;
+  return clip(<OutlineLayers d={footOutlineDrawing(kind === "foot-ap" ? "ap" : "oblique", rot)} toSvg={toSvg} />);
 }
-
-/** The toe / metatarsal bands of the drawn foot projection (the same bands the result image uses for that projection, whatever the exam). */
-const footBands = (kind: LowerLimbKind) => {
-  const lm = LOWER_LIMB_RADIOGRAPHS[kind].limbRotation;
-  return lm && "bands" in lm ? lm.bands : [];
-};
 
 type Map = (v: number) => number;
 const softStyle = { fill: SCENE.lung, stroke: SCENE.edge, strokeWidth: STROKE.thin, strokeLinejoin: "round" } as const;
@@ -114,51 +111,6 @@ function KneeLateral({ X, Y, rotationDeg, showGuides }: { X: Map; Y: Map; rotati
           <circle cx={X(O.centre[0])} cy={Y(O.centre[1])} r={3} fill={SCENE.guide} stroke={SCENE.underStroke} strokeWidth={1.5} />
         </g>
       )}
-    </>
-  );
-}
-
-function Foot({ kind, X, Y, k, rotationDeg, bands }: { kind: "ap" | "oblique"; X: Map; Y: Map; k: number; rotationDeg: number; bands: { v1: number; v2: number }[] }): ReactNode {
-  const O: FootOutline = kind === "ap" ? OUTLINES.footAp : OUTLINES.footOblique;
-  const M = FOOT_MODEL[kind];
-  const anchors = footAnchors(kind, footValue(kind, rotationDeg));
-  const lists = [anchors.toes, anchors.metatarsal];
-  const dx = (x: number, y: number) => footShiftPx(x, y, M.widthPx, M.heightPx, bands, lists);
-  const P = (x: number, y: number): Pt => [X(x + dx(x, y)), Y(y)];
-  const rayLine = (r: FootOutline["rays"][number]) => {
-    const [a, b] = [P(r.pts[0][0], r.pts[0][1]), P(r.pts[1][0], r.pts[1][1])];
-    const w = r.w * k;
-    return (
-      <g key={r.id}>
-        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.bone} strokeOpacity={0.85} strokeWidth={w + 2 * STROKE.thin} strokeLinecap="round" />
-        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.trunk} strokeWidth={w} strokeLinecap="round" />
-      </g>
-    );
-  };
-  const blob = (b: FootOutline["blobs"][number]) => {
-    const c = P(b.cx, b.cy);
-    return <ellipse key={b.id} cx={c[0]} cy={c[1]} rx={b.rx * k} ry={b.ry * k} {...boneStyle} />;
-  };
-  const soft = O.soft.map(([x, y]) => P(x, y));
-  // the soft tissue of a toe: a wider rounded stroke under its bones (the toes have no silhouette of their own in the foot body)
-  const softToe = (r: FootOutline["rays"][number]) => {
-    const [a, b] = [P(r.pts[0][0], r.pts[0][1]), P(r.pts[1][0], r.pts[1][1])];
-    const w = r.w * k + 7;
-    return (
-      <g key={`soft-${r.id}`}>
-        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.edge} strokeOpacity={0.7} strokeWidth={w + 2 * STROKE.thin} strokeLinecap="round" />
-        <line x1={a[0]} y1={a[1]} x2={b[0]} y2={b[1]} stroke={SCENE.lung} strokeWidth={w} strokeLinecap="round" />
-      </g>
-    );
-  };
-  return (
-    <>
-      <path d={smoothClosedPath(soft)} {...softStyle} />
-      {O.rays.filter((r) => r.band === "toes").map(softToe)}
-      {O.blobs.filter((b) => b.band === "tarsal").map(blob)}
-      {O.rays.filter((r) => r.band === "metatarsal").map(rayLine)}
-      {O.blobs.filter((b) => b.band === "metatarsal").map(blob)}
-      {O.rays.filter((r) => r.band === "toes").map(rayLine)}
     </>
   );
 }

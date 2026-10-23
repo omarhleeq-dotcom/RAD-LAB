@@ -1,4 +1,4 @@
-# Traced drawing outlines (RAD-072 part 2a)
+# Traced drawing outlines (RAD-072 part 2a hand, part 2b wrist and foot)
 
 `trace-hand-outlines.py` traces the drawing outlines of the hand from the project's own two baseline radiographs and writes
 `src/features/positioning/hand-outlines.json`. Owner decision: [RAD-072 2a](../../docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23).
@@ -48,9 +48,30 @@ Header: `note`, `region`, `side`, `date`, `method`, `coordinates`, `sources` (as
 `views.<view>.structures[]`, each `{ id, group, closed, follows, drawn?, note?, points: [[x, y], …] }` in image px of the web copy; `drawn: false` keeps a structure in the data but out of the drawing (the thumb-MCP sesamoid-like densities).
 `follows` names the `features/hand-model` tube (or tube group: `column` = one copy per digit, `forearm` = radius and ulna copies, `carpals`) whose rotation the drawing follows (a drawing link; the model is unchanged).
 
-## Reuse for other regions
+## One tracer, one seed file per exam family (since RAD-072 2b)
 
-The tracers (ribbon, blob, joint gap, soft tissue), the simplifier, the overlay writer and the JSON shape are region-neutral.
-A new region needs its own seed table, source list, output path and `follows` vocabulary (its own model's part ids); the
-curated thresholds (`SOFT_TOWARD_BG`, `BRIGHT_FACTOR`, `OUTER_STRENGTH`) may need per-image values. Splitting the shared code
-into a module is deferred until a second region actually uses it.
+`trace_lib.py` holds everything region-neutral (image helpers, ribbon / radial / blob / **snap** / **axis-snap** tracers, joint spaces and
+joint paths, the soft-tissue outline with its "never inside a bone" check, the simplifier, the JSON writer and the overlays). Each exam
+family is a short script of seeds, sources, hooks and a `SPEC`: `trace-hand-outlines.py` (2a), `trace-wrist-outlines.py` and
+`trace-foot-outlines.py` (2b); `python3 -I` does not add the script directory, so each script inserts it into `sys.path`.
+
+```sh
+python3 -I scripts/trace-outlines/trace-wrist-outlines.py --check            # JSON byte-identical
+python3 -I scripts/trace-outlines/trace-wrist-outlines.py --check-overlays   # JSON and every review PNG byte-identical
+```
+
+- **snap tracer** (`"tracer": "snap"`, `poly`): a polygon read by eye at 3x is resampled and every sample moves along its outward normal
+  (± `search` px) to the steepest bright-to-dark step; samples without a clear step keep the seed; shifts are median-filtered and smoothed.
+  A sample on the image border is pinned and the outline is open there (bones cut by the image edge). Used for carpal bones and forearm bones.
+- **axis-snap** (`"tracer": "axis-snap"`, `a`, `b`, `he`, `hs`): the radial tracer's rounded-box prior built from an axis seed, then snapped
+  (default `search` = a third of the shaft half-width). Used for phalanges and metatarsals.
+- **joint path** (`lines[].pts`): the darkest point along the local normal of a curated polyline (±`g` px), for curved joint lines.
+- **along line** (`lines[].along = {bone, from, to, offset}`): a joint line that follows the edge of an already traced bone (e.g. the radius's
+  articular surface), smooth by construction. `lines[].smooth` smooths a darkest-point path; `cfg.joint_g` / `joint_centre` / `joint_half`
+  set a joint space's search for the joints the seed ends do not bracket (foot MTP). `cfg.soft_smooth` (per view or one number) smooths the
+  soft-tissue runs and drops spikes (an interior point whose two segments enclose < 50 degrees). All optional: the hand is unchanged.
+- `cfg.soft_hint` (per view): curated soft-tissue polygons (read by eye at 2-3x) united with the thresholded region and the grown bone outlines, for a soft-tissue border too faint for the threshold (wrist PA radial border).
+- `cfg.soft_runs`: keep up to N soft-tissue runs when the silhouette is cut into several open runs by the image edge (wrist, foot).
+- Where two bones overlap and the image does not separate them the seed names ONE combined outline (`note`), never an invented split.
+
+For the shoulder (2c) the lib works unchanged: add `trace-shoulder-outlines.py` with its seeds, sources, `follows` vocabulary and review list.

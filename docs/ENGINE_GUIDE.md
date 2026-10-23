@@ -52,14 +52,17 @@ Applies to every chest figure (PA/AP frontal, lateral, plan view, AP side view);
 4. **Labels** stay fully inside the drawing frame at 390 and 1440, EN and AR, guides ON/OFF; chest guide labels are drawn above the collimation shade.
 
 <a id="limb-drawing-style"></a>
-### Limb drawing style (RAD-072 2a, hand pilot)
+### Limb drawing style (RAD-072 2a hand pilot, 2b wrist and foot)
 
-Applies to limb figures drawn from traced outlines; today only the hand PA / lateral detector views. Other limb figures keep the rule above until their own owner decision. Owner instruction: [RAD-072 2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23).
+Applies to limb figures drawn from traced outlines; today the hand PA / lateral, wrist PA / lateral and foot DP / oblique detector views. Other limb figures (knee, ankle, elbow, pelvis, shoulder) keep the rule above until their own owner decision. Owner instructions: [RAD-072 2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23), [2b](DECISIONS.md#rad072-2b-owner-2026-10-23).
 
 1. **Source:** outlines traced from the project's own baselines only (`scripts/trace-outlines/`, `hand-outlines.json`): illustrative, drawing-only, not a measurement. They are moved by the family's existing model (`features/hand-model`, unchanged), each structure following the model part it names, so the drawing turns like the result image. A right-hand case mirrors the drawing; RTL never does.
 2. **Tonal layers, back to front:** detector background → soft tissue (`soft`, `outline` edge) → joint spaces (`air`, thin) → bone fills (`boneFill`, **translucent**, `LIMB.boneFillOpacity`; the copies of a superimposed group share it so they read as one bone at the base pose) → every bone's cortex edge last (`boneLine` on `underStroke`) → guides → fault overlays (outline, never a solid fill) → labels. Tokens: the chest `SCENE` tones plus the `LIMB` widths in `scene-style.ts`; no new colour.
-3. **Superimposed bones stay visible** (radiograph-style): overlapping fills read lighter and every edge is drawn over all fills, so no bone disappears at any rotation (`hand-outline-drawing.test.ts`, full range, both exams). Contrast as in the chest rule 3: edges ≥3:1 on soft tissue, one bone and two bones via the under-stroke; pinned by `scene-style.test.ts`. Guides stay thinner than a bone edge.
+3. **Superimposed bones stay visible** (radiograph-style): overlapping fills read lighter and every edge is drawn over all fills, so no bone disappears at any rotation (`hand-outline-drawing.test.ts`, `wrist-outline-drawing.test.ts`, `foot-outline-drawing.test.ts`, full range, every exam). The layers live in `outline-layers.tsx` and the shared geometry in `outline-geometry.ts`; each family has its own pure projection (`hand-`, `wrist-`, `foot-outline-drawing.ts`). Contrast as in the chest rule 3: edges ≥3:1 on soft tissue, one bone and two bones via the under-stroke; pinned by `scene-style.test.ts`. Guides stay thinner than a bone edge.
 4. Structures marked `drawn: false` in the data (the sesamoid-like densities) and single-point landmarks are not drawn.
+5. **Wrist (2b):** PA = the model's column anchors warp the whole image, the ulna and the radius move as two layers below the radiocarpal rows; lateral = two copies (far 40 % / near 60 %) of the two superimposed bands. Bones cut by the image edge are open outlines whose fill follows the image border.
+6. **Foot (2b):** every bone moves as a RIGID piece by the model's displacement at that bone (owner finding #13: the result image's band warp shears bones; the drawing does not reproduce the shear; the shear itself is a model limit, not changed here). The tarsals are not displaced by the model and stay put.
+7. **Side views (2b):** proportions only, read from the traced outlines (`wristSideHeights`, `footSideProportions`); no geometry or scoring change.
 
 ## Pilot, hosting and runtime
 
