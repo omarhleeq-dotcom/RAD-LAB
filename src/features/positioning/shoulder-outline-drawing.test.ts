@@ -63,7 +63,7 @@ describe("shoulder drawing from the traced outlines (RAD-072 2c)", () => {
       const near = (p: DrawnPart, pick: (a: number[]) => number) => pick(p.points.filter(([, y]) => Math.abs(y - 560) < 60).map(([x]) => x));
       return near(glenoid, (a) => Math.min(...a)) - near(head, (a) => Math.max(...a));
     };
-    for (const [far, near] of [[0, 15], [15, 25], [25, 34], [60, 50], [50, 46]]) expect(gap(far), `${far}° vs ${near}°`).toBeLessThan(gap(near));
+    for (const [far, near] of [[0, 15], [15, 25], [25, 34], [60, 50], [50, 46]] as const) expect(gap(far), `${far}° vs ${near}°`).toBeLessThan(gap(near));
     expect(gap(0)).toBeGreaterThan(0); // the head never reaches the glenoid band
     // every bone keeps a real size at the extremes (the warp never folds)
     for (const deg of [0, 60]) {
