@@ -5,7 +5,7 @@ import { patientMotionFinding } from "./critical-common";
 import { pelvisTechnique } from "./pelvis-technique";
 import { PELVIS_DETECTOR, PELVIS_MARKER_KEEP_OUT, PELVIS_REGION } from "./pelvis-geometry";
 const t = (en: string, ar: string) => ({ en, ar });
-const evidence: Evidence = { status: "provisional", reference: "BONTRAGER-9 p.271-272,279; docs/DECISIONS.md S-PELVIS-1-1…5", note: "Clinical facts common-reference, provisional pending O5. Numerical tolerances, weights and geometry are explicitly educational choices." };
+const evidence: Evidence = { status: "provisional", reference: "BONTRAGER-9 p.271-272,279; docs/DECISIONS.md S-PELVIS-1-1…5", note: "Clinical facts: common reference." };
 const feedback = (en: string, ar: string, badEn: string, badAr: string) => ({ pass: t(en, ar), fail: t(badEn, badAr), low: t(badEn, badAr), high: t(badEn, badAr) });
 const markerFeedback = (...args: Parameters<typeof feedback>) => ({ ...feedback(...args),
   overlap: t("Move the marker off essential pelvic anatomy.", "أبعد العلامة عن التشريح الأساسي للحوض."),

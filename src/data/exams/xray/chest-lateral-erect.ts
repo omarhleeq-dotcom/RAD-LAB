@@ -114,7 +114,7 @@ export const chestLateralErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "S10b-13, S10b-21, S12-7",
-          note: "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the PA wrong-side marker. The numeric score is unchanged.",
+          note: "The gate is a simulator rule with the same severity as the PA wrong-side marker. The numeric score is unchanged.",
         },
       },
       {
@@ -140,7 +140,7 @@ export const chestLateralErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "S10b-13, S10b-6",
-          note: "PROVISIONAL / educational: the gate is a simulator rule; the final list of critical findings is set by an educator. The numeric score is unchanged.",
+          note: "The gate is a simulator rule. The numeric score is unchanged.",
         },
       },
     ],
@@ -185,7 +185,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "common-reference",
         reference: "BONTRAGER-9 p.84, 94; S10b-4",
-        note: "Left lateral unless the protocol or right-sided pathology calls for the right (Bontrager); both sides are offered, left is correct for this case. Pending educator confirmation (O7 closed by S10b-4).",
+        note: "Left lateral unless the protocol or right-sided pathology calls for the right (Bontrager); both sides are offered, left is correct for this case.",
       },
     },
     {
@@ -230,10 +230,10 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "BONTRAGER-9 p.94 (criteria); Lateral ref §3",
-        note: "The required anatomy is Bontrager's criterion; the 27 × 31 cm demo region is provisional (S10b-15, O2).",
+        note: "The required anatomy is Bontrager's criterion.",
       },
     },
-    { ...pa("collimation-excess"), evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.94 (collimate to the lung fields)", note: "Principle validated; the 5 cm margin limit is provisional / configurable." } },
+    { ...pa("collimation-excess"), evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.94 (collimate to the lung fields)", note: "Margin limit: 5 cm." } },
     {
       id: "chin",
       kind: "equals",
@@ -329,10 +329,12 @@ export const chestLateralErectExam: ExamDefinition = {
           ar: "المريض مائل (دوران). الأضلاع الخلفية والزاويتان الضلعيتان الحجابيتان للجانبين أبعد من نحو 1 سم الذي يسببه تباعد الحزمة عادةً. يُحكم على الدوران بمقدار هذا التباعد؛ ويصعب تحديد الاتجاه في الصورة الجانبية فلا يُذكر. والصورة الجانبية المائلة بوضوح خطأ في الوضعية يجب تصحيحه في التدريب.",
         },
       },
+      // ENGINE TEACHING CHOICE (S12-3): the ±2° / ±5° bands come from separation ≈ 2·a·sin(θ) with an assumed thorax half-width a = 14 cm
+      // (1 cm → about 2°; 5° → about 2.4 cm). Neither the half-width nor the mapping is a Bontrager value. Not shown on screen (RAD-068 final part).
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.84-85, 94; S10b-7; S12-3",
-        note: "ENGINE TEACHING CHOICE (S12-3): Bontrager gives about 1 cm of normal separation at 183 cm and no angle. The ±2° / ±5° bands come from separation ≈ 2·a·sin(θ) with an assumed thorax half-width a = 14 cm (1 cm → about 2°; 5° → about 2.4 cm). Neither the half-width nor the mapping is a Bontrager value. Magnitude only, no direction.",
+        note: "Bontrager gives about 1 cm of normal separation at 183 cm and no angle (S12-3). Magnitude only, no direction.",
       },
     },
     {
@@ -356,7 +358,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.94; Lateral ref §3",
-        note: "CR perpendicular to the mid-thorax; the target is the centre of the demo region and the tolerances are provisional.",
+        note: "CR perpendicular to the mid-thorax; the target is the centre of the required region.",
       },
     },
     {
@@ -380,7 +382,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.94 (T7, 7.5–10 cm below the jugular notch); S10b-5",
-        note: "T7 is Bontrager's level; the position on the detector is modelled as the centre of the demo region and the tolerances are provisional.",
+        note: "T7 is Bontrager's level; the position on the detector is modelled as the centre of the required region.",
       },
     },
     {
@@ -409,11 +411,11 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.81, 92, 94; S10b-1; S12-1",
-        note: "110–125 kV is Bontrager (p.94). The partial bands 100–109 and 126–150 kV are an ENGINE TEACHING CHOICE (owner-approved), NOT Bontrager. kVp physics is validated but never mapped to displayed darkness.",
+        note: "110–125 kV is Bontrager (p.94). kVp physics is never mapped to displayed darkness.",
       },
     },
-    { ...pa("exposure-adequacy"), evidence: { status: "provisional", reference: "Technique ref §5, §6, §8; S10b-9", note: "VALIDATED: DI equation and digital-exposure concepts. PROVISIONAL: the ±1 / ±3 DI bands and the demo target; no numeric mAs target and no universal EIT or DI limit is claimed. A lateral is expected to need more exposure than the PA (teaching only, S10b-9)." } },
-    { ...pa("dose-optimization"), evidence: { status: "provisional", reference: "Technique ref §7, §8; S10b-9", note: "VALIDATED: digital dynamic range can hide excess exposure (dose creep). PROVISIONAL: the DI bands. No patient dose is calculated." } },
+    { ...pa("exposure-adequacy"), evidence: { status: "provisional", reference: "Technique ref §5, §6, §8; S10b-9", note: "DI equation and digital-exposure concepts; no numeric mAs target and no universal EIT or DI limit is claimed. A lateral is expected to need more exposure than the PA (S10b-9)." } },
+    { ...pa("dose-optimization"), evidence: { status: "provisional", reference: "Technique ref §7, §8; S10b-9", note: "Digital dynamic range can hide excess exposure (dose creep). No patient dose is calculated." } },
     {
       id: "aec-chambers",
       kind: "technique",
@@ -442,7 +444,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "vendor-protocol-dependent",
         reference: "Technique ref §4; EC16260 p.21; S10b-2",
-        note: "VALIDATED: the purpose of AEC. The central-chamber choice follows the EC16260 example (Bontrager is silent on AEC); the layout and factors are VENDOR / LOCAL-PROTOCOL DEPENDENT.",
+        note: "The purpose of AEC. The central-chamber choice follows the EC16260 example (Bontrager is silent on AEC); the layout and factors depend on the vendor and the local protocol.",
       },
     },
     {
@@ -470,7 +472,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.94 (minimum 183 cm); S10b-26; S12-1",
-        note: "Bontrager gives a MINIMUM of 72 in (183 cm) only. The 185 cm upper full-credit limit and the 150–200 cm partial band are ENGINE TEACHING CHOICES (owner decision 2026-10-07), NOT Bontrager; 180 cm earns full credit as the rounding of 183.",
+        note: "Bontrager gives a MINIMUM of 72 in (183 cm) only. 180 cm earns full credit as the rounding of 183.",
       },
     },
     {

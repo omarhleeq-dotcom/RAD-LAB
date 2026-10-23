@@ -117,7 +117,7 @@ const PER = {
         "Caudad angle. Bontrager angles the beam 3°–5° caudad only for a thin patient (ASIS-to-table distance under 19 cm); this patient is average, so the beam stays perpendicular.",
         "ميل نحو القدمين. يميل Bontrager بالشعاع 3°–5° نحو القدمين لمريض نحيف فقط (المسافة أقل من 19 سم)؛ وهذا المريض متوسط لذا يبقى الشعاع عموديًا.",
       ),
-      evidenceNote: "Perpendicular for an average patient (ASIS-to-table 19–24 cm; 3–5° caudad below 19 cm, cephalad above 24 cm) is Bontrager. The ±2° full-credit and ±5° partial-credit bands are an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
+      evidenceNote: "Perpendicular for an average patient (ASIS-to-table 19–24 cm; 3–5° caudad below 19 cm, cephalad above 24 cm) is Bontrager. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
       { id: "rotation", description: T("True AP: symmetric condyles and joint space; about the medial half of the fibular head superimposed by the tibia; intercondylar eminence centred in the fossa", "إسقاط AP صحيح: لقمتان وحيز مفصل متناظرة؛ ونحو النصف الإنسي لرأس الشظية متراكب بالظنبوب؛ والنتوء بين اللقمتين في منتصف الحفرة") },
@@ -205,7 +205,7 @@ const PER = {
         "Too little cephalad angle (a perpendicular beam is used only when the lower leg can be raised to the plane of the femur). Angle the tube 5°–7° cephalad. (The 3°–10° partial-credit band is an engine teaching choice.)",
         "ميل نحو الرأس أقل من اللازم (يُستخدم الشعاع العمودي فقط إذا أمكن رفع الساق إلى مستوى عظم الفخذ). أمِل الأنبوب 5°–7° نحو الرأس. (نطاق الدرجة الجزئية 3°–10° اختيار تعليمي في المحاكي.)",
       ),
-      evidenceNote: "5°–7° cephalad (7–10° for a short patient with a wide pelvis, about 5° for a tall male with a narrow pelvis, perpendicular if the lower leg can be raised to the femur's plane) is Bontrager. The 3°–10° partial band is an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
+      evidenceNote: "5°–7° cephalad (7–10° for a short patient with a wide pelvis, about 5° for a tall male with a narrow pelvis, perpendicular if the lower leg can be raised to the femur's plane) is Bontrager. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
       { id: "rotation", description: T("True lateral: posterior borders of the femoral condyles superimposed; patella in profile; fibular head overlap as in a true lateral", "إسقاط جانبي صحيح: الحدود الخلفية للقمتي عظم الفخذ متراكبة؛ والرضفة في وضع جانبي؛ وتراكب رأس الشظية كما في الجانبي الصحيح") },
@@ -294,7 +294,7 @@ const PER = {
         "Less than about 10° toward the heel (or angled toward the toes). The beam is not perpendicular to the metatarsals; Bontrager angles it about 10° toward the heel for an average arch. (The 5°–15° partial-credit band is an engine teaching choice.)",
         "أقل من نحو 10° باتجاه العقب (أو مائل نحو الأصابع). الشعاع ليس عموديًا على عظام مشط القدم؛ يميله Bontrager نحو 10° باتجاه العقب لقوس متوسط. (نطاق الدرجة الجزئية 5°–15° اختيار تعليمي في المحاكي.)",
       ),
-      evidenceNote: "About 10° toward the heel (about 15° for a high arch, about 5° for a low arch, no angle for a foreign body) is Bontrager; toward the heel = cephalad = negative on the control. The 5°–15° partial band is an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
+      evidenceNote: "About 10° toward the heel (about 15° for a high arch, about 5° for a low arch, no angle for a foreign body) is Bontrager; toward the heel = cephalad = negative on the control. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
       { id: "rotation", description: T("True AP: nearly equal spacing of metatarsals 2–5; bases of the 1st and 2nd metatarsals separated, bases 2–5 overlapping", "إسقاط AP صحيح: مسافات متقاربة تقريبًا بين مشط القدم 2–5؛ وقاعدتا المشط الأول والثاني منفصلتان وقواعد 2–5 متراكبة") },
@@ -377,7 +377,7 @@ const PER = {
       fail: T("The tube angle is far from perpendicular. For the medial oblique foot the central ray is perpendicular to the detector (Bontrager p.233).", "ميل الأنبوب بعيد عن العمودي. في القدم المائلة الإنسية يكون الشعاع المركزي عموديًا على الكاشف (Bontrager ص.233)."),
       low: T("The tube is angled cephalad (toward the heel). The medial oblique foot needs a perpendicular beam (Bontrager p.233).", "الأنبوب مائل نحو الرأس (باتجاه العقب). تحتاج القدم المائلة الإنسية شعاعًا عموديًا (Bontrager ص.233)."),
       high: T("The tube is angled caudad (toward the toes). The medial oblique foot needs a perpendicular beam (Bontrager p.233).", "الأنبوب مائل نحو القدمين (باتجاه الأصابع). تحتاج القدم المائلة الإنسية شعاعًا عموديًا (Bontrager ص.233)."),
-      evidenceNote: "CR perpendicular to the detector is Bontrager. The ±2° full-credit and ±5° partial-credit bands are an ENGINE TEACHING CHOICE. Feedback only: the tube angle is NOT drawn on the result image.",
+      evidenceNote: "CR perpendicular to the detector is Bontrager. Feedback only: the tube angle is NOT drawn on the result image.",
     },
     imageCriteria: [
       { id: "rotation", description: T("Plantar surface 30°–40° to the detector (40° recommended): metatarsals 3–5 free of superimposition; 5th metatarsal tuberosity in profile", "الأخمص بزاوية 30°–40° مع الكاشف (يوصى بـ40°): عظام مشط القدم 3–5 غير متراكبة؛ وحدبة المشط الخامس بالجانب") },
@@ -423,7 +423,7 @@ const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
       `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (هذه ${PER[k].part.ar} ${sideWords(k).ar}). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
     ),
     concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, p.224-225, ${PER[k].page}`, "COMMON QUALITY CRITERION: an anatomic side marker is required on every image and must name the side imaged. For a single limb Bontrager gives no viewer-half convention, so only the letter is judged (O21 option A, S14.1c-4, S14.4-2)."),
-    evidence: ev("provisional", "S14.4-3, S14.1c-4", "PROVISIONAL / educational: the gate is a simulator rule (educator decision pending, O5). The numeric score is unchanged."),
+    evidence: ev("provisional", "S14.4-3, S14.1c-4", "The gate is a simulator rule. The numeric score is unchanged."),
   },
   {
     id: "missing-marker",
@@ -433,7 +433,7 @@ const criticalFindings = (k: LowerLimbKind): CriticalFindingRule[] => [
       `ملاحظة حرجة — لا توجد علامة جانب: لن تبيّن الصورة أي ${PER[k].part.ar} تُظهر. تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. غياب العلامة خطأ مهم يجب تصحيحه في التدريب، وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
     ),
     concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, p.224-225, ${PER[k].page}`, "COMMON QUALITY CRITERION: the image must carry a side marker."),
-    evidence: ev("provisional", "S14.4-3", "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged."),
+    evidence: ev("provisional", "S14.4-3", "The gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged."),
   },
 ];
 
@@ -458,8 +458,8 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
     // MAGNITUDE-ONLY for the three turn exams (Bontrager gives no direction rule), so no `low` / `high` text; the oblique's value is the absolute plantar angle, so it has direction text.
     feedback: oblique ? { pass: p.rotationPass, fail: p.rotationFail, low: (p as typeof PER["foot-oblique"]).rotationLow, high: (p as typeof PER["foot-oblique"]).rotationHigh } : { pass: p.rotationPass, fail: p.rotationFail },
     evidence: oblique
-      ? ev("provisional", `BONTRAGER-9 ${pg}; S14.4-5`, "The plantar angle 30°–40° (40° recommended) and the criteria are Bontrager's; the 25°–45° partial band is an ENGINE TEACHING CHOICE. The console value is the absolute angle; the picture's own obliquity is unmeasured (O63), so the drawn effect (a displacement of the metatarsal and toe columns by the deviation from 40°) is an EDUCATIONAL APPROXIMATION made from one baseline image.")
-      : ev("provisional", `BONTRAGER-9 ${pg}; S14.4-3`, "The criteria are Bontrager's. The ±2° / ±5° bands are an ENGINE TEACHING CHOICE (Bontrager gives no angle). The sign of the value is defined by the RESULT IMAGE (positive = toward the viewer's right); no direction of turn is claimed. The drawn effect is an EDUCATIONAL APPROXIMATION made from one baseline image."),
+      ? ev("provisional", `BONTRAGER-9 ${pg}; S14.4-5`, "The plantar angle 30°–40° (40° recommended) and the criteria are Bontrager's. The console value is the absolute angle; the picture's own obliquity is unmeasured (O63).")
+      : ev("provisional", `BONTRAGER-9 ${pg}; S14.4-3`, "The criteria are Bontrager's (Bontrager gives no angle). The sign of the value is defined by the RESULT IMAGE (positive = toward the viewer's right); no direction of turn is claimed."),
   };
   return [
     {
@@ -491,7 +491,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
       evidence: ev(
         "educational-simplification",
         `BONTRAGER-9 ${pg} (collimate to the area of interest; ${p.coverageEn})`,
-        "The required anatomy is Bontrager's criterion. How far it extends, where the region lies on the baseline and the image scale are engine estimates read by eye (S14.4-10, O61, O62). Provisional.",
+        "The required anatomy is Bontrager's criterion.",
       ),
     },
     {
@@ -511,7 +511,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           `المجال مفتوح أكثر من اللازم. يطلب Bontrager التحديد من الجهات الأربع إلى منطقة الاهتمام (ص.224-225)؛ والمجال الأكبر يعرّض أنسجة أكثر ويزيد التشتت. قرّب حواف المجال من ${p.part.ar} دون أن تقطع التشريح المطلوب. (حدّ الهامش ‎${p.excessCm}‎ سم اختيار تعليمي في المحاكي؛ ويجب أن يشمل المجال العلامة.)`,
         ),
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 p.224-225, ${pg} (collimate to the area of interest)`, `Principle from the textbook; the ${p.excessCm} cm margin limit is an engine teaching choice (provisional / configurable). The field is centred on the central ray, so a one-sided margin can be unavoidable (O40-like).`),
+      evidence: ev("educational-simplification", `BONTRAGER-9 p.224-225, ${pg} (collimate to the area of interest)`, `Principle from the textbook. Margin limit: ${p.excessCm} cm. The field is centred on the central ray, so a one-sided margin can be unavoidable.`),
     },
     {
       id: "side-marker",
@@ -556,7 +556,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           `لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فتتحرك ${p.part.ar} أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل العظمية الدقيقة. اطلب من المريض إبقاء ${p.part.ar} ثابتة.`,
         ),
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "VALIDATED: motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored (no rubric exists)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "Motion reduces sharpness. That this instruction decides whether this simulated patient moves is an educational assumption. Deliberately unscored (no rubric exists)."),
     },
     rotationRule,
     {
@@ -566,7 +566,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
       category: "centering",
       label: p.centreXLabel,
       feedback: { pass: p.centreXPass, fail: p.centreXFail, low: p.centreXLow, high: p.centreXHigh },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (part centred on the detector)`, "Alignment is Bontrager's; the tolerance values are an engine teaching choice (provisional)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (part centred on the detector)`, "Alignment is Bontrager's."),
     },
     {
       id: "centering-vertical",
@@ -580,7 +580,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
         low: p.centreYLow,
         high: p.centreYHigh,
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (central ray at the ${p.centrePage})`, "The target is Bontrager's; its position on the detector is read by eye on the baseline and the tolerances are an engine teaching choice (provisional)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (central ray at the ${p.centrePage})`, "The target is Bontrager's; its position on the detector is read by eye on the baseline."),
     },
     {
       id: "angulation",
@@ -617,7 +617,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
         ),
         fail: T(`kVp is outside this case's protocol range for the ${partEn} (${pLo}–${pHi} kV).`, `قيمة kVp خارج نطاق بروتوكول هذه الحالة لـ${p.part.ar} (‎${pLo}–${pHi}‎ kV).`),
       },
-      evidence: ev("provisional", `BONTRAGER-9 ${pg} (digital ${(kvLo + kvHi) / 2} ± 5 kV); S14.4-3`, `${kvLo}–${kvHi} kV is Bontrager. The partial bands ${pLo}–${kvLo - 1} and ${kvHi + 1}–${pHi} kV are an ENGINE TEACHING CHOICE, NOT Bontrager. kVp physics is validated but never mapped to displayed darkness.`),
+      evidence: ev("provisional", `BONTRAGER-9 ${pg} (digital ${(kvLo + kvHi) / 2} ± 5 kV); S14.4-3`, `${kvLo}–${kvHi} kV is Bontrager. kVp physics is never mapped to displayed darkness.`),
     },
     {
       id: "exposure-adequacy",
@@ -643,7 +643,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
         ),
         fail: T("Detector exposure is well below the target: the image would be noisy.", "تعريض الكاشف أقل بكثير من الهدف: ستكون الصورة مليئة بالضجيج."),
       },
-      evidence: ev("provisional", "Technique ref §5, §6, §8; S10b-9; S14.4-3; O26, O35", "VALIDATED: the DI equation and the digital-exposure concepts. PROVISIONAL: the ±1 / ±3 DI bands and the manual reference point the exposure is measured against (an engine teaching constant); no numeric mAs target and no universal EIT or DI limit is claimed (Bontrager gives no mAs for the lower limb, and no source for the exposure appearance, O35)."),
+      evidence: ev("provisional", "Technique ref §5, §6, §8; S10b-9; S14.4-3; O26, O35", "The DI equation and the digital-exposure concepts; no numeric mAs target and no universal EIT or DI limit is claimed (Bontrager gives no mAs for the lower limb, and no source for the exposure appearance, O35)."),
     },
     {
       id: "dose-optimization",
@@ -661,7 +661,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
         ),
         fail: T("Detector exposure is far above the target: a clear dose-creep risk.", "تعريض الكاشف أعلى بكثير من الهدف: خطر واضح لزحف الجرعة."),
       },
-      evidence: ev("provisional", "Technique ref §7, §8; S14.4-3", "VALIDATED: digital dynamic range can hide excess exposure (dose creep). PROVISIONAL: the DI bands. No patient dose is calculated."),
+      evidence: ev("provisional", "Technique ref §7, §8; S14.4-3", "Digital dynamic range can hide excess exposure (dose creep). No patient dose is calculated."),
     },
     {
       id: "sid",
@@ -686,7 +686,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
         ),
         fail: T(`SID is outside this case's protocol range for the ${partEn} (below about 95 cm or above 130 cm).`, `قيمة SID خارج نطاق بروتوكول هذه الحالة لـ${p.part.ar} (أقل من نحو 95 سم أو أكثر من 130 سم).`),
       },
-      evidence: ev("provisional", `BONTRAGER-9 p.224-225 (SID minimum 40 in / 102 cm); S14.4-3`, "The 102 cm minimum is Bontrager (inch-to-cm conversion). The 110 cm upper full-credit limit and the 95–130 cm partial band are ENGINE TEACHING CHOICES, NOT Bontrager."),
+      evidence: ev("provisional", `BONTRAGER-9 p.224-225 (SID minimum 40 in / 102 cm); S14.4-3`, "The 102 cm minimum is Bontrager (inch-to-cm conversion)."),
     },
   ];
 };

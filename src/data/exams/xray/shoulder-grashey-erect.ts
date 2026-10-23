@@ -5,7 +5,7 @@ import { patientMotionFinding } from "./critical-common";
 import { shoulderTechnique } from "./shoulder-technique";
 import { SHOULDER_BAND_DEG, SHOULDER_DETECTOR, SHOULDER_REGION } from "./shoulder-geometry";
 const t = (en: string, ar: string) => ({ en, ar });
-const evidence: Evidence = { status: "provisional", reference: "BONTRAGER-9 p.196; docs/DECISIONS.md S-SHOULDER-2-1…7, S-SHOULDER-3-1…5", note: "Clinical facts common-reference, provisional pending O5. Numerical tolerances, weights, scale and region are explicitly educational choices." };
+const evidence: Evidence = { status: "provisional", reference: "BONTRAGER-9 p.196; docs/DECISIONS.md S-SHOULDER-2-1…7, S-SHOULDER-3-1…5", note: "Clinical facts: common reference." };
 const feedback = (en: string, ar: string, badEn: string, badAr: string) => ({ pass: t(en, ar), fail: t(badEn, badAr), low: t(badEn, badAr), high: t(badEn, badAr) });
 const markerFeedback = (...args: Parameters<typeof feedback>) => ({ ...feedback(...args),
   overlap: t("Move the marker off the shoulder anatomy.", "أبعد العلامة عن تشريح الكتف."),

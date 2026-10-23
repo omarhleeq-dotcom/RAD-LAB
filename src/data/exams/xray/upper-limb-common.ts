@@ -424,7 +424,7 @@ const FAMILY = {
     excessNoteTail: "",
     clipRef: () => "collimate on all four sides to include the distal radius and ulna and the mid-metacarpal area",
     clipNote:
-      "The required anatomy is Bontrager's criterion; the region used is LIMITED BY THE BASELINE IMAGE (it ends at the proximal metacarpals, so the mid-metacarpal area cannot be shown, S14.1c-7, O28) and its size is provisional.",
+      "The required anatomy is Bontrager's criterion; the region used is LIMITED BY THE BASELINE IMAGE (it ends at the proximal metacarpals, so the mid-metacarpal area cannot be shown, S14.1c-7, O28).",
     markerRefTail: "",
     wrongSideRef: "S14.1-4, S14.1b-1, S14.1c-4",
     missingRef: "S14.1-4, S14.1b-1",
@@ -460,7 +460,7 @@ const FAMILY = {
     excessNoteTail: " The field is centred on the central ray, so a one-sided margin is unavoidable (S14.2-10, O40).",
     clipRef: () => "collimate on all four sides to the outer margins of the hand and wrist; entire hand and wrist plus about 2.5 cm of distal forearm",
     clipNote:
-      "The required anatomy is Bontrager's criterion. The 2.5 cm of distal forearm is Bontrager's 'about'; where the region's lower edge lies on the baseline (2.5 cm below the radiocarpal joint, read by eye) and the image scale (0.0113 cm / px) are engine estimates (S14.2-10, O41). Provisional.",
+      "The required anatomy is Bontrager's criterion. The 2.5 cm of distal forearm is Bontrager's 'about'.",
     markerRefTail: ", S14.2-2",
     wrongSideRef: "S14.2-5, S14.2-8, S14.1c-4",
     missingRef: "S14.2-5",
@@ -496,7 +496,7 @@ const FAMILY = {
     excessNoteTail: " The field is centred on the central ray, so a one-sided margin can be unavoidable (S14.3-9, O40).",
     clipRef: (p: Per) => `collimate on all four sides to the area of interest; ${p.covered.en}`,
     clipNote:
-      "The required anatomy is Bontrager's criterion. How far it extends along the arm (about 7 cm of humerus and 6–7 cm of forearm around the target), where the region lies on the baseline and the image scale (0.0155 cm / px) are engine estimates read by eye (S14.3-9, O49). Provisional.",
+      "The required anatomy is Bontrager's criterion.",
     markerRefTail: ", S14.3-5",
     wrongSideRef: "S14.3-5, S14.1c-4",
     missingRef: "S14.3-5",
@@ -545,7 +545,7 @@ const criticalFindings = (k: UpperLimbKind): CriticalFindingRule[] => {
         `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (${f.sideIs}). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
       ),
       concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, ${PER[k].page}`, `COMMON QUALITY CRITERION: an anatomic side marker is required on every image and must name the side imaged. For a single limb Bontrager gives no viewer-half convention, so only the letter is judged (O21 option A, S14.1c-4${f.markerRefTail}).`),
-      evidence: ev("provisional", f.wrongSideRef, "PROVISIONAL / educational: the gate is a simulator rule (educator decision pending, O5). The numeric score is unchanged."),
+      evidence: ev("provisional", f.wrongSideRef, "The gate is a simulator rule. The numeric score is unchanged."),
     },
     {
       id: "missing-marker",
@@ -555,7 +555,7 @@ const criticalFindings = (k: UpperLimbKind): CriticalFindingRule[] => {
         `ملاحظة حرجة — لا توجد علامة جانب: لن تبيّن الصورة أي ${f.which} تُظهر. تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. غياب العلامة خطأ مهم يجب تصحيحه في التدريب، وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
       ),
       concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, ${PER[k].page}`, "COMMON QUALITY CRITERION: the image must carry a side marker."),
-      evidence: ev("provisional", f.missingRef, "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged."),
+      evidence: ev("provisional", f.missingRef, "The gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged."),
     },
   ];
 };
@@ -612,7 +612,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
           `المجال مفتوح أكثر من اللازم. يطلب Bontrager التحديد من الجهات الأربع إلى منطقة الاهتمام؛ والمجال الأكبر يعرّض أنسجة أكثر ويزيد التشتت. قرّب حواف المجال من ${f.excessToward.ar} دون أن تقطع التشريح المطلوب. (حدّ الهامش ${f.excessAr(p.excessCm)} سم اختيار تعليمي في المحاكي؛ ويجب أن يشمل المجال العلامة.)`,
         ),
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (collimate to the area of interest)`, `Principle from the textbook; the ${p.excessCm} cm margin limit is an engine teaching choice (provisional / configurable).${f.excessNoteTail}`),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (collimate to the area of interest)`, `Principle from the textbook. Margin limit: ${p.excessCm} cm.${f.excessNoteTail}`),
     },
     {
       id: "side-marker",
@@ -657,7 +657,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
           `لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فتتحرك ${f.moving.ar} أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل العظمية الدقيقة. اطلب من المريض إبقاء ${f.moving.ar} ثابتة.`,
         ),
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "VALIDATED: motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored (no rubric exists)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "Motion reduces sharpness. That this instruction decides whether this simulated patient moves is an educational assumption. Deliberately unscored (no rubric exists)."),
     },
     {
       id: "rotation",
@@ -675,7 +675,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       evidence: ev(
         "provisional",
         `BONTRAGER-9 ${pg}; ${f.rotationRef}`,
-        "The criteria are Bontrager's. The ±2° / ±5° bands are an ENGINE TEACHING CHOICE (Bontrager gives no angle). The sign of the value is defined by the RESULT IMAGE (positive = toward the viewer's right); no direction of turn is claimed. The drawn effect is an EDUCATIONAL APPROXIMATION made from one baseline image.",
+        "The criteria are Bontrager's (Bontrager gives no angle). The sign of the value is defined by the RESULT IMAGE (positive = toward the viewer's right); no direction of turn is claimed.",
       ),
     },
     {
@@ -690,7 +690,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         low: p.centreX.low,
         high: p.centreX.high,
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (${f.centreXRef})`, "Alignment is Bontrager's; the tolerance values are an engine teaching choice (provisional)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (${f.centreXRef})`, "Alignment is Bontrager's."),
     },
     {
       id: "centering-vertical",
@@ -704,7 +704,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         low: p.centreY.low,
         high: p.centreY.high,
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (central ray perpendicular to the ${p.centre.page})`, `${f.targetNoun} is Bontrager's; its position on the detector is read by eye on the baseline and the tolerances are an engine teaching choice (provisional).`),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (central ray perpendicular to the ${p.centre.page})`, `${f.targetNoun} is Bontrager's; its position on the detector is read by eye on the baseline.`),
     },
     {
       id: "kvp",
@@ -729,7 +729,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         ),
         fail: T(`kVp is outside this case's protocol range for the ${f.part.en} (${pLo}–${pHi} kV).`, `قيمة kVp خارج نطاق بروتوكول هذه الحالة ${f.forPart} (‎${pLo}–${pHi}‎ kV).`),
       },
-      evidence: ev("provisional", `BONTRAGER-9 ${pg} (digital ${(kvLo + kvHi) / 2} ± 5 kV); ${f.techniqueRef}`, `${kvLo}–${kvHi} kV is Bontrager. The partial bands ${pLo}–${kvLo - 1} and ${kvHi + 1}–${pHi} kV are an ENGINE TEACHING CHOICE, NOT Bontrager. kVp physics is validated but never mapped to displayed darkness.`),
+      evidence: ev("provisional", `BONTRAGER-9 ${pg} (digital ${(kvLo + kvHi) / 2} ± 5 kV); ${f.techniqueRef}`, `${kvLo}–${kvHi} kV is Bontrager. kVp physics is never mapped to displayed darkness.`),
     },
     {
       id: "exposure-adequacy",
@@ -758,7 +758,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       evidence: ev(
         "provisional",
         `Technique ref §5, §6, §8; S10b-9; ${f.teachingRef}; O26${f.exposureRefTail}`,
-        `VALIDATED: the DI equation and the digital-exposure concepts. PROVISIONAL: the ±1 / ±3 DI bands and the manual reference point the exposure is measured against (an engine teaching constant); no numeric mAs target and no universal EIT or DI limit is claimed (Bontrager gives no mAs for the ${f.part.en}${f.exposureNoteTail}).`,
+        `The DI equation and the digital-exposure concepts; no numeric mAs target and no universal EIT or DI limit is claimed (Bontrager gives no mAs for the ${f.part.en}${f.exposureNoteTail}).`,
       ),
     },
     {
@@ -777,7 +777,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         ),
         fail: T("Detector exposure is far above the target: a clear dose-creep risk.", "تعريض الكاشف أعلى بكثير من الهدف: خطر واضح لزحف الجرعة."),
       },
-      evidence: ev("provisional", `Technique ref §7, §8; ${f.teachingRef}`, "VALIDATED: digital dynamic range can hide excess exposure (dose creep). PROVISIONAL: the DI bands. No patient dose is calculated."),
+      evidence: ev("provisional", `Technique ref §7, §8; ${f.teachingRef}`, "Digital dynamic range can hide excess exposure (dose creep). No patient dose is calculated."),
     },
     {
       id: "sid",
@@ -803,7 +803,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         ),
         fail: T(`SID is outside this case's protocol range for the ${f.part.en} (below about 95 cm or above 130 cm).`, `قيمة SID خارج نطاق بروتوكول هذه الحالة ${f.forPart} (أقل من نحو 95 سم أو أكثر من 130 سم).`),
       },
-      evidence: ev("provisional", `BONTRAGER-9 ${pg} (SID minimum 40 in / 102 cm); ${f.techniqueRef}`, "The 102 cm minimum is Bontrager (inch-to-cm conversion). The 110 cm upper full-credit limit and the 95–130 cm partial band are ENGINE TEACHING CHOICES, NOT Bontrager."),
+      evidence: ev("provisional", `BONTRAGER-9 ${pg} (SID minimum 40 in / 102 cm); ${f.techniqueRef}`, "The 102 cm minimum is Bontrager (inch-to-cm conversion)."),
     },
   ];
 };
