@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) مدموج في #115 (فحص الهاتف باقٍ، [تقرير B](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md))؛ **2c الكتف:** المرحلة A (تشخيص وتتبع A-038، دون كود تطبيق) منجزة على PR مسودة والمرحلة B قيد التنفيذ بقرارات المالك ([القرار](DECISIONS.md#rad072-2c-owner-2026-10-24)، [تقرير A](RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md))؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
-- **ينتظر المالك:** فحص الهاتف لـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) مدموج في #115 (فحص الهاتف باقٍ، [تقرير B](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md))؛ **2c الكتف:** المرحلة A (تشخيص وتتبع A-038، دون كود تطبيق) منجزة على PR مسودة والمرحلة B منجزة بقرارات المالك ([القرار](DECISIONS.md#rad072-2c-owner-2026-10-24)، [تقرير B](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md)) وتنتظر فحص الهاتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
+- **ينتظر المالك:** فحص الهاتف لـ2c ([تقرير B §8](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-وar-390-الكاشف-ومنظر-الأعلى-الإرشادات-onoff)) ولـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
 - **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23) و[2b](DECISIONS.md#rad072-2b-owner-2026-10-23).
 - **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral (2a، [القائمة](RAD-072_PART2A_HASHES_2026-10-23.md)) ثم wrist-pa وwrist-lateral وfoot-ap وfoot-oblique (2b، [القائمة](RAD-072_PART2B_HASHES_2026-10-23.md)) وحدها؛ نماذج اليد والرسغ والطرف السفلي المشتركة وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير.
@@ -19,7 +19,7 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 245,
+  "revision": 246,
   "updated_at": "2026-10-24T08:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
@@ -669,8 +669,8 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "(1) الصدر #113. (2) الأطراف: اليد #114، الرسغ والقدم #115 (فحص الهاتف باقٍ)؛ 2c الكتف Grashey: A منجزة، وB قيد التنفيذ بقرارات المالك D1–D6 (القرار 2c): رسم من التتبع، رفع سقف الإغلاق، زاوية الجسم ظاهرة في منظر الأعلى. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md",
+      "description": "(1) الصدر #113. (2) الأطراف: اليد #114، الرسغ والقدم #115 (فحص الهاتف باقٍ)؛ 2c الكتف Grashey: A وB منجزتان على PR مسودة (رسم من التتبع، رفع سقف الإغلاق، زاوية الجسم ظاهرة في منظر الأعلى) وتنتظران فحص الهاتف. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     }
   ]
