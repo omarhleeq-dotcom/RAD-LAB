@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 229,
-  "updated_at": "2026-10-23T06:42:33+00:00",
+  "revision": 231,
+  "updated_at": "2026-10-23T07:23:29+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -669,9 +669,9 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "ثلاثة أجزاء: (1) رسوم الصدر الجانبي (الكاشف والعلوي) ورئتا AP/PA، هذا PR؛ (2) الأطراف: عظام القدم ودورانها، اتجاه الكاحل الجانبي، اختفاء عظم اليد عند الدوران، وغياب تغيّر الكتف مع زاوية الجسم؛ (3) بنود R ورسم صور النتيجة، بما فيه المساحة المخططة بلا بيانات في الكاحل AP والصدر الجانبي. قبول الهاتف قبل الدمج.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23",
-      "waiting_on": "code"
+      "description": "ثلاثة أجزاء: (1) رسوم الصدر الجانبي (الكاشف والعلوي) ورئتا AP/PA، في مسودة تنتظر فحص الهاتف؛ (2) الأطراف: عظام القدم ودورانها، اتجاه الكاحل الجانبي، اختفاء عظم اليد عند الدوران، وغياب تغيّر الكتف مع زاوية الجسم؛ (3) بنود R ورسم صور النتيجة، بما فيه المساحة المخططة بلا بيانات في الكاحل AP والصدر الجانبي. قبول الهاتف قبل الدمج.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md",
+      "waiting_on": "owner"
     }
   ]
 }

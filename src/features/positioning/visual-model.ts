@@ -42,12 +42,11 @@ export function scapulaOffset(shoulders: ShoulderPositionId, unit = 1): number {
 export const chinOverlapsApices = (chin: ChinPositionId) => chin === "tucked";
 
 /**
- * Plan-view (top-down, SVG: +x toward the detector, +y = detector-left-to-right = the patient's left in a PA) rotation
- * of the patient figure, in SVG degrees (positive = clockwise). S11c-1 / S12-2: positive `rotationDeg` = the SAME physical
- * turn about the patient's vertical axis in every projection: the patient's LEFT side swings toward the receptor as in a PA.
- * PA and lateral: the patient is drawn facing +x (PA) or with the left side toward +x (left lateral, base angle −90° in
- * `PlanView`), and that turn is counter-clockwise in the SVG, so the sign flips. AP: the patient faces the tube (−x), the
- * left side is at −y and the same turn is clockwise, so the value is used as is.
+ * Plan-view drawing rotation in SVG screen axes (+x right, +y down; positive = clockwise).
+ * Rotation sign follows the per-exam result-image convention (S11c-1 / S13-6); the open plan-view mismatch O19 remains.
+ * PA faces +x. The corrected left-lateral base pose is +90° in `PlanView` (RAD-072): anatomical left faces the detector
+ * at +x, and anterior faces +y. AP faces the tube at −x. This existing helper uses the AP value directly and negates it
+ * for PA / lateral; RAD-072 changes the lateral base drawing only, not this helper or any scored direction (S12-2).
  */
 export function planRotationDeg(projection: ProjectionId, rotationDeg: number): number {
   return projection === "ap-erect" ? rotationDeg : -rotationDeg;

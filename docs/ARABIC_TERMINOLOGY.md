@@ -432,3 +432,17 @@ The owner decided the evidence badge labels (D5) and the table (c) corrections o
 **CLN-034 (arrows and phrasing):** in the Arabic effect titles the arrow is «←» (the direction of reading in Arabic), as the chest PA title already had; the limb and AP titles used «→» for the same meaning and now use «←». The «يُفترض أن» / «يجب أن» difference named in the audit no longer occurs: «يُفترض أن» appears nowhere in the displayed Arabic, and «يجب أن» is the only form of "should".
 
 **Still open:** the other §12 terms of the review that are not in table (c); the Arabic of the evidence notes (internal working notes shown in the expandable evidence panel).
+
+## RAD-072 part 1 — chest drawing text alternatives (2026-10-23)
+
+**DRAFT — machine-assisted wording, pending owner language review.** These new entries are not covered by the historical owner acceptance at the top of this file. They describe project scene drawings only and add no clinical rule or scoring value. Existing approved terms remain unchanged.
+
+| English | Draft Arabic | Where | Review status |
+|---|---|---|---|
+| Cardiac notch (left lung) | الثلمة القلبية (بالرئة اليسرى) | `scene.altFrontal` | DRAFT |
+| Trachea | الرغامى | `scene.altFrontal` | DRAFT |
+| Mediastinum | المنصف | `scene.altFrontal`; existing term elsewhere in messages | Existing wording reused; this alt sentence DRAFT |
+| Vertebral bodies | أجسام الفقرات | `scene.altLateral` | DRAFT |
+| Upper-anterior lung fields | الحقول الرئوية العلوية الأمامية | `scene.armsLowered` | DRAFT |
+
+Source and scope: [owner drawing findings](DECISIONS.md#rad072-chest-owner-2026-10-23), [part report](RAD-072_PART1_REPORT_2026-10-23.md). The existing costophrenic-angle, sternum and diaphragmatic-dome terms are reused.

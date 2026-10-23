@@ -35,10 +35,10 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
   const { detX, detW, pxPerCm, midY, sidPx, scale, arcR, axisY } = PV;
   const lateral = settings.projection === "lateral-left";
   const facesTube = settings.projection === "ap-erect";
-  const depth = lateral ? 55 : 21;
-  const ptX = detX - 4 - depth;
-  // S12-2: left lateral = the patient's left side toward the detector (+x), which is a −90° turn from the PA drawing.
-  const baseAngle = lateral ? -90 : 0;
+  const depth = lateral ? 24 * scale : 21;
+  const ptX = detX - (lateral ? 0 : 4) - depth;
+  // Seen from above: PA faces +x and anatomical left is local −y. A +90° turn puts that LEFT side at the detector (+x).
+  const baseAngle = lateral ? 90 : 0;
   const plan = planRotationDeg(settings.projection, settings.rotationDeg);
   const tubeX = Math.max(30, detX - settings.sidCm * sidPx);
   const refX = detX - SID_REFERENCE_CM * sidPx;
@@ -51,16 +51,17 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
   const noseDir = facesTube ? -1 : 1;
   const armsRaised = settings.choices?.arms === "raised";
   const faultOutline = showGuides && lateral && !armsRaised;
-  // rotation arc: from the reference axis (the shoulder axis at 0°) to the patient's shoulder axis, at radius arcR, "up" in the patient's frame
-  const p0 = rot(0, -arcR, baseAngle);
-  const p1 = rot(0, -arcR, baseAngle + plan);
-  const pm = rot(0, -(arcR + 17), baseAngle + plan / 2);
-  const ref = rot(0, -(arcR + 8), baseAngle);
+  // rotation arc: from the reference axis (the shoulder axis at 0°) to the patient's shoulder axis, at radius arcR on the tube side of the patient
+  const arcSide = lateral ? 1 : -1; // keep the readout on the tube side, outside the torso
+  const p0 = rot(0, arcSide * arcR, baseAngle);
+  const p1 = rot(0, arcSide * arcR, baseAngle + plan);
+  const pm = rot(0, arcSide * (arcR + 17), baseAngle + plan / 2);
+  const ref = rot(0, arcSide * (arcR + 8), baseAngle);
   const arm = (cy: number, key: string) => <ellipse key={key} cx={0} cy={cy} rx={9} ry={lateral && armsRaised ? 9 : 13} fill={SCENE.limb} stroke={faultOutline ? SCENE.guide : SCENE.edge} strokeWidth={faultOutline ? STROKE.medium : STROKE.thin} />;
-  const armsY = lateral && armsRaised ? [-21, 21] : lateral ? [-66, 66] : [-67, 67];
+  const armsY = [-67, 67];
 
   return (
-    <svg viewBox="0 24 450 334" role="img" aria-label={t("alt")} className="h-auto w-full" style={{ direction: "ltr" }}>
+    <svg viewBox="0 24 450 334" role="img" aria-label={lateral ? ts("altPlanLateral", { deg: settings.rotationDeg, arms: ts(armsRaised ? "armsRaised" : "armsLowered") }) : t("alt")} className="h-auto w-full" style={{ direction: "ltr" }}>
       {/* beam: cone to the collimated field and the central ray */}
       <polygon points={`${tubeX + 28},${midY + lateralPx} ${detX},${fy1} ${detX},${fy2}`} fill={SCENE.beam} opacity={0.16} />
       <UnderStroked stroke={SCENE.beam} width={2} dash="5 4">
@@ -86,15 +87,24 @@ export function PlanView({ radCase, settings, showGuides }: Props) {
       <SceneLabel x={ptX + pm.x} y={midY + pm.y + 5} size={LABEL_SIZE.view - 2} anchor="middle">{ts("rotationArc", { deg: settings.rotationDeg })}</SceneLabel>
       {/* patient from above */}
       <g transform={`translate(${ptX} ${midY}) rotate(${plan + baseAngle}) scale(${scale})`}>
-        {armsY.map((cy, i) => arm(cy, `a${i}`))}
-        <ellipse cx={0} cy={0} rx={16} ry={50} fill={SCENE.trunk} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+        {/* Local x = anterior–posterior; local y = left–right. In a left lateral −y touches the detector.
+            The wider AP dimension follows the detector; the shorter transverse axis follows the ray. */}
+        {!lateral && armsY.map((cy, i) => arm(cy, `a${i}`))}
+        <ellipse data-anatomy="torso" cx={0} cy={0} rx={lateral ? 40 : 16} ry={lateral ? 24 : 50} fill={SCENE.trunk} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+        {lateral && (
+          <>
+            {/* Above-head arms are beyond the anterior edge in this overhead projection, never at the torso sides. */}
+            {[-9, 9].map((cy) => <ellipse key={cy} data-anatomy={armsRaised ? "raised-arm" : "anterior-arm"} cx={armsRaised ? 53 : 30} cy={cy} rx={armsRaised ? 8 : 13} ry={8} fill={SCENE.limb} stroke={faultOutline ? SCENE.guide : SCENE.edge} strokeWidth={faultOutline ? STROKE.medium : STROKE.thin} />)}
+            <path data-anatomy="left-contact" d="M -7 -24 L 7 -24" stroke={SCENE.bone} strokeWidth={STROKE.medium} />
+          </>
+        )}
         <circle cx={0} cy={0} r={14} fill={SCENE.head} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
         <path d={`M ${noseDir * 13} -6 L ${noseDir * 25} 0 L ${noseDir * 13} 6 Z`} fill={SCENE.bone} />
       </g>
       {/* labels, each in its own slot */}
       <SceneLabel x={8} y={46} size={LABEL_SIZE.view}>{ts("rotationReadout", { deg: settings.rotationDeg })}</SceneLabel>
       {showGuides && !lateral && <SceneLabel x={8} y={70} size={LABEL_SIZE.view - 2} fill={SCENE.guide}>{t("rotationGuide")}</SceneLabel>}
-      <SceneLabel x={ptX} y={lateral ? midY + 56 : midY + 122} size={LABEL_SIZE.view} anchor="middle">{t("patient")}</SceneLabel>
+      <SceneLabel x={lateral ? ptX - 60 : ptX} y={lateral ? midY + 56 : midY + 122} size={LABEL_SIZE.view} anchor="middle">{t("patient")}</SceneLabel>
       <SceneLabel x={tubeX + 14} y={midY + lateralPx - 30} size={LABEL_SIZE.view} anchor="middle">{ts("tube")}</SceneLabel>
       {/* SID: one axis from the tube to the detector, its reference tick on the same axis */}
       <g aria-hidden>

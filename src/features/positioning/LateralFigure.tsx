@@ -34,11 +34,14 @@ export function LateralFigure({ W, H, region, rotationDeg, chin, armsRaised, sho
   const { x, y, w, h } = region;
   const right = x + w;
   const sep = rotationDeg * SEPARATION_PER_DEG;
-  const shoulder = { x: mid + 10, y: 8 };
+  const shoulder = { x: x + w * 0.19, y: y + h * 0.06 };
   const trunk =
     `M ${mid - 30} 14 C ${mid - 52} 34 ${x - 14} 52 ${x - 14} 120 C ${x - 14} 220 ${x - 10} 330 ${x - 8} ${H} L ${right + 12} ${H} ` +
     `C ${right + 20} 330 ${right + 30} 220 ${right + 28} 130 C ${right + 26} 80 ${right + 6} 44 ${right - 48} 28 C ${right - 70} 22 ${mid + 10} 20 ${mid + 6} 8 Z`;
-  const diaphragm = (dx: number, dy: number) => `M ${x + 12 + dx} ${y + h * 0.86 + dy} Q ${mid + dx} ${y + h * 0.74 + dy} ${right - 24 + dx} ${y + h * 0.9 + dy}`;
+  // Normalised to the EXISTING fitted landmark box. These are drawing proportions, never scored landmarks.
+  const pt = (u: number, v: number) => `${x + u * w} ${y + v * h}`;
+  const base = `M ${pt(0.04, 0.79)} C ${pt(0.25, 0.74)} ${pt(0.47, 0.83)} ${pt(0.64, 0.89)} Q ${pt(0.8, 0.96)} ${pt(0.92, 1)}`;
+  const lung = `M ${pt(0.43, 0)} C ${pt(0.26, 0)} ${pt(0.16, 0.08)} ${pt(0.13, 0.22)} C ${pt(0.03, 0.42)} ${pt(0, 0.62)} ${pt(0.04, 0.79)} C ${pt(0.25, 0.74)} ${pt(0.47, 0.83)} ${pt(0.64, 0.89)} Q ${pt(0.8, 0.96)} ${pt(0.92, 1)} C ${pt(1, 0.75)} ${pt(0.98, 0.42)} ${pt(0.84, 0.18)} C ${pt(0.72, 0.04)} ${pt(0.56, 0)} ${pt(0.43, 0)} Z`;
   return (
     <g>
       {/* far arm (behind the head), when raised */}
@@ -46,27 +49,32 @@ export function LateralFigure({ W, H, region, rotationDeg, chin, armsRaised, sho
         <Limb
           fill={SCENE.limbFar}
           pts={[
-            { x: shoulder.x + 14, y: shoulder.y + 8, w: 24 },
-            { x: mid + 62, y: -30, w: 20 },
-            { x: mid + 32, y: -70, w: 17 },
-            { x: mid + 26, y: -78, w: 20 },
+            { x: shoulder.x + 10, y: shoulder.y, w: 24 },
+            { x: x + 18, y: -68, w: 20 },
+            { x: mid + 30, y: -74, w: 17 },
+            { x: mid + 36, y: -72, w: 20 },
           ]}
         />
       )}
       {/* neck, head in profile with the chin cue (face to the viewer's left), trunk */}
-      <rect x={mid - 32} y={-12} width={34} height={44} fill={SCENE.head} />
-      <HeadProfile cx={mid - 22} cy={-46} s={0.82} facing={-1} chin={chin} />
+      <path d={`M ${mid - 42} -14 Q ${mid - 45} 8 ${mid - 55} 24 L ${mid + 6} 28 Q ${mid - 12} 2 ${mid - 10} -12 Z`} fill={SCENE.head} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+      <HeadProfile cx={mid - 28} cy={-38} s={0.64} facing={-1} chin={chin} />
       <path d={trunk} fill={SCENE.trunk} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round" />
       {/* lung field (both lungs superimposed): apices clear of the shoulder girdle */}
-      <rect x={x + 12} y={y} width={w - 36} height={h} rx={60} fill={SCENE.lung} stroke={SCENE.edge} strokeWidth={STROKE.thin} opacity={0.95} />
-      {/* heart: anterior (left), low */}
-      <ellipse cx={x + w * 0.3} cy={y + h * 0.72} rx={w * 0.17} ry={h * 0.2} transform={`rotate(-18 ${x + w * 0.3} ${y + h * 0.72})`} fill={SCENE.trunk} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
-      {/* the two diaphragm domes, superimposed in a true lateral */}
-      <path d={diaphragm(0, 0)} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.medium} opacity={0.8} />
-      <path d={diaphragm(8, 9)} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.thin} opacity={0.55} />
+      <path data-anatomy="lateral-lung" d={lung} fill={SCENE.lung} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+      {/* Anterior/inferior cardiac silhouette rests on the same basal curve as the lung. */}
+      <path data-anatomy="heart" d={`M ${pt(0.13, 0.46)} C ${pt(0.29, 0.39)} ${pt(0.43, 0.53)} ${pt(0.5, 0.72)} Q ${pt(0.53, 0.8)} ${pt(0.49, 0.84)} C ${pt(0.3, 0.77)} ${pt(0.17, 0.76)} ${pt(0.04, 0.79)} Q ${pt(0.03, 0.59)} ${pt(0.13, 0.46)} Z`} fill={SCENE.trunk} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+      {/* The diaphragm bounds the lung: the posterior recess is deepest; the second dome is inferior to the fill. */}
+      <path data-anatomy="diaphragm" d={base} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.medium} />
+      <path d={`M ${pt(0.06, 0.82)} C ${pt(0.27, 0.77)} ${pt(0.5, 0.86)} ${pt(0.66, 0.92)} Q ${pt(0.8, 0.98)} ${pt(0.9, 1)}`} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.thin} opacity={0.55} />
       {/* sternum / anterior chest wall (front) and thoracic spine with a gentle kyphosis (back) */}
       <path d={`M ${x + 6} ${y + 6} Q ${x - 2} ${y + h * 0.4} ${x + 6} ${y + h * 0.8}`} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.heavy} strokeLinecap="round" opacity={0.75} />
-      <path d={`M ${right - 34} ${y + 2} C ${right - 14} ${y + h * 0.3} ${right - 14} ${y + h * 0.62} ${right - 32} ${y + h * 0.94}`} fill="none" stroke={SCENE.bone} strokeWidth={22} strokeLinecap="round" opacity={0.3} />
+      {/* Discrete vertebral bodies trace a mild posterior kyphosis instead of one featureless rod. */}
+      {Array.from({ length: 10 }, (_, i) => {
+        const v = 0.05 + i * 0.087;
+        const vx = right - w * 0.075 + Math.sin((i / 9) * Math.PI) * w * 0.035;
+        return <rect key={i} x={vx - 9} y={y + h * v} width={18} height={h * 0.065} rx={3} fill={SCENE.limbFar} stroke={SCENE.bone} strokeWidth={STROKE.thin} transform={`rotate(${(i - 4.5) * 1.5} ${vx} ${y + h * v})`} />;
+      })}
       {/* posterior ribs of the two sides: one arc, and a second one displaced by the rotation */}
       <path d={`M ${right - 8} ${y + h * 0.08} Q ${right + 10} ${y + h * 0.5} ${right - 8} ${y + h * 0.88}`} fill="none" stroke={SCENE.bone} strokeWidth={STROKE.medium} opacity={0.9} />
       {Math.abs(sep) > 0.5 && (
@@ -75,7 +83,7 @@ export function LateralFigure({ W, H, region, rotationDeg, chin, armsRaised, sho
           <path d={`M ${right - 8 + sep} ${y + h * 0.08} Q ${right + 10 + sep} ${y + h * 0.5} ${right - 8 + sep} ${y + h * 0.88}`} fill="none" stroke={SCENE.beam} strokeWidth={STROKE.medium} strokeDasharray="6 5" />
         </>
       )}
-      <SceneLabel x={x + w * 0.3} y={y + h * 0.72 + 6} size={LABEL_SIZE.detector - 4} anchor="middle">
+      <SceneLabel x={x + w * 0.25} y={y + h * 0.67} size={LABEL_SIZE.detector - 4} anchor="middle">
         {t("heart")}
       </SceneLabel>
       {/* chin tucked: the jaw is drawn over the apices */}
@@ -85,9 +93,9 @@ export function LateralFigure({ W, H, region, rotationDeg, chin, armsRaised, sho
         <Limb
           pts={[
             { x: shoulder.x, y: shoulder.y, w: 28 },
-            { x: mid + 44, y: -34, w: 22 },
-            { x: mid + 14, y: -72, w: 18 },
-            { x: mid + 8, y: -80, w: 22 },
+            { x: x + 8, y: -68, w: 22 },
+            { x: mid + 18, y: -76, w: 18 },
+            { x: mid + 26, y: -74, w: 22 },
           ]}
         />
       ) : (
@@ -98,13 +106,13 @@ export function LateralFigure({ W, H, region, rotationDeg, chin, armsRaised, sho
             outlineWidth={showGuides ? STROKE.medium + 1 : STROKE.thin * 2}
             pts={[
               { x: shoulder.x, y: shoulder.y, w: 28 },
-              { x: mid + 24, y: y + h * 0.46, w: 22 },
-              { x: mid + 6, y: y + h * 0.9, w: 17 },
-              { x: mid + 2, y: y + h * 1.0, w: 20 },
+              { x: x + w * 0.3, y: y + h * 0.34, w: 38 },
+              { x: x + w * 0.05, y: y + h * 0.43, w: 24 },
+              { x: x - 8, y: y + h * 0.39, w: 26 },
             ]}
           />
           {showGuides && (
-            <SceneLabel x={W - 8} y={H - 44} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.guide}>
+            <SceneLabel x={right - 24} y={y + h * 0.24} size={LABEL_SIZE.detector - 4} anchor="end" fill={SCENE.guide}>
               {t("armsOverLungs")}
             </SceneLabel>
           )}

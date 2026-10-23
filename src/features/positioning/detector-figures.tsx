@@ -10,6 +10,7 @@ import type { ComponentType } from "react";
 import { useTranslations } from "next-intl";
 import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
+import { fitAnatomyBox, regionToRect } from "@/features/simulation/geometry";
 import { FrontalFigure } from "./FrontalFigure";
 import { LateralFigure } from "./LateralFigure";
 import { LowerLimbDrawing } from "./LowerLimbFigure";
@@ -25,7 +26,7 @@ export const U = 10;
 
 export interface FigureProps {
   /** Only the existing drawing geometry, never a grading rule or target. */
-  radCase: Pick<RadCase, "detector" | "requiredAnatomy" | "requiredProjection">;
+  radCase: Pick<RadCase, "detector" | "requiredAnatomy" | "requiredProjection"> & Partial<Pick<RadCase, "radiograph">>;
   settings: SimulationSettings;
   showGuides: boolean;
   /** Detector size in drawing units. */
@@ -72,11 +73,12 @@ const chinKey = (s: SimulationSettings) => (s.chinPosition === "tucked" ? "chinT
 // The chest drawings read the chin / shoulder cues, which every chest exam declares (S14.1b: optional in the settings for a
 // limb exam); the ideal values below are only the type-level fallback and never apply to a chest exam.
 function PaDrawing({ radCase, settings, H, W }: FigureProps) {
-  const a = radCase.requiredAnatomy;
+  // Practice supplies the reference fit. Frame-only drawing callers retain their explicitly supplied frame.
+  const a = radCase.radiograph ? fitAnatomyBox(radCase.radiograph, radCase.requiredAnatomy).landmarkCm : regionToRect(radCase.requiredAnatomy);
   const rv = rotationVisual(settings.rotationDeg);
   // A projection other than the PA drawn in the frontal figure keeps the narrowed thorax (as before the registry).
   const thoraxScale = settings.projection === "lateral-left" ? 0.45 : rv.thoraxScale;
-  const lungY = a.yCm * U, lungH = a.heightCm * U, lungW = (a.widthCm * U) / 2 - 8;
+  const lungY = a.y1 * U, lungH = (a.y2 - a.y1) * U, lungW = ((a.x2 - a.x1) * U) / 2 - 8;
   return <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={scapulaOffset(settings.shoulderPosition ?? "rolled-forward")} chin={settings.chinPosition ?? "elevated"} />;
 }
 
@@ -93,13 +95,14 @@ function PaOrientation({ W, showGuides }: OrientationProps) {
 }
 
 function LateralDrawing({ radCase, settings, H, W, showGuides }: FigureProps) {
-  const a = radCase.requiredAnatomy;
-  const lungY = a.yCm * U, lungH = a.heightCm * U;
+  // Practice supplies the reference fit. Frame-only drawing callers retain their explicitly supplied frame.
+  const a = radCase.radiograph ? fitAnatomyBox(radCase.radiograph, radCase.requiredAnatomy).landmarkCm : regionToRect(radCase.requiredAnatomy);
+  const lungY = a.y1 * U, lungH = (a.y2 - a.y1) * U;
   return (
     <LateralFigure
       W={W}
       H={H}
-      region={{ x: a.xCm * U, y: lungY, w: a.widthCm * U, h: lungH }}
+      region={{ x: a.x1 * U, y: lungY, w: (a.x2 - a.x1) * U, h: lungH }}
       rotationDeg={settings.rotationDeg}
       chin={settings.chinPosition ?? "elevated"}
       armsRaised={settings.choices?.arms === "raised"}
