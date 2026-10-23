@@ -51,6 +51,22 @@ export const SCENE = {
   boneLine: "#eef3f7",
 } as const;
 
+/**
+ * Limb tonal layers (RAD-072 2a, ENGINE_GUIDE "Limb drawing style"), the chest layers applied to a limb drawn from traced outlines
+ * (the hand first): soft tissue `soft` (mid tone) with the `outline` silhouette → joint spaces (`air`, dark, thin) → bone fills
+ * (`boneFill`, TRANSLUCENT so superimposed bones read lighter and stay visible, radiograph-style) → every bone's cortex edge drawn
+ * last, over all fills: a `boneLine` line on an `underStroke` line, so an edge reads on soft tissue, on one bone and on two
+ * superimposed bones alike (one luminance axis cannot keep both the fill and a light edge at 3:1). Widths in SVG units; pinned by
+ * `scene-style.test.ts`. No new colour: the chest tokens are reused.
+ */
+export const LIMB = {
+  boneFillOpacity: 0.5,
+  edge: 0.9,
+  edgeUnder: 2.1,
+  joint: 1.3,
+  softEdge: 1.2,
+} as const;
+
 /** Anatomy fills the accents are checked against. */
 export const ANATOMY_FILLS = ["bg", "bezel", "detectorFill", "trunk", "head", "limb", "limbFar", "lung"] as const;
 

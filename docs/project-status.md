@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-068 مكتمل بعد دمج أجزائه وفحص المالك للهاتف. RAD-072 قيد التنفيذ بثلاثة أجزاء: الصدر، ثم الأطراف، ثم بنود R وصور النتيجة؛ بعده RAD-069 ثم RAD-062 وفق [قرار الترتيب](DECISIONS.md#ui-inventory-owner-2026-10-22).
-- **ينتظر المالك:** فحص رسوم الصدر بعد جودة 1b على الهاتف قبل الدمج، (L7 عند 0° تمامًا؛ [تقرير 1b](RAD-072_PART1B_REPORT_2026-10-23.md#7-المفتوح))؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) منجز بمرحلتيه على PR مسودة؛ ثم 2b القدم والكاحل، ثم 2c الكتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
+- **ينتظر المالك:** فحص الهاتف لرسم اليد وفق [تقرير المرحلة B §8](RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
-- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ تقارير أجزاء RAD-068 داخل المهمة، و[قرار الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[قرار 1b](DECISIONS.md#rad072-1b-owner-2026-10-23).
-- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. استثناء scene-dom لهذه الدفعة يقتصر على رسوم الصدر الثلاثة؛ لا تغيير توصيف أو golden أو تقييم. حدود الاتصال المثبّتة وإصدارات الأدوات اليدوية بلا تغيير.
+- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23).
+- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral وحدها ([القائمة](RAD-072_PART2A_HASHES_2026-10-23.md))؛ نموذج اليد المشترك وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 233,
-  "updated_at": "2026-10-23T11:10:00+00:00",
+  "revision": 237,
+  "updated_at": "2026-10-23T20:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -669,8 +669,8 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "ثلاثة أجزاء: (1) رسوم الصدر على #113 مع جودة الرسم 1b (نسب وألوان وتسميات وجانب العلوي وزاوية AP)، تنتظر فحص المالك على الهاتف؛ (2) الأطراف: عظام القدم ودورانها، الكاحل الجانبي، عظم اليد عند الدوران، الكتف مع زاوية الجسم؛ (3) بنود R وصور النتيجة ومنها مساحة no-data في الكاحل AP والصدر الجانبي.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md",
+      "description": "(1) الصدر مدموج في #113. (2) الأطراف: 2a تجربة اليد: المرحلتان A وB على PR مسودة (رسم من المخططات المستخلصة، أسلوب الأطراف، إصلاح H1)، تنتظر فحص المالك على الهاتف؛ 2b القدم والكاحل؛ 2c الكتف مع زاوية الجسم. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md",
       "waiting_on": "owner"
     }
   ]
