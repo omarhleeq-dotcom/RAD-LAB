@@ -103,7 +103,7 @@ describe("rotation: magnitude only; ±2° / ±5° are an engine teaching choice"
     const a = run({ rotationDeg: 8 }), b = run({ rotationDeg: -8 });
     expect(check(a, "rotation").feedback.en).toBe(check(b, "rotation").feedback.en);
     expect(a.score.total).toBe(b.score.total);
-    expect(check(a, "rotation").feedback.en).toMatch(/engine teaching choice/);
+    expect(check(a, "rotation").feedback.en).toMatch(/partial credit/i);
     expect(check(a, "rotation").feedback.en).not.toMatch(/clockwise|toward the left|toward the right/i);
   });
   it("the picture shows the rotation exactly when the check is not passed (consistency), with the foot wording", () => {
@@ -125,7 +125,7 @@ describe("tube angle: 10° toward the heel (cephalad, negative); the bands are a
   });
   it("is feedback only (not drawn) and says which way and for which arch", () => {
     expect(check(run({ tubeAngulationDeg: 0 }), "angulation").feedback.en).toMatch(/toward the heel/);
-    expect(check(run({ tubeAngulationDeg: -14 }), "angulation").feedback.en).toMatch(/engine teaching choice/);
+    expect(check(run({ tubeAngulationDeg: -14 }), "angulation").feedback.en).toMatch(/partial credit/i);
     const plan = buildRenderPlan(run({ tubeAngulationDeg: 0 }).resultState, footAp);
     expect(plan.effects.map((e) => e.id)).not.toContain("angulation");
   });
@@ -144,9 +144,9 @@ describe("technique: Bontrager p.232 kV band 60–70; the partial bands, SID ban
     expect(buildRenderPlan(r.resultState, footAp).effects.map((e) => e.id)).toContain("low-penetration");
   });
   it("every teaching-choice band is named as such in the learner-visible text", () => {
-    expect(check(run({ kvp: 57 }), "kvp").feedback.en).toMatch(/engine teaching choice/);
-    expect(check(run({ sidCm: 120 }), "sid").feedback.en).toMatch(/engine teaching choice/);
-    expect(check(run({ rotationDeg: 8 }), "rotation").feedback.en).toMatch(/engine teaching choice/);
+    expect(check(run({ kvp: 57 }), "kvp").feedback.en).toMatch(/partial credit/i);
+    expect(check(run({ sidCm: 120 }), "sid").feedback.en).toMatch(/textbook gives only a minimum|minimum/);
+    expect(check(run({ rotationDeg: 8 }), "rotation").feedback.en).toMatch(/partial credit/i);
   });
 });
 

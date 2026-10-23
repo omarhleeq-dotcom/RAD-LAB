@@ -79,8 +79,8 @@ describe("Pelvis AP reference and existing optional mechanisms", () => {
     expect(check({kvp:80},"kvp").outcome).toBe("pass");
     expect(check({kvp:78},"kvp").outcome).toBe("partial");
     expect(check({kvp:70},"kvp").outcome).toBe("fail");
-    expect(check({sidCm:120},"sid").feedback.en).toMatch(/teaching choice/);
-    expect(check({rotationDeg:8},"rotation").feedback.en).toMatch(/teaching choice/);
+    expect(check({sidCm:120},"sid").feedback.en).toMatch(/textbook gives only a minimum|minimum/);
+    expect(check({rotationDeg:8},"rotation").feedback.en).toMatch(/partial credit/i);
   });
   it("changes pixels deterministically for rotation without synthesizing leg-angle anatomy", () => {
     const src={width:134,height:104,data:Float32Array.from({length:134*104},(_,i)=>35+(i*7)%160)};

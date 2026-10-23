@@ -13,11 +13,11 @@ import { publicReference, publicText } from "@/features/evidence/public-text";
  */
 type Tree = { [k: string]: string | Tree };
 
-const EN_BANNED = /provisional|validated|normally (be )?repeated|awaiting educator|educator review|demo values?|pending educator|physicist review|owner-verified/i;
+const EN_BANNED = /provisional|validated|normally (be )?repeated|awaiting educator|educator review|demo values?|pending educator|physicist review|owner-verified|teaching choices?|simulator rule|educational assumption/i;
 /** The credits page states licence evidence ("owner-verified licence evidence", D3); that is licence status, not a claim about a value. */
 const EN_EXEMPT_PREFIX = ["credits"];
 /** Arabic: «مؤقت» (provisional) and «مثبت» (validated) as a label, and "the image is normally repeated" («تُعاد الصورة عادةً»). */
-const AR_BANNED = /مؤقت|مثبت|تُعاد الصورة|تعاد الصورة|بانتظار مراجعة|مراجعة المعلم|مراجعة الفيزيائي/;
+const AR_BANNED = /اختيار(ات)? تعليمي|مؤقت|مثبت|تُعاد الصورة|تعاد الصورة|بانتظار مراجعة|مراجعة المعلم|مراجعة الفيزيائي/;
 /**
  * In the Assess and credits namespaces «مؤقت» means "temporary" (a temporary test, a temporary save), «مثبت» means "pinned / installed"
  * (a pinned test version) or "not established" (a licence not yet confirmed): ordinary words, not the evidence badge.
@@ -37,7 +37,7 @@ function caseStrings(v: unknown, path: string, out: Array<[string, string]>): vo
 
 describe("no removed wording in any displayed string (D1 / D5, RAD-068 part 2)", () => {
   it("messages: English", () => {
-    const hits = leaves(en as Tree).filter(([k, s]) => EN_BANNED.test(s) && !(EN_EXEMPT_PREFIX.some((p) => k.startsWith(p)) && !/provisional|validated|educator|physicist|demo/i.test(s)));
+    const hits = leaves(en as Tree).filter(([k, s]) => EN_BANNED.test(s) && !(EN_EXEMPT_PREFIX.some((p) => k.startsWith(p)) && !/provisional|validated|educator|physicist|demo|teaching choice|simulator rule|educational assumption/i.test(s)));
     expect(hits.map(([k]) => k)).toEqual([]);
   });
   it("messages: Arabic", () => {

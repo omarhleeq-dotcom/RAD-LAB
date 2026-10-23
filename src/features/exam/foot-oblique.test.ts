@@ -102,7 +102,7 @@ describe("obliquity: the console value is the absolute plantar angle; 30°–40�
   it("says which way (the value is a real angle) and names the partial band as a teaching choice", () => {
     expect(check(run({ rotationDeg: 20 }), "rotation").feedback.en).toMatch(/less than the 30°–40°/);
     expect(check(run({ rotationDeg: 55 }), "rotation").feedback.en).toMatch(/more than the 30°–40°/);
-    expect(check(run({ rotationDeg: 27 }), "rotation").feedback.en).toMatch(/engine teaching choice/);
+    expect(check(run({ rotationDeg: 27 }), "rotation").feedback.en).toMatch(/partial credit/i);
   });
   it("the picture shows the effect exactly when the check is not passed (consistency), with the foot wording; 40° is the baseline", () => {
     const fail = run({ rotationDeg: 20 }), pass = run({ rotationDeg: 40 });
@@ -148,9 +148,9 @@ describe("technique: Bontrager p.232 kV band 60–70; the partial bands, SID ban
     expect(buildRenderPlan(r.resultState, footOblique).effects.map((e) => e.id)).toContain("low-penetration");
   });
   it("every teaching-choice band is named as such in the learner-visible text", () => {
-    expect(check(run({ kvp: 57 }), "kvp").feedback.en).toMatch(/engine teaching choice/);
-    expect(check(run({ sidCm: 120 }), "sid").feedback.en).toMatch(/engine teaching choice/);
-    expect(check(run({ rotationDeg: 27 }), "rotation").feedback.en).toMatch(/engine teaching choice/);
+    expect(check(run({ kvp: 57 }), "kvp").feedback.en).toMatch(/partial credit/i);
+    expect(check(run({ sidCm: 120 }), "sid").feedback.en).toMatch(/textbook gives only a minimum|minimum/);
+    expect(check(run({ rotationDeg: 27 }), "rotation").feedback.en).toMatch(/partial credit/i);
   });
 });
 
