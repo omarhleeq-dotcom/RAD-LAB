@@ -6,10 +6,10 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) المرحلة A على PR مسودة؛ ثم 2c الكتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
-- **ينتظر المالك:** مراجعة تراكبات الرسغ والقدم (2b المرحلة A) عند اكتمالها؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) المرحلة A منجزة على PR مسودة؛ ثم 2c الكتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
+- **ينتظر المالك:** مراجعة تراكبات الرسغ والقدم (2b المرحلة A) وفق [تقرير A §8](RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md#8-قائمة-المالك-ماذا-تفحص-في-كل-تراكب-وموجّه-الجلسة-التالية)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
-- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23).
+- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23) و[2b](DECISIONS.md#rad072-2b-owner-2026-10-23).
 - **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral وحدها ([القائمة](RAD-072_PART2A_HASHES_2026-10-23.md))؛ نموذج اليد المشترك وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 238,
-  "updated_at": "2026-10-23T21:00:00+00:00",
+  "revision": 239,
+  "updated_at": "2026-10-23T22:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -669,8 +669,8 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "(1) الصدر مدموج في #113. (2) الأطراف: 2a تجربة اليد مدموجة في #114 ومقبولة من المالك (حدّان بسيطان مقبولان دون إصلاح)؛ 2b الرسغ ثم القدم بالطريقة نفسها (الكاحل خرج منه)؛ 2c الكتف مع زاوية الجسم في جلسة مستقلة. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23",
+      "description": "(1) الصدر مدموج في #113. (2) الأطراف: 2a تجربة اليد مدموجة في #114 ومقبولة من المالك (حدّان بسيطان مقبولان دون إصلاح)؛ 2b الرسغ ثم القدم بالطريقة نفسها (الكاحل خرج منه): المرحلة A منجزة على PR مسودة وتنتظر مراجعة المالك للتراكبات قبل B؛ 2c الكتف مع زاوية الجسم في جلسة مستقلة. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md",
       "waiting_on": "owner"
     }
   ]

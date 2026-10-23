@@ -1,0 +1,294 @@
+{
+ "format": "rad-lab-traced-outlines/1",
+ "note": "illustrative, drawing-only; not a measurement",
+ "region": "wrist",
+ "side": "LEFT (both images are a left wrist; a right-wrist case mirrors the drawing, never the RTL layout)",
+ "date": "2026-10-23",
+ "method": "semi-automatic: polygons read by eye at 3x from the same image, moved onto the steepest bright-to-dark step along their normals (snap tracer), median-filtered and Ramer-Douglas-Peucker simplified; joint lines = darkest point of profiles along the local normal; soft tissue = Otsu threshold boundary united with the grown bone outlines. Script: scripts/trace-outlines/trace-wrist-outlines.py",
+ "coordinates": "image px of the web copy (origin top-left, x right, y down), the space of features/wrist-model/wrist-model.ts",
+ "follows": "PA: anchors = the metacarpal-column anchors that warp the whole image, ulna / radius = the two forearm layers; lateral: metacarpals / head = the two copies of the proximal-metacarpal / ulnar-head bands, static = not displaced by the wrist model (drawing link only; the model is unchanged)",
+ "drawn": "absent = drawn; false = kept in the data but not drawn",
+ "sources": {
+  "pa": {
+   "asset": "A-011",
+   "derivedFrom": "A-010",
+   "file": "public/images/wrist/wrist-pa-baseline.jpg",
+   "sha256": "dd9c8bd12bc01bf5e754c430ab7adbc6f6eb67cbb0c58d34478bc6880bbf8e2c"
+  },
+  "lateral": {
+   "asset": "A-013",
+   "derivedFrom": "A-012",
+   "file": "public/images/wrist/wrist-lateral-baseline.jpg",
+   "sha256": "85931e218444711e6badd07149054040fa7d0c456ab5b87c240b62b729a06fdf"
+  }
+ },
+ "views": {
+  "pa": {
+   "widthPx": 690,
+   "heightPx": 980,
+   "structures": [
+    {
+     "id": "soft-tissue",
+     "group": "soft",
+     "closed": false,
+     "follows": null,
+     "note": "Otsu threshold 68.4 of the smoothed image, united with the bone outlines grown by 10 px; open where the silhouette leaves the image",
+     "points": [[130, 974], [128, 804], [108, 710], [114, 624], [108, 548], [114, 524], [134, 494], [142, 486], [168, 488], [170, 480], [158, 464], [146, 314], [128, 204], [68, 4]]
+    },
+    {
+     "id": "soft-tissue-2",
+     "group": "soft",
+     "closed": false,
+     "follows": null,
+     "note": "Otsu threshold 68.4 of the smoothed image, united with the bone outlines grown by 10 px; open where the silhouette leaves the image",
+     "points": [[684, 282], [638, 274], [638, 320], [624, 340], [604, 348], [572, 346], [556, 368], [568, 408], [578, 400], [598, 400], [606, 410], [610, 476], [598, 634], [566, 798], [566, 904], [576, 974]]
+    },
+    {
+     "id": "soft-tissue-3",
+     "group": "soft",
+     "closed": false,
+     "follows": null,
+     "note": "Otsu threshold 68.4 of the smoothed image, united with the bone outlines grown by 10 px; open where the silhouette leaves the image",
+     "points": [[636, 4], [630, 8], [630, 34], [612, 48], [596, 98], [606, 134], [646, 102], [684, 50]]
+    },
+    {
+     "id": "mc5-base",
+     "group": "metacarpals",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[78, 0], [108, 81], [120, 149], [131, 182], [157, 223], [166, 230], [181, 236], [204, 242], [227, 216], [235, 202], [238, 186], [225, 161], [220, 107], [193, 73], [166, 20], [160, 0]]
+    },
+    {
+     "id": "mc4-base",
+     "group": "metacarpals",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[232, 0], [229, 4], [229, 10], [239, 70], [229, 129], [229, 150], [236, 168], [246, 184], [269, 193], [299, 190], [326, 165], [341, 145], [331, 120], [321, 80], [302, 40], [295, 17], [294, 10], [300, 0]]
+    },
+    {
+     "id": "mc3-base",
+     "group": "metacarpals",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[340, 0], [343, 60], [338, 120], [345, 145], [339, 171], [347, 178], [380, 196], [400, 192], [416, 191], [440, 200], [444, 191], [452, 184], [455, 165], [452, 140], [443, 126], [441, 117], [444, 98], [436, 78], [422, 59], [420, 35], [409, 0], [400, 0]]
+    },
+    {
+     "id": "mc2-base",
+     "group": "metacarpals",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[485, 0], [492, 12], [483, 47], [475, 62], [436, 112], [431, 122], [429, 143], [437, 165], [439, 187], [448, 201], [475, 210], [534, 204], [544, 204], [570, 210], [591, 199], [598, 150], [580, 104], [572, 71], [572, 0]]
+    },
+    {
+     "id": "mc1-base",
+     "group": "metacarpals",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[689, 60], [689, 74], [687, 78], [647, 122], [625, 141], [605, 154], [584, 183], [575, 190], [574, 209], [583, 218], [614, 235], [630, 255], [638, 261], [658, 269], [684, 266], [689, 272]]
+    },
+    {
+     "id": "hamate",
+     "group": "carpals",
+     "closed": true,
+     "follows": "anchors",
+     "points": [[214, 204], [250, 199], [298, 202], [316, 228], [322, 305], [316, 329], [316, 344], [312, 363], [305, 377], [285, 387], [262, 360], [214, 286], [197, 268], [186, 251], [184, 239], [186, 226], [200, 217]]
+    },
+    {
+     "id": "capitate",
+     "group": "carpals",
+     "closed": true,
+     "follows": "anchors",
+     "points": [[364, 210], [373, 212], [399, 206], [425, 219], [429, 233], [440, 249], [441, 263], [434, 309], [444, 336], [443, 356], [439, 372], [427, 394], [411, 410], [388, 418], [362, 416], [339, 411], [317, 394], [320, 358], [330, 320], [326, 262], [332, 226]]
+    },
+    {
+     "id": "trapezoid",
+     "group": "carpals",
+     "closed": true,
+     "follows": "anchors",
+     "points": [[449, 226], [465, 226], [472, 222], [505, 215], [523, 218], [527, 235], [539, 257], [536, 282], [547, 300], [545, 306], [528, 320], [519, 321], [500, 331], [485, 328], [470, 322], [459, 298], [452, 291], [448, 278], [448, 250], [445, 235]]
+    },
+    {
+     "id": "trapezium",
+     "group": "carpals",
+     "closed": true,
+     "follows": "anchors",
+     "points": [[525, 216], [549, 228], [585, 231], [598, 239], [615, 256], [622, 259], [626, 273], [628, 311], [613, 332], [595, 338], [585, 339], [577, 336], [567, 337], [551, 343], [544, 328], [543, 287], [534, 269], [534, 245]]
+    },
+    {
+     "id": "scaphoid",
+     "group": "carpals",
+     "closed": true,
+     "follows": "anchors",
+     "points": [[470, 302], [497, 313], [524, 338], [545, 366], [546, 391], [534, 404], [520, 432], [499, 464], [491, 471], [472, 487], [447, 500], [411, 511], [402, 490], [403, 450], [414, 426], [434, 402], [434, 308], [436, 303]]
+    },
+    {
+     "id": "lunate",
+     "group": "carpals",
+     "closed": true,
+     "follows": "anchors",
+     "points": [[390, 516], [371, 526], [362, 526], [329, 531], [303, 527], [270, 507], [266, 485], [275, 467], [302, 433], [328, 423], [344, 426], [370, 424], [381, 426], [388, 429], [388, 433], [396, 446], [398, 455]]
+    },
+    {
+     "id": "triquetrum-pisiform",
+     "group": "carpals",
+     "closed": true,
+     "follows": "anchors",
+     "note": "triquetrum and pisiform superimposed (the pisiform is the denser oval over the ulnar-proximal part); one combined outline",
+     "points": [[159, 352], [173, 331], [196, 318], [212, 319], [222, 322], [227, 325], [243, 351], [266, 376], [275, 389], [288, 400], [297, 403], [297, 426], [264, 465], [243, 483], [222, 475], [208, 466], [184, 454], [172, 438], [167, 418], [167, 403], [158, 383]]
+    },
+    {
+     "id": "radius",
+     "group": "forearm",
+     "closed": false,
+     "follows": "radius",
+     "points": [[386, 979], [390, 973], [391, 939], [386, 889], [383, 760], [369, 701], [344, 647], [337, 623], [323, 601], [316, 560], [316, 546], [401, 531], [437, 515], [471, 506], [557, 450], [573, 425], [588, 411], [597, 420], [595, 455], [600, 490], [593, 515], [594, 545], [589, 620], [567, 720], [555, 810], [557, 835], [551, 889], [548, 979]]
+    },
+    {
+     "id": "ulna",
+     "group": "forearm",
+     "closed": false,
+     "follows": "ulna",
+     "points": [[140, 979], [139, 805], [137, 785], [121, 720], [118, 685], [124, 625], [119, 565], [120, 549], [127, 531], [137, 514], [152, 497], [173, 501], [176, 529], [180, 539], [188, 549], [215, 541], [262, 535], [290, 545], [305, 570], [302, 610], [291, 639], [283, 679], [263, 749], [250, 860], [247, 969], [252, 979]]
+    },
+    {
+     "id": "radiocarpal",
+     "group": "joints",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[321, 534], [380, 526], [389, 522], [397, 511], [407, 508], [419, 512], [430, 511], [473, 490], [491, 484], [495, 470], [520, 457], [531, 457], [538, 448], [552, 453], [560, 447], [572, 446], [589, 436]]
+    },
+    {
+     "id": "distal-radioulnar",
+     "group": "joints",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[300, 546], [318, 611]]
+    },
+    {
+     "id": "midcarpal",
+     "group": "joints",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[263, 367], [289, 388], [314, 401], [321, 407], [360, 418], [396, 421], [422, 405], [425, 394], [421, 382], [429, 365], [430, 314], [433, 302], [470, 298], [478, 304], [497, 310], [525, 336], [534, 339], [549, 349]]
+    },
+    {
+     "id": "carpometacarpal",
+     "group": "joints",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[212, 231], [240, 214], [246, 205], [257, 198], [279, 196], [300, 201], [310, 200], [330, 187], [340, 187], [350, 192], [360, 205], [390, 203], [401, 194], [411, 193], [431, 197], [440, 206], [450, 207], [460, 215], [480, 216], [490, 211], [520, 211], [529, 204], [548, 203], [557, 207], [567, 216], [577, 215], [586, 209], [595, 207]]
+    },
+    {
+     "id": "carpometacarpal-1",
+     "group": "joints",
+     "closed": false,
+     "follows": "anchors",
+     "points": [[587, 199], [594, 206], [593, 222], [622, 249], [654, 273]]
+    },
+    {
+     "id": "ulnar-styloid",
+     "group": "prominences",
+     "closed": false,
+     "follows": "ulna",
+     "points": [[152, 497]]
+    },
+    {
+     "id": "radial-styloid",
+     "group": "prominences",
+     "closed": false,
+     "follows": "radius",
+     "points": [[588, 411]]
+    }
+   ]
+  },
+  "lateral": {
+   "widthPx": 559,
+   "heightPx": 1400,
+   "structures": [
+    {
+     "id": "soft-tissue",
+     "group": "soft",
+     "closed": false,
+     "follows": null,
+     "note": "Otsu threshold 26.5 of the smoothed image, united with the bone outlines grown by 10 px; open where the silhouette leaves the image",
+     "points": [[84, 1394], [86, 1056], [106, 806], [112, 548], [110, 506], [88, 500], [82, 450], [94, 404], [92, 350], [104, 292], [98, 282], [98, 224], [164, 4]]
+    },
+    {
+     "id": "soft-tissue-2",
+     "group": "soft",
+     "closed": false,
+     "follows": null,
+     "note": "Otsu threshold 26.5 of the smoothed image, united with the bone outlines grown by 10 px; open where the silhouette leaves the image",
+     "points": [[554, 210], [540, 304], [528, 320], [482, 328], [422, 490], [432, 512], [434, 556], [452, 600], [456, 660], [464, 654], [468, 622], [472, 638], [458, 938], [482, 1394]]
+    },
+    {
+     "id": "mc1-base",
+     "group": "metacarpals",
+     "closed": false,
+     "follows": "metacarpals",
+     "points": [[178, 0], [177, 10], [155, 92], [127, 172], [109, 237], [108, 273], [114, 284], [114, 292], [120, 296], [130, 299], [155, 297], [181, 303], [200, 294], [210, 294], [220, 299], [246, 299], [251, 284], [257, 260], [261, 200], [268, 161], [265, 130], [257, 105], [258, 95], [268, 65], [268, 0]]
+    },
+    {
+     "id": "mc2-5-bases",
+     "group": "metacarpals",
+     "closed": false,
+     "follows": "metacarpals",
+     "note": "the bases of metacarpals 2-5 superimposed: one combined outline",
+     "points": [[557, 125], [548, 185], [534, 250], [530, 281], [529, 291], [531, 295], [518, 310], [509, 314], [470, 319], [450, 324], [425, 316], [400, 320], [380, 320], [346, 308], [330, 310], [327, 307], [318, 295], [317, 285], [333, 265], [338, 251], [333, 224], [352, 194], [375, 150], [389, 130], [404, 72], [418, 41], [423, 26], [444, 1], [450, 0]]
+    },
+    {
+     "id": "scaphoid-trapezium",
+     "group": "carpals",
+     "closed": true,
+     "follows": "static",
+     "note": "scaphoid (tubercle) and trapezium superimposed at the volar-distal corner; one combined outline",
+     "points": [[113, 304], [126, 301], [147, 301], [160, 295], [175, 292], [212, 296], [225, 299], [231, 310], [238, 335], [238, 340], [231, 354], [231, 378], [220, 383], [206, 407], [202, 410], [175, 410], [155, 406], [132, 398], [109, 401], [104, 392], [103, 368], [106, 332], [114, 312]]
+    },
+    {
+     "id": "pisiform",
+     "group": "carpals",
+     "closed": true,
+     "follows": "static",
+     "points": [[108, 407], [120, 407], [135, 412], [168, 413], [171, 450], [161, 491], [130, 498], [99, 491], [93, 464], [103, 417]]
+    },
+    {
+     "id": "capitate",
+     "group": "carpals",
+     "closed": true,
+     "follows": "static",
+     "points": [[300, 409], [330, 403], [344, 403], [353, 415], [376, 429], [374, 460], [379, 485], [368, 518], [347, 537], [321, 542], [303, 539], [291, 534], [278, 518], [272, 505], [269, 470], [271, 455], [275, 441], [282, 435]]
+    },
+    {
+     "id": "lunate",
+     "group": "carpals",
+     "closed": true,
+     "follows": "static",
+     "points": [[202, 528], [240, 513], [255, 515], [280, 514], [285, 514], [302, 524], [327, 530], [332, 533], [338, 552], [348, 565], [346, 582], [341, 598], [322, 617], [290, 631], [270, 630], [234, 622], [230, 620], [220, 601], [216, 599], [203, 584], [198, 570]]
+    },
+    {
+     "id": "dorsal-carpals",
+     "group": "carpals",
+     "closed": true,
+     "follows": "static",
+     "note": "hamate, triquetrum and trapezoid superimposed on the dorsal-distal side; one combined outline (the image does not separate them)",
+     "points": [[382, 331], [396, 335], [415, 346], [431, 349], [444, 365], [449, 395], [434, 423], [427, 446], [415, 468], [405, 478], [390, 484], [380, 496], [376, 485], [378, 430], [389, 400], [381, 345]]
+    },
+    {
+     "id": "radius-ulna",
+     "group": "forearm",
+     "closed": false,
+     "follows": "head",
+     "note": "distal radius and ulna superimposed: one combined outline (the ulna lies behind the radius)",
+     "points": [[296, 1399], [305, 1391], [306, 1384], [290, 1050], [276, 901], [254, 841], [195, 767], [183, 750], [181, 700], [184, 686], [195, 666], [205, 660], [215, 650], [230, 646], [261, 651], [275, 641], [285, 639], [301, 643], [317, 630], [338, 625], [355, 603], [368, 604], [380, 594], [389, 595], [410, 624], [428, 638], [436, 656], [439, 700], [421, 801], [417, 847], [408, 901], [405, 945], [405, 1075], [414, 1359], [414, 1395], [412, 1399]]
+    },
+    {
+     "id": "radiocarpal",
+     "group": "joints",
+     "closed": false,
+     "follows": "static",
+     "points": [[205, 640], [213, 633], [222, 631], [232, 633], [242, 639], [261, 637], [290, 625], [309, 623], [336, 611]]
+    }
+   ]
+  }
+ }
+}
