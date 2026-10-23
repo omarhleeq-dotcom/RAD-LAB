@@ -323,13 +323,13 @@ These are **residual scope descriptions**, not a second task-status register. Ow
 | <a id="decision-o48"></a> `O48` | قبول crop/fill وآثاره في صور الكوع للمراجعة الطبية؛ لا تعديل صورة من تنظيف docs. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o48) |
 | <a id="decision-o49"></a> `O49` | مقياس/landmarks/هندسة الكوع تقديرية؛ مراجعة القياس والموديل. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o49) |
 | <a id="decision-o50"></a> `O50` | مراجعة حدود النتيجة للكوع: ghosting وعدم رسم concentric arcs/double ridges؛ لا ادعاء occlusion حقيقي. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o50) |
-| <a id="decision-o52"></a> `O52` | قرار اتجاه كاشف elbow-lateral أو اعتماد portrait الحالي؛ عند تغيير الاتجاه يلزم نطاق بيانات/اختبارات مستقل. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o52) |
+| <a id="decision-o52"></a> `O52` | **مغلق 2026-10-24:** يبقى portrait؛ الجانبي للمرفق يؤخذ بالاتجاهين ولا فرق تعليميًا؛ لا تغيير بيانات. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o52) · [قرار 2026-10-24](#owner-data-decisions-2026-10-24) |
 | <a id="decision-o54"></a> `O54` | كبرت guide labels في S-VIS-1b؛ المتبقي تأكيد القراءة على الهاتف، لا إعادة تنفيذ تعديل الحجم. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o54) |
-| <a id="decision-o55"></a> `O55` | تقارب marker/handle في hand-PA؛ ينتظر قرار الموضع مع O74، دون تغيير موضع يؤثر في scoring الآن. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o55) |
+| <a id="decision-o55"></a> `O55` | **مغلق 2026-10-24:** يبقى الموضع الافتراضي؛ لمس الهاتف يستهدف أقرب عنصر مرئي (#109)؛ لا تغيير موضع أو تقييم. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o55) · [قرار 2026-10-24](#owner-data-decisions-2026-10-24) |
 | <a id="decision-o56"></a> `O56` | ملاحظات الرخص القديمة للركبة/القدم مقيدة بقرار O100؛ لا تجاوز لحالة owner-verified أو إعادة تحقق مقبول. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o56) |
 | <a id="decision-o57"></a> `O57` | قبول osteophyte الأدنى في baseline الركبة باعتباره حدًا لصورة near-normal يحتاج مراجعة المعلم. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o57) |
 | <a id="decision-o58"></a> `O58` | اختلاف flexion صورة الركبة≈45° عن target20–30° الموثق؛ مراجعة الملاءمة، لا تغيير قيمة طبية. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o58) |
-| <a id="decision-o59"></a> `O59` | تأكيد ملف القدم المقصود لاختلاف الأبعاد المعلنة عن المرفق؛ قرار المالك. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o59) |
+| <a id="decision-o59"></a> `O59` | **مغلق 2026-10-24:** الملف المرفق (A-026) هو المقصود وعليه رُوجع تتبّع RAD-072 2b. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o59) · [قرار 2026-10-24](#owner-data-decisions-2026-10-24) |
 | <a id="decision-o60"></a> `O60` | قبول crop/fill وآثار إزالة Dx في صور الركبة/القدم؛ مراجعة جودة الصورة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o60) |
 | <a id="decision-o61"></a> `O61` | غياب posterior calcaneus من baseline القدم؛ المنطقة المطلوبة محدودة بما يظهر، ومراجعة صورة أفضل مؤجلة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o61) |
 | <a id="decision-o62"></a> `O62` | مراجعة المقياس والlandmarks ونماذج الركبة/القدم: تقديرات بصرية لا قياس. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o62) |
@@ -342,7 +342,7 @@ These are **residual scope descriptions**, not a second task-status register. Ow
 | <a id="decision-o70"></a> `O70` | قد تتقاطع labels/handles بعد سحب CR؛ تدقيق المحاور المحدودة لا يثبت كل حالات السحب. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o70) |
 | <a id="decision-o71"></a> `O71` | معايير تشريحية لا يرسمها نموذج الركبة/القدم من صورة واحدة؛ تبقى حدودًا معلنة للمراجعة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o71) |
 | <a id="decision-o73"></a> `O73` | أرقام موديل الرسغ تقديرية/gain تعليمي؛ مراجعة قبول صور الدوران. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o73) |
-| <a id="decision-o74"></a> `O74` | اختيار موضع marker الافتراضي لhand-PA مع O55 ثم نطاق تحقق scoring مستقل. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o74) |
+| <a id="decision-o74"></a> `O74` | **مغلق 2026-10-24:** يبقى الموضع الافتراضي مع O55؛ لا إعادة براهين تسجيل. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o74) · [قرار 2026-10-24](#owner-data-decisions-2026-10-24) |
 | <a id="decision-o75"></a> `O75` | طلب التحقق التاريخي للكاحل مقيد بقرار O100؛ تبقى owner-verified ولا تصبح independently verified. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o75) |
 | <a id="decision-o76"></a> `O76` | جانب الكاحل LEFT مستنتج؛ يحتاج تأكيد المعلم، لا تغيير side دون دليل. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o76) |
 | <a id="decision-o77"></a> `O77` | تغطية metatarsals/tarsals للكاحل ناقصة؛ تبقى المنطقة بحدود الصورة دون anatomy مختلقة. | [السجل](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o77) |
@@ -440,3 +440,16 @@ Closed question texts and their scope/evidence are retained in the [closed-quest
 - **D6:** تبقى A-038 (صورة Grashey الوحيدة). تُسجَّل على RAD-032 ملاحظات المراجِع: قوس رأس شبه دائري تام ودرجة سطوع أفقية مستقيمة تحت شريط الحُق، ربما من معالجة صورة؛ تبقى الملاءمة مفتوحة للمراجع (O91/O5).
 - **تحديث المالك (2026-10-24، بعد فحص الهاتف):** (1) منحنى الإغلاق في D2 يصير رتيبًا متشبّعًا بدل الخطي: حادًا قرب حدّ النطاق ومسطّحًا نحو حدّي اللوحة؛ عند 20° و60° (15° عن النطاق) لا يقل عن 59 px القديمة، وعند 0° أكبر ما يسمح به شرط عدم الطيّ وتمييز الرأس؛ النطاق الميت 35–45° كما هو. (2) ملاحظة المرجع تحت صورة النتيجة تذكر (EN/AR) أنه بحسب وصف من رفع الصورة لهذا الكتف تاريخ خلع متكرر ولا يظهر شذوذ على الصورة؛ تبقى A-038 مناسبة الآن حتى تتوفر صور أخرى؛ RAD-032 تبقى review (نص فقط؛ المصطلحات الجديدة DRAFT في ARABIC_TERMINOLOGY).
 - يسري كما في 2a/2b: PR مسودة واحد؛ لا ready أو merge أو auto-merge؛ لا اشتراك أو polling؛ لا worktree أو subagents؛ لا فتح معاينة مستضافة.
+
+<a id="owner-data-decisions-2026-10-24"></a>
+## قرارات بيانات المالك وإغلاق RAD-017 وRAD-042 وRAD-043 — المالك، 2026-10-24
+
+توثيق فقط: لا تغيير في كود أو بيانات أو بصمات أو اختبارات أو درجات. كل بند يحيل إلى سجله الأصلي؛ سطر الإغلاق في [جدول O المفتوح](#decision-o52) يحيل إلى هذا القسم.
+
+1. **O55 وO74 (علامة hand-PA بجانب مقبض التحديد الأيسر):** يبقى موضع العلامة الافتراضي كما هو. لمس الهاتف يستهدف الآن أقرب عنصر مرئي ([PR #109](RAD-068_PART1_REPORT_2026-10-22.md)، قاعدة `nearestTouchTarget`)، فلا حاجة لتغيير الموضع ولا لإعادة براهين التسجيل. لا تغيير في الموضع أو التقييم. **مغلقان.** الأصل: [O55](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o55)، [O74](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o74)، [S-VIS-1b-7](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-vis-1b-7).
+2. **O52 (اتجاه كاشف elbow-lateral):** يبقى portrait. ممارسة المالك: الجانبي للمرفق يؤخذ بالاتجاهين portrait أو landscape ولا فرق تعليميًا بينهما. **مغلق** دون تغيير بيانات. الأصل: [O52](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o52).
+3. **O59 (ملف foot DP، المعلن 1067×1913 والمرفق 1061×2431):** الملف المرفق ([A-026](ASSET_PROVENANCE_AND_LICENSES.md#a-026--normal-foot-dp-ap-right-foot-unmodified-master-s144)) هو المقصود، وهو الصورة التي روجع وقُبل عليها تتبّع القدم في 2b من RAD-072 ([قرار 2b](#rad072-2b-owner-2026-10-23)، [ملحق تقرير A](RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md#addendum-owner-review)). **مغلق.** الأصل: [O59](archive/decisions/DECISIONS-until-2026-10-16.md#decision-o59).
+4. **RAD-043:** أرسل المالك رسالة ملاحظات من الموقع وظهرت في لوحة المالك؛ بهذا اكتمل الفحص الحي المتبقي لإرسال/حفظ الملاحظة. الأصل: [S-PILOT-37](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-37)، [S-PILOT-39.1](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-39.1)…[39.3](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-39.3).
+5. **RAD-042:** يقبل المالك إغلاق حفظ المحاولات والأحداث على الدليل المسجّل سابقًا ([S-PILOT-28](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-28)، [S-PILOT-39.4](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-39.4)، PR #55/#72) دون إثبات حي للحالات النادرة. **لم يُتحقق منها ولا تُدّعى موثقة:** انقطاع الشبكة وفشل حفظ المحاولة.
+
+**الحدود:** RAD-044 دون تغيير (فحص تنزيل ملف الملاحظات CSV ما زال مفتوحًا). الإغلاق لا يعمّم الدليل على كل جهاز أو حساب، ولا يغيّر قرارات S-PILOT الأصلية.
