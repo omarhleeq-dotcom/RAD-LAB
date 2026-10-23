@@ -111,7 +111,7 @@ export const chestPaErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "Positioning ref §Image rejection",
-          note: "PROVISIONAL / educational: forcing the pass mark below the threshold is a simulator rule, not a real-world automatic reject decision. The numeric score is unchanged.",
+          note: "The numeric score is unchanged.",
         },
       },
       {
@@ -124,12 +124,12 @@ export const chestPaErectExam: ExamDefinition = {
         concept: {
           status: "common-reference",
           reference: "Image-quality ref — Motion",
-          note: "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness (the principle is validated). That this simulated patient moves is an educational assumption of the patient-cooperation profile.",
+          note: "COMMON QUALITY CRITERION: patient / respiratory motion reduces sharpness.",
         },
         evidence: {
           status: "provisional",
           reference: "Positioning ref §Image rejection",
-          note: "PROVISIONAL / educational: the gate is a simulator rule; no blur size or motion distance is claimed. The numeric score is unchanged.",
+          note: "No blur size or motion distance is claimed. The numeric score is unchanged.",
         },
       },
       {
@@ -142,12 +142,12 @@ export const chestPaErectExam: ExamDefinition = {
         concept: {
           status: "common-reference",
           reference: "Image-quality ref — Side marker and annotations (side identification must be visible)",
-          note: "COMMON QUALITY CRITERION: the image must identify the correct patient side. Which viewer side L / R belongs on is this simulator's EDUCATIONAL display convention (no validated orientation mapping is adopted in the references).",
+          note: "COMMON QUALITY CRITERION: the image must identify the correct patient side. Which viewer side L / R belongs on is this simulator's EDUCATIONAL display convention (the references adopt no orientation mapping).",
         },
         evidence: {
           status: "provisional",
           reference: "Image-quality ref — Side marker and annotations",
-          note: "PROVISIONAL / educational: the laterality convention and the gate are simulator rules. Support read in full: Chung 2020 (PMC7685512) counted markers on the incorrect side as errors (4 of 421 audited paediatric radiographs; digital correction of a wrong radiopaque marker counted as acceptable), Fuller 2016 (PMC5016621) is an opinion editorial citing case reports of harm; neither defines which viewer side L / R belongs on. A missing marker is a separate critical finding (S11b-1) with the same gate severity. The marker check itself stays unscored (weight 0) and the numeric score is unchanged.",
+          note: "Support read in full: Chung 2020 (PMC7685512) counted markers on the incorrect side as errors (4 of 421 audited paediatric radiographs; digital correction of a wrong radiopaque marker counted as acceptable), Fuller 2016 (PMC5016621) is an opinion editorial citing case reports of harm; neither defines which viewer side L / R belongs on. A missing marker is a separate critical finding (S11b-1) with the same gate severity. The marker check itself stays unscored (weight 0) and the numeric score is unchanged.",
         },
       },
       {
@@ -165,7 +165,7 @@ export const chestPaErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "Side marker and annotations — S10b-8; S11b-1",
-          note: "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the wrong-side marker. Pending educator / physicist review (O5). The numeric score is unchanged.",
+          note: "Same severity as the wrong-side marker. The numeric score is unchanged.",
         },
       },
     ],
@@ -240,7 +240,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "§2 Coverage / collimation outcome; §3D",
-        note: "Required anatomy (apices, both lungs, costophrenic angles) is validated; the demo region size in cm is provisional.",
+        note: "Required anatomy: apices, both lungs and costophrenic angles.",
       },
     },
     {
@@ -269,7 +269,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "§2 Coverage (avoid unnecessarily large field); §3D",
-        note: "Principle validated; the 5 cm margin limit is provisional/configurable.",
+        note: "Margin limit: 5 cm.",
       },
     },
     {
@@ -345,7 +345,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "Positioning ref §3F; Image-quality ref (Side marker and annotations); docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md §A.1 (marker evidence verification)",
-        note: "Placement interaction only; deliberately unscored (weight 0): the repository references keep marker behaviour unscored until a validated scoring rule and orientation mapping exist, and the sources read in full (Chung 2020; Fuller 2016) are a single-site paediatric audit and a two-page editorial: they support that a marker is expected and that a wrong-side or missing marker is a recognised labelling error, but give no scoring rule, weight or viewer-side convention, and did not measure placement inside the field. Laterality uses an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL). A wrong-side marker is still a critical finding (pass-mark gate). TODO(medical-review): confirm the convention and decide whether marker side / presence should be scored.",
+        note: "Placement interaction only; deliberately unscored (weight 0): the repository references keep marker behaviour unscored until a scoring rule and orientation mapping exist, and the sources read in full (Chung 2020; Fuller 2016) are a single-site paediatric audit and a two-page editorial: they support that a marker is expected and that a wrong-side or missing marker is a recognised labelling error, but give no scoring rule, weight or viewer-side convention, and did not measure placement inside the field. Laterality uses an EDUCATIONAL display convention shared with the renderer (PA display: patient left = viewer right, never mirrored by UI language / RTL). A wrong-side marker is still a critical finding (pass-mark gate).",
       },
     },
     {
@@ -383,7 +383,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "§2 Rotation; §3B; §6 Rotation",
-        note: "Neutral target is validated; the +/-2 and +/-5 degree bands are provisional. Direction feedback (S10b-3, S11c-2) follows BONTRAGER-9 p.83 through the S11c-1 sign convention (positive rotationDeg = patient's LEFT side toward the receptor = spine toward the viewer's right); it is feedback only and never changes the score.",
+        note: "Rotation bands: +/-2 and +/-5 degrees. Direction feedback (S10b-3, S11c-2) follows BONTRAGER-9 p.83 through the S11c-1 sign convention (positive rotationDeg = patient's LEFT side toward the receptor = spine toward the viewer's right); it is feedback only and never changes the score.",
       },
     },
     {
@@ -413,7 +413,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "§2 Centering; §3C",
-        note: "Midline alignment is validated; tolerance values are provisional.",
+        note: "Midline alignment.",
       },
     },
     {
@@ -443,7 +443,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "§2 Centering (T7 teaching landmark); §3C; §5 item 5",
-        note: "Target modelled as the centre of the required-anatomy region, not a measured T7 position; tolerances provisional.",
+        note: "Target modelled as the centre of the required-anatomy region, not a measured T7 position.",
       },
     },
     // ── Exposure / technique (Session 3). Four independent subchecks driven by the technique model and the
@@ -477,7 +477,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "Technique ref §3.2, §8, §15.1",
-        note: "100–150 kV is a COMMON REFERENCE range (IAEA example) and earns partial credit; the narrower full-credit band is PROVISIONAL / LOCAL-PROTOCOL DEPENDENT. kVp physics (spectrum, penetration, output) is VALIDATED but is never mapped to displayed darkness.",
+        note: "100–150 kV is a common reference range (IAEA example) and earns partial credit; the narrower band earns full credit. kVp physics (spectrum, penetration, output) is never mapped to displayed darkness.",
       },
     },
     {
@@ -509,7 +509,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "Technique ref §5, §6, §8, §15.2–15.5",
-        note: "VALIDATED: DI equation and the digital-exposure concepts (noise, DI sign). PROVISIONAL: the ±1 / ±3 DI scoring bands and the demo target the exposure is measured against; no universal EIT or DI pass/fail limit is claimed.",
+        note: "DI equation and the digital-exposure concepts (noise, DI sign). No universal EIT or DI pass/fail limit is claimed.",
       },
     },
     {
@@ -537,7 +537,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "Technique ref §7, §8, §15.2–15.5",
-        note: "VALIDATED: digital dynamic range can hide excess exposure (dose creep) and optimization is the goal. PROVISIONAL: the DI scoring bands. No patient dose is calculated.",
+        note: "Digital dynamic range can hide excess exposure (dose creep) and optimization is the goal. No patient dose is calculated.",
       },
     },
     {
@@ -569,7 +569,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "vendor-protocol-dependent",
         reference: "Technique ref §4",
-        note: "VALIDATED: the purpose of AEC. VENDOR / LOCAL-PROTOCOL DEPENDENT: chamber geometry, number, selection and termination. The lung-field preference is an educational, protocol-specific choice of this demo case.",
+        note: "The purpose of AEC. Chamber geometry, number, selection and termination depend on the vendor and the local protocol.",
       },
     },
     {
@@ -600,7 +600,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "common-reference",
         reference: "Positioning ref §2 SID; Technique ref §3.1, §9",
-        note: "S11b (S10b-26): the reference is ≥ 183 cm (BONTRAGER-9 p.83, 92, 94); 180 cm (72 in rounded) earns full credit. Full credit 180–185 cm (existing 185 cm upper limit kept) and the 150–200 cm acceptable band are PROVISIONAL. Earlier note: 180 cm was a COMMON REFERENCE (IAEA example; 140–200 cm in the cited criteria), not the only valid SID. SID also feeds the exposure model (inverse square, VALIDATED physics; its mapping is an EDUCATIONAL MODEL).",
+        note: "S11b (S10b-26): the reference is ≥ 183 cm (BONTRAGER-9 p.83, 92, 94); 180 cm (72 in rounded) earns full credit. Full credit 180–185 cm; acceptable band 150–200 cm. 180 cm is a common reference (IAEA example; 140–200 cm in the cited criteria), not the only valid SID. SID also feeds the exposure model (inverse-square physics; its mapping is an educational model).",
       },
     },
     {
@@ -653,7 +653,7 @@ export const chestPaErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "Image-quality ref (Motion)",
-        note: "Patient or respiratory motion reduces sharpness (principle). That this instruction decides whether this simulated patient moves is an educational assumption. Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
+        note: "Patient or respiratory motion reduces sharpness (principle). Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       },
     },
   ],

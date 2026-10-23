@@ -17,6 +17,6 @@ export const shoulderTechnique: AnyExamTechniqueProfile = {
   } },
   assumptions: [
     ...base.assumptions.filter(a => KEEP.includes(a.id)),
-    { id: "shoulder-reference", label: { en: "Shoulder teaching model", ar: "نموذج الكتف التعليمي" }, value: { en: "Bontrager p.196: digital 80 ± 5 kV, SID at least 102 cm, grid. Manual-only mode, the partial bands, the 80 kV / 2 mAs / 102 cm model anchor, attenuation and tolerances are engine teaching choices, not a clinical technique chart.", ar: "Bontrager ص.196: ‏رقمي 80 ± 5 kV وSID لا يقل عن 102 سم، مع شبكة. الوضع اليدوي والنطاقات الجزئية ونقطة النموذج 80 kV و2 mAs عند 102 سم والتوهين والتسامحات اختيارات تعليمية في المحاكي وليست جدول تعريض سريريًا." }, evidence: { status: "educational-simplification", reference: "docs/DECISIONS.md S-SHOULDER-3-3; BONTRAGER-9 p.196" } },
+    { id: "shoulder-reference", label: { en: "Shoulder teaching model", ar: "نموذج الكتف التعليمي" }, value: { en: "Bontrager p.196: digital 80 ± 5 kV, SID at least 102 cm, grid. Manual-only mode, the partial bands, the 80 kV / 2 mAs / 102 cm model anchor, attenuation and tolerances are not a clinical technique chart.", ar: "Bontrager ص.196: ‏رقمي 80 ± 5 kV وSID لا يقل عن 102 سم، مع شبكة. الوضع اليدوي والنطاقات الجزئية ونقطة النموذج 80 kV و2 mAs عند 102 سم والتوهين والتسامحات وليست جدول تعريض سريريًا." }, evidence: { status: "educational-simplification", reference: "docs/DECISIONS.md S-SHOULDER-3-3; BONTRAGER-9 p.196" } },
   ],
 };

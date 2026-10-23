@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 227,
-  "updated_at": "2026-10-22T20:30:00+00:00",
+  "revision": 228,
+  "updated_at": "2026-10-23T05:46:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -631,11 +631,11 @@
     {
       "id": "RAD-068",
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
-      "status": "in_progress",
+      "status": "review",
       "priority": "high",
-      "description": "الجزءان 1 و2 مدموجان (#109، #110). الجزء 3 (بنود S: S8 فحص، S3، S5، S2 بدفعاته 4a–4d، S6، ومتابعة S5) منفذ في PR مسودة؛ تدقيقا العلامة والتخطيط وbuild:pages نجحت. الجزء الأخير: علامات provisional ونصوص الدليل المعروضة (provisional/VALIDATED/pending educator review، D1) تُحسم قبل اكتمال RAD-068؛ ثم بنود R. CLN-025 مؤجل، CLN-018 مفتوح.",
-      "source_ref": "docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#part2-acceptance-owner-2026-10-22؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
-      "waiting_on": "code"
+      "description": "كل أجزاء RAD-068 داخلة؛ الجزء الأخير في PR مسودة (نصوص الدليل بلا عبارات الحالة، وفقرة «قيمة تعليمية» في الشروط، وتوسيع اختبار النصوص). علامات provisional الداخلية دون تغيير. بنود R انتقلت إلى RAD-072. ينتظر فحص المالك ثم يضبطه done. CLN-025 مؤجل، CLN-018 مفتوح.",
+      "source_ref": "تقارير الأجزاء: docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_FINAL_REPORT_2026-10-22.md؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#part2-acceptance-owner-2026-10-22؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-069",
@@ -669,8 +669,8 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "planned",
       "priority": "high",
-      "description": "بعد RAD-068 وقبل RAD-069: مناظر مشهد الصدر الجانبي، ورئتا الصدر AP مستلقيًا، وعظام القدم ودورانها، واتجاه رسم الكاحل الجانبي، وعظم اليد عند الدوران، وتغيّر الكتف مع زاوية الجسم، والمساحة المخططة في نتيجة الكاحل AP. بند «الكاحل AP يُظهر الجانبي» مغلق بحسب التصميم. كل رسم بموافقة المالك على scene-dom.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
+      "description": "بعد RAD-068 وقبل RAD-069: بنود R (تكبير رئة جهة المشاهد S12-1، رسوم AP/PA S13b-1، نقطة توسيط الركبة S14.4-R9) مع مناظر الصدر الجانبي، ورئتي AP، وعظام القدم، والكاحل الجانبي، وعظم اليد عند الدوران، والكتف مع زاوية الجسم، ومساحة الكاحل AP. كل رسم بموافقة المالك على scene-dom.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
       "waiting_on": "code"
     }
   ]

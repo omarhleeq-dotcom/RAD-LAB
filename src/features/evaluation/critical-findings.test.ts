@@ -125,7 +125,7 @@ describe("2 · critical findings gate the pass mark without changing the numeric
       expect(f.concept.status, f.id).toBe("common-reference");
       expect(f.concept.note, f.id).toMatch(/COMMON QUALITY CRITERION/);
       expect(f.evidence.status, f.id).toBe("provisional");
-      expect(f.evidence.note, f.id).toMatch(/PROVISIONAL \/ educational/);
+      expect(f.evidence.note, f.id).toMatch(/numeric score is unchanged/);
       expect(f.concept.reference.length).toBeGreaterThan(0);
     }
   });

@@ -127,7 +127,7 @@ export const chestApSupineExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "S10b-13, S10b-22",
-          note: "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the PA wrong-side marker. The numeric score is unchanged.",
+          note: "Same severity as the PA wrong-side marker. The numeric score is unchanged.",
         },
       },
       {
@@ -225,10 +225,10 @@ export const chestApSupineExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "BONTRAGER-9 p.96-97 (criteria: collimate on four sides to the lung fields); AP ref §8",
-        note: "The required anatomy is Bontrager's criterion; the 27 × 31 cm demo region is provisional (S10b-15, O2).",
+        note: "The required anatomy is Bontrager's criterion.",
       },
     },
-    { ...pa("collimation-excess"), evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.96 (collimate to the lung fields)", note: "Principle validated; the 5 cm margin limit is provisional / configurable." } },
+    { ...pa("collimation-excess"), evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.96 (collimate to the lung fields)", note: "Margin limit: 5 cm." } },
     {
       id: "shoulders",
       kind: "equals",
@@ -309,7 +309,7 @@ export const chestApSupineExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.83, 96; S10b-3; S13",
-        note: "Criterion = the PA's (equal spine-to-rib-border and sternoclavicular distances, p.96). The ±2° / ±5° bands are an ENGINE TEACHING CHOICE (the same numbers as the PA; Bontrager gives no angle). Magnitude only (S13-6): no direction text. The sign of the value is defined by the RESULT IMAGE (positive = the spine shifts to the viewer's right in the frontal image, as for the PA, S11c-1); the sternal-clavicle-end rule (p.83) is the PA geometry and is not applied to the AP.",
+        note: "Criterion = the PA's (equal spine-to-rib-border and sternoclavicular distances, p.96). Bontrager gives no angle. Magnitude only (S13-6): no direction text. The sign of the value is defined by the RESULT IMAGE (positive = the spine shifts to the viewer's right in the frontal image, as for the PA, S11c-1); the sternal-clavicle-end rule (p.83) is the PA geometry and is not applied to the AP.",
       },
     },
     {
@@ -333,7 +333,7 @@ export const chestApSupineExam: ExamDefinition = {
           ar: "الشعاع المركزي مزاح إلى يمين الخط المنتصف (يمين عرض الكاشف). يقع الصدر بعيدًا عن المركز وقد تُقطع حافة الرئة في ذلك الجانب. حرّك الهدف يسارًا نحو الخط المنتصف.",
         },
       },
-      evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.96; AP ref §3", note: "Midline alignment; tolerance values are provisional." },
+      evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.96; AP ref §3", note: "Midline alignment." },
     },
     {
       id: "centering-vertical",
@@ -359,7 +359,7 @@ export const chestApSupineExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.96 (T7, 8–10 cm below the jugular notch); S10b-23",
-        note: "T7 is Bontrager's level; the position on the detector is modelled as the centre of the demo region and the tolerances are provisional.",
+        note: "T7 is Bontrager's level; the position on the detector is modelled as the centre of the required region.",
       },
     },
     {
@@ -393,7 +393,7 @@ export const chestApSupineExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.96-97; S10b-23; S13",
-        note: "About 5° caudad (perpendicular to the long axis of the sternum) is Bontrager. The ±2° full-credit band and the 1–10° partial band are an ENGINE TEACHING CHOICE (not Bontrager). Feedback only: the clavicle / apex appearance is NOT drawn on the result image.",
+        note: "About 5° caudad (perpendicular to the long axis of the sternum) is Bontrager. Feedback only: the clavicle / apex appearance is NOT drawn on the result image.",
       },
     },
     {
@@ -410,23 +410,23 @@ export const chestApSupineExam: ExamDefinition = {
           ar: "قيمة kVp ضمن النطاق المستهدف لهذه الحالة (110–125 kV)، وهو النطاق الأمثل للصدر في الكتاب، ومنه صدر AP المستلقي.",
         },
         low: {
-          en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; the 100–109 and 126–150 kV partial credit is an engine teaching choice.)",
-          ar: "قيمة kVp أقل من النطاق المستهدف. الحزمة الأقل اختراقًا تمتصها البنى الكثيفة أكثر (القلب والعمود الفقري) فيصعب رؤية العلامات الرئوية خلفها. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 100–109 و126–150 kV فهي اختيار تعليمي في المحاكي.)",
+          en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; 100–109 and 126–150 kV earns partial credit.)",
+          ar: "قيمة kVp أقل من النطاق المستهدف. الحزمة الأقل اختراقًا تمتصها البنى الكثيفة أكثر (القلب والعمود الفقري) فيصعب رؤية العلامات الرئوية خلفها. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق في الكتاب هو 110–125 kV فقط؛ وتُمنح درجة جزئية لـ 100–109 و126–150 kV.)",
         },
         high: {
-          en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; the 126–150 kV partial credit is an engine teaching choice.)",
-          ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 126–150 kV فهي اختيار تعليمي.)",
+          en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; 126–150 kV earns partial credit.)",
+          ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ وتُمنح درجة جزئية لـ 126–150 kV.)",
         },
         fail: { en: "kVp is outside this case's protocol range.", ar: "قيمة kVp خارج نطاق بروتوكول هذه الحالة." },
       },
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.81, 92, 94, 96; S10b-1; S12-1",
-        note: "110–125 kV is Bontrager (p.96). The partial bands 100–109 and 126–150 kV are an ENGINE TEACHING CHOICE (owner-approved), NOT Bontrager. kVp physics is validated but never mapped to displayed darkness.",
+        note: "110–125 kV is Bontrager (p.96). kVp physics is never mapped to displayed darkness.",
       },
     },
-    { ...pa("exposure-adequacy"), evidence: { status: "provisional", reference: "Technique ref §5, §6, §8; S10b-9", note: "VALIDATED: DI equation and digital-exposure concepts. PROVISIONAL: the ±1 / ±3 DI bands and the demo target; no numeric mAs target and no universal EIT or DI limit is claimed. A portable AP exposure is manual and recorded per image (S10b-2); the exposure mode itself is not scored." } },
-    { ...pa("dose-optimization"), evidence: { status: "provisional", reference: "Technique ref §7, §8; S10b-9", note: "VALIDATED: digital dynamic range can hide excess exposure (dose creep). PROVISIONAL: the DI bands. No patient dose is calculated." } },
+    { ...pa("exposure-adequacy"), evidence: { status: "provisional", reference: "Technique ref §5, §6, §8; S10b-9", note: "DI equation and digital-exposure concepts; no numeric mAs target and no universal EIT or DI limit is claimed. A portable AP exposure is manual and recorded per image (S10b-2); the exposure mode itself is not scored." } },
+    { ...pa("dose-optimization"), evidence: { status: "provisional", reference: "Technique ref §7, §8; S10b-9", note: "Digital dynamic range can hide excess exposure (dose creep). No patient dose is calculated." } },
     {
       id: "sid",
       kind: "range",
@@ -445,15 +445,15 @@ export const chestApSupineExam: ExamDefinition = {
           ar: "قيمة SID أقصر من 183 سم (72 بوصة)، وهو الحد الأدنى حيثما أمكن. يمكن قبول مسافة أقصر لمريض لا يمكن تصويره على تلك المسافة، لكن يجب حينئذٍ كتابة SID المستخدمة على الصورة مع الإسقاط (مثل AP مستلقيًا؛ ولا يحاكي المحاكي هذه البطاقة بعد). كما تجعل القلب يبدو أكبر (للتعليم فقط) وتزيد التعريض عند الكاشف (قانون التربيع العكسي).",
         },
         high: {
-          en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum; the upper limit is an engine teaching choice.)",
-          ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى اختيار تعليمي في المحاكي.)",
+          en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum.)",
+          ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط.)",
         },
         fail: { en: "SID is outside this case's target band (below about 102 cm or above 200 cm).", ar: "قيمة SID خارج النطاق المستهدف لهذه الحالة (أقل من نحو 102 سم أو أكثر من 200 سم)." },
       },
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.96 (minimum 183 cm where possible, otherwise label the SID); ACR-PORTABLE Sec IV (102 cm); S10b-23; S12-1",
-        note: "Bontrager gives a MINIMUM of 72 in (183 cm) where possible and asks for the SID to be marked when shorter. The 185 cm upper full-credit limit, the 150–200 cm style partial band and the 102 cm lower bound (ACR-PORTABLE conversion, not Bontrager) are ENGINE TEACHING CHOICES; 180 cm earns full credit as the rounding of 183.",
+        note: "Bontrager gives a MINIMUM of 72 in (183 cm) where possible and asks for the SID to be marked when shorter. The 102 cm lower bound is an ACR-PORTABLE conversion; 180 cm earns full credit as the rounding of 183.",
       },
     },
     {

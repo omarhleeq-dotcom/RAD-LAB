@@ -235,7 +235,7 @@
     "criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score ({total}) and the category weights are unchanged.",
     "criticalEvidence": "Evidence for this critical finding",
     "criticalConcept": "Concept (common quality criterion)",
-    "criticalImplementation": "Implementation (educational simulator rule)"
+    "criticalImplementation": "Implementation in this simulator"
   },
   "categories": {
     "positioning": "Positioning",
@@ -298,7 +298,7 @@
     },
     "gaugeTitle": "Detector exposure relative to the target",
     "gaugeAlt": "Scale of the deviation index from −6 to +6 with the target at 0 and your exposure marked.",
-    "gaugeNote": "DI = 10 × log10(EI / EIT). +3 ≈ twice the target exposure, −3 ≈ half. The ±1 and ±3 scoring bands are teaching choices of this simulator, not universal limits. EI here is a simulated exposure indicator, not patient dose.",
+    "gaugeNote": "DI = 10 × log10(EI / EIT). +3 ≈ twice the target exposure, −3 ≈ half. The ±1 and ±3 scoring bands are not universal limits. EI here is a simulated exposure indicator, not patient dose.",
     "whyTitle": "Why",
     "why": {
       "kvp": "kVp sets the energy spectrum of the beam: it changes penetration and X-ray output. It is not a brightness control — on digital systems processing sets the displayed brightness.",
@@ -322,7 +322,7 @@
       "outside-patient": "outside the patient"
     },
     "assumptionsTitle": "Model assumptions & evidence",
-    "assumptionsIntro": "Every medical rule behind this feedback is classified. Only “source-based” items are claims taken from a cited source; the rest are protocol-specific or teaching choices.",
+    "assumptionsIntro": "Every medical rule behind this feedback is classified. Only “source-based” items are claims taken from a cited source; the rest are protocol-specific or educational simplifications.",
     "profile": "Protocol profile"
   },
   "patient": {
@@ -1152,8 +1152,8 @@
     "midline": "Midsagittal plane",
     "detectorCaption": "Detector view: AP pelvis, patient right on viewer left",
     "sideViewCaption": "Supine setup and independent leg-position gauge",
-    "schematicNote": "Educational schematic, not anatomically exact. The same one-image model drives pelvic rotation in the setup and result. Leg position is independent; hidden trochanters and femoral-neck foreshortening are not reconstructed on the radiograph. Numeric tolerances and geometry are teaching assumptions.",
-    "rotationHelp": "Rotate the pelvis independently of both legs. Iliac wings and obturator foramina should be symmetric. This one-image warp is a teaching approximation; ±2° full / ±5° partial are engine teaching choices.",
+    "schematicNote": "Educational schematic, not anatomically exact. The same one-image model drives pelvic rotation in the setup and result. Leg position is independent; hidden trochanters and femoral-neck foreshortening are not reconstructed on the radiograph.",
+    "rotationHelp": "Rotate the pelvis independently of both legs. Iliac wings and obturator foramina should be symmetric. This one-image warp is a teaching approximation; ±2° full / ±5° partial credit.",
     "markerConvention": "Marker R inside the field, clear of the anatomy; only the letter is judged. The baseline has no fixed marker. Never mirrored in Arabic.",
     "markerHint": "Choose R, then place it inside the field and outside the pelvis.",
     "rotation": "Pelvic rotation"
@@ -1173,8 +1173,8 @@
     "midline": "Scapulohumeral joint",
     "detectorCaption": "Detector view: right shoulder, AP oblique glenoid (Grashey), patient right on viewer left",
     "sideViewCaption": "Plan view from above: the erect patient, body turn and independent arm position",
-    "schematicNote": "Educational schematic, not anatomically exact. The same one-image model closes the joint space in the setup and in the result when the body turn is outside the 35°–45° source range. The arm position is drawn in the setup only and does not change the radiograph; the glenoid rims and head overlap are not reconstructed. Scale, region and tolerances are teaching assumptions.",
-    "rotationHelp": "Turn the body toward the affected (right) shoulder; the angle is the absolute turn from the detector. Bontrager gives 35°–45° and every angle in that range scores the same: there is no single ideal angle. The 30°–50° partial band is an engine teaching choice.",
+    "schematicNote": "Educational schematic, not anatomically exact. The same one-image model closes the joint space in the setup and in the result when the body turn is outside the 35°–45° source range. The arm position is drawn in the setup only and does not change the radiograph; the glenoid rims and head overlap are not reconstructed.",
+    "rotationHelp": "Turn the body toward the affected (right) shoulder; the angle is the absolute turn from the detector. Bontrager gives 35°–45° and every angle in that range scores the same: there is no single ideal angle. Partial credit applies within 30°–50°.",
     "markerConvention": "Marker R (the patient's right) inside the field, clear of the anatomy; only the letter is judged. The baseline has no fixed marker. Never mirrored in Arabic.",
     "markerHint": "Choose R, then place it inside the field and outside the shoulder.",
     "rotation": "Body turn toward the right shoulder"
@@ -1432,7 +1432,10 @@
       "title": "Patient data and usage rules",
       "p1": "Never enter real patient data or images. RAD-LAB is an experimental educational simulator and is not for clinical use or medical decision-making.",
       "p2": "Your account is for personal use and must not be shared with others. Training content must not be republished. You may share a screenshot of your result or talk about your experience. You must not attempt to disrupt the operation of the website.",
-      "p3": "The simulator does not assess radiation shielding (such as gonad or thyroid shields). This does not replace your local radiation-protection policy."
+      "p3": "The simulator does not assess radiation shielding (such as gonad or thyroid shields). This does not replace your local radiation-protection policy.",
+      "p4": "Values marked “Teaching value”, “Educational simplification” or “Common reference / not universal” reflect choices or simplifications made in this simulator for teaching purposes (for example tolerance limits, scoring weights, exposure-indicator ranges and the size of visual effects); they are not universal clinical standards. Facts are taken from the professional sources cited.",
+      "p5": "Some errors are treated as critical in this simulator for teaching purposes; this is not a clinical accept or reject decision.",
+      "p6": "The simulated patient's behaviour follows simplified teaching assumptions."
     },
     "closing": "By ticking “I agree”, you confirm that you have read this page and agree to participate as described."
   },

@@ -114,7 +114,7 @@ export const chestLateralErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "S10b-13, S10b-21, S12-7",
-          note: "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the PA wrong-side marker. The numeric score is unchanged.",
+          note: "Same severity as the PA wrong-side marker. The numeric score is unchanged.",
         },
       },
       {
@@ -140,7 +140,7 @@ export const chestLateralErectExam: ExamDefinition = {
         evidence: {
           status: "provisional",
           reference: "S10b-13, S10b-6",
-          note: "PROVISIONAL / educational: the gate is a simulator rule; the final list of critical findings is set by an educator. The numeric score is unchanged.",
+          note: "The numeric score is unchanged.",
         },
       },
     ],
@@ -185,7 +185,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "common-reference",
         reference: "BONTRAGER-9 p.84, 94; S10b-4",
-        note: "Left lateral unless the protocol or right-sided pathology calls for the right (Bontrager); both sides are offered, left is correct for this case. Pending educator confirmation (O7 closed by S10b-4).",
+        note: "Left lateral unless the protocol or right-sided pathology calls for the right (Bontrager); both sides are offered, left is correct for this case.",
       },
     },
     {
@@ -230,10 +230,10 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "educational-simplification",
         reference: "BONTRAGER-9 p.94 (criteria); Lateral ref §3",
-        note: "The required anatomy is Bontrager's criterion; the 27 × 31 cm demo region is provisional (S10b-15, O2).",
+        note: "The required anatomy is Bontrager's criterion.",
       },
     },
-    { ...pa("collimation-excess"), evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.94 (collimate to the lung fields)", note: "Principle validated; the 5 cm margin limit is provisional / configurable." } },
+    { ...pa("collimation-excess"), evidence: { status: "educational-simplification", reference: "BONTRAGER-9 p.94 (collimate to the lung fields)", note: "Margin limit: 5 cm." } },
     {
       id: "chin",
       kind: "equals",
@@ -329,10 +329,12 @@ export const chestLateralErectExam: ExamDefinition = {
           ar: "المريض مائل (دوران). الأضلاع الخلفية والزاويتان الضلعيتان الحجابيتان للجانبين أبعد من نحو 1 سم الذي يسببه تباعد الحزمة عادةً. يُحكم على الدوران بمقدار هذا التباعد؛ ويصعب تحديد الاتجاه في الصورة الجانبية فلا يُذكر. والصورة الجانبية المائلة بوضوح خطأ في الوضعية يجب تصحيحه في التدريب.",
         },
       },
+      // ENGINE TEACHING CHOICE (S12-3): the ±2° / ±5° bands come from separation ≈ 2·a·sin(θ) with an assumed thorax half-width a = 14 cm
+      // (1 cm → about 2°; 5° → about 2.4 cm). Neither the half-width nor the mapping is a Bontrager value. Not shown on screen (RAD-068 final part).
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.84-85, 94; S10b-7; S12-3",
-        note: "ENGINE TEACHING CHOICE (S12-3): Bontrager gives about 1 cm of normal separation at 183 cm and no angle. The ±2° / ±5° bands come from separation ≈ 2·a·sin(θ) with an assumed thorax half-width a = 14 cm (1 cm → about 2°; 5° → about 2.4 cm). Neither the half-width nor the mapping is a Bontrager value. Magnitude only, no direction.",
+        note: "Bontrager gives about 1 cm of normal separation at 183 cm and no angle (S12-3). Magnitude only, no direction.",
       },
     },
     {
@@ -356,7 +358,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.94; Lateral ref §3",
-        note: "CR perpendicular to the mid-thorax; the target is the centre of the demo region and the tolerances are provisional.",
+        note: "CR perpendicular to the mid-thorax; the target is the centre of the required region.",
       },
     },
     {
@@ -380,7 +382,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.94 (T7, 7.5–10 cm below the jugular notch); S10b-5",
-        note: "T7 is Bontrager's level; the position on the detector is modelled as the centre of the demo region and the tolerances are provisional.",
+        note: "T7 is Bontrager's level; the position on the detector is modelled as the centre of the required region.",
       },
     },
     {
@@ -397,23 +399,23 @@ export const chestLateralErectExam: ExamDefinition = {
           ar: "قيمة kVp ضمن النطاق المستهدف لهذه الحالة (110–125 kV). تُصوَّر الصورة الجانبية للصدر بجهد مرتفع نسبيًا لتظهر الأضلاع والعلامات الرئوية عبر القلب والرئتين العلويتين.",
         },
         low: {
-          en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; the 100–109 and 126–150 kV partial credit is an engine teaching choice.)",
-          ar: "قيمة kVp أقل من النطاق المستهدف. الحزمة الأقل اختراقًا تمتصها البنى الكثيفة أكثر (القلب والعمود الفقري) فيصعب رؤية العلامات الرئوية خلفها. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 100–109 و126–150 kV فهي اختيار تعليمي في المحاكي.)",
+          en: "kVp is below the target band. A less penetrating beam is absorbed more by the heart and the spine, so lung markings behind them are harder to see. Extra mAs adds photons, not penetration. (Only 110–125 kV is the textbook band; 100–109 and 126–150 kV earns partial credit.)",
+          ar: "قيمة kVp أقل من النطاق المستهدف. الحزمة الأقل اختراقًا تمتصها البنى الكثيفة أكثر (القلب والعمود الفقري) فيصعب رؤية العلامات الرئوية خلفها. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق في الكتاب هو 110–125 kV فقط؛ وتُمنح درجة جزئية لـ 100–109 و126–150 kV.)",
         },
         high: {
-          en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; the 126–150 kV partial credit is an engine teaching choice.)",
-          ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ أما الدرجة الجزئية لـ 126–150 kV فهي اختيار تعليمي.)",
+          en: "kVp is above the target band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only 110–125 kV is the textbook band; 126–150 kV earns partial credit.)",
+          ar: "قيمة kVp أعلى من النطاق المستهدف. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق في الكتاب هو 110–125 kV فقط؛ وتُمنح درجة جزئية لـ 126–150 kV.)",
         },
         fail: { en: "kVp is outside this case's protocol range.", ar: "قيمة kVp خارج نطاق بروتوكول هذه الحالة." },
       },
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.81, 92, 94; S10b-1; S12-1",
-        note: "110–125 kV is Bontrager (p.94). The partial bands 100–109 and 126–150 kV are an ENGINE TEACHING CHOICE (owner-approved), NOT Bontrager. kVp physics is validated but never mapped to displayed darkness.",
+        note: "110–125 kV is Bontrager (p.94). kVp physics is never mapped to displayed darkness.",
       },
     },
-    { ...pa("exposure-adequacy"), evidence: { status: "provisional", reference: "Technique ref §5, §6, §8; S10b-9", note: "VALIDATED: DI equation and digital-exposure concepts. PROVISIONAL: the ±1 / ±3 DI bands and the demo target; no numeric mAs target and no universal EIT or DI limit is claimed. A lateral is expected to need more exposure than the PA (teaching only, S10b-9)." } },
-    { ...pa("dose-optimization"), evidence: { status: "provisional", reference: "Technique ref §7, §8; S10b-9", note: "VALIDATED: digital dynamic range can hide excess exposure (dose creep). PROVISIONAL: the DI bands. No patient dose is calculated." } },
+    { ...pa("exposure-adequacy"), evidence: { status: "provisional", reference: "Technique ref §5, §6, §8; S10b-9", note: "DI equation and digital-exposure concepts; no numeric mAs target and no universal EIT or DI limit is claimed. A lateral is expected to need more exposure than the PA (S10b-9)." } },
+    { ...pa("dose-optimization"), evidence: { status: "provisional", reference: "Technique ref §7, §8; S10b-9", note: "Digital dynamic range can hide excess exposure (dose creep). No patient dose is calculated." } },
     {
       id: "aec-chambers",
       kind: "technique",
@@ -442,7 +444,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: {
         status: "vendor-protocol-dependent",
         reference: "Technique ref §4; EC16260 p.21; S10b-2",
-        note: "VALIDATED: the purpose of AEC. The central-chamber choice follows the EC16260 example (Bontrager is silent on AEC); the layout and factors are VENDOR / LOCAL-PROTOCOL DEPENDENT.",
+        note: "The purpose of AEC. The central-chamber choice follows the EC16260 example (Bontrager is silent on AEC); the layout and factors depend on the vendor and the local protocol.",
       },
     },
     {
@@ -462,15 +464,15 @@ export const chestLateralErectExam: ExamDefinition = {
           ar: "قيمة SID أقصر من الحد الأدنى 183 سم (72 بوصة). المسافة الأقصر تزيد التعريض عند الكاشف (قانون التربيع العكسي) فيلزم خفض العوامل في الوضع اليدوي، كما تزيد التكبير.",
         },
         high: {
-          en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. An AEC compensates in the educational model. (The textbook gives only a minimum; the upper limit is an engine teaching choice.)",
-          ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. ويعوّض AEC ذلك في النموذج التعليمي. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى اختيار تعليمي في المحاكي.)",
+          en: "SID is longer than this simulator's teaching band; exposure at the detector drops (inverse-square), so in manual mode the technique would need adjusting. An AEC compensates in the educational model. (The textbook gives only a minimum.)",
+          ar: "قيمة SID أطول من النطاق التعليمي في المحاكي؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. ويعوّض AEC ذلك في النموذج التعليمي. (الكتاب يذكر حدًا أدنى فقط.)",
         },
         fail: { en: "SID is outside this case's target band.", ar: "قيمة SID خارج النطاق المستهدف لهذه الحالة." },
       },
       evidence: {
         status: "provisional",
         reference: "BONTRAGER-9 p.94 (minimum 183 cm); S10b-26; S12-1",
-        note: "Bontrager gives a MINIMUM of 72 in (183 cm) only. The 185 cm upper full-credit limit and the 150–200 cm partial band are ENGINE TEACHING CHOICES (owner decision 2026-10-07), NOT Bontrager; 180 cm earns full credit as the rounding of 183.",
+        note: "Bontrager gives a MINIMUM of 72 in (183 cm) only. 180 cm earns full credit as the rounding of 183.",
       },
     },
     {

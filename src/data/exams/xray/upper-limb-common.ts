@@ -124,8 +124,8 @@ const PER = {
       "الرسغ متعامد مع الكاشف: المسافات بين قواعد عظام مشط اليد متقاربة، ويظهر تقعر متساوٍ على جانبي أجسامها، والطرفان السفليان للكعبرة والزند منفصلان (Bontrager ص.156).",
     ),
     rotationFail: T(
-      "The wrist is rotated. The spaces between the proximal metacarpals are unequal and the ulna moves over the radius, so the distal radius and ulna are no longer separated (Bontrager p.156). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the wrist). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "الرسغ مائل (دوران). أصبحت المسافات بين قواعد عظام مشط اليد غير متساوية وتحرك الزند فوق الكعبرة، فلم تعد النهايتان البعيدتان للكعبرة والزند منفصلتين (Bontrager ص.156). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للرسغ). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The wrist is rotated. The spaces between the proximal metacarpals are unequal and the ulna moves over the radius, so the distal radius and ulna are no longer separated (Bontrager p.156). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the wrist). Full credit within ±2°, partial credit within ±5°.",
+      "الرسغ مائل (دوران). أصبحت المسافات بين قواعد عظام مشط اليد غير متساوية وتحرك الزند فوق الكعبرة، فلم تعد النهايتان البعيدتان للكعبرة والزند منفصلتين (Bontrager ص.156). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للرسغ). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       ...WRIST_TOP_BOTTOM,
@@ -164,8 +164,8 @@ const PER = {
       "الرسغ في إسقاط جانبي صحيح: رأس الزند فوق النهاية البعيدة للكعبرة وقواعد عظام مشط اليد من الثانية إلى الخامسة متراكبة (Bontrager ص.158).",
     ),
     rotationFail: T(
-      "The wrist is rotated: the ulnar head is no longer over the distal radius and the proximal metacarpals are no longer superimposed (Bontrager p.158). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the wrist). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "الرسغ مائل (دوران): لم يعد رأس الزند فوق النهاية البعيدة للكعبرة ولم تعد قواعد عظام مشط اليد متراكبة (Bontrager ص.158). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للرسغ). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The wrist is rotated: the ulnar head is no longer over the distal radius and the proximal metacarpals are no longer superimposed (Bontrager p.158). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the wrist). Full credit within ±2°, partial credit within ±5°.",
+      "الرسغ مائل (دوران): لم يعد رأس الزند فوق النهاية البعيدة للكعبرة ولم تعد قواعد عظام مشط اليد متراكبة (Bontrager ص.158). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للرسغ). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       ...WRIST_TOP_BOTTOM,
@@ -204,8 +204,8 @@ const PER = {
       "اليد متعامدة مع الكاشف: تقعرات أجسام عظام مشط اليد والسلاميات متماثلة والأنسجة الرخوة على جانبي السلاميات من 2 إلى 5 متساوية (Bontrager ص.150).",
     ),
     rotationFail: T(
-      "The hand is rotated. The spaces between the metacarpal shafts and the digits are unequal and the soft tissue on the two sides of the phalanges is no longer equal (Bontrager p.150). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the hand). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "اليد مائلة (دوران). أصبحت المسافات بين أجسام عظام مشط اليد وبين الأصابع غير متساوية ولم تعد الأنسجة الرخوة على جانبي السلاميات متساوية (Bontrager ص.150). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه لليد). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The hand is rotated. The spaces between the metacarpal shafts and the digits are unequal and the soft tissue on the two sides of the phalanges is no longer equal (Bontrager p.150). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the hand). Full credit within ±2°, partial credit within ±5°.",
+      "اليد مائلة (دوران). أصبحت المسافات بين أجسام عظام مشط اليد وبين الأصابع غير متساوية ولم تعد الأنسجة الرخوة على جانبي السلاميات متساوية (Bontrager ص.150). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه لليد). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       ...HAND_TOP_BOTTOM,
@@ -243,8 +243,8 @@ const PER = {
       "اليد في إسقاط جانبي صحيح: عظام مشط اليد والسلاميات متراكبة والطرفان السفليان للكعبرة والزند متراكبان (Bontrager ص.153).",
     ),
     rotationFail: T(
-      "The hand is rotated: the metacarpals and phalanges are no longer superimposed and the distal radius and ulna are no longer superimposed (Bontrager p.153). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the hand). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "اليد مائلة (دوران): لم تعد عظام مشط اليد والسلاميات متراكبة ولم تعد النهايتان البعيدتان للكعبرة والزند متراكبتين (Bontrager ص.153). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه لليد). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The hand is rotated: the metacarpals and phalanges are no longer superimposed and the distal radius and ulna are no longer superimposed (Bontrager p.153). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the hand). Full credit within ±2°, partial credit within ±5°.",
+      "اليد مائلة (دوران): لم تعد عظام مشط اليد والسلاميات متراكبة ولم تعد النهايتان البعيدتان للكعبرة والزند متراكبتين (Bontrager ص.153). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه لليد). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       ...HAND_TOP_BOTTOM,
@@ -290,8 +290,8 @@ const PER = {
       "المرفق متعامد مع الكاشف: اللقيمتان في وضع جانبي (بروفايل) ورأس الكعبرة وعنقها وحدبتها منفصلة عن الزند أو متراكبة معه قليلًا فقط (Bontrager ص.166).",
     ),
     rotationFail: T(
-      "The elbow is rotated: the epicondyles are no longer in profile and the radial head, neck and tubercle are no longer separated from the ulna (Bontrager p.166). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the elbow). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "المرفق مائل (دوران): لم تعد اللقيمتان في وضع جانبي (بروفايل) ولم يعد رأس الكعبرة وعنقها وحدبتها منفصلة عن الزند (Bontrager ص.166). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للمرفق). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The elbow is rotated: the epicondyles are no longer in profile and the radial head, neck and tubercle are no longer separated from the ulna (Bontrager p.166). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the elbow). Full credit within ±2°, partial credit within ±5°.",
+      "المرفق مائل (دوران): لم تعد اللقيمتان في وضع جانبي (بروفايل) ولم يعد رأس الكعبرة وعنقها وحدبتها منفصلة عن الزند (Bontrager ص.166). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للمرفق). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal humerus.", "الحافة العلوية للمجال تقطع العضد السفلي."),
@@ -352,8 +352,8 @@ const PER = {
       "المرفق في إسقاط جانبي صحيح: حدود اللقمتين ونتوءاهما متراكبة ونحو نصف رأس الكعبرة مغطى بالنتوء الإكليلي (Bontrager ص.172). (الأقواس المتحدة المركز لأخدود البكرة، وهي معيار آخر لدى Bontrager، لا يرسمها هذا المحاكي.)",
     ),
     rotationFail: T(
-      "The elbow is rotated: the condyle outlines and epicondyles are no longer superimposed and the radial head is no longer about half covered by the coronoid process (Bontrager p.172). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the elbow). The ±2° full-credit and ±5° partial-credit bands are an engine teaching choice.",
-      "المرفق مائل (دوران): لم تعد حدود اللقمتين ونتوءاهما متراكبة ولم يعد نحو نصف رأس الكعبرة مغطى بالنتوء الإكليلي (Bontrager ص.172). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للمرفق). نطاقا ±2° (درجة كاملة) و±5° (درجة جزئية) اختيار تعليمي في المحاكي.",
+      "The elbow is rotated: the condyle outlines and epicondyles are no longer superimposed and the radial head is no longer about half covered by the coronoid process (Bontrager p.172). Only the amount of rotation is scored, not its direction (Bontrager gives no direction rule for the elbow). Full credit within ±2°, partial credit within ±5°.",
+      "المرفق مائل (دوران): لم تعد حدود اللقمتين ونتوءاهما متراكبة ولم يعد نحو نصف رأس الكعبرة مغطى بالنتوء الإكليلي (Bontrager ص.172). يُحتسب مقدار الدوران فقط دون اتجاهه (لا يذكر Bontrager قاعدة اتجاه للمرفق). درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°.",
     ),
     clippedSides: {
       top: T("The top of the field cuts off the distal humerus.", "الحافة العلوية للمجال تقطع العضد السفلي."),
@@ -424,7 +424,7 @@ const FAMILY = {
     excessNoteTail: "",
     clipRef: () => "collimate on all four sides to include the distal radius and ulna and the mid-metacarpal area",
     clipNote:
-      "The required anatomy is Bontrager's criterion; the region used is LIMITED BY THE BASELINE IMAGE (it ends at the proximal metacarpals, so the mid-metacarpal area cannot be shown, S14.1c-7, O28) and its size is provisional.",
+      "The required anatomy is Bontrager's criterion; the region used is LIMITED BY THE BASELINE IMAGE (it ends at the proximal metacarpals, so the mid-metacarpal area cannot be shown, S14.1c-7, O28).",
     markerRefTail: "",
     wrongSideRef: "S14.1-4, S14.1b-1, S14.1c-4",
     missingRef: "S14.1-4, S14.1b-1",
@@ -460,7 +460,7 @@ const FAMILY = {
     excessNoteTail: " The field is centred on the central ray, so a one-sided margin is unavoidable (S14.2-10, O40).",
     clipRef: () => "collimate on all four sides to the outer margins of the hand and wrist; entire hand and wrist plus about 2.5 cm of distal forearm",
     clipNote:
-      "The required anatomy is Bontrager's criterion. The 2.5 cm of distal forearm is Bontrager's 'about'; where the region's lower edge lies on the baseline (2.5 cm below the radiocarpal joint, read by eye) and the image scale (0.0113 cm / px) are engine estimates (S14.2-10, O41). Provisional.",
+      "The required anatomy is Bontrager's criterion. The 2.5 cm of distal forearm is Bontrager's 'about'.",
     markerRefTail: ", S14.2-2",
     wrongSideRef: "S14.2-5, S14.2-8, S14.1c-4",
     missingRef: "S14.2-5",
@@ -496,7 +496,7 @@ const FAMILY = {
     excessNoteTail: " The field is centred on the central ray, so a one-sided margin can be unavoidable (S14.3-9, O40).",
     clipRef: (p: Per) => `collimate on all four sides to the area of interest; ${p.covered.en}`,
     clipNote:
-      "The required anatomy is Bontrager's criterion. How far it extends along the arm (about 7 cm of humerus and 6–7 cm of forearm around the target), where the region lies on the baseline and the image scale (0.0155 cm / px) are engine estimates read by eye (S14.3-9, O49). Provisional.",
+      "The required anatomy is Bontrager's criterion.",
     markerRefTail: ", S14.3-5",
     wrongSideRef: "S14.3-5, S14.1c-4",
     missingRef: "S14.3-5",
@@ -545,7 +545,7 @@ const criticalFindings = (k: UpperLimbKind): CriticalFindingRule[] => {
         `ملاحظة حرجة — علامة جانب خاطئة: حرف العلامة لا يطابق جانب المريض (${f.sideIs}). العلامة الخاطئة تُحدِّد جانب المريض خطأً، لذا تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
       ),
       concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, ${PER[k].page}`, `COMMON QUALITY CRITERION: an anatomic side marker is required on every image and must name the side imaged. For a single limb Bontrager gives no viewer-half convention, so only the letter is judged (O21 option A, S14.1c-4${f.markerRefTail}).`),
-      evidence: ev("provisional", f.wrongSideRef, "PROVISIONAL / educational: the gate is a simulator rule (educator decision pending, O5). The numeric score is unchanged."),
+      evidence: ev("provisional", f.wrongSideRef, "The numeric score is unchanged."),
     },
     {
       id: "missing-marker",
@@ -555,7 +555,7 @@ const criticalFindings = (k: UpperLimbKind): CriticalFindingRule[] => {
         `ملاحظة حرجة — لا توجد علامة جانب: لن تبيّن الصورة أي ${f.which} تُظهر. تقع المحاولة دون درجة النجاح مهما كانت الدرجة الرقمية. غياب العلامة خطأ مهم يجب تصحيحه في التدريب، وهذه نتيجة تعليمية وليست قرارًا سريريًا بشأن الصورة.`,
       ),
       concept: ev("common-reference", `BONTRAGER-9 p.32-33, 36, ${PER[k].page}`, "COMMON QUALITY CRITERION: the image must carry a side marker."),
-      evidence: ev("provisional", f.missingRef, "PROVISIONAL / educational: the gate is a simulator rule with the same severity as the wrong-side marker. The numeric score is unchanged."),
+      evidence: ev("provisional", f.missingRef, "Same severity as the wrong-side marker. The numeric score is unchanged."),
     },
   ];
 };
@@ -608,11 +608,11 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         pass: T("The field is not larger than necessary for the required anatomy.", "المجال ليس أكبر من اللازم للتشريح المطلوب."),
         fail: T("The field is opened wider than necessary.", "المجال مفتوح أكثر من اللازم."),
         high: T(
-          `The field is opened wider than necessary. Bontrager asks for collimation on all four sides to the area of interest; a larger field exposes more tissue and adds scatter. Close the field toward the ${f.excessToward.en}, without cutting off the required anatomy. (The ${p.excessCm} cm margin limit is an engine teaching choice; the field must still include the marker.)`,
-          `المجال مفتوح أكثر من اللازم. يطلب Bontrager التحديد من الجهات الأربع إلى منطقة الاهتمام؛ والمجال الأكبر يعرّض أنسجة أكثر ويزيد التشتت. قرّب حواف المجال من ${f.excessToward.ar} دون أن تقطع التشريح المطلوب. (حدّ الهامش ${f.excessAr(p.excessCm)} سم اختيار تعليمي في المحاكي؛ ويجب أن يشمل المجال العلامة.)`,
+          `The field is opened wider than necessary. Bontrager asks for collimation on all four sides to the area of interest; a larger field exposes more tissue and adds scatter. Close the field toward the ${f.excessToward.en}, without cutting off the required anatomy. (Margin limit: ${p.excessCm} cm; the field must still include the marker.)`,
+          `المجال مفتوح أكثر من اللازم. يطلب Bontrager التحديد من الجهات الأربع إلى منطقة الاهتمام؛ والمجال الأكبر يعرّض أنسجة أكثر ويزيد التشتت. قرّب حواف المجال من ${f.excessToward.ar} دون أن تقطع التشريح المطلوب. (حدّ الهامش ${f.excessAr(p.excessCm)} سم؛ ويجب أن يشمل المجال العلامة.)`,
         ),
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (collimate to the area of interest)`, `Principle from the textbook; the ${p.excessCm} cm margin limit is an engine teaching choice (provisional / configurable).${f.excessNoteTail}`),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (collimate to the area of interest)`, `Principle from the textbook. Margin limit: ${p.excessCm} cm.${f.excessNoteTail}`),
     },
     {
       id: "side-marker",
@@ -657,7 +657,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
           `لم يُطلب من المريض بوضوح أن يبقى ثابتًا، فتتحرك ${f.moving.ar} أثناء التعريض في هذه المحاكاة. تسبب الحركة فقدانًا في الحدّة (ضبابية) قد يخفي التفاصيل العظمية الدقيقة. اطلب من المريض إبقاء ${f.moving.ar} ثابتة.`,
         ),
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "VALIDATED: motion reduces sharpness. EDUCATIONAL ASSUMPTION: that this instruction decides whether this simulated patient moves. Deliberately unscored (no rubric exists)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (no motion); Image-quality ref (Motion)`, "Motion reduces sharpness. Deliberately unscored (no rubric exists)."),
     },
     {
       id: "rotation",
@@ -675,7 +675,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       evidence: ev(
         "provisional",
         `BONTRAGER-9 ${pg}; ${f.rotationRef}`,
-        "The criteria are Bontrager's. The ±2° / ±5° bands are an ENGINE TEACHING CHOICE (Bontrager gives no angle). The sign of the value is defined by the RESULT IMAGE (positive = toward the viewer's right); no direction of turn is claimed. The drawn effect is an EDUCATIONAL APPROXIMATION made from one baseline image.",
+        "The criteria are Bontrager's (Bontrager gives no angle). The sign of the value is defined by the RESULT IMAGE (positive = toward the viewer's right); no direction of turn is claimed.",
       ),
     },
     {
@@ -690,7 +690,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         low: p.centreX.low,
         high: p.centreX.high,
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (${f.centreXRef})`, "Alignment is Bontrager's; the tolerance values are an engine teaching choice (provisional)."),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (${f.centreXRef})`, "Alignment is Bontrager's."),
     },
     {
       id: "centering-vertical",
@@ -704,7 +704,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         low: p.centreY.low,
         high: p.centreY.high,
       },
-      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (central ray perpendicular to the ${p.centre.page})`, `${f.targetNoun} is Bontrager's; its position on the detector is read by eye on the baseline and the tolerances are an engine teaching choice (provisional).`),
+      evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (central ray perpendicular to the ${p.centre.page})`, `${f.targetNoun} is Bontrager's; its position on the detector is read by eye on the baseline.`),
     },
     {
       id: "kvp",
@@ -720,16 +720,16 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
           `قيمة kVp ضمن نطاق Bontrager الرقمي ${f.forPart} ${p.name.ar} (‎${kvLo}–${kvHi}‎ kV).`,
         ),
         low: T(
-          `kVp is below the textbook band. A less penetrating beam is absorbed more by the dense bones, so bone detail is harder to see. Extra mAs adds photons, not penetration. (Only ${kvLo}–${kvHi} kV is the textbook digital band; the partial credit between ${pLo} and ${kvLo - 1} kV is an engine teaching choice.)`,
-          `قيمة kVp أقل من نطاق الكتاب. الحزمة الأقل اختراقًا تمتصها العظام الكثيفة أكثر فيصعب رؤية التفاصيل العظمية. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ أما الدرجة الجزئية بين ‎${pLo}‎ و‎${kvLo - 1}‎ kV فهي اختيار تعليمي في المحاكي.)`,
+          `kVp is below the textbook band. A less penetrating beam is absorbed more by the dense bones, so bone detail is harder to see. Extra mAs adds photons, not penetration. (Only ${kvLo}–${kvHi} kV is the textbook digital band; ${pLo}–${kvLo - 1} kV earns partial credit.)`,
+          `قيمة kVp أقل من نطاق الكتاب. الحزمة الأقل اختراقًا تمتصها العظام الكثيفة أكثر فيصعب رؤية التفاصيل العظمية. mAs الإضافي يزيد الفوتونات ولا يزيد الاختراق. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ وتُمنح درجة جزئية بين ‎${pLo}‎ و‎${kvLo - 1}‎ kV.)`,
         ),
         high: T(
-          `kVp is above the textbook band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only ${kvLo}–${kvHi} kV is the textbook digital band; the partial credit up to ${pHi} kV is an engine teaching choice.)`,
-          `قيمة kVp أعلى من نطاق الكتاب. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ أما الدرجة الجزئية حتى ‎${pHi}‎ kV فهي اختيار تعليمي.)`,
+          `kVp is above the textbook band. The beam is more penetrating, which lowers contrast; whether that is acceptable depends on the detector and local protocol. This simulation draws no image effect for a higher kVp. (Only ${kvLo}–${kvHi} kV is the textbook digital band; partial credit applies up to ${pHi} kV.)`,
+          `قيمة kVp أعلى من نطاق الكتاب. الحزمة أكثر اختراقًا فينخفض التباين؛ ومدى قبول ذلك يعتمد على الكاشف والبروتوكول المحلي. لا يرسم المحاكي أثرًا للـ kVp الأعلى. (النطاق الرقمي في الكتاب هو ‎${kvLo}–${kvHi}‎ kV فقط؛ وتُمنح درجة جزئية حتى ‎${pHi}‎ kV.)`,
         ),
         fail: T(`kVp is outside this case's protocol range for the ${f.part.en} (${pLo}–${pHi} kV).`, `قيمة kVp خارج نطاق بروتوكول هذه الحالة ${f.forPart} (‎${pLo}–${pHi}‎ kV).`),
       },
-      evidence: ev("provisional", `BONTRAGER-9 ${pg} (digital ${(kvLo + kvHi) / 2} ± 5 kV); ${f.techniqueRef}`, `${kvLo}–${kvHi} kV is Bontrager. The partial bands ${pLo}–${kvLo - 1} and ${kvHi + 1}–${pHi} kV are an ENGINE TEACHING CHOICE, NOT Bontrager. kVp physics is validated but never mapped to displayed darkness.`),
+      evidence: ev("provisional", `BONTRAGER-9 ${pg} (digital ${(kvLo + kvHi) / 2} ± 5 kV); ${f.techniqueRef}`, `${kvLo}–${kvHi} kV is Bontrager. kVp physics is never mapped to displayed darkness.`),
     },
     {
       id: "exposure-adequacy",
@@ -758,7 +758,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       evidence: ev(
         "provisional",
         `Technique ref §5, §6, §8; S10b-9; ${f.teachingRef}; O26${f.exposureRefTail}`,
-        `VALIDATED: the DI equation and the digital-exposure concepts. PROVISIONAL: the ±1 / ±3 DI bands and the manual reference point the exposure is measured against (an engine teaching constant); no numeric mAs target and no universal EIT or DI limit is claimed (Bontrager gives no mAs for the ${f.part.en}${f.exposureNoteTail}).`,
+        `The DI equation and the digital-exposure concepts; no numeric mAs target and no universal EIT or DI limit is claimed (Bontrager gives no mAs for the ${f.part.en}${f.exposureNoteTail}).`,
       ),
     },
     {
@@ -777,7 +777,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
         ),
         fail: T("Detector exposure is far above the target: a clear dose-creep risk.", "تعريض الكاشف أعلى بكثير من الهدف: خطر واضح لزحف الجرعة."),
       },
-      evidence: ev("provisional", `Technique ref §7, §8; ${f.teachingRef}`, "VALIDATED: digital dynamic range can hide excess exposure (dose creep). PROVISIONAL: the DI bands. No patient dose is calculated."),
+      evidence: ev("provisional", `Technique ref §7, §8; ${f.teachingRef}`, "Digital dynamic range can hide excess exposure (dose creep). No patient dose is calculated."),
     },
     {
       id: "sid",
@@ -798,12 +798,12 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
           `قيمة SID أقصر من الحد الأدنى 102 سم (40 بوصة) الذي يذكره Bontrager ${f.sidForPart}. المسافة الأقصر تزيد التكبير وعدم الحدّة (لا يُرسمان في هذه النسخة) وتزيد التعريض عند الكاشف (قانون التربيع العكسي).`,
         ),
         high: T(
-          "SID is longer than this simulator's teaching band (102–110 cm); exposure at the detector drops (inverse square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum; the upper limit and the partial band are engine teaching choices.)",
-          "قيمة SID أطول من النطاق التعليمي في المحاكي (102–110 سم)؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط؛ والحد الأعلى والنطاق الجزئي اختياران تعليميان في المحاكي.)",
+          "SID is longer than this simulator's teaching band (102–110 cm); exposure at the detector drops (inverse square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum.)",
+          "قيمة SID أطول من النطاق التعليمي في المحاكي (102–110 سم)؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط.)",
         ),
         fail: T(`SID is outside this case's protocol range for the ${f.part.en} (below about 95 cm or above 130 cm).`, `قيمة SID خارج نطاق بروتوكول هذه الحالة ${f.forPart} (أقل من نحو 95 سم أو أكثر من 130 سم).`),
       },
-      evidence: ev("provisional", `BONTRAGER-9 ${pg} (SID minimum 40 in / 102 cm); ${f.techniqueRef}`, "The 102 cm minimum is Bontrager (inch-to-cm conversion). The 110 cm upper full-credit limit and the 95–130 cm partial band are ENGINE TEACHING CHOICES, NOT Bontrager."),
+      evidence: ev("provisional", `BONTRAGER-9 ${pg} (SID minimum 40 in / 102 cm); ${f.techniqueRef}`, "The 102 cm minimum is Bontrager (inch-to-cm conversion)."),
     },
   ];
 };

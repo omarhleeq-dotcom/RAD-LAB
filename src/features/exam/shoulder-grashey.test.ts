@@ -45,7 +45,7 @@ describe("Shoulder Grashey exam (erect) built from existing optional mechanisms"
     for (const r of [35, 36, 40, 44, 45]) expect(check({ rotationDeg: r }, "rotation").outcome).toBe("pass");
     for (const r of [30, 34, 46, 50]) expect(check({ rotationDeg: r }, "rotation").outcome).toBe("partial");
     for (const r of [0, 15, 29, 51, 60]) expect(check({ rotationDeg: r }, "rotation").outcome).toBe("fail");
-    expect(check({ rotationDeg: 33 }, "rotation").feedback.en).toMatch(/teaching choice/);
+    expect(check({ rotationDeg: 33 }, "rotation").feedback.en).toMatch(/partial credit/i);
     expect(check({ rotationDeg: 20 }, "rotation").feedback.en).toMatch(/less than 35°/);
     expect(check({ rotationDeg: 58 }, "rotation").feedback.en).toMatch(/more than 45°/);
   });
@@ -73,8 +73,8 @@ describe("Shoulder Grashey exam (erect) built from existing optional mechanisms"
     expect(plan({ collimation: { width: 0.3, height: 0.5 } }).effects.map((e) => e.id)).toContain("collimation-clipping");
     expect(check({ collimation: { width: 0.95, height: 0.95 } }, "collimation-excess").outcome).not.toBe("pass");
     for (const [kv, outcome] of [[80, "pass"], [75, "pass"], [85, "pass"], [72, "partial"], [60, "fail"]] as const) expect(check({ kvp: kv }, "kvp").outcome).toBe(outcome);
-    expect(check({ kvp: 72 }, "kvp").feedback.en).toMatch(/teaching choice/);
-    expect(check({ sidCm: 120 }, "sid").feedback.en).toMatch(/teaching choice/);
+    expect(check({ kvp: 72 }, "kvp").feedback.en).toMatch(/partial credit/i);
+    expect(check({ sidCm: 120 }, "sid").feedback.en).toMatch(/textbook gives only a minimum|minimum/);
     expect(check({ sidCm: 102 }, "sid").outcome).toBe("pass");
     expect(check({ sidCm: 95 }, "sid").outcome).toBe("partial");
   });
