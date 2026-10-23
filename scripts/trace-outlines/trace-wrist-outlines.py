@@ -100,6 +100,9 @@ LAT_LINES = [
 ]
 
 SOFT_TOWARD_BG = {"pa": 0.0, "lateral": 0.0}
+# curated soft-tissue region (owner review 2026-10-23): the radial border of the wrist / thumb base is a faint mid-grey the threshold misses, so
+# the outline ran horizontally across the thumb base to the image edge. Read at 2.3x: the skin edge runs (689, 300) -> (662, 400) -> (660, 480) -> (650, 700) -> (641, 979).
+SOFT_HINT = {"pa": [[(689, 285), (640, 280), (636, 322), (600, 352), (590, 380), (606, 414), (612, 484), (598, 632), (570, 804), (566, 979), (641, 979), (650, 700), (656, 580), (660, 480), (663, 400), (672, 340), (689, 300)]]}
 BRIGHT_FACTOR = {"pa": 0.6, "lateral": 0.6}
 
 
@@ -122,7 +125,7 @@ SPEC = {
     "out_review": "docs/review/rad-072-wrist",
     "sources": SOURCES,
     "views": {"pa": (PA_BONES, PA_BLOBS, PA_JOINTS, PA_LINES), "lateral": (LAT_BONES, LAT_BLOBS, LAT_JOINTS, LAT_LINES)},
-    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "extras": extras, "soft_runs": 2, "soft_smooth": {"pa": 3, "lateral": 12}, "soft_open": "the silhouette"},
+    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "extras": extras, "soft_hint": SOFT_HINT, "soft_runs": 2, "soft_smooth": {"pa": 3, "lateral": 12}, "soft_open": "the silhouette"},
     "header": {
         "region": "wrist",
         "side": "LEFT (both images are a left wrist; a right-wrist case mirrors the drawing, never the RTL layout)",

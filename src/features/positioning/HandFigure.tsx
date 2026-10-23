@@ -1,6 +1,6 @@
 import { HAND_CM_PER_PX, handImage } from "@/data/exams/xray/hand-geometry";
 import { handOutlineDrawing, type DrawnPart } from "./hand-outline-drawing";
-import { LIMB, SCENE } from "./scene-style";
+import { copyOpacity, OutlineLayers, outlineLayers, r, type OutlineLayer } from "./outline-layers";
 import type { FigureProps } from "./detector-figures";
 
 /**
@@ -26,59 +26,11 @@ export function HandDrawing({ radCase, settings }: FigureProps) {
   const x0 = im.box.u1 * im.widthPx;
   const y0 = im.box.v1 * im.heightPx;
   const toSvg = ([px, py]: [number, number]) => `${r(a.xCm * U + (px - x0) * k)},${r(a.yCm * U + (py - y0) * k)}`;
-  const d = handOutlineDrawing(kind, settings.rotationDeg);
-  return (
-    <g strokeLinejoin="round" strokeLinecap="round">
-      {handLayers(d).map(({ layer, part }) => (
-        <path key={`${layer}|${part.id}|${part.copy}`} d={path(part, toSvg)} {...STYLE[layer](part)} />
-      ))}
-    </g>
-  );
+  return <OutlineLayers d={handOutlineDrawing(kind, settings.rotationDeg)} toSvg={toSvg} />;
 }
 
-export type HandLayer = "soft" | "joint" | "boneFill" | "edgeUnder" | "edge";
+export type HandLayer = OutlineLayer;
 
-/** The draw order: soft tissue, joint spaces, all bone fills, then all bone edges (under-strokes before lines). */
-export function handLayers(d: ReturnType<typeof handOutlineDrawing>): { layer: HandLayer; part: DrawnPart }[] {
-  return [
-    { layer: "soft", part: d.soft },
-    ...d.joints.map((part) => ({ layer: "joint" as const, part })),
-    ...d.bones.map((part) => ({ layer: "boneFill" as const, part })),
-    ...d.bones.map((part) => ({ layer: "edgeUnder" as const, part })),
-    ...d.bones.map((part) => ({ layer: "edge" as const, part })),
-  ];
-}
-
-/**
- * Fill opacity of one copy of a bone: the copies of a superimposed group (one per digit, or radius + ulna) coincide at the base
- * pose, so each copy gets the opacity whose n-fold overlap equals ONE bone's `LIMB.boneFillOpacity`.
- */
-export const copyOpacity = (copies: number) => 1 - (1 - LIMB.boneFillOpacity) ** (1 / copies);
-
-const STYLE: Record<HandLayer, (p: DrawnPart) => Record<string, string | number>> = {
-  soft: () => ({ fill: SCENE.soft, stroke: SCENE.outline, strokeWidth: LIMB.softEdge }),
-  joint: () => ({ fill: "none", stroke: SCENE.air, strokeWidth: LIMB.joint }),
-  boneFill: (p) => ({ fill: SCENE.boneFill, fillOpacity: r(copyOpacity(p.copies), 3), stroke: "none" }),
-  edgeUnder: () => ({ fill: "none", stroke: SCENE.underStroke, strokeWidth: LIMB.edgeUnder }),
-  edge: () => ({ fill: "none", stroke: SCENE.boneLine, strokeWidth: LIMB.edge }),
-};
-
-const r = (v: number, n = 1) => Math.round(v * 10 ** n) / 10 ** n;
-
-/** A smooth path through the traced control points (quadratic segments between the midpoints; corners slightly rounded). */
-function path(p: DrawnPart, toSvg: (q: [number, number]) => string): string {
-  const pts = p.points;
-  const mid = (i: number): [number, number] => {
-    const a = pts[i % pts.length]!, b = pts[(i + 1) % pts.length]!;
-    return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-  };
-  if (pts.length < 3) return `M${pts.map(toSvg).join("L")}`;
-  if (p.closed) {
-    let s = `M${toSvg(mid(0))}`;
-    for (let i = 1; i <= pts.length; i++) s += `Q${toSvg(pts[i % pts.length]!)} ${toSvg(mid(i))}`;
-    return s + "Z";
-  }
-  let s = `M${toSvg(pts[0]!)}`;
-  for (let i = 1; i < pts.length - 1; i++) s += `Q${toSvg(pts[i]!)} ${toSvg(mid(i))}`;
-  return s + `L${toSvg(pts[pts.length - 1]!)}`;
-}
+/** The draw order of the hand figure (the shared limb layers; the full-rotation test checks it). */
+export const handLayers = (d: ReturnType<typeof handOutlineDrawing>): { layer: HandLayer; part: DrawnPart }[] => outlineLayers(d);
+export { copyOpacity };

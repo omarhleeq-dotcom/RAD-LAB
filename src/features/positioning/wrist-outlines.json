@@ -41,7 +41,7 @@
      "closed": false,
      "follows": null,
      "note": "Otsu threshold 68.4 of the smoothed image, united with the bone outlines grown by 10 px; open where the silhouette leaves the image",
-     "points": [[684, 282], [640, 277], [638, 318], [627, 336], [604, 347], [569, 350], [558, 369], [567, 405], [592, 401], [605, 411], [610, 484], [598, 632], [567, 804], [567, 898], [576, 974]]
+     "points": [[684, 308], [663, 400], [640, 974]]
     },
     {
      "id": "mc5-base",

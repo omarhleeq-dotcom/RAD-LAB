@@ -21,20 +21,15 @@
 import outlines from "./hand-outlines.json";
 import { projectHand, type HandKind, type Projected } from "@/features/hand-model/hand-model";
 
-export type Pt = [number, number];
+import { followNearest, polygonArea, type DrawnPart as SharedPart, type Pt } from "./outline-geometry";
+
+export type { Pt };
+export { polygonArea };
 type Group = "soft" | "digits" | "metacarpals" | "thumb" | "carpus" | "forearm" | "joints" | "prominences";
 interface Structure { id: string; group: Group; closed: boolean; follows: string | null; drawn?: boolean; points: Pt[] }
 
 /** One drawn copy of a structure, in image px of the baseline (the figure maps px to detector units). */
-export interface DrawnPart {
-  id: string;
-  group: Group;
-  closed: boolean;
-  /** 0 … n-1 for the copies of a superimposed group, 0 otherwise. */
-  copy: number;
-  copies: number;
-  points: Pt[];
-}
+export type DrawnPart = SharedPart<Group>;
 export interface HandOutlineDrawing {
   /** The soft-tissue silhouette edge (open where the forearm leaves the image). */
   soft: DrawnPart;
@@ -95,19 +90,6 @@ function mapsFor(s: Structure, base: Map<string, Projected>, rot: Map<string, Pr
   }
 }
 
-const centroid = (pts: Pt[]): Pt => [pts.reduce((a, p) => a + p[0], 0) / pts.length, pts.reduce((a, p) => a + p[1], 0) / pts.length];
-function segDist([x, y]: Pt, pts: Pt[], closed: boolean): number {
-  let best = Infinity;
-  const n = closed ? pts.length : pts.length - 1;
-  for (let i = 0; i < n; i++) {
-    const [x1, y1] = pts[i]!, [x2, y2] = pts[(i + 1) % pts.length]!;
-    const dx = x2 - x1, dy = y2 - y1, L2 = dx * dx + dy * dy || 1;
-    const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / L2));
-    best = Math.min(best, Math.hypot(x - x1 - t * dx, y - y1 - t * dy));
-  }
-  return best;
-}
-
 const isBone = (s: Structure) => s.group !== "soft" && s.group !== "joints" && s.points.length > 2;
 const drawn = (s: Structure) => s.drawn !== false && s.points.length > 2;
 
@@ -131,16 +113,7 @@ export function handOutlineDrawing(kind: HandKind, rotationDeg: number, opts: { 
   // Soft tissue: each point follows its nearest traced bone; for a group with copies, the copy that moves it farthest outward.
   const bonesBase = all.filter((b) => isBone(b) && drawn(b)); // a structure that is not drawn owns no soft tissue
   const softS = all.find((s) => s.group === "soft")!;
-  const softPts = softS.points.map((q): Pt => {
-    let near = bonesBase[0]!, d = Infinity;
-    for (const b of bonesBase) {
-      const e = segDist(q, b.points, b.closed);
-      if (e < d) [near, d] = [b, e];
-    }
-    const out = q[0] - centroid(near.points)[0];
-    const cands = maps.get(near.id)!.map((m) => m(q));
-    return cands.reduce((a, c) => ((c[0] - a[0]) * out > 0 ? c : a));
-  });
+  const softPts = followNearest(softS.points, bonesBase, (id) => maps.get(id)!);
   const flip = opts.mirror ? mirrorAxis(kind) * 2 : null;
   const fx = (p: DrawnPart): DrawnPart => (flip === null ? p : { ...p, points: p.points.map(([x, y]): Pt => [flip - x, y]) });
   return {
@@ -149,6 +122,3 @@ export function handOutlineDrawing(kind: HandKind, rotationDeg: number, opts: { 
     joints: all.filter((s) => s.group === "joints" && drawn(s)).flatMap(parts).map(fx),
   };
 }
-
-/** Area of a closed polygon (image px²). */
-export const polygonArea = (pts: Pt[]): number => Math.abs(pts.reduce((a, [x, y], i) => { const [u, v] = pts[(i + 1) % pts.length]!; return a + x * v - u * y; }, 0)) / 2;

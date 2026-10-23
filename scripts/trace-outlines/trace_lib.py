@@ -521,6 +521,17 @@ def bone_guard(shape, outlines, margin):
     return np.asarray(im) > 0
 
 
+def hint_mask(shape, polygons):
+    """Half-resolution mask of curated soft-tissue polygons (read by eye at 2-3x from the same image) for where the soft tissue is too faint
+    for the threshold (RAD-072 2b: the radial border of the wrist PA). United with the thresholded region and the grown bone outlines."""
+    H, W = (shape[0] + 1) // 2, (shape[1] + 1) // 2
+    im = Image.new("L", (W, H), 0)
+    d = ImageDraw.Draw(im)
+    for poly in polygons:
+        d.polygon([(x / 2, y / 2) for x, y in poly], fill=255)
+    return np.asarray(im) > 0
+
+
 def soft_tissue(img, thr, guard, max_runs=1, smooth=0):
     small = gauss(img, 3.0)[::2, ::2]
     mask = (small > thr) | guard
@@ -698,7 +709,7 @@ def view(kind, img, bones, blobs, joints, lines, cfg):
     # soft tissue last (it is united with the grown bone outlines), stored first
     bones_px = [st["points"] if st["closed"] else st["points"] + [st["points"][0]]
                 for st in out if st["group"] not in ("joints",) and len(st["points"]) > 2]
-    softs = soft_tissue(img, thr, bone_guard(img.shape, bones_px, SOFT_MARGIN), cfg.get("soft_runs", 1), (lambda s: s.get(kind, 0) if isinstance(s, dict) else s)(cfg.get("soft_smooth", 0)))
+    softs = soft_tissue(img, thr, bone_guard(img.shape, bones_px, SOFT_MARGIN) | hint_mask(img.shape, cfg.get("soft_hint", {}).get(kind, [])), cfg.get("soft_runs", 1), (lambda s: s.get(kind, 0) if isinstance(s, dict) else s)(cfg.get("soft_smooth", 0)))
     for i, soft in reversed(list(enumerate(softs))):
         out.insert(0, {"id": "soft-tissue" if i == 0 else f"soft-tissue-{i + 1}", "group": "soft", "closed": False, "follows": None,
                        "note": f"Otsu threshold {round(float(thr), 1)} of the smoothed image, united with the bone outlines grown by "

@@ -70,6 +70,7 @@ python3 -I scripts/trace-outlines/trace-wrist-outlines.py --check-overlays   # J
   articular surface), smooth by construction. `lines[].smooth` smooths a darkest-point path; `cfg.joint_g` / `joint_centre` / `joint_half`
   set a joint space's search for the joints the seed ends do not bracket (foot MTP). `cfg.soft_smooth` (per view or one number) smooths the
   soft-tissue runs and drops spikes (an interior point whose two segments enclose < 50 degrees). All optional: the hand is unchanged.
+- `cfg.soft_hint` (per view): curated soft-tissue polygons (read by eye at 2-3x) united with the thresholded region and the grown bone outlines, for a soft-tissue border too faint for the threshold (wrist PA radial border).
 - `cfg.soft_runs`: keep up to N soft-tissue runs when the silhouette is cut into several open runs by the image edge (wrist, foot).
 - Where two bones overlap and the image does not separate them the seed names ONE combined outline (`note`), never an invented split.
 

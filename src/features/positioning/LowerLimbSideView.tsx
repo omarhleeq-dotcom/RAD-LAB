@@ -5,6 +5,7 @@ import { collimatedField } from "@/features/simulation/geometry";
 import { Limb, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, STROKE } from "./scene-style";
 import { LOWER_LIMB_SIDE, slabX } from "./lower-limb-visual";
+import { footSideProportions } from "./foot-side-proportions";
 
 /** Educational reference SID (Bontrager's minimum 40 in = 102 cm, p.224-225). Mirrors the SID rule of the exam. */
 const SID_REFERENCE_CM = 102;
@@ -59,6 +60,7 @@ export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
   // The target of the exam (fixed anatomy; the learner moves the ray).
   const tg = radCase.positioning.centering.target;
   const targetX = toX(((tg.y + 1) / 2) * detector.heightCm);
+  const footProp = part === "foot" ? footSideProportions(kind as "foot-ap" | "foot-oblique") : null;
   const d0 = alongBeam(sidPx, DIM_OFFSET), d1 = alongBeam(0, DIM_OFFSET);
   const dr = alongBeam(refPx, DIM_OFFSET);
   const tick = (p: { x: number; y: number }, len = 8) => ({ x1: p.x - nrm.x * len, y1: p.y - nrm.y * len, x2: p.x + nrm.x * len, y2: p.y + nrm.y * len });
@@ -93,7 +95,8 @@ export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
         <>
           {/* thigh up to the bent knee, shank down to the ankle, the foot flat on the detector (toes toward the feet side, the right) */}
           <Limb pts={[{ x: 120, y: S - 22, w: 38 }, { x: targetX - 120, y: S - 96, w: 32 }, { x: targetX - 48, y: S - 38, w: 22 }]} />
-          <path d={`M ${targetX - 70} ${S - 3} L ${targetX - 70} ${S - 38} L ${targetX - 20} ${S - 32} L ${targetX + 56} ${S - 14} L ${targetX + 96} ${S - 6} L ${targetX + 96} ${S - 3} Z`} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round" />
+          {/* the toes' reach beyond the target comes from the traced foot (RAD-072 2b, proportions only): the forefoot part of the profile is scaled to it */}
+          <path d={`M ${targetX - 70} ${S - 3} L ${targetX - 70} ${S - 38} L ${targetX - 20} ${S - 32} L ${targetX + 56 * footProp!.toeReach / 96} ${S - 14} L ${targetX + footProp!.toeReach} ${S - 6} L ${targetX + footProp!.toeReach} ${S - 3} Z`} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} strokeLinejoin="round" />
         </>
       )}
       {/* the collimated field on the detector (amber, as on the detector view) */}
@@ -160,14 +163,16 @@ export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
       <SceneLabel x={14} y={S + 46} size={LABEL_SIZE.view}>{ts("head")}</SceneLabel>
       <SceneLabel x={430} y={S + 46} size={LABEL_SIZE.view} anchor="end">{ts("feet")}</SceneLabel>
       <SceneLabel x={(slabA + slabB) / 2} y={S + 46} size={LABEL_SIZE.view} anchor="middle">{ts("detector")}</SceneLabel>
-      <EndView part={part} kind={kind} rotationDeg={settings.rotationDeg} label={tp} />
+      <EndView part={part} kind={kind} rotationDeg={settings.rotationDeg} label={tp} footWidth={footProp?.forefootWidth} />
     </svg>
   );
 }
 
 /** A small end-on gauge of the rotation value: a detector line and the limb's cross-section / sole tilted by the value (+ = right side up in this view). */
-function EndView({ part, kind, rotationDeg, label }: { part: Part; kind: string; rotationDeg: number; label: (k: string, v?: Record<string, string | number>) => string }) {
+function EndView({ part, kind, rotationDeg, label, footWidth }: { part: Part; kind: string; rotationDeg: number; label: (k: string, v?: Record<string, string | number>) => string; footWidth?: number }) {
   const cx = 78, base = 84;
+  // the foot cross-section is as wide as the traced forefoot (RAD-072 2b, proportions only); the knee / ankle gauges are unchanged
+  const hw = footWidth ? footWidth / 2 : 44;
   // foot oblique: the console value is the plantar angle to the detector, the lateral side raised (the lateral side is at the viewer's LEFT looking from the toes); the others: the value as a tilt
   const tilt = kind === "foot-oblique" ? rotationDeg : -rotationDeg;
   const deg = Math.round(rotationDeg);
@@ -177,7 +182,7 @@ function EndView({ part, kind, rotationDeg, label }: { part: Part; kind: string;
       <line x1={14} y1={base} x2={142} y2={base} stroke={SCENE.detector} strokeWidth={4} strokeLinecap="round" />
       <g transform={`rotate(${tilt} ${cx} ${base})`}>
         {part === "foot" ? (
-          <path d={`M ${cx - 44} ${base - 2} C ${cx - 44} ${base - 24} ${cx - 20} ${base - 36} ${cx} ${base - 36} C ${cx + 22} ${base - 36} ${cx + 44} ${base - 24} ${cx + 44} ${base - 2} Z`} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
+          <path d={`M ${cx - hw} ${base - 2} C ${cx - hw} ${base - 24} ${cx - hw * 0.45} ${base - 36} ${cx} ${base - 36} C ${cx + hw * 0.5} ${base - 36} ${cx + hw} ${base - 24} ${cx + hw} ${base - 2} Z`} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
         ) : (
           <>
             <ellipse cx={cx} cy={base - 30} rx={36} ry={28} fill={SCENE.limb} stroke={SCENE.edge} strokeWidth={STROKE.thin} />
