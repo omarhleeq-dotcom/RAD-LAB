@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتمل RAD-061 وجرد RAD-064 وفرز RAD-065، وأُغلق RAD-019 بـ[قرار المالك](DECISIONS.md#review-closure-owner-2026-10-22)، وسُجلت أجوبة بنود S، ودُمج UI-1 (RAD-066) وUI-3 (RAD-067) واكتملا بتحقق المالك، وسُجلت نتائج فحص المالك للصور، ودُمج الجزءان 1 و2 من RAD-068 (#109، #110) ونُفذ الجزء 3 (بنود S) في PR مسودة. الترتيب F9 بحسب [قرار جرد الواجهة](DECISIONS.md#ui-inventory-owner-2026-10-22): UI-1 RAD-066 ← UI-3 RAD-067 ← تصحيحات المحاكي الطبية RAD-068 ← تصحيحات رسم المشاهد RAD-072 ← UI-4 RAD-069 ← RAD-062 مع لوحة المالك ← RAD-059 ← تلميع RAD-057 ← RAD-063.
-- **ينتظر المالك:** البند 16 من قائمة الصور (بعد RAD-067)؛ موافقة منفصلة لكل جلسة؛ استئناف برمجة Assess.
-- **ينتظر مراجِعًا بشريًا:** لا شيء جديد. RAD-019 أُغلق دون توقيع مرخّص (تحقق المالك مع مراجعة بحثية مساعدة بالذكاء الاصطناعي). O108 والمصادر والتراخيص والنسخ مستقلة في RAD-063.
-- **مرجع Git:** docs:context والأداة المتصلة للرؤوس وفحوصها؛ [تقرير الفرز](RAD-065_REVIEW_TRIAGE_2026-10-22.md) و[قرار ترتيب التنظيف](DECISIONS.md#cleanup-sequencing-owner-2026-10-22).
-- **مخاطر معلنة:** تعديل ملف مثبّت ببصمة حدود الاتصال دون تحديثها يُسقط CI؛ حد وقت `server-runtime.test.ts` قد يتذبذب (الخيار (ب) ومحفّزاته في RAD-062)؛ بصمات scene-dom تُحدَّث بموافقة المالك فقط (حُدّثت في الجزء 2 لنصوص الدفعة وحدها بإثبات أن الفرق نص فقط، وفي الجزء 3 حيث غيّرت قاعدة S النتيجة بقبول المالك المسبق وإثبات الفروق في التقرير)؛ القيم تبقى `provisional` داخليًا حتى قرار RAD-068 (D4)؛ نصوص الأدلة الداخلية المعروضة (`note`) ما زالت تحمل الكلمات ولها قرار مستقل، ولا ادعاء مصادقة سريرية (D5)؛ أي نص أو تصحيح في الصدر PA يغيّر لقطات التوصيف (استثناء S-STD-2)؛ إصدار wrangler وSHAs الـactions تُحدَّث يدويًا وبقرار صريح.
+- **الاتجاه الحالي:** RAD-068 مكتمل بعد دمج أجزائه وفحص المالك للهاتف. RAD-072 قيد التنفيذ بثلاثة أجزاء: الصدر، ثم الأطراف، ثم بنود R وصور النتيجة؛ بعده RAD-069 ثم RAD-062 وفق [قرار الترتيب](DECISIONS.md#ui-inventory-owner-2026-10-22).
+- **ينتظر المالك:** قبول رسوم RAD-072 على الهاتف قبل الدمج؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
+- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ تقارير أجزاء RAD-068 داخل المهمة، و[قرار هذه الدفعة](DECISIONS.md#rad072-chest-owner-2026-10-23).
+- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. استثناء scene-dom لهذه الدفعة يقتصر على رسوم الصدر الثلاثة؛ لا تغيير توصيف أو golden أو تقييم. حدود الاتصال المثبّتة وإصدارات الأدوات اليدوية بلا تغيير.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 228,
-  "updated_at": "2026-10-23T05:46:00+00:00",
+  "revision": 229,
+  "updated_at": "2026-10-23T06:42:33+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -631,11 +631,11 @@
     {
       "id": "RAD-068",
       "title": "تصحيحات المحاكي الطبية بعد الفرز",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "كل أجزاء RAD-068 داخلة؛ الجزء الأخير في PR مسودة (نصوص الدليل بلا عبارات الحالة، وفقرة «قيمة تعليمية» في الشروط، وتوسيع اختبار النصوص). علامات provisional الداخلية دون تغيير. بنود R انتقلت إلى RAD-072. ينتظر فحص المالك ثم يضبطه done. CLN-025 مؤجل، CLN-018 مفتوح.",
+      "description": "اكتملت الأجزاء الأربعة ودُمجت (#109–#112)، وفحص المالك الجزء الأخير على الهاتف في 2026-10-23. تبقى provisional داخلية؛ بنود R ضمن RAD-072، وCLN-025 مؤجل وCLN-018 مفتوح.",
       "source_ref": "تقارير الأجزاء: docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_FINAL_REPORT_2026-10-22.md؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/DECISIONS.md#part2-acceptance-owner-2026-10-22؛ docs/DECISIONS.md#text-batch-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md؛ docs/DECISIONS.md#s-items-owner-2026-10-22؛ docs/DECISIONS.md#review-closure-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/RAD-066_UI1_REPORT_2026-10-22.md (قبول المالك 2026-10-22: البصمات واللقطات للنصوص الخمسة مدرجة في تقرير RAD-068؛ تبقى بدائل «not a diagnostic image»؛ يُحذف «not a diagnostic or clinically validated» من radiograph.educationalNote ويبقى أنها ليست صورة مريض الحالة)",
-      "waiting_on": "owner"
+      "completion_evidence": "PR #109–#112 مدموجة؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/RAD-068_PART2_REPORT_2026-10-22.md؛ docs/RAD-068_PART3_REPORT_2026-10-22.md؛ docs/RAD-068_FINAL_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23 (قبول الهاتف 2026-10-23) و#provisional-evidence-owner-2026-10-22."
     },
     {
       "id": "RAD-069",
@@ -667,10 +667,10 @@
     {
       "id": "RAD-072",
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "بعد RAD-068 وقبل RAD-069: بنود R (تكبير رئة جهة المشاهد S12-1، رسوم AP/PA S13b-1، نقطة توسيط الركبة S14.4-R9) مع مناظر الصدر الجانبي، ورئتي AP، وعظام القدم، والكاحل الجانبي، وعظم اليد عند الدوران، والكتف مع زاوية الجسم، ومساحة الكاحل AP. كل رسم بموافقة المالك على scene-dom.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22",
+      "description": "ثلاثة أجزاء: (1) رسوم الصدر الجانبي (الكاشف والعلوي) ورئتا AP/PA، هذا PR؛ (2) الأطراف: عظام القدم ودورانها، اتجاه الكاحل الجانبي، اختفاء عظم اليد عند الدوران، وغياب تغيّر الكتف مع زاوية الجسم؛ (3) بنود R ورسم صور النتيجة، بما فيه المساحة المخططة بلا بيانات في الكاحل AP والصدر الجانبي. قبول الهاتف قبل الدمج.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23",
       "waiting_on": "code"
     }
   ]
