@@ -36,13 +36,51 @@ export const SCENE = {
   /** Under-stroke of every accent line, label pill and text. */
   underStroke: "#06101a",
   label: "#e6eef4",
+  /**
+   * Chest tonal layers (RAD-072 1b, ENGINE_GUIDE "Chest drawing style"), back to front: detector background (`detectorFill`) →
+   * `soft` tissue (mid tone) → `air` (lung fields, darkest) → `heart` (filled, muted warm) → bones (`boneFill` / `boneLine`,
+   * lighter and stronger) → guides (accents above, dashed, on `underStroke`) → fault overlays (outline / hatch, never a solid
+   * dark fill) → labels. `outline` is the silhouette and heart edge. Used by the chest figures only; the other scenes keep the
+   * dark muted fills above. Ratios are pinned by `scene-style.test.ts`.
+   */
+  soft: "#5d7489",
+  air: "#0a1620",
+  heart: "#7a5f6c",
+  outline: "#c6d4df",
+  boneFill: "#c4d2dd",
+  boneLine: "#eef3f7",
 } as const;
 
 /** Anatomy fills the accents are checked against. */
 export const ANATOMY_FILLS = ["bg", "bezel", "detectorFill", "trunk", "head", "limb", "limbFar", "lung"] as const;
 
-/** Line weights (SVG units; the three views are scaled to a similar on-screen size). */
-export const STROKE = { thin: 1.5, medium: 3, heavy: 5 } as const;
+/** Chest tonal fills (RAD-072 1b) checked by the chest contrast test. */
+export const CHEST_FILLS = ["soft", "air", "heart", "boneFill"] as const;
+
+/** Line weights (SVG units; the three views are scaled to a similar on-screen size). `guide`: a chest guide line, thinner than the bones it crosses. */
+export const STROKE = { thin: 1.5, medium: 3, heavy: 5, guide: 1.5 } as const;
+
+/**
+ * ONE body proportion set for every chest figure (RAD-072 1b): frontal and lateral detector views, plan (top) view and AP side view.
+ * DRAWING PROPORTIONS of one schematic adult in drawing centimetres: NOT medical facts, measurements or scored values. Each view
+ * multiplies them by its own drawing scale (detector view: `U` = 10 units per cm; plan view and AP side view: their own px per cm).
+ * The thorax width / depth are the EXISTING fitted lung landmark boxes plus a soft-tissue margin, so the lungs keep the scored
+ * geometry; every other part is drawn relative to them. `l` = length, `w` = frontal width, `d` = front-to-back depth, `h` = height.
+ */
+export const BODY = {
+  head: { h: 23, w: 15, d: 19 },
+  neck: { h: 9, w: 11, d: 11 },
+  shoulderW: 39,
+  thorax: { w: 31, d: 28 },
+  /** Shoulder (acromion) to hip joint along the trunk; width at the waist; depth of the abdomen. */
+  trunk: { l: 52, waistW: 27, abdomenD: 22 },
+  upperArm: { l: 31, w: 9 },
+  forearm: { l: 26, w: 7 },
+  hand: { l: 18, w: 8 },
+  thigh: { l: 45, w: 15 },
+  shank: { l: 42, w: 10 },
+  foot: { l: 25, h: 8 },
+} as const;
 
 /** Extra width of the dark under-stroke beneath an accent line. */
 export const UNDER = 3;

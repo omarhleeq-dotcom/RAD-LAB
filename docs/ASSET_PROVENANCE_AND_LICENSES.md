@@ -782,7 +782,7 @@ No fonts, icons, audio or datasets are registered. The A-001 licence record was 
 | Lateral chest baseline radiograph (adult, erect, annotations neutral) | Wikimedia Commons file `Normal lateral chest radiograph (X-ray).jpg`, **supplied by the owner** (2026-10-07) | CC0 1.0 as stated by the owner from the file page | Yes | **Yes — A-006 / A-007** (added in the S12 implementation commit) | **UNBLOCKED (owner-verified; Commons re-verification pending, see A-006).** Superseded by section E. |
 | Lateral overlays (arms, scapula, soft tissue) | would be authored procedurally by RAD-LAB code | own work | Yes | n/a | Not yet needed |
 | R / L side marker | learner-controlled annotation layer drawn by the renderer | own work | Yes | already in renderer | Pass |
-| Lateral positioning scene art | schematic, authored by RAD-LAB (no generated scene art, owner decision) | own work | Yes | No | Not yet authored |
+| Lateral positioning scene art | schematic, authored by RAD-LAB (no generated scene art, owner decision) | own work | Yes | Yes | See ART-RAD072-CHEST below (current drawing); historical needs audit retained. |
 
 Verification attempt: `commons.wikimedia.org` API (search for lateral chest radiographs; `meta=siteinfo` retry) returned **HTTP 429 "too many requests"** from the session's shared egress IP on three attempts. Not bypassed. No Wikimedia, Radiopaedia or other image was downloaded, so none can be registered. **No asset was used.**
 
@@ -890,3 +890,17 @@ Shipped font/notice bytes (SHA-256); font binaries are unmodified. In the IBM no
 ### RAD-054 — phone-feedback navigation symbols (2026-10-16)
 
 `src/features/platform/ExamGraphic.tsx`: six replacement original schematic SVGs (knee AP/lateral, ankle AP/lateral, foot AP/oblique) and two new category symbols (full upper/lower limb), authored directly as vector paths for this repository. No external image, generated raster, tracing, copied scene or diagnostic radiograph. The owner's screenshots identify the old symbols to replace; they are not product assets. Existing font licences remain. These symbols aid navigation only; they do not validate anatomy or clinical positioning. Category mappings are in the version-1 presentation registry.
+
+
+### ART-RAD072-CHEST — project scene SVG drawings (2026-10-23, F8)
+
+| Field | Record |
+|---|---|
+| Authorship / licence basis | Original vector paths and basic SVG shapes authored directly for RAD-LAB; project own work, commercial-compatible. No copied or traced image, textbook figure, image-generation output or external asset. |
+| Source files | `src/features/positioning/LateralFigure.tsx`, `src/features/positioning/PlanView.tsx`, `src/features/positioning/FrontalFigure.tsx`; binding in `src/features/positioning/detector-figures.tsx`. Existing scene palette and primitives reused. |
+| Lateral detector | Profile facing anterior/viewer left, tapered lung apex, diaphragm as basal contour with deepest posterior recess, anterior/inferior cardiac silhouette, vertebral bodies with mild kyphosis, sternum and raised/anterior arms. Existing rib-separation effect retained. |
+| Lateral top | Left side on detector, transverse axis perpendicular to detector, AP dimension parallel; tube on the patient's right (viewer left in the overhead layout), anterior toward the bottom of this view; arms above head or in front of chest. Rotation from the lateral baseline. |
+| Shared frontal detector | AP supine and PA use the same original lung paths: apices, pointed lateral costophrenic angles, asymmetric domes, left cardiac notch, cardiac silhouette, central mediastinum and trachea. |
+| Geometry / accessibility | Drawing fits the existing scored landmark boxes via `fitAnatomyBox`; no changed regions/targets/marker coordinates. Same SVG on desktop/phone and in both locales; EN/AR alt descriptions updated, existing captions remain accurate. |
+| Limits / acceptance | Schematic scene, not a diagnostic image or a new radiograph. Existing reference assets and scoring untouched. [Owner decision](DECISIONS.md#rad072-chest-owner-2026-10-23); phone visual acceptance pending. [Part report](RAD-072_PART1_REPORT_2026-10-23.md). |
+| Part 1b (2026-10-23) | Same own-work basis, redrawn with the shared `BODY` proportions and chest tonal tokens (`scene-style.ts`); now also covers `ApSupineView.tsx` (AP side view) and the PA cue side diagram in `PatientCues.tsx`. The top view draws the chosen side (L or R) against the detector. No external, traced or generated asset. [Owner decision 1b](DECISIONS.md#rad072-1b-owner-2026-10-23); [part 1b report](RAD-072_PART1B_REPORT_2026-10-23.md). |

@@ -42,28 +42,30 @@ export function scapulaOffset(shoulders: ShoulderPositionId, unit = 1): number {
 export const chinOverlapsApices = (chin: ChinPositionId) => chin === "tucked";
 
 /**
- * Plan-view (top-down, SVG: +x toward the detector, +y = detector-left-to-right = the patient's left in a PA) rotation
- * of the patient figure, in SVG degrees (positive = clockwise). S11c-1 / S12-2: positive `rotationDeg` = the SAME physical
- * turn about the patient's vertical axis in every projection: the patient's LEFT side swings toward the receptor as in a PA.
- * PA and lateral: the patient is drawn facing +x (PA) or with the left side toward +x (left lateral, base angle −90° in
- * `PlanView`), and that turn is counter-clockwise in the SVG, so the sign flips. AP: the patient faces the tube (−x), the
- * left side is at −y and the same turn is clockwise, so the value is used as is.
+ * Plan-view drawing rotation in SVG screen axes (+x right, +y down; positive = clockwise).
+ * Rotation sign follows the per-exam result-image convention (S11c-1 / S13-6); the open plan-view mismatch O19 remains.
+ * PA faces +x. The corrected left-lateral base pose is +90° in `PlanView` (RAD-072): anatomical left faces the detector
+ * at +x, and anterior faces +y. AP faces the tube at −x. This existing helper uses the AP value directly and negates it
+ * for PA / lateral; RAD-072 changes the lateral base drawing only, not this helper or any scored direction (S12-2).
  */
 export function planRotationDeg(projection: ProjectionId, rotationDeg: number): number {
   return projection === "ap-erect" ? rotationDeg : -rotationDeg;
 }
 
-/** Geometry of the AP side view (drawing units). Not to scale: a schematic of the set-up, never a measurement. */
+/**
+ * Geometry of the AP side view (drawing units). Not to scale: a schematic of the set-up, never a measurement. RAD-072 1b: the
+ * patient and the detector share ONE drawing scale (`pxPerCm`, with the `BODY` proportions); the SID stays schematic (`sidPxPerCm`).
+ */
 export const AP_SIDE = {
-  /** Detector slab under the patient: its head end, the length of the 43 cm long axis and the surface height. */
-  slabX0: 100,
-  pxPerCm: 4.4,
+  /** Detector slab under the patient: its head end, the drawing scale (also of the patient) and the surface height. */
+  slabX0: 120,
+  pxPerCm: 2,
   surfaceY: 232,
-  /** Hip pivot about which the head end is raised (semi-erect). The raise angle is a drawing value, not a scored or sourced one. */
-  pivot: { x: 302, y: 232 },
+  /** Hip pivot about which the head end is raised (semi-erect): the shoulder (5 cm below the slab's head end) plus the trunk length. The raise angle is a drawing value, not a scored or sourced one. */
+  pivot: { x: 234, y: 232 },
   semiErectDeg: 30,
   /** Centre of the head, lying at the head end of the detector. */
-  head: { x: 80, y: 210 },
+  head: { x: 92, y: 212 },
   /** SID is drawn at this scale along the beam. */
   sidPxPerCm: 0.62,
 } as const;
@@ -79,7 +81,7 @@ export interface ApSideLayout {
   detectorLabel: { x: number; y: number };
   /** The head (centre of the skull) after the raise. */
   head: { x: number; y: number };
-  /** The tube focal spot and the rotation of its housing (its axis points along the beam). */
+  /** The tube focal spot and the rotation of its housing (its axis points along the beam; SVG degrees from the screen vertical). */
   tube: { x: number; y: number };
   tubeRotDeg: number;
   /** Source-to-detector distance drawn along the beam. */
@@ -95,8 +97,10 @@ const rotateAbout = (p: { x: number; y: number }, c: { x: number; y: number }, d
 
 /**
  * Layout of the AP side view from the learner's settings. `tubeAngleDeg` is + = caudad (the beam leaves the tube toward the
- * feet, the viewer's right), measured here from the vertical (the reference for a raised head end is an open question for the
- * educator, see REVIEW_PACKAGE). The tube housing rotates by −angle so that its axis lies along the drawn beam.
+ * feet, the viewer's right), measured from the PERPENDICULAR TO THE DETECTOR (owner decision RAD-072 1b, S5: the angulation
+ * feedback describes the beam as perpendicular to the sternum at about 5° caudad). Supine the detector is horizontal, so this is the
+ * vertical as before; semi-erect the tube tilts with the raised detector. Drawing only: the setting, its rule, bands, feedback and
+ * score are unchanged. The tube housing rotates so that its axis lies along the drawn beam.
  */
 export function apSideLayout(a: {
   tubeAngleDeg: number;
@@ -112,7 +116,9 @@ export function apSideLayout(a: {
   const onSlab = (cm: number) => rotateAbout({ x: AP_SIDE.slabX0 + cm * AP_SIDE.pxPerCm, y: AP_SIDE.surfaceY }, AP_SIDE.pivot, raiseDeg);
   const target = onSlab(a.rayCm);
   const sidPx = a.sidCm * AP_SIDE.sidPxPerCm;
-  const rad = toRad(a.tubeAngleDeg);
+  // Beam direction from the screen vertical: the angle from the detector perpendicular minus the raise of the detector.
+  const beamDeg = a.tubeAngleDeg - raiseDeg;
+  const rad = toRad(beamDeg);
   return {
     raiseDeg,
     target,
@@ -121,7 +127,7 @@ export function apSideLayout(a: {
     detectorLabel: rotateAbout({ x: AP_SIDE.slabX0 + (a.detectorHeightCm * AP_SIDE.pxPerCm) / 2, y: AP_SIDE.surfaceY + 36 }, AP_SIDE.pivot, raiseDeg),
     head: rotateAbout(AP_SIDE.head, AP_SIDE.pivot, raiseDeg),
     tube: { x: target.x - Math.sin(rad) * sidPx, y: target.y - Math.cos(rad) * sidPx },
-    tubeRotDeg: -a.tubeAngleDeg,
+    tubeRotDeg: -beamDeg,
     sidPx,
   };
 }
