@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 241,
-  "updated_at": "2026-10-23T23:30:00+00:00",
+  "revision": 242,
+  "updated_at": "2026-10-24T00:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -171,11 +171,11 @@
     {
       "id": "RAD-017",
       "title": "قرارات بيانات مفتوحة عند المالك: موضع علامة hand-PA (O55/O74)، اتجاه لوحة elbow-lateral (O52)، ملف foot (O59)",
-      "status": "planned",
+      "status": "done",
       "priority": "medium",
-      "description": "ثلاثة قرارات صغيرة عند المالك: موضع علامة hand-PA (O55/O74)، اتجاه كاسيت elbow-lateral (O52)، ملف القدم المقصود (المعلن 1067×1913 والمرفق 1061×2431، O59). لا تعديل قبل القرار (S-STD-1).",
-      "source_ref": "DECISIONS.md O55، O74، O52، O59 وS-VIS-1b-9",
-      "waiting_on": "owner"
+      "description": "أُغلقت القرارات الثلاثة بقرار المالك: يبقى موضع علامة hand-PA (O55/O74) وتبقى لوحة elbow-lateral portrait (O52)، والمقصود ملف القدم المرفق A-026 (O59). لا تغيير بيانات أو تقييم؛ لا متبقٍ.",
+      "source_ref": "DECISIONS.md O55، O74، O52، O59 وS-VIS-1b-7/9؛ docs/DECISIONS.md#owner-data-decisions-2026-10-24",
+      "completion_evidence": "docs/DECISIONS.md#owner-data-decisions-2026-10-24 (قرار المالك 2026-10-24، يحيل إلى سجلات O55/O74/O52/O59 الأصلية). توثيق فقط؛ لا تغيير كود أو بيانات أو بصمات أو درجات."
     },
     {
       "id": "RAD-018",
@@ -397,20 +397,20 @@
     {
       "id": "RAD-042",
       "title": "حفظ المحاولات والأحداث (Practice محفوظ)",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "الحفظ مدموج (#55)، وظهور محاولات جديدة للمالك مثبت بإفادة/صورة S-PILOT-39.4 (#72). لا حاجة لإعادة إثبات حفظ المحاولة نفسه. تبقى مراجعة نطاق الأحداث والحالات غير الناجحة غير الموثقة حيًا؛ ينتظر المالك اعتماد إغلاق هذا النطاق دون تعميم الدليل على كل جهاز/حساب.",
-      "source_ref": "PR #55/#72؛ DECISIONS.md S-PILOT-28، S-PILOT-39.4؛ docs/PILOT_PLATFORM_PLAN.md §5/§8",
-      "waiting_on": "owner"
+      "description": "أُغلق بقبول المالك على الدليل المسجّل (#55، #72، S-PILOT-28، S-PILOT-39.4). لم يُتحقق حيًا من الحالات النادرة: انقطاع الشبكة وفشل حفظ المحاولة، ولا تُدّعى موثقة. لا يعمّم الدليل على كل جهاز أو حساب.",
+      "source_ref": "PR #55/#72؛ DECISIONS.md S-PILOT-28، S-PILOT-39.4؛ docs/DECISIONS.md#owner-data-decisions-2026-10-24؛ docs/PILOT_PLATFORM_PLAN.md §5/§8",
+      "completion_evidence": "قبول المالك 2026-10-24 في docs/DECISIONS.md#owner-data-decisions-2026-10-24 على دليل #55/#72 وS-PILOT-39.4 (ظهور محاولات جديدة للمالك). انقطاع الشبكة وفشل حفظ المحاولة غير مُتحقق منهما حيًا."
     },
     {
       "id": "RAD-043",
       "title": "الموافقة وزر الملاحظات ورابط الاستبيان",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "الموافقة والملاحظات مدموجتان (#56/#57)؛ الشروط EN/AR والموافقة المتجددة مثبتة في S-PILOT-39.1…39.3 (#71/#72). المتبقي فحص إرسال/حفظ الملاحظة حيًا. غياب رابط الاستبيان أفاد به المالك في S-PILOT-37؛ الاستبيان الداخلي مؤجل، ولا طلب لإعداده الآن.",
-      "source_ref": "PR #56/#57/#71/#72؛ DECISIONS.md S-PILOT-37، S-PILOT-39.1…39.3؛ docs/PILOT_PLATFORM_PLAN.md §6/§8",
-      "waiting_on": "owner"
+      "description": "أُغلق: الموافقة والملاحظات مدموجتان (#56/#57)، والشروط والموافقة المتجددة مثبتتان (S-PILOT-39.1…39.3)، وأرسل المالك ملاحظة من الموقع فظهرت في لوحته. الاستبيان الداخلي مؤجل ولا طلب لإعداده الآن.",
+      "source_ref": "PR #56/#57/#71/#72؛ DECISIONS.md S-PILOT-37، S-PILOT-39.1…39.3؛ docs/DECISIONS.md#owner-data-decisions-2026-10-24؛ docs/PILOT_PLATFORM_PLAN.md §6/§8",
+      "completion_evidence": "فحص المالك الحي 2026-10-24: أُرسلت رسالة ملاحظات من الموقع وظهرت في لوحة المالك (docs/DECISIONS.md#owner-data-decisions-2026-10-24)، مع أدلة S-PILOT-39.1…39.3 للشروط والموافقة."
     },
     {
       "id": "RAD-044",
