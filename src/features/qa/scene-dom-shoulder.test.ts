@@ -31,6 +31,7 @@ const STATES: Record<string, Partial<SimulationSettings>> = {
 for (const examId of EXAM_IDS) {
   const cases = CASES.filter((x) => x.id === examId || x.id.startsWith(`${examId}/`));
   if (cases.length === 0) continue; // the exam is added in its own commit
+  // Per-test timeout (owner decision 2026-10-24, DECISIONS.md#housekeeping-owner-2026-10-24): the 5000 ms default expired on loaded CI; no hash ever differed.
   it(`the rendered ${examId} scenes and result panels are unchanged (S-SHOULDER-3)`, () => {
     const FILE = `scripts/qa/scene-dom/${examId}-hashes.json`;
     const out: Record<string, string> = {};
@@ -52,5 +53,5 @@ for (const examId of EXAM_IDS) {
     const golden = JSON.parse(readFileSync(FILE, "utf8")) as Record<string, string>;
     expect(Object.keys(out)).toEqual(Object.keys(golden));
     expect(Object.keys(out).filter((k) => out[k] !== golden[k])).toEqual([]);
-  });
+  }, 30_000);
 }
