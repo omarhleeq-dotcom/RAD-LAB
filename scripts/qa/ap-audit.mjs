@@ -6,6 +6,7 @@
 // and screenshots in OUT (default /tmp/rad-lab-qa-ap). Exit code 1 on any failure.
 import { chromium } from "playwright";
 import { mkdirSync, readFileSync } from "node:fs";
+import { driver, startPractice } from "./workspace.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const OUT = process.env.OUT ?? "/tmp/rad-lab-qa-ap";
@@ -33,24 +34,23 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
   await axe("exam hub");
   await page.goto(`${BASE}/${loc}/xray/chest-ap-supine/practice`, { waitUntil: "networkidle" });
   await axe("setup");
+  await startPractice(page, msgs);
   await noOverflow("setup");
   await page.screenshot({ path: `${OUT}/${tag.replace("/", "-")}-setup.png`, fullPage: true });
 
   // Drive the UI like a learner (same helpers as run-matrix.mjs). Texts come from the messages / exam data.
   const m = msgs;
   const forCase = (x) => x.replace(/^\{sex, select, female \{(.*?)\} other \{.*\}\}$/s, "$1");
-  const setRange = (label, value) => page.getByRole("slider", { name: label, exact: true }).evaluate((node, v) => {
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(node, String(v));
-    node.dispatchEvent(new Event("input", { bubbles: true }));
-    node.dispatchEvent(new Event("change", { bubbles: true }));
-  }, value);
+  const dr = driver(page, msgs, { touch: opts.hasTouch }); // opens the phone tab / panel that holds a control before using it
+  const setRange = dr.slider;
   const radio = (text) => page.locator("label", { hasText: text }).filter({ has: page.locator('input[type="radio"]') }).first();
-  const click = (loc2) => (opts.hasTouch ? loc2.tap() : loc2.click());
+  const click = dr.click;
   const group = (legend) => page.locator("fieldset", { has: page.locator("legend", { hasText: legend }) });
   const exam = JSON.parse(readFileSync("scripts/qa/ap-labels.json", "utf8"))[loc];
 
   async function attempt(name, u) {
     await page.goto(`${BASE}/${loc}/xray/chest-ap-supine/practice`, { waitUntil: "networkidle" });
+    await startPractice(page, msgs);
     await click(group(exam.stateLegend).locator("label").nth(u.state === "supine" ? 0 : 1));
     // S13-6: the AP button is labelled by the selected position, never "AP erect"
     ok(`${tag} ${name}: no "${m.console.projections["ap-erect"]}" button in the AP exam`, (await page.locator("label", { hasText: new RegExp(`^\\s*${m.console.projections["ap-erect"]}\\s*$`) }).count()) === 0);

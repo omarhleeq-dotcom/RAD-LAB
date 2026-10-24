@@ -6,6 +6,7 @@
 // and screenshots in OUT (default /tmp/rad-lab-qa-${EXAM}). Exit code 1 on any failure.
 import { chromium } from "playwright";
 import { mkdirSync, readFileSync } from "node:fs";
+import { driver, startPractice } from "./workspace.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const EXAM = process.argv[2] ?? "ankle-ap";
@@ -40,22 +41,21 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
   await axe("exam hub");
   await page.goto(`${BASE}/${loc}/xray/${EXAM}/practice`, { waitUntil: "networkidle" });
   await axe("setup");
+  await startPractice(page, msgs);
   await noOverflow("setup");
   await page.screenshot({ path: `${OUT}/${tag.replace("/", "-")}-setup.png`, fullPage: true });
 
   // Drive the UI like a learner (same helpers as run-matrix.mjs). Texts come from the messages / exam data.
   const m = msgs;
   const forCase = (x) => x.replace(/^\{sex, select, female \{.*?\} other \{(.*)\}\}$/s, "$1"); // the ankle case patient is male
-  const setRange = (label, value) => page.getByRole("slider", { name: label, exact: true }).evaluate((node, v) => {
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(node, String(v));
-    node.dispatchEvent(new Event("input", { bubbles: true }));
-    node.dispatchEvent(new Event("change", { bubbles: true }));
-  }, value);
+  const dr = driver(page, msgs, { touch: opts.hasTouch }); // opens the phone tab / panel that holds a control before using it
+  const setRange = dr.slider;
   const radio = (text) => page.locator("label", { hasText: text }).filter({ has: page.locator('input[type="radio"]') }).first();
-  const click = (loc2) => (opts.hasTouch ? loc2.tap() : loc2.click());
+  const click = dr.click;
 
   async function attempt(name, u) {
     await page.goto(`${BASE}/${loc}/xray/${EXAM}/practice`, { waitUntil: "networkidle" });
+    await startPractice(page, msgs);
     await click(radio(m.console.projections[C.projection]));
     await setRange(m[C.ns][C.rotKey], u.rotation);
     await setRange(m.console.tubeAngulation, u.tube ?? C.tube);
