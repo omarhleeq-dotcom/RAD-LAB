@@ -10,7 +10,6 @@ import { needsConsent } from "./consent";
 import { ProfileName } from "./ProfileName";
 import { validFullName } from "./full-name";
 import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
-import { SURVEY_URL, surveyHref } from "./survey";
 import { useSessionAccount } from "./SessionGate";
 import { safeReturnPath, signInReturnSearch } from "./session-access";
 
@@ -22,7 +21,7 @@ export function AccountPanel() {
   const t = useTranslations("account");
   const tt = useTranslations("training");
   const locale = useLocale();
-  const { state, saveName, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useSessionAccount();
+  const { state, saveName, signIn, signUp, signOut, retry, acceptTerms, requestReset, updatePassword } = useSessionAccount();
   const [mode, setMode] = useState<Mode>("signIn");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -115,22 +114,6 @@ export function AccountPanel() {
         </section>
       )}
       {!needsConsent(state.consentVersion) && status === "approved" && <p data-testid="consent-done" className="mb-4 text-sm text-muted">{t("consent.accepted")} <Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>}
-      {SURVEY_URL && status === "approved" && (
-        <section className="mb-4 rounded-lg border border-line bg-panel p-5" data-testid="survey-card" aria-labelledby="survey-title">
-          <h2 id="survey-title" className="text-lg font-semibold">{t("survey.title")}</h2>
-          <p className="mt-2">{t("survey.body")}</p>
-          <a
-            href={surveyHref(SURVEY_URL, code)}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-testid="survey-link"
-            className={`mt-3 inline-block ${primary}`}
-            onClick={() => void surveyOpened()}
-          >
-            {t("survey.open")}
-          </a>
-        </section>
-      )}
       <section className="rounded-lg border border-line bg-panel p-5" data-testid={`account-${status}`} {...(status === "approved" ? { "aria-label": t("title") } : { "aria-labelledby": "acct-status" })}>
         <p className="text-sm text-muted">{t("signedInAs")} <span dir="ltr" className="font-medium text-ink">{state.email}</span></p>
         {status !== "approved" && <>
