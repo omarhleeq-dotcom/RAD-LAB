@@ -12,12 +12,15 @@
 //   default axes: every radio group (fieldset legend) inside the positioning section + the rotation slider at min / 0 / max.
 //   --spec <json>: replaces the defaults. {"radios": [<text>...], "sliders": {<text>: [values...]}}, where <text> is a message path
 //   ("positioning.chinLegend", "console.tubeAngulation") or {"en": "...", "ar": "..."} (an exam's own choice-control legend).
+//   --whole-detector (RAD-074): on the phone layout, first press "Whole detector" (when the exam has that toggle), so the labels are measured in the
+//   whole-detector view. The default measures the fitted view the learner sees first, whose frame is smaller than the labels' positions.
 //   --obstacles (S-VIS-1-4): also reports guide labels that touch the crosshair, a collimation handle or the collimated-field edge of the
 //   detector drawing (anatomy is not measured). Off by default so the chest scenes keep their recorded results.
 //   A radio axis iterates the options of the group; a slider axis sets each value. More states than --max-states (default 200)
 //   aborts before measuring: narrow the axes instead of raising the limit casually.
 import { chromium } from "playwright";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { driver, startPractice } from "./workspace.mjs";
 
 const args = process.argv.slice(2);
 const exam = args.find((a) => !a.startsWith("--") && args[args.indexOf(a) - 1] !== "--spec" && args[args.indexOf(a) - 1] !== "--max-states");
@@ -26,6 +29,7 @@ if (!exam) { console.error("usage: node scripts/qa/label-collisions.mjs <exam-id
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const OUT = process.env.OUT ?? `/tmp/rad-lab-qa-labels-${exam}`;
 const OBSTACLES = args.includes("--obstacles");
+const WHOLE = args.includes("--whole-detector");
 const MODALITY = opt("--modality") ?? "xray";
 const MAX_STATES = Number(opt("--max-states") ?? 200);
 const spec = opt("--spec") ? JSON.parse(readFileSync(opt("--spec"), "utf8")) : null;
@@ -45,9 +49,15 @@ for (const loc of ["en", "ar"]) for (const [vw, opts] of Object.entries(VIEWPORT
   const tag = `${loc}/${vw}`;
   const ctx = await browser.newContext({ ...opts, locale: loc === "ar" ? "ar" : "en-US" });
   const page = await ctx.newPage();
-  const click = (l) => (opts.hasTouch ? l.tap() : l.click());
+  const dr = driver(page, MSGS[loc], { touch: opts.hasTouch }); // phone layout: opens the tab / panel of a control before using it
+  const click = dr.click;
   await page.goto(`${BASE}/${loc}/${MODALITY}/${exam}/practice`, { waitUntil: "networkidle" });
   await page.waitForSelector(POS);
+  await startPractice(page, MSGS[loc]);
+  if (WHOLE && opts.hasTouch) {
+    const whole = page.getByRole("button", { name: MSGS[loc].workspace.wholeDetector, exact: true });
+    if (await whole.count()) await whole.click();
+  }
 
   // --- axes
   const radioAxes = [];
@@ -62,6 +72,7 @@ for (const loc of ["en", "ar"]) for (const [vw, opts] of Object.entries(VIEWPORT
   const sliderAxes = Object.entries(spec ? spec.sliders ?? {} : { "positioning.rotation": ["min", 0, "max"] }).map(([name, values]) => ({ name: text(loc, name), values }));
   for (const ax of sliderAxes) {
     const el = page.getByRole("slider", { name: ax.name, exact: true });
+    await dr.reveal(el);
     const [min, max] = await el.evaluate((n) => [Number(n.min), Number(n.max)]);
     ax.vals = ax.values.map((v) => (v === "min" ? min : v === "max" ? max : v));
     ax.el = el;
@@ -70,11 +81,7 @@ for (const loc of ["en", "ar"]) for (const [vw, opts] of Object.entries(VIEWPORT
   const total = axes.reduce((n, x) => n * x.count, 1);
   if (total > MAX_STATES) { console.error(`${tag}: ${total} states > --max-states ${MAX_STATES}; narrow the axes (--spec).`); process.exit(2); }
 
-  const setSlider = (el, v) => el.evaluate((node, val) => {
-    Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(node, String(val));
-    node.dispatchEvent(new Event("input", { bubbles: true }));
-    node.dispatchEvent(new Event("change", { bubbles: true }));
-  }, v);
+  const setSlider = dr.setSlider;
   const guides = page.locator(`${POS} input[type="checkbox"]`).first();
 
   const measure = () => page.evaluate(([POS, OBSTACLES]) => {

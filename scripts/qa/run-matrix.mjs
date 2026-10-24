@@ -19,6 +19,7 @@ import { chromium } from "playwright";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { decodeGrey, downscale2, encodeGrey, compareGrey } from "./png.mjs";
+import { reveal, startPractice } from "./workspace.mjs";
 
 const arg = (name) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split("=")[1];
 const flag = (name) => process.argv.includes(`--${name}`);
@@ -48,14 +49,21 @@ const results = [];
 const ok = (name, cond, extra = "") => { results.push({ name, pass: !!cond, extra }); if (!cond) console.log("  FAIL", name, extra); };
 const sha = (b) => createHash("sha1").update(b).digest("hex").slice(0, 12);
 
+// Which messages file a page uses (the phone layout's tabs are found by their translated names).
+const pageMsgs = new WeakMap();
 async function setRange(page, label, value) {
-  await page.getByRole("slider", { name: label, exact: true }).evaluate((node, v) => {
+  const slider = page.getByRole("slider", { name: label, exact: true });
+  await reveal(page, pageMsgs.get(page), slider);
+  await slider.evaluate((node, v) => {
     Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(node, String(v));
     node.dispatchEvent(new Event("input", { bubbles: true }));
     node.dispatchEvent(new Event("change", { bubbles: true }));
   }, value);
 }
-const choose = (page, device, locator) => (DEVICES[device].hasTouch ? locator.tap() : locator.click());
+const choose = async (page, device, locator) => {
+  await reveal(page, pageMsgs.get(page), locator);
+  return DEVICES[device].hasTouch ? locator.tap() : locator.click();
+};
 
 async function configure(page, device, loc, u) {
   const m = msgs[loc];
@@ -110,10 +118,12 @@ async function runScenario(browser, loc, device, sc) {
   const u = { ...file.defaults, ...sc.set };
   const ctx = await browser.newContext({ ...DEVICES[device], locale: loc === "ar" ? "ar" : "en-US" });
   const page = await ctx.newPage();
+  pageMsgs.set(page, msgs[loc]);
   const errors = [];
   page.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
   page.on("pageerror", (e) => errors.push(String(e)));
   await page.goto(`${BASE}/${loc}/xray/chest-pa-erect/practice`, { waitUntil: "networkidle" });
+  await startPractice(page, msgs[loc]);
   ok(`${tag}: html dir`, (await page.getAttribute("html", "dir")) === (loc === "ar" ? "rtl" : "ltr"));
   if (!sc.fromInitial) await configure(page, device, loc, u);
   ok(`${tag}: no result / effects before the exposure (Practice Mode does not leak)`, (await page.locator('[data-testid="radiograph"]').count()) === 0);

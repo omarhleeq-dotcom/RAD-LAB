@@ -495,7 +495,7 @@
  "chamberLabels": {
   "left": {
    "en": "Left field (detector view)",
-   "ar": "الحقل الأيسر (عرض الكاسيت)"
+   "ar": "الحقل الأيسر (عرض الكاشف)"
   },
   "center": {
    "en": "Central field",
@@ -503,7 +503,7 @@
   },
   "right": {
    "en": "Right field (detector view)",
-   "ar": "الحقل الأيمن (عرض الكاسيت)"
+   "ar": "الحقل الأيمن (عرض الكاشف)"
   }
  }
 }

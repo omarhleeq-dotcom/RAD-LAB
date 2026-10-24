@@ -18,6 +18,7 @@
     "status:check": "node scripts/status/check-status.mjs",
     "qa:visual": "node scripts/qa/run-matrix.mjs",
     "qa:a11y": "node scripts/qa/a11y-audit.mjs",
+    "qa:exam-audit": "node scripts/qa/exam-audit.mjs",
     "docs:check": "node scripts/docs/check-docs.mjs",
     "docs:test": "node --test scripts/docs/*.test.mjs scripts/status/*.test.mjs",
     "status:summary": "node scripts/status/summary.mjs",
