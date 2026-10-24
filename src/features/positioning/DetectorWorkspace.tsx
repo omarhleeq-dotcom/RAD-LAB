@@ -231,11 +231,15 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
     <>
     {frameRows && <PhoneFrameLabels>
       <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
+    </PhoneFrameLabels>}
+    {frameRows && <PhoneFrameLabels detectorWidth={W}>
       <Orientation W={W} showGuides={showGuides} projection={settings.projection} />
-      {showGuides && <>
+    </PhoneFrameLabels>}
+    {frameRows && showGuides && <PhoneFrameLabels>
+      <>
         <SceneLabel x={W - 4} y={-122} size={figure.marginGuideLabels ? MARGIN_LABEL_SIZE : LABEL_SIZE.detector + 4} anchor="end" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
         <SceneLabel x={W - 4} y={-92} size={figure.marginGuideLabels ? MARGIN_LABEL_SIZE : LABEL_SIZE.detector + 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
-      </>}
+      </>
     </PhoneFrameLabels>}
     <svg
       ref={svgRef}

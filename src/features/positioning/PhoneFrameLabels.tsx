@@ -27,8 +27,34 @@ export function frameRows(width: number, measurements: readonly Measurement[]): 
   return { positions, width, height: top + rowHeight + inset };
 }
 
+export type OrientationSlot = "start" | "centre" | "end";
+export const orientationSlot = (x: number, detectorWidth: number): OrientationSlot =>
+  x < detectorWidth / 3 ? "start" : x > 2 * detectorWidth / 3 ? "end" : "centre";
+
+/** Physical image slots: never reverse them for Arabic or UI direction. */
+export function orientationRows(width: number, detectorWidth: number, measurements: readonly Measurement[]): FrameRows {
+  const inset = 3, gap = 6;
+  const rows: { height: number; labels: { m: Measurement; left: number; right: number }[] }[] = [];
+  for (const m of measurements) {
+    const slot = orientationSlot(Number(JSON.parse(m.key)[0]), detectorWidth);
+    const pillWidth = m.width + 10;
+    const left = slot === "start" ? inset : slot === "end" ? width - inset - pillWidth : (width - pillWidth) / 2;
+    let row = rows.find((r) => r.labels.every((l) => left >= l.right + gap || left + pillWidth + gap <= l.left));
+    if (!row) { row = { height: 0, labels: [] }; rows.push(row); }
+    row.labels.push({ m, left, right: left + pillWidth });
+    row.height = Math.max(row.height, m.height + 2);
+  }
+  const positions: Record<string, Position> = {};
+  let top = inset;
+  for (const row of rows) {
+    for (const { m, left } of row.labels) positions[m.key] = { x: left + 5 - m.x, y: top + 1 - m.y };
+    top += row.height + gap;
+  }
+  return { positions, width, height: rows.length ? top - gap + inset : 1 };
+}
+
 /** Phone fitted view only. Its own pixel-sized SVG bands do not change the detector's viewBox or touch transform. */
-export function PhoneFrameLabels({ children }: { children: ReactNode }) {
+export function PhoneFrameLabels({ children, detectorWidth }: { children: ReactNode; detectorWidth?: number }) {
   const ref = useRef<SVGSVGElement>(null);
   const [rows, setRows] = useState<FrameRows>({ positions: {}, width: 1, height: 1 });
   useLayoutEffect(() => {
@@ -41,7 +67,7 @@ export function PhoneFrameLabels({ children }: { children: ReactNode }) {
         const b = t.getBBox();
         return { key: t.dataset.phoneFrameLabel!, x: b.x - t.x.baseVal[0]!.value, y: b.y - t.y.baseVal[0]!.value, width: b.width, height: b.height };
       });
-      const next = frameRows(width, measurements);
+      const next = detectorWidth === undefined ? frameRows(width, measurements) : orientationRows(width, detectorWidth, measurements);
       setRows((old) => JSON.stringify(old) === JSON.stringify(next) ? old : next);
     };
     measure();
@@ -49,7 +75,7 @@ export function PhoneFrameLabels({ children }: { children: ReactNode }) {
     observer.observe(svg);
     void document.fonts.ready.then(measure);
     return () => observer.disconnect();
-  }, [children]);
+  }, [children, detectorWidth]);
   return <svg ref={ref} aria-hidden="true" width="100%" height={rows.height} viewBox={`0 0 ${rows.width} ${rows.height}`} style={{ direction: "ltr", pointerEvents: "none" }}>
     <PhoneFrameLabelContext.Provider value={rows}>{children}</PhoneFrameLabelContext.Provider>
   </svg>;
