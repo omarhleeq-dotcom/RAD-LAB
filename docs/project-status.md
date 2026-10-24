@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) المرحلتان A وB منجزتان على PR مسودة وتنتظران فحص الهاتف ([تقرير B](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md))؛ ثم 2c الكتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
-- **ينتظر المالك:** فحص الهاتف لـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) مدموج في #115 (فحص الهاتف باقٍ، [تقرير B](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md))؛ **2c الكتف:** المرحلة A (تشخيص وتتبع A-038، دون كود تطبيق) منجزة على PR مسودة والمرحلة B منجزة بقرارات المالك ([القرار](DECISIONS.md#rad072-2c-owner-2026-10-24)، [تقرير B](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md)) وتنتظر فحص الهاتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
+- **ينتظر المالك:** فحص الهاتف لـ2c ([تقرير B §8](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-وar-390-الكاشف-ومنظر-الأعلى-الإرشادات-onoff)) ولـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
 - **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23) و[2b](DECISIONS.md#rad072-2b-owner-2026-10-23).
 - **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral (2a، [القائمة](RAD-072_PART2A_HASHES_2026-10-23.md)) ثم wrist-pa وwrist-lateral وfoot-ap وfoot-oblique (2b، [القائمة](RAD-072_PART2B_HASHES_2026-10-23.md)) وحدها؛ نماذج اليد والرسغ والطرف السفلي المشتركة وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 242,
-  "updated_at": "2026-10-24T00:00:00+00:00",
+  "revision": 248,
+  "updated_at": "2026-10-24T09:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -309,7 +309,7 @@
       "title": "مطابقة صورة الكتف وترخيصها وملاءمتها",
       "status": "review",
       "priority": "high",
-      "description": "هوية صورة الكتف وترخيصها مطابقان (CC0، SHA-1 مطابق، O87 مغلق)؛ الأصل A-037 والويب A-038 بلا تعديل بكسلات. تبقى ملاحظات الصورة (الإطار ينتهي في منتصف العضد، هامش مائل، اسم الملف normal) وملاءمتها للمراجعة (O91/O5). يُغلق بقرار المراجِع (O91) على ملاحظات الصورة.",
+      "description": "الهوية والترخيص مطابقان (CC0، O87 مغلق)؛ A-037 وA-038 بلا تعديل بكسلات. قرار المالك 2026-10-24: تبقى A-038 مناسبة الآن حتى تتوفر صور أخرى، وملاحظة المرجع تحت النتيجة تذكر الخلع المتكرر وغياب شذوذ ظاهر. تبقى ملاءمتها للمراجِع (O91/O5): قوس رأس شبه دائري وخط سطوع أفقي مستقيم (ربما معالجة صورة).",
       "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md",
       "waiting_on": "reviewer"
     },
@@ -417,7 +417,7 @@
       "title": "لوحة المالك وتصدير CSV",
       "status": "review",
       "priority": "medium",
-      "description": "اللوحة والمرشحات وCSV المحاولات موثقة حيًا (S-PILOT-25/28). S-PILOT-32.3 حسم إبقاء ملفي المحاولات والملاحظات كاملين للمالك؛ لا تعاد خيارات الحجب. المتبقي تحقق ملف الملاحظات وتقرير الانقطاع/الأجزاء المتعددة على الجهاز؛ QA المحاكى لا يثبت حفظ التنزيل.",
+      "description": "اللوحة والمرشحات وCSV المحاولات موثقة حيًا. اختبار المالك 2026-10-24: تصدير الملاحظات بمدى 17–24 أكتوبر لم يعد صفوفًا مع أن الملاحظة ظاهرة في اللوحة؛ السبب المرجح تطبيق مرشح الفحص على الملاحظات/التصدير واختلافه عن مرشحات الشاشة (غير مؤكد). أجّله المالك إلى إعادة تصميم لوحة المالك (RAD-069).",
       "source_ref": "PR #54/#58/#63/#64؛ DECISIONS.md S-PILOT-25/28، S-PILOT-32.3؛ docs/PILOT_PLATFORM_PLAN.md §8",
       "waiting_on": "owner"
     },
@@ -642,7 +642,7 @@
       "title": "UI-4: المكتبة والتدريب والثيم والرسومات",
       "status": "planned",
       "priority": "medium",
-      "description": "بعد RAD-068 ثم RAD-072: شبكة المكتبة (F1)، وصفحتا التدريب والنتيجة (F5: صفحة النتيجة كثيفة على الهاتف بتأكيد المالك، فالملخص أولًا والتفاصيل مطوية)، وثيم داكن/فاتح بزر في الشريط العلوي، الافتراضي داكن ومحفوظ (F7)، ورسومات SVG من عمل المشروع مسجلة في سجل الأصول (F8).",
+      "description": "بعد RAD-068 ثم RAD-072: شبكة المكتبة، وصفحتا التدريب والنتيجة (الملخص أولًا)، وثيم داكن/فاتح، ورسومات SVG مسجلة. وإعادة تصميم لوحة المالك: مرشحات أوضح (لم يفهم المالك مرشح الفحص)، وإصلاح تصدير ملاحظات RAD-044 ضمنها، ومساحة مخططة لأقسام Assess في RAD-062 (مشرف، رفع أسئلة، تصحيح كتابي).",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
       "waiting_on": "code"
     },
@@ -669,8 +669,8 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "(1) الصدر مدموج في #113. (2) الأطراف: 2a تجربة اليد مدموجة في #114 ومقبولة من المالك (حدّان بسيطان مقبولان دون إصلاح)؛ 2b الرسغ ثم القدم بالطريقة نفسها (الكاحل خرج منه): المرحلة A منجزة على PR مسودة وتنتظر مراجعة المالك للتراكبات قبل B؛ 2c الكتف مع زاوية الجسم في جلسة مستقلة. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md",
+      "description": "(1) الصدر #113. (2) الأطراف: اليد #114، الرسغ والقدم #115 (فحص الهاتف باقٍ)؛ 2c الكتف Grashey: A وB منجزتان على PR مسودة (رسم من التتبع، رفع سقف الإغلاق، زاوية الجسم ظاهرة في منظر الأعلى) وتنتظران فحص الهاتف. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     }
   ]

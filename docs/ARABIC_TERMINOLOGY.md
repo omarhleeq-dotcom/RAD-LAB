@@ -461,3 +461,11 @@ Source and scope: [owner drawing findings](DECISIONS.md#rad072-chest-owner-2026-
 | The {side} lateral position / the {side} side (left / right) | الوضع الجانبي {الأيسر/الأيمن}، والجانب {الأيسر/الأيمن} | `scene.altPlanLateral`, `scene.sideLeft` / `sideRight` | DRAFT |
 
 Source and scope: [owner decision 1b](DECISIONS.md#rad072-1b-owner-2026-10-23), [part 1b report](RAD-072_PART1B_REPORT_2026-10-23.md).
+
+## RAD-072 2c — shoulder reference note (DRAFT, machine-assisted, pending owner / educator review)
+Keys: `radiograph` credit of `src/data/cases/shoulder-grashey-radiograph.ts` and the matching `context` in `src/data/credits.ts` (the note shown under the shoulder result image). Source: [owner decision 2c D6 / RAD-032 note](DECISIONS.md#rad072-2c-owner-2026-10-24).
+| EN | Draft Arabic | Where |
+|---|---|---|
+| Per the image uploader's description | بحسب وصف من رفع الصورة | shoulder credit note (DRAFT) |
+| has a history of recurrent dislocation | لهذا الكتف تاريخ من الخلع المتكرر | shoulder credit note (DRAFT) |
+| no abnormality is visible on the image | ولا يظهر على الصورة أي شذوذ | shoulder credit note (DRAFT) |
