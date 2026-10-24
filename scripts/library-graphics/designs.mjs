@@ -2,7 +2,8 @@
 // "bone" (closed outline), "line" (open stroke). Everything lives in the 240 x 168 viewBox; nothing is mirrored for RTL.
 // Knee, ankle, elbow and pelvis reuse the project's own model geometry. The chest projections, upper/lower limb, head and spine
 // keep the geometry of the earlier hand-drawn ExamGraphic (LEGACY, converted to absolute paths, decorative extras dropped):
-// the Phase A review of the first redraw judged those shapes better than the new attempts. The body region is new.
+// the Phase A review judged those shapes better than the first redraws; the head was reverted to it in Phase B3 by owner decision.
+// The body region and the spine are new.
 
 const LEGACY = {
   "chest-pa": [
@@ -63,30 +64,6 @@ const LEGACY = {
     ["fill", "M99 140L99 120Q72 110 72 72Q72 29 115 26Q155 22 159 65L172 89L158 92L158 113Q157 126 131 122L131 140"],
     ["line", "M99 140L99 120Q72 110 72 72Q72 29 115 26Q155 22 159 65L172 89L158 92L158 113Q157 126 131 122L131 140"],
     ["line", "M84 53Q117 26 143 53M89 61Q97 44 110 58Q122 40 133 57M111 59L111 88M150 76L155 76M142 105L155 105"],
-  ],
-  "spine": [
-    ["line", "M123 19Q95 51 123 85Q150 117 122 149"],
-    ["fill", "M103 24L121 24Q125 24 125 28L125 31Q125 35 121 35L103 35Q99 35 99 31L99 28Q99 24 103 24Z"],
-    ["bone", "M103 24L121 24Q125 24 125 28L125 31Q125 35 121 35L103 35Q99 35 99 31L99 28Q99 24 103 24Z"],
-    ["line", "M92 29L84 29M132 29L140 29"],
-    ["fill", "M103 41L121 41Q125 41 125 45L125 48Q125 52 121 52L103 52Q99 52 99 48L99 45Q99 41 103 41Z"],
-    ["bone", "M103 41L121 41Q125 41 125 45L125 48Q125 52 121 52L103 52Q99 52 99 48L99 45Q99 41 103 41Z"],
-    ["line", "M92 46L84 46M132 46L140 46"],
-    ["fill", "M103 58L121 58Q125 58 125 62L125 65Q125 69 121 69L103 69Q99 69 99 65L99 62Q99 58 103 58Z"],
-    ["bone", "M103 58L121 58Q125 58 125 62L125 65Q125 69 121 69L103 69Q99 69 99 65L99 62Q99 58 103 58Z"],
-    ["line", "M92 63L84 63M132 63L140 63"],
-    ["fill", "M119 75L137 75Q141 75 141 79L141 82Q141 86 137 86L119 86Q115 86 115 82L115 79Q115 75 119 75Z"],
-    ["bone", "M119 75L137 75Q141 75 141 79L141 82Q141 86 137 86L119 86Q115 86 115 82L115 79Q115 75 119 75Z"],
-    ["line", "M108 80L100 80M148 80L156 80"],
-    ["fill", "M119 92L137 92Q141 92 141 96L141 99Q141 103 137 103L119 103Q115 103 115 99L115 96Q115 92 119 92Z"],
-    ["bone", "M119 92L137 92Q141 92 141 96L141 99Q141 103 137 103L119 103Q115 103 115 99L115 96Q115 92 119 92Z"],
-    ["line", "M108 97L100 97M148 97L156 97"],
-    ["fill", "M111 109L129 109Q133 109 133 113L133 116Q133 120 129 120L111 120Q107 120 107 116L107 113Q107 109 111 109Z"],
-    ["bone", "M111 109L129 109Q133 109 133 113L133 116Q133 120 129 120L111 120Q107 120 107 116L107 113Q107 109 111 109Z"],
-    ["line", "M100 114L92 114M140 114L148 114"],
-    ["fill", "M111 126L129 126Q133 126 133 130L133 133Q133 137 129 137L111 137Q107 137 107 133L107 130Q107 126 111 126Z"],
-    ["bone", "M111 126L129 126Q133 126 133 130L133 133Q133 137 129 137L111 137Q107 137 107 133L107 130Q107 126 111 126Z"],
-    ["line", "M100 131L92 131M140 131L148 131"],
   ],
 };
 
@@ -166,7 +143,7 @@ export function designs(h) {
     ],
   });
 
-  // ---- regions, head, spine -------------------------------------------------------------------------------------
+  // ---- regions, spine -------------------------------------------------------------------------------------
   const body_ = [
     ...body([[88, 14], [152, 14], [176, 30], [176, 66], [160, 100], [168, 130], [172, 156], [68, 156], [72, 130], [80, 100], [64, 66], [64, 30]],
       [[68, 156], [72, 130], [80, 100], [64, 66], [64, 30], [88, 14], [152, 14], [176, 30], [176, 66], [160, 100], [168, 130], [172, 156]]),
@@ -174,20 +151,12 @@ export function designs(h) {
     open([[120, 24], [120, 84]]),
     closed("bone", [[80, 114], [98, 106], [120, 114], [142, 106], [160, 114], [156, 136], [140, 148], [120, 140], [100, 148], [84, 136]]),
   ];
-  // ---- head and spine: hand-drawn schematic icons (no project model) -----------------------------------------------
+  // ---- spine: a hand-drawn schematic icon (no project model) -------------------------------------------------------
   const rounded = (pts, k = 0.28) => pts.flatMap((p, i) => {
     const a = pts[(i + pts.length - 1) % pts.length], b = pts[(i + 1) % pts.length];
     return [[p[0] + (a[0] - p[0]) * k, p[1] + (a[1] - p[1]) * k], [p[0] + (b[0] - p[0]) * k, p[1] + (b[1] - p[1]) * k]];
   });
   const solid = (pts) => [closed("fill", pts), closed("bone", pts)];
-  // Lateral skull facing left: cranial vault, orbit, maxilla under it, and the mandible hinged at the joint in front of the ear
-  // region (condyle at the vault base, ramus down, body forward to the chin); no facial features.
-  const head = [
-    ...solid([[86, 56], [94, 32], [122, 18], [156, 16], [182, 30], [194, 58], [190, 86], [172, 102], [148, 108], [128, 106], [112, 98], [96, 90], [84, 76]]),
-    closed("bone", [[92, 66], [106, 62], [116, 72], [108, 86], [96, 82]]),
-    ...solid([[88, 78], [74, 94], [70, 108], [78, 117], [98, 119], [122, 114], [130, 102], [124, 90], [108, 84]]),
-    ...solid([[134, 100], [152, 100], [160, 120], [152, 140], [126, 150], [98, 146], [82, 134], [84, 123], [104, 122], [124, 122], [132, 114]]),
-  ];
   // Normal frontal spine: one straight midline column, vertebral bodies widening evenly downward, an even disc between each,
   // short transverse processes, and the sacrum at the foot. Nothing is shifted sideways.
   const pitch = 21, bodyH = 12, halfW = (i) => 13 + i * 2.6, top0 = 12;
@@ -208,6 +177,6 @@ export function designs(h) {
     "body": body_, "chest-pa": legacy("chest-pa"), "chest-ap": legacy("chest-ap"), "chest-lateral": legacy("chest-lateral"), "pelvis-ap": pelvisAp,
     "knee-ap": kneeAp, "knee-lateral": kneeLateral, "ankle-ap": ankleAp, "ankle-lateral": ankleLateral,
     "elbow-ap": elbowAp, "elbow-lateral": elbowLateral, "upper-limb": legacy("upper-limb"), "lower-limb": legacy("lower-limb"),
-    "head": head, "spine": spineGraphic, "generic": generic,
+    "head": legacy("head"), "spine": spineGraphic, "generic": generic,
   };
 }

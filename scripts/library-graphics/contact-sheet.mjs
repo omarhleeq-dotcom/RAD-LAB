@@ -38,7 +38,7 @@ const markup = (Component, kind) => renderToStaticMarkup(React.createElement(Com
 
 const SOURCE = {
   traced: ["hand-pa", "hand-lateral", "wrist-pa", "wrist-lateral", "foot-ap", "foot-oblique", "shoulder-grashey"],
-  kept: ["chest-pa", "chest-ap", "chest-lateral", "upper-limb", "lower-limb"],
+  kept: ["chest-pa", "chest-ap", "chest-lateral", "upper-limb", "lower-limb", "head"],
   project: ["knee-ap", "knee-lateral", "ankle-ap", "ankle-lateral", "elbow-ap", "elbow-lateral", "pelvis-ap"],
 };
 const sourceOf = (kind) => SOURCE.traced.includes(kind) ? "traced" : SOURCE.project.includes(kind) ? "project geometry" : SOURCE.kept.includes(kind) ? "old drawing kept, restyled" : "hand-built (new)";
