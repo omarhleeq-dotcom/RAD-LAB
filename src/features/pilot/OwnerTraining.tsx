@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { EXAMS, getExam } from "@/data/exams";
 import { localize } from "@/lib/localized";
@@ -37,7 +37,7 @@ function SavedRows({filters}:{filters:OwnerFilters}) {
  return <section className="space-y-3">
   <p data-testid="matching-counts" role="status">{attempts.kind==="ready"&&notes.kind==="ready"?t("matching",{attempts:attempts.page.total,notes:notes.page.total}):t("loading")}</p>
   {(attempts.kind==="error"||notes.kind==="error")&&<p role="alert">{t("error")}</p>}
-  <CsvBar filters={filters}/>
+  {attempts.kind==="ready"&&notes.kind==="ready"&&<CsvBar filters={filters}/>}
   <div className="flex gap-2">{(["notes","attempts"] as const).map(s=><button key={s} className={btn} aria-pressed={stream===s} onClick={()=>{setStream(s);setCursor(null);setBoundary(null);}}>{t(s)}</button>)}</div>
   {current.kind==="loading"&&<p role="status">{t("loading")}</p>}
   {page?.rows.length===0&&<p>{t("empty")}</p>}
@@ -49,10 +49,11 @@ function SavedRows({filters}:{filters:OwnerFilters}) {
   <div className="flex gap-2"><button className={btn} onClick={()=>{setCursor(null);setBoundary(null);}}>{t("first")}</button><button className={btn} disabled={!page?.next} onClick={()=>{setCursor(page!.next);setBoundary(page!.boundary);}}>{t("next")}</button></div>
  </section>;
 }
+const subscribeZone = () => () => {};
 export function OwnerTraining() {
  const t=useTranslations("owner.dashboard"),locale=useLocale();
  const [person,setPerson]=useState<DirectoryPerson|null>(null),[exam,setExam]=useState(""),[from,setFrom]=useState(""),[to,setTo]=useState("");
- const [zone,setZone]=useState("");useEffect(()=>setZone(Intl.DateTimeFormat().resolvedOptions().timeZone),[]);
+ const zone=useSyncExternalStore(subscribeZone,()=>Intl.DateTimeFormat().resolvedOptions().timeZone,()=>"");
  const invalid=!!from&&!!to&&from>to;
  const filters={...EMPTY_FILTERS,participant:person?.userId??"",participantCode:person?.code??"",exam,from:localDateBound(from),to:localDateBound(to,true)};
  return <div className="space-y-5" data-testid="owner-training"><h2 className="text-xl font-semibold">{t("training")}</h2><p>{t("sameFilters")}</p>

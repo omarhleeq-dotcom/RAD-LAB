@@ -270,5 +270,5 @@ export function localDateBound(value: string, end = false): string {
   const d = new Date(year!, month!-1, day!);
   if (d.getFullYear()!==year || d.getMonth()!==month!-1 || d.getDate()!==day) throw new Error("Invalid date");
   if (end) { d.setDate(d.getDate()+1); d.setMilliseconds(-1); }
-  return d.toISOString();
+  return end ? d.toISOString().replace(".999Z", ".999999Z") : d.toISOString();
 }

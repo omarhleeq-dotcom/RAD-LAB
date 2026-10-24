@@ -37,7 +37,7 @@ it("reads pending first across bounded pages, searches all accounts, counts stat
   const old=process.env.TZ;process.env.TZ="Asia/Amman";
   let from:string,to:string;
   try {from=localDateBound("2026-10-17");to=localDateBound("2026-10-24",true);}finally{if(old===undefined)delete process.env.TZ;else process.env.TZ=old;}
-  expect(from).toBe("2026-10-16T21:00:00.000Z");expect(to).toBe("2026-10-24T20:59:59.999Z");
+  expect(from).toBe("2026-10-16T21:00:00.000Z");expect(to).toBe("2026-10-24T20:59:59.999999Z");
   const rpc=async(args:Record<string,unknown>)=>({error:null,data:(await db.query<{p:OwnerPage}>("select owner_page_v1($1,$2,$3,$4,$5,$6,$7,$8,$9) p",[args.p_stream,args.p_limit,args.p_cursor,args.p_participant,args.p_from,args.p_to,args.p_exam,args.p_boundary,args.p_export])).rows[0]!.p});
   const filters={...EMPTY_FILTERS,from,to,exam:"chest-pa-erect"};
   const shown=await readOwnerPage(rpc,"notes",filters,null,"2026-10-25T00:00:00Z"),exported=await readOwnerPage(rpc,"notes",filters,null,shown.boundary,true);
@@ -45,6 +45,15 @@ it("reads pending first across bounded pages, searches all accounts, counts stat
   const csv=exportOwnerPart("notes",exported);expect(csv.written).toBe(2);expect(csv.skipped).toBe(0);expect(csv.csv).toContain("17 Oct local start");expect(csv.csv).toContain("24 Oct local end");expect(csv.csv).not.toContain("25 Oct excluded");
   const utc=await readOwnerPage(rpc,"notes",{...filters,from:"2026-10-17T00:00:00Z",to:"2026-10-24T23:59:59.999Z"},null,"2026-10-25T00:00:00Z");
   expect(utc.rows.map(r=>r.text)).not.toEqual(shown.rows.map(r=>r.text));
+  // Minimal reproduction of an empty 17–24 export: one note in the first local day's UTC overlap.
+  await db.exec("reset role;delete from feedback where text<>'17 Oct local start';set role authenticated");
+  const missed=await readOwnerPage(rpc,"notes",{...filters,from:"2026-10-17T00:00:00Z",to:"2026-10-24T23:59:59.999999Z"},null,"2026-10-25T00:00:00Z",true);
+  const fixed=await readOwnerPage(rpc,"notes",filters,null,"2026-10-25T00:00:00Z",true);
+  expect(exportOwnerPart("notes",missed).written).toBe(0);
+  expect(exportOwnerPart("notes",fixed).written).toBe(1);
+  const ready=readFileSync("supabase/checks/owner-dashboard-ready.sql","utf8");
+  const checked=await db.exec(ready);
+  expect(checked[1]?.rows[0]).toMatchObject({rpc_present:true,function_contract:true,authenticated_execute:true,anon_denied:true,index_ready:true});
   const summary=(await db.query<{p:{rows:{attempts:number;passed:number;wrong:unknown[]}[]}}>("select owner_dashboard_v1('summary') p")).rows[0]!.p;
   expect(summary.rows[0]).toMatchObject({attempts:1,passed:1,wrong:[{id:"fixture-check",count:1}]});
   await db.query("select set_config('request.jwt.claim.sub',$1,false)",[participant]);
