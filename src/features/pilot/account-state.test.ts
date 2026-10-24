@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { authErrorKey, HEARTBEAT_MS, parseProfile, passwordProblem, shouldHeartbeat } from "./account-state";
+import { authErrorKey, HEARTBEAT_MS, parseProfile, passwordProblem, postLoginTarget, shouldHeartbeat } from "./account-state";
 
 describe("authErrorKey maps real Supabase Auth codes to a message key", () => {
   it.each([
@@ -55,4 +55,21 @@ describe("shouldHeartbeat", () => {
     expect(shouldHeartbeat({ status: "pending", visible: true, nowMs: now, lastMs: null })).toBe(true);
     expect(shouldHeartbeat({ status: "suspended", visible: true, nowMs: now, lastMs: null })).toBe(true);
   });
+});
+
+describe("postLoginTarget keeps the post-login destination rules", () => {
+  const base = { approved: true, fragment: null, changed: false, returnTo: null, justSignedIn: true, locale: "en" } as const;
+  it("goes to the locale home after a sign-in made on the page", () => expect(postLoginTarget(base)).toBe("/en"));
+  it("uses the locale of the page", () => expect(postLoginTarget({ ...base, locale: "ar" })).toBe("/ar"));
+  it("goes to a safe returnTo, even for an already signed-in visit", () => expect(postLoginTarget({ ...base, justSignedIn: false, returnTo: "/en/training" })).toBe("/en/training"));
+  it("stays on the account page on a deliberate visit without returnTo", () => expect(postLoginTarget({ ...base, justSignedIn: false })).toBeNull());
+  it("stays on the account page when the account is not approved", () => {
+    expect(postLoginTarget({ ...base, approved: false })).toBeNull();
+    expect(postLoginTarget({ ...base, approved: false, returnTo: "/en/training" })).toBeNull();
+  });
+  it("stays for a recovery or link-error fragment", () => {
+    expect(postLoginTarget({ ...base, fragment: "recovery", returnTo: "/en/training" })).toBeNull();
+    expect(postLoginTarget({ ...base, fragment: "linkError" })).toBeNull();
+  });
+  it("stays after a password change so the notice is seen", () => expect(postLoginTarget({ ...base, changed: true, returnTo: "/en/training" })).toBeNull());
 });

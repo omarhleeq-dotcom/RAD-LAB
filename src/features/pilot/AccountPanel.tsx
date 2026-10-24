@@ -2,9 +2,9 @@
 
 // The account page body (RAD-041b): sign in / create account, "waiting for approval", approved, suspended. Messages: namespace `account`.
 import { useLocale, useTranslations } from "next-intl";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { type AuthErrorKey, passwordProblem, recoveryFromHash } from "./account-state";
+import { type AuthErrorKey, passwordProblem, postLoginTarget, recoveryFromHash } from "./account-state";
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
 import { ProfileName } from "./ProfileName";
@@ -22,7 +22,7 @@ export function AccountPanel() {
   const t = useTranslations("account");
   const tt = useTranslations("training");
   const locale = useLocale();
-  const signingIn = useRef(false);
+  const [signingIn, setSigningIn] = useState(false);
   const { state, saveName, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useSessionAccount();
   const [mode, setMode] = useState<Mode>("signIn");
   const [name, setName] = useState("");
@@ -39,11 +39,13 @@ export function AccountPanel() {
   const [fragment, setFragment] = useState<"recovery" | "linkError" | null>(() => (typeof window === "undefined" ? null : recoveryFromHash(window.location.hash)));
   const [changed, setChanged] = useState(false);
 
+  // The full reload below is kept (same destination rules); while it is pending the account view is replaced by a short status so it does not flash.
+  const target = state.kind === "signedIn" && typeof window !== "undefined"
+    ? postLoginTarget({ approved: state.profile.status === "approved", fragment, changed, returnTo: safeReturnPath(new URLSearchParams(window.location.search).get("returnTo")), justSignedIn: signingIn, locale })
+    : null;
   useEffect(() => {
-    if (state.kind !== "signedIn" || state.profile.status !== "approved" || fragment !== null || changed) return;
-    const destination = safeReturnPath(new URLSearchParams(window.location.search).get("returnTo"));
-    if (destination || signingIn.current) window.location.replace(destination ?? `/${locale}`);
-  }, [state, fragment, changed, locale]);
+    if (target) window.location.replace(target);
+  }, [target]);
 
   if (!PILOT) {
     return <p data-testid="account-off" className="rounded-lg border border-dashed border-line bg-paper p-5 text-muted">{t("notEnabled")}</p>;
@@ -60,14 +62,16 @@ export function AccountPanel() {
       if (password !== confirm) return setError("passwordMismatch");
     }
     setBusy(true);
-    signingIn.current = mode === "signIn";
+    setSigningIn(mode === "signIn");
     const result = mode === "signIn" ? await signIn(email.trim(), password) : await signUp(email.trim(), password, name.trim());
     setBusy(false);
-    if (!result.ok) { signingIn.current = false; return setError(result.error); }
+    if (!result.ok) { setSigningIn(false); return setError(result.error); }
     setPassword("");
     setConfirm("");
     if (mode === "signUp") setSentTo(email.trim());
   }
+
+  if (target) return <p role="status" data-testid="account-redirecting" className="text-muted">{t("redirecting")}</p>;
 
   if (state.kind === "loading") return <p role="status" className="text-muted">{t("loading")}</p>;
 
