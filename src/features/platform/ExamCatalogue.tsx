@@ -75,7 +75,7 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
       <div className="library-search"><label htmlFor={inputId}>{t("search")}</label><div className="search-field"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="10" cy="10" r="7" /><path d="m16 16 5 5" /></svg><input ref={searchInput} id={inputId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("searchPlaceholder")} autoComplete="off" /></div></div>
       <div className="library-results-meta"><p role="status" aria-live="polite">{t("resultCount", { count: items.length })}</p>{query && <button className="clear-filters" type="button" onClick={clear}>{t("clear")}</button>}</div>
       {items.length === 0 ? <section className="library-empty"><h3>{t("emptyTitle")}</h3><p>{t("emptyBody")}</p><button type="button" className="platform-button" onClick={clear}>{t("clear")}</button></section> : <ul className="exam-grid">{items.map((exam) => <li key={exam.id} className="exam-card" data-testid={`exam-${exam.id}`}>
-        <Link href={exam.href} className="exam-card-link" aria-label={shortExamTitle(exam, locale)}>
+        <Link href={exam.href} className="exam-card-link">
           <div className="exam-art"><ExamGraphic kind={graphicOf(exam)} /></div>
           <div className="exam-card-body"><h3>{shortExamTitle(exam, locale)}</h3>
             {exam.caseCount > 1 && <p className="exam-meta"><span>{t("caseCount", { count: exam.caseCount })}</span></p>}

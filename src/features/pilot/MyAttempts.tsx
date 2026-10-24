@@ -97,7 +97,7 @@ function PersonTraining({ request }: { request: TrainingRequest }) {
   const passed = data?.rows.filter(r => r.result.passed).length ?? 0;
   const strongest = ranked.at(-1), weakest = ranked[0];
   return <section className="mt-4" aria-busy={busy || (!data && !error)}>
-    <div className="flex items-center justify-between gap-3"><h2>{t("overall")}</h2><button type="button" className={button} disabled={busy} onClick={refresh}>{t("refresh")}</button></div>
+    <div className="flex items-center justify-between gap-3"><h2>{t("overall")}</h2>{data && <button type="button" className={button} disabled={busy} onClick={refresh}>{t("refresh")}</button>}</div>
     {!data ? <TrainingReadStatus error={error} retry={refresh} /> : <>
       <div className="overall-card" data-testid="training-overall">
         <p className="text-lg font-semibold">{t("passedOf", { passed, count: data.rows.length })}</p>
