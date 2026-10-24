@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 262,
-  "updated_at": "2026-10-24T23:59:00+00:00",
+  "revision": 263,
+  "updated_at": "2026-10-25T00:10:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-076",
   "tasks": [
@@ -695,7 +695,7 @@
       "title": "تنظيف وإصلاحات صغيرة: سياسة اللقطات، مهلات حراس scene-dom، وميض الدخول، تشخيص phone-navigation",
       "status": "review",
       "priority": "medium",
-      "description": "سياسة اللقطات، مهلة حراس scene-dom، «جارٍ تسجيل الدخول…»، وإصلاح هبوط الدخول (returnTo في العنوان) وfixture. المتبقي: حذف الفروع المدموجة (رُفض 403)، وتحديث مقطع المكتبة في phone-navigation ليطابق Back الحالي (قرار المالك).",
+      "description": "سياسة اللقطات، مهلة حراس scene-dom، «جارٍ تسجيل الدخول…»، وإصلاح هبوط الدخول (returnTo في العنوان) وfixture. المتبقي: حذف الفروع المدموجة (رُفض 403)؛ phone-navigation يمر كاملًا بعد تحديث مقطع المكتبة.",
       "source_ref": "docs/RAD-075_HOUSEKEEPING_REPORT_2026-10-24.md؛ docs/DECISIONS.md#housekeeping-owner-2026-10-24",
       "waiting_on": "owner"
     }
