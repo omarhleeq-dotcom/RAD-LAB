@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { EXAMS } from "@/data/exams";
 import { shortExamTitle } from "@/features/platform/library";
 import { createClient } from "@supabase/supabase-js";
-import { rankLastResults, readSavedResults, savedExamResults } from "./saved-results";
+import { rankLastResults, readSavedResults, reviewTarget, savedExamResults } from "./saved-results";
 import type { TrainingAttempt } from "./training";
 const user = "00000000-0000-0000-0000-000000000001";
 function row(i: number, total = 90, passed = true) {
@@ -67,5 +67,24 @@ describe("saved result display", () => {
   it("does not turn an older failed result into the latest one", () => {
     const rows = [attempt(1, "wrist-pa", "2026-10-22", 55, false), attempt(2, "wrist-pa", "2026-10-24", 84, true)];
     expect(savedExamResults(rows)[0]?.last.result.passed).toBe(true);
+  });
+});
+
+describe("home Review choice", () => {
+  const at = (id: number, exam: string, total: number, passed: boolean, time: string) => ({ ...row(id, total, passed), exam_id: exam, finished_at: time });
+  const attempts = (rows: ReturnType<typeof at>[]) => rows.map((r) => ({ id: r.id, exam: r.exam_id, case: r.case_id, definition: r.definition_version, comparison: null, engine: r.engine_version, producer: r.producer_version, format: 1, time: r.finished_at, result: r.result })) as unknown as TrainingAttempt[];
+  it("skips the last practised exam and takes the next weakest", () => {
+    const rows = attempts([at(1, "wrist-pa", 40, false, "2026-10-24T09:00:00Z"), at(2, "hand-pa", 60, false, "2026-10-23T09:00:00Z"), at(3, "elbow-ap", 95, true, "2026-10-22T09:00:00Z")]);
+    expect(rankLastResults(rows)[0]!.exam).toBe("wrist-pa");
+    expect(reviewTarget(rankLastResults(rows), savedExamResults(rows)[0]!.exam)?.exam).toBe("hand-pa");
+  });
+  it("keeps the weakest when it is not the last practised exam", () => {
+    const rows = attempts([at(1, "wrist-pa", 95, true, "2026-10-24T09:00:00Z"), at(2, "hand-pa", 60, false, "2026-10-23T09:00:00Z")]);
+    expect(reviewTarget(rankLastResults(rows), savedExamResults(rows)[0]!.exam)?.exam).toBe("hand-pa");
+  });
+  it("offers no Review when only the last practised exam exists", () => {
+    const rows = attempts([at(1, "wrist-pa", 40, false, "2026-10-24T09:00:00Z"), at(2, "wrist-pa", 50, false, "2026-10-23T09:00:00Z")]);
+    expect(reviewTarget(rankLastResults(rows), savedExamResults(rows)[0]!.exam)).toBeUndefined();
+    expect(reviewTarget([], undefined)).toBeUndefined();
   });
 });

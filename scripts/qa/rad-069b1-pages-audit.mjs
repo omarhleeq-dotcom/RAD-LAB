@@ -64,11 +64,13 @@ try{
  }
  await page.goto(`${base}/${locale}`,{waitUntil:'networkidle'});await page.getByTestId('home-dashboard').waitFor();await capture('home');
  if(stage==='after'){assert.ok((await page.locator('main').innerText()).includes('Fixture Student Name'));checks++;}
+ if(stage==='after'){const acts=await page.locator('.home-action').evaluateAll(n=>n.slice(0,2).map(x=>x.textContent));assert.equal(new Set(acts).size,acts.length,'Continue and Review must name different exams');checks++;}
  await page.goto(`${base}/${locale}/xray`,{waitUntil:'networkidle'});await page.getByTestId('library-categories').waitFor();await capture('library');
  const beforeReads=reads;
  for(const region of ['body','upper-limb','lower-limb']){await page.goto(`${base}/${locale}/xray#category=${region}`,{waitUntil:'networkidle'});await page.getByTestId(`library-region-${region}`).waitFor();await capture(region);}
  if(stage==='after'){assert.equal(reads,beforeReads,'category changes must not fetch once per card');checks++;}
  await page.goto(`${base}/${locale}/training`,{waitUntil:'networkidle'});await capture('training-collapsed');
+ if(stage==='after'){assert.equal(await page.getByTestId('training-summary').count(),0,'practice page must not repeat the stats row');checks++;}
  if(stage==='after'){
   await page.getByRole('button',{name:messages[locale].training.showAll,exact:true}).click();
   await page.getByRole('button',{name:new RegExp(messages[locale].training.examDetails)}).first().click();
@@ -82,6 +84,7 @@ try{
  assert.match(await point.getAttribute('aria-label'),/Wrong-side marker|علامة جانب خاطئة/);checks++;
  const detailButtons=page.getByRole('button',{name:messages[locale].training.examDetails,exact:true});
  for(let i=1;i<await detailButtons.count();i++)await detailButtons.nth(i).click();
+ const clipped=await page.locator('.attempt-reason').evaluateAll(n=>n.filter(x=>x.scrollWidth>x.clientWidth+1||getComputedStyle(x).textOverflow==='ellipsis').length);assert.equal(clipped,0,'critical reason must be fully readable');checks++;
  const passedPoint=page.getByTestId('training-chart').getByRole('button',{name:/88\.3/});await passedPoint.focus();
  assert.equal(await passedPoint.evaluate(n=>getComputedStyle(n).color),'rgb(23, 97, 61)');assert.equal(await point.evaluate(n=>getComputedStyle(n).color),'rgb(161, 33, 50)');checks++;
  assert.equal(await page.getByTestId('training-chart').count(),3);checks++;

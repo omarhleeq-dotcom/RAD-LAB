@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { MODALITIES } from "@/data/modalities";
 import { getExam } from "@/data/exams";
 import { localize } from "@/lib/localized";
-import { rankLastResults, savedExamResults } from "./saved-results";
+import { rankLastResults, reviewTarget, savedExamResults } from "./saved-results";
 import { useSavedResults } from "./useSavedResults";
 import { Link } from "@/i18n/navigation";
 import { getPilotClient } from "./client";
@@ -63,7 +63,8 @@ export function TrainingSummary() {
     return exam && modality ? { href: `/${modality.id}/${exam.id}`, title: localize(exam.title, locale) } : null;
   };
   const last = groups[0] && route(groups[0].exam);
-  const weakest = ranked[0] && route(ranked[0].exam);
+  const review = reviewTarget(ranked, groups[0]?.exam);
+  const weakest = review && route(review.exam);
   return <>
     <h1>{name ? t("welcome", { name }) : th("dashboardTitle")}</h1>
     <nav className="home-next" aria-label={t("nextPractice")}>

@@ -182,9 +182,9 @@
     "screens": 1
   },
   "after-en-390-training-expanded": {
-    "height": 1765,
+    "height": 1629,
     "viewport": 844,
-    "screens": 2.09
+    "screens": 1.93
   },
   "after-en-1440-home": {
     "height": 900,
@@ -217,9 +217,9 @@
     "screens": 1
   },
   "after-en-1440-training-expanded": {
-    "height": 1570,
+    "height": 1491,
     "viewport": 900,
-    "screens": 1.74
+    "screens": 1.66
   },
   "after-ar-390-home": {
     "height": 844,
@@ -252,9 +252,9 @@
     "screens": 1
   },
   "after-ar-390-training-expanded": {
-    "height": 1641,
+    "height": 1562,
     "viewport": 844,
-    "screens": 1.94
+    "screens": 1.85
   },
   "after-ar-1440-home": {
     "height": 900,
@@ -287,14 +287,14 @@
     "screens": 1
   },
   "after-ar-1440-training-expanded": {
-    "height": 1554,
+    "height": 1495,
     "viewport": 900,
-    "screens": 1.73
+    "screens": 1.66
   },
   "after-evidence": {
     "fixtureAttempts": 6,
     "axeAudits": 38,
-    "checks": 64
+    "checks": 76
   },
   "qa": {
     "vitest": {

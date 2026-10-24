@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 258,
-  "updated_at": "2026-10-24T20:22:00+00:00",
+  "revision": 259,
+  "updated_at": "2026-10-24T22:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-075",
   "tasks": [
@@ -641,7 +641,7 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "A دُمجت #121 وتنتظر فحص المالك. B1 منفذة لكن FULL فشل: سجل القراءة صُحح، ومهلة الكوع لم تُعد؛ يلزم FULL ناجح لاحقًا. B2a مخطط: زر الثيم بالشريط العلوي (F7)، داكن افتراضيًا ومحفوظ على الجهاز دون اتباع النظام. B2b الرسومات؛ C لوحة المالك وتصدير RAD-044 ومواضع Assess؛ مخططة.",
+      "description": "A دُمجت #121 وتنتظر فحص المالك. B1 منفذة وعُدّلت بعد مراجعة المالك؛ FULL ناجح على القفل. يبقى فحص المالك للهاتف، وphone-navigation يتوقف عند هبوط الدخول (خارج B1، لم يُعدَّل). B2a مخطط: زر الثيم بالشريط العلوي (F7)، داكن افتراضيًا ومحفوظ على الجهاز دون اتباع النظام. B2b الرسومات؛ C لوحة المالك وتصدير RAD-044 ومواضع Assess؛ مخططة.",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md",
       "waiting_on": "code"
     },

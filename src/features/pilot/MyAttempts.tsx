@@ -10,7 +10,7 @@ import { rankLastResults, savedExamResults } from "./saved-results";
 import { PILOT } from "./config";
 import { useSessionAccount } from "./SessionGate";
 import { comparableAttempts, comparisonMessage, type Trainee, type TrainingAttempt, type TrainingExam, type TrainingRequest } from "./training";
-import { SummaryCards, TrainingReadStatus, trainingButton as button, useTraining } from "./TrainingSummary";
+import { TrainingReadStatus, trainingButton as button, useTraining } from "./TrainingSummary";
 
 function useTrainingLabels() {
   const t = useTranslations("training"), locale = useLocale();
@@ -39,7 +39,7 @@ function Results({ rows }: { rows: TrainingAttempt[] }) {
   const pointText = (a: TrainingAttempt) => `${date(a.time)} · ${t("scoreValue", { score: a.result.total })} · ${a.result.passed ? "✓" : "✕"} ${t(a.result.passed ? "passedShort" : "notPassedShort")}${reason(a) ? ` · ${reason(a)}` : ""}`;
   return <>
     <h4 className="mt-3 font-semibold">{t("trend")}</h4>
-    <p className="mt-1 text-sm text-muted">{t("trendHint")}</p>
+    <div className="training-intro mt-1"><p className="text-sm text-muted">{t("trendShort")}</p><ResultDisclosure title={<span aria-hidden="true">ⓘ</span>} label={t("aboutChart")}><p>{t("trendHint")}</p></ResultDisclosure></div>
     {points.length >= 2 ? <figure className="my-3 rounded-lg border border-line bg-paper p-2" data-testid="training-chart">
       <div className="saved-chart">
         <svg viewBox="0 0 600 190" role="img" aria-label={t("chartLabel")} className="w-full" style={{ direction: "ltr" }}>
@@ -106,7 +106,6 @@ function PersonTraining({ request }: { request: TrainingRequest }) {
         {weakest && <p>{t("weakest")}: {exam(weakest.exam)} · <bdi>{weakest.last.result.total}</bdi> {weakest.last.result.passed ? "✓" : "✕"}</p>}
         <p className="text-sm text-muted">{t(data.next ? "coveredRange" : "allSavedRange", { count: data.rows.length, total: data.summary.attempts, from: data.rows.at(-1) ? date(data.rows.at(-1)!.time) : t("none"), to: date(data.boundary) })}</p>
       </div>
-      <SummaryCards data={data.summary} />
       <ResultDisclosure title={t("showAll")} className="rounded-lg border border-line bg-panel">
         {groups.length === 0 ? <p>{t("empty")}</p> : <ul className="saved-exam-grid">{groups.map(g => <li key={g.exam} className="saved-exam-card">
           <h3>{exam(g.exam)}</h3>

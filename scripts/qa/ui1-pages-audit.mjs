@@ -75,10 +75,11 @@ try {
     ok(await p.getByTestId("preview-banner").count() === 0, `${tag}/library: no banner`);
     ok(!banned.test(await p.locator("body").innerText()), `${tag}/library: no provisional wording`);
     ok(await p.locator(".platform-intro").count() === 0, `${tag}/library: no subtitle`);
-    ok(await p.locator(".site-topbar .language-switcher").count() === 0, `${tag}/library: no language switch in the top bar`);
+    // B1 positions: top bar on desktop, inside the menu on the phone.
+    ok(await p.locator(".site-topbar .language-switcher").first().isVisible() === (width >= 1024), `${tag}/library: language switch ${width >= 1024 ? "is" : "is not"} visible in the top bar`);
     if (width < 1024) { await p.getByTestId("menu-toggle").click(); await p.getByRole("dialog").waitFor(); }
     const switchLink = p.locator(`.language-switcher a[lang="${loc === "en" ? "ar" : "en"}"]:visible`);
-    ok(await switchLink.count() === 1, `${tag}/library: one language switch reachable from the ${width < 1024 ? "menu" : "sidebar"}`);
+    ok(await switchLink.count() === 1, `${tag}/library: one language switch reachable from the ${width < 1024 ? "menu" : "top bar"}`);
     if (width < 1024) await p.keyboard.press("Escape");
     ok(await p.locator("footer").innerText().then((t) => !/clinical|سريري|تشخيص/.test(t)), `${tag}/library: no legal text in footer`);
     await audit(p, `${tag}/library`);

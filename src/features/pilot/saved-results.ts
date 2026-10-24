@@ -55,3 +55,7 @@ export function savedExamResults(rows: readonly TrainingAttempt[]) {
 export function rankLastResults(rows: readonly TrainingAttempt[]) {
   return savedExamResults(rows).sort((a, b) => Number(a.last.result.passed) - Number(b.last.result.passed) || a.last.result.total - b.last.result.total || a.exam.localeCompare(b.exam));
 }
+// Review names the weakest exam that differs from the one Continue already opens; none left means no Review.
+export function reviewTarget<T extends { exam: string }>(ranked: readonly T[], lastExam: string | undefined): T | undefined {
+  return ranked.find((g) => g.exam !== lastExam);
+}
