@@ -1,7 +1,5 @@
 // Presentation only. Never feeds evaluation, saved results, render plans or pixels.
 import type { CheckRule, RadCase } from "@/domain/case";
-import { effectsOfVariant, RULE_EFFECTS } from "@/features/radiograph/consistency";
-import type { RenderPlan } from "@/features/radiograph/plan";
 import type { CheckResult, CriticalFinding, EvaluationResult } from "./types";
 
 // Critical mechanisms, not exams. New critical detectors must declare their presentation link too.
@@ -40,20 +38,4 @@ export function ruleTarget(rule: CheckRule | undefined): string | undefined {
   if (rule?.kind === "equals") return rule.expected;
   if (rule?.kind === "range") return `${rule.ideal[0]}–${rule.ideal[1]} ${rule.unit}`;
   return undefined;
-}
-
-/** Partition all existing notes/effects exactly once. Variant link first, existing rule-effect registry second.
- * Unmatched effects/notes remain reachable in image information, including baseline and invisible effects.
- */
-export function resultContent(c: RadCase, result: EvaluationResult, plan: RenderPlan) {
-  const fixes = orderFixes(c, result);
-  const effectOwner = (id: string) => fixes.find((k) =>
-    (k.variant ? effectsOfVariant(k.variant) : []).includes(id) || RULE_EFFECTS[k.ruleId]?.effects.includes(id));
-  const variantOwner = (id: string) => fixes.find((k) => k.variant === id);
-  return {
-    fixes,
-    correct: result.checks.filter((k) => k.outcome === "pass"),
-    effects: (ruleId?: string) => plan.effects.filter((e) => effectOwner(e.id)?.ruleId === ruleId),
-    variants: (ruleId?: string) => result.variants.filter((v) => variantOwner(v)?.ruleId === ruleId),
-  };
 }

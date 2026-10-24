@@ -5,11 +5,11 @@ import { describe, expect, it } from "vitest";
 import { CASES } from "@/data/cases";
 import { CRITICAL_DETECTORS } from "./critical";
 import { evaluate } from "./engine";
-import { CRITICAL_RULE_LINKS, criticalForCheck, orderFixes, pointsLost, resultContent, ruleTarget } from "./result-presentation";
+import { CRITICAL_RULE_LINKS, criticalForCheck, orderFixes, pointsLost, ruleTarget } from "./result-presentation";
 import { buildRenderPlan } from "@/features/radiograph/plan";
 import { RadiographEffects } from "@/features/radiograph/RadiographEffects";
 import { ResultImage } from "./ResultImage";
-import { ResultPanel } from "./ResultPanel";
+import { ResultPanel, resultContent } from "./ResultPanel";
 import { wordingNsOf } from "@/features/radiograph/wording";
 import { variantIsDrawn } from "@/features/radiograph/consistency";
 import { localize } from "@/lib/localized";
@@ -33,12 +33,12 @@ describe("result presentation priority", () => {
     expect(ordered.slice(0, 2).map((x) => x.ruleId)).toEqual(["projection", "side-marker"]);
     expect(ordered.slice(2).every((x) => criticalForCheck(x, c, r.criticalFindings).length === 0)).toBe(true);
     expect(r).toEqual(snapshot);
-    for (let i = 3; i < ordered.length; i++) expect(pointsLost(ordered[i - 1], r.checks, c)).toBeGreaterThanOrEqual(pointsLost(ordered[i], r.checks, c));
+    for (let i = 3; i < ordered.length; i++) expect(pointsLost(ordered[i - 1]!, r.checks, c)).toBeGreaterThanOrEqual(pointsLost(ordered[i]!, r.checks, c));
   });
   it("uses category weights and partial credit, preserving ties and zero-weight items", () => {
     const r = evaluate(c, c.initialSettings);
     r.criticalFindings = [];
-    const template = r.checks[0];
+    const template = r.checks[0]!;
     r.checks = [
       { ...template, ruleId: "a", category: "rotation", credit: 0.5, outcome: "partial", weight: 1 },
       { ...template, ruleId: "b", category: "sid", credit: 0, outcome: "fail", weight: 1 },
@@ -47,7 +47,7 @@ describe("result presentation priority", () => {
     ];
     const custom = { ...c, scoring: { ...c.scoring, categoryWeights: { rotation: 10, sid: 40 } } };
     expect(orderFixes(custom, r).map((k) => k.ruleId)).toEqual(["b", "c", "a", "d"]);
-    expect(pointsLost({ ...r.checks[0], capsCategory: true }, r.checks, custom)).toBe(5);
+    expect(pointsLost({ ...r.checks[0]!, capsCategory: true }, r.checks, custom)).toBe(5);
     expect(orderFixes(c, { ...r, checks: r.checks.map((k) => ({ ...k, outcome: "pass" })) })).toEqual([]);
   });
   it("takes targets only from explicit rule data; none is invented for other mechanisms", () => {

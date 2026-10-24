@@ -9,13 +9,14 @@ import type { RadCase } from "@/domain/case";
 import type { CoreCategoryId, SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
 import { buildRenderPlan } from "@/features/radiograph/plan";
-import { needsNotDrawnLabel, variantIsDrawn } from "@/features/radiograph/consistency";
+import { effectsOfVariant, RULE_EFFECTS, needsNotDrawnLabel, variantIsDrawn } from "@/features/radiograph/consistency";
 import { RadiographEffect } from "@/features/radiograph/RadiographEffects";
 import { projectionLabelOf } from "@/features/simulation/projection-label";
 import { wordingNsOf } from "@/features/radiograph/wording";
 import { TechniqueResult } from "@/features/technique/TechniqueResult";
 import { ResultDisclosure } from "./ResultDisclosure";
-import { criticalForCheck, resultContent, ruleTarget } from "./result-presentation";
+import { criticalForCheck, orderFixes, ruleTarget } from "./result-presentation";
+import type { RenderPlan } from "@/features/radiograph/plan";
 import { ResultImage } from "./ResultImage";
 import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
 
@@ -33,6 +34,22 @@ const OUTCOME_STYLE: Record<CheckOutcome, string> = {
   fail: "border-bad text-bad",
 };
 const OUTCOME_ICON: Record<CheckOutcome, string> = { pass: "✓", partial: "◐", fail: "✕" };
+
+/** Partition all existing notes/effects exactly once. Variant link first, existing rule-effect registry second.
+ * Unmatched effects/notes remain reachable in image information, including baseline and invisible effects.
+ */
+export function resultContent(c: RadCase, result: EvaluationResult, plan: RenderPlan) {
+  const fixes = orderFixes(c, result);
+  const effectOwner = (id: string) => fixes.find((k) =>
+    (k.variant ? effectsOfVariant(k.variant) : []).includes(id) || RULE_EFFECTS[k.ruleId]?.effects.includes(id));
+  const variantOwner = (id: string) => fixes.find((k) => k.variant === id);
+  return {
+    fixes,
+    correct: result.checks.filter((k) => k.outcome === "pass"),
+    effects: (ruleId?: string) => plan.effects.filter((e) => effectOwner(e.id)?.ruleId === ruleId),
+    variants: (ruleId?: string) => result.variants.filter((v) => variantOwner(v)?.ruleId === ruleId),
+  };
+}
 
 export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: Props) {
   const t = useTranslations("result");
