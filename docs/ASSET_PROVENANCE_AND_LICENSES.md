@@ -941,3 +941,27 @@ Shipped font/notice bytes (SHA-256); font binaries are unmodified. In the IBM no
 | Limits | Illustrative, drawing-only; **not a measurement**, not a diagnostic image, no clinical validation. The frame is rotated / cropped and ends in mid-humerus, so the shaft is an open outline and the medial clavicle, scapular body and thorax are absent; the source shows a straight horizontal brightness step below the glenoid band that is not traced as anatomy. Head, neck, greater tuberosity and shaft are one outline; glenoid face and scapular neck are one band. Identities are visual readings (O91 / O5). [Owner decision](DECISIONS.md#rad072-2b-owner-2026-10-23) (method); [Phase A report](RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md). |
 | Phase B use (2026-10-24) | The shoulder detector-view scene (`ShoulderFigure.tsx` via `shoulder-outline-drawing.ts`) now draws these CC0-derived outlines, moved by the unchanged shoulder model's displacement field (the result image's field); the plan view gains an always-visible angle, reference line, turn wedge and chest arrow. Project own work on a CC0 basis; no other image. Drawing only; the closure per degree and its range (`TUNING.limbRotation`) are illustrative; scores and regions unchanged. [Phase B report](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md). |
 
+
+### ART-RAD069-LIBRARY-GRAPHICS — exam-library navigation graphics, 22 drawings (2026-10-24, RAD-069 B2b, F8)
+
+| Field | Record |
+|---|---|
+| Type | Schematic navigation art, not diagnostic images and not positioning scenes: `src/features/platform/library-graphics.json` (SVG path data, generated), rendered by `ExamGraphic.tsx`; replaces the hand-drawn paths of ART-RAD054-CATALOGUE for every library card. One viewBox (240 x 168), one stroke width, `currentColor` strokes, `art-soft` fill, no text. |
+| Authorship / licence basis | Project-made work (F8), commercial-compatible: derived only from RAD-LAB's own drawing data (below) or hand-drawn for this project. No copied or newly traced image, textbook figure, image-generation output or external asset. Items derived from the CC0 traced outlines are released by RAD-LAB as CC0 1.0 derivatives (licence basis unchanged, see the trace entries above); the rest are project own work. |
+| Reproduce | `node scripts/library-graphics/build-library-graphics.mjs` writes the JSON; `--check` fails unless it is byte-identical (also checked by `library-graphics.test.ts`). Deterministic; reads only the files named below. Review sheets: `scripts/library-graphics/contact-sheet.mjs`. |
+| Limits | Illustrative icons, not a measurement; no clinical validation. [Owner decision](DECISIONS.md#rad069b2b-owner-2026-10-24); [report](RAD-069B2B_PHASE_A_REPORT_2026-10-24.md). |
+
+Source of each graphic (kind id: source):
+
+| Graphic | Source |
+|---|---|
+| `hand-pa`, `hand-lateral` | Traced outlines `hand-outlines.json` (ART-RAD072-HAND-TRACE), traced from A-015 (from A-014) and A-017 (from A-016); simplified to icon scale |
+| `wrist-pa`, `wrist-lateral` | Traced outlines `wrist-outlines.json` (ART-RAD072-LIMB-TRACE-2B), from A-011 (from A-010) and A-013 (from A-012); `wrist-pa` reduced to the carpal row and distal radius/ulna and closed inside the frame |
+| `foot-ap`, `foot-oblique` | Traced outlines `foot-outlines.json` (same entry), from A-027 (from A-026) and A-029 (from A-028) |
+| `shoulder-grashey` | Traced outlines `shoulder-outlines.json` (ART-RAD072-SHOULDER-TRACE), from A-038 (from A-037); humeral head, glenoid, acromion, clavicle end |
+| `knee-ap`, `knee-lateral` | Project model geometry `lower-limb-outlines.json` (knee scene outlines read by eye from the knee baselines A-023 and A-025, S14.4) |
+| `ankle-ap`, `ankle-lateral` | Project model geometry `ankle-outlines.ts` (read by eye from A-031 and A-033, S14.5). In `ankle-lateral` the soft outline is closed with a forefoot taper that is a drawing convention (the model ends at the picture edge), not model geometry |
+| `elbow-ap`, `elbow-lateral` | Project model geometry `elbow-visual.ts` (read by eye from A-019 and A-021, S14.3); `elbow-lateral` crops the humerus and forearm and uses the trochlea/capitulum circle and olecranon contour |
+| `pelvis-ap` | Project scene geometry in `PelvisFigure.tsx` (polygons traced by eye over the pelvis product copy A-036), patient-right bones mirrored to a symmetric outline; polygons copied into `scripts/library-graphics/designs.mjs` |
+| `chest-pa`, `chest-ap`, `chest-lateral`, `upper-limb`, `lower-limb` | Kept drawing: the earlier hand-drawn `ExamGraphic.tsx` geometry (ART-RAD054-CATALOGUE and the RAD-054 phone-feedback symbols), converted to absolute paths and restyled; decorative extras dropped |
+| `body`, `head`, `spine`, `generic` | Hand-drawn schematic icons for this project (no project model): torso with ribs and pelvis; lateral skull (vault, orbit, maxilla, mandible); normal straight frontal column with discs; neutral fallback frame |

@@ -550,6 +550,8 @@ Closed question texts and their scope/evidence are retained in the [closed-quest
 
 **الحدود:** لا تغيير للمحاكي أو المشاهد أو صور النتيجة أو التقييم أو البيانات المحفوظة أو رموز الثيم؛ كل golden وcharacterisation ومفتاح scene|… وresult|… حرفيًا، بلا qa:golden/qa:characterise. التفاصيل والأدلة في [تقرير المرحلة A](RAD-069B2B_PHASE_A_REPORT_2026-10-24.md).
 
+**المرحلة B (قرار المالك بعد مراجعة لوحتي A، 2026-10-24):** ثُبّتت كما هي: hand-pa وhand-lateral وwrist-lateral وelbow-ap وfoot-ap وfoot-oblique وknee-ap وankle-ap وbody وchest-pa/ap/lateral وupper-limb وlower-limb. تُصلح: wrist-pa (تبسيط وإدخال كل الرسم في الإطار بلا قطع)، knee-lateral (حذف خط النسيج الرخو الأيمن)، shoulder-grashey (مقروء بحجم البطاقة، دون العودة للقديم). تُرسم من جديد من هندسة المشروع: pelvis-ap (متماثل: أجنحة الحرقفة والعجز والارتفاق والثقبان السدّان ورأسا الفخذ)، elbow-lateral (انثناء نحو 90° مع المنزلة/الكبيرة والزجّ)، ankle-lateral (قدم جانبية بلا قطع). يُحسَّن spine (عمود **سوي** بلا انحناء جانبي، يُقرأ كعمود مستقيم أمامي أو منظر جانبي طبيعي) وhead (جمجمة جانبية مبسطة بلا ملامح). ثم تُسجَّل الرسومات الـ22 في [سجل الأصول](ASSET_PROVENANCE_AND_LICENSES.md#art-rad069-library-graphics--exam-library-navigation-graphics-22-drawings-2026-10-24-rad-069-b2b-f8) عملًا للمشروع بمصدر كل منها. لا شيء من خارج المشروع للرسوم التشخيصية؛ الأسلوب نفسه. التنفيذ والأدلة في [قسم المرحلة B](RAD-069B2B_PHASE_A_REPORT_2026-10-24.md#المرحلة-b).
+
 <a id="housekeeping-owner-2026-10-24"></a>
 ## قرارات المالك 2026-10-24 — تنظيف دفعة RAD-075 (لقطات، فروع، مهلات، وميض الدخول)
 
