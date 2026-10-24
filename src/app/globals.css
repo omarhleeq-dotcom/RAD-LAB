@@ -211,3 +211,56 @@ html { scroll-padding-block-start: calc(var(--site-bar-height, 4.75rem) + .75rem
 .dashboard-empty p { color: var(--color-muted); max-width: 28rem; }
 @media (max-width: 1199px) { .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 599px) { .category-grid { grid-template-columns: minmax(0, 1fr); } .home-decoration { opacity: .2; } }
+
+/* RAD-069 B1: compact navigation and saved-result presentation; theme remains B2a. */
+.desktop-language { display: block; }
+.exam-grid, .category-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; }
+.exam-card-link { display: flex; flex: 1; flex-direction: column; color: inherit; text-decoration: none; }
+.exam-card-link:hover { background: #f0f8f8; }
+.exam-card-link:focus-visible { outline-offset: -4px; }
+.exam-graphic { height: 7rem; }
+.exam-card-body { padding: .65rem; gap: .4rem; }
+.exam-card h3 { font-size: .95rem; }
+.category-choice .exam-graphic { height: 7rem; }
+.category-choice-label { padding: .65rem; font-size: .95rem; }
+.category-planned { height: auto; align-self: start; opacity: .65; }
+.category-planned .exam-art { display: none; }
+.category-planned-label { padding: .5rem .65rem; font-size: .8125rem; }
+.category-planned-label h3 { font-size: inherit; }
+.saved-verdict { font-size: .8125rem; }
+.is-passed { color: #17613d; }
+.is-failed { color: #a12132; }
+.training-summary-row { display: flex; gap: .65rem; justify-content: space-between; border-block: 1px solid var(--color-line); padding-block: .75rem; margin-block: 1rem; }
+.training-summary-row dt { font-size: .75rem; }
+.training-summary-row dd { margin-block-start: .15rem; }
+.home-dashboard { gap: 1rem; }
+.home-next { display: grid; gap: .75rem; }
+.home-action { display: grid; grid-template-columns: 1fr auto; gap: .25rem .5rem; border: 1px solid var(--color-line); border-radius: .85rem; padding: .9rem 1rem; background: white; }
+.home-action strong { color: var(--color-brand-strong); }
+.home-action > span:first-of-type { grid-column: 1; }
+.home-action > span[aria-hidden] { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+[dir="ltr"] .home-action > span[aria-hidden] { transform: scaleX(-1); }
+.overall-card { padding: 1rem; margin-block: .75rem; background: white; border: 1px solid var(--color-line); border-radius: .85rem; display: grid; gap: .4rem; }
+.training-intro { display: flex; align-items: start; gap: .5rem; margin-block: .5rem; font-size: .875rem; }
+.training-intro > div { max-width: 32rem; }
+.training-intro > div > button { width: auto; padding: 0 .5rem; }
+.training-intro > div > button > svg { display: none; }
+.saved-exam-grid { display: grid; gap: .75rem; list-style: none; }
+.saved-exam-card { min-width: 0; border: 1px solid var(--color-line); border-radius: .75rem; padding: .75rem; }
+.saved-exam-card h3 { font-size: 1rem; }
+.saved-chart { position: relative; direction: ltr; }
+.saved-chart-point { position: absolute; transform: translate(-50%, -50%); min-width: 44px; min-height: 44px; font-size: 1rem; font-weight: 800; border-radius: 50%; cursor: pointer; background: radial-gradient(circle, white 0 32%, transparent 34%); }
+.saved-chart-point[aria-pressed="true"] { text-decoration: underline; text-underline-offset: 3px; }
+.attempt-line { display: flex; align-items: center; gap: .25rem; font-size: .8125rem; white-space: nowrap; }
+.attempt-reason { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+@media (min-width: 1280px) { .home-next { grid-template-columns: repeat(3, minmax(0, 1fr)); } .saved-exam-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1199px) { .exam-grid, .category-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 1023px) { .desktop-language { display: none; } }
+@media (max-width: 599px) {
+  .exam-grid, .category-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+  .exam-graphic, .category-choice .exam-graphic { height: 5rem; }
+  .category-choice-label { padding: .55rem; font-size: .875rem; }
+  .saved-verdict { font-size: .75rem; }
+  .training-summary-row { gap: .5rem; }
+  .training-summary-row > div { flex: 1; }
+}
