@@ -686,7 +686,7 @@
       "title": "إصلاح أدوات فحص المتصفح على واجهة المحاكي الحالية",
       "status": "review",
       "priority": "medium",
-      "description": "PR مسودة: مساعد مشترك يفتح تبويب الهاتف/اللوحة قبل الوصول إلى الضابط، و14 سكربتًا أُصلحت، وأمر qa:exam-audit؛ بلا كود منتج. تنتظر المالك: مراجعة الـPR وقرارات تقرير §7 (تسميات إطار 390، clip-margin-only، phone-navigation).",
+      "description": "PR مسودة: مساعد مشترك يفتح تبويب الهاتف/اللوحة قبل الوصول إلى الضابط، و13 سكربتًا أُصلحت، وأمر qa:exam-audit؛ بلا كود منتج. تنتظر المالك: مراجعة الـPR وقرارات تقرير §7 (تسميات إطار 390، clip-margin-only، phone-navigation).",
       "source_ref": "docs/RAD-074_QA_TOOLING_REPORT_2026-10-24.md؛ docs/DOCS_CHECKS.md#browser-audits",
       "waiting_on": "owner"
     }
