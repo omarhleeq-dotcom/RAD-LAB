@@ -261,3 +261,14 @@ export function exportOwnerPart(stream: "attempts" | "notes", page: OwnerPage): 
   const csv = toCsv(NOTE_CSV_HEADER, parsed.items.map((n) => [n.userId, n.id, n.examId, no.get(n.id) ?? "", n.attemptId ?? "", n.at, n.text]));
   return { csv, written: parsed.items.length, skipped: skipped + parsed.skipped };
 }
+
+/** Calendar days are interpreted in the browser zone, including DST transitions. Inclusive server bounds. */
+export function localDateBound(value: string, end = false): string {
+  if (!value) return "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) throw new Error("Invalid date");
+  const [year, month, day] = value.split("-").map(Number);
+  const d = new Date(year!, month!-1, day!);
+  if (d.getFullYear()!==year || d.getMonth()!==month!-1 || d.getDate()!==day) throw new Error("Invalid date");
+  if (end) { d.setDate(d.getDate()+1); d.setMilliseconds(-1); }
+  return d.toISOString();
+}

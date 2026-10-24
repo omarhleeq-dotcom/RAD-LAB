@@ -4,6 +4,7 @@ import { isStatus, type ProfileRole, type ProfileStatus } from "./account-state"
 export type Participant = {
   readonly userId: string;
   readonly code: string;
+  readonly name?: string | null;
   readonly role: ProfileRole;
   readonly status: ProfileStatus;
   readonly email: string;
@@ -21,7 +22,7 @@ export function parseParticipant(row: unknown): Participant | null {
   const r = row as Record<string, unknown>;
   const userId = str(r.user_id), code = str(r.participant_code), email = str(r.email), createdAt = str(r.created_at);
   if (!userId || !code || !email || !createdAt || !isStatus(r.status) || (r.role !== "participant" && r.role !== "owner") || typeof r.email_confirmed !== "boolean") return null;
-  return { userId, code, role: r.role, status: r.status, email, emailConfirmed: r.email_confirmed, createdAt, lastSeenAt: str(r.last_seen_at), lastEventAt: str(r.last_event_at) };
+  return { userId, code, ...(typeof r.name === "string" ? {name:r.name} : {}), role: r.role, status: r.status, email, emailConfirmed: r.email_confirmed, createdAt, lastSeenAt: str(r.last_seen_at), lastEventAt: str(r.last_event_at) };
 }
 
 export function parseParticipants(rows: unknown): Participant[] {

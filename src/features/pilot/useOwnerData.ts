@@ -6,9 +6,9 @@ import { type Cursor, type OwnerFilters, type OwnerPage, type OwnerStream, readO
 
 export type OwnerData = { kind: "loading" } | { kind: "error" } | { kind: "ready"; page: OwnerPage };
 /** Replaces the current page, never accumulates a table. Ignore late responses on filter/account changes. */
-export function useOwnerData(enabled: boolean, version: number, stream: OwnerStream, filters: OwnerFilters, cursor: Cursor | null = null, boundary: string | null = null): OwnerData {
+export function useOwnerData(enabled: boolean, version: number, stream: OwnerStream, filters: OwnerFilters, cursor: Cursor | null = null, boundary: string | null = null, limit = 20): OwnerData {
   const [result, setResult] = useState<{ key: string; data: OwnerData } | null>(null);
-  const key = JSON.stringify([enabled, version, stream, filters, cursor, boundary]);
+  const key = JSON.stringify([enabled, version, stream, filters, cursor, boundary, limit]);
   useEffect(() => {
     if (!enabled) return;
     let cancelled = false;
@@ -16,7 +16,7 @@ export function useOwnerData(enabled: boolean, version: number, stream: OwnerStr
       try {
         const client = await getPilotClient();
         if (!client) throw new Error("off");
-        const page = await readOwnerPage((args) => client.rpc("owner_page_v1", args), stream, filters, cursor, boundary);
+        const page = await readOwnerPage((args) => client.rpc("owner_page_v1", args), stream, filters, cursor, boundary, false, limit);
         if (!cancelled) setResult({ key, data: { kind: "ready", page } });
       } catch { if (!cancelled) setResult({ key, data: { kind: "error" } }); }
     })();

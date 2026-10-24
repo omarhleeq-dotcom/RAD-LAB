@@ -49,7 +49,7 @@ export function CsvBar({ filters }: { filters: OwnerFilters }) {
     if (session.page.next) void load(session.stream, next); else setComplete(true);
   }
   return <div data-testid="csv-bar" className="my-3 space-y-2">
-    <p className="text-sm text-muted">{t("paging.exportHint")}</p>
+    <details className="text-sm text-muted"><summary aria-label={t("dashboard.exportInfo")} className="min-h-11 cursor-pointer">ⓘ</summary><p>{t("paging.exportHint")}</p></details>
     <div className="flex flex-wrap gap-2">
       {(["attempts", "notes"] as const).map((stream) => <button key={stream} data-testid={`csv-${stream}`} className={btn} disabled={busy || !!session} onClick={() => void load(stream, null)}>{t(`csv.${stream}`)}</button>)}
       {session && !complete && !failed && <button data-testid="export-save" className={btn} disabled={busy} onClick={save}>{t("paging.savePart", { part: session.part })}</button>}
@@ -75,7 +75,7 @@ export function ParticipantActivity({ code, userId, filters, version }: { code: 
   const pa = parseAttempts(stream === "attempts" ? page?.rows : []), pn = parseNotes(stream === "notes" ? page?.rows : []);
   const attempts = pa.items, notes = pn.items;
   const attemptNo = new Map((page?.rows ?? []).flatMap((r) => typeof r.attempt_id === "string" && typeof r.attempt_no === "number" ? [[r.attempt_id, r.attempt_no] as const] : []));
-  const label = t("paging.details", { code });
+  const label = t("dashboard.activity");
   return (
     <details onToggle={(e) => setOpen(e.currentTarget.open)} data-testid={`activity-${code}`} className="mt-3 rounded-md border border-line">
       <summary className="cursor-pointer px-3 py-2 text-sm font-medium">{label}</summary>
