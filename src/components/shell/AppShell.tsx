@@ -95,10 +95,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button type="button" className="menu-toggle" aria-label={t("openMenu")} aria-haspopup="dialog" aria-controls="mobile-navigation" aria-expanded={open} data-testid="menu-toggle" onClick={() => { dialog.current?.showModal(); setOpen(true); }}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg></button>
           {logo}
         </div>
-        <div className="site-top-actions">{workspace && <Link href={available[0] ? `/${available[0].id}` : "/"} className="workspace-library">{t("library")}</Link>}</div>
+        <div className="site-top-actions"><div className="desktop-language"><LanguageSwitcher /></div>{workspace && <Link href={available[0] ? `/${available[0].id}` : "/"} className="workspace-library">{t("library")}</Link>}</div>
       </div>
     </header>
-    <aside className="desktop-sidebar site-chrome">{navigation}<div className="sidebar-language"><LanguageSwitcher /></div></aside>
+    <aside className="desktop-sidebar site-chrome">{navigation}</aside>
     <dialog ref={dialog} id="mobile-navigation" className="mobile-drawer site-chrome" aria-labelledby="mobile-nav-title" onKeyDown={trapFocus} onClose={() => setOpen(false)} onClick={(event) => { if (event.target === event.currentTarget) close(); }}>
       <div className="drawer-panel">
         <div className="drawer-top"><button type="button" className="drawer-close" aria-label={t("closeMenu")} onClick={close} autoFocus>×</button>{logo}<LanguageSwitcher /></div>
