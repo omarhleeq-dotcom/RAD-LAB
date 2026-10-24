@@ -1,8 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useContext, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import type { ChinPositionId } from "@/domain/simulation";
 import { SCENE, STROKE, UNDER } from "./scene-style";
+import { PhoneFrameLabelContext, frameLabelKey } from "./PhoneFrameLabels";
 
 interface LabelProps {
   x: number;
@@ -27,6 +28,12 @@ interface Box {
  * (callers wrap labels in an `aria-hidden` group where the label is not itself the accessible name).
  */
 export function SceneLabel({ x, y, size, anchor = "start", fill = SCENE.label, children }: LabelProps) {
+  const rows = useContext(PhoneFrameLabelContext);
+  const key = frameLabelKey(x, y, size, children);
+  if (rows) {
+    const position = rows.positions[key];
+    x = position?.x ?? 0; y = position?.y ?? 0; anchor = "start";
+  }
   const ref = useRef<SVGTextElement>(null);
   const [box, setBox] = useState<Box | null>(null);
   useLayoutEffect(() => {
@@ -40,7 +47,7 @@ export function SceneLabel({ x, y, size, anchor = "start", fill = SCENE.label, c
   return (
     <g style={{ pointerEvents: "none" }}>
       {box && <rect x={box.x - 5} y={box.y - 1} width={box.width + 10} height={box.height + 2} rx={5} fill={SCENE.underStroke} opacity={0.82} />}
-      <text ref={ref} x={x} y={y} fontSize={size} textAnchor={anchor} fill={fill}>
+      <text ref={ref} data-phone-frame-label={rows ? key : undefined} x={x} y={y} fontSize={size} textAnchor={anchor} fill={fill}>
         {children}
       </text>
     </g>
