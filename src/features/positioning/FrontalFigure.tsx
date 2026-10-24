@@ -16,10 +16,20 @@ interface Props {
   chin: ChinPositionId;
   /** Practice guides: the fault overlays (scapulae over the lungs, chin over the apices) get the guide outline. */
   showGuides?: boolean;
+  /**
+   * Optional (RAD-072 part 3b, S13b-1 ii): `"hips"` draws the hands on the hips with the elbows flared out, as in Bontrager's erect PA chest.
+   * Absent = the arms hang at the sides, byte-identical to before (the AP detector view and the chest lateral's frontal fallback omit it).
+   */
+  hands?: "hips";
 }
 
 /** Drawing units per drawing cm (the detector view's `U`). */
 const K = 10;
+/**
+ * Hands on the hips: the arm bones are drawn at this share of their `BODY` length. The frame spans only about 26 drawing cm from the
+ * shoulder to the hip, shorter than the arm, so the full length would throw the elbows far outside the view. Drawing only.
+ */
+const HIP_ARM = 0.65;
 
 /**
  * Project-authored frontal chest shared by PA and AP. The lung bounds come from the existing fitted anatomy box,
@@ -29,7 +39,7 @@ const K = 10;
  * edge (the edge of the image), the head runs off the top of the view. Drawing proportions only: no clinical measurement, score or
  * result-image effect. Never mirrored by RTL.
  */
-export function FrontalFigure({ W, H, thoraxScale, rv, lungY, lungH, lungW, scapula, chin, showGuides = false }: Props) {
+export function FrontalFigure({ W, H, thoraxScale, rv, lungY, lungH, lungW, scapula, chin, showGuides = false, hands }: Props) {
   const mid = W / 2;
   const p = (side: number, u: number, v: number) => `${mid + side * (8 + u * lungW)} ${lungY + v * lungH}`;
   const lung = (side: number) => `M ${p(side, 0.34, 0)} C ${p(side, 0.67, 0)} ${p(side, 0.92, 0.15)} ${p(side, 0.98, 0.38)} Q ${p(side, 1, 0.68)} ${p(side, 1, 1)} ` +
@@ -78,6 +88,23 @@ export function FrontalFigure({ W, H, thoraxScale, rv, lungY, lungH, lungW, scap
     const end = { x: elbow.x + s * 8 * Math.min(1, dy / len), y: Math.min(H, elbow.y + len) };
     return limbPath([{ ...sh, w: BODY.upperArm.w * K }, { ...elbow, w: BODY.forearm.w * K * 1.05 }, { ...end, w: BODY.forearm.w * K * 0.9 }]);
   };
+  // Hands on the hips: the elbow is the point of the two-bone chain (BODY.upperArm / forearm) that lies away from the midline, so the
+  // elbows flare out; the hand lies on the trunk's edge at the hip (drawn after the trunk so it is not hidden by it).
+  const hip = (s: number) => {
+    const sh = { x: mid + s * (acromion - 22), y: shoulderY + 30 };
+    const hand = { x: mid + s * (waist - 2), y: Math.min(H - 40, baseY + 58) };
+    const a = BODY.upperArm.l * K * HIP_ARM, f = BODY.forearm.l * K * HIP_ARM;
+    const dx = hand.x - sh.x, dy = hand.y - sh.y, d = Math.min(Math.hypot(dx, dy), a + f - 1);
+    const along = (a * a - f * f + d * d) / (2 * d), off = Math.sqrt(Math.max(0, a * a - along * along));
+    const ux = dx / Math.hypot(dx, dy), uy = dy / Math.hypot(dx, dy);
+    const out = s * -uy >= 0 ? { x: -uy, y: ux } : { x: uy, y: -ux };
+    const elbow = { x: sh.x + ux * along + out.x * off, y: sh.y + uy * along + out.y * off };
+    return { sh, elbow, hand, ang: (Math.atan2(hand.y - elbow.y, hand.x - elbow.x) * 180) / Math.PI };
+  };
+  const hipArm = (s: number) => {
+    const { sh, elbow, hand } = hip(s);
+    return limbPath([{ ...sh, w: BODY.upperArm.w * K }, { ...elbow, w: BODY.forearm.w * K * 1.05 }, { ...hand, w: BODY.forearm.w * K * 0.9 }]);
+  };
   const scapulae = [
     { cx: mid - lungW + 14 - scapula, cy: lungY + 110, rx: 26, ry: 72 },
     { cx: mid + lungW - 14 + scapula, cy: lungY + 110, rx: 26, ry: 72 },
@@ -89,7 +116,7 @@ export function FrontalFigure({ W, H, thoraxScale, rv, lungY, lungH, lungW, scap
     <>
       <g transform={`translate(${mid} 0) scale(${thoraxScale} 1) translate(${-mid} 0)`}>
         {/* soft tissue: arms at the sides, head (seen from behind / in front: no face detail) and neck, trunk with shoulders and waist */}
-        {[-1, 1].map((s) => <path key={s} data-anatomy="arm" d={arm(s)} fill={SCENE.soft} {...outlined} />)}
+        {[-1, 1].map((s) => <path key={s} data-anatomy="arm" d={hands === "hips" ? hipArm(s) : arm(s)} fill={SCENE.soft} {...outlined} />)}
         {/* outline pass, then fill pass: the head, neck and trunk in ONE silhouette */}
         {[true, false].map((outlinePass) => (
           <g key={String(outlinePass)} fill={outlinePass ? SCENE.outline : SCENE.soft} stroke={outlinePass ? SCENE.outline : "none"} strokeWidth={STROKE.thin * 2} strokeLinejoin="round">
@@ -97,6 +124,10 @@ export function FrontalFigure({ W, H, thoraxScale, rv, lungY, lungH, lungW, scap
             <path data-anatomy={outlinePass ? undefined : "trunk"} d={trunkPath} />
           </g>
         ))}
+        {hands === "hips" && [-1, 1].map((s) => {
+          const { hand, ang } = hip(s);
+          return <ellipse key={s} data-anatomy="hand" cx={hand.x} cy={hand.y} rx={BODY.hand.l * K * 0.28} ry={BODY.hand.w * K * 0.4} transform={`rotate(${ang} ${hand.x} ${hand.y})`} fill={SCENE.soft} {...outlined} />;
+        })}
         <path d={`M ${mid - headW * 0.72} ${chinY - 40} Q ${mid} ${chinY + 22} ${mid + headW * 0.72} ${chinY - 40}`} fill="none" stroke={SCENE.outline} strokeWidth={STROKE.thin} opacity={0.6} />
         {/* lungs in the air tone; each hemithorax keeps the existing rotation-size effect; both bases stop at their diaphragm dome */}
         {([-1, 1] as const).map((side) => (

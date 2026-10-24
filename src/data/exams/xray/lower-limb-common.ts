@@ -52,9 +52,10 @@ const PER = {
     kv: { full: [70, 80], partial: [65, 85] },
     // Excess-collimation margin per side (ENGINE TEACHING CHOICE): the marker needs ≈ 2 cm beside the region.
     excessCm: 3.5,
-    centreLabel: T("Central ray — mid-knee joint (about 1.25 cm below the patella)", "الشعاع المركزي — منتصف مفصل الركبة (نحو 1.25 سم أسفل الرضفة)"),
-    centreEn: "the mid-knee joint, about 1.25 cm below the lowest point of the patella",
-    centreAr: "منتصف مفصل الركبة، نحو 1.25 سم أسفل أدنى نقطة في الرضفة",
+    // RAD-072 part 3b (S14.4-R9): the marked and scored point is the mid-joint; Bontrager's own reference is ≈1.25 cm distal to the patellar apex, which this image does not show.
+    centreLabel: T("Central ray — mid-knee joint (the marked point; reference about 1.25 cm below the patellar apex, not visible in this image)", "الشعاع المركزي — منتصف مفصل الركبة (النقطة المعلَّمة؛ المرجع نحو 1.25 سم أسفل قمة الرضفة وهي غير ظاهرة في هذه الصورة)"),
+    centreEn: "the mid-knee joint (the marked point; Bontrager's reference is about 1.25 cm distal to the patellar apex, which is not visible in this image)",
+    centreAr: "منتصف مفصل الركبة (النقطة المعلَّمة؛ مرجع Bontrager نحو 1.25 سم أسفل قمة الرضفة وهي غير ظاهرة في هذه الصورة)",
     centrePage: "mid-knee joint",
     projectionPass: T("Correct projection: AP knee (leg extended), as requested.", "الإسقاط صحيح: الركبة بإسقاط AP (الساق ممدودة) كما هو مطلوب."),
     projectionFail: T(
@@ -274,17 +275,17 @@ const PER = {
     coverageEn: "the whole foot: all the phalanges, the metatarsals, the navicular, the cuneiforms and the cuboid",
     coverageAr: "القدم كلها: جميع السلاميات وعظام مشط القدم والزورقي والإسفينيات والنردي",
     angle: {
-      label: T("Tube angle (10° toward the heel)", "ميل الأنبوب (10° نحو العقب)"),
+      label: T("Tube angle (10° toward the heel = cephalad, −10° on the control)", "ميل الأنبوب (10° نحو العقب = نحو الرأس، −10° على أداة التحكم)"),
       // BONTRAGER p.232: 10° toward the heel = cephalad (negative values of the control); high arch ≈ 15°, low arch ≈ 5°. The bands are ENGINE TEACHING CHOICES.
       ideal: [-12, -8] as [number, number],
       acceptable: [-15, -5] as [number, number],
       pass: T(
-        "About 10° toward the heel (cephalad), right for an average arch: the beam is perpendicular to the metatarsals (Bontrager p.232; about 15° for a high arch, about 5° for a low arch).",
-        "نحو 10° باتجاه العقب (نحو الرأس)، وهو صحيح لقوس متوسط: الشعاع عمودي على عظام مشط القدم (Bontrager ص.232؛ نحو 15° لقوس عالٍ ونحو 5° لقوس منخفض).",
+        "About 10° toward the heel (cephalad, −10° on the control), right for an average arch: the beam is perpendicular to the metatarsals (Bontrager p.232; about 15° for a high arch, about 5° for a low arch).",
+        "نحو 10° باتجاه العقب (نحو الرأس، −10° على أداة التحكم)، وهو صحيح لقوس متوسط: الشعاع عمودي على عظام مشط القدم (Bontrager ص.232؛ نحو 15° لقوس عالٍ ونحو 5° لقوس منخفض).",
       ),
       fail: T(
-        "The tube angle is far from about 10° toward the heel (cephalad). For an average arch the beam is perpendicular to the metatarsals (Bontrager p.232).",
-        "ميل الأنبوب بعيد عن نحو 10° باتجاه العقب (نحو الرأس). لقوس متوسط يكون الشعاع عموديًا على عظام مشط القدم (Bontrager ص.232).",
+        "The tube angle is far from about 10° toward the heel (cephalad, −10° on the control). For an average arch the beam is perpendicular to the metatarsals (Bontrager p.232).",
+        "ميل الأنبوب بعيد عن نحو 10° باتجاه العقب (نحو الرأس، −10° على أداة التحكم). لقوس متوسط يكون الشعاع عموديًا على عظام مشط القدم (Bontrager ص.232).",
       ),
       low: T(
         "More than about 10° toward the heel. Bontrager gives about 15° only for a high arch; this foot has an average arch. (Partial credit applies within 5°–15°.)",

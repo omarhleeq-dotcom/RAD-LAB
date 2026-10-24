@@ -37,6 +37,12 @@ export interface RadiographAssetSpec {
    * rotation effect as a posterior-rib separation instead of a frontal spine shift.
    */
   projection?: ProjectionId;
+  /**
+   * Optional (RAD-072 part 3b, S13b-1 b): the result panel shows a small key beside the image (hatching = no data in the reference
+   * image, not exposure or collimation) and a line that the reference covers only part of the detector, with the share computed from
+   * the fit (`detectorCoverage`). For an exam whose reference image is much smaller than the detector. Absent = nothing new is shown.
+   */
+  partialCoverageKey?: true;
   /** Registry entries (docs/ASSET_PROVENANCE_AND_LICENSES.md) this asset derives from. */
   registryIds: string[];
   /** Voluntary attribution line (the licence does not require it). */

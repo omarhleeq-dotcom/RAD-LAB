@@ -137,6 +137,7 @@ export const ANKLE_AP_RADIOGRAPH: RadiographAssetSpec = {
   widthPx: 728,
   heightPx: 1631,
   projection: "ankle-ap",
+  partialCoverageKey: true,
   registryIds: ["A-030", "A-031"],
   credit: credit(
     "Reference radiograph: an adult ankle (the source description mentions no trauma), AP (frontal), Mikael Häggström, Wikimedia Commons, CC0 1.0 (licence confirmed by the project owner). The edge artefacts of the original were repaired. A real ankle (a 24-year-old male, per the file description) used as a teaching approximation: not a diagnostic image and not a person from the chest cases.",

@@ -6,7 +6,7 @@ import en from "../../../messages/en.json";
 import ar from "../../../messages/ar.json";
 import { CASES } from "@/data/cases";
 import { fitAnatomyBox } from "@/features/simulation/geometry";
-import { CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, U } from "./detector-figures";
+import { CHEST_AP_FIGURE, CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, DETECTOR_FIGURES, U } from "./detector-figures";
 import { PlanView } from "./PlanView";
 import { DetectorWorkspace } from "./DetectorWorkspace";
 import { AP_SIDE, apSideLayout } from "./visual-model";
@@ -194,4 +194,51 @@ it("lung and heart paths fit the EXISTING scored landmark boxes in every drawn v
         }
       }
   }
+});
+
+describe("Frontal figure: hands on the hips are the chest PA's alone (RAD-072 part 3b, S13b-1 ii)", () => {
+  const ap = CASES.find((c) => c.id === "chest-ap-supine")!;
+  const pa = CASES.find((c) => c.id === "chest-pa-erect")!;
+  const draw = (figure: typeof CHEST_PA_FIGURE, c: typeof pa, patch: Record<string, unknown> = {}) => render(createElement(figure.Drawing, {
+    radCase: c, settings: { ...c.initialSettings, rotationDeg: 0, ...patch } as never,
+    showGuides: true, W: c.detector.widthCm * U, H: c.detector.heightCm * U,
+  }));
+  // Every figure that reaches FrontalFigure: PA exam (hips), AP exam, chest lateral exam with a non-lateral projection (arms at the sides).
+  const withoutArms = (html: string) => html.replace(/<path data-anatomy="arm"[^>]*><\/path>/g, "").replace(/<ellipse data-anatomy="hand"[^>]*><\/ellipse>/g, "");
+  it("the PA draws two hands and two arms; the AP and the lateral exam's frontal fallback draw the arms at the sides, no hands", () => {
+    const hips = draw(CHEST_PA_FIGURE, pa);
+    expect(hips.match(/data-anatomy="hand"/g)).toHaveLength(2);
+    expect(hips.match(/data-anatomy="arm"/g)).toHaveLength(2);
+    for (const html of [draw(CHEST_AP_FIGURE, ap), draw(CHEST_LATERAL_FIGURE, lateral, { projection: "pa-erect" })]) {
+      expect(html).not.toContain('data-anatomy="hand"');
+      expect(html.match(/data-anatomy="arm"/g)).toHaveLength(2);
+    }
+  });
+  it("the AP figure is the frontal figure unchanged: same markup as the lateral exam's fallback for the same case (nothing outside chest PA changed)", () => {
+    for (const patch of [{}, { chinPosition: "tucked" }, { shoulderPosition: "relaxed" }, { shoulderPosition: "rolled-forward" }]) {
+      expect(draw(CHEST_AP_FIGURE, ap, patch)).toBe(draw(CHEST_LATERAL_FIGURE, { ...ap, id: ap.id } as typeof ap, { projection: "pa-erect", ...patch }));
+    }
+  });
+  it("the PA differs from the arms-at-the-sides drawing in the arms and hands only: trunk, lungs, heart, bones and overlays are the same markup", () => {
+    for (const patch of [{}, { chinPosition: "tucked" }, { shoulderPosition: "relaxed" }, { shoulderPosition: "rolled-forward" }]) {
+      expect(withoutArms(draw(CHEST_PA_FIGURE, pa, patch))).toBe(withoutArms(draw(CHEST_AP_FIGURE, pa, patch)));
+    }
+  });
+  it("the elbows flare away from the midline and the hand lies on the trunk's edge inside the detector's lower edge", () => {
+    const html = draw(CHEST_PA_FIGURE, pa);
+    const hands = [...html.matchAll(/<ellipse data-anatomy="hand" cx="([\d.]+)" cy="([\d.]+)"/g)].map((m) => ({ x: Number(m[1]), y: Number(m[2]) }));
+    const W = pa.detector.widthCm * U, H = pa.detector.heightCm * U;
+    expect(hands).toHaveLength(2);
+    expect(hands[0]!.x).toBeLessThan(W / 2);
+    expect(hands[1]!.x).toBeGreaterThan(W / 2);
+    for (const h of hands) expect(h.y).toBeLessThan(H);
+  });
+  it("the scene registry draws each chest scene with its own figure, and no limb or other exam figure draws hands", () => {
+    expect(DETECTOR_FIGURES["chest-ap-supine"]).toBe(CHEST_AP_FIGURE);
+    for (const c of CASES.filter((c) => c.bodyPart !== "chest")) {
+      const fig = DETECTOR_FIGURES[c.requiredProjection];
+      if (!fig) continue;
+      expect(render(createElement(fig.Drawing, { radCase: c, settings: c.initialSettings as never, showGuides: true, W: c.detector.widthCm * U, H: c.detector.heightCm * U }))).not.toContain('data-anatomy="hand"');
+    }
+  });
 });
