@@ -2,6 +2,8 @@ import {readFileSync} from "node:fs";
 import {runInNewContext} from "node:vm";
 import {webcrypto} from "node:crypto";
 import {expect,it} from "vitest";
+// Freeze only the VM clock: an ISO timestamp ending in 01.250Z contains the grade sentinel "1.25".
+class FixedDate extends Date {constructor(value?:string|number){super(value??"2026-10-24T12:00:00.000Z");}}
 const source=readFileSync("scripts/pilot/assess-f-closed-service-check.js","utf8");
 const owner="00000000-0000-0000-0000-000000000001",participant="00000000-0000-0000-0000-000000000002",cursor="00000000-0000-0000-0000-000000000099";
 const token="private-session-never-print",key="sb_publishable_synthetic_public_key";
@@ -10,7 +12,7 @@ async function run(role:"owner"|"participant",o:{fault?:Fault;populated?:boolean
  const id=role==="owner"?owner:participant,other=role==="owner"?participant:owner;
  const prompts=[o.key??key,o.other===undefined?other:o.other],out:string[]=[],calls:{path:string;body:Record<string,unknown>|null;signed:boolean}[]=[];
  await runInNewContext(source,{
-  location:{protocol:"https:",hostname:"signed-in-application.test"},URL,AbortSignal,TextEncoder,Uint8Array,crypto:webcrypto,
+  Date:FixedDate,location:{protocol:"https:",hostname:"signed-in-application.test"},URL,AbortSignal,TextEncoder,Uint8Array,crypto:webcrypto,
   localStorage:{getItem:(name:string)=>{expect(name).toBe("sb-vlacestfruxooznrcjqc-auth-token");return o.noSession?null:JSON.stringify({access_token:token,user:{id}});}},
   prompt:()=>prompts.shift(),console:{log:(s:string)=>out.push(s)},
   fetch:async(input:string,init:RequestInit)=>{

@@ -1871,6 +1871,8 @@
     "privacy": "Only the owner can view your answers. Please do not include names, emails or patient information.",
     "susEnglish": "The standard SUS statements are shown in their original English. An Arabic version has not been approved for use here. For SUS, 1 means strongly disagree and 5 means strongly agree.",
     "optional": "optional",
+    "scaleStart": "Strongly disagree",
+    "scaleEnd": "Strongly agree",
     "submit": "Send feedback",
     "sending": "Sending…",
     "sent": "Your feedback was sent. Thank you.",
