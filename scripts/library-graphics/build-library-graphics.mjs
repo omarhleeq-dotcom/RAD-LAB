@@ -11,6 +11,26 @@ const OUT = "src/features/platform/library-graphics.json";
 const traced = (name) => JSON.parse(readFileSync(`src/features/positioning/${name}-outlines.json`, "utf8"));
 const r1 = (n) => Math.round(n * 10) / 10;
 
+/** Sutherland–Hodgman: a polygon clipped to the window [x0, y0, x1, y1]. */
+function clipPoly(pts, [x0, y0, x1, y1]) {
+  const edges = [
+    [(p) => p[0] >= x0, (a, b) => [x0, a[1] + (b[1] - a[1]) * (x0 - a[0]) / (b[0] - a[0])]],
+    [(p) => p[0] <= x1, (a, b) => [x1, a[1] + (b[1] - a[1]) * (x1 - a[0]) / (b[0] - a[0])]],
+    [(p) => p[1] >= y0, (a, b) => [a[0] + (b[0] - a[0]) * (y0 - a[1]) / (b[1] - a[1]), y0]],
+    [(p) => p[1] <= y1, (a, b) => [a[0] + (b[0] - a[0]) * (y1 - a[1]) / (b[1] - a[1]), y1]],
+  ];
+  let out = pts;
+  for (const [inside, cross] of edges) {
+    const input = out;
+    out = [];
+    input.forEach((cur, i) => {
+      const prev = input[(i + input.length - 1) % input.length];
+      if (inside(cur)) { if (!inside(prev)) out.push(cross(prev, cur)); out.push(cur); } else if (inside(prev)) out.push(cross(prev, cur));
+    });
+  }
+  return out;
+}
+
 /** Ramer–Douglas–Peucker on an open polyline. */
 function rdp(pts, eps) {
   if (pts.length < 3) return pts;
@@ -72,22 +92,33 @@ const area = (pts) => Math.abs(pts.reduce((sum, p, i) => { const q = pts[(i + 1)
  * outline (closed when the trace is closed, dropped under `minArea` viewBox units squared); "line" an open stroke. `eps` is
  * the simplification tolerance in viewBox units.
  */
-function derive(file, view, { margin, bias, eps = 0.9, minArea = 0, tx = (p) => p, closeWith = [], include }) {
+function derive(file, view, { margin, bias, eps = 0.9, minArea = 0, tx = (p) => p, closeWith = [], clip, softEdge = true, boneFill = false, include }) {
   const v = traced(file).views[view];
-  const chosen = include(new Map(v.structures.map((s) => [s.id, s])), v.structures);
+  let chosen = include(new Map(v.structures.map((s) => [s.id, s])), v.structures);
+  // `clip` [x0, y0, x1, y1]: the drawing shows only that window of the trace and every outline is closed on the cut,
+  // so nothing is left open or cut by the frame (open lines that leave the window are dropped).
+  if (clip) chosen = [
+    ...(chosen.some(([, role]) => role === "soft") ? [[{ id: "soft", closed: true, points: chosen.filter(([, role]) => role === "soft").flatMap(([x]) => x.points) }, "soft"]] : []),
+    ...chosen.filter(([, role]) => role !== "soft"),
+  ].flatMap(([s, role, e]) => {
+    if (role === "line") return s.points.every(([x, y]) => x >= clip[0] && x <= clip[2] && y >= clip[1] && y <= clip[3]) ? [[s, role, e]] : [];
+    const points = clipPoly(s.points, clip);
+    return points.length > 2 ? [[{ ...s, closed: true, points }, role, e]] : [];
+  });
   const fit = fitter([...chosen.flatMap(([s]) => s.points), ...closeWith].map(tx), margin, bias);
   const place = (s) => s.points.map((p) => fit(tx(p)));
   const soft = chosen.filter(([, role]) => role === "soft").map(([s]) => s);
   const parts = [];
   if (soft.length) {
     parts.push({ role: "fill", d: smoothPath(simplify([...soft.flatMap(place), ...closeWith.map((p) => fit(tx(p)))], true, eps), true) });
-    for (const s of soft) parts.push({ role: "line", d: smoothPath(simplify(place(s), false, eps), false) });
+    for (const s of soft) if (softEdge) parts.push(clip ? { role: "bone", d: smoothPath(simplify(place(s), true, eps), true) } : { role: "line", d: smoothPath(simplify(place(s), false, eps), false) });
   }
   for (const [s, role, e] of chosen) {
     if (role === "soft") continue;
     const closed = s.closed && role !== "line";
     const pts = simplify(place(s), closed, e ?? eps);
     if (closed && area(pts) < minArea) continue;
+    if (closed && boneFill) parts.push({ role: "fill", d: smoothPath(pts, closed) });
     parts.push({ role: closed ? "bone" : "line", d: smoothPath(pts, closed) });
   }
   return parts;
@@ -151,9 +182,10 @@ function geometry({ win, items, margin = 12, bias = [0, 0], eps = 0.9, minArea =
     if (ring) {
       const pts = simplify(ring, it.role !== "line", it.eps ?? eps);
       if (it.role !== "line" && area(pts) < minArea) continue;
+      if (it.fill && it.role === "bone") parts.push({ role: "fill", d: smoothPath(pts, true) });
       parts.push({ role, d: smoothPath(pts, it.role !== "line") });
     }
-    for (const r of runs) parts.push({ role: "line", d: smoothPath(simplify(r, false, it.eps ?? eps), false) });
+    for (const r of runs) if (!it.keepRun || it.keepRun(r)) parts.push({ role: "line", d: smoothPath(simplify(r, false, it.eps ?? eps), false) });
   }
   return parts;
 }
@@ -168,13 +200,15 @@ const softAnd = (groups, extra = []) => (byId, list) => list
 export const DERIVED = {
   "hand-pa": ["hand", "pa", { eps: 1, minArea: 6, include: softAnd(["digits", "metacarpals", "thumb", "carpus", "forearm"]) }],
   "hand-lateral": ["hand", "lateral", { eps: 1, minArea: 6, include: softAnd(["digits", "metacarpals", "thumb", "carpus", "forearm"]) }],
-  "wrist-pa": ["wrist", "pa", { eps: 1, minArea: 6, include: softAnd(["metacarpals", "carpals", "forearm"]) }],
+  // Phase B: carpal row and distal radius/ulna only, the whole drawing inside the frame (outlines closed on the cut)
+  "wrist-pa": ["wrist", "pa", { eps: 1.3, minArea: 6, margin: 14, clip: [100, 170, 700, 900], boneFill: true, include: (byId, list) => list.filter((x) => x.group === "carpals" || x.group === "forearm").map((x) => [x, "bone"]) }],
   "wrist-lateral": ["wrist", "lateral", { eps: 1, minArea: 6, include: softAnd(["metacarpals", "carpals", "forearm"]) }],
   "foot-ap": ["foot", "ap", { eps: 1, minArea: 6, include: softAnd(["phalanges", "metatarsals", "tarsals"]) }],
   "foot-oblique": ["foot", "oblique", { eps: 1, minArea: 6, include: softAnd(["phalanges", "metatarsals", "tarsals"]) }],
+  // Phase B: humeral head, glenoid, acromion and clavicle line, a shorter shaft and fewer inner lines at a larger scale
   "shoulder-grashey": ["shoulder", "grashey", {
-    eps: 1, closeWith: [[1193, 4], [1193, 1800]],
-    include: softAnd(["humerus", "scapula", "clavicle"], ["scapular-border-inner", "scapular-border-outer", "humeral-head-arc", "greater-tuberosity-line"]),
+    eps: 1.4, margin: 8, clip: [380, 40, 1192, 1020], boneFill: true,
+    include: (byId) => [...["humerus-proximal", "acromion", "clavicle-distal", "glenoid-neck"].map((id) => [byId.get(id), "bone"]), ...["greater-tuberosity-line", "humeral-head-arc"].map((id) => [byId.get(id), "line"])],
   }],
 };
 export function build() {

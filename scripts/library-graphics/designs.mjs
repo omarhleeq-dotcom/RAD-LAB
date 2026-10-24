@@ -100,19 +100,22 @@ export function designs(h) {
   const body = (fillPts, edgePts) => [closed("fill", fillPts), open(edgePts)];
 
   // ---- pelvis (the pelvis scene polygons of PelvisFigure.tsx, image px 2675 x 2084) -------------------------------
+  // Symmetric about the midline of the scene picture: the patient-right bones of the pelvis scene mirrored to the left.
   const pm = (p) => p.map(([x, y]) => [2675 - x, y]);
   const wingR = [[1075, 720], [1030, 430], [990, 300], [770, 165], [500, 145], [340, 230], [215, 330], [260, 700], [410, 1075], [480, 1280], [640, 1450], [860, 1380], [840, 1100], [875, 950], [960, 830]];
-  const wingL = [[1700, 700], [1690, 480], [1760, 330], [1980, 235], [2250, 215], [2470, 260], [2590, 420], [2420, 880], [2270, 1180], [2190, 1290], [2040, 1450], [1820, 1360], [1900, 1180], [1890, 1000], [1790, 830]];
-  const ringR = [[640, 1450], [700, 1650], [780, 1880], [900, 1960], [1100, 1960], [1250, 1880], [1335, 1760], [1330, 1690], [1050, 1610], [880, 1500]];
+  const ringR = [[640, 1450], [700, 1650], [780, 1880], [900, 1960], [1100, 1960], [1250, 1880], [1337, 1760], [1337, 1690], [1050, 1610], [880, 1500]];
   const sacrum = [[1150, 300], [1525, 300], [1590, 560], [1480, 900], [1380, 1140], [1295, 1140], [1195, 900], [1085, 560]];
   const femurR = [[470, 1500], [250, 1470], [100, 1490], [20, 1580], [50, 1800], [30, 2084], [540, 2084], [520, 1850], [560, 1720], [600, 1620]];
-  const pelvisSoft = [[330, 0], [2345, 0], [2640, 340], [2640, 520], [2480, 900], [2400, 1150], [2560, 1380], [2675, 1480], [2675, 2084], [1960, 2084], [1945, 2000], [730, 2000], [715, 2084], [0, 2084], [0, 1480], [120, 1380], [270, 1150], [190, 900], [80, 520], [80, 340]];
+  const disc = (cx, cy, rx, ry, n = 20) => Array.from({ length: n }, (_, i) => [cx + rx * Math.cos(i * 2 * Math.PI / n), cy + ry * Math.sin(i * 2 * Math.PI / n)]);
   const pelvisAp = geometry({
-    win: [0, 0, 2675, 2084], margin: 10, eps: 1.1,
+    win: [0, 0, 2675, 2084], margin: 10, eps: 1.4,
     items: [
-      { role: "soft", pts: pelvisSoft },
-      { role: "bone", pts: wingR }, { role: "bone", pts: wingL }, { role: "bone", pts: sacrum },
-      { role: "bone", pts: ringR }, { role: "bone", pts: pm(ringR) }, { role: "bone", pts: femurR }, { role: "bone", pts: pm(femurR) },
+      { role: "bone", fill: true, pts: wingR }, { role: "bone", fill: true, pts: pm(wingR) }, { role: "bone", fill: true, pts: sacrum },
+      { role: "bone", pts: ringR }, { role: "bone", pts: pm(ringR) },
+      { role: "bone", pts: disc(1100, 1780, 150, 95) }, { role: "bone", pts: pm(disc(1100, 1780, 150, 95)) },
+      { role: "bone", fill: true, eps: 3, pts: femurR }, { role: "bone", fill: true, eps: 3, pts: pm(femurR) },
+      { role: "bone", fill: true, pts: disc(600, 1420, 160, 160) }, { role: "bone", fill: true, pts: pm(disc(600, 1420, 160, 160)) },
+      { role: "line", pts: [[1337, 1690], [1337, 1760]] },
     ],
   });
 
@@ -124,16 +127,24 @@ export function designs(h) {
   });
   const kneeLateral = geometry({
     win: [40, 100, 1150, 1700], margin: 10, eps: 1,
-    items: [{ role: "soft", pts: knee.kneeLateral.soft }, { role: "bone", pts: knee.kneeLateral.femur }, { role: "bone", pts: knee.kneeLateral.patella }, { role: "bone", pts: knee.kneeLateral.tibia }, { role: "bone", pts: knee.kneeLateral.fibula }],
+    items: [{ role: "soft", pts: knee.kneeLateral.soft, keepRun: (run) => run.reduce((m, p) => m + p[0], 0) / run.length < 120 }, { role: "bone", pts: knee.kneeLateral.femur }, { role: "bone", pts: knee.kneeLateral.patella }, { role: "bone", pts: knee.kneeLateral.tibia }, { role: "bone", pts: knee.kneeLateral.fibula }],
   });
   const ankle = tsConst("src/features/positioning/ankle-outlines.ts", "ANKLE_OUTLINES");
   const ankleAp = geometry({
     win: [0, 200, 720, 1700], margin: 10, eps: 1,
     items: [{ role: "soft", pts: ankle.ap.soft }, { role: "bone", pts: ankle.ap.tibia }, { role: "bone", pts: ankle.ap.fibula }, { role: "bone", pts: ankle.ap.talus }, { role: "bone", pts: ankle.ap.heel }],
   });
+  // The model's lateral ankle ends at the picture edge on the foot side; the soft outline is closed there with a rounded
+  // forefoot cap (a drawing convention, not model geometry) so the foot direction reads and nothing is cut by the frame.
+  const al = ankle.lateral;
+  const cut = al.soft.findIndex((p) => p[0] === 0);
+  const ankleSoft = [...al.soft.slice(0, cut), [10, 870], [-140, 960], [-290, 1120], [-420, 1320], [-470, 1480], [-440, 1600], [-330, 1655], [-120, 1662], ...al.soft.slice(cut + 2)];
   const ankleLateral = geometry({
-    win: [0, 200, 910, 1670], margin: 10, eps: 1,
-    items: [{ role: "soft", pts: ankle.lateral.soft }, { role: "bone", pts: ankle.lateral.tibia }, { role: "bone", pts: ankle.lateral.fibula }, { role: "bone", pts: ankle.lateral.talus }, { role: "bone", pts: ankle.lateral.calcaneus }, { role: "bone", pts: ankle.lateral.foot }],
+    win: [-500, 200, 910, 1700], margin: 10, eps: 1,
+    items: [
+      { role: "soft", pts: ankleSoft }, { role: "bone", fill: true, pts: al.foot }, { role: "bone", fill: true, pts: al.calcaneus },
+      { role: "bone", fill: true, pts: al.talus }, { role: "bone", fill: true, pts: al.tibia }, { role: "bone", fill: true, pts: al.fibula },
+    ],
   });
   const apElbow = tsConst("src/features/positioning/elbow-visual.ts", "AP_OUTLINES");
   const latElbow = tsConst("src/features/positioning/elbow-visual.ts", "LATERAL_OUTLINES");
@@ -141,9 +152,15 @@ export function designs(h) {
     win: [30, -100, 830, 1250], margin: 10, eps: 1,
     items: [{ role: "soft", pts: apElbow.soft }, { role: "bone", pts: apElbow.humerus }, { role: "bone", pts: apElbow.ulna }, { role: "bone", pts: apElbow.radius }],
   });
+  // Flexed about 90 degrees: humerus up, trochlea / capitulum circle, olecranon behind, radius and ulna forward.
+  const el = latElbow, c = el.circle, crop = (pts) => pts.map(([x, y]) => [Math.max(0, x), Math.max(150, y)]);
   const elbowLateral = geometry({
-    win: [-60, -150, 950, 1090], margin: 10, eps: 1,
-    items: [{ role: "soft", pts: latElbow.soft }, { role: "bone", pts: latElbow.humerus }, { role: "bone", pts: latElbow.radius }, { role: "bone", pts: latElbow.ulna }, { role: "line", pts: latElbow.posteriorContour }],
+    win: [0, 150, 950, 1090], margin: 10, eps: 1.2,
+    items: [
+      { role: "bone", fill: true, pts: crop(el.humerus) }, { role: "bone", fill: true, pts: crop(el.ulna) }, { role: "bone", fill: true, pts: crop(el.radius) },
+      { role: "line", pts: el.posteriorContour },
+      { role: "bone", pts: disc(c.cx, c.cy, c.r, c.r) },
+    ],
   });
 
   // ---- regions, head, spine -------------------------------------------------------------------------------------
@@ -154,12 +171,38 @@ export function designs(h) {
     open([[120, 24], [120, 84]]),
     closed("bone", [[80, 114], [98, 106], [120, 114], [142, 106], [160, 114], [156, 136], [140, 148], [120, 140], [100, 148], [84, 136]]),
   ];
+  // ---- head and spine: hand-drawn schematic icons (no project model) -----------------------------------------------
+  const rounded = (pts, k = 0.28) => pts.flatMap((p, i) => {
+    const a = pts[(i + pts.length - 1) % pts.length], b = pts[(i + 1) % pts.length];
+    return [[p[0] + (a[0] - p[0]) * k, p[1] + (a[1] - p[1]) * k], [p[0] + (b[0] - p[0]) * k, p[1] + (b[1] - p[1]) * k]];
+  });
+  const solid = (pts) => [closed("fill", pts), closed("bone", pts)];
+  // Lateral skull facing left: one cranial vault and facial outline, the orbit, and the mandible; no facial features.
+  const head = [
+    ...solid([[84, 60], [94, 32], [122, 18], [156, 16], [182, 30], [194, 58], [190, 86], [172, 102], [148, 108], [130, 111], [122, 116], [94, 118], [76, 112], [68, 96], [78, 74]]),
+    closed("bone", [[92, 72], [106, 68], [116, 78], [108, 92], [96, 88]]),
+    ...solid([[84, 126], [92, 140], [122, 148], [148, 134], [154, 106], [144, 104], [138, 122], [110, 130]]),
+  ];
+  // Normal frontal spine: one straight midline column, vertebral bodies widening evenly downward, an even disc between each,
+  // short transverse processes, and the sacrum at the foot. Nothing is shifted sideways.
+  const pitch = 21, bodyH = 12, halfW = (i) => 13 + i * 2.6, top0 = 12;
+  const bodies = Array.from({ length: 6 }, (_, i) => rounded([[120 - halfW(i), top0 + i * pitch], [120 + halfW(i), top0 + i * pitch], [120 + halfW(i), top0 + i * pitch + bodyH], [120 - halfW(i), top0 + i * pitch + bodyH]], 0.18));
+  const discs = Array.from({ length: 5 }, (_, i) => {
+    const w = halfW(i + 0.5) - 1.5, y = top0 + i * pitch + bodyH + 1;
+    return closed("fill", [[120 - w, y], [120 + w, y], [120 + w, y + pitch - bodyH - 2], [120 - w, y + pitch - bodyH - 2]]);
+  });
+  const processes = Array.from({ length: 6 }, (_, i) => {
+    const y = top0 + i * pitch + bodyH / 2, w = halfW(i);
+    return [open([[120 - w - 1, y], [120 - w - 11, y - 2]]), open([[120 + w + 1, y], [120 + w + 11, y - 2]])];
+  }).flat();
+  const sacrumTop = top0 + 5 * pitch + bodyH + 8;
+  const spineGraphic = [...discs, ...bodies.flatMap((b) => solid(b)), ...processes, ...solid(rounded([[120 - 30, sacrumTop], [120 + 30, sacrumTop], [120 + 10, 160], [120 - 10, 160]], 0.2))];
   const generic = [closed("fill", [[64, 28], [176, 28], [176, 140], [64, 140]]), closed("bone", [[64, 28], [176, 28], [176, 140], [64, 140]]), open([[120, 46], [120, 122]]), open([[88, 84], [152, 84]])];
 
   return {
     "body": body_, "chest-pa": legacy("chest-pa"), "chest-ap": legacy("chest-ap"), "chest-lateral": legacy("chest-lateral"), "pelvis-ap": pelvisAp,
     "knee-ap": kneeAp, "knee-lateral": kneeLateral, "ankle-ap": ankleAp, "ankle-lateral": ankleLateral,
     "elbow-ap": elbowAp, "elbow-lateral": elbowLateral, "upper-limb": legacy("upper-limb"), "lower-limb": legacy("lower-limb"),
-    "head": legacy("head"), "spine": legacy("spine"), "generic": generic,
+    "head": head, "spine": spineGraphic, "generic": generic,
   };
 }

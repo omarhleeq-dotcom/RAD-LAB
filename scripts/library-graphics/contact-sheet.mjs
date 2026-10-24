@@ -1,6 +1,7 @@
 // Review contact sheets for the library graphics (RAD-069 B2b): every graphic, old next to new, at phone-card size and large,
 // one compressed JPEG per theme. Renders the real ExamGraphic components (old from a git ref, new from the working tree).
-//   node scripts/library-graphics/contact-sheet.mjs --old-ref <commit> [--out docs/review/rad-069b2b-contact]
+//   node scripts/library-graphics/contact-sheet.mjs --old-ref <commit> [--out docs/review/rad-069b2b-contact] [--only kind,kind]
+// Phase A compared the pre-B2b drawings with the new ones; Phase B compares the Phase A commit with the working tree for the changed kinds.
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, writeFileSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -25,29 +26,35 @@ async function loadGraphic(name, source, assetDir) {
 }
 const present = JSON.parse(readFileSync("src/features/platform/catalogue-presentation.json", "utf8"));
 const oldSource = execFileSync("git", ["show", `${oldRef}:src/features/platform/ExamGraphic.tsx`], { encoding: "utf8" });
-const oldOldKinds = (kind) => kind === "body" ? "chest-pa" : kind;   // before B2b the body region reused the chest PA drawing
-const Old = await loadGraphic("old", oldSource, path.resolve("."));
+const oldOldKinds = (kind) => !oldJson && kind === "body" ? "chest-pa" : kind;   // before B2b the body region reused the chest PA drawing
+// from Phase A on the old ExamGraphic reads its drawings from library-graphics.json at that ref
+let oldJson = null;
+try { oldJson = execFileSync("git", ["show", `${oldRef}:src/features/platform/library-graphics.json`], { encoding: "utf8" }); } catch { /* the pre-B2b component has no data file */ }
+const oldJsonFile = path.join(dir, "old-library-graphics.json");
+if (oldJson) writeFileSync(oldJsonFile, oldJson);
+const Old = await loadGraphic("old", oldJson ? oldSource.replace('"./library-graphics.json"', JSON.stringify(oldJsonFile)) : oldSource, path.resolve("."));
 const New = await loadGraphic("new", readFileSync("src/features/platform/ExamGraphic.tsx", "utf8").replace('"./library-graphics.json"', JSON.stringify(path.resolve("src/features/platform/library-graphics.json"))), path.resolve("."));
 const markup = (Component, kind) => renderToStaticMarkup(React.createElement(Component, { kind }));
 
 const SOURCE = {
   traced: ["hand-pa", "hand-lateral", "wrist-pa", "wrist-lateral", "foot-ap", "foot-oblique", "shoulder-grashey"],
-  kept: ["chest-pa", "chest-ap", "chest-lateral", "upper-limb", "lower-limb", "head", "spine"],
+  kept: ["chest-pa", "chest-ap", "chest-lateral", "upper-limb", "lower-limb"],
   project: ["knee-ap", "knee-lateral", "ankle-ap", "ankle-lateral", "elbow-ap", "elbow-lateral", "pelvis-ap"],
 };
 const sourceOf = (kind) => SOURCE.traced.includes(kind) ? "traced" : SOURCE.project.includes(kind) ? "project geometry" : SOURCE.kept.includes(kind) ? "old drawing kept, restyled" : "hand-built (new)";
+const only = arg("--only", "") ? arg("--only", "").split(",") : null;
 const kinds = [
   ...present.regions.map((r) => r.graphic),
   ...Object.values(present.projectionGraphics).flatMap((v) => Object.values(v)),
-];
+].filter((k) => !only || only.includes(k));
 const THEMES = {
   dark: { paper: "#0d151c", ink: "#e6edf2", bg: "#12313a", brand: "#8ad8e3", soft: "#234d59" },
   light: { paper: "#f5f8fa", ink: "#15283b", bg: "#e5f4f6", brand: "#07555d", soft: "#bde4e9" },
 };
 const tile = (svg, w, h) => `<div class="art" style="width:${w}px;height:${h}px">${svg}</div>`;
 const cell = (kind) => `<section><h2>${kind} <small>${sourceOf(kind)}</small></h2><div class="row">
-  <div><p>old, card</p>${tile(markup(Old, oldOldKinds(kind)), 175, 80)}</div><div><p>new, card</p>${tile(markup(New, kind), 175, 80)}</div>
-  <div><p>old, large</p>${tile(markup(Old, oldOldKinds(kind)), 280, 160)}</div><div><p>new, large</p>${tile(markup(New, kind), 280, 160)}</div></div></section>`;
+  <div><p>before, card</p>${tile(markup(Old, oldOldKinds(kind)), 175, 80)}</div><div><p>after, card</p>${tile(markup(New, kind), 175, 80)}</div>
+  <div><p>before, large</p>${tile(markup(Old, oldOldKinds(kind)), 280, 160)}</div><div><p>after, large</p>${tile(markup(New, kind), 280, 160)}</div></div></section>`;
 
 const browser = await chromium.launch({ args: ["--no-sandbox"], ...(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}) });
 for (const [theme, t] of Object.entries(THEMES)) {
