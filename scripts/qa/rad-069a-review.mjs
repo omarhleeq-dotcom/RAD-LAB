@@ -87,7 +87,7 @@ for (const locale of ["en", "ar"]) for (const width of [390, 1440]) for (const a
     if (e) { e.scrollTop = 0; e.style.overflow = "visible"; e.style.flex = "none"; e.style.height = `${e.scrollHeight}px`; e.parentElement.style.height = "auto"; e.parentElement.style.overflow = "visible"; }
     window.scrollTo(0, 0);
   });
-  await page.screenshot({ path: `docs/review/rad-069a-${tag}-${stage}.png`, fullPage: true });
+  await page.screenshot({ path: `docs/review/rad-069a-${tag}-${stage}.png`, fullPage: true, animations: "disabled" });
   rows.push({ tag, ...metrics, pixels });
   console.log(tag, metrics);
   await ctx.close();
