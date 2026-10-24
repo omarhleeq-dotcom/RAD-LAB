@@ -28,7 +28,7 @@ function useSavedReason() {
     }).join(" / ");
   };
 }
-function Results({ rows }: { rows: TrainingAttempt[] }) {
+export function Results({ rows }: { rows: TrainingAttempt[] }) {
   const { t, date } = useTrainingLabels();
   const locale = useLocale(), reason = useSavedReason();
   const categories = useTranslations("categories");
@@ -149,5 +149,5 @@ export function MyAttempts() {
   const { state } = useSessionAccount();
   if (!PILOT) return <p data-testid="training-off">{t("notEnabled")}</p>;
   if (state.kind !== "signedIn" || state.profile.status !== "approved") return <p role="status">{t("loading")}</p>;
-  return <Workspace key={`${state.userId}-${state.profile.role}`} userId={state.userId} owner={state.profile.role === "owner"} />;
+  return state.profile.role === "owner" ? <Link href="/owner?tab=training" className={button}>{t("follow")}</Link> : <Workspace key={`${state.userId}-${state.profile.role}`} userId={state.userId} owner={false} />;
 }

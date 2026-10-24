@@ -1,4 +1,6 @@
 "use client";
+import { OwnerDirectory } from "@/features/pilot/OwnerDirectory";
+import { ResultDisclosure } from "@/features/evaluation/ResultDisclosure";
 import { OwnerContentPanel } from "./OwnerContentPanel";
 
 import { useEffect, useState } from "react";
@@ -55,7 +57,6 @@ function toggle(list:string[],id:string) {return list.includes(id)?list.filter(x
 function Administration() {
   const t=useTranslations("assessAdmin");
   const [revision,setRevision]=useState(0);
-  const [search,setSearch]=useState("");
   const [people,setPeople]=useState<string[]>([]);
   const [selectedGroups,setSelectedGroups]=useState<string[]>([]);
   const [group,setGroup]=useState<AdminRow|null>(null);
@@ -64,7 +65,7 @@ function Administration() {
   const [assignment,setAssignment]=useState<AdminRow|null>(null);
   const [busy,setBusy]=useState(false);
   const [message,setMessage]=useState<"saved"|AssessAdminError["kind"]|null>(null);
-  const groups=usePage("groups",null,"",revision), directory=usePage("people",null,search,revision);
+  const groups=usePage("groups",null,"",revision);
   const members=usePage("members",group?.id??null,"",revision), versions=usePage("versions",null,"",revision);
   const assignments=usePage("assignments",null,"",revision),targets=usePage("targets",assignment?.id??null,"",revision);
   async function write(command:AdminCommand) {
@@ -86,7 +87,7 @@ function Administration() {
     } finally {setBusy(false);}
   }
   return <div className="mt-4 space-y-5" data-testid="assess-admin">
-    <p className="text-sm text-muted">{t("intro")}</p>
+    <ResultDisclosure title="ⓘ" label={t("title")}><p className="text-sm text-muted">{t("intro")}</p></ResultDisclosure>
     {message&&<p role={message==="saved"?"status":"alert"} className={message==="saved"?"text-ok":"text-bad"}>{message==="saved"?t("saved"):t(`errors.${message}`)}</p>}
     <fieldset disabled={busy} className="min-w-0 space-y-5">
       <legend className="sr-only">{t("title")}</legend>
@@ -94,9 +95,7 @@ function Administration() {
         <span className="text-sm">{t("selected",{people:people.length,groups:selectedGroups.length})}</span>
         <button className={button} onClick={()=>{setPeople([]);setSelectedGroups([]);}}>{t("clear")}</button></div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="min-w-0 space-y-3"><label className="block text-sm">{t("search")}<input className={input} maxLength={100} value={search} onChange={e=>setSearch(e.target.value)}/></label>
-          <Rows title={t("people")} data={directory}>{row=><label className="flex items-start gap-2"><input type="checkbox" className="mt-1 size-5 shrink-0" checked={people.includes(row.id)} disabled={!people.includes(row.id)&&people.length>=100} onChange={()=>setPeople(current=>toggle(current,row.id))}/><Person row={row}/></label>}</Rows>
-        </div>
+        <OwnerDirectory revision={revision} picker selected={people} onSelect={p=>setPeople(current=>toggle(current,p.userId))}/>
         <div className="min-w-0 space-y-3">
           <Rows title={t("groups")} data={groups}>{row=><div className="flex flex-wrap items-center gap-2">
             <label className="flex min-w-0 items-center gap-2"><input className="size-5 shrink-0" type="checkbox" checked={selectedGroups.includes(row.id)} disabled={!selectedGroups.includes(row.id)&&selectedGroups.length>=100} onChange={()=>setSelectedGroups(current=>toggle(current,row.id))}/>{row.name}</label>
@@ -114,7 +113,7 @@ function Administration() {
         <Rows title={t("members")} data={members}>{row=><div className="flex items-start justify-between gap-2"><Person row={row}/><button className={button} aria-label={t("removePerson",{name:row.name||t("unnamed")})} onClick={()=>void write({type:"members",group:group.id,users:[row.id],add:false})}>{t("remove")}</button></div>}</Rows>
       </section>}
       <section className="space-y-3" aria-label={t("assignment")}><h3 className="text-lg font-semibold">{t("assignment")}</h3>
-        <p className="text-sm text-muted">{t("assignmentHelp")}</p>
+        <ResultDisclosure title="ⓘ" label={t("assignment")}><p className="text-sm text-muted">{t("assignmentHelp")}</p></ResultDisclosure>
         <Rows title={t("versions")} data={versions}>{row=><label className="flex items-center gap-2"><input type="radio" name="assess-version" className="size-5" checked={version?.id===row.id} onChange={()=>setVersion(row)}/>{row.name} — {row.version} ({t(row.track!)})</label>}</Rows>
         {version&&<p>{t("chosenVersion",{name:version.name??"",version:version.version??""})}</p>}
         <button className={button} disabled={!version||(!people.length&&!selectedGroups.length)} onClick={()=>{if(version&&window.confirm(t("confirmAssign")))void write({type:"assign",version:version.id,users:people,groups:selectedGroups});}}>{t("publishAssignment")}</button>
@@ -131,9 +130,8 @@ function Administration() {
 /** Parent mounts this for an approved owner only; SQL still enforces every permission. */
 export function OwnerAssessPanel() {
   const t=useTranslations("assessAdmin");
-  const [open,setOpen]=useState(false);
-  return <details className="mt-8 rounded-lg border border-line bg-panel p-4" onToggle={e=>setOpen(e.currentTarget.open)}>
-    <summary className="cursor-pointer text-lg font-semibold">{t("title")}</summary>
-    {open&&<><Administration/><OwnerContentPanel/></>}
-  </details>;
+  return <section className="rounded-lg border border-line bg-panel p-4" aria-label={t("title")}>
+    <h2 className="text-lg font-semibold">{t("title")}</h2>
+    <Administration/><OwnerContentPanel/>
+  </section>;
 }

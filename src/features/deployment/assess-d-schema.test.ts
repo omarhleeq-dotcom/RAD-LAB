@@ -10,6 +10,10 @@ it("D requires both lifecycle and UI migrations, rejects the old B attestation a
  try {
   for(const part of ["src","supabase","scripts/pages"])cpSync(part,join(dir,part),{recursive:true});
   const manifestPath=join(dir,"scripts/pages/frontend-schema.json"),m=JSON.parse(readFileSync(manifestPath,"utf8"));
+  // This retained fixture predates the owner dashboard SQL; preserve its exact assertions.
+  rmSync(join(dir,"supabase/migrations/20261024000100_owner_dashboard.sql"),{force:true});
+  delete m.deferredMigrations["20261024000100_owner_dashboard.sql"];
+  writeFileSync(join(dir,"scripts/pages/frontend-schema.json"),JSON.stringify(m));
   expect(m.requiredMigrations).toContain("20261020000700_assess_lifecycle.sql");expect(m.requiredMigrations).toContain("20261020000800_assess_mixed_ui.sql");expect(m.deferredMigrations).toEqual({});
   const run=(print=false)=>spawnSync(process.execPath,["--input-type=module","-e",`import {runSchemaGate} from ${JSON.stringify(script)};try{console.log(runSchemaGate({NEXT_PUBLIC_SUPABASE_URL:'https://vlacestfruxooznrcjqc.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'sb_publishable_synthetic_local_test_123456',PILOT_SCHEMA_VERIFIED:'pilot-v1:26b88b9dd0b1aa96e0b25ea9bb16c358c5710fb2c89a773e4a55c995720b4df5'},${print},${JSON.stringify(dir)}));}catch(e){console.error(e.message);process.exitCode=1;}`],{encoding:"utf8",timeout:15000});
   const blocked=run();expect(blocked.status).toBe(1);expect(blocked.stderr).toContain("schema compatibility has not been attested");

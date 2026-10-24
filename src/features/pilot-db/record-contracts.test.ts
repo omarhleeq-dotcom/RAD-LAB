@@ -72,8 +72,9 @@ describe("full chain record contracts and seven-file upgrade", () => {
     expect(columns.find((r) => r.key === "attempts.comparison_version")?.is_nullable).toBe("YES");
     expect(columns.filter((r) => !originalColumns.includes(r.key) && r.key !== "profiles.display_name" && r.key !== "attempts.comparison_version").every((r) => r.is_nullable === "NO")).toBe(true);
     const current = (await functions()).rows;
-    expect(current).toHaveLength(originalFunctions.length + 3);
-    expect(current.filter((f) => !originalFunctions.some((old) => old.identity === f.identity)).map((f) => f.name).sort()).toEqual(["can_read_training", "training_page_v1", "training_page_v1_with_comparison"]);
+    // RAD-069 C1 owner-approved registry exception (2026-10-24): one additive owner RPC only.
+    expect(current).toHaveLength(originalFunctions.length + 4);
+    expect(current.filter((f) => !originalFunctions.some((old) => old.identity === f.identity)).map((f) => f.name).sort()).toEqual(["can_read_training", "owner_dashboard_v1", "training_page_v1", "training_page_v1_with_comparison"]);
     for (const old of originalFunctions) {
       const next = current.find((r) => r.identity === old.identity)!;
       if (old.name === "owner_page_v1" || old.name === "handle_new_user") {

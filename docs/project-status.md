@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-069 B2b المرحلتان A وB (رسومات المكتبة، 22 رسمًا مسجّلة في سجل الأصول) منفذتان وتنتظران مراجعة المالك للثمانية المعدّلة ([القرار](DECISIONS.md#rad069b2b-owner-2026-10-24)، [التقرير](RAD-069B2B_PHASE_A_REPORT_2026-10-24.md)) قبل المرحلة B؛ RAD-069 B2a منفذة ([القرار](DECISIONS.md#rad069b2a-owner-2026-10-24)، [التقرير](RAD-069B2A_REPORT_2026-10-24.md)) وتنتظر فحص المالك؛ B1 منفذة مع QA غير مكتمل وفق [قرار المالك](DECISIONS.md#rad069b1-owner-2026-10-24) و[تقرير B1](RAD-069B1_REPORT_2026-10-24.md)؛ A مدموجة، وC مخططة. RAD-075 مغلقة. RAD-072 مكتملة بتأكيد الهاتف؛ RAD-073 مخططة.
-- **ينتظر المالك:** مراجعة المالك لثمانية رسومات B2b المعدّلة (اللوحتان)؛ فحص A وB1 على الهاتف والحاسوب؛ قرارات نتائج RAD-074 §7؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-069 C1 منفذة في المسودة على المخطط الحالي: تبويبات URL واعتماد الحسابات ودليل خادم مشترك وتدريب/ملاحظات/CSV من نقرة واحدة وإعادة تنظيم Assess؛ SQL مؤجلة إلى DB day، والملخص ينتظر التحديث؛ [القرار](DECISIONS.md#rad069c-owner-2026-10-24) و[التقرير](RAD-069C1_REPORT_2026-10-24.md). مراجعات A/B1/B2a/B2b باقية. RAD-075 وRAD-072 مغلقتان؛ RAD-073 مستقلة.
+- **ينتظر المالك:** فحص C1 على الهاتف؛ SQL C1 وC2 اللاحقة مؤجلة إلى DB day؛ مراجعة تدفق تنزيل CSV الجديد؛ RAD-044 مغلقة بتحقق الهاتف؛ قرار تصميم الحذف فقط؛ ولوحتا B2b وفحوص A/B1/B2a وقرارات RAD-074 §7 والبند16 من قائمة الصور. استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
-- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ دليل دمج A في تقرير B1؛ [إغلاق RAD-072](DECISIONS.md#rad072-phone-closure-2026-10-24).
-- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية؛ B1 نتائج محفوظة دون إعادة تقييم، وتسميات البنود غير محفوظة. كل scene/result وgolden وcharacterisation والتقييم ثابتة في B1.
+- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ [تقرير C1 §6](RAD-069C1_REPORT_2026-10-24.md#6-التحقق) للنتائج والحدود، لا نجاح CI مفترض.
+- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. RAD-044 مغلقة بعد تحقق الملف الحالي من المالك، دون الجزم بسبب الملف التاريخي؛ حارس عدد الدوال صُحح بالاستثناء المأذون ونجح. لا تغيير للمشاهد/النتيجة/التقييم/الثيم وبصماتها.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 265,
-  "updated_at": "2026-10-25T02:00:00+00:00",
+  "revision": 268,
+  "updated_at": "2026-10-25T02:00:03+00:00",
   "timezone": "UTC",
   "next_id": "RAD-076",
   "tasks": [
@@ -414,11 +414,11 @@
     {
       "id": "RAD-044",
       "title": "لوحة المالك وتصدير CSV",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "اللوحة والمرشحات وCSV المحاولات موثقة حيًا. اختبار المالك 2026-10-24: تصدير الملاحظات بمدى 17–24 أكتوبر لم يعد صفوفًا مع أن الملاحظة ظاهرة في اللوحة؛ السبب المرجح تطبيق مرشح الفحص على الملاحظات/التصدير واختلافه عن مرشحات الشاشة (غير مؤكد). أجّله المالك إلى إعادة تصميم لوحة المالك (RAD-069).",
-      "source_ref": "PR #54/#58/#63/#64؛ DECISIONS.md S-PILOT-25/28، S-PILOT-32.3؛ docs/PILOT_PLATFORM_PLAN.md §8",
-      "waiting_on": "owner"
+      "description": "تحقق المالك بالهاتف من CSV الملاحظات لمدى17–24أكتوبر:3ملاحظات مطابقة، عربية مقروءة وأسطر متعددة سليمة، ورمز فقط دون اسم أو بريد. تحسين اكتشاف زر التنزيل ضمن RAD-069 C1.",
+      "source_ref": "PR #54/#58/#63/#64؛ DECISIONS.md S-PILOT-25/28، S-PILOT-32.3؛ docs/PILOT_PLATFORM_PLAN.md §8؛ docs/RAD-069C1_REPORT_2026-10-24.md §3؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad044-phone-verification-2026-10-24",
+      "completion_evidence": "إفادة المالك 2026-10-24 في المحادثة بعد فحص PR #126 بالهاتف؛ docs/DECISIONS.md#rad044-phone-verification-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow. أدلة التنفيذ السابقة PR #54/#58/#63/#64 محفوظة؛ لا ادعاء دمج C1 أو فحص حي من الوكيل."
     },
     {
       "id": "RAD-045",
@@ -641,8 +641,8 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "A وB1 تنتظران فحص المالك. B2a منفذة (F7) وتنتظر فحص الهاتف بعد إيقاف تغميق المتصفح. B2b (F8): رسومات المكتبة منفذة (A وB) ومسجلة في سجل الأصول، وتنتظر مراجعة المالك للثمانية المعدّلة. C لوحة المالك (RAD-044 ومواضع Assess) مخططة.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md",
+      "description": "A/B تنتظر مراجعة المالك. C1 تعمل بالمخطط الحالي؛ تنزيل CSV من نقرة واحدة واستكمال المقسم وإلغاء القديم تلقائيًا منفذ للمراجعة. RAD-044 مغلقة بتحقق الهاتف. SQL C1/C2 والحذف والاستبيانات مؤجلة إلى DB day؛ ملخص الفحوص ينتظرها.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow",
       "waiting_on": "owner"
     },
     {

@@ -22,8 +22,12 @@ export function reviewedOwnerListBody(body){
  return body.replace(first,'p.status,\n           u.email').replace(second,'p.last_seen_at,\n           (select').replaceAll('\n','\r\n');
 }
 async function reference(lineEndings,{reviewed=false,historical=false,trialLineEndings='lf'}={}) {
- const db=await openLocalDatabase('pglite',{lineEndings});
+ // Immutable historical installer references stop at retention. Future public RPCs
+ // are allowed by assertion(), but must never rewrite an already reviewed package.
+ const db=await openLocalDatabase('pglite',{lineEndings,through:'f'});
  try {
+  const retention=readFileSync(new URL('../../supabase/migrations/20261020001100_assess_retention.sql',import.meta.url),'utf8');
+  await db.exec(lineEndings==='crlf'?retention.replaceAll('\n','\r\n'):retention);
   await db.exec("set search_path=''");
   if(historical){
    const routines=await db.query("select proname,prosrc,pg_get_functiondef(oid) def from pg_proc where pronamespace='public'::regnamespace and proname=any($1::text[])",[historicalPublic]);

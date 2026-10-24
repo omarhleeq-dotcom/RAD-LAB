@@ -2,9 +2,10 @@
 
 // Attempts and notes of one participant (a collapsed section inside the owner's participant card) and the CSV download bar (RAD-044b).
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { getPilotClient } from "./client";
-import { type Cursor, type OwnerFilters, type OwnerPage, csvFileName, exportOwnerPart, parseAttempts, parseNotes, readOwnerPage } from "./owner-data";
+import { type Cursor, type OwnerFilters, parseAttempts, parseNotes, readOwnerPage } from "./owner-data";
+import { createOwnerExport, EXPORT_PAGE_SIZE } from "./owner-export";
 import { useOwnerData } from "./useOwnerData";
 import { formatStamp } from "./owner-state";
 
@@ -21,44 +22,36 @@ function download(name: string, text: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/** Independent export session. Each explicit click saves one bounded part; no large in-memory concatenation. */
+/** Main actions always start a new export. Only large exports need an explicit next-part click. */
 export function CsvBar({ filters }: { filters: OwnerFilters }) {
   const t = useTranslations("owner");
-  const [session, setSession] = useState<{ stream: "attempts" | "notes"; page: OwnerPage; part: number; written: number; skipped: number; filters: OwnerFilters } | null>(null);
-  const [activeStream, setActiveStream] = useState<"attempts" | "notes" | null>(null);
-  const [partsSaved, setPartsSaved] = useState(0);
-  const [busy, setBusy] = useState(false);
-  const [failed, setFailed] = useState(false);
-  const [complete, setComplete] = useState(false);
-  async function load(stream: "attempts" | "notes", previous = session) {
-    setActiveStream(stream); setBusy(true); setFailed(false);
-    try {
-      const client = await getPilotClient();
-      if (!client) throw new Error("off");
-      const page = await readOwnerPage((args) => client.rpc("owner_page_v1", args), stream, previous?.filters ?? filters, previous?.page.next ?? null, previous?.page.boundary ?? null, true, 1000);
-      setSession({ stream, page, part: (previous?.part ?? 0) + 1, written: previous?.written ?? 0, skipped: previous?.skipped ?? 0, filters: previous?.filters ?? { ...filters } });
-    } catch { setFailed(true); }
-    setBusy(false);
-  }
-  function save() {
-    if (!session) return;
-    const part = exportOwnerPart(session.stream, session.page);
-    download(csvFileName(session.stream, new Date()).replace(".csv", `-part-${session.part}.csv`), part.csv);
-    const next = { ...session, written: session.written + part.written, skipped: session.skipped + part.skipped };
-    setSession(next); setPartsSaved((n) => n + 1);
-    if (session.page.next) void load(session.stream, next); else setComplete(true);
-  }
+  const [flow]=useState(()=>createOwnerExport({
+    read:async(stream,selected,cursor,boundary,signal)=>{
+      const client=await getPilotClient();
+      if(!client||signal.aborted)throw new Error("off");
+      return readOwnerPage(args=>client.rpc("owner_page_v1",args).abortSignal(signal),stream,selected,cursor,boundary,true,EXPORT_PAGE_SIZE);
+    },
+    save:download,
+  }));
+  const state=useSyncExternalStore(flow.subscribe,flow.getSnapshot,flow.getSnapshot);
+  useEffect(()=>()=>flow.dispose(),[flow]);
   return <div data-testid="csv-bar" className="my-3 space-y-2">
-    <p className="text-sm text-muted">{t("paging.exportHint")}</p>
     <div className="flex flex-wrap gap-2">
-      {(["attempts", "notes"] as const).map((stream) => <button key={stream} data-testid={`csv-${stream}`} className={btn} disabled={busy || !!session} onClick={() => void load(stream, null)}>{t(`csv.${stream}`)}</button>)}
-      {session && !complete && !failed && <button data-testid="export-save" className={btn} disabled={busy} onClick={save}>{t("paging.savePart", { part: session.part })}</button>}
-      {session && <button className={btn} disabled={busy} onClick={() => { setSession(null); setComplete(false); setFailed(false); setPartsSaved(0); setActiveStream(null); }}>{t("paging.resetExport")}</button>}
-      {activeStream && <button data-testid="export-report" className={btn} disabled={busy} onClick={() => download("radlab-export-report.json", JSON.stringify({ version: 1, stream: activeStream, partsSaved, boundary: session?.page.boundary ?? null, filters: { participant: (session?.filters ?? filters).participantCode ?? "", exam: (session?.filters ?? filters).exam, from: (session?.filters ?? filters).from, to: (session?.filters ?? filters).to }, utc: new Date().toISOString(), written: session?.written ?? 0, skipped: session?.skipped ?? 0, complete: complete && !failed && session?.skipped === 0, error: failed, status: "Rows read within boundary during export; not a point-in-time snapshot" }, null, 2))}>{t("paging.report")}</button>}
+      {(["attempts","notes"] as const).map(stream=><button key={stream} data-testid={`csv-${stream}`} className={btn} onClick={()=>void flow.start(stream,filters)}>{t(`csv.${stream}`)}</button>)}
     </div>
-    {busy && <p role="status">{t("loading")}</p>}
-    {failed && <p data-testid="export-error" role="alert">{t("paging.exportError")}</p>}
-    {session && <p data-testid="export-status" role="status">{t("paging.exportStatus", { count: session.written, skipped: session.skipped })} {complete ? t("paging.complete") : t("paging.incomplete")}</p>}
+    {state.multipart&&state.cursor&&<div className="space-y-2">
+      <p className="text-sm text-muted">{t("exportFlow.large")}</p>
+      <button data-testid="export-next" className={btn} disabled={state.busy} onClick={()=>void flow.next()}>{t("exportFlow.next",{part:state.files+1,parts:state.parts})}</button>
+    </div>}
+    {state.busy&&<p role="status">{t("exportFlow.preparing")}</p>}
+    {state.failed&&<p data-testid="export-error" role="alert">{t("exportFlow.failed")}</p>}
+    {state.files>0&&state.stream&&<p data-testid="export-status" role="status">{t(`exportFlow.${state.stream}Downloaded`,{count:state.written,files:state.files})}</p>}
+    {state.skipped>0&&<p role="alert">{t("exportFlow.skipped",{count:state.skipped})}</p>}
+    <details data-testid="export-info" className="text-sm text-muted">
+      <summary aria-label={t("dashboard.exportInfo")} className="min-h-11 cursor-pointer">ⓘ</summary>
+      <p>{t("paging.exportHint")}</p>
+      {state.multipart&&state.files>0&&<button data-testid="export-report" className={btn} onClick={()=>download("radlab-export-report.json",JSON.stringify(flow.report(),null,2))}>{t("paging.report")}</button>}
+    </details>
   </div>;
 }
 
@@ -75,7 +68,7 @@ export function ParticipantActivity({ code, userId, filters, version }: { code: 
   const pa = parseAttempts(stream === "attempts" ? page?.rows : []), pn = parseNotes(stream === "notes" ? page?.rows : []);
   const attempts = pa.items, notes = pn.items;
   const attemptNo = new Map((page?.rows ?? []).flatMap((r) => typeof r.attempt_id === "string" && typeof r.attempt_no === "number" ? [[r.attempt_id, r.attempt_no] as const] : []));
-  const label = t("paging.details", { code });
+  const label = t("dashboard.activity");
   return (
     <details onToggle={(e) => setOpen(e.currentTarget.open)} data-testid={`activity-${code}`} className="mt-3 rounded-md border border-line">
       <summary className="cursor-pointer px-3 py-2 text-sm font-medium">{label}</summary>

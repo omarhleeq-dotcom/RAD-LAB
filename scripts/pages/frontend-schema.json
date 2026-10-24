@@ -28,7 +28,15 @@
     "supabase/checks/assess-history-ready.sql",
     "supabase/checks/assess-retention-ready.sql"
   ],
-  "deferredMigrations": {},
+  "deferredMigrations": {
+    "20261024000100_owner_dashboard.sql": {
+      "sha256": "d7c932ca54d1724ef8ffeb1f78c0a69834609e9e9dd49d1d0b8bb6c8b701bef2",
+      "reason": "Owner decision 2026-10-24: C1 SQL waits for the shared DB day with C2 delete and surveys; no browser access until application, checks and a single new attestation.",
+      "serverModules": [
+        "src/features/pilot/owner-dashboard-deferred.ts"
+      ]
+    }
+  },
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
@@ -37,28 +45,32 @@
     "src/features/pilot/client.ts": "e4ad823775d64b2e7a650a61674bdbd00d76cff838397e5274c6ea34971ecdf0",
     "src/features/pilot/AttemptRecorder.tsx": "66548e1e7c1b0eca105f187929a61e6901b9894093d423d81e95d09d70b872e2",
     "src/features/pilot/attempt-logger.ts": "83894d055186a16bc93eef6e7bfcf78d833e81f3a5bb595993d2aaa8c3e85a4a",
-    "src/features/pilot/useOwnerData.ts": "d32c0364f5ef98a81c8219ffedfc7e89eafcc6260314f0d8aa0098c141857469",
-    "src/features/pilot/owner-data.ts": "cf88fe691a8b45d4014db867774df4b343e353971e1e8c2fff847fb595059373",
-    "src/features/pilot/useAccount.ts": "b7dabc44751aa31928a5fb0625fb7c6657b856f6071eefd452e6262a3612ffa1",
+    "src/features/pilot/saved-results.ts": "691407a50686f264bb71e66bc1e6ef08573010c30b69c557c94c253235022f82",
     "src/features/pilot/profile-read.ts": "466b47e31c3433eaa6a6cc93af1beb9a511b20b124071a7e895af0c77ac067a1",
     "src/features/pilot/training.ts": "6040ad4bf434348458319e9746847cecb1b64630f845e85b2f79e9b1b7b970a3",
+    "src/features/pilot/useSavedResults.ts": "f1ce44bf9531208500eb7645ea0c037027bf385451af19b534fd6c454170cdaf",
+    "src/features/pilot/useAccount.ts": "b7dabc44751aa31928a5fb0625fb7c6657b856f6071eefd452e6262a3612ffa1",
     "src/features/pilot/activity.ts": "ef0fbb293a0fdd42faa46d5a5556b10b570f65396dd884e8f707186fba7d0f4a",
-    "src/features/pilot/TrainingSummary.tsx": "67e0146747ad1a8f1e4658b22cece8fe6cd35ded6e33af5592013cf033572e08",
     "src/features/pilot/PilotSessionKeeper.tsx": "c812951455090fc989fd481ddaadced07e16b2533af8d359e276857779b6fe88",
-    "src/features/pilot/OwnerPanel.tsx": "75ac309d2a7d4148f206384a4d3eb061540430fc350a8dd18039c4241d1b71a6",
-    "src/features/assess/OwnerAssessPanel.tsx": "5fb54cb28f08cb5e71ca163594de1b3bf23860c0427326b7f1210c3530334403",
+    "src/features/pilot/useOwnerData.ts": "bd6ef03a4143401f32617e24e1ce1d15466b2953151bfcae55e3ffb44958e534",
+    "src/features/pilot/owner-data.ts": "a6b0f47c993869e60c605009d9b7cb483f94bfda3bce83e2e20b1934bb2ea5c4",
+    "src/features/pilot/TrainingSummary.tsx": "67e0146747ad1a8f1e4658b22cece8fe6cd35ded6e33af5592013cf033572e08",
+    "src/features/pilot/OwnerTraining.tsx": "23c2bfad50c50c5833270597bd767acf2b52a702b01d355e7b2a42838b1f0fd1",
+    "src/features/pilot/owner-dashboard-data.ts": "278608f71cb931eec8a19dd3bd6bacba99a3fb4125cca1d58f4759a4079a8655",
+    "src/features/pilot/OwnerDirectory.tsx": "b441f5aba570da829584522c30acf92410495737653051789274516afc0c3298",
+    "src/features/pilot/OwnerActivity.tsx": "9ebd86037a0874fb366b42e0718348cec62ea2a9a368b48a4395c82e544c7f1d",
+    "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
+    "src/features/pilot/OwnerPanel.tsx": "3e8aac7f4d69322cd63243419c88c283183d46eaccd7a24d81eb53bb8fe02aa5",
+    "src/features/assess/OwnerAssessPanel.tsx": "f8d38442b9996a0d56f711b01b744b6273a897ddbcbc40a2c7c8db5a371d6ff2",
     "src/features/assess/admin-data.ts": "c39b767b2b48b3cd941698f14baef70cc87aa062973f037bb4623e288c3b1576",
-    "src/features/assess/OwnerContentPanel.tsx": "c637817a067cb14bf6964cd6e52f1a01f59f4148ae461ec8337ded8f64173658",
+    "src/features/assess/OwnerContentPanel.tsx": "2037a5733bef75e1295e9c6aa629babb6961471383e850cd883ad3d6a9295ae6",
     "src/features/assess/content-data.ts": "2c2b06add8358339237055326e256366bbe75d0a88b6feb1ea3b49df89817a2f",
     "src/features/assess/runner-data.ts": "4225aa8f80962ab709c323783e25d24d077abe176fbbf1b21b4fb15120abbd34",
-    "src/features/pilot/OwnerActivity.tsx": "9e1a1c3a57351c4adcc791045c42162e6963b3b5b06db7cd1ea5f49c562dd404",
     "src/features/assess/HistoryPanel.tsx": "2a98829cf8b922e238a735b13dcfc93f06c83dd444c9e641c341d2305f4b9424",
     "src/features/assess/history-data.ts": "db54e2a06a6f6bf14da903f75d12a37bca72dda4d75fcdf3f2cc994face8fd09",
     "src/features/assess/AssessPanel.tsx": "f89d13471f6a7b4caf09a7532ec8b2d34067ab13ca21d578c38549d8290c28f1",
     "src/features/assess/AssessConsent.tsx": "32f970a60dc71bcc9a8b79ced8e5b08644e6852c78152154c79bc908b7b65dbb",
-    "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31",
-    "src/features/pilot/saved-results.ts": "691407a50686f264bb71e66bc1e6ef08573010c30b69c557c94c253235022f82",
-    "src/features/pilot/useSavedResults.ts": "f1ce44bf9531208500eb7645ea0c037027bf385451af19b534fd6c454170cdaf"
+    "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",
