@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-072 دُمجت أجزاؤه الثلاثة (#113–#119: الصدر، الأطراف، والجزء 3 المرحلتان A وB)، وفحص المالك #118 و#119 على الهاتف؛ يبقى فحص الهاتف لـ2b/2c. RAD-073 مخططة بلا بدء. RAD-074 (إصلاح أدوات فحص المتصفح، [التقرير](RAD-074_QA_TOOLING_REPORT_2026-10-24.md)) على PR مسودة بلا كود منتج؛ التالي RAD-069 الجزء A (صفحة النتيجة) بمدخلات المالك.
-- **ينتظر المالك:** مراجعة PR الأدوات (RAD-074)؛ تأكيد فحص الهاتف لـ2b ([تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)) و2c ([تقرير B §8](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-وar-390-الكاشف-ومنظر-الأعلى-الإرشادات-onoff)) لإغلاق RAD-072؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-069 A مع تلميع ملاحظات الهاتف السبع للمراجعة وإعادة فحص المالك على الهاتف والحاسوب؛ B1/B2a/B2b/C مخططة وفق [قرار المالك](DECISIONS.md#rad069a-owner-2026-10-24). RAD-072 مكتملة مع تأكيد الهاتف؛ RAD-073 مخططة.
+- **ينتظر المالك:** إعادة فحص نتيجة RAD-069 A بعد تلميع الهاتف على PR #121؛ قرارات نتائج RAD-074 §7؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
-- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23) و[2b](DECISIONS.md#rad072-2b-owner-2026-10-23).
-- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral (2a، [القائمة](RAD-072_PART2A_HASHES_2026-10-23.md)) ثم wrist-pa وwrist-lateral وfoot-ap وfoot-oblique (2b، [القائمة](RAD-072_PART2B_HASHES_2026-10-23.md)) وحدها؛ نماذج اليد والرسغ والطرف السفلي المشتركة وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير. الجزء 3 المرحلة B غيّر بصمات الصدر PA/AP والركبة AP والقدم DP والكاحل AP والكتف واليد الجانبية والقدم المائلة وحدها ([القائمة](RAD-072_PART3B_HASHES_2026-10-24.md)).
+- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ #120 مدموج وفق التحقق عند بدء RAD-069 A؛ [إغلاق RAD-072](DECISIONS.md#rad072-phone-closure-2026-10-24).
+- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية؛ A تخطيط فقط، واستثناء بصماتها محصور في result|…؛ تبقى scene وgolden وcharacterisation وبكسلات الصورة والتقييم ثابتة.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 253,
-  "updated_at": "2026-10-24T19:00:00+00:00",
+  "revision": 256,
+  "updated_at": "2026-10-24T20:20:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-075",
   "tasks": [
@@ -638,12 +638,12 @@
     },
     {
       "id": "RAD-069",
-      "title": "UI-4: المكتبة والتدريب والثيم والرسومات",
-      "status": "planned",
+      "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
+      "status": "review",
       "priority": "medium",
-      "description": "بعد RAD-068 ثم RAD-072: شبكة المكتبة، وصفحتا التدريب والنتيجة (الملخص أولًا)، وثيم داكن/فاتح، ورسومات SVG مسجلة. وإعادة تصميم لوحة المالك: مرشحات أوضح (لم يفهم المالك مرشح الفحص)، وإصلاح تصدير ملاحظات RAD-044 ضمنها، ومساحة مخططة لأقسام Assess في RAD-062 (مشرف، رفع أسئلة، تصحيح كتابي).",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md",
-      "waiting_on": "code"
+      "description": "A: نُفذت ملاحظات الهاتف السبع (2026-10-24): سطر معلومات الصورة، رأس واضح، الأهداف والتنسيق، وإزالة تداخل الملاحظات؛ تنتظر إعادة فحص المالك على الهاتف والحاسوب. B1: الصفحات واللغة؛ B2a: الثيم (F7)؛ B2b: الرسومات (F8)؛ C: لوحة المالك وتصدير RAD-044 ومواضع Assess؛ مخططة.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-070",
@@ -675,18 +675,18 @@
     {
       "id": "RAD-072",
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "دُمجت الأجزاء الثلاثة #113–#119 (الصدر؛ الأطراف؛ الجزء 3 A وB)؛ فحص المالك #118 و#119 على الهاتف (رده في جلسة RAD-074). المتبقي: تأكيد فحص الهاتف لـ2b (#115) و2c (#116) ثم الإغلاق. e = RAD-073 مستقلة.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-3b-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_B_REPORT_2026-10-24.md؛ docs/RAD-072_PART3B_HASHES_2026-10-24.md",
-      "waiting_on": "owner"
+      "description": "اكتملت تصحيحات الأجزاء 1/1b و2a و2b و2c و3 A/B وفحص الهاتف لكل جزء؛ RAD-073 مستقلة.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-3b-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_B_REPORT_2026-10-24.md؛ docs/RAD-072_PART3B_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad072-phone-closure-2026-10-24",
+      "completion_evidence": "دُمجت #113–#119. فحص المالك الهاتف: 1/1b (#113)، 2a (#114)، 2b (#115) و2c (#116) قبل الدمج (أكد في طلب RAD-069 A، 2026-10-24)، و3 A (#118) وB (#119) أكدهما في RAD-074؛ #117 متابعة وثائق. الأدلة الأصلية في source_ref؛ docs/DECISIONS.md#rad072-phone-closure-2026-10-24."
     },
     {
       "id": "RAD-074",
       "title": "إصلاح أدوات فحص المتصفح على واجهة المحاكي الحالية",
       "status": "review",
       "priority": "medium",
-      "description": "PR مسودة: مساعد مشترك يفتح تبويب الهاتف/اللوحة قبل الوصول إلى الضابط، و13 سكربتًا أُصلحت، وأمر qa:exam-audit؛ بلا كود منتج. تنتظر المالك: مراجعة الـPR وقرارات تقرير §7 (تسميات إطار 390، clip-margin-only، phone-navigation).",
+      "description": "دُمج #120: مساعد workspace وأدوات التدقيق وأمر qa:exam-audit. المتبقي قرارات المالك بشأن نتائج التقرير §7 (تسميات إطار 390، clip-margin-only، phone-navigation).",
       "source_ref": "docs/RAD-074_QA_TOOLING_REPORT_2026-10-24.md؛ docs/DOCS_CHECKS.md#browser-audits",
       "waiting_on": "owner"
     }

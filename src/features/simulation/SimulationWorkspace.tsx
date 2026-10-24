@@ -7,6 +7,8 @@ import { ResultPanel } from "@/features/evaluation/ResultPanel";
 import { PatientInstructionsPanel } from "@/features/patient/PatientInstructionsPanel";
 import { PositioningScene } from "@/features/positioning/scenes";
 import { AttemptRecorder } from "@/features/pilot/AttemptRecorder";
+import { ResultDisclosure } from "@/features/evaluation/ResultDisclosure";
+import { savedAttempt } from "@/features/pilot/saved-attempt";
 import { FeedbackBox } from "@/features/pilot/FeedbackBox";
 import { splitCaseId } from "@/features/pilot/attempt-record";
 import { ConsolePanel } from "@/features/xray-console/ConsolePanel";
@@ -24,6 +26,8 @@ const usePhoneLayout = () => useSyncExternalStore(subscribePhone, () => matchMed
 
 export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string; backHref?: string }) {
   const t = useTranslations("workspace");
+  const tr = useTranslations("result");
+  const saved = useSyncExternalStore(savedAttempt.subscribe, savedAttempt.get, () => null);
   const ts = useTranslations("sex");
   const locale = useLocale();
   const { activeCase, settings, mode, phase, result, attempt, loadCase, setSetting, expose, retry, reset } =
@@ -43,7 +47,9 @@ export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string
   const resultPanels = result && (
     <>
       <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
-      <FeedbackBox examId={splitCaseId(c.id).examId} />
+      {saved?.status === "saved" && <ResultDisclosure title={tr("addNote")} className="mt-5 rounded-lg border border-line bg-panel [&>div>section]:mt-0 [&>div>section]:border-0 [&>div>section]:p-0">
+        <FeedbackBox examId={splitCaseId(c.id).examId} />
+      </ResultDisclosure>}
     </>
   );
 
@@ -67,41 +73,44 @@ export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string
         </div>
       </div>
 
-      <section aria-labelledby="case-heading" className="rounded-lg border border-line bg-panel p-4">
-        <h1 id="case-heading" className="text-xl font-bold">
-          {localize(c.title, locale)}
-        </h1>
-        <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="font-semibold text-muted">{t("patient")}</dt>
-            <dd>
-              {localize(c.patient.description, locale)} ({ts(c.patient.sex)}, {c.patient.age})
-            </dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-muted">{t("request")}</dt>
-            <dd>{localize(c.requestedExamination, locale)}</dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-muted">{t("scenario")}</dt>
-            <dd>{localize(c.clinicalScenario, locale)}</dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-muted">{t("condition")}</dt>
-            <dd>{localize(c.patientCondition, locale)}</dd>
-          </div>
-        </dl>
-        <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
-      </section>
+      {locked && <h1 className="sr-only">{localize(c.title, locale)}</h1>}
+      {!locked && <>
+        <section aria-labelledby="case-heading" className="rounded-lg border border-line bg-panel p-4">
+          <h1 id="case-heading" className="text-xl font-bold">
+            {localize(c.title, locale)}
+          </h1>
+          <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="font-semibold text-muted">{t("patient")}</dt>
+              <dd>
+                {localize(c.patient.description, locale)} ({ts(c.patient.sex)}, {c.patient.age})
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-muted">{t("request")}</dt>
+              <dd>{localize(c.requestedExamination, locale)}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-muted">{t("scenario")}</dt>
+              <dd>{localize(c.clinicalScenario, locale)}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-muted">{t("condition")}</dt>
+              <dd>{localize(c.patientCondition, locale)}</dd>
+            </div>
+          </dl>
+          <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
+        </section>
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <div className="min-w-0 space-y-5">
-          <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
-          <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="min-w-0 space-y-5">
+            <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
+            <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+          </div>
+          <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
         </div>
-        <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
-      </div>
 
+      </>}
       <div ref={resultRef} className="scroll-mt-4">
         {resultPanels}
       </div>
