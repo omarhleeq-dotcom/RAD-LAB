@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 270,
-  "updated_at": "2026-10-25T02:00:05+00:00",
+  "revision": 271,
+  "updated_at": "2026-10-25T02:00:06+00:00",
   "timezone": "UTC",
   "next_id": "RAD-076",
   "tasks": [
@@ -641,7 +641,7 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "C1 (#126) وC2 Phase 1 (#127) مدموجتان؛ تجهيز Phase 2 بواجهات محقونة بلا وصل حي للمراجعة. ينتظر DB day والموافقة والإطلاق ومراجعات الهاتف A/B/C1. الحذف كامل بعد30يومًا مع restore قبلها؛ لا استئناف Assess.",
+      "description": "C1 (#126) وC2 Phase 1 (#127) مدموجتان؛ Phase 2 مجهزة في مسودة #128 بواجهات محقونة بلا وصل حي. ينتظر مراجعة المالك وDB day والموافقة والإطلاق وفحوص الهاتف A/B/C1. الحذف كامل بعد30يومًا مع restore قبلها؛ لا استئناف Assess.",
       "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow؛ docs/DECISIONS.md#rad069c2-owner-2026-10-24؛ docs/RAD-069C2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c2-phase2-deferred-ui-2026-10-24؛ docs/RAD-069C2_PHASE2_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     },
