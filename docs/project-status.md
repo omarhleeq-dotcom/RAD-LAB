@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 260,
-  "updated_at": "2026-10-24T23:30:00+00:00",
+  "revision": 263,
+  "updated_at": "2026-10-25T00:10:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-075",
+  "next_id": "RAD-076",
   "tasks": [
     {
       "id": "RAD-001",
@@ -688,6 +688,15 @@
       "priority": "medium",
       "description": "دُمج #120: مساعد workspace وأدوات التدقيق وأمر qa:exam-audit. المتبقي قرارات المالك بشأن نتائج التقرير §7 (تسميات إطار 390، clip-margin-only، phone-navigation).",
       "source_ref": "docs/RAD-074_QA_TOOLING_REPORT_2026-10-24.md؛ docs/DOCS_CHECKS.md#browser-audits",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-075",
+      "title": "تنظيف وإصلاحات صغيرة: سياسة اللقطات، مهلات حراس scene-dom، وميض الدخول، تشخيص phone-navigation",
+      "status": "review",
+      "priority": "medium",
+      "description": "سياسة اللقطات، مهلة حراس scene-dom، «جارٍ تسجيل الدخول…»، وإصلاح هبوط الدخول (returnTo في العنوان) وfixture. المتبقي: حذف الفروع المدموجة (رُفض 403)؛ phone-navigation يمر كاملًا بعد تحديث مقطع المكتبة.",
+      "source_ref": "docs/RAD-075_HOUSEKEEPING_REPORT_2026-10-24.md؛ docs/DECISIONS.md#housekeeping-owner-2026-10-24",
       "waiting_on": "owner"
     }
   ]

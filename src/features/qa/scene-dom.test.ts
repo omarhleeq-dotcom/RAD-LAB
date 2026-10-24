@@ -47,6 +47,7 @@ function variants(c: RadCase): Record<string, Partial<SimulationSettings>> {
   return v;
 }
 
+// Per-test timeout (owner decision 2026-10-24, DECISIONS.md#housekeeping-owner-2026-10-24): the 5000 ms default expired on loaded CI; no hash ever differed.
 it("the rendered scenes and result panels of PA, Lateral and AP are unchanged (S14-0)", () => {
   const out: Record<string, string> = {};
   // The wrist exams (S14.1c) have their own guard (`scene-dom-wrist.test.ts`); this one stays the chest set captured before S14-0.
@@ -69,4 +70,4 @@ it("the rendered scenes and result panels of PA, Lateral and AP are unchanged (S
   expect(Object.keys(out)).toEqual(Object.keys(golden));
   const changed = Object.keys(out).filter((k) => out[k] !== golden[k]);
   expect(changed).toEqual([]);
-});
+}, 30_000);

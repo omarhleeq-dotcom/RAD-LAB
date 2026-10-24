@@ -1225,6 +1225,7 @@
       "signUp": "Create account"
     },
     "working": "Please wait…",
+    "redirecting": "Signing in…",
     "signOut": "Sign out",
     "retry": "Try again",
     "signedInAs": "Signed in as",
