@@ -12,7 +12,7 @@ import { validFullName } from "./full-name";
 import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
 import { SURVEY_URL, surveyHref } from "./survey";
 import { useSessionAccount } from "./SessionGate";
-import { safeReturnPath } from "./session-access";
+import { safeReturnPath, signInReturnSearch } from "./session-access";
 
 type Mode = "signIn" | "signUp";
 const field = "mt-1 block w-full rounded-md border border-line bg-panel px-3 py-2 text-base";
@@ -22,7 +22,6 @@ export function AccountPanel() {
   const t = useTranslations("account");
   const tt = useTranslations("training");
   const locale = useLocale();
-  const [signingIn, setSigningIn] = useState(false);
   const { state, saveName, signIn, signUp, signOut, retry, acceptTerms, surveyOpened, requestReset, updatePassword } = useSessionAccount();
   const [mode, setMode] = useState<Mode>("signIn");
   const [name, setName] = useState("");
@@ -41,7 +40,7 @@ export function AccountPanel() {
 
   // The full reload below is kept (same destination rules); while it is pending the account view is replaced by a short status so it does not flash.
   const target = state.kind === "signedIn" && typeof window !== "undefined"
-    ? postLoginTarget({ approved: state.profile.status === "approved", fragment, changed, returnTo: safeReturnPath(new URLSearchParams(window.location.search).get("returnTo")), justSignedIn: signingIn, locale })
+    ? postLoginTarget({ approved: state.profile.status === "approved", fragment, changed, returnTo: safeReturnPath(new URLSearchParams(window.location.search).get("returnTo")) })
     : null;
   useEffect(() => {
     if (target) window.location.replace(target);
@@ -62,10 +61,13 @@ export function AccountPanel() {
       if (password !== confirm) return setError("passwordMismatch");
     }
     setBusy(true);
-    setSigningIn(mode === "signIn");
+    // A sign-in on this page leaves for home; the AppShell swap remounts this panel, so the intent lives in the URL (restored if the sign-in fails).
+    const before = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const search = mode === "signIn" ? signInReturnSearch(window.location.search, locale) : null;
+    if (search) window.history.replaceState(window.history.state, "", `${window.location.pathname}${search}${window.location.hash}`);
     const result = mode === "signIn" ? await signIn(email.trim(), password) : await signUp(email.trim(), password, name.trim());
     setBusy(false);
-    if (!result.ok) { setSigningIn(false); return setError(result.error); }
+    if (!result.ok) { if (search) window.history.replaceState(window.history.state, "", before); return setError(result.error); }
     setPassword("");
     setConfirm("");
     if (mode === "signUp") setSentTo(email.trim());

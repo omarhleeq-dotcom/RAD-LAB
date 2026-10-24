@@ -40,12 +40,12 @@ export function recoveryFromHash(hash: string): "recovery" | "linkError" | null 
 /**
  * Where the account page sends a signed-in participant by a full reload, or `null` to stay on the account page.
  * Only an approved account leaves, and never while a recovery/link-error fragment or the password-changed notice is shown.
- * A visit with a safe `returnTo` always leaves; otherwise only a sign-in made on this page does (a deliberate visit stays).
+ * Only a safe `returnTo` in the URL leaves: a sign-in made on the page writes `returnTo=/{locale}` there first (`signInReturnSearch`),
+ * so the decision survives the remount when the shell changes; a deliberate visit by an already signed-in user stays.
  */
-export function postLoginTarget(input: { approved: boolean; fragment: "recovery" | "linkError" | null; changed: boolean; returnTo: string | null; justSignedIn: boolean; locale: string }): string | null {
+export function postLoginTarget(input: { approved: boolean; fragment: "recovery" | "linkError" | null; changed: boolean; returnTo: string | null }): string | null {
   if (!input.approved || input.fragment !== null || input.changed) return null;
-  if (input.returnTo) return input.returnTo;
-  return input.justSignedIn ? `/${input.locale}` : null;
+  return input.returnTo;
 }
 
 /** The password rule enforced by the project (owner decision S-PILOT-6): min 8 with lower, upper, digit and symbol. Checked client-side for fast feedback only; the server decides. */

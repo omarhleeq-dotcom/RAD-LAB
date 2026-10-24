@@ -33,6 +33,7 @@ async function setup(locale, width, status = "approved", seeded = false) {
     if (url.pathname === "/auth/v1/logout") return route.fulfill({ status: 204, headers });
     if (url.pathname === "/rest/v1/profiles") return json({ status, role: "participant", participant_code: "P-test", consent_version: consent, display_name: null });
     if (url.pathname === "/rest/v1/events" || url.pathname === "/rest/v1/rpc/touch_last_seen") return route.fulfill({ status: 201, headers });
+    if (url.pathname.startsWith("/rest/v1/rpc/")) return route.fulfill({ status: 201, headers, contentType: "application/json", body: "{}" }); // home reads the training summary; same stub as ui1-pages-audit
     assert.fail(`unexpected request ${req.method()} ${url.pathname}`);
   });
   const page = await ctx.newPage();

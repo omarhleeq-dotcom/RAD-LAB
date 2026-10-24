@@ -26,3 +26,11 @@ export function safeReturnPath(value: string | null): string | null {
 export function accountDestination(locale: string, path: string): string {
   return `/${locale}/account?returnTo=${encodeURIComponent(safeReturnPath(path) ?? `/${locale}`)}`;
 }
+
+/** The query string to write before a sign-in on the account page: keeps a safe `returnTo`, otherwise points it at the locale home. `null` = nothing to write. */
+export function signInReturnSearch(search: string, locale: string): string | null {
+  const params = new URLSearchParams(search);
+  if (safeReturnPath(params.get("returnTo"))) return null;
+  params.set("returnTo", `/${locale}`);
+  return `?${params.toString()}`;
+}

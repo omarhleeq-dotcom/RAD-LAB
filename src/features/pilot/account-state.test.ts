@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { safeReturnPath, signInReturnSearch } from "./session-access";
 import { authErrorKey, HEARTBEAT_MS, parseProfile, passwordProblem, postLoginTarget, shouldHeartbeat } from "./account-state";
 
 describe("authErrorKey maps real Supabase Auth codes to a message key", () => {
@@ -58,18 +59,34 @@ describe("shouldHeartbeat", () => {
 });
 
 describe("postLoginTarget keeps the post-login destination rules", () => {
-  const base = { approved: true, fragment: null, changed: false, returnTo: null, justSignedIn: true, locale: "en" } as const;
-  it("goes to the locale home after a sign-in made on the page", () => expect(postLoginTarget(base)).toBe("/en"));
-  it("uses the locale of the page", () => expect(postLoginTarget({ ...base, locale: "ar" })).toBe("/ar"));
-  it("goes to a safe returnTo, even for an already signed-in visit", () => expect(postLoginTarget({ ...base, justSignedIn: false, returnTo: "/en/training" })).toBe("/en/training"));
-  it("stays on the account page on a deliberate visit without returnTo", () => expect(postLoginTarget({ ...base, justSignedIn: false })).toBeNull());
-  it("stays on the account page when the account is not approved", () => {
-    expect(postLoginTarget({ ...base, approved: false })).toBeNull();
-    expect(postLoginTarget({ ...base, approved: false, returnTo: "/en/training" })).toBeNull();
-  });
+  const base = { approved: true, fragment: null, changed: false, returnTo: "/en/training" } as const;
+  it("goes to a safe returnTo", () => expect(postLoginTarget(base)).toBe("/en/training"));
+  it("stays on the account page for a deliberate visit without returnTo", () => expect(postLoginTarget({ ...base, returnTo: null })).toBeNull());
+  it("stays on the account page when the account is not approved", () => expect(postLoginTarget({ ...base, approved: false })).toBeNull());
   it("stays for a recovery or link-error fragment", () => {
-    expect(postLoginTarget({ ...base, fragment: "recovery", returnTo: "/en/training" })).toBeNull();
+    expect(postLoginTarget({ ...base, fragment: "recovery" })).toBeNull();
     expect(postLoginTarget({ ...base, fragment: "linkError" })).toBeNull();
   });
-  it("stays after a password change so the notice is seen", () => expect(postLoginTarget({ ...base, changed: true, returnTo: "/en/training" })).toBeNull());
+  it("stays after a password change so the notice is seen", () => expect(postLoginTarget({ ...base, changed: true })).toBeNull());
+});
+
+describe("a sign-in on the account page survives the remount through the URL", () => {
+  const afterRemount = (search: string, locale: string, approved = true) => {
+    const written = signInReturnSearch(search, locale) ?? search;
+    return postLoginTarget({ approved, fragment: null, changed: false, returnTo: safeReturnPath(new URLSearchParams(written).get("returnTo")) });
+  };
+  it("writes the locale home when there is no returnTo, and a remount then goes home", () => {
+    expect(signInReturnSearch("", "en")).toBe("?returnTo=%2Fen");
+    expect(afterRemount("", "en")).toBe("/en");
+    expect(afterRemount("", "ar")).toBe("/ar");
+  });
+  it("keeps an existing safe returnTo untouched", () => {
+    expect(signInReturnSearch("?returnTo=%2Fen%2Ftraining", "en")).toBeNull();
+    expect(afterRemount("?returnTo=%2Fen%2Ftraining", "en")).toBe("/en/training");
+  });
+  it("replaces an unsafe returnTo with home and keeps other parameters", () => {
+    expect(afterRemount("?returnTo=https%3A%2F%2Fevil.invalid", "en")).toBe("/en");
+    expect(signInReturnSearch("?x=1", "en")).toBe("?x=1&returnTo=%2Fen");
+  });
+  it("an unapproved account stays gated even with the written returnTo", () => expect(afterRemount("", "en", false)).toBeNull());
 });
