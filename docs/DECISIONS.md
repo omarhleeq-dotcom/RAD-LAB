@@ -608,3 +608,58 @@ Closed question texts and their scope/evidence are retained in the [closed-quest
 **السلطة:** إفادة المالك في المحادثة بعد فحص PR #126 بالهاتف: CSV الملاحظات لمدى17–24أكتوبر ينزل وفيه **الملاحظات الثلاث المطابقة بالضبط**؛ العربية مقروءة، والأسطر المتعددة محفوظة، ورمز المشارك وحده دون بريد أو اسم. لا تُنشر الملاحظات أو الرموز أو لقطات بياناته.
 
 هذا يحقق المتبقي في [قرار DB day](#rad069-deferred-db-day-2026-10-24) و[تحقيق C1](#rad069c-owner-2026-10-24)، فتُغلق RAD-044 بتوجيهه. لا ننسب سببًا يقينيًا للملف التاريخي الفارغ من هذا الإثبات؛ التحقق يثبت الملف الحالي الذي اختبره المالك. سهولة اكتشاف زر التنزيل إصلاح واجهة ضمن RAD-069 C1 و[القرار أعلاه](#rad069-export-flow-owner-2026-10-24)، ولا تؤجل إغلاق تحقق RAD-044. لا ادعاء دمج أو نشر إنتاج أو اختبار حي من الوكيل.
+
+
+<a id="rad069c2-owner-2026-10-24"></a>
+### RAD-069 C2 — قرارات المالك، 2026-10-24
+
+**السلطة:** طلب Phase 1 ومتابعات المالك في المحادثة؛ يتقدم القرار النهائي التالي على اقتراح §7 من [C1](RAD-069C1_REPORT_2026-10-24.md#7-المفتوح-وتصميم-الحذف--لا-تنفيذ) وعلى طلب الاحتفاظ مجهول الهوية الأول في C2. التنفيذ للمراجعة، و[التقرير](RAD-069C2_REPORT_2026-10-24.md) يحفظ القائمة والحدود؛ SQL مؤجلة وفق [DB day](#rad069-deferred-db-day-2026-10-24).
+
+**الحذف، owner-only:** تعطيل أولًا يمنع تسجيل الدخول؛ يختفي من القوائم الطبيعية ويظهر في قائمة pending deletion مع N يومًا متبقية. المالك يستعيده قبل انقضاء30يومًا. بعد المهلة يحذف finalise حساب Auth، ثم profile والمحاولات والملاحظات والأحداث وأجوبة الاستبيان عبر CASCADE القائمة؛ لا نسخ مجهولة أو tombstone أو تغيير لأي FK قديم. RPCs SECURITY DEFINER ذات search_path ثابت ومنح صريحة، ترفض غير المالك والنفس وآخر مالك. finalise يستدعيه المالك عند فتح اللوحة أو بالزر؛ لا اعتماد على cron غير موجود. الشروط في إطلاق DB day ستذكر النهائية بعد30يومًا وبقاء نسخ المزوّد حتى نهاية احتفاظه. لا service key بالمتصفح. **الاحتفاظ العام لكل البيانات S-PILOT-15 مستقل لاحقًا؛ لا سياسة أو purge عام بهذه الدفعة.**
+
+**الاستبيانات، owner-only:** نوع SUS: البنود الإنجليزية القياسية10، سلم1–5، scoring القياسي0–100، attribution Brooke (1996): “SUS: A ‘quick and dirty’ usability scale”, in Jordan, Thomas, Weerdmeester & McClelland (eds.), Usability Evaluation in Industry, Taylor & Francis, pp.189–194. العربية لا تُخترع؛ قرار مفتوح حتى إثبات ترجمة عربية منشورة validated مع citation كامل. General: rating1–5، ما أعجبك، ما يحتاج تحسينًا، bug اختياري. أنواع مستقبلية حتى نحو10أسئلة بإصدارات بيانات. المالك يفتح/يغلق rounds، نوع واحد لكل round. القديم عند تفعيل المخطط مؤهل فورًا، الجديد بعد5محاولات Practice محفوظة؛ pending واحد، وفاصل7أيام على الأقل قابل للزيادة من المالك. بطاقة تذكير بالصفحة الرئيسية دون منع التدريب ورابط Your feedback بالقائمة في Phase 2. الإجابات مرتبطة بالمشارك لمعرفة من أجاب، لكن المالك وحده يقرأها ولا المشرف المستقبلي؛ CSV برمز المشارك فقط. روابط المشارك في جداول C2 تستخدم ON DELETE CASCADE. تُزال بطاقة الاستبيان الخارجي في Phase 2 مع بقاء كودها ومتغير NEXT_PUBLIC_SURVEY_URL للبحث. CONSENT_VERSION يتغير يوم القاعدة فقط مع إطلاق المزايا ونصوصها؛ [S-PILOT-10/11](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-10) و[خصوصية الملاحظات](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-14) و[الاحتفاظ](archive/decisions/DECISIONS-until-2026-10-16.md#decision-s-pilot-15) محفوظة كدليل سابق؛ لا توسيع لإتاحة surveys.
+
+**المستقبل — docs only:** Assess بعد C2 وDB day وعند أمر المالك الصريح «resume Assess» فقط. Stage1: محرر أسئلة بالموقع، MCQ إجابة واحدة مع مصادر؛ أسئلة المحاكي امتحان كامل أو أجزاء مختارة، بالتصحيح القائم، ومعاينة قبل النشر؛ JSON يبقى للاستخدام المتقدم. Stage2: صور تبدأ بصور المشروع المرخصة؛ أي رفع يحتاج مصدرًا/رخصة وبلا بيانات مرضى. Stage3: إجابات كتابية يصححها المشرف يدويًا فقط، أبدًا بالحاسوب. المشرف يعيّنه المالك من الموقع؛ يبني على مجموعات Assess، ينشئ مجموعات برمز/رابط، ينضم الطالب برمز ثم موافقة المشرف أو auto-approve للمجموعة. يرى نتائج تدريب/امتحان طلابه فقط من تاريخ الانضمام؛ ينشئ اختبارات مجموعاته ويصحح الكتابي؛ لا يرى شيئًا بعد انتهاء المجموعة أو مغادرة الطالب. النتائج تبقى لدى المالك وفق قرار احتفاظها؛ surveys للمالك فقط. لا اعتماد أو حذف حسابات بواسطة المشرف. استيراد Excel/sheet أو نص ملصوق خيارات لاحقة غير محسومة؛ لا تنفيذ لأي من ذلك الآن.
+
+<a id="rad069c2-test-exception-2026-10-24"></a>
+#### استثناء C2 الموحد S-STD-2 — موافقات المالك 2026-10-24
+
+مرتبط بـ[استثناء C1 المحدود](#rad069c-test-exception-2026-10-24)، ولا يوسعه بأثر رجعي. أذن المالك بإضافة كائنات C2 الجديدة فقط إلى توقعات `src/features/pilot-db/record-contracts.test.ts` و`src/features/pilot-db/migration-chain.test.ts` (الأعمدة/القيود/الكتالوج/عدد الدوال وقائمتها، والمنح/السياسات على الجديد فقط عند الحاجة). كل بيانات وتوقعات وكائنات وتعريفات وACLs وسياسات وفهارس وFKs وبصمات القديم تبقى كما هي. القائمة الدقيقة الملزمة أدناه نُشرت في الرد والتقرير قبل التحرير:
+
+### قائمة الكائنات الدقيقة — قبل تحرير الحراس
+
+كل الكائنات في `public`؛ لا تعديل لكائن قديم.
+
+| الجدول | الأعمدة (كلها NOT NULL) |
+|---|---|
+| `c2_account_deletions` | `user_id`, `requested_at`, `restore_status`, `previous_banned_until` |
+| `c2_survey_settings` | `singleton`, `activated_at`, `gap_days` |
+| `c2_survey_versions` | `id`, `survey_type`, `version`, `definition` |
+| `c2_survey_rounds` | `id`, `version_id`, `opened_at`, `closed_at` |
+| `c2_survey_responses` | `id`, `user_id`, `round_id`, `offered_at`, `answered_at`, `state`, `answers`, `score` |
+
+قيود NOT NULL المسماة كاملة:
+
+- `c2_account_deletions_user_id_not_null`, `c2_account_deletions_requested_at_not_null`, `c2_account_deletions_restore_status_not_null`, `c2_account_deletions_previous_banned_until_not_null`.
+- `c2_survey_settings_singleton_not_null`, `c2_survey_settings_activated_at_not_null`, `c2_survey_settings_gap_days_not_null`.
+- `c2_survey_versions_id_not_null`, `c2_survey_versions_survey_type_not_null`, `c2_survey_versions_version_not_null`, `c2_survey_versions_definition_not_null`.
+- `c2_survey_rounds_id_not_null`, `c2_survey_rounds_version_id_not_null`, `c2_survey_rounds_opened_at_not_null`, `c2_survey_rounds_closed_at_not_null`.
+- `c2_survey_responses_id_not_null`, `c2_survey_responses_user_id_not_null`, `c2_survey_responses_round_id_not_null`, `c2_survey_responses_offered_at_not_null`, `c2_survey_responses_answered_at_not_null`, `c2_survey_responses_state_not_null`, `c2_survey_responses_answers_not_null`, `c2_survey_responses_score_not_null`.
+
+القيود الأخرى:
+
+- `c2_account_deletions_pkey`, `c2_account_deletions_user_id_fkey`, `c2_account_deletions_restore_status_check`, `c2_account_deletions_requested_at_check`.
+- `c2_survey_settings_pkey`, `c2_survey_settings_singleton_check`, `c2_survey_settings_gap_days_check`.
+- `c2_survey_versions_pkey`, `c2_survey_versions_type_version_key`, `c2_survey_versions_survey_type_check`, `c2_survey_versions_version_check`, `c2_survey_versions_definition_check`.
+- `c2_survey_rounds_pkey`, `c2_survey_rounds_version_id_fkey`, `c2_survey_rounds_dates_check`.
+- `c2_survey_responses_pkey`, `c2_survey_responses_user_id_fkey`, `c2_survey_responses_round_id_fkey`, `c2_survey_responses_user_round_key`, `c2_survey_responses_state_check`, `c2_survey_responses_answers_check`, `c2_survey_responses_score_check`, `c2_survey_responses_dates_check`.
+
+الفهارس: `c2_account_deletions_pkey`, `c2_survey_settings_pkey`, `c2_survey_versions_pkey`, `c2_survey_rounds_pkey`, `c2_survey_responses_pkey`, `c2_survey_versions_type_version_key`, `c2_survey_responses_user_round_key`, `c2_account_deletions_expiry_idx`, `c2_survey_responses_pending_idx`, `c2_survey_responses_user_offered_idx`.
+
+الدوال الجديدة **4 فقط**: `owner_account_deletion_v1`, `owner_account_directory_v1`, `owner_surveys_v1`, `participant_survey_v1`. التوقيع النهائي: `owner_account_deletion_v1(text,uuid,uuid,integer)`، `owner_account_directory_v1(text,text,jsonb,timestamptz,integer)`، `owner_surveys_v1(text,jsonb,uuid,integer)`، `participant_survey_v1(jsonb)`. حارس public: زيادة8 عن العينة الأصلية، والإجمالي16.
+
+المنح: `EXECUTE TO authenticated` على هذه التواقيع الأربعة فقط. `REVOKE ALL FROM PUBLIC, anon, authenticated` على الجداول الخمسة والدوال الأربع قبل المنح المحددة؛ RLS مفعلة بلا أي سياسات جديدة وبلا منح مباشرة للجداول. لا sequences أو triggers أو منح/سياسات على كائن قديم.
+
+الترحيلات المؤجلة بالضبط: `20261024000100_owner_dashboard.sql` ثم `20261024000200_owner_deletion_surveys.sql`. الفحوص المؤجلة: `supabase/checks/owner-dashboard-ready.sql` و`supabase/checks/owner-deletion-surveys-ready.sql`؛ لا إضافة إلى required.
+
+الاستثناء الإضافي للمسار الصحيح `src/features/deployment/owner-dashboard-deferred-schema.test.ts`: توقع أسماء deferred يتوسع إلى ملفَي C1+C2 المذكورين فقط؛ كل توقع آخر ثابت بالبايت. قاعدة same-pattern تجيز إضافة اسم C2 المؤجل فقط إلى عزل fixtures القديمة في `frontend-schema.test.ts` و`assess-d-schema.test.ts` و`assess-e-schema.test.ts` و`assess-f-schema.test.ts` تحت deployment، دون تغيير توقعاتها أو hashes. لا تعديل للحارس أو requiredMigrations/checks أو attestation؛ تبقى `pilot-v1:0bc3743c707cff0fcef456d00096f6e186b759390708d2d963a6eabea55e5d52`. أي توقع من نوع آخر خارج الملفين أو تغيير كائن/توقع قديم يتطلب توقفًا وإذنًا آخر.
