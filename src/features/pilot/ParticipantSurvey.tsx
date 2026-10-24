@@ -41,9 +41,21 @@ function SurveyForm({adapter,pending}:{adapter:C2Adapter;pending:Pending}) {
   {pending.definition.questions.map(q=>{
    const general=pending.survey_type==='General'&&pending.version===1&&['rating','liked','improve','bug'].includes(q.id);
    const label=general?t(`general.${q.id}`):q.label;
-   return <div key={q.id} lang={general?locale:pending.definition.locale} dir={general?(locale==='ar'?'rtl':'ltr'):english?'ltr':'auto'}>
+   const language=general?locale:pending.definition.locale;
+   const direction=general?(locale==='ar'?'rtl':'ltr'):english?'ltr':'auto';
+   if(q.kind==='rating')return <fieldset key={q.id} disabled={busy} lang={locale} dir={locale==='ar'?'rtl':'ltr'} className="min-w-0 space-y-2">
+    <legend className="mb-2 block w-full" lang={language} dir={direction}>{label}{q.optional?` (${t('optional')})`:''}</legend>
+    <div className="grid grid-cols-5 gap-2">
+     {[1,2,3,4,5].map(n=><label key={n} className="flex min-h-14 min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-md border border-line p-2 has-checked:border-signal has-checked:bg-paper focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-signal">
+      <input type="radio" name={`c2-q-${q.id}`} value={n} required={!q.optional} checked={answers[q.id]===n} aria-label={t(`scale.${n}`)} className="size-5 accent-signal" onChange={()=>setAnswers(a=>({...a,[q.id]:n}))}/>
+      <span aria-hidden="true">{n}</span>
+     </label>)}
+    </div>
+    <div className="flex justify-between gap-4 text-sm text-muted" data-testid="c2-scale-endpoints"><span className="max-w-[45%]">{t('scaleStart')}</span><span className="max-w-[45%]">{t('scaleEnd')}</span></div>
+   </fieldset>;
+   return <div key={q.id} lang={language} dir={direction}>
     <label className="block" htmlFor={`c2-q-${q.id}`}>{label}{q.optional?` (${t('optional')})`:''}</label>
-    {q.kind==='rating'?<select id={`c2-q-${q.id}`} required={!q.optional} className={c2Field} value={answers[q.id]??''} disabled={busy} onChange={e=>setAnswers(a=>{const next={...a};if(e.target.value)next[q.id]=Number(e.target.value);else delete next[q.id];return next;})}><option value="">{t('choose')}</option>{[1,2,3,4,5].map(n=><option key={n} value={n}>{t(pending.definition.scoring==='sus'?`scale.${n}`:`rating.${n}`)}</option>)}</select>:<textarea id={`c2-q-${q.id}`} required={!q.optional} maxLength={1000} rows={3} dir="auto" className={c2Field} value={answers[q.id]??''} disabled={busy} onChange={e=>setAnswers(a=>({...a,[q.id]:e.target.value}))}/>}
+    <textarea id={`c2-q-${q.id}`} required={!q.optional} maxLength={1000} rows={3} dir="auto" className={c2Field} value={answers[q.id]??''} disabled={busy} onChange={e=>setAnswers(a=>({...a,[q.id]:e.target.value}))}/>
    </div>;
   })}
   {pending.definition.citation&&<p lang="en" dir="ltr" className="break-words text-sm text-muted">{pending.definition.citation}</p>}

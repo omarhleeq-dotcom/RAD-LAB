@@ -31,9 +31,9 @@ export function OwnerDeletion({adapter,ownerId,onChanged}:{adapter:C2Adapter;own
   {(!data||unavailable||error)&&<p role={error?'alert':'status'}>{t(!data?'loading':unavailable?'unavailable':'error')}</p>}
   {notice&&<p role={notice==='error'?'alert':'status'}>{t(notice)}</p>}
   {!unavailable&&!error&&directory&&pending&&<>
-   <form className="flex flex-wrap items-end gap-2" onSubmit={e=>{e.preventDefault();setSearch(draft.trim());setPosition(C2_FIRST);setConfirm(null);setAgreed(false);}}>
-    <label className="min-w-0 flex-1">{t('search')}<input maxLength={100} className={c2Field} value={draft} onChange={e=>setDraft(e.target.value)}/></label>
-    <label>{t('status')}<select className={c2Field} value={status} onChange={e=>{setStatus(e.target.value);setPosition(C2_FIRST);setConfirm(null);setAgreed(false);}}><option value="">{t('all')}</option>{(['pending','approved','suspended'] as const).map(s=><option key={s} value={s}>{t(s)}</option>)}</select></label>
+   <form className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end" onSubmit={e=>{e.preventDefault();setSearch(draft.trim());setPosition(C2_FIRST);setConfirm(null);setAgreed(false);}}>
+    <label className="block min-w-0">{t('search')}<input maxLength={100} className={c2Field} value={draft} onChange={e=>setDraft(e.target.value)}/></label>
+    <label className="block min-w-0">{t('status')}<select className={c2Field} value={status} onChange={e=>{setStatus(e.target.value);setPosition(C2_FIRST);setConfirm(null);setAgreed(false);}}><option value="">{t('all')}</option>{(['pending','approved','suspended'] as const).map(s=><option key={s} value={s}>{t(s)}</option>)}</select></label>
     <button className={btn} disabled={busy}>{t('searchAction')}</button>
    </form>
    <p className="text-sm text-muted">{(['pending','approved','suspended'] as const).map(s=>`${t(s)}: ${directory.counts[s]}`).join(' · ')}</p>

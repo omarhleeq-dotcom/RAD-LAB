@@ -72,9 +72,42 @@ async function mount(locale,width,theme,screen,extra={}) {
 }
 async function audit(page,tag){await page.evaluate(AXE);const result=await page.evaluate(()=>axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));assert.deepEqual(result.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[],tag);axes++;ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),tag+' no overflow');}
 async function capture(page,name){await page.screenshot({path:dir+'/'+name+'.jpg',fullPage:true,type:'jpeg',quality:75});snapshots.push(name);}
+// Captured before RAD-076 changed the controls; JSON.stringify preserves key order and numeric types.
+const priorPayload={
+ SUS:'{"id":"pending-response","answers":{"q1":4,"q2":4,"q3":4,"q4":4,"q5":4,"q6":4,"q7":4,"q8":4,"q9":4,"q10":4}}',
+ General:'{"id":"pending-response","answers":{"rating":4,"liked":"Fixture feedback only","improve":"Fixture feedback only","bug":"Fixture feedback only"}}'
+};
+async function samePayload(page,type){
+ const serialized=await page.evaluate(()=>JSON.stringify(window.__calls.find(c=>c.name==='submit').args));
+ ok(serialized===priorPayload[type],type+' submission byte-identical to pre-radio fixture');
+}
 async function fillSurvey(page,generalMode=false){
  const form=page.getByTestId('c2-survey').locator('form');await form.waitFor();
- for(const select of await form.locator('select').all())await select.selectOption('4');
+ const locale=await page.locator('html').getAttribute('lang'),t=messages[locale].c2;
+ const groups=form.locator('fieldset');
+ ok(await groups.count()===(generalMode?1:10),'rating fieldsets for every question');
+ const names=new Set();
+ for(const group of await groups.all()){
+  ok(await group.locator('legend').count()===1,'one legend per rating fieldset');
+  const radios=group.getByRole('radio');
+  ok(await radios.count()===5,'five radios per question');
+  const attributes=await radios.evaluateAll(nodes=>nodes.map(n=>({name:n.name,value:n.value,required:n.required})));
+  ok(attributes.every((a,i)=>a.name===attributes[0].name&&a.name&&a.value===String(i+1)&&a.required),'one name and original values 1–5 per required question');
+  ok(!names.has(attributes[0].name),'distinct question names');names.add(attributes[0].name);
+  const endpoints=group.getByTestId('c2-scale-endpoints');
+  ok(JSON.stringify(await endpoints.locator('span').allTextContents())===JSON.stringify([t.scaleStart,t.scaleEnd]),locale+' exact endpoint labels');
+  const boxes=await radios.evaluateAll(nodes=>nodes.map(n=>{const r=n.closest('label').getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height};}));
+  ok(boxes.every((b,i)=>b.w>=44&&b.h>=44&&Math.abs(b.y-boxes[0].y)<1&&(i===0||(locale==='ar'?b.x<boxes[i-1].x:b.x>boxes[i-1].x))),locale+' five large targets in one row in reading order');
+  ok(await group.evaluate(el=>getComputedStyle(el).direction)===(locale==='ar'?'rtl':'ltr'),locale+' radio group direction');
+  const ends=await endpoints.locator('span').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().x));
+  ok(locale==='ar'?ends[0]>ends[1]:ends[0]<ends[1],locale+' endpoints follow rating order');
+  await radios.nth(0).focus();await page.keyboard.press('ArrowDown');
+  ok(await radios.nth(1).isChecked()&&await radios.nth(1).evaluate(el=>el===document.activeElement),'keyboard arrow selects and focuses next radio');
+  await page.keyboard.press('ArrowUp');
+  ok(await radios.nth(0).isChecked()&&await radios.nth(0).evaluate(el=>el===document.activeElement),'keyboard arrow selects and focuses previous radio');
+  await radios.nth(3).check();
+ }
+ if(generalMode)ok(JSON.stringify(await groups.locator('legend').allTextContents())===JSON.stringify([t.general.rating]),'exact General rating legend');
  if(generalMode){for(const textarea of await form.locator('textarea').all())await textarea.fill('Fixture feedback only');}
 }
 try {
@@ -90,6 +123,9 @@ try {
     ok(await page.getByRole('alert').count()===0,label+' missing is a waiting state');
    }else if(screen==='owner'){
     const deletion=page.getByTestId('c2-deletion');
+    const labels=deletion.locator('form label');
+    ok(await labels.count()===2,label+' two search labels');
+    for(const field of await labels.all())ok(await field.evaluate(el=>{const r=document.createRange();r.selectNodeContents(el.firstChild);return r.getBoundingClientRect().height<=parseFloat(getComputedStyle(el).lineHeight)+1;}),label+' search label on one line');
     ok(await deletion.getByText('P-fixture-20',{exact:true}).count()===0,label+' directory first page bounded');
     ok(await deletion.getByText('P-expired-fixture',{exact:true}).count()===1,label+' pending separate');
     ok(await deletion.getByRole('button',{name:t.deactivate,exact:true}).first().isDisabled(),label+' self deletion disabled');
@@ -122,11 +158,12 @@ try {
     ok(await page.locator('#practice-link').isVisible(),label+' Practice remains accessible');
     ok(await page.getByRole('link',{name:t.feedback,exact:true}).getAttribute('href')==='#survey',label+' feedback opens pending page');
    }else {
-    const labels=await page.getByTestId('c2-survey').locator('form label').allTextContents();
+    const labels=await page.getByTestId('c2-survey').locator('form fieldset legend').allTextContents();
     ok(labels.length===10&&labels.every((label,i)=>label===sus.questions[i].label),label+' exact English SUS');
     if(locale==='ar'&&width===390&&theme==='dark')await capture(page,'survey-form');
     await fillSurvey(page);await page.getByRole('button',{name:t.submit,exact:true}).click();await page.getByText(t.sent,{exact:true}).waitFor();
     const value=await page.evaluate(()=>window.__calls.find(c=>c.name==='submit').args);
+    await samePayload(page,'SUS');
     ok(value.id==='pending-response'&&Object.keys(value).length===2&&Object.keys(value.answers).length===10,label+' response-id-bound submission');
    }
    await audit(page,label+'/'+screen);
@@ -136,6 +173,14 @@ try {
   console.log(label+': passed');
  }
  if(!englishSUSOnly){
+ // General uses the same radio contract in the complete locale/viewport/theme matrix.
+ for(const locale of ['en','ar'])for(const width of [390,1440])for(const theme of ['dark','light']){
+  const f=await mount(locale,width,theme,'survey',{general:true});
+  await fillSurvey(f.page,true);await audit(f.page,[locale,width,theme,'General'].join('/'));
+  if(locale==='ar'&&width===390&&theme==='dark')await capture(f.page,'general-form');
+  await f.page.getByRole('button',{name:messages[locale].c2.submit,exact:true}).click();await f.page.getByText(messages[locale].c2.sent,{exact:true}).waitFor();
+  await samePayload(f.page,'General');ok(f.errors.length===0,'General no page errors');ok(f.network()===0,'General no network');await f.context.close();
+ }
  for(const sentKind of ['already','closed','stale','unavailable','error']){
   const {context,page}=await mount('ar',390,'dark','survey',{general:true,sentKind});await fillSurvey(page,true);await page.getByRole('button',{name:messages.ar.c2.submit,exact:true}).click();const key={closed:'roundClosed',already:'already',stale:'stale',unavailable:'unavailable',error:'error'}[sentKind];await page.getByText(messages.ar.c2[key],{exact:true}).waitFor();await audit(page,'general/'+sentKind);if(sentKind==='error')await capture(page,'general-error');await context.close();
  }
