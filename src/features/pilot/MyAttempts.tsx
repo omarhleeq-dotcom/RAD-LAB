@@ -35,17 +35,17 @@ function Results({ rows }: { rows: TrainingAttempt[] }) {
   const points = comparableAttempts(rows);
   const message = comparisonMessage(rows);
   const [active, setActive] = useState<TrainingAttempt | null>(null);
-  const xy = points.map((a, i) => [50 + i * 510 / Math.max(1, points.length - 1), 155 - a.result.total * 1.25]);
-  const pointText = (a: TrainingAttempt) => `${date(a.time)} · ${t("scoreValue", { score: a.result.total })} · ${a.result.passed ? "✓" : "✕"} ${t(a.result.passed ? "passed" : "notPassed")}${reason(a) ? ` · ${reason(a)}` : ""}`;
+  const xy = points.map((a, i) => [90 + i * 470 / Math.max(1, points.length - 1), 155 - a.result.total * 1.25]);
+  const pointText = (a: TrainingAttempt) => `${date(a.time)} · ${t("scoreValue", { score: a.result.total })} · ${a.result.passed ? "✓" : "✕"} ${t(a.result.passed ? "passedShort" : "notPassedShort")}${reason(a) ? ` · ${reason(a)}` : ""}`;
   return <>
     <h4 className="mt-3 font-semibold">{t("trend")}</h4>
     <p className="mt-1 text-sm text-muted">{t("trendHint")}</p>
     {points.length >= 2 ? <figure className="my-3 rounded-lg border border-line bg-paper p-2" data-testid="training-chart">
       <div className="saved-chart">
         <svg viewBox="0 0 600 190" role="img" aria-label={t("chartLabel")} className="w-full" style={{ direction: "ltr" }}>
-          {[0, 50, 100].map(value => <g key={value}><text x="30" y={160 - value * 1.25} textAnchor="end" fontSize="15" fill="currentColor">{value}</text><line x1="45" y1={155 - value * 1.25} x2="575" y2={155 - value * 1.25} stroke="currentColor" opacity="0.15" /></g>)}
+          {[0, 50, 100].map(value => <g key={value}><text x="55" y={160 - value * 1.25} textAnchor="end" fontSize="24" fill="currentColor">{value}</text><line x1="75" y1={155 - value * 1.25} x2="575" y2={155 - value * 1.25} stroke="currentColor" opacity="0.15" /></g>)}
           <polyline points={xy.map(p => p.join(",")).join(" ")} fill="none" stroke="currentColor" opacity=".4" strokeWidth="2" />
-          <text x="50" y="185" fontSize="14" fill="currentColor">{t("earlier")}</text><text x="560" y="185" textAnchor="end" fontSize="14" fill="currentColor">{t("later")}</text>
+          <text x="90" y="185" fontSize="24" fill="currentColor">{t("earlier")}</text><text x="560" y="185" textAnchor="end" fontSize="24" fill="currentColor">{t("later")}</text>
         </svg>
         {xy.map(([x, y], i) => <button key={points[i]!.id} type="button" className={`saved-chart-point ${points[i]!.result.passed ? "is-passed" : "is-failed"}`}
           style={{ left: `${x! / 6}%`, top: `${y! / 1.9}%` }} aria-label={pointText(points[i]!)} aria-pressed={active?.id === points[i]!.id}
@@ -57,7 +57,7 @@ function Results({ rows }: { rows: TrainingAttempt[] }) {
     {points.length >= 2 && points.length < rows.length && <p className="my-3 text-sm text-muted" data-testid="training-chart-separated">{t("separateComparison")}</p>}
     <ul className="divide-y divide-line" data-testid="training-history">
       {rows.map(a => <li key={a.id} data-testid="training-attempt">
-        <ResultDisclosure title={<span className="attempt-line"><time dateTime={a.time}>{new Intl.DateTimeFormat(locale, { dateStyle: "short" }).format(new Date(a.time))}</time><span>· <bdi>{a.result.total}</bdi> ·</span><span className={a.result.passed ? "is-passed" : "is-failed"} aria-label={t(a.result.passed ? "passed" : "notPassed")}>{a.result.passed ? "✓" : "✕"}</span>{!a.result.passed && <span className="attempt-reason" title={reason(a)}>· {reason(a)}</span>}</span>}>
+        <ResultDisclosure title={<span className="attempt-line"><time dateTime={a.time}>{new Intl.DateTimeFormat(locale, { dateStyle: "short" }).format(new Date(a.time))}</time><span>· <bdi>{a.result.total}</bdi> ·</span><span className={a.result.passed ? "is-passed" : "is-failed"} aria-label={t(a.result.passed ? "passedShort" : "notPassedShort")}>{a.result.passed ? "✓" : "✕"}</span>{!a.result.passed && <span className="attempt-reason" title={reason(a)}>· {reason(a)}</span>}</span>}>
           <p className="text-sm">{pointText(a)}</p><p className="mt-2 text-sm text-muted">{t("savedResult")}</p>
           <h5 className="mt-3 font-semibold">{t("categories")}</h5>
           {a.result.categories.length ? <dl className="mt-2 space-y-2">{a.result.categories.map((c, i) => <div key={i}><dt className="text-sm">{categories.has(c.c) ? categories(c.c) : t("otherCategory")}</dt><dd><bdi>{c.earned} / {c.weight}</bdi><meter className="block w-full" min={0} max={c.weight} value={c.earned} aria-label={categories.has(c.c) ? categories(c.c) : t("otherCategory")} /></dd></div>)}</dl> : <p>{t("noCategories")}</p>}
@@ -110,7 +110,7 @@ function PersonTraining({ request }: { request: TrainingRequest }) {
       <ResultDisclosure title={t("showAll")} className="rounded-lg border border-line bg-panel">
         {groups.length === 0 ? <p>{t("empty")}</p> : <ul className="saved-exam-grid">{groups.map(g => <li key={g.exam} className="saved-exam-card">
           <h3>{exam(g.exam)}</h3>
-          <p className="mt-2">{t("lastScore")}: <bdi>{g.last.result.total}</bdi> <span className={`saved-verdict ${g.last.result.passed ? "is-passed" : "is-failed"}`}>{g.last.result.passed ? "✓" : "✕"} {t(g.last.result.passed ? "passed" : "notPassed")}</span></p>
+          <p className="mt-2">{t("lastScore")}: <bdi>{g.last.result.total}</bdi> <span className={`saved-verdict ${g.last.result.passed ? "is-passed" : "is-failed"}`}>{g.last.result.passed ? "✓" : "✕"} {t(g.last.result.passed ? "passedShort" : "notPassedShort")}</span></p>
           <p>{t("bestScore")}: <bdi>{g.best}</bdi> · {t("attemptCount", { count: g.rows.length })}</p>
           <ResultDisclosure title={t("examDetails")}><Results rows={g.rows} /></ResultDisclosure>
         </li>)}</ul>}

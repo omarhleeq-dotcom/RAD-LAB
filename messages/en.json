@@ -1602,7 +1602,9 @@
     "rankHint": "Strongest and weakest use the latest saved pass status, then score. Scores are never recalculated. Critical labels use the recorded identifiers and existing exam labels.",
     "coveredRange": "Covers {count} of {total} saved attempts: {from} – {to}. Exam counts and best scores below cover this range. Load older results to extend it.",
     "allSavedRange": "All {count} saved attempts through {to}.",
-    "loadOlder": "Load older results"
+    "loadOlder": "Load older results",
+    "passedShort": "Passed",
+    "notPassedShort": "Below pass"
   },
   "assessAdmin": {
     "title": "Assess groups and assignments",

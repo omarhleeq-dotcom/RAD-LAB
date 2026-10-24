@@ -79,7 +79,7 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
           <div className="exam-art"><ExamGraphic kind={graphicOf(exam)} /></div>
           <div className="exam-card-body"><h3>{shortExamTitle(exam, locale)}</h3>
             {exam.caseCount > 1 && <p className="exam-meta"><span>{t("caseCount", { count: exam.caseCount })}</span></p>}
-            {data && (results.has(exam.id) ? <span className={`saved-verdict ${results.get(exam.id)!.result.passed ? "is-passed" : "is-failed"}`}>{results.get(exam.id)!.result.passed ? "✓" : "✕"} {tt(results.get(exam.id)!.result.passed ? "passed" : "notPassed")}</span> : !data.next && <span className="saved-verdict">{tt("notTried")}</span>)}
+            {data && (results.has(exam.id) ? <span className={`saved-verdict ${results.get(exam.id)!.result.passed ? "is-passed" : "is-failed"}`}>{results.get(exam.id)!.result.passed ? "✓" : "✕"} {tt(results.get(exam.id)!.result.passed ? "passedShort" : "notPassedShort")}</span> : !data.next && <span className="saved-verdict">{tt("notTried")}</span>)}
           </div>
         </Link>
       </li>)}</ul>}
