@@ -95,5 +95,5 @@ export function ExamGraphic({ kind }: { kind: string }) {
   } else {
     drawing = <><path d="M74 32h92v96H74zM120 49v62M89 80h62" /><circle cx="120" cy="80" r="45" stroke="var(--art-soft)" strokeWidth="12" /></>;
   }
-  return <svg className="exam-graphic" data-graphic={kind} viewBox="0 0 240 168" aria-hidden="true" focusable="false"><circle cx="104" cy="91" r="66" fill="var(--art-soft)" opacity=".5" /><circle cx="187" cy="34" r="23" fill="var(--art-soft)" opacity=".7" /><g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">{drawing}</g></svg>;
+  return <svg className="exam-graphic" data-graphic={kind} viewBox="0 0 240 168" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">{drawing}</g></svg>;
 }

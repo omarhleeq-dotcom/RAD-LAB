@@ -80,3 +80,13 @@ export function categoryLibraryPath(modality: string, bodyPart: string): string 
   const region = LIBRARY_REGIONS.find((entry) => entry.bodyParts.includes(bodyPart));
   return `/${modality}#category=${encodeURIComponent(region?.id ?? `body-part:${bodyPart}`)}`;
 }
+
+/** Display-only short title: copy the existing body-part name and projection portion of the full title.
+ * Unknown title formats retain the full wording; never invent a clinical abbreviation.
+ */
+export function shortExamTitle(item: Pick<LibraryItem, "title" | "bodyPart">, locale: string): string {
+  const language = locale === "ar" ? "ar" : "en";
+  const part = BODY_PARTS.find(p => p.id === item.bodyPart);
+  const projection = item.title[language].split(" — ")[1]?.split(/[,(（]/)[0]?.trim();
+  return part && projection ? `${part.name[language]} · ${projection}` : item.title[language];
+}

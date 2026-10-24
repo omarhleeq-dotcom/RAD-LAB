@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -11,16 +11,24 @@ const LABELS: Record<string, { short: string; native: string }> = {
   ar: { short: "AR", native: "العربية" },
 };
 
+const hashSnapshot = () => window.location.hash;
+const serverHash = () => "";
+function subscribeHash(notify: () => void) {
+  window.addEventListener("hashchange", notify);
+  window.addEventListener("popstate", notify);
+  return () => { window.removeEventListener("hashchange", notify); window.removeEventListener("popstate", notify); };
+}
 function Switcher({ query }: { query: string }) {
   const t = useTranslations("common");
   const current = useLocale();
   const pathname = usePathname();
+  const hash = useSyncExternalStore(subscribeHash, hashSnapshot, serverHash);
   return (
     <nav aria-label={t("language")} className="language-switcher">
       {routing.locales.map((locale) => (
         <Link
           key={locale}
-          href={`${pathname}${query}`}
+          href={`${pathname}${query}${hash}`}
           locale={locale}
           hrefLang={locale}
           lang={locale}

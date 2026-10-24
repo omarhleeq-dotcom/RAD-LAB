@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
+import { MODALITIES } from "@/data/modalities";
+import { getExam } from "@/data/exams";
+import { localize } from "@/lib/localized";
+import { rankLastResults, reviewTarget, savedExamResults } from "./saved-results";
+import { useSavedResults } from "./useSavedResults";
 import { Link } from "@/i18n/navigation";
 import { getPilotClient } from "./client";
 import { PILOT } from "./config";
@@ -39,27 +44,35 @@ export function TrainingReadStatus({ error, retry }: { error?: "error" | "expire
 export function SummaryCards({ data }: { data: TrainingSummaryData }) {
   const t = useTranslations("training");
   const locale = useLocale();
-  return <dl className="my-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="training-summary">
+  return <dl className="training-summary-row" data-testid="training-summary">
     {([["attempts", data.attempts], ["exams", data.exams], ...(data.trainees !== null ? [["activeTrainees", data.trainees]] : []), ["latest", data.latest ? new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(data.latest)) : t("none")]] as [string, string | number][]).map(([label, value]) =>
-      <div key={label} className="rounded-lg border border-line bg-panel p-4"><dt className="text-sm text-muted">{t(label)}</dt><dd className="mt-2 text-xl font-semibold"><bdi>{typeof value === "number" ? value.toLocaleString(locale) : value}</bdi></dd></div>)}
+      <div key={label} className="min-w-0"><dt className="text-sm text-muted">{t(label)}</dt><dd className="text-sm font-semibold"><bdi>{typeof value === "number" ? value.toLocaleString(locale) : value}</bdi></dd></div>)}
   </dl>;
 }
-function Summary({ userId, owner }: { userId: string; owner: boolean }) {
-  const t = useTranslations("training");
-  const { page, error, retry } = useTraining({ view: "summary", scope: owner ? "all" : "own", ...(owner ? {} : { user: userId }) });
-  return <>
-    <h3 className="mt-4 text-xl font-semibold">{t(owner ? "follow" : "mine")}</h3>
-    <p className="mt-2 text-sm text-muted">{t("practiceOnly")}</p>
-    {page?.summary ? <SummaryCards data={page.summary} /> : <TrainingReadStatus error={error} retry={retry} />}
-    <Link href="/training" className={trainingButton}>{t(owner ? "follow" : "open")}</Link>
-  </>;
-}
 export function TrainingSummary() {
-  const t = useTranslations("training");
+  const t = useTranslations("training"), th = useTranslations("home"), ts = useTranslations("shell");
+  const locale = useLocale();
   const { state } = useSessionAccount();
-  if (!PILOT || state.kind !== "signedIn" || state.profile.status !== "approved") return null;
-  return <div data-testid="home-training" className="min-w-0 [overflow-wrap:anywhere]">
-    {state.displayName ? <p className="mt-3 text-lg">{t("welcome", { name: state.displayName })}</p> : <p className="mt-3 rounded-md bg-paper p-3">{t("completeName")} <Link href="/account" className="text-brand underline">{t("personal")}</Link></p>}
-    <Summary key={state.userId} userId={state.userId} owner={state.profile.role === "owner"} />
-  </div>;
+  const user = PILOT && state.kind === "signedIn" && state.profile.status === "approved" ? state.userId : null;
+  const { data } = useSavedResults(user);
+  const name = state.kind === "signedIn" ? state.displayName : null;
+  const groups = savedExamResults(data?.rows ?? []);
+  const ranked = rankLastResults(data?.rows ?? []);
+  const route = (id: string) => {
+    const exam = getExam(id), modality = MODALITIES.find(m => m.status === "available" && m.examModality === exam?.modality);
+    return exam && modality ? { href: `/${modality.id}/${exam.id}`, title: localize(exam.title, locale) } : null;
+  };
+  const last = groups[0] && route(groups[0].exam);
+  const review = reviewTarget(ranked, groups[0]?.exam);
+  const weakest = review && route(review.exam);
+  return <>
+    <h1>{name ? t("welcome", { name }) : th("dashboardTitle")}</h1>
+    <nav className="home-next" aria-label={t("nextPractice")}>
+      {last && <Link href={last.href} className="home-action"><strong>{t("continueExam")}</strong><span>{last.title}</span><span aria-hidden="true">←</span></Link>}
+      {weakest && <Link href={weakest.href} className="home-action"><strong>{t("reviewExam")}</strong><span>{weakest.title}</span><span aria-hidden="true">←</span></Link>}
+      {MODALITIES.filter(m => m.status === "available").map(m => <Link key={m.id} href={`/${m.id}`} className="home-action"><strong>{ts("library")}</strong><span>{localize(m.name, locale)}</span><span aria-hidden="true">←</span></Link>)}
+    </nav>
+    {data && data.summary.attempts > 0 && <SummaryCards data={data.summary} />}
+    {data?.next && <p className="text-sm text-muted">{t("recentScope", { count: data.rows.length })}</p>}
+  </>;
 }
