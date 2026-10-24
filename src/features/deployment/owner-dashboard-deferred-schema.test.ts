@@ -9,7 +9,7 @@ const marker="pilot-v1:0bc3743c707cff0fcef456d00096f6e186b759390708d2d963a6eabea
 it("retains the current documented attestation while classifying unchanged owner SQL as deferred",()=>{
  const m=JSON.parse(readFileSync("scripts/pages/frontend-schema.json","utf8"));
  expect(m.requiredMigrations).not.toContain(migration);expect(m.checks).not.toContain(check);
- expect(Object.keys(m.deferredMigrations)).toEqual([migration]);
+ expect(Object.keys(m.deferredMigrations)).toEqual([migration,"20261024000200_owner_deletion_surveys.sql"]);
  expect(m.deferredMigrations[migration].sha256).toBe(createHash("sha256").update(readFileSync(`supabase/migrations/${migration}`)).digest("hex"));
  const env={...process.env,NEXT_PUBLIC_SUPABASE_URL:"https://vlacestfruxooznrcjqc.supabase.co",NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_synthetic_local_test_123456",PILOT_SCHEMA_VERIFIED:marker};
  const r=spawnSync(process.execPath,["scripts/pages/pilot-schema-gate.mjs"],{env,encoding:"utf8"});

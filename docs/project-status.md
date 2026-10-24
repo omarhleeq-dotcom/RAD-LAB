@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-069 C1 منفذة في المسودة على المخطط الحالي: تبويبات URL واعتماد الحسابات ودليل خادم مشترك وتدريب/ملاحظات/CSV من نقرة واحدة وإعادة تنظيم Assess؛ SQL مؤجلة إلى DB day، والملخص ينتظر التحديث؛ [القرار](DECISIONS.md#rad069c-owner-2026-10-24) و[التقرير](RAD-069C1_REPORT_2026-10-24.md). مراجعات A/B1/B2a/B2b باقية. RAD-075 وRAD-072 مغلقتان؛ RAD-073 مستقلة.
-- **ينتظر المالك:** فحص C1 على الهاتف؛ SQL C1 وC2 اللاحقة مؤجلة إلى DB day؛ مراجعة تدفق تنزيل CSV الجديد؛ RAD-044 مغلقة بتحقق الهاتف؛ قرار تصميم الحذف فقط؛ ولوحتا B2b وفحوص A/B1/B2a وقرارات RAD-074 §7 والبند16 من قائمة الصور. استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** C1 مدموجة، C2 المرحلة1 للقرارات وطبقة البيانات للمراجعة؛ [القرار](DECISIONS.md#rad069c2-owner-2026-10-24) و[التقرير](RAD-069C2_REPORT_2026-10-24.md). لا واجهة أو تطبيق SQL؛ مراجعات A/B باقية.
+- **ينتظر المالك:** مراجعة C2 Phase 1، ثم Phase 2 وDB day؛ فحص C1 وتدفق CSV على الهاتف ومراجعات A/B وبنود الصور السابقة. RAD-044 مغلقة بتحققه؛ لا طلب بياناته. SUS العربية تحتاج مصدرًا validated منشورًا. Assess بإذن استئناف منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
-- **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ [تقرير C1 §6](RAD-069C1_REPORT_2026-10-24.md#6-التحقق) للنتائج والحدود، لا نجاح CI مفترض.
-- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. RAD-044 مغلقة بعد تحقق الملف الحالي من المالك، دون الجزم بسبب الملف التاريخي؛ حارس عدد الدوال صُحح بالاستثناء المأذون ونجح. لا تغيير للمشاهد/النتيجة/التقييم/الثيم وبصماتها.
+- **مرجع Git:** docs:context للحالة الراهنة؛ تقرير C2 §6 للتحقق وحدوده؛ لا نجاح CI أو نشر مفترض.
+- **مخاطر معلنة:** SQL مؤجلة والشهادة الحالية محفوظة؛ الحذف كامل عبر CASCADE بلا نسخة مجهولة أو retention عام. JWT السابق ينتهي بعمره، والتجديد ملغى والحساب موقوف. لا تغيير للتقييم أو المشاهد أو الصور أو الثيم وبصماتها؛ القيم provisional.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 268,
-  "updated_at": "2026-10-25T02:00:03+00:00",
+  "revision": 269,
+  "updated_at": "2026-10-25T02:00:04+00:00",
   "timezone": "UTC",
   "next_id": "RAD-076",
   "tasks": [
@@ -641,8 +641,8 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "A/B تنتظر مراجعة المالك. C1 تعمل بالمخطط الحالي؛ تنزيل CSV من نقرة واحدة واستكمال المقسم وإلغاء القديم تلقائيًا منفذ للمراجعة. RAD-044 مغلقة بتحقق الهاتف. SQL C1/C2 والحذف والاستبيانات مؤجلة إلى DB day؛ ملخص الفحوص ينتظرها.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow",
+      "description": "C1 مدموجة (#126)، تنتظر فحص الهاتف. C2 Phase 1: قرارات وSQL واختبارات للمراجعة، بلا واجهة؛ Phase 2 ثم DB day لاحقًا. الحذف النهائي كامل بعد30يومًا مع restore قبلها. مراجعات A/B1/B2a وB2b باقية؛ لا استئناف Assess.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow؛ docs/DECISIONS.md#rad069c2-owner-2026-10-24؛ docs/RAD-069C2_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     },
     {
