@@ -47,7 +47,7 @@ export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string
   const resultPanels = result && (
     <>
       <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
-      {saved?.status === "saved" && <ResultDisclosure title={tr("addNote")} className="mt-5 rounded-lg border border-line bg-panel">
+      {saved?.status === "saved" && <ResultDisclosure title={tr("addNote")} className="mt-5 rounded-lg border border-line bg-panel [&>div>section]:mt-0 [&>div>section]:border-0 [&>div>section]:p-0">
         <FeedbackBox examId={splitCaseId(c.id).examId} />
       </ResultDisclosure>}
     </>

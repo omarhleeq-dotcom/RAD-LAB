@@ -192,10 +192,11 @@
     }
   },
   "result": {
+    "aboutImage": "About this image",
     "fixThese": "Fix these",
     "correctCount": "Correct ({n})",
     "critical": "critical",
-    "target": "target",
+    "target": "Target",
     "techniqueAnalysis": "Technique and exposure analysis",
     "imageCaption": "Result image",
     "imageInformation": "Image information",

@@ -15,8 +15,9 @@ import { projectionLabelOf } from "@/features/simulation/projection-label";
 import { wordingNsOf } from "@/features/radiograph/wording";
 import { TechniqueResult } from "@/features/technique/TechniqueResult";
 import { ResultDisclosure } from "./ResultDisclosure";
-import { criticalForCheck, orderFixes, ruleTarget } from "./result-presentation";
+import { criticalForCheck, orderFixes } from "./result-presentation";
 import type { RenderPlan } from "@/features/radiograph/plan";
+import { displayTarget, formatResultObserved } from "./result-values";
 import { ResultImage } from "./ResultImage";
 import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
 
@@ -108,19 +109,22 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   );
   const item = (k: CheckResult) => {
     const critical = criticalForCheck(k, radCase, result.criticalFindings);
-    const target = ruleTarget(radCase.rules.find((r) => r.id === k.ruleId));
+    const target = displayTarget(radCase.rules.find((r) => r.id === k.ruleId), radCase, locale);
+    const label = localize(k.label, locale);
+    const labelIncludesNotScored = label.toLocaleLowerCase(locale).includes(t("notScored").toLocaleLowerCase(locale));
     return (
       <li key={k.ruleId} className={clsx("rounded border-s-4 bg-paper/60", OUTCOME_STYLE[k.outcome])}>
         <ResultDisclosure title={<>
-          <span className="block text-ink">
-            <span aria-hidden>{OUTCOME_ICON[k.outcome]} </span>
-            <span className="font-semibold">{localize(k.label, locale)}</span>{" "}
-            <span className="text-xs">{t(`outcome.${k.outcome}`)}</span>{" "}
-            {critical.length > 0 && <strong className="text-xs text-bad">{t("critical")}</strong>}
-            {!k.scored && <span className="ms-1 text-xs text-muted">({t("notScored")})</span>}
-            <span className="ms-2 text-xs text-muted">{t("yourSetting")}: <bdi dir={k.observedKind || k.observedChoice ? undefined : "ltr"}>{observedLabel(k.observedKind, k.observed, k.observedChoice)}</bdi>
-              {target !== undefined && <> <span aria-hidden className="inline-block rtl:-scale-x-100">→</span> <span className="sr-only">{t("target")}: </span><bdi dir={k.observedKind || k.observedChoice ? undefined : "ltr"}>{observedLabel(k.observedKind, target, k.observedChoice)}</bdi></>}
-            </span>
+          <span className="flex items-start gap-2 text-ink">
+            <span aria-hidden className="shrink-0">{OUTCOME_ICON[k.outcome]}</span>
+            <span className="min-w-0 flex-1 font-semibold">{label}</span>
+            <span className="sr-only">{t(`outcome.${k.outcome}`)}</span>
+            {critical.length > 0 && <strong className="shrink-0 rounded bg-bad/10 px-1.5 py-0.5 text-xs text-bad">{t("critical")}</strong>}
+            {!k.scored && !labelIncludesNotScored && <span className="text-xs text-muted">({t("notScored")})</span>}
+          </span>
+          <span className="mt-1 block text-xs text-muted">
+            {t("yourSetting")}: <bdi dir={k.observedKind || k.observedChoice ? undefined : "ltr"}>{formatResultObserved(observedLabel(k.observedKind, k.observed, k.observedChoice))}</bdi>
+            {target !== undefined && <> <span aria-hidden className="inline-block rtl:-scale-x-100">→</span> {t("target")}: <bdi dir={k.observedKind || k.observedChoice || locale === "ar" ? "auto" : "ltr"}>{observedLabel(k.observedKind, target, k.observedChoice)}</bdi></>}
           </span>
           {/* Feedback contains decimals, abbreviations and inline references in both locales; retain it verbatim,
               clamped, rather than risk treating a reference or decimal point as a sentence boundary. */}

@@ -67,8 +67,7 @@ export function ResultImage({ radCase, plan, information }: Props) {
         )}
       </div>
       <figcaption className="mt-2 space-y-1 text-xs text-muted">
-        <p className="font-medium text-ink">{tr("imageCaption")}</p>
-        <ResultDisclosure title={<span aria-hidden>ⓘ</span>} label={tr("imageInformation")} className="rounded border border-line">
+        <ResultDisclosure title={<span className="flex items-center gap-2"><span aria-hidden>ⓘ</span>{tr("aboutImage")}</span>}>
         <p>{t("educationalNote")}</p>
         {radCase.radiograph.partialCoverageKey && (
           <div data-testid="no-data-key" className="flex items-start gap-2">

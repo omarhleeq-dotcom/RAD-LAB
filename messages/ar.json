@@ -192,6 +192,7 @@
     }
   },
   "result": {
+    "aboutImage": "عن هذه الصورة",
     "fixThese": "أصلح هذه",
     "correctCount": "الصحيح ({n})",
     "critical": "حرج",
