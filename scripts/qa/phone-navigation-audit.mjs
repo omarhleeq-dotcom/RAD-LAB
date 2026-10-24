@@ -11,7 +11,7 @@ const axe = readFileSync("node_modules/axe-core/axe.min.js", "utf8");
 const user = { id: "00000000-0000-0000-0000-000000000001", aud: "authenticated", role: "authenticated", email: "test@example.test", app_metadata: {}, user_metadata: {}, created_at: "2026-10-15T00:00:00Z" };
 const b64 = (value) => Buffer.from(JSON.stringify(value)).toString("base64url");
 const session = { access_token: `${b64({ alg: "HS256", typ: "JWT" })}.${b64({ sub: user.id, role: "authenticated", aud: "authenticated", exp: 4102444800 })}.sig`, refresh_token: "synthetic", token_type: "bearer", expires_in: 3600, expires_at: 4102444800, user };
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? "/usr/bin/chromium", args: ["--no-sandbox"] });
+const browser = await chromium.launch({ args: ["--no-sandbox"] });
 mkdirSync("/tmp/rad054-phone", { recursive: true });
 let checks = 0, audits = 0;
 const ok = (value, label) => { assert.ok(value, label); checks++; };

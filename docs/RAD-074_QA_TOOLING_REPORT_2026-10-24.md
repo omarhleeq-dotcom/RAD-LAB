@@ -11,7 +11,8 @@
 **انحرافات/إضافات يجب ذكرها:**
 - `scripts/qa/scenarios.json`: سلسلتان عربيتان في `chamberLabels` («عرض الكاسيت» ← «عرض الكاشف») لأن نص المنتج الحالي «عرض الكاشف». هذا ملف يقرؤه اختبار وحدة (`scenario-matrix.ts`) لكن لا يستعمل `chamberLabels` إلا run-matrix؛ شُغّل `npx vitest run src/features/qa` (13 ملفًا، 448 اختبارًا) نجح. لم يُشغَّل `qa:golden`.
 - `label-collisions.mjs`: خيار اختياري جديد `--whole-detector` (الافتراضي كما كان) لفصل ما يظهره العرض الملائم عن عرض الكاشف كله.
-- `a11y-audit.mjs`: `mkdirSync` لمجلد OUT (كان يفشل بعد انتهاء الفحوص إن لم يوجد)؛ `phone-navigation-audit.mjs`: `CHROMIUM` من البيئة بدل مسار ثابت؛ `hand-lateral-layout.mjs`: زر Expose باسمه الدقيق (المحدد القديم يطابق زرًا آخر بالعربية).
+- `a11y-audit.mjs`: `mkdirSync` لمجلد OUT (كان يفشل بعد انتهاء الفحوص إن لم يوجد)؛ `phone-navigation-audit.mjs`: `chromium.launch({ args })` بلا مسار (تعليمة المالك) بدل `/usr/bin/chromium` الثابت؛ `hand-lateral-layout.mjs`: زر Expose باسمه الدقيق (المحدد القديم يطابق زرًا آخر بالعربية).
+- **بتعليمة المالك (رد الجلسة):** حُدّثت مهمة RAD-072 في project-status ضمن هذه الدفعة، انظر البند 9 في §7. وتُثبَّت نسخة Playwright المطابقة للمتصفح المثبَّت مسبقًا (`npm i --no-save playwright@1.63.0 axe-core`) كي يعمل `chromium.launch()` بلا مسار؛ نسخة أحدث تطلب متصفحًا غير موجود.
 - الاختبار الذاتي عدّل مؤقتًا `PhoneWorkspace.tsx` محليًا ثم أُعيد بـ`git checkout` وأُعيد البناء؛ لم يُلتزم (انظر §6).
 - `npm ci` + `npm i --no-save playwright axe-core` + `npm run build` للبيئة؛ لا تغيير في ملفات متتبَّعة.
 
@@ -35,7 +36,7 @@
 | result-marker | يعمل (مصمَّم لـUI-3) | بلا تعديل: 510/510 موضعًا لـ17 فحصًا |
 | ui1-pages | يعمل على تصدير pilot-synthetic | بلا تعديل: 136 فحصًا، 36 axe |
 | credits | يعمل على تصدير بلا pilot: 886 فحصًا، 76 axe (على تصدير pilot يُحجب المسار فتنتهي مهلة العنوان؛ هذا شرط تشغيل لا عطل) | بلا تعديل |
-| phone-navigation | معطوب: مسار chromium ثابت `/usr/bin/chromium` | بعد إصلاح المسار ما زال يفشل: بعد الدخول تبقى الصفحة `/en/account` والسكربت ينتظر `/en` (§7). لم يُصلح |
+| phone-navigation | معطوب: مسار chromium ثابت `/usr/bin/chromium` | بعد إزالة المسار (بالمتصفح المثبَّت) ما زال يفشل: بعد الدخول تبقى الصفحة `/en/account` والسكربت ينتظر `/en` (§7). لم يُصلح |
 | assess-history/owner/practical/runner | لم تُشغَّل: Assess مؤجل |  |
 | pilot-consent/feedback/owner/reset/schema | لم تُشغَّل: تحتاج Supabase حيًّا؛ لا تشغيل على خدمة حية |  |
 | appearance، category-history، session-gate، my-attempts | لم تُشغَّل: خارج القائمة المطلوبة (حسابات/دخول synthetic؛ my-attempts مرتبط بـAssess المؤجل) |  |
@@ -77,13 +78,19 @@
 
 ## 7. بنود مفتوحة ونتائج الواجهة الحقيقية
 
-1. **(نتيجة واجهة) إطار العرض الملائم على الهاتف 390:** في كل الفحوص الخمسة عشر المقيسة وفي كل الحالات (إرشادات on وoff) تقع تسميات الإطار «Head/Feet/Detector» (ومع الإرشادات «Patient's right/left» و«Midsagittal plane» و«Centering target region» وما يعادلها) خارج `viewBox` المقصوص، و`overflow: hidden` على الـSVG، فلا تظهر حتى يُضغط «Whole detector». أمثلة: الحوض `viewBox` −6 −6 442 362 والتسمية عند y = −137. التداخل بين التسميات: 0. القرار للمالك: هل تُنقل التسميات داخل الإطار الملائم أم يكفي أن تُعرض في «Whole detector»؟ لم تُغيَّر الواجهة.
-2. **(نتيجة واجهة) عرض الكاشف الكامل على الهاتف، الحوض EN 390 مع الإرشادات:** تسمية «Patient's left» خارج الإطار بنحو 20 وحدة في 81 حالة؛ بالعربية سليم.
+1. **(بند واجهة مفتوح — لا إصلاح) إطار العرض الملائم على الهاتف 390:** في كل الفحوص الخمسة عشر المقيسة وفي كل الحالات (إرشادات on وoff) تقع تسميات الإطار «Head/Feet/Detector» (ومع الإرشادات «Patient's right/left» و«Midsagittal plane» و«Centering target region» وما يعادلها) خارج `viewBox` المقصوص، و`overflow: hidden` على الـSVG، فلا تظهر في العرض الملائم الافتراضي حتى يُضغط «Whole detector». لا تداخل بين التسميات (0). الفحص: `label-collisions.mjs <exam> --spec scripts/qa/label-states/<exam>.json` (EN وAR، 390، كل حالات المواصفة).
+   - **الحوض `pelvis-ap-supine`، EN 390، الحالة الافتراضية (الإرشادات on):** `viewBox` −6 −6 442 362 والتسمية «Midsagittal plane» عند y = −137 و«Head» عند y = −76: [لقطة](review/rad-074-pelvis-ap-supine-en-390-fitted-guides-on.png). الحالات الفاشلة: 162 من 162 لكل لغة (إرشادات on وoff، كل تركيبات الساقين والتنفس والدوران −15/0/15 وميل الأنبوب −15/0/15).
+   - **الركبة `knee-ap`، EN 390، الإرشادات on:** نفس النمط (36 حالة فاشلة لكل لغة): [لقطة](review/rad-074-knee-ap-en-390-fitted-guides-on.png).
+   - باقي الفحوص (الأعداد الفاشلة لكل لغة عند 390): ankle-ap 36، ankle-lateral 36، chest-ap-supine 72، elbow-ap/lateral 12، foot-ap/oblique 36، hand-lateral/pa 12، knee-lateral 36، shoulder-grashey-erect 324، wrist-lateral/pa 6. الصدر PA والجانبي بلا ملف حالات فلم يُقاسا. على 1440: 0.
+   - القرار للمالك: تُنقل التسميات داخل الإطار الملائم، أم يكفي ظهورها في «Whole detector»؟
+2. **(بند واجهة مفتوح — لا إصلاح) عرض الكاشف الكامل، الحوض EN 390:** بالضغط على «Whole detector» تبقى كل الفحوص نظيفة عدا الحوض بالإنجليزية: تسمية «Patient's left» تتجاوز الحافة اليمنى للإطار بنحو 20 وحدة، **مع الإرشادات on فقط**، في 81 من 81 حالة (كل تركيبات الساقين والتنفس والدوران وميل الأنبوب): [لقطة](review/rad-074-pelvis-ap-supine-en-390-whole-guides-on.png)؛ مثال حالة: `Position of both legs=0 Breathing instruction=0 Pelvic rotation=-15 Tube angulation=-15`. بالعربية سليم. القياس: `label-collisions.mjs pelvis-ap-supine --spec … --whole-detector`.
 3. **سيناريو `clip-margin-only` (run-matrix، سطح المكتب EN/AR):** يضبط ارتفاع الحقل 29.6 سم لكن منزلق «Field height» خطوته 1 سم فيقرّب إلى 30، فلا تظهر ملاحظتا «margin only» (0 بدل 2). لا يمكن بلوغ السيناريو عبر الواجهة؛ إما تدخّل المالك (دقة المنزلق) أو إعادة تعريف السيناريو في جلسة تسمح بتغيير الاختبارات. لم يُخفَّف التأكيد.
 4. **phone-navigation-audit:** بعد الدخول تبقى الصفحة `/en/account` (دخول مستقل بعد RAD-066) والسكربت يتوقع `/en` ثم لوحة الرئيسية؛ تعديل التوقع يغيّر المفحوص، فلم يُعدَّل.
 5. **فجوات تغطية:** لا ملف حالات label-collisions للصدر PA ولا الصدر الجانبي؛ credits وphone-navigation يحتاجان تصديرين مختلفين (بلا pilot / pilot synthetic).
-6. **وصف RAD-072 في project-status** ما زال يقول إن المرحلة B على PR مسودة مع أن #119 مدموج؛ لم أغيّره (خارج النطاق).
+6. **تحديث RAD-072 (بتعليمة المالك):** انظر البند 9.
 7. تحذيران lint قديمان في `simulator-layout-audit.mjs` (خارج النطاق).
+
+9. **RAD-072 في project-status (غُيّر في هذه الدفعة بإذن المالك):** `in_progress` ← **`review`**، `waiting_on: owner`، والوصف يبدأ بما دُمج (#113–#119) ويذكر فحص المالك لـ#118 و#119 على الهاتف. لم أضعها `done` لأن [قاعدة 12](status-format.md) تُبقي المدموج غير المتحقَّق منه `review`، ولم يؤكد رد المالك فحص الهاتف لـ2b (#115) و2c (#116) ولا سُجّل قرار بذلك؛ حين تؤكد ذلك تُغلق بـ`completion_evidence`. حُدّث ملخص project-status (بندا الاتجاه والانتظار) تبعًا لذلك. رد المالك لم يُدوَّن في DECISIONS (خارج الميزانية)؛ مرجعه وصف المهمة وهذا التقرير.
 
 **إجابتا AGENTS:** هل تغيّر الحكم؟ لا: لم تُعدَّل قاعدة في AGENTS ولا DECISIONS؛ أُضيف رابط واحد إلى أمر الفحص في سطر جدول QA بلا إعادة صياغة، وقسم جديد في DOCS_CHECKS لا يحل محل قاعدة. هل بقي رابط الدليل الأصلي؟ نعم: لم يُحذف أو يُختصر أي نص قائم، وقواعد exam-recipe §7 والعتبات في السكربتات كما هي.
 
