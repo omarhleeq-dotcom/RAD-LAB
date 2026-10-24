@@ -16,7 +16,7 @@ import { safeReturnPath } from "./session-access";
 
 type Mode = "signIn" | "signUp";
 const field = "mt-1 block w-full rounded-md border border-line bg-panel px-3 py-2 text-base";
-const primary = "rounded-md bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-strong disabled:opacity-60";
+const primary = "rounded-md bg-brand px-4 py-2 font-semibold text-on-brand hover:bg-brand-strong disabled:opacity-60";
 
 export function AccountPanel() {
   const t = useTranslations("account");
@@ -168,7 +168,7 @@ export function AccountPanel() {
             type="button"
             role="tab"
             aria-selected={mode === m}
-            className={`rounded-md border px-4 py-2 font-medium ${mode === m ? "border-brand bg-brand text-white" : "border-line"}`}
+            className={`rounded-md border px-4 py-2 font-medium ${mode === m ? "border-brand bg-brand text-on-brand" : "border-line"}`}
             onClick={() => { setMode(m); setError(null); }}
           >
             {t(`tabs.${m}`)}

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { MODALITIES } from "@/data/modalities";
 import { PILOT } from "@/features/pilot/config";
 import { useOptionalSessionAccount } from "@/features/pilot/SessionGate";
@@ -84,7 +85,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     </Link> : <span key={entry.icon} className="nav-planned" aria-disabled="true"><Icon kind={entry.icon} /><span>{entry.label}</span><small>{tc("comingSoon")}</small></span>;
   })}{approved && <button type="button" className="nav-signout" data-testid="sign-out" onClick={signOut}><Icon kind="signout" /><span>{ta("signOut")}</span></button>}</nav>;
   if (standalone) return <div className="site-layout" data-standalone="true">
-    <header className="site-header site-chrome"><div className="site-topbar"><div className="site-brand-group">{logo}</div><div className="site-top-actions"><LanguageSwitcher /></div></div></header>
+    <header className="site-header site-chrome"><div className="site-topbar"><div className="site-brand-group">{logo}</div><div className="site-top-actions"><LanguageSwitcher /><ThemeToggle /></div></div></header>
     <div className="site-main">{children}</div>
     <footer className="site-footer site-chrome"><p><Link href="/credits">{tc("creditsLink")}</Link></p></footer>
   </div>;
@@ -95,13 +96,14 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button type="button" className="menu-toggle" aria-label={t("openMenu")} aria-haspopup="dialog" aria-controls="mobile-navigation" aria-expanded={open} data-testid="menu-toggle" onClick={() => { dialog.current?.showModal(); setOpen(true); }}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg></button>
           {logo}
         </div>
-        <div className="site-top-actions"><div className="desktop-language"><LanguageSwitcher /></div>{workspace && <Link href={available[0] ? `/${available[0].id}` : "/"} className="workspace-library">{t("library")}</Link>}</div>
+        <div className="site-top-actions"><div className="desktop-language"><LanguageSwitcher /></div><div className="desktop-language"><ThemeToggle /></div>{workspace && <Link href={available[0] ? `/${available[0].id}` : "/"} className="workspace-library">{t("library")}</Link>}</div>
       </div>
     </header>
     <aside className="desktop-sidebar site-chrome">{navigation}</aside>
     <dialog ref={dialog} id="mobile-navigation" className="mobile-drawer site-chrome" aria-labelledby="mobile-nav-title" onKeyDown={trapFocus} onClose={() => setOpen(false)} onClick={(event) => { if (event.target === event.currentTarget) close(); }}>
       <div className="drawer-panel">
         <div className="drawer-top"><button type="button" className="drawer-close" aria-label={t("closeMenu")} onClick={close} autoFocus>×</button>{logo}<LanguageSwitcher /></div>
+        <div className="drawer-theme"><ThemeToggle /></div>
         <h2 id="mobile-nav-title" className="sr-only">{t("navigation")}</h2>
         {navigation}
       </div>

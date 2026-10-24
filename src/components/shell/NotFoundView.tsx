@@ -7,7 +7,7 @@ export function NotFoundView({ title, body, linkLabel, href = "/" }: { title: st
       <h1 className="text-2xl font-bold">{title}</h1>
       <p className="mt-3 text-lg text-muted">{body}</p>
       <p className="mt-6">
-        <Link href={href} className="inline-flex min-h-6 items-center rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-strong">
+        <Link href={href} className="inline-flex min-h-6 items-center rounded-md bg-brand px-4 py-2 font-medium text-on-brand hover:bg-brand-strong">
           {linkLabel}
         </Link>
       </p>

@@ -100,7 +100,7 @@ export function TechniqueResult({ radCase, kvp, manualMas, exposure: x }: Props)
             />
             <div className="absolute inset-y-0 w-px bg-ink/60" style={{ left: `${pct(0)}%` }} />
             <div
-              className="absolute -top-1.5 h-7 w-1.5 -translate-x-1/2 rounded bg-ink ring-2 ring-white"
+              className="absolute -top-1.5 h-7 w-1.5 -translate-x-1/2 rounded bg-ink ring-2 ring-panel"
               style={{ left: `${pct(x.deviationIndex)}%` }}
             />
           </div>

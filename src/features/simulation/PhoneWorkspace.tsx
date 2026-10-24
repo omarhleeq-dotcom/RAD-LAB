@@ -313,7 +313,7 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
         <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
         {/* The scene's schematic note lands here, once (SceneSlots.notes). */}
         <div ref={attachNotes} className="[&_p]:px-0" />
-        <button ref={caseStart} type="button" onClick={() => caseSheet.current?.close()} className="mt-4 min-h-11 w-full rounded-md bg-brand px-4 py-2 font-bold text-white hover:bg-brand-strong">
+        <button ref={caseStart} type="button" onClick={() => caseSheet.current?.close()} className="mt-4 min-h-11 w-full rounded-md bg-brand px-4 py-2 font-bold text-on-brand hover:bg-brand-strong">
           {t("startCase")}
         </button>
       </dialog>

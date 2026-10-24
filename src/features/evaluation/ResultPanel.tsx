@@ -183,7 +183,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
             <ul className="space-y-2">{content.correct.map(item)}</ul>
           </ResultDisclosure>
           <div className="flex flex-wrap items-center gap-2">
-            <button type="button" onClick={onRetry} className="min-h-11 rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-strong">{t("retry")}</button>
+            <button type="button" onClick={onRetry} className="min-h-11 rounded-md bg-brand px-4 py-2 font-medium text-on-brand hover:bg-brand-strong">{t("retry")}</button>
             <button type="button" onClick={onRestart} className="min-h-11 rounded-md border border-line px-4 py-2 font-medium hover:bg-paper">{t("restart")}</button>
             <p className="w-full text-xs text-muted">{t("retryHelp")}</p>
           </div>

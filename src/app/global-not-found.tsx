@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ar from "../../messages/ar.json";
 import en from "../../messages/en.json";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 /**
@@ -15,7 +16,11 @@ export default function GlobalNotFound() {
     { code: "ar", dir: "rtl", m: ar },
   ] as const;
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
+      <head>
+        <meta name="color-scheme" content="dark" />
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="antialiased">
         <header className="site-chrome border-b border-line bg-panel">
           <div className="mx-auto max-w-7xl px-4 py-3">
@@ -30,7 +35,7 @@ export default function GlobalNotFound() {
               <h1 className="text-2xl font-bold">{m.notFound.title}</h1>
               <p className="mt-3 text-lg text-muted">{m.notFound.body}</p>
               <p className="mt-4">
-                <a href={`/${code}`} className="inline-flex min-h-6 items-center rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-strong">
+                <a href={`/${code}`} className="inline-flex min-h-6 items-center rounded-md bg-brand px-4 py-2 font-medium text-on-brand hover:bg-brand-strong">
                   {m.common.backHome}
                 </a>
               </p>

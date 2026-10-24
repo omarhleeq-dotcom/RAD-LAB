@@ -6,6 +6,7 @@ import { AppShell } from "@/components/shell/AppShell";
 import { RouteFocus } from "@/components/shell/RouteFocus";
 import { SessionGate, SessionProvider } from "@/features/pilot/SessionGate";
 import { dirFor, routing } from "@/i18n/routing";
+import { THEME_INIT_SCRIPT } from "@/lib/theme";
 import "../globals.css";
 
 export function generateStaticParams() {
@@ -27,12 +28,17 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const t = await getTranslations("common");
 
   return (
-    <html lang={locale} dir={dirFor(locale)}>
+    // Dark is the markup default; the inline script (before first paint) switches to a saved light choice. suppressHydrationWarning: that attribute differs from the server HTML by design.
+    <html lang={locale} dir={dirFor(locale)} data-theme="dark" suppressHydrationWarning>
+      <head>
+        <meta name="color-scheme" content="dark" />
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="antialiased">
         <NextIntlClientProvider>
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-brand focus:px-3 focus:py-2 focus:text-white"
+            className="sr-only focus:not-sr-only focus:absolute focus:start-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-brand focus:px-3 focus:py-2 focus:text-on-brand"
           >
             {t("skipToContent")}
           </a>
