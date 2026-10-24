@@ -110,13 +110,6 @@ function tsConst(file, name) {
   return new Function(`return (${src.slice(from, i + 1).replace(/\s+as\s+(const|Pt(\[\])?|\[Pt, Pt\])(?=[,;\s}\]])/g, "")})`)();
 }
 
-/** A rounded bar from a to b (half-widths wa, wb), as a closed point list for smoothPath. */
-function capsule(a, b, wa, wb = wa) {
-  const ang = Math.atan2(b[1] - a[1], b[0] - a[0]), nx = -Math.sin(ang), ny = Math.cos(ang), tx = Math.cos(ang), ty = Math.sin(ang);
-  const at = (c, u, v) => [c[0] + tx * u + nx * v, c[1] + ty * u + ny * v];
-  return [at(a, 0, wa), at(b, 0, wb), at(b, wb * 0.9, wb * 0.5), at(b, wb * 1.2, 0), at(b, wb * 0.9, -wb * 0.5), at(b, 0, -wb), at(a, 0, -wa), at(a, -wa * 0.9, -wa * 0.5), at(a, -wa * 1.2, 0), at(a, -wa * 0.9, wa * 0.5)];
-}
-
 /**
  * Project geometry (polygons in image px; the knee/ankle/elbow/pelvis models) windowed to the frame the drawing shows: points
  * outside `win` ([x0, y0, x1, y1]) are clamped and the segments lying on the cut are dropped, so a limb leaves the picture
@@ -165,7 +158,7 @@ function geometry({ win, items, margin = 12, bias = [0, 0], eps = 0.9, minArea =
   return parts;
 }
 
-const helpers = { smoothPath, simplify, fitter, area, capsule, geometry, tsConst, traced, VIEW_W, VIEW_H };
+const helpers = { smoothPath, simplify, fitter, area, geometry, tsConst, traced, VIEW_W, VIEW_H };
 
 const softAnd = (groups, extra = []) => (byId, list) => list
   .filter((s) => s.drawn !== false && (s.group === "soft" || groups.includes(s.group) || extra.includes(s.id)))

@@ -18,13 +18,13 @@ describe("library graphics (RAD-069 B2b)", () => {
     expect(ART.generic).toBeDefined();
     expect(new Set(presentation.regions.map((r) => r.graphic)).size).toBe(presentation.regions.length);
   });
-  it("keeps every path inside the shared viewBox (a stroke half-width clear of the edge) with finite numbers and only M/L/Q/Z commands", () => {
+  it("keeps every path inside the shared viewBox (a stroke half-width clear of the edge) with finite numbers and only absolute M/L/Q/C/Z commands", () => {
     const [w, h] = graphics.viewBox as [number, number];
     for (const [kind, parts] of Object.entries(ART)) {
       expect(parts.length, kind).toBeGreaterThan(1);
       for (const { role, d } of parts) {
         expect(["fill", "bone", "line"]).toContain(role);
-        expect(d, kind).toMatch(/^[MLQZ0-9 .\-]+$/);
+        expect(d, kind).toMatch(/^[MLQCZ0-9 .\-]+$/);
         const nums = d.match(/-?\d+(\.\d+)?/g)!.map(Number);
         expect(nums.every(Number.isFinite), kind).toBe(true);
         for (let i = 0; i < nums.length; i += 2) {
@@ -47,7 +47,7 @@ describe("library graphics (RAD-069 B2b)", () => {
       expect(json).not.toContain('"type":"text"');
       expect(json).not.toMatch(/transform|scale\(/);
       expect(json).not.toMatch(/strokeWidth":(?!3\.5[,}])/);
-      expect(json.match(/var\(--art-soft\)/g)?.length ?? 0).toBeGreaterThan(0);
+      expect(json.match(/var\(--art-soft\)/g)?.length ?? 0).toBe(ART[kind in ART ? kind : "generic"]!.filter((p) => p.role === "fill").length);
     }
   });
   it("is byte-identical to what scripts/library-graphics regenerates from the project's own outlines", () => {
