@@ -16,7 +16,13 @@ export function useOwnerData(enabled: boolean, version: number, stream: OwnerStr
       try {
         const client = await getPilotClient();
         if (!client) throw new Error("off");
-        const page = await readOwnerPage((args) => client.rpc("owner_page_v1", args), stream, filters, cursor, boundary, false, limit);
+        const page = await readOwnerPage(async (args) => {
+          if (stream === "attempts") {
+            const response = await client.rpc("owner_dashboard_v1", {p_view:"attempts",p_limit:args.p_limit,p_cursor:args.p_cursor,p_participant:args.p_participant,p_from:args.p_from,p_to:args.p_to,p_exam:args.p_exam,p_boundary:args.p_boundary});
+            if (!response.error || !["PGRST202","42883"].includes(response.error.code)) return response;
+          }
+          return client.rpc("owner_page_v1", args);
+        }, stream, filters, cursor, boundary, false, limit);
         if (!cancelled) setResult({ key, data: { kind: "ready", page } });
       } catch { if (!cancelled) setResult({ key, data: { kind: "error" } }); }
     })();

@@ -28,7 +28,7 @@ function useSavedReason() {
     }).join(" / ");
   };
 }
-function Results({ rows }: { rows: TrainingAttempt[] }) {
+export function Results({ rows }: { rows: TrainingAttempt[] }) {
   const { t, date } = useTrainingLabels();
   const locale = useLocale(), reason = useSavedReason();
   const categories = useTranslations("categories");

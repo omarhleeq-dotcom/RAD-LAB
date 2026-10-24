@@ -27,7 +27,7 @@ async function setup(loc,w,theme,n=12,legacy=false,role='owner'){
  await context.addInitScript(({session,theme})=>{localStorage.setItem('sb-abcdefghijklmnop-auth-token',JSON.stringify(session));localStorage.setItem('radlab-theme',theme);},{session,theme});
  const rows=fixtures(n),reads=[],writes=[];
  await context.route(`${SUPA}/**`,async route=>{
-  const req=route.request(),path=new URL(req.url()).pathname,headers={'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'*'};
+  const req=route.request(),path=new URL(req.url()).pathname,headers={'access-control-allow-origin':'*','access-control-allow-headers':'*','access-control-allow-methods':'*','access-control-expose-headers':'content-range'};
   const json=(status,body)=>route.fulfill({status,headers,contentType:'application/json',body:JSON.stringify(body)});
   if(req.method()==='OPTIONS')return route.fulfill({status:204,headers});
   if(path.startsWith('/auth/v1/user'))return json(200,user);
@@ -38,6 +38,10 @@ async function setup(loc,w,theme,n=12,legacy=false,role='owner'){
   if(path.endsWith('/rpc/owner_dashboard_v1')){
    const a=req.postDataJSON();reads.push(a);
    if(legacy)return json(404,{code:'PGRST202'});
+   if(a.p_view==='attempts'){
+    const found=[attempt].filter(r=>(!a.p_participant||r.user_id===a.p_participant)&&(!a.p_exam||r.exam_id===a.p_exam)&&(!a.p_from||Date.parse(r.finished_at)>=Date.parse(a.p_from))&&(!a.p_to||Date.parse(r.finished_at)<=Date.parse(a.p_to)));
+    return json(200,{version:1,boundary:'2026-10-25T00:00:00Z',total:found.length,pending:0,rows:found.map(r=>({...r,comparison:null,comparison_verified:true})),next:null});
+   }
    if(a.p_view==='summary')return json(200,{version:1,boundary:'2026-10-25T00:00:00Z',rows:[{exam:attempt.exam_id,attempts:1,passed:1,known:1,wrong:[]}],next:null,counts:null});
    let filtered=rows.filter(p=>(!a.p_search||`${p.name} ${p.email}`.toLowerCase().includes(a.p_search.toLowerCase()))&&(!a.p_status||a.p_status===p.status));
    const searched=rows.filter(p=>!a.p_search||`${p.name} ${p.email}`.toLowerCase().includes(a.p_search.toLowerCase()));
@@ -51,7 +55,7 @@ async function setup(loc,w,theme,n=12,legacy=false,role='owner'){
    const more=found.length>20;found=found.slice(0,20);
    return json(200,{version:1,boundary:'2026-10-25T00:00:00Z',summary:null,rows:found.map(p=>({id:p.user_id,name:p.name,email:p.email,status:p.status,attempts:0,exams:0,latest:null})),next:more?{id:found.at(-1).user_id}:null});
   }
-  if(path.endsWith('/rpc/owner_page_v1')&&req.headers()['accept-profile']!=='assess'){
+  if(path.endsWith('/rpc/owner_page_v1')&&(req.headers()['content-profile']??req.headers()['accept-profile'])!=='assess'){
    const a=req.postDataJSON();reads.push(a);const stamp=a.p_stream==='notes'?'at':a.p_stream==='attempts'?'finished_at':'created_at';
    let found=(a.p_stream==='participants'?rows:a.p_stream==='notes'?notes:[attempt]).filter(r=>(!a.p_participant||r.user_id===a.p_participant)&&(!a.p_exam||r.exam_id===a.p_exam)&&(!a.p_from||Date.parse(r[stamp])>=Date.parse(a.p_from))&&(!a.p_to||Date.parse(r[stamp])<=Date.parse(a.p_to)));
    found.sort((a,b)=>Date.parse(b[stamp])-Date.parse(a[stamp])||String(a.id??a.user_id).localeCompare(String(b.id??b.user_id)));
@@ -91,7 +95,7 @@ try {
   const tag=`${loc}/${w}/${theme}`,d=messages[loc].owner.dashboard;
   const {context,page,reads,writes,errors}=await setup(loc,w,theme);
   await page.getByTestId('owner-summary').waitFor();ok(await page.getByTestId('owner-row').count()===12,`${tag} 12 rows`);
-  const first=await page.getByTestId('owner-row').first().innerText();ok(first.includes(d.pending),`${tag} pending first`);
+  const first=await page.getByTestId('owner-row').first().innerText();ok(first.includes(messages[loc].owner.status.pending),`${tag} pending first`);
   await axe(page,tag);if(loc==='ar'&&w===390&&theme==='dark')await page.screenshot({path:'/tmp/rad069c1/participants.png',fullPage:true});
   await page.getByTestId('owner-row').first().locator('details > summary').first().click();await axe(page,`${tag} details`);
   ok((await page.getByTestId('owner-row').first().innerText()).match(/P-\d{32}/g)?.length===1,`${tag} one code`);
@@ -102,12 +106,17 @@ try {
   await page.getByTestId('csv-notes').click();await page.getByTestId('export-save').waitFor();
   const [download]=await Promise.all([page.waitForEvent('download'),page.getByTestId('export-save').click()]);const csv=readFileSync(await download.path(),'utf8');
   ok(notes.every(n=>csv.includes(n.text))&&!csv.includes(user.email),`${tag} notes CSV matches view`);await axe(page,`${tag} training`);
+  await page.getByTestId('owner-training').locator('details > summary').first().click();
+  await page.getByTestId('owner-directory').getByRole('searchbox').fill('owner@example.test');await page.getByTestId('owner-directory').getByRole('button',{name:d.searchAction,exact:true}).click();
+  await page.getByTestId('owner-directory').getByRole('checkbox').first().check();
+  await page.getByTestId('filter-exam').selectOption(attempt.exam_id);await page.getByRole('button',{name:d.attempts,exact:true}).click();
+  await page.getByTestId('owner-followup').waitFor();await page.getByTestId('training-chart-reason').waitFor();await axe(page,`${tag} filtered follow-up`);
   await page.getByRole('link',{name:d.assess,exact:true}).click();await page.getByTestId('assess-admin').waitFor();
-  ok(await page.getByTestId('assess-content').isVisible(),`${tag} Assess visible`);ok(await page.getByTestId('owner-directory').count()===1,`${tag} shared directory`);await axe(page,`${tag} assess`);if(loc==='ar'&&w===390&&theme==='dark')await page.screenshot({path:'/tmp/rad069c1/assess.png',fullPage:true});
+  ok(await page.getByTestId('assess-content').isVisible(),`${tag} Assess visible`);ok(await page.getByTestId('owner-directory').count()===1,`${tag} shared directory`);await axe(page,`${tag} assess`);ok(await page.getByTestId('assess-admin').getByRole('alert').count()===0,`${tag} Assess reads succeed`);if(loc==='ar'&&w===390&&theme==='dark')await page.screenshot({path:'/tmp/rad069c1/assess.png',fullPage:true});
   await page.goBack();await page.getByTestId('owner-training').waitFor();ok(new URL(page.url()).searchParams.get('tab')==='training',`${tag} Back`);
   ok(errors.length===0,`${tag} no page errors: ${errors}`);ok(writes.length===0,`${tag} fixture read-only audit: ${writes}`);
   if(loc==='ar'&&w===390&&theme==='dark')await page.screenshot({path:'/tmp/rad069c1/training.png',fullPage:true});
-  await context.close();
+  console.log(`${tag}: passed`);await context.close();
  }
  for(const n of [12,200])for(const loc of ['ar','en'])for(const w of [390,1440]){
   const {context,page,rows}=await setup(loc,w,'dark',n);await page.getByTestId('owner-summary').waitFor();

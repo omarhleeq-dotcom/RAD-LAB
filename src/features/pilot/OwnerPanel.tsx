@@ -41,11 +41,13 @@ export function OwnerPanel() {
    <OwnerDirectory revision={version}>{p=>{
     const actions=actionsFor(p,ownerId);
     return <>
-     <div className="flex min-w-0 flex-wrap items-center gap-2">
-      <div className="min-w-0 flex-1"><strong className="block break-words">{p.name||d("unnamed")}</strong><bdi className="block break-all text-sm text-muted">{p.email}</bdi></div>
-      <span className="rounded-full border border-line bg-paper px-2 py-1 text-xs">{t(`status.${p.status}`)}</span>
-      <span className="text-xs text-muted"><span className="sr-only">{t("lastActivity")}: </span><bdi>{when(lastActivity(p))}</bdi></span>
+     <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1">
+      <div className="min-w-0"><strong className="block break-words">{p.name||d("unnamed")}</strong><bdi className="block break-all text-sm text-muted">{p.email}</bdi></div>
       {actions[0]&&<button className={btn} disabled={busy===p.userId} onClick={()=>void setStatus(p,actions[0]!)}>{warn===p.userId&&actions[0]==="approved"?t("confirmApprove"):t(`actions.${actions[0]}`)}</button>}
+      <div className="col-span-2 flex flex-wrap items-center gap-2">
+       <span className="rounded-full border border-line bg-paper px-2 py-1 text-xs">{t(`status.${p.status}`)}</span>
+       <span className="text-xs text-muted"><span className="sr-only">{t("lastActivity")}: </span><bdi>{when(lastActivity(p))}</bdi></span>
+      </div>
      </div>
      {warn===p.userId&&<p role="alert">{t("warnUnconfirmed")}</p>}
      <details className="mt-1"><summary className="min-h-11 cursor-pointer text-sm">{d("details")}</summary>

@@ -1448,7 +1448,8 @@
       "from": "From",
       "to": "Through",
       "zone": "Local dates and times: {zone}",
-      "dateError": "The end date must be on or after the start date."
+      "dateError": "The end date must be on or after the start date.",
+      "pageScope": "This section covers {count} saved attempts on the current page."
     }
   },
   "terms": {

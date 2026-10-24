@@ -11,11 +11,20 @@ declare
  rank_after integer; id_after uuid; exam_after text;
 begin
  if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
- if p_view is null or p_view not in ('participants','summary') or p_search is null or length(p_search)>100
+ if p_view is null or p_view not in ('participants','summary','attempts') or p_search is null or length(p_search)>100
    or p_status is null or p_status not in ('','pending','approved','suspended')
    or p_limit is null or p_limit<1 or not isfinite(b) or b>statement_timestamp()
    or (p_from is not null and not isfinite(p_from)) or (p_to is not null and not isfinite(p_to))
    or p_from>p_to or length(p_exam)>200 then raise exception 'invalid dashboard request' using errcode='22023'; end if;
+ if p_view='attempts' then
+   -- Preserve the bounded v1 read/filters and enrich only this page with saved
+   -- comparison metadata. Never derive semantic identities in the browser.
+   page := public.owner_page_v1('attempts',lim,p_cursor,p_participant,p_from,p_to,p_exam,b,false);
+   select coalesce(jsonb_agg(r.value || jsonb_build_object('comparison',a.comparison_version,'comparison_verified',true) order by r.ordinality),'[]'::jsonb)
+     into counts from jsonb_array_elements(page->'rows') with ordinality r(value,ordinality)
+     join public.attempts a on a.id=(r.value->>'id')::uuid;
+   return jsonb_set(page,'{rows}',counts);
+ end if;
  if p_cursor is not null then
    if jsonb_typeof(p_cursor)<>'object' then raise exception 'invalid cursor' using errcode='22023'; end if;
    if p_view='participants' then

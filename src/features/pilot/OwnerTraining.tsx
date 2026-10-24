@@ -3,6 +3,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { EXAMS, getExam } from "@/data/exams";
 import { localize } from "@/lib/localized";
+import { Results } from "./MyAttempts";
 import { CsvBar } from "./OwnerActivity";
 import { EMPTY_FILTERS, localDateBound, parseAttempts, parseNotes, type Cursor, type OwnerFilters } from "./owner-data";
 import { OwnerDirectory, ownerButton as btn } from "./OwnerDirectory";
@@ -46,6 +47,16 @@ function SavedRows({filters}:{filters:OwnerFilters}) {
    {pn.items.map(n=><li key={n.id} className="py-3"><p className="text-sm text-muted">{exam(n.examId)} · <time dateTime={n.at}>{date(n.at)}</time> · <bdi>{String(page?.rows.find(r=>String(r.id)===n.id)?.participant_code??"")}</bdi></p><p className="mt-1 whitespace-pre-wrap break-words" dir="auto">{n.text}</p></li>)}
    {pa.items.map(a=><li key={a.id} className="py-3"><p>{exam(a.examId)} · {date(a.finishedAt)} · <bdi>{String(page?.rows.find(r=>r.id===a.id)?.participant_code??"")}</bdi></p><p>{ot(a.passed?"activity.passed":"activity.notPassed")} · {a.total}</p></li>)}
   </ul>
+  {stream==="attempts"&&filters.participant&&filters.exam&&pa.items.length>0&&<section data-testid="owner-followup">
+   <p className="text-sm text-muted">{t("pageScope",{count:pa.items.length})}</p>
+   <Results rows={pa.items.map(a=>({id:a.id,exam:a.examId,case:a.caseId,definition:a.definitionVersion,
+    // The additive read attests saved comparison metadata for this page. The
+    // legacy fallback keeps charts closed; it cannot attest that metadata.
+    comparison:typeof page?.rows.find(r=>r.id===a.id)?.comparison==="string" ? String(page!.rows.find(r=>r.id===a.id)!.comparison) : null,
+    engine:page?.rows.find(r=>r.id===a.id)?.comparison_verified===true ? a.record?.engineVersion??"unknown" : "unknown",
+    producer:a.record?.producerVersion??"unknown",format:1,time:a.finishedAt,
+    result:{total:a.total,passed:a.passed,critical:[...a.critical],categories:[...a.categories]}}))}/>
+  </section>}
   <div className="flex gap-2"><button className={btn} onClick={()=>{setCursor(null);setBoundary(null);}}>{t("first")}</button><button className={btn} disabled={!page?.next} onClick={()=>{setCursor(page!.next);setBoundary(page!.boundary);}}>{t("next")}</button></div>
  </section>;
 }

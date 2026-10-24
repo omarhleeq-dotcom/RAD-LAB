@@ -55,6 +55,8 @@ it("reads pending first across bounded pages, searches all accounts, counts stat
   const checked=await db.exec(ready);
   expect(checked[1]?.rows[0]).toMatchObject({rpc_present:true,function_contract:true,authenticated_execute:true,anon_denied:true,index_ready:true});
   const summary=(await db.query<{p:{rows:{attempts:number;passed:number;wrong:unknown[]}[]}}>("select owner_dashboard_v1('summary') p")).rows[0]!.p;
+  const enriched=(await db.query<{p:OwnerPage}>("select owner_dashboard_v1('attempts') p")).rows[0]!.p;
+  expect(enriched.rows[0]).toMatchObject({comparison:null,comparison_verified:true,id:"10000000-0000-0000-0000-000000000001"});
   expect(summary.rows[0]).toMatchObject({attempts:1,passed:1,wrong:[{id:"fixture-check",count:1}]});
   await db.query("select set_config('request.jwt.claim.sub',$1,false)",[participant]);
   await expect(db.query("select owner_dashboard_v1('participants')")).rejects.toThrow(/owner only/);
