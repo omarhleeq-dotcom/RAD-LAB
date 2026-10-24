@@ -4,6 +4,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PGlite } from "@electric-sql/pglite";
 import { describe, expect, it } from "vitest";
+import { C2_CONSTRAINTS, C2_TABLE_COLUMNS } from "../pilot/c2-contract";
 
 const dir = join(process.cwd(), "supabase/migrations");
 function ordered(names: string[]): string[] {
@@ -46,6 +47,7 @@ const metadata: Readonly<Record<string, readonly string[]>> = {
 };
 // RAD-058 owner-approved structural exception; exact new grants/upgrade semantics in training.test.ts.
 const addedConstraints = new Set([
+  ...C2_CONSTRAINTS,
   "profiles.profiles_display_name_check",
   "attempts.attempts_comparison_version_check",
   "pilot_locales.pilot_locales_pkey", "pilot_locales.pilot_locales_tag_check", "pilot_locales.pilot_locales_tag_not_null", "attempts.attempts_locale_fkey",
@@ -131,8 +133,9 @@ describe("ordered migration chain", () => {
         .toEqual(before.constraints.filter((c) => !(c.tab === "attempts" && c.conname === "attempts_locale_check")));
       expect((await columns()).filter((c) => !((metadata[c.table_name] ?? []).includes(c.column_name)
         || (c.table_name === "pilot_locales" && c.column_name === "tag")
-        || (c.table_name === "profiles" && c.column_name === "display_name")))).toEqual(before.columns);
-      expect((await catalogue(db)).filter((c) => c.relname !== "pilot_locales")).toEqual(before.catalogue);
+        || (c.table_name === "profiles" && c.column_name === "display_name")
+        || Object.entries(C2_TABLE_COLUMNS).some(([table, columns]) => table === c.table_name && (columns as readonly string[]).includes(c.column_name))))).toEqual(before.columns);
+      expect((await catalogue(db)).filter((c) => c.relname !== "pilot_locales" && !Object.hasOwn(C2_TABLE_COLUMNS, c.relname))).toEqual(before.catalogue);
       await db.exec(`insert into auth.users(email) values ('new@example.test')`);
       expect((await db.query<{ participant_code: string }>(`select participant_code from public.profiles where participant_code <> 'P-1234abcd'`)).rows[0]!.participant_code).toMatch(/^P-[0-9a-f]{32}$/);
     } finally { await db.close(); }

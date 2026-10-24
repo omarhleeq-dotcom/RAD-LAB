@@ -35,6 +35,13 @@
       "serverModules": [
         "src/features/pilot/owner-dashboard-deferred.ts"
       ]
+    },
+    "20261024000200_owner_deletion_surveys.sql": {
+      "sha256": "757ba38b0806221e8bbce71cc2f67740188ccdcaa46664bc070ce1d339c9d99a",
+      "reason": "Owner C2 decision 2026-10-24: deletion and surveys are deferred to the coordinated DB day; no frontend API, consent change or required check now.",
+      "serverModules": [
+        "src/features/pilot/c2-contract.ts"
+      ]
     }
   },
   "explicitBoundaries": [

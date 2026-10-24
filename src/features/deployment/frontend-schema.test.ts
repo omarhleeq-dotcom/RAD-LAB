@@ -25,6 +25,7 @@ beforeAll(()=>{
   rmSync(join(root,"supabase/migrations/20261020001100_assess_retention.sql"),{force:true});
   // Keep the historical B fixture isolated from the additive owner dashboard.
   rmSync(join(root,"supabase/migrations/20261024000100_owner_dashboard.sql"),{force:true});
+  rmSync(join(root,"supabase/migrations/20261024000200_owner_deletion_surveys.sql"),{force:true});
   mkdirSync(join(root,"src/features/assess"),{recursive:true});
   mkdirSync(join(root,"src/features/positioning"),{recursive:true});
   cpSync("src/features/assess/admin-data.ts",join(root,"src/features/assess/admin-data.ts"));
