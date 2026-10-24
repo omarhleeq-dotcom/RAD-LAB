@@ -2,7 +2,8 @@
 
 import { publicText } from "@/features/evidence/public-text";
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
+import { ResultDisclosure } from "./ResultDisclosure";
 import type { RadCase } from "@/domain/case";
 import { localize } from "@/lib/localized";
 import type { RenderPlan } from "@/features/radiograph/plan";
@@ -17,13 +18,14 @@ const grey = (v: number) => `rgb(${v} ${v} ${v})`;
 interface Props {
   radCase: RadCase;
   plan: RenderPlan;
+  information?: ReactNode;
 }
 
 /**
  * The simulated educational radiograph. The image is the primary result; the caption keeps the educational
  * disclaimer next to it (not an image of the case patient, not diagnostic, effects are approximations).
  */
-export function ResultImage({ radCase, plan }: Props) {
+export function ResultImage({ radCase, plan, information }: Props) {
   const t = useTranslations("radiograph");
   const tr = useTranslations("result");
   const locale = useLocale();
@@ -65,7 +67,9 @@ export function ResultImage({ radCase, plan }: Props) {
         )}
       </div>
       <figcaption className="mt-2 space-y-1 text-xs text-muted">
-        <p className="font-medium text-ink">{t("educationalNote")}</p>
+        <p className="font-medium text-ink">{tr("imageCaption")}</p>
+        <ResultDisclosure title={<span aria-hidden>ⓘ</span>} label={tr("imageInformation")} className="rounded border border-line">
+        <p>{t("educationalNote")}</p>
         {radCase.radiograph.partialCoverageKey && (
           <div data-testid="no-data-key" className="flex items-start gap-2">
             <svg aria-hidden width="14" height="14" viewBox="0 0 14 14" className="mt-0.5 shrink-0 rounded-sm border border-muted/60">
@@ -81,6 +85,8 @@ export function ResultImage({ radCase, plan }: Props) {
         <p>{t("margins")}</p>
         <p>{tr("imageBrightnessNote")}</p>
         <p lang={locale}>{publicText(localize(radCase.radiograph.credit, locale))}</p>
+        {information}
+        </ResultDisclosure>
       </figcaption>
     </figure>
   );

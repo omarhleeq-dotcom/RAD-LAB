@@ -67,41 +67,44 @@ export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string
         </div>
       </div>
 
-      <section aria-labelledby="case-heading" className="rounded-lg border border-line bg-panel p-4">
-        <h1 id="case-heading" className="text-xl font-bold">
-          {localize(c.title, locale)}
-        </h1>
-        <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
-          <div>
-            <dt className="font-semibold text-muted">{t("patient")}</dt>
-            <dd>
-              {localize(c.patient.description, locale)} ({ts(c.patient.sex)}, {c.patient.age})
-            </dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-muted">{t("request")}</dt>
-            <dd>{localize(c.requestedExamination, locale)}</dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-muted">{t("scenario")}</dt>
-            <dd>{localize(c.clinicalScenario, locale)}</dd>
-          </div>
-          <div>
-            <dt className="font-semibold text-muted">{t("condition")}</dt>
-            <dd>{localize(c.patientCondition, locale)}</dd>
-          </div>
-        </dl>
-        <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
-      </section>
+      {locked && <h1 className="sr-only">{localize(c.title, locale)}</h1>}
+      {!locked && <>
+        <section aria-labelledby="case-heading" className="rounded-lg border border-line bg-panel p-4">
+          <h1 id="case-heading" className="text-xl font-bold">
+            {localize(c.title, locale)}
+          </h1>
+          <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="font-semibold text-muted">{t("patient")}</dt>
+              <dd>
+                {localize(c.patient.description, locale)} ({ts(c.patient.sex)}, {c.patient.age})
+              </dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-muted">{t("request")}</dt>
+              <dd>{localize(c.requestedExamination, locale)}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-muted">{t("scenario")}</dt>
+              <dd>{localize(c.clinicalScenario, locale)}</dd>
+            </div>
+            <div>
+              <dt className="font-semibold text-muted">{t("condition")}</dt>
+              <dd>{localize(c.patientCondition, locale)}</dd>
+            </div>
+          </dl>
+          <p className="mt-3 text-xs text-muted">{t("practiceHint")}</p>
+        </section>
 
-      <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
-        <div className="min-w-0 space-y-5">
-          <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
-          <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_24rem]">
+          <div className="min-w-0 space-y-5">
+            <PositioningScene radCase={c} settings={settings} mode={mode} onChange={setSetting} disabled={locked} />
+            <PatientInstructionsPanel radCase={c} settings={settings} onChange={setSetting} disabled={locked} />
+          </div>
+          <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
         </div>
-        <ConsolePanel radCase={c} settings={settings} mode={mode} onChange={setSetting} onExpose={expose} locked={locked} />
-      </div>
 
+      </>}
       <div ref={resultRef} className="scroll-mt-4">
         {resultPanels}
       </div>

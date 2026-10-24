@@ -192,6 +192,14 @@
     }
   },
   "result": {
+    "fixThese": "Fix these",
+    "correctCount": "Correct ({n})",
+    "critical": "critical",
+    "target": "target",
+    "techniqueAnalysis": "Technique and exposure analysis",
+    "imageCaption": "Result image",
+    "imageInformation": "Image information",
+    "addNote": "Add a note",
     "title": "Simulated result",
     "score": "Score",
     "outOf": "out of 100",

@@ -10,10 +10,12 @@ import type { CoreCategoryId, SimulationSettings } from "@/domain/simulation";
 import { localize } from "@/lib/localized";
 import { buildRenderPlan } from "@/features/radiograph/plan";
 import { needsNotDrawnLabel, variantIsDrawn } from "@/features/radiograph/consistency";
-import { RadiographEffects } from "@/features/radiograph/RadiographEffects";
+import { RadiographEffect } from "@/features/radiograph/RadiographEffects";
 import { projectionLabelOf } from "@/features/simulation/projection-label";
 import { wordingNsOf } from "@/features/radiograph/wording";
 import { TechniqueResult } from "@/features/technique/TechniqueResult";
+import { ResultDisclosure } from "./ResultDisclosure";
+import { criticalForCheck, resultContent, ruleTarget } from "./result-presentation";
 import { ResultImage } from "./ResultImage";
 import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
 
@@ -71,160 +73,111 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
     }
   };
 
+  const content = resultContent(radCase, result, plan);
+  const effects = (ruleId?: string) => content.effects(ruleId).map((effect) => (
+    <RadiographEffect key={effect.id} effect={effect} plan={plan} sex={radCase.patient.sex} wording={wordingNsOf(radCase.radiograph.projection)} />
+  ));
+  const variants = (ruleId?: string) => content.variants(ruleId).map((v) => (
+    <p key={v} data-variant={v} data-drawn={variantIsDrawn(v, plan)} className="text-xs text-muted">
+      {t(`variants.${v}`)}{v !== "correct" && !variantIsDrawn(v, plan) && <> ({t("notDrawnVariant")})</>}
+    </p>
+  ));
+  const evidence = (ev: CheckResult["evidence"]) => (
+    <div className="mt-2 space-y-1 text-xs text-muted">
+      <EvidenceBadge status={ev.status} /> <a href={`/${locale}/credits`} className="underline text-brand-strong">{tEv("reference")}</a>
+      {publicReference(ev.reference) && <p>{tEv("reference")}: <bdi dir="ltr">{publicReference(ev.reference)}</bdi></p>}
+      {ev.note && <p>{publicText(ev.note)}</p>}
+    </div>
+  );
+  const item = (k: CheckResult) => {
+    const critical = criticalForCheck(k, radCase, result.criticalFindings);
+    const target = ruleTarget(radCase.rules.find((r) => r.id === k.ruleId));
+    return (
+      <li key={k.ruleId} className={clsx("rounded border-s-4 bg-paper/60", OUTCOME_STYLE[k.outcome])}>
+        <ResultDisclosure title={<>
+          <span className="block text-ink">
+            <span aria-hidden>{OUTCOME_ICON[k.outcome]} </span>
+            <span className="font-semibold">{localize(k.label, locale)}</span>{" "}
+            <span className="text-xs">{t(`outcome.${k.outcome}`)}</span>{" "}
+            {critical.length > 0 && <strong className="text-xs text-bad">{t("critical")}</strong>}
+            {!k.scored && <span className="ms-1 text-xs text-muted">({t("notScored")})</span>}
+            <span className="ms-2 text-xs text-muted">{t("yourSetting")}: <bdi dir={k.observedKind || k.observedChoice ? undefined : "ltr"}>{observedLabel(k.observedKind, k.observed, k.observedChoice)}</bdi>
+              {target !== undefined && <> <span aria-hidden className="inline-block rtl:-scale-x-100">→</span> <span className="sr-only">{t("target")}: </span><bdi dir={k.observedKind || k.observedChoice ? undefined : "ltr"}>{observedLabel(k.observedKind, target, k.observedChoice)}</bdi></>}
+            </span>
+          </span>
+          {/* Feedback contains decimals, abbreviations and inline references in both locales; retain it verbatim,
+              clamped, rather than risk treating a reference or decimal point as a sentence boundary. */}
+          <span className="mt-1 line-clamp-2 text-sm text-ink group-aria-expanded:hidden">{localize(k.feedback, locale)}</span>
+        </>}>
+          <p className="text-sm text-ink">{localize(k.feedback, locale)}</p>
+          {k.ruleId === "collimation-clipping" && k.outcome !== "pass" && plan.marginOnlySides.length > 0 && (
+            <p data-testid="clip-margin-note" className="mt-1 text-xs text-muted">{tRad("clippingMarginNote", { sides: plan.marginOnlySides.map((side) => tRad(`altSides.${side}`)).join(" / ") })}</p>
+          )}
+          {needsNotDrawnLabel(k.ruleId, k.outcome, plan) && <p data-testid="not-drawn" className="mt-1 text-xs text-muted">{t("notDrawn")}</p>}
+          {variants(k.ruleId)}
+          <ul className="mt-2 space-y-2">{effects(k.ruleId)}</ul>
+          {evidence(k.evidence)}
+          {critical.map((f) => <div key={f.id} data-critical={f.id} className="mt-2 space-y-1 border-t border-line pt-2 text-sm text-ink">
+            <p>{localize(f.reason, locale)}</p>
+            {f.id === result.criticalFindings[0]?.id && <p className="text-xs text-muted">{t("criticalNote", { total: score.total })}</p>}
+            <p className="text-xs font-semibold">{t("criticalConcept")}</p>{evidence(f.concept)}
+            <p className="text-xs font-semibold">{t("criticalImplementation")}</p>{evidence(f.evidence)}
+          </div>)}
+        </ResultDisclosure>
+      </li>
+    );
+  };
+
   return (
-    <div className="space-y-5">
-    <section aria-labelledby="result-heading" className="rounded-lg border border-line bg-panel">
-      <div className="border-b border-line px-4 py-3">
-        <h2 id="result-heading" className="font-semibold">
-          {t("title")}
-        </h2>
+    <section aria-labelledby="result-heading" className="space-y-4 rounded-lg border border-line bg-panel p-3 sm:p-4">
+      <div className="space-y-2 rounded border border-line p-3" role="status">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h2 id="result-heading" className={clsx("font-bold", score.passed ? "text-ok" : "text-bad")}>{score.passed ? t("passed") : t("failed")}</h2>
+          <span dir="ltr" className="font-mono text-2xl font-bold text-brand-strong">{score.total} <span className="text-sm">/ 100</span></span>
+        </div>
+        {result.criticalFindings.length > 0 && <p className="text-sm text-bad">{result.criticalFindings.map((f) => localize(f.label, locale)).join(" / ")}</p>}
+        <p className="flex flex-wrap gap-x-4 text-xs">
+          {(["fail", "partial", "pass"] as const).map((outcome) => <span key={outcome}>{t(`outcome.${outcome}`)}: {result.checks.filter((k) => k.outcome === outcome).length}</span>)}
+        </p>
       </div>
-      <div className="grid gap-6 p-4 lg:grid-cols-[minmax(0,26rem)_1fr]">
-        <div className="space-y-4">
-          <ResultImage radCase={radCase} plan={plan} />
-          <div>
-            <h3 className="text-sm font-semibold">{t("variantsTitle")}</h3>
-            <ul className="mt-1 list-disc ps-5 text-sm text-muted">
-              {result.variants.map((v) => (
-                <li key={v} data-variant={v} data-drawn={variantIsDrawn(v, plan)}>
-                  {t(`variants.${v}`)}
-                  {v !== "correct" && !variantIsDrawn(v, plan) && <span className="ms-1 text-xs">({t("notDrawnVariant")})</span>}
-                </li>
-              ))}
-            </ul>
-            {result.variants.some((v) => v !== "correct" && !variantIsDrawn(v, plan)) && (
-              <p className="mt-1 text-xs text-muted">{t("notDrawnNote")}</p>
-            )}
-          </div>
+
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
+        <div className="min-w-0 lg:sticky lg:top-4">
+          <ResultImage radCase={radCase} plan={plan} information={<>
+            <p className="text-xs text-muted">{t("scoreNote")}</p>
+            <h3 className="mt-3 text-sm font-semibold">{tRad("effectsTitle")}</h3>
+            <p className="text-xs text-muted">{tRad("effectsIntro")}</p>
+            {variants()}
+            {result.variants.some((v) => v !== "correct" && !variantIsDrawn(v, plan)) && <p className="text-xs text-muted">{t("notDrawnNote")}</p>}
+            <ul className="mt-2 space-y-2">{effects()}</ul>
+          </>} />
         </div>
 
-        <div className="space-y-6">
-          <div className="flex flex-wrap items-center gap-5">
-            <div className="text-center" role="status">
-              <div dir="ltr" className="font-mono text-5xl font-bold tabular-nums text-brand-strong">
-                {score.total}
-              </div>
-              <div className="text-xs text-muted">{t("outOf")}</div>
-            </div>
-            <p
-              className={clsx(
-                "rounded-md px-3 py-1.5 text-sm font-semibold",
-                score.passed ? "bg-ok/10 text-ok" : "bg-bad/10 text-bad",
-              )}
-            >
-              {score.passed ? t("passed") : t("failed")}
-            </p>
-          </div>
-          <p className="-mt-3 text-xs text-muted">{t("scoreNote")}</p>
-
-          {result.criticalFindings.length > 0 && (
-            <section aria-labelledby="critical-heading" className="rounded border-2 border-bad bg-bad/5 p-3">
-              <h3 id="critical-heading" className="text-sm font-bold text-bad">
-                {t("criticalTitle")}
-              </h3>
-              <p className="mt-1 text-xs text-muted">{t("criticalNote", { total: score.total })}</p>
-              <ul className="mt-2 space-y-3">
-                {result.criticalFindings.map((f) => (
-                  <li key={f.id} data-critical={f.id} className="text-sm">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-ink">{localize(f.label, locale)}</span>
-                      <EvidenceBadge status={f.evidence.status} />
-                    </div>
-                    <p className="mt-1 text-ink">{localize(f.reason, locale)}</p>
-                    <details className="mt-1 text-xs text-muted">
-                      <summary className="cursor-pointer">{t("criticalEvidence")}</summary>
-                      <p className="mt-1">
-                        <span className="font-semibold">{t("criticalConcept")}:</span> <EvidenceBadge status={f.concept.status} /> {f.concept.note && publicText(f.concept.note)}
-                      </p>
-                      <p className="mt-1">
-                        <span className="font-semibold">{t("criticalImplementation")}:</span> <EvidenceBadge status={f.evidence.status} /> {f.evidence.note && publicText(f.evidence.note)}
-                      </p>
-                      {publicReference(f.concept.reference) && (
-                        <p className="mt-1">
-                          {tEv("reference")}: <bdi dir="ltr">{publicReference(f.concept.reference)}</bdi>
-                        </p>
-                      )}
-                    </details>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
+        <div className="min-w-0 space-y-3">
           <div>
-            <h3 className="text-sm font-semibold">{t("breakdown")}</h3>
-            <ul className="mt-2 space-y-2">
-              {score.categories.map((c) => (
-                <li key={c.category} className="text-sm">
-                  <div className="flex justify-between">
-                    <span>{categoryLabel(c.category)}</span>
-                    <span dir="ltr" className="font-mono tabular-nums">
-                      {c.earned} / {c.weight}
-                    </span>
-                  </div>
-                  <div className="mt-1 h-2 rounded bg-paper" aria-hidden>
-                    <div className="h-2 rounded bg-brand" style={{ width: `${c.ratio * 100}%` }} />
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <h3 className="mb-2 font-semibold">{t("fixThese")}</h3>
+            <ul className="space-y-2">{content.fixes.map(item)}</ul>
           </div>
+          <ResultDisclosure title={<strong>{t("correctCount", { n: content.correct.length })}</strong>} className="rounded border border-line">
+            <ul className="space-y-2">{content.correct.map(item)}</ul>
+          </ResultDisclosure>
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={onRetry} className="min-h-11 rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-strong">{t("retry")}</button>
+            <button type="button" onClick={onRestart} className="min-h-11 rounded-md border border-line px-4 py-2 font-medium hover:bg-paper">{t("restart")}</button>
+            <p className="w-full text-xs text-muted">{t("retryHelp")}</p>
+          </div>
+          <ResultDisclosure title={<strong>{t("breakdown")}</strong>} className="rounded border border-line">
+            <ul className="space-y-2">{score.categories.map((c) => <li key={c.category} className="text-sm">
+              <div className="flex justify-between gap-2"><span>{categoryLabel(c.category)}</span><span dir="ltr" className="font-mono">{c.earned} / {c.weight}</span></div>
+              <div className="mt-1 h-2 rounded bg-paper" aria-hidden><div className="h-2 rounded bg-brand" style={{ width: `${c.ratio * 100}%` }} /></div>
+            </li>)}</ul>
+          </ResultDisclosure>
+          <ResultDisclosure title={<strong>{t("techniqueAnalysis")}</strong>} className="rounded border border-line">
+            <TechniqueResult radCase={radCase} kvp={settings.kvp} manualMas={settings.mas} exposure={result.exposure} />
+          </ResultDisclosure>
 
-          <div>
-            <h3 className="text-sm font-semibold">{t("feedback")}</h3>
-            <ul className="mt-2 space-y-3">
-              {result.checks.map((k) => (
-                <li key={k.ruleId} className={clsx("border-s-4 bg-paper/60 py-2 ps-3 pe-2", OUTCOME_STYLE[k.outcome])}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="font-medium text-ink">
-                      <span aria-hidden>{OUTCOME_ICON[k.outcome]} </span>
-                      {localize(k.label, locale)}
-                      <span className="ms-2 text-xs font-semibold">{t(`outcome.${k.outcome}`)}</span>
-                      {!k.scored && <span className="ms-2 text-xs font-normal text-muted">({t("notScored")})</span>}
-                    </span>
-                    <span className="text-xs text-muted">
-                      {t("yourSetting")}: <bdi dir={k.observedKind || k.observedChoice ? undefined : "ltr"} className={k.observedKind || k.observedChoice ? undefined : "font-mono"}>{observedLabel(k.observedKind, k.observed, k.observedChoice)}</bdi>
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-ink">{localize(k.feedback, locale)}</p>
-                  {k.ruleId === "collimation-clipping" && k.outcome !== "pass" && plan.marginOnlySides.length > 0 && (
-                    <p data-testid="clip-margin-note" className="mt-0.5 text-xs text-muted">
-                      {tRad("clippingMarginNote", { sides: plan.marginOnlySides.map((side) => tRad(`altSides.${side}`)).join(" / ") })}
-                    </p>
-                  )}
-                  {needsNotDrawnLabel(k.ruleId, k.outcome, plan) && (
-                    <p data-testid="not-drawn" className="mt-0.5 text-xs text-muted">{t("notDrawn")}</p>
-                  )}
-                  <details className="mt-1 text-xs text-muted">
-                    <summary className="min-h-6 cursor-pointer py-0.5">
-                      {t("evidenceToggle")} <EvidenceBadge status={k.evidence.status} />
-                    </summary>
-                    {publicReference(k.evidence.reference) && (
-                      <p className="mt-1">
-                        {tEv("reference")}: <bdi dir="ltr">{publicReference(k.evidence.reference)}</bdi>
-                      </p>
-                    )}
-                    {k.evidence.note && <p className="mt-0.5">{publicText(k.evidence.note)}</p>}
-                  </details>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" onClick={onRetry} className="rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-strong">
-              {t("retry")}
-            </button>
-            <button type="button" onClick={onRestart} className="rounded-md border border-line px-4 py-2 font-medium hover:bg-paper">
-              {t("restart")}
-            </button>
-            <p className="text-xs text-muted">{t("retryHelp")}</p>
-          </div>
         </div>
       </div>
     </section>
-    <RadiographEffects plan={plan} sex={radCase.patient.sex} wording={wordingNsOf(radCase.radiograph.projection)} />
-    <TechniqueResult radCase={radCase} kvp={settings.kvp} manualMas={settings.mas} exposure={result.exposure} />
-    </div>
   );
 }

@@ -192,6 +192,14 @@
     }
   },
   "result": {
+    "fixThese": "أصلح هذه",
+    "correctCount": "الصحيح ({n})",
+    "critical": "حرج",
+    "target": "الهدف",
+    "techniqueAnalysis": "تحليل التقنية والتعريض",
+    "imageCaption": "صورة النتيجة",
+    "imageInformation": "معلومات الصورة",
+    "addNote": "أضف ملاحظة",
     "title": "النتيجة المحاكاة",
     "score": "الدرجة",
     "outOf": "من 100",
