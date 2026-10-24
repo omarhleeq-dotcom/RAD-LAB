@@ -8,7 +8,11 @@ import { localize } from "@/lib/localized";
 import type { RenderPlan } from "@/features/radiograph/plan";
 import { RadiographCanvas } from "@/features/radiograph/RadiographCanvas";
 import { describeRadiograph } from "@/features/radiograph/alt";
+import { detectorCoverage } from "@/features/radiograph/coverage";
+import { TUNING } from "@/features/radiograph/tuning";
 import { wordingNsOf } from "@/features/radiograph/wording";
+
+const grey = (v: number) => `rgb(${v} ${v} ${v})`;
 
 interface Props {
   radCase: RadCase;
@@ -62,6 +66,18 @@ export function ResultImage({ radCase, plan }: Props) {
       </div>
       <figcaption className="mt-2 space-y-1 text-xs text-muted">
         <p className="font-medium text-ink">{t("educationalNote")}</p>
+        {radCase.radiograph.partialCoverageKey && (
+          <div data-testid="no-data-key" className="flex items-start gap-2">
+            <svg aria-hidden width="14" height="14" viewBox="0 0 14 14" className="mt-0.5 shrink-0 rounded-sm border border-muted/60">
+              <rect width="14" height="14" fill={grey(TUNING.noData.dark)} />
+              <path d="M-2 4 L4 -2 M-2 10 L10 -2 M-2 16 L16 -2 M4 16 L16 4 M10 16 L16 10" stroke={grey(TUNING.noData.light)} strokeWidth="2.4" />
+            </svg>
+            <div className="space-y-1">
+              <p>{t("noDataKey")}</p>
+              <p>{t("partialCoverage", { percent: Math.round(detectorCoverage(radCase.radiograph, radCase.requiredAnatomy, radCase.detector) * 100) })}</p>
+            </div>
+          </div>
+        )}
         <p>{t("margins")}</p>
         <p>{tr("imageBrightnessNote")}</p>
         <p lang={locale}>{publicText(localize(radCase.radiograph.credit, locale))}</p>

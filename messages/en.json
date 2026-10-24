@@ -415,6 +415,8 @@
     "magnitudeApprox": "Educational visual approximation",
     "magnitudeNone": "Nothing drawn (by design)",
     "margins": "Dark margins lie outside the collimated field. Grey hatched areas inside the field have no reference-image data: they are not exposure, collimation or anatomy.",
+    "noDataKey": "Hatching = no data in the reference image. It is not exposure and not collimation.",
+    "partialCoverage": "The reference image covers only part of the detector for this exam (about {percent}% of its area); inside the field, the rest is hatched.",
     "clippingMarginNote": "Margin only at {sides}: the field cuts only the margin of the required region, beyond the lungs, ribs and costophrenic angles drawn in this baseline picture. The score still applies the region, but the picture shows those structures complete.",
     "altClippingMargin": "At {sides} the field cuts only the margin of the required region; the lungs shown are complete.",
     "altReference": "No simulated image-quality fault is visible: this is the reference appearance.",
