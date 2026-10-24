@@ -1160,8 +1160,8 @@
     "sideViewCaption": "Supine setup and independent leg-position gauge",
     "schematicNote": "Educational schematic, not anatomically exact. The same one-image model drives pelvic rotation in the setup and result. Leg position is independent; hidden trochanters and femoral-neck foreshortening are not reconstructed on the radiograph.",
     "rotationHelp": "Rotate the pelvis independently of both legs. Iliac wings and obturator foramina should be symmetric. This one-image warp is a teaching approximation; ±2° full / ±5° partial credit.",
-    "markerConvention": "Marker R inside the field, clear of the anatomy; only the letter is judged. The baseline has no fixed marker. Never mirrored in Arabic.",
-    "markerHint": "Choose R, then place it inside the field and outside the pelvis.",
+    "markerConvention": "Display convention (AP, same as PA): the patient's right appears on the viewer's left. Place R on the viewer's left side of the image, inside the field and clear of the anatomy; R in the other half is a wrong-side marker. The baseline has no fixed marker. Never mirrored in Arabic.",
+    "markerHint": "Choose R, then place it on the viewer's left, inside the field and outside the pelvis.",
     "rotation": "Pelvic rotation"
   },
   "scenePelvis": {

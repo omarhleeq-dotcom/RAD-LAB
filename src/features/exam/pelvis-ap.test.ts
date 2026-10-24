@@ -50,14 +50,15 @@ describe("Pelvis AP reference and existing optional mechanisms", () => {
     expect(plan({rotationDeg:r}).anatomy.rotation).toBeNull();
     expect(plan({rotationDeg:r}).limb !== undefined).toBe(Math.abs(r)>2);
   });
-  it("uses the fixed R marker (letter only), gates missing/wrong letter, and flags overlap/outside", () => {
-    expect(pelvisApSupineExam.positioning.markerRule).toEqual({ kind: "fixed-side", side: "R" });
+  it("uses the anatomical-side marker rule (RAD-072 part 3, S3 option D), gates missing/wrong-side, and flags overlap/outside", () => {
+    expect(pelvisApSupineExam.positioning.markerRule).toBeUndefined();
     expect(run().criticalFindings).toEqual([]);
-    // Only the letter is judged: R is accepted on either viewer half, L is wrong wherever it is placed.
-    expect(run({sideMarker:"R",markerPosition:{x:0.93,y:-0.6}}).criticalFindings).toEqual([]);
+    // The pelvis is bilateral: R belongs in the patient's right half (viewer-left in AP), L in the other; either letter in the other half is wrong-side.
+    expect(run({sideMarker:"R",markerPosition:{x:0.93,y:-0.6}}).criticalFindings.map(f=>f.id)).toContain("wrong-side-marker");
     expect(run({sideMarker:null}).criticalFindings.map(f=>f.id)).toContain("missing-marker");
     expect(run({sideMarker:"L"}).criticalFindings.map(f=>f.id)).toContain("wrong-side-marker");
-    expect(run({sideMarker:"L",markerPosition:{x:0.93,y:-0.6}}).criticalFindings.map(f=>f.id)).toContain("wrong-side-marker");
+    expect(run({sideMarker:"L",markerPosition:{x:0.93,y:-0.6}}).criticalFindings.map(f=>f.id)).not.toContain("wrong-side-marker");
+    expect(run({sideMarker:"R",markerPosition:{x:0.93,y:-0.6}}).score.passed).toBe(false);
     expect(run({sideMarker:"L"}).score.passed).toBe(false);
     // S-PELVIS-3-1: the keep-out zones cover the bones only; the empty top-left corner is a valid place, the rest of the old box is not.
     expect(check({markerPosition:{x:-0.86,y:-0.743}},"side-marker").outcome).toBe("pass");

@@ -12,6 +12,8 @@ import { comparisonVersion } from "./comparison-version";
  * See docs/PILOT_SUPABASE_SETUP.md#practice-evaluation-version.
  *
  * Version history (newest first; each entry names the rule that changed saved outcomes):
+ *  - /7: RAD-072 part 3 step 2 (owner 2026-10-24). Pelvis AP: the marker takes the chest PA/AP anatomical-side rule (S3 option D) instead
+ *    of the fixed-letter rule: R in the patient's left half (viewer's right) is now a wrong-side marker, and L in the viewer's right half is no longer one.
  *  - /6: RAD-068 part 3 batch 6 (S5 follow-up). Chest exams: the "stay still" instruction caps the breathing category's credit: missing leaves the
  *    engine's partial credit (half), an instruction to move leaves none; a wrong breathing instruction still loses the whole category. The motion
  *    gate is unchanged.
@@ -25,7 +27,7 @@ import { comparisonVersion } from "./comparison-version";
  *    letter that differs from the side against the detector is a wrong marker.
  *  - /1: first declared identity of the evaluation contract.
  */
-export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/6";
+export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/7";
 
 // Capture provenance at evaluation time, without changing result/score JSON bytes.
 // Weak keys retain no history; clones/deserialised/unidentified results fail closed.
