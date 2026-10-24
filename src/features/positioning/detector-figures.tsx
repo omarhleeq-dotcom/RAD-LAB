@@ -74,15 +74,18 @@ const chinKey = (s: SimulationSettings) => (s.chinPosition === "tucked" ? "chinT
 
 // The chest drawings read the chin / shoulder cues, which every chest exam declares (S14.1b: optional in the settings for a
 // limb exam); the ideal values below are only the type-level fallback and never apply to a chest exam.
-function PaDrawing({ radCase, settings, H, W, showGuides }: FigureProps) {
+function PaDrawing({ radCase, settings, H, W, showGuides, hands }: FigureProps & { hands?: "hips" }) {
   // Practice supplies the reference fit. Frame-only drawing callers retain their explicitly supplied frame.
   const a = radCase.radiograph ? fitAnatomyBox(radCase.radiograph, radCase.requiredAnatomy).landmarkCm : regionToRect(radCase.requiredAnatomy);
   const rv = rotationVisual(settings.rotationDeg);
   // A projection other than the PA drawn in the frontal figure keeps the narrowed thorax (as before the registry).
   const thoraxScale = settings.projection === "lateral-left" ? 0.45 : rv.thoraxScale;
   const lungY = a.y1 * U, lungH = (a.y2 - a.y1) * U, lungW = ((a.x2 - a.x1) * U) / 2 - 8;
-  return <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={scapulaOffset(settings.shoulderPosition ?? "rolled-forward")} chin={settings.chinPosition ?? "elevated"} showGuides={showGuides} />;
+  return <FrontalFigure W={W} H={H} thoraxScale={thoraxScale} rv={rv} lungY={lungY} lungH={lungH} lungW={lungW} scapula={scapulaOffset(settings.shoulderPosition ?? "rolled-forward")} chin={settings.chinPosition ?? "elevated"} showGuides={showGuides} hands={hands} />;
 }
+
+/** The erect PA chest: hands on the hips (RAD-072 part 3b). The AP and the chest lateral's frontal fallback keep `PaDrawing` (arms at the sides). */
+const PaHipsDrawing = (props: FigureProps) => <PaDrawing {...props} hands="hips" />;
 
 function PaOrientation({ W, showGuides }: OrientationProps) {
   const ts = useTranslations("scene");
@@ -136,9 +139,12 @@ export const CHEST_PA_FIGURE: DetectorFigure = {
   midlineKey: "positioning.midline",
   alt: (ts, s) =>
     ts("altFrontal", { chin: ts(chinKey(s)), shoulders: ts(s.shoulderPosition === "rolled-forward" ? "shouldersRolled" : "shouldersRelaxed") }),
-  Drawing: PaDrawing,
+  Drawing: PaHipsDrawing,
   Orientation: PaOrientation,
 };
+
+/** The supine / semi-erect AP chest detector view: the PA frontal figure with the arms at the sides (Bontrager: arms away from the chest, along the body). */
+export const CHEST_AP_FIGURE: DetectorFigure = { ...CHEST_PA_FIGURE, Drawing: PaDrawing };
 
 export const CHEST_LATERAL_FIGURE: DetectorFigure = {
   altKey: "positioningLateral.alt",
@@ -409,6 +415,7 @@ export const ANKLE_LATERAL_FIGURE: DetectorFigure = {
 /** The registry. The AP supine scene draws the PA frontal figure on the detector view (its own part is the side view). */
 export const DETECTOR_FIGURES: Readonly<Record<string, DetectorFigure>> = {
   "chest-pa": CHEST_PA_FIGURE,
+  "chest-ap-supine": CHEST_AP_FIGURE,
   "chest-lateral": CHEST_LATERAL_FIGURE,
   "wrist-pa": WRIST_PA_FIGURE,
   "wrist-lateral": WRIST_LATERAL_FIGURE,

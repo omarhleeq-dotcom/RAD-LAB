@@ -17,6 +17,8 @@ const SLAB_LEN = 43 * AP_SIDE.pxPerCm;
 const K = AP_SIDE.pxPerCm;
 /** Distance of the SID dimension line from the central ray, perpendicular to it. */
 const DIM_OFFSET = 30;
+/** Forward rotation of the upper arm about the shoulder when the shoulders are rolled forward (drawing angle, not a measurement). */
+const ROLL_DEG = 28;
 
 interface Props {
   radCase: RadCase;
@@ -28,7 +30,7 @@ interface Props {
  * Hand-drawn schematic SIDE view of the AP chest (S13 scene "chest-ap-supine"; redrawn in S13b-1 / -2): the patient in profile
  * on the bed, head to the viewer's LEFT (face up), the detector under the back and the tube above. It draws what the learner
  * controls and what is scored: the position (supine, or the head end raised when semi-erect: patient and detector rise together
- * about the hips), the shoulders (rolled forward lifts the shoulder off the bed), the tube with its caudad angle and the central
+ * about the hips), the shoulders (rolled forward turns the upper arms forward about the shoulder), the tube with its caudad angle and the central
  * ray, the collimated field on the detector, and the SID measured along the beam (dimension line with its reference tick).
  * RAD-072 1b: the patient from the shared `BODY` proportions at the detector's scale — head joined to the trunk by the neck, the near
  * arm along the side with the forearm on the abdomen, legs of natural thickness with a foot, one silhouette through the hip when the
@@ -89,11 +91,16 @@ export function ApSupineView({ radCase, settings, showGuides }: Props) {
   ]);
   const footL = BODY.foot.l * K, footH = BODY.foot.h * K;
   const foot = `M ${ankle - 6} ${S - 12} C ${ankle - 3} ${S - footL * 0.5} ${ankle} ${S - footL * 0.85} ${ankle + 2} ${S - footL - 4} Q ${ankle + 8} ${S - footL - 8} ${ankle + footH - 2} ${S - footL - 1} L ${ankle + footH + 2} ${S - 14} Q ${ankle + footH + 2} ${S} ${ankle + 4} ${S} L ${ankle - 6} ${S} Z`;
-  // Near arm along the side: shoulder (lifted when rolled forward) → elbow beside the trunk → forearm and hand on the abdomen.
-  const shY = S - (rolled ? 40 : 30);
+  // Near arm along the side: shoulder → elbow beside the trunk → forearm and hand on the abdomen. The shoulder stays where it is in both
+  // positions (never lifted off the bed); "rolled forward" is the upper arm rotated forward about the shoulder, so the elbow comes up
+  // and forward (RAD-072 part 3b, S13b-1 i). Drawing only.
+  const shY = S - 30;
+  const upper = { x: 52, y: 15 };
+  const turn = ((rolled ? ROLL_DEG : 0) * Math.PI) / 180;
+  const elbowAt = { x: shX + 4 + upper.x * Math.cos(turn) + upper.y * Math.sin(turn), y: shY + upper.y * Math.cos(turn) - upper.x * Math.sin(turn) };
   const arm = limbPath([
     { x: shX + 4, y: shY, w: BODY.upperArm.w * K },
-    { x: shX + 56, y: S - 15, w: BODY.forearm.w * K },
+    { x: elbowAt.x, y: elbowAt.y, w: BODY.forearm.w * K },
     { x: shX + 82, y: S - 34, w: BODY.forearm.w * K * 0.85 },
     { x: shX + 96, y: S - 40, w: BODY.hand.w * K * 0.7 },
   ]);

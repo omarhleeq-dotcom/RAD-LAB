@@ -16,7 +16,7 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { ApSupineView } from "./ApSupineView";
 import { ElbowSideView } from "./ElbowSideView";
-import { ANKLE_AP_FIGURE, ANKLE_LATERAL_FIGURE, CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, ELBOW_AP_FIGURE, ELBOW_LATERAL_FIGURE, FOOT_AP_FIGURE, FOOT_OBLIQUE_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, KNEE_AP_FIGURE, KNEE_LATERAL_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
+import { ANKLE_AP_FIGURE, ANKLE_LATERAL_FIGURE, CHEST_AP_FIGURE, CHEST_LATERAL_FIGURE, CHEST_PA_FIGURE, ELBOW_AP_FIGURE, ELBOW_LATERAL_FIGURE, FOOT_AP_FIGURE, FOOT_OBLIQUE_FIGURE, HAND_LATERAL_FIGURE, HAND_PA_FIGURE, KNEE_AP_FIGURE, KNEE_LATERAL_FIGURE, WRIST_LATERAL_FIGURE, WRIST_PA_FIGURE, type DetectorFigure } from "./detector-figures";
 import { HandSideView } from "./HandSideView";
 import { LowerLimbSideView } from "./LowerLimbSideView";
 import { ApPatientCues, LateralPatientCues, PatientCues, type CuesProps } from "./PatientCues";
@@ -84,7 +84,7 @@ export const CHEST_LATERAL_LAYOUT: SceneLayout = {
 };
 
 export const CHEST_AP_SUPINE_LAYOUT: SceneLayout = {
-  figure: CHEST_PA_FIGURE,
+  figure: CHEST_AP_FIGURE,
   SecondView: ApSupineView,
   Cues: ApPatientCues,
   texts: {
