@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-069 C1 منفذة في المسودة: تبويبات URL واعتماد الحسابات ودليل خادم مشترك وتدريب/ملاحظات/CSV وإعادة تنظيم Assess؛ [القرار](DECISIONS.md#rad069c-owner-2026-10-24) و[التقرير](RAD-069C1_REPORT_2026-10-24.md). مراجعات A/B1/B2a/B2b باقية. RAD-075 وRAD-072 مغلقتان؛ RAD-073 مستقلة.
-- **ينتظر المالك:** SQL/إثبات C1 وفحص الهاتف؛ تحقق RAD-044 من CSV الملاحظات القائمة؛ قرار تصميم الحذف فقط؛ ولوحتا B2b وفحوص A/B1/B2a وقرارات RAD-074 §7 والبند16 من قائمة الصور. استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-069 C1 منفذة في المسودة على المخطط الحالي: تبويبات URL واعتماد الحسابات ودليل خادم مشترك وتدريب/ملاحظات/CSV وإعادة تنظيم Assess؛ SQL مؤجلة إلى DB day، والملخص ينتظر التحديث؛ [القرار](DECISIONS.md#rad069c-owner-2026-10-24) و[التقرير](RAD-069C1_REPORT_2026-10-24.md). مراجعات A/B1/B2a/B2b باقية. RAD-075 وRAD-072 مغلقتان؛ RAD-073 مستقلة.
+- **ينتظر المالك:** فحص C1 على الهاتف؛ SQL C1 وC2 اللاحقة مؤجلة إلى DB day؛ تحقق RAD-044 من CSV الملاحظات القائمة؛ قرار تصميم الحذف فقط؛ ولوحتا B2b وفحوص A/B1/B2a وقرارات RAD-074 §7 والبند16 من قائمة الصور. استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
 - **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ [تقرير C1 §6](RAD-069C1_REPORT_2026-10-24.md#6-التحقق) للنتائج والحدود، لا نجاح CI مفترض.
 - **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. السبب الحي لـRAD-044 غير مثبت رغم اختبار خطأ UTC وإصلاحه؛ حارس عدد الدوال صُحح بالاستثناء المأذون ونجح. لا تغيير للمشاهد/النتيجة/التقييم/الثيم وبصماتها.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 266,
-  "updated_at": "2026-10-25T02:00:01+00:00",
+  "revision": 267,
+  "updated_at": "2026-10-25T02:00:02+00:00",
   "timezone": "UTC",
   "next_id": "RAD-076",
   "tasks": [
@@ -416,8 +416,8 @@
       "title": "لوحة المالك وتصدير CSV",
       "status": "review",
       "priority": "medium",
-      "description": "C1 تصلح تحويل الأيام المحلية وتوحّد مرشحات العرض والتصدير، مع اختبار SQL يعيد CSV فارغًا لمدى17–24 بعينات. سبب الواقعة الحية غير مثبت؛ تنتظر تحقق المالك من عدد الملاحظات وCSV محليًا. لا إغلاق قبل ذلك.",
-      "source_ref": "PR #54/#58/#63/#64؛ DECISIONS.md S-PILOT-25/28، S-PILOT-32.3؛ docs/PILOT_PLATFORM_PLAN.md §8؛ docs/RAD-069C1_REPORT_2026-10-24.md §3؛ docs/DECISIONS.md#rad069c-owner-2026-10-24",
+      "description": "C1 تصلح الأيام المحلية وتوحّد مرشحات الملاحظات وCSV مع اختبار SQL لمدى17–24 بعينات. ينتظر تحقق المالك من الهاتف بعد النشر بالمخطط الحالي؛ لا SQL مطلوبة الآن. سبب الواقعة الحية غير مثبت ولا إغلاق قبل رده.",
+      "source_ref": "PR #54/#58/#63/#64؛ DECISIONS.md S-PILOT-25/28، S-PILOT-32.3؛ docs/PILOT_PLATFORM_PLAN.md §8؛ docs/RAD-069C1_REPORT_2026-10-24.md §3؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24",
       "waiting_on": "owner"
     },
     {
@@ -641,8 +641,8 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "A وB1 وB2a وB2b تنتظر مراجعة المالك. C1 منفذة في المسودة: تبويبات ودليل مرقم ومرشحات وعرض/CSV للملاحظات وإعادة تنظيم Assess؛ تنتظر SQL/الإثبات وفحص الهاتف. حارس عدد الدوال نجح بالاستثناء المأذون. الحذف تصميم فقط.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md",
+      "description": "A/B تنتظر مراجعة المالك. C1 منفذة في المسودة وتعمل بالمخطط الحالي؛ SQL C1 وكل تغييرات DB مؤجلة إلى DB day مع C2 اللاحقة للحذف والاستبيانات. ينتظر الهاتف، وملخص الفحوص ينتظر DB day. الحذف تصميم فقط.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24",
       "waiting_on": "owner"
     },
     {

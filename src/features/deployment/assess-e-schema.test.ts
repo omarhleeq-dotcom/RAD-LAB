@@ -9,6 +9,10 @@ it("E requires its reviewed SQL/catalogues, rejects a C/D-only attestation and p
  const dir=mkdtempSync(join(tmpdir(),"radlab-e-gate-"));try{
   for(const p of ["src","supabase","scripts/pages"])cpSync(p,join(dir,p),{recursive:true});
   const path=join(dir,"scripts/pages/frontend-schema.json"),m=JSON.parse(readFileSync(path,"utf8"));
+  // This retained fixture predates the owner dashboard SQL; preserve its exact assertions.
+  rmSync(join(dir,"supabase/migrations/20261024000100_owner_dashboard.sql"),{force:true});
+  delete m.deferredMigrations["20261024000100_owner_dashboard.sql"];
+  writeFileSync(join(dir,"scripts/pages/frontend-schema.json"),JSON.stringify(m));
   expect(m.requiredMigrations).toContain("20261020000900_assess_practical_ui.sql");expect(m.checks).toContain("supabase/checks/assess-practical-ready.sql");expect(m.checks).toContain("supabase/checks/assess-staging-ready.sql");expect(m.deferredMigrations).toEqual({});
   // Compute the prior C/D marker from its actual historical files, independent of E source pins.
   const hash=createHash("sha256").update("https://vlacestfruxooznrcjqc.supabase.co\n");

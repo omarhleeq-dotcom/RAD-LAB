@@ -2,7 +2,8 @@ import { readFileSync, readdirSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
 import { expect, it } from "vitest";
 import { EMPTY_FILTERS, exportOwnerPart, localDateBound, readOwnerPage, type OwnerPage } from "./owner-data";
-import { directoryPage } from "./owner-dashboard-data";
+import { directoryPage } from "./owner-dashboard-deferred";
+import { directoryPage as currentDirectoryPage, examSummaryPage } from "./owner-dashboard-data";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 it("reads pending first across bounded pages, searches all accounts, counts statuses, aggregates saved outcomes and denies nonowners",async()=>{
@@ -78,6 +79,54 @@ it("falls back only for a missing RPC, with bounded server search and no broad e
   return {data:{version:1,boundary:"2026-01-01T00:00:00Z",summary:null,rows:[],next:null},error:null};
  },from:()=>({select:()=>({eq:async()=>({count:0,error:null})})})} as unknown as SupabaseClient;
  const page=await directoryPage(client,"remote@example.test","",{cursor:null,boundary:null});
- expect(page.legacy).toBe(true);expect(page.next?.cursor).toEqual({partition:"1"});expect(calls).toEqual(["owner_dashboard_v1","training_page_v1_with_comparison"]);
+ expect(page.legacy).toBe(true);expect(page.next).toBeNull();expect(calls).toEqual(["owner_dashboard_v1","training_page_v1_with_comparison","training_page_v1_with_comparison","training_page_v1_with_comparison"]);
  await expect(directoryPage({rpc:async()=>({error:{code:"42501"}})} as unknown as SupabaseClient,"","",{cursor:null,boundary:null})).rejects.toThrow();
 });
+
+it("uses only installed directory APIs and returns the summary waiting state without any future RPC",async()=>{
+ const calls:Record<string,unknown>[]=[];
+ const client={rpc:async(name:string,args:Record<string,unknown>)=>{
+   expect(name).toBe("training_page_v1_with_comparison");calls.push(args);
+   return {data:{version:1,boundary:"2026-01-01T00:00:00Z",summary:null,rows:[],next:null},error:null};
+ },from:()=>({select:()=>({eq:async()=>({count:0,error:null})})})} as unknown as SupabaseClient;
+ const p=await currentDirectoryPage(client,"outside-page@example.test","suspended",{cursor:{id:"00000000-0000-0000-0000-000000000001"},boundary:"2026-01-01T00:00:00Z"});
+ expect(p.legacy).toBe(true);expect(p.next).toBeNull();
+ expect(calls).toMatchObject([{p_search:"outside-page@example.test",p_status:"suspended",p_limit:20,p_cursor:{id:"00000000-0000-0000-0000-000000000001"}}]);
+ const before=calls.length;
+ expect(await examSummaryPage(client,EMPTY_FILTERS,{cursor:null,boundary:null})).toBeNull();
+ expect(calls).toHaveLength(before);
+});
+
+it("searches the next status when the pending partition is empty, preserving bounded reads",async()=>{
+ const statuses:string[]=[];
+ const client={rpc:async(name:string,args:Record<string,unknown>)=>{
+  expect(name).toBe("training_page_v1_with_comparison");expect(args.p_limit).toBe(20);statuses.push(String(args.p_status));
+  return {data:{version:1,boundary:"2026-01-01T00:00:00Z",summary:null,rows:[],next:null},error:null};
+ },from:()=>({select:()=>({eq:async()=>({count:0,error:null})})})} as unknown as SupabaseClient;
+ expect((await currentDirectoryPage(client,"matching@example.test","",{cursor:null,boundary:null})).rows).toHaveLength(0);
+ expect(statuses).toEqual(["pending","approved","suspended"]);
+});
+
+it("reads and exports notes against the installed migration ceiling without dashboard SQL",async()=>{
+ const db=new PGlite(),owner="00000000-0000-0000-0000-000000000001";
+ try{
+  await db.exec(`create role anon nologin;create role authenticated nologin;create schema auth;
+   create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
+   create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+   grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
+  for(const f of readdirSync("supabase/migrations").filter(f=>f.endsWith(".sql")&&f<"20261024000100").sort())await db.exec(readFileSync(`supabase/migrations/${f}`,"utf8"));
+  expect((await db.query<{n:number}>("select count(*)::int n from pg_proc where proname='owner_dashboard_v1'")).rows[0]!.n).toBe(0);
+  await db.query("insert into auth.users values($1,'fixture@example.test',now(),'{}')",[owner]);
+  await db.query("update profiles set role='owner',status='approved' where user_id=$1",[owner]);
+  await db.query("insert into feedback(user_id,exam_id,text,at) select $1,'chest-pa-erect','Fixture note '||i,'2026-10-18'::timestamptz + i*interval '1 minute' from generate_series(1,25) i",[owner]);
+  await db.query("select set_config('request.jwt.claim.sub',$1,false)",[owner]);await db.exec("set role authenticated");
+  const rpc=async(a:Record<string,unknown>)=>({error:null,data:(await db.query<{p:OwnerPage}>("select owner_page_v1($1,$2,$3,$4,$5,$6,$7,$8,$9) p",[a.p_stream,a.p_limit,a.p_cursor,a.p_participant,a.p_from,a.p_to,a.p_exam,a.p_boundary,a.p_export])).rows[0]!.p});
+  const filters={...EMPTY_FILTERS,exam:"chest-pa-erect",from:"2026-10-17T00:00:00Z",to:"2026-10-24T23:59:59.999999Z"};
+  const first=await readOwnerPage(rpc,"notes",filters,null,"2026-10-25T00:00:00Z",false,20);
+  expect(first.total).toBe(25);expect(first.rows).toHaveLength(20);expect(first.next).not.toBeNull();
+  const second=await readOwnerPage(rpc,"notes",filters,first.next,first.boundary,false,20);
+  expect(second.rows).toHaveLength(5);expect(second.next).toBeNull();
+  const exported=await readOwnerPage(rpc,"notes",filters,null,first.boundary,true,1000);
+  expect(exportOwnerPart("notes",exported).written).toBe(25);expect(exported.rows.every(r=>!Object.hasOwn(r,"user_id"))).toBe(true);
+ }finally{await db.close();}
+},30000);

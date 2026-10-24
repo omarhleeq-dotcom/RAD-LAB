@@ -17,8 +17,7 @@
     "20261020000800_assess_mixed_ui.sql",
     "20261020000900_assess_practical_ui.sql",
     "20261020001000_assess_history_consent.sql",
-    "20261020001100_assess_retention.sql",
-    "20261024000100_owner_dashboard.sql"
+    "20261020001100_assess_retention.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
@@ -27,10 +26,17 @@
     "supabase/checks/assess-practical-ready.sql",
     "supabase/checks/assess-staging-ready.sql",
     "supabase/checks/assess-history-ready.sql",
-    "supabase/checks/assess-retention-ready.sql",
-    "supabase/checks/owner-dashboard-ready.sql"
+    "supabase/checks/assess-retention-ready.sql"
   ],
-  "deferredMigrations": {},
+  "deferredMigrations": {
+    "20261024000100_owner_dashboard.sql": {
+      "sha256": "d7c932ca54d1724ef8ffeb1f78c0a69834609e9e9dd49d1d0b8bb6c8b701bef2",
+      "reason": "Owner decision 2026-10-24: C1 SQL waits for the shared DB day with C2 delete and surveys; no browser access until application, checks and a single new attestation.",
+      "serverModules": [
+        "src/features/pilot/owner-dashboard-deferred.ts"
+      ]
+    }
+  },
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
@@ -46,11 +52,11 @@
     "src/features/pilot/useAccount.ts": "b7dabc44751aa31928a5fb0625fb7c6657b856f6071eefd452e6262a3612ffa1",
     "src/features/pilot/activity.ts": "ef0fbb293a0fdd42faa46d5a5556b10b570f65396dd884e8f707186fba7d0f4a",
     "src/features/pilot/PilotSessionKeeper.tsx": "c812951455090fc989fd481ddaadced07e16b2533af8d359e276857779b6fe88",
-    "src/features/pilot/useOwnerData.ts": "ed62d0bc5511e0bf8e4ba77ca48af08f0a2ef0a39726a43b89ca37a0f5644e61",
+    "src/features/pilot/useOwnerData.ts": "bd6ef03a4143401f32617e24e1ce1d15466b2953151bfcae55e3ffb44958e534",
     "src/features/pilot/owner-data.ts": "a6b0f47c993869e60c605009d9b7cb483f94bfda3bce83e2e20b1934bb2ea5c4",
     "src/features/pilot/TrainingSummary.tsx": "67e0146747ad1a8f1e4658b22cece8fe6cd35ded6e33af5592013cf033572e08",
     "src/features/pilot/OwnerTraining.tsx": "23c2bfad50c50c5833270597bd767acf2b52a702b01d355e7b2a42838b1f0fd1",
-    "src/features/pilot/owner-dashboard-data.ts": "f0e61d42f4020f3f4395a016dd669c92d30bc2f8eabea5139b2861376900b83b",
+    "src/features/pilot/owner-dashboard-data.ts": "b10134be1500c356479a3bb4c3fcd1cb527d0cbe16cecaa26d49ab01670a804d",
     "src/features/pilot/OwnerDirectory.tsx": "b441f5aba570da829584522c30acf92410495737653051789274516afc0c3298",
     "src/features/pilot/OwnerActivity.tsx": "80401ccba4a81c8db876068b0586dafafd0f2398d438024b00810c17bf13d801",
     "src/features/pilot/OwnerPanel.tsx": "3e8aac7f4d69322cd63243419c88c283183d46eaccd7a24d81eb53bb8fe02aa5",
