@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-069 B2a منفذة ([القرار](DECISIONS.md#rad069b2a-owner-2026-10-24)، [التقرير](RAD-069B2A_REPORT_2026-10-24.md)) وتنتظر فحص المالك؛ B1 منفذة مع QA غير مكتمل وفق [قرار المالك](DECISIONS.md#rad069b1-owner-2026-10-24) و[تقرير B1](RAD-069B1_REPORT_2026-10-24.md)؛ A مدموجة، وB2a/B2b/C مخططة. RAD-072 مكتملة بتأكيد الهاتف؛ RAD-073 مخططة.
-- **ينتظر المالك:** فحص A وB1 على الهاتف والحاسوب؛ قرارات نتائج RAD-074 §7؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-069 B2b المرحلة A (رسومات المكتبة) منفذة وتنتظر لوحة المراجعة ([القرار](DECISIONS.md#rad069b2b-owner-2026-10-24)، [التقرير](RAD-069B2B_PHASE_A_REPORT_2026-10-24.md)) قبل المرحلة B؛ RAD-069 B2a منفذة ([القرار](DECISIONS.md#rad069b2a-owner-2026-10-24)، [التقرير](RAD-069B2A_REPORT_2026-10-24.md)) وتنتظر فحص المالك؛ B1 منفذة مع QA غير مكتمل وفق [قرار المالك](DECISIONS.md#rad069b1-owner-2026-10-24) و[تقرير B1](RAD-069B1_REPORT_2026-10-24.md)؛ A مدموجة، وC مخططة. RAD-075 مغلقة. RAD-072 مكتملة بتأكيد الهاتف؛ RAD-073 مخططة.
+- **ينتظر المالك:** مراجعة لوحة رسومات B2b؛ فحص A وB1 على الهاتف والحاسوب؛ قرارات نتائج RAD-074 §7؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
 - **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ دليل دمج A في تقرير B1؛ [إغلاق RAD-072](DECISIONS.md#rad072-phone-closure-2026-10-24).
 - **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية؛ B1 نتائج محفوظة دون إعادة تقييم، وتسميات البنود غير محفوظة. كل scene/result وgolden وcharacterisation والتقييم ثابتة في B1.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 263,
-  "updated_at": "2026-10-25T00:10:00+00:00",
+  "revision": 264,
+  "updated_at": "2026-10-25T01:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-076",
   "tasks": [
@@ -641,8 +641,8 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "A وB1 تنتظران فحص المالك. B2a منفذة (F7): ثيم داكن افتراضي وزر بالشريط العلوي، محفوظ على الجهاز؛ الصورة والمشاهد مطابقة بكسلًا؛ تنتظر فحص الهاتف بعد إيقاف تغميق المتصفح. B2b الرسومات وC لوحة المالك (تصدير RAD-044 ومواضع Assess) مخططة.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md",
+      "description": "A وB1 تنتظران فحص المالك. B2a منفذة (F7) وتنتظر فحص الهاتف بعد إيقاف تغميق المتصفح. B2b (F8): المرحلة A منفذة (رسومات مولّدة بسكربت مع لوحتي مراجعة) وتنتظر موافقة المالك قبل المرحلة B (تسجيل الأصول). C لوحة المالك (RAD-044 ومواضع Assess) مخططة.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     },
     {
@@ -693,11 +693,11 @@
     {
       "id": "RAD-075",
       "title": "تنظيف وإصلاحات صغيرة: سياسة اللقطات، مهلات حراس scene-dom، وميض الدخول، تشخيص phone-navigation",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "سياسة اللقطات، مهلة حراس scene-dom، «جارٍ تسجيل الدخول…»، وإصلاح هبوط الدخول (returnTo في العنوان) وfixture. المتبقي: حذف الفروع المدموجة (رُفض 403)؛ phone-navigation يمر كاملًا بعد تحديث مقطع المكتبة.",
+      "description": "سياسة اللقطات، مهلة حراس scene-dom، «جارٍ تسجيل الدخول…»، إصلاح هبوط الدخول، وتحديث مقطع المكتبة في phone-navigation؛ حذف المالك الفروع الستة المدموجة.",
       "source_ref": "docs/RAD-075_HOUSEKEEPING_REPORT_2026-10-24.md؛ docs/DECISIONS.md#housekeeping-owner-2026-10-24",
-      "waiting_on": "owner"
+      "completion_evidence": "المحتوى في main (#123 و#124): اختبارات واجتياز phone-navigation 274 فحصًا (تقرير RAD-075 متابعة 2)؛ حذف الفروع الستة بإفادة المالك 2026-10-24 (متابعة 3)."
     }
   ]
 }
