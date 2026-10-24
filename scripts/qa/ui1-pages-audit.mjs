@@ -20,6 +20,7 @@ let checks = 0, audits = 0;
 const ok = (v, label) => { assert.ok(v, label); checks++; };
 async function setup(signedIn, status, consentVersion, name, width) {
   const ctx = await browser.newContext({ viewport: { width, height: 900 } });
+  if (process.env.THEME) await ctx.addInitScript((t) => localStorage.setItem("radlab-theme", t), process.env.THEME); // RAD-069 B2a: THEME=light|dark
   const errors = [];
   if (signedIn) await ctx.addInitScript((v) => localStorage.setItem("sb-abcdefghijklmnop-auth-token", v), JSON.stringify(session));
   await ctx.route("**/*", async (route) => {

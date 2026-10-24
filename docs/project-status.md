@@ -6,7 +6,7 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-069 B1 منفذة مع QA غير مكتمل وفق [قرار المالك](DECISIONS.md#rad069b1-owner-2026-10-24) و[تقرير B1](RAD-069B1_REPORT_2026-10-24.md)؛ A مدموجة، وB2a/B2b/C مخططة. RAD-072 مكتملة بتأكيد الهاتف؛ RAD-073 مخططة.
+- **الاتجاه الحالي:** RAD-069 B2a منفذة ([القرار](DECISIONS.md#rad069b2a-owner-2026-10-24)، [التقرير](RAD-069B2A_REPORT_2026-10-24.md)) وتنتظر فحص المالك؛ B1 منفذة مع QA غير مكتمل وفق [قرار المالك](DECISIONS.md#rad069b1-owner-2026-10-24) و[تقرير B1](RAD-069B1_REPORT_2026-10-24.md)؛ A مدموجة، وB2a/B2b/C مخططة. RAD-072 مكتملة بتأكيد الهاتف؛ RAD-073 مخططة.
 - **ينتظر المالك:** فحص A وB1 على الهاتف والحاسوب؛ قرارات نتائج RAD-074 §7؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
 - **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ دليل دمج A في تقرير B1؛ [إغلاق RAD-072](DECISIONS.md#rad072-phone-closure-2026-10-24).
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 259,
-  "updated_at": "2026-10-24T22:00:00+00:00",
+  "revision": 260,
+  "updated_at": "2026-10-24T23:30:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-075",
   "tasks": [
@@ -641,9 +641,9 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "A دُمجت #121 وتنتظر فحص المالك. B1 منفذة وعُدّلت بعد مراجعة المالك؛ FULL ناجح على القفل. يبقى فحص المالك للهاتف، وphone-navigation يتوقف عند هبوط الدخول (خارج B1، لم يُعدَّل). B2a مخطط: زر الثيم بالشريط العلوي (F7)، داكن افتراضيًا ومحفوظ على الجهاز دون اتباع النظام. B2b الرسومات؛ C لوحة المالك وتصدير RAD-044 ومواضع Assess؛ مخططة.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md",
-      "waiting_on": "code"
+      "description": "A وB1 تنتظران فحص المالك. B2a منفذة (F7): ثيم داكن افتراضي وزر بالشريط العلوي، محفوظ على الجهاز؛ الصورة والمشاهد مطابقة بكسلًا؛ تنتظر فحص الهاتف بعد إيقاف تغميق المتصفح. B2b الرسومات وC لوحة المالك (تصدير RAD-044 ومواضع Assess) مخططة.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-070",

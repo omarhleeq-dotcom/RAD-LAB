@@ -1489,7 +1489,9 @@
     "learn": "Learning material",
     "openMenu": "Open navigation",
     "closeMenu": "Close navigation",
-    "training": "Training"
+    "training": "Training",
+    "theme": "Dark theme",
+    "themeShort": "Dark"
   },
   "library": {
     "title": "Exam library",
