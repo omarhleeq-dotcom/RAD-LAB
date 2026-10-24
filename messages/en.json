@@ -1101,7 +1101,7 @@
     "alt": "Interactive schematic of the detector with the right knee, the collimated field, the central-ray target and the side marker.",
     "midline": "Long axis of the leg",
     "midlineLateral": "Mid-knee line",
-    "detectorCaptionAp": "Detector view as displayed: right knee, AP, leg extended (femur toward the top, the lateral side — the fibula — on the viewer's left)",
+    "detectorCaptionAp": "Detector view as displayed: right knee, AP, leg extended (femur toward the top, the lateral side — the fibula — on the viewer's left) The marked point is the mid-knee joint; Bontrager's reference, about 1.25 cm distal to the patellar apex, is not visible in this image.",
     "detectorCaptionLateral": "Detector view as displayed: right knee, lateral (mediolateral), knee flexed (femur toward the top, the front of the knee on the viewer's left)",
     "sideViewCaption": "Side view of the table set-up",
     "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The leg position, the flexion of the lateral knee, the grid, shielding and the patient's build are shown as context only: they are not scored in this version.",
