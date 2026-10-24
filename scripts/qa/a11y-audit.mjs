@@ -4,12 +4,14 @@
 // the Session 9 shell pages, the set-up screen and a result screen; keyboard reachability and visible focus of every control; the text
 // alternative of the canvas; no horizontal overflow; touch-target size on mobile.
 import { chromium } from "playwright";
-import { readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { driver, startPractice } from "./workspace.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const axeSrc = readFileSync("node_modules/axe-core/axe.min.js", "utf8");
 const msgs = { en: JSON.parse(readFileSync("messages/en.json", "utf8")), ar: JSON.parse(readFileSync("messages/ar.json", "utf8")) };
 const DEVICES = { desktop: { viewport: { width: 1440, height: 900 } }, mobile: { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true } };
+if (process.env.OUT) mkdirSync(process.env.OUT, { recursive: true });
 const report = [];
 const note = (loc, dev, area, kind, detail) => { report.push({ loc, dev, area, kind, detail }); if (kind !== "ok") console.log(`  ${kind.toUpperCase()} ${loc}/${dev}/${area}: ${typeof detail === "string" ? detail : JSON.stringify(detail)}`); };
 
@@ -32,6 +34,9 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
   }
   await page.goto(`${BASE}/${loc}/xray/chest-pa-erect/practice`, { waitUntil: "networkidle" });
   await axe("setup");
+  // Phone layout: the case-details sheet is modal; the keyboard walk and the result need it closed (a no-op on desktop).
+  await startPractice(page, msgs[loc]);
+  const dr = driver(page, msgs[loc]);
 
   // Keyboard: Tab through the whole page; every stop must have a visible focus indicator; record the order.
   const stops = [];
@@ -64,7 +69,7 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
   }
 
   // Result screen.
-  await page.getByRole("button", { name: msgs[loc].console.expose, exact: true }).click();
+  await dr.click(page.getByRole("button", { name: msgs[loc].console.expose, exact: true }));
   await page.waitForSelector('[data-testid="radiograph"][data-status="ready"]', { timeout: 20000 });
   await axe("result");
   const alt = await page.locator('[data-testid="radiograph"] canvas').getAttribute("aria-label");
