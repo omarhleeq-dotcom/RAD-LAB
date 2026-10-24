@@ -3,23 +3,26 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { getPilotClient } from "./client";
 import { directoryPage, FIRST, type DirectoryPage, type DirectoryPerson, type Position } from "./owner-dashboard-data";
+import { useSessionAccount } from "./SessionGate";
 export const ownerButton = "min-h-11 rounded-md border border-line px-3 py-2 text-sm font-medium hover:bg-paper disabled:opacity-60";
 /** Shared bounded directory for approvals, export selection and Assess selection. */
 export function OwnerDirectory({ revision=0, picker=false, selected=[], onSelect, children }: {
  revision?:number; picker?:boolean; selected?:string[]; onSelect?:(person:DirectoryPerson)=>void; children?:(person:DirectoryPerson)=>React.ReactNode;
 }) {
+ const {state}=useSessionAccount();
+ const owner=state.kind==="signedIn"&&state.profile.status==="approved"&&state.profile.role==="owner"?state.userId:null;
  const t=useTranslations("owner.dashboard");
  const [draft,setDraft]=useState(""),[search,setSearch]=useState(""),[status,setStatus]=useState("");
  const [position,setPosition]=useState<Position>(FIRST),[result,setResult]=useState<{key:string;page?:DirectoryPage;error?:boolean}>({key:""});
- const key=JSON.stringify([search,status,position,revision]);
- useEffect(()=>{let cancelled=false;void (async()=>{
+ const key=JSON.stringify([owner,search,status,position,revision]);
+ useEffect(()=>{if(!owner)return;let cancelled=false;void (async()=>{
    try {const c=await getPilotClient();if(!c)throw new Error();const page=await directoryPage(c,search,status,position);if(!cancelled)setResult({key,page});}
    catch {if(!cancelled)setResult({key,error:true});}
  })();return ()=>{cancelled=true;};
  // key contains the entire request.
  // eslint-disable-next-line react-hooks/exhaustive-deps
  },[key]);
- const page=result.key===key?result.page:undefined;
+ const page=owner&&result.key===key?result.page:undefined;
  return <section className="min-w-0 space-y-3" aria-label={t("search")} data-testid="owner-directory">
    <form className="flex flex-wrap items-end gap-2" onSubmit={e=>{e.preventDefault();setSearch(draft.trim());setPosition(FIRST);}}>
     <label className="min-w-0 flex-1 text-sm">{t("search")}<input type="search" maxLength={100} className="mt-1 block w-full rounded border border-line bg-panel p-2" value={draft} onChange={e=>setDraft(e.target.value)}/></label>

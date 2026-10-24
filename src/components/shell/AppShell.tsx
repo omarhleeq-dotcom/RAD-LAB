@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const entries = [
     { href: "/", label: tc("home"), icon: "home" },
     ...available.map((modality) => ({ href: `/${modality.id}`, label: available.length === 1 ? t("library") : `${t("library")} · ${localize(modality.name, locale)}`, icon: "library" })),
-    ...(PILOT ? [{ href: "/training", label: t("training"), icon: "assess" }, { href: "/account", label: t("account"), icon: "account" }] : []),
+    ...(PILOT ? [{ href: "/feedback", label: t("feedback"), icon: "assess" }, { href: "/training", label: t("training"), icon: "assess" }, { href: "/account", label: t("account"), icon: "account" }] : []),
     { ...(PILOT ? { href: "/assess" } : {}), label: t("assess"), icon: "assess" },
     { label: t("learn"), icon: "learn" },
     { href: "/credits", label: tc("creditsLink"), icon: "credits" },
