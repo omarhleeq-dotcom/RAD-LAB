@@ -7,11 +7,6 @@ it("Current retention frontend retains F, requires v2 SQL, rejects the actual E/
  const dir=mkdtempSync(join(tmpdir(),"radlab-f-gate-"));try{
   for(const p of ["src","supabase","scripts/pages"])cpSync(p,join(dir,p),{recursive:true});
   const path=join(dir,"scripts/pages/frontend-schema.json"),m=JSON.parse(readFileSync(path,"utf8"));
-  // This retained fixture predates the owner dashboard SQL; preserve its exact assertions.
-  rmSync(join(dir,"supabase/migrations/20261024000100_owner_dashboard.sql"),{force:true});
-  rmSync(join(dir,"supabase/migrations/20261024000200_owner_deletion_surveys.sql"),{force:true});
-  delete m.deferredMigrations["20261024000100_owner_dashboard.sql"];
-  delete m.deferredMigrations["20261024000200_owner_deletion_surveys.sql"];
   writeFileSync(join(dir,"scripts/pages/frontend-schema.json"),JSON.stringify(m));
   expect(m.contract).toBe("pilot-through-assess-retention/1");expect(m.requiredMigrations).toContain("20261020001100_assess_retention.sql");expect(m.checks).toContain("supabase/checks/assess-retention-ready.sql");expect(m.requiredMigrations).toContain("20261020001000_assess_history_consent.sql");expect(m.checks).toContain("supabase/checks/assess-history-ready.sql");expect(m.deferredMigrations).toEqual({});
   const env={NEXT_PUBLIC_SUPABASE_URL:"https://vlacestfruxooznrcjqc.supabase.co",NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_synthetic_local_test_123456",PILOT_SCHEMA_VERIFIED:"pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f"};

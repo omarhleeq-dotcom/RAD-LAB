@@ -17,7 +17,9 @@
     "20261020000800_assess_mixed_ui.sql",
     "20261020000900_assess_practical_ui.sql",
     "20261020001000_assess_history_consent.sql",
-    "20261020001100_assess_retention.sql"
+    "20261020001100_assess_retention.sql",
+    "20261024000100_owner_dashboard.sql",
+    "20261024000200_owner_deletion_surveys.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
@@ -26,24 +28,11 @@
     "supabase/checks/assess-practical-ready.sql",
     "supabase/checks/assess-staging-ready.sql",
     "supabase/checks/assess-history-ready.sql",
-    "supabase/checks/assess-retention-ready.sql"
+    "supabase/checks/assess-retention-ready.sql",
+    "supabase/checks/owner-dashboard-ready.sql",
+    "supabase/checks/owner-deletion-surveys-ready.sql"
   ],
-  "deferredMigrations": {
-    "20261024000100_owner_dashboard.sql": {
-      "sha256": "d7c932ca54d1724ef8ffeb1f78c0a69834609e9e9dd49d1d0b8bb6c8b701bef2",
-      "reason": "Owner decision 2026-10-24: C1 SQL waits for the shared DB day with C2 delete and surveys; no browser access until application, checks and a single new attestation.",
-      "serverModules": [
-        "src/features/pilot/owner-dashboard-deferred.ts"
-      ]
-    },
-    "20261024000200_owner_deletion_surveys.sql": {
-      "sha256": "757ba38b0806221e8bbce71cc2f67740188ccdcaa46664bc070ce1d339c9d99a",
-      "reason": "Owner C2 decision 2026-10-24: deletion and surveys are deferred to the coordinated DB day; no frontend API, consent change or required check now.",
-      "serverModules": [
-        "src/features/pilot/c2-contract.ts"
-      ]
-    }
-  },
+  "deferredMigrations": {},
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
@@ -63,11 +52,14 @@
     "src/features/pilot/owner-data.ts": "a6b0f47c993869e60c605009d9b7cb483f94bfda3bce83e2e20b1934bb2ea5c4",
     "src/features/pilot/TrainingSummary.tsx": "67e0146747ad1a8f1e4658b22cece8fe6cd35ded6e33af5592013cf033572e08",
     "src/features/pilot/OwnerTraining.tsx": "23c2bfad50c50c5833270597bd767acf2b52a702b01d355e7b2a42838b1f0fd1",
-    "src/features/pilot/owner-dashboard-data.ts": "278608f71cb931eec8a19dd3bd6bacba99a3fb4125cca1d58f4759a4079a8655",
-    "src/features/pilot/OwnerDirectory.tsx": "b441f5aba570da829584522c30acf92410495737653051789274516afc0c3298",
+    "src/features/pilot/owner-dashboard-data.ts": "7eeeefd28b84f9406bd017e547ea2dba1a9db6c308c81199df3b0fdcceaadc10",
+    "src/features/pilot/owner-dashboard-deferred.ts": "efe0b0a805bb69c1f1dd4e82ea06afb9ae9018066488157a93f496db1883e702",
+    "src/features/pilot/OwnerDirectory.tsx": "093dbbb3c1a625b9d4803f71eb60936d491bf90781b0509c4b0417aabcb02713",
     "src/features/pilot/OwnerActivity.tsx": "9ebd86037a0874fb366b42e0718348cec62ea2a9a368b48a4395c82e544c7f1d",
     "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
-    "src/features/pilot/OwnerPanel.tsx": "3e8aac7f4d69322cd63243419c88c283183d46eaccd7a24d81eb53bb8fe02aa5",
+    "src/features/pilot/OwnerPanel.tsx": "cc274b6ff26e8d402fed22ead298228276d6d27784ff257caf99f35016ac6698",
+    "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
+    "src/features/pilot/c2-contract.ts": "bbf1d8373042124ba88b5e7b59052dc1c55466972bf3cdfdcf54b448389972ec",
     "src/features/assess/OwnerAssessPanel.tsx": "f8d38442b9996a0d56f711b01b744b6273a897ddbcbc40a2c7c8db5a371d6ff2",
     "src/features/assess/admin-data.ts": "c39b767b2b48b3cd941698f14baef70cc87aa062973f037bb4623e288c3b1576",
     "src/features/assess/OwnerContentPanel.tsx": "2037a5733bef75e1295e9c6aa629babb6961471383e850cd883ad3d6a9295ae6",
