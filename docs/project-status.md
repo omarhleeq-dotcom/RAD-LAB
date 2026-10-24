@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 249,
-  "updated_at": "2026-10-24T12:00:00+00:00",
+  "revision": 250,
+  "updated_at": "2026-10-24T14:00:00+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-073",
+  "next_id": "RAD-074",
   "tasks": [
     {
       "id": "RAD-001",
@@ -664,12 +664,21 @@
       "defer_reason": "قرار المالك S10: يحتاج تحكمًا جديدًا في المحاكي؛ ليس الآن."
     },
     {
+      "id": "RAD-073",
+      "title": "منع العلامة من مخططات العظام المتتبَّعة",
+      "status": "planned",
+      "priority": "low",
+      "description": "فكرة لاحقة (الجزء 3 §7e): مخططات العظام المتتبَّعة مناطقَ منع للعلامة بدل مستطيل التشريح، كالحوض اليدوي. لم تبدأ. مخاطر: إسقاط المخططات على الكاشف مع الدوران وحدّ هامشي؛ تغيير تقييم العلامة فيرفع إصدار التقييم؛ علامة فوق عظم غير متتبَّع (سمسماني)؛ اختبار لكل فحص.",
+      "source_ref": "docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md#7-بنود-مفتوحة-وقرارات-المالك؛ docs/DECISIONS.md#rad072-3b-owner-2026-10-24",
+      "waiting_on": "owner"
+    },
+    {
       "id": "RAD-072",
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "(1) الصدر #113. (2) الأطراف: اليد #114، الرسغ والقدم #115، الكتف 2c #116 (فحص الهاتف باقٍ). (3) الجزء 3 المرحلة A على PR مسودة: قاعدة جانب R للحوض (RAD-037) وتصحيح منظر الأعلى للكتف نُفذا، والباقي خيارات بلا تنفيذ (بنود R وهاشور no-data والإبهام والمشط) بانتظار قرار المالك.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md",
+      "description": "(1) الصدر #113. (2) الأطراف #114 #115 #116 (فحص الهاتف باقٍ). (3) الجزء 3: A مدموج #118؛ B على PR مسودة بقرارات [المالك](DECISIONS.md#rad072-3b-owner-2026-10-24): رسم الصدر، نص الركبة والقدم، مفتاح الهاشور، سطرا اليد والقدم؛ e = RAD-073.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-3b-owner-2026-10-24",
       "waiting_on": "owner"
     }
   ]
