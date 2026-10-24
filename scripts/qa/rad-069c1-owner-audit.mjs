@@ -100,9 +100,8 @@ try {
   await page.getByTestId('filter-from').fill('2026-10-17');await page.getByTestId('filter-to').fill('2026-10-24');
   await page.getByTestId('saved-owner-rows').getByText(notes[0].text,{exact:true}).waitFor();
   ok(reads.some(r=>r.p_from==='2026-10-16T21:00:00.000Z'&&r.p_to==='2026-10-24T20:59:59.999999Z'),`${tag} local inclusive bounds`);
-  await page.getByTestId('csv-notes').click();await page.getByTestId('export-save').waitFor();
-  const [download]=await Promise.all([page.waitForEvent('download'),page.getByTestId('export-save').click()]);const csv=readFileSync(await download.path(),'utf8');
-  ok(notes.every(n=>csv.includes(n.text))&&!csv.includes(user.email),`${tag} notes CSV matches view`);await axe(page,`${tag} training`);
+  const [download]=await Promise.all([page.waitForEvent('download'),page.getByTestId('csv-notes').click()]);const csv=readFileSync(await download.path(),'utf8');
+  ok(notes.every(n=>csv.includes(n.text))&&!csv.includes(user.email),`${tag} notes CSV matches view`);ok(await page.getByTestId('export-next').count()===0&&await page.getByTestId('export-report').count()===0,`${tag} one file needs no extra controls`);ok(await page.getByTestId('csv-notes').isEnabled()&&await page.getByTestId('csv-attempts').isEnabled(),`${tag} main downloads remain enabled`);await axe(page,`${tag} training`);
   await page.getByTestId('owner-training').locator('details > summary').first().click();
   await page.getByTestId('owner-directory').getByRole('searchbox').fill('owner@example.test');await page.getByTestId('owner-directory').getByRole('button',{name:d.searchAction,exact:true}).click();
   await page.getByTestId('owner-directory').getByRole('checkbox').first().check();
@@ -134,11 +133,31 @@ try {
   const next=list.locator('..').getByRole('button',{name:d.next,exact:true});
   await next.click();await page.getByText(many[24].text,{exact:true}).waitFor();ok(await list.locator('li').count()===20,'notes continuation replaces rows');
   await next.click();await page.getByText(many[4].text,{exact:true}).waitFor();ok(await list.locator('li').count()===5,'notes final page');
-  await page.getByTestId('csv-notes').click();await page.getByTestId('export-save').waitFor();
-  const [download]=await Promise.all([page.waitForEvent('download'),page.getByTestId('export-save').click()]);const csv=readFileSync(await download.path(),'utf8');
+  const [download]=await Promise.all([page.waitForEvent('download'),page.getByTestId('csv-notes').click()]);const csv=readFileSync(await download.path(),'utf8');
   ok(csv.split('\r\n').length-2===45&&csv.includes(many[0].text)&&csv.includes(many.at(-1).text),'notes export covers all matching pages');
   ok(reads.filter(r=>r.p_stream==='notes').every(r=>r.p_limit<=(r.p_export?1000:20)),'all note reads bounded on installed RPC');
   await axe(page,'current schema paged notes and export');await context.close();
+ }
+ {
+  const many=Array.from({length:1001},(_,i)=>({...notes[1],id:String(i+1),text:`Fixture large note ${i}`,at:new Date(Date.parse('2026-10-18T00:00:00Z')+i*1000).toISOString()}));
+  const {context,page,reads}=await setup('en',390,'dark',12,true,'owner',many),d=messages.en.owner.dashboard;
+  await page.getByRole('link',{name:d.training,exact:true}).click();await page.getByTestId('matching-counts').waitFor();
+  await page.getByTestId('csv-notes').waitFor();
+  const [first]=await Promise.all([page.waitForEvent('download'),page.getByTestId('csv-notes').click()]);
+  const firstText=readFileSync(await first.path(),'utf8');ok(first.suggestedFilename().endsWith('-part-1.csv')&&firstText.split('\r\n').length-2===1000,'large export downloads first part on the main click');
+  ok(reads.filter(r=>r.p_export&&r.p_stream==='notes').length===1,'next page is not prefetched');
+  await page.getByTestId('export-next').waitFor();ok((await page.getByTestId('export-next').innerText()).includes('2 of 2'),'plain next-part button');
+  ok(!await page.getByTestId('export-report').isVisible(),'report is behind info');
+  const [second]=await Promise.all([page.waitForEvent('download'),page.getByTestId('export-next').click()]);
+  ok(second.suggestedFilename().endsWith('-part-2.csv')&&readFileSync(await second.path(),'utf8').split('\r\n').length-2===1,'next click downloads only part 2');
+  ok((await page.getByTestId('export-status').innerText()).includes(`${new Intl.NumberFormat('en').format(1001)} notes in 2 files`),'plain completed count');
+  ok(await page.getByTestId('export-next').count()===0,'no next button after completion');
+  await page.getByTestId('export-info').locator('summary').click();await page.getByTestId('export-report').waitFor();await axe(page,'large export and info');
+  await Promise.all([page.waitForEvent('download'),page.getByTestId('csv-notes').click()]);await page.getByTestId('export-next').waitFor();
+  const [restart]=await Promise.all([page.waitForEvent('download'),page.getByTestId('csv-attempts').click()]);
+  ok(restart.suggestedFilename().includes('attempts')&&await page.getByTestId('export-next').count()===0,'new download replaces an unfinished export automatically');
+  ok((await page.getByTestId('export-status').innerText()).includes('1 attempt in 1 file'),'restart resets the downloaded count');
+  await axe(page,'cancel and restart');await context.close();
  }
  {const {context,page}=await setup('en',390,'dark',12,true);await page.getByTestId('owner-summary').waitFor();ok(await page.getByTestId('owner-row').count()>0,'current schema fallback');await axe(page,'fallback');await context.close();}
  {const {context,page,reads}=await setup('ar',390,'dark',12,true,'participant');await page.getByTestId('owner-denied').waitFor();ok(reads.length===0,'nonowner has no owner reads');await axe(page,'denied');await context.close();}
