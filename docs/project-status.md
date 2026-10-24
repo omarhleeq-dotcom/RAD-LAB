@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-077: C1 تعبئة المكتبة الداكنة وA1 تسميات الهاتف الملائم للمراجعة؛ [التقرير](RAD-077_REPORT_2026-10-24.md) و[قرار المالك](DECISIONS.md#rad077-owner-2026-10-24). B مؤجل.
-- **ينتظر المالك:** مراجعة الهاتف والصور؛ حوض الكاشف الكامل وأسفل1440 مفتوحان دون إصلاح الآن. C2 وDB day والموافقة والإطلاق ضمن مسارها السابق؛ مراجعات الهاتف A/B/C1 باقية. RAD-044 مغلقة بإثباته؛ SUS العربية تحتاج citation validated؛ Assess بإذن استئناف منفصل.
+- **الاتجاه الحالي:** RAD-069 DB day: وصل C1/C2 والموافقة والشهادة للمراجعة وفق [أمر المالك](DECISIONS.md#rad069-db-day-owner-2026-10-24) و[التقرير](RAD-069_DB_DAY_REPORT_2026-10-24.md). مراجعة RAD-077 باقية وفق تقريرها.
+- **ينتظر المالك:** إعادة staging المحدثة، ثم تعيين الشهادة وإعادة CI والدمج والهاتف؛ لا إعادة الترحيلات. فحوص الهاتف A/B/C1 وRAD-077 باقية، وحوض الكاشف الكامل وأسفل1440 خارج النطاق. SUS العربية تحتاج citation معتمدًا؛ Assess بإذن استئناف مستقل؛ RAD-044 مغلقة بإثباته.
 - **ينتظر مراجِعًا بشريًا:** لا مراجعة طبية جديدة؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
-- **مرجع Git:** docs:context للحالة الراهنة؛ تقرير RAD-077 §6 للتحقق وحدوده، بلا نجاح CI أو نشر مفترض.
-- **مخاطر معلنة:** تسمية مستقبلية أعرض من الصف أو هاتف أقصر يحتاجان تدقيقًا؛ لا تصغير تلقائي. SSR والبصمات والطب والتقييم ثابتة. C1/C2 غير موصولتين والحارس والشهادة وحدود الاتصال ثابتة؛ JWT السابق ونسخ المزوّد وحدود CASCADE كما في قراراتها.
+- **مرجع Git:** docs:context للحالة الراهنة؛ تقرير DB day §6 للتحقق وحدوده، وتقرير RAD-077 لأدلته السابقة؛ بلا نجاح CI أو نشر مفترض.
+- **مخاطر معلنة:** الشهادة الجديدة تحتاج إجراء المالك؛ readiness لا تثبت الخدمة أو الاستعادة أو نسخ المزوّد. JWT السابق وCASCADE بقيودهما. S-PILOT-15 منفصلة، ولا سياسة احتفاظ عامة أو استئناف Assess. حدود عرض RAD-077 وبصماته والطب والتقييم باقية.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 275,
-  "updated_at": "2026-10-25T02:00:10+00:00",
+  "revision": 276,
+  "updated_at": "2026-10-25T02:00:11+00:00",
   "timezone": "UTC",
   "next_id": "RAD-078",
   "tasks": [
@@ -641,8 +641,8 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "C1 (#126) وC2 Phase 1 (#127) مدموجتان؛ Phase 2 مجهزة في مسودة #128 بواجهات محقونة بلا وصل حي. ينتظر مراجعة المالك وDB day والموافقة والإطلاق وفحوص الهاتف A/B/C1. الحذف كامل بعد30يومًا مع restore قبلها؛ لا استئناف Assess.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow؛ docs/DECISIONS.md#rad069c2-owner-2026-10-24؛ docs/RAD-069C2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c2-phase2-deferred-ui-2026-10-24؛ docs/RAD-069C2_PHASE2_REPORT_2026-10-24.md",
+      "description": "C1/C2 مطبقتان وفق إفادة المالك؛ وصل DB day والموافقة والشهادة الجديدة للمراجعة. ينتظر إعادة staging المحدثة، ثم تعيين الشهادة وإعادة CI والدمج والهاتف. مراجعات A/B/C1 باقية؛ S-PILOT-15 مستقلة ولا استئناف Assess.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow؛ docs/DECISIONS.md#rad069c2-owner-2026-10-24؛ docs/RAD-069C2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c2-phase2-deferred-ui-2026-10-24؛ docs/RAD-069C2_PHASE2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-db-day-owner-2026-10-24؛ docs/RAD-069_DB_DAY_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     },
     {
