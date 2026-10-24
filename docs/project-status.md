@@ -7,7 +7,7 @@
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
 - **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) مدموج في #115 (فحص الهاتف باقٍ، [تقرير B](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md))؛ **2c الكتف:** المرحلة A (تشخيص وتتبع A-038، دون كود تطبيق) منجزة على PR مسودة والمرحلة B منجزة بقرارات المالك ([القرار](DECISIONS.md#rad072-2c-owner-2026-10-24)، [تقرير B](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md)) وتنتظر فحص الهاتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
-- **ينتظر المالك:** فحص الهاتف لـ2c ([تقرير B §8](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-وar-390-الكاشف-ومنظر-الأعلى-الإرشادات-onoff)) ولـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **ينتظر المالك:** قراراته على خيارات [الجزء 3 المرحلة A](RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md#7-بنود-مفتوحة-وقرارات-المالك) وفحص الهاتف للحوض والكتف؛ فحص الهاتف لـ2c ([تقرير B §8](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-وar-390-الكاشف-ومنظر-الأعلى-الإرشادات-onoff)) ولـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
 - **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23) و[2b](DECISIONS.md#rad072-2b-owner-2026-10-23).
 - **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral (2a، [القائمة](RAD-072_PART2A_HASHES_2026-10-23.md)) ثم wrist-pa وwrist-lateral وfoot-ap وfoot-oblique (2b، [القائمة](RAD-072_PART2B_HASHES_2026-10-23.md)) وحدها؛ نماذج اليد والرسغ والطرف السفلي المشتركة وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 248,
-  "updated_at": "2026-10-24T09:00:00+00:00",
+  "revision": 249,
+  "updated_at": "2026-10-24T12:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-073",
   "tasks": [
@@ -227,19 +227,18 @@
       "title": "تحضير الإصدار: لافتة المعاينة، تدقيق الرخص التجاري، صفحة الاعتمادات، قراءة المصادر المتبقية",
       "status": "planned",
       "priority": "low",
-      "description": "تحضير الإصدار بعد اكتمال X-ray v1: قرار المالك للافتة المعاينة، تدقيق الرخص بعد الأصول الجديدة، قراءة O4/O26. الاعتمادات منفذة في RAD-045؛ شروط NIH مؤجلة في RAD-038. لا يبدأ تلقائيًا ضمن جرد الأدلة.",
-      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ docs/ENGINE_GUIDE.md (Pilot, hosting and runtime — لا تُزل اللافتة دون قرار المالك)",
+      "description": "تحضير الإصدار بعد X-ray v1: لافتة المعاينة تبقى حتى الإصدار (قرار 2026-10-24)، تدقيق الرخص، قراءة O4/O26، ومراجعة Cloudflare Access قبل أي إصدار تجاري. الاعتمادات في RAD-045؛ NIH في RAD-038. لا يبدأ تلقائيًا.",
+      "source_ref": "DECISIONS.md S12-12، O4، O10، O26، S10b-20؛ docs/ENGINE_GUIDE.md (Pilot, hosting and runtime — لا تُزل اللافتة دون قرار المالك)؛ DECISIONS.md#rad072-3-owner-2026-10-24",
       "waiting_on": "owner"
     },
     {
       "id": "RAD-024",
       "title": "حالة نشر المعاينة الخاصة (Cloudflare Pages وZero Trust Access)",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "نجح Deploy Pages على main لرأس دمج #86 (run39074999369)، بما فيه رفع Cloudflare. لا يثبت هذا تقييد الموقع بـAccess أو حد مستخدميه. ينتظر المالك توثيق حالة Access ونطاق الحماية؛ فحص الهاتف في #85 منفصل.",
-      "source_ref": "docs/DEPLOYMENT.md؛ .github/workflows/deploy-pages.yml؛ docs/archive/planning/ROADMAP-until-2026-10-16.md (Gate G0)؛ https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/39074999369",
-      "conflict": "سجل G0 التاريخي يطلب حماية Cloudflare Access؛ نجاح الرفع وإفادة الهاتف لا يثبتان تطبيقها. يبقى اختلاف وصف «معاينة خاصة» عن الدليل غير محسوم حتى إفادة المالك بإعداد Access ونطاقه.",
-      "waiting_on": "owner"
+      "description": "حماية التجربة هي بوابة حساب التطبيق (دعوة وموافقة المالك)؛ Cloudflare Access غير مطلوب الآن. التصدير الساكن (HTML وJS وصور وبيانات فحوص) يُنزَّل لمن يملك الرابط؛ بيانات المشاركين والمحاولات والملاحظات والحسابات ومفاتيح Assess على الخادم خلف RLS.",
+      "source_ref": "docs/DEPLOYMENT.md؛ .github/workflows/deploy-pages.yml؛ docs/archive/planning/ROADMAP-until-2026-10-16.md (Gate G0)؛ https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/39074999369؛ DECISIONS.md#rad072-3-owner-2026-10-24",
+      "completion_evidence": "قرار المالك 2026-10-24 (DECISIONS.md#rad072-3-owner-2026-10-24) ونجاح Deploy Pages (run39074999369)؛ عزل RLS مراجَع في RAD-041/RAD-056. إعادة النظر في Access قبل الإصدار التجاري مسجلة في RAD-023."
     },
     {
       "id": "RAD-025",
@@ -280,11 +279,11 @@
     {
       "id": "RAD-029",
       "title": "صورة Pelvis AP المنظفة من marker — مادة مراجعة",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "A-034/A-035 مدموجان (#33) وA-036 نسخة المنتج؛ التنظيف تحقق بصفر بكسل متغير خارج الخلفية. تبقى ملاءمة الصورة وتغطيتها للمراجعة الطبية (O84/O5). يُغلق بقرار المراجِع (O84) على ملاءمة الصورة.",
-      "source_ref": "docs/ASSET_PROVENANCE_AND_LICENSES.md A-034/A-035؛ scripts/derive-pelvis-baseline.py؛ DECISIONS.md O84؛ PR #33",
-      "waiting_on": "reviewer"
+      "description": "A-034/A-035 مدموجان (#33) وA-036 نسخة المنتج؛ التنظيف بصفر بكسل متغير خارج الخلفية. قبل المالك الصورة المنظفة للتدريس؛ لا مصادقة طبية (قيم provisional).",
+      "source_ref": "docs/ASSET_PROVENANCE_AND_LICENSES.md A-034/A-035؛ scripts/derive-pelvis-baseline.py؛ DECISIONS.md O84؛ PR #33؛ DECISIONS.md#rad072-3-owner-2026-10-24",
+      "completion_evidence": "قرار المالك 2026-10-24 (DECISIONS.md#rad072-3-owner-2026-10-24) بعد فحصه الصورة على الهاتف؛ التنظيف: scripts/derive-pelvis-baseline.py وPR #33."
     },
     {
       "id": "RAD-030",
@@ -354,8 +353,8 @@
       "title": "مراجعة جودة تنفيذ فحص الحوض (pelvis-ap-supine)",
       "status": "review",
       "priority": "high",
-      "description": "مخطط الحوض وR ومنطقة منع العلامة منفذة (O99 محلولة). لم تتضمن إفادة #85 تحققًا محددًا لمراجعة الحوض O98؛ ينتظر إفادة المالك بهذا النطاق. ظهور قصور يبقي review حتى المعالجة، ولا يغلق RAD-029/O84/O85/O5.",
-      "source_ref": "DECISIONS.md O98؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15",
+      "description": "فحص المالك 2026-10-24: الصورة والرسم والتقييم جيدة جدًا، لكن R في النصف الأيسر للمريض قُبل خطأً؛ صُحح بقاعدة الصدر (S3 د) في RAD-072 الجزء 3 (رفع إصدار التقييم). ينتظر إعادة فحص المالك على الهاتف.",
+      "source_ref": "DECISIONS.md O98؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15؛ DECISIONS.md#rad072-3-owner-2026-10-24",
       "waiting_on": "owner"
     },
     {
@@ -669,8 +668,8 @@
       "title": "تصحيحات رسم المشاهد وسلوكها بعد فحص المالك للصور",
       "status": "in_progress",
       "priority": "high",
-      "description": "(1) الصدر #113. (2) الأطراف: اليد #114، الرسغ والقدم #115 (فحص الهاتف باقٍ)؛ 2c الكتف Grashey: A وB منجزتان على PR مسودة (رسم من التتبع، رفع سقف الإغلاق، زاوية الجسم ظاهرة في منظر الأعلى) وتنتظران فحص الهاتف. (3) بنود R وصور النتيجة ومنها no-data في الكاحل AP والصدر الجانبي.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md",
+      "description": "(1) الصدر #113. (2) الأطراف: اليد #114، الرسغ والقدم #115، الكتف 2c #116 (فحص الهاتف باقٍ). (3) الجزء 3 المرحلة A على PR مسودة: قاعدة جانب R للحوض (RAD-037) وتصحيح منظر الأعلى للكتف نُفذا، والباقي خيارات بلا تنفيذ (بنود R وهاشور no-data والإبهام والمشط) بانتظار قرار المالك.",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md",
       "waiting_on": "owner"
     }
   ]
