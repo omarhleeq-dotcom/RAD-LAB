@@ -20,6 +20,7 @@ import { CHEST_PA_FIGURE, DETECTOR_FIGURES, U, type DetectorFigure } from "./det
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, STROKE, UNDER } from "./scene-style";
 import { detectorViewBox, phoneFit } from "./fit-view";
+import { PhoneFrameLabels } from "./PhoneFrameLabels";
 import { markerBox, nearestTouchTarget, touchGeometry, type TouchCandidate } from "./touch-geometry";
 
 const KEY_STEP = 0.02;
@@ -225,7 +226,21 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
   );
 
+  const frameRows = phone && fit;
   return (
+    <>
+    {frameRows && <PhoneFrameLabels>
+      <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
+    </PhoneFrameLabels>}
+    {frameRows && <PhoneFrameLabels detectorWidth={W}>
+      <Orientation W={W} showGuides={showGuides} projection={settings.projection} />
+    </PhoneFrameLabels>}
+    {frameRows && showGuides && <PhoneFrameLabels>
+      <>
+        <SceneLabel x={W - 4} y={-122} size={figure.marginGuideLabels ? MARGIN_LABEL_SIZE : LABEL_SIZE.detector + 4} anchor="end" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
+        <SceneLabel x={W - 4} y={-92} size={figure.marginGuideLabels ? MARGIN_LABEL_SIZE : LABEL_SIZE.detector + 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
+      </>
+    </PhoneFrameLabels>}
     <svg
       ref={svgRef}
       viewBox={`${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`}
@@ -278,7 +293,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
               />
             )}
           </UnderStroked>
-          {figure.marginGuideLabels ? (
+          {figure.marginGuideLabels && !frameRows ? (
             <>
               <SceneLabel x={W - 4} y={-122} size={MARGIN_LABEL_SIZE} anchor="end" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
               <SceneLabel x={W - 4} y={-92} size={MARGIN_LABEL_SIZE} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
@@ -299,7 +314,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
 
       {/* Chest guide labels (RAD-072 1b, G4): above the collimation shade (never dimmed by it), larger, centred on what they name and
           inside the detector frame: the target-region label just above its region, the midline label on the line near the bottom. */}
-      {showGuides && !figure.marginGuideLabels && (
+      {showGuides && !figure.marginGuideLabels && !frameRows && (
         <g aria-hidden style={{ pointerEvents: "none" }}>
           <SceneLabel x={tgtView.x} y={Math.max(24, tgtView.y - (tgt.acceptableTolerance.y * H) / 2 - 10)} size={LABEL_SIZE.detector + 4} anchor="middle" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
           <SceneLabel x={mid} y={H - 24} size={LABEL_SIZE.detector + 4} anchor="middle" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
@@ -307,13 +322,13 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       )}
 
       {/* orientation labels (image convention, never mirrored by RTL): Head at the top, Feet at the bottom edge; anterior / posterior (lateral) or the patient's sides (frontal, practice guides) */}
-      <g aria-hidden style={{ pointerEvents: "none" }}>
+      {!frameRows && <g aria-hidden style={{ pointerEvents: "none" }}>
         <SceneArrow x1={-20} y1={-48} x2={-20} y2={-80} />
         <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
         <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
         <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
         <Orientation W={W} showGuides={showGuides} projection={settings.projection} />
-      </g>
+      </g>}
 
       {edges.map(({ edge, x, y }) => (
         <g key={edge} aria-hidden {...dragProps({ kind: "edge", edge })} style={{ cursor: disabled ? "default" : EDGE_CURSOR[edge] }}>
@@ -339,7 +354,12 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       </g>
 
-      <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>
+      {!frameRows && <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>}
     </svg>
+    {frameRows && <PhoneFrameLabels>
+      <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
+      <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>
+    </PhoneFrameLabels>}
+    </>
   );
 }
