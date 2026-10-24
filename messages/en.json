@@ -1178,7 +1178,7 @@
     "alt": "Interactive detector schematic: right shoulder with humeral head, glenoid, acromion, clavicle and proximal humerus, collimation, central ray and side marker.",
     "midline": "Scapulohumeral joint",
     "detectorCaption": "Detector view: right shoulder, AP oblique glenoid (Grashey), patient right on viewer left",
-    "sideViewCaption": "Plan view from above: the erect patient, body turn and independent arm position",
+    "sideViewCaption": "Plan view from above: the erect patient, body turn and independent arm position (the upper arm hangs at the side, the circle; the short stub is the forearm of the bent elbow)",
     "schematicNote": "Educational schematic, not anatomically exact. The same one-image model closes the joint space in the setup and in the result when the body turn is outside the 35°–45° source range. The arm position is drawn in the setup only and does not change the radiograph; the glenoid rims and head overlap are not reconstructed.",
     "rotationHelp": "Turn the body toward the affected (right) shoulder; the angle is the absolute turn from the detector. Bontrager gives 35°–45° and every angle in that range scores the same: there is no single ideal angle. Partial credit applies within 30°–50°.",
     "markerConvention": "Marker R (the patient's right) inside the field, clear of the anatomy; only the letter is judged. The baseline has no fixed marker. Never mirrored in Arabic.",
