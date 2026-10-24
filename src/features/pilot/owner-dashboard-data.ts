@@ -38,6 +38,4 @@ export async function directoryPage(client: SupabaseClient, search: string, stat
   return {rows,counts,legacy:true,next:cursor?{cursor,boundary:page.boundary}:null};
 }
 /** Visible waiting state until the deferred SQL and frontend requirements are promoted together. */
-export function examSummaryPage(_client:SupabaseClient, _filters:OwnerFilters, _position:Position): Promise<{rows:ExamSummary[];next:Position|null}|null> {
-  return Promise.resolve(null);
-}
+export const examSummaryPage: (client:SupabaseClient, filters:OwnerFilters, position:Position) => Promise<{rows:ExamSummary[];next:Position|null}|null> = () => Promise.resolve(null);
