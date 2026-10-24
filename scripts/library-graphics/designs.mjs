@@ -105,7 +105,9 @@ export function designs(h) {
   const wingR = [[1075, 720], [1030, 430], [990, 300], [770, 165], [500, 145], [340, 230], [215, 330], [260, 700], [410, 1075], [480, 1280], [640, 1450], [860, 1380], [840, 1100], [875, 950], [960, 830]];
   const ringR = [[640, 1450], [700, 1650], [780, 1880], [900, 1960], [1100, 1960], [1250, 1880], [1337, 1760], [1337, 1690], [1050, 1610], [880, 1500]];
   const sacrum = [[1150, 300], [1525, 300], [1590, 560], [1480, 900], [1380, 1140], [1295, 1140], [1195, 900], [1085, 560]];
-  const femurR = [[470, 1500], [250, 1470], [100, 1490], [20, 1580], [50, 1800], [30, 2084], [540, 2084], [520, 1850], [560, 1720], [600, 1620]];
+  // Proximal femur: head seated in the acetabulum, neck down-laterally to the greater trochanter, a short shaft down.
+  const femurR = [[470, 1330], [330, 1390], [200, 1420], [100, 1470], [20, 1580], [50, 1800], [40, 2084], [330, 2084], [340, 1860], [420, 1740], [540, 1620]];
+  const acetabulum = Array.from({ length: 13 }, (_, i) => { const q = (200 + 140 * i / 12) * Math.PI / 180; return [600 + 262 * Math.cos(q), 1420 + 262 * Math.sin(q)]; });
   const disc = (cx, cy, rx, ry, n = 20) => Array.from({ length: n }, (_, i) => [cx + rx * Math.cos(i * 2 * Math.PI / n), cy + ry * Math.sin(i * 2 * Math.PI / n)]);
   const pelvisAp = geometry({
     win: [0, 0, 2675, 2084], margin: 10, eps: 1.4,
@@ -113,8 +115,9 @@ export function designs(h) {
       { role: "bone", fill: true, pts: wingR }, { role: "bone", fill: true, pts: pm(wingR) }, { role: "bone", fill: true, pts: sacrum },
       { role: "bone", pts: ringR }, { role: "bone", pts: pm(ringR) },
       { role: "bone", pts: disc(1100, 1780, 150, 95) }, { role: "bone", pts: pm(disc(1100, 1780, 150, 95)) },
-      { role: "bone", fill: true, eps: 3, pts: femurR }, { role: "bone", fill: true, eps: 3, pts: pm(femurR) },
-      { role: "bone", fill: true, pts: disc(600, 1420, 160, 160) }, { role: "bone", fill: true, pts: pm(disc(600, 1420, 160, 160)) },
+      { role: "bone", fill: true, eps: 2, pts: femurR }, { role: "bone", fill: true, eps: 2, pts: pm(femurR) },
+      { role: "bone", fill: true, pts: disc(600, 1420, 220, 220, 28) }, { role: "bone", fill: true, pts: pm(disc(600, 1420, 220, 220, 28)) },
+      { role: "line", pts: acetabulum }, { role: "line", pts: pm(acetabulum) },
       { role: "line", pts: [[1337, 1690], [1337, 1760]] },
     ],
   });
@@ -177,11 +180,13 @@ export function designs(h) {
     return [[p[0] + (a[0] - p[0]) * k, p[1] + (a[1] - p[1]) * k], [p[0] + (b[0] - p[0]) * k, p[1] + (b[1] - p[1]) * k]];
   });
   const solid = (pts) => [closed("fill", pts), closed("bone", pts)];
-  // Lateral skull facing left: one cranial vault and facial outline, the orbit, and the mandible; no facial features.
+  // Lateral skull facing left: cranial vault, orbit, maxilla under it, and the mandible hinged at the joint in front of the ear
+  // region (condyle at the vault base, ramus down, body forward to the chin); no facial features.
   const head = [
-    ...solid([[84, 60], [94, 32], [122, 18], [156, 16], [182, 30], [194, 58], [190, 86], [172, 102], [148, 108], [130, 111], [122, 116], [94, 118], [76, 112], [68, 96], [78, 74]]),
-    closed("bone", [[92, 72], [106, 68], [116, 78], [108, 92], [96, 88]]),
-    ...solid([[84, 126], [92, 140], [122, 148], [148, 134], [154, 106], [144, 104], [138, 122], [110, 130]]),
+    ...solid([[86, 56], [94, 32], [122, 18], [156, 16], [182, 30], [194, 58], [190, 86], [172, 102], [148, 108], [128, 106], [112, 98], [96, 90], [84, 76]]),
+    closed("bone", [[92, 66], [106, 62], [116, 72], [108, 86], [96, 82]]),
+    ...solid([[88, 78], [74, 94], [70, 108], [78, 117], [98, 119], [122, 114], [130, 102], [124, 90], [108, 84]]),
+    ...solid([[134, 100], [152, 100], [160, 120], [152, 140], [126, 150], [98, 146], [82, 134], [84, 123], [104, 122], [124, 122], [132, 114]]),
   ];
   // Normal frontal spine: one straight midline column, vertebral bodies widening evenly downward, an even disc between each,
   // short transverse processes, and the sacrum at the foot. Nothing is shifted sideways.
