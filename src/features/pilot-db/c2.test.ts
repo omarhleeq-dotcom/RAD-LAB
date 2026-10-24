@@ -186,7 +186,7 @@ describe("C2 versioned survey rounds", () => {
   const row = (result.rows as Obj[])[0]!;
   expect(Object.keys(row).sort()).toEqual(["id", "participant_code", "round_id", "survey_type", "version", "answered_at", "answers", "score"].sort());
   expect(JSON.stringify(result)).not.toContain(uid(3)); expect(JSON.stringify(result)).not.toContain("@example.test"); expect(JSON.stringify(result)).not.toContain("Synthetic fixture");
-  expect(row.participant_code).toBe((await db.query("select participant_code from profiles where user_id=$1", [uid(3)])).rows[0]!.participant_code);
+  expect(row.participant_code).toBe((await db.query<{participant_code: string}>("select participant_code from profiles where user_id=$1", [uid(3)])).rows[0]!.participant_code);
  });
  it("uses the ten standard English SUS items, attribution and standard scores 0, 50 and 100", async () => {
   await open("SUS");
@@ -247,9 +247,9 @@ it("matches the exact additive inventory, ACLs, RLS, indexes and read-only readi
    grant usage on schema auth to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;`);
   for (const f of readdirSync("supabase/migrations").filter(f => f.endsWith(".sql") && f < C2_MIGRATION).sort()) await scratch.exec(readFileSync(`supabase/migrations/${f}`, "utf8"));
   const state = async () => ({
-   functions: (await scratch.query("select p.oid,pg_get_functiondef(p.oid) definition,p.proacl::text from pg_proc p where p.pronamespace in ('public'::regnamespace,'assess'::regnamespace) order by p.oid")).rows,
-   tables: (await scratch.query("select oid,relname,relrowsecurity,relacl::text from pg_class where relnamespace in ('public'::regnamespace,'assess'::regnamespace) and relkind in ('r','S','i') order by oid")).rows,
-   constraints: (await scratch.query("select oid,conrelid,conname,pg_get_constraintdef(oid) definition from pg_constraint where connamespace in ('public'::regnamespace,'assess'::regnamespace) order by oid")).rows,
+   functions: (await scratch.query<{oid: number; definition: string; proacl: string | null}>("select p.oid,pg_get_functiondef(p.oid) definition,p.proacl::text from pg_proc p where p.pronamespace in ('public'::regnamespace,'assess'::regnamespace) order by p.oid")).rows,
+   tables: (await scratch.query<{oid: number; relname: string; relrowsecurity: boolean; relacl: string | null}>("select oid,relname,relrowsecurity,relacl::text from pg_class where relnamespace in ('public'::regnamespace,'assess'::regnamespace) and relkind in ('r','S','i') order by oid")).rows,
+   constraints: (await scratch.query<{oid: number; conrelid: number; conname: string; definition: string}>("select oid,conrelid,conname,pg_get_constraintdef(oid) definition from pg_constraint where connamespace in ('public'::regnamespace,'assess'::regnamespace) order by oid")).rows,
    policies: (await scratch.query("select * from pg_policies order by schemaname,tablename,policyname")).rows,
   });
   const prev = await state();
