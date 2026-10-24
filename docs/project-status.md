@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 256,
-  "updated_at": "2026-10-24T20:20:00+00:00",
+  "revision": 257,
+  "updated_at": "2026-10-24T20:21:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-075",
   "tasks": [
@@ -641,8 +641,8 @@
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
       "status": "review",
       "priority": "medium",
-      "description": "A: نُفذت ملاحظات الهاتف السبع (2026-10-24): سطر معلومات الصورة، رأس واضح، الأهداف والتنسيق، وإزالة تداخل الملاحظات؛ تنتظر إعادة فحص المالك على الهاتف والحاسوب. B1: الصفحات واللغة؛ B2a: الثيم (F7)؛ B2b: الرسومات (F8)؛ C: لوحة المالك وتصدير RAD-044 ومواضع Assess؛ مخططة.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md",
+      "description": "A دُمجت #121 وتنتظر إعادة فحص المالك. B1 جارٍ: الرئيسية والمكتبة والتدريب واللغة. B2a مخطط: زر تبديل الثيم بالشريط العلوي (F7)، افتراضي داكن وحفظ على الجهاز دون اتباعه تلقائيًا. B2b الرسومات (F8)؛ C لوحة المالك وتصدير RAD-044 ومواضع Assess؛ مخططة.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24",
       "waiting_on": "owner"
     },
     {
