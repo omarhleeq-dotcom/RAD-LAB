@@ -13,7 +13,7 @@ export function ProfileName({ name, email, save }: { name: string | null; email:
       <label className="block">{t("name")}<input name="displayName" disabled={state === "saving"} autoComplete="name" dir="auto" required maxLength={100} value={value} onChange={(e) => { setValue(e.target.value); setState("idle"); }} className="mt-1 block w-full rounded-md border border-line bg-panel px-3 py-2" aria-describedby="name-hint" /></label>
       <p id="name-hint" className="text-sm text-muted">{t("nameHint")}</p>
       <p className="text-sm">{t("email")} <bdi className="break-all">{email}</bdi></p>
-      <button disabled={state === "saving" || !validName(value)} className="rounded-md bg-brand px-4 py-2 font-semibold text-on-brand disabled:opacity-60">{t(state === "saving" ? "saving" : "save")}</button>
+      <button disabled={state === "saving" || !validName(value)} className="rounded-md bg-brand px-4 py-2 font-semibold text-white disabled:opacity-60">{t(state === "saving" ? "saving" : "save")}</button>
       {state === "saved" && <p role="status">{t("saved")}</p>}
       {state === "error" && <p role="alert">{t("saveError")}</p>}
     </form>

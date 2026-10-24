@@ -157,7 +157,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
                 onClick={() => setView(v)}
                 className={clsx(
                   "min-h-11 min-w-20 rounded-md px-3 text-sm font-semibold",
-                  view === v ? "bg-brand text-on-brand" : "text-ink hover:bg-paper",
+                  view === v ? "bg-brand text-white" : "text-ink hover:bg-paper",
                 )}
               >
                 {v === "detector" ? tw("viewDetector") : layout.secondViewIsTop ? tw("viewTop") : tw("viewSide")}
@@ -171,7 +171,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
             type="button"
             onClick={enlarge.onToggle}
             aria-label={enlarge.active ? undefined : tw("enlargeScene")}
-            className={clsx("grid min-h-11 shrink-0 place-items-center rounded-lg border", enlarge.active ? "border-brand bg-brand px-3 text-sm font-bold text-on-brand" : "size-11 border-line text-ink hover:bg-paper")}
+            className={clsx("grid min-h-11 shrink-0 place-items-center rounded-lg border", enlarge.active ? "border-brand bg-brand px-3 text-sm font-bold text-white" : "size-11 border-line text-ink hover:bg-paper")}
           >
             {enlarge.active ? (
               tw("closeSheet")

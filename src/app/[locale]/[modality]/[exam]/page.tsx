@@ -56,7 +56,7 @@ export default async function ExamPage({ params }: PageProps<"/[locale]/[modalit
                 <div className="mt-4 flex items-center justify-between gap-3">
                   <Link
                     href={practicePath(m.id, exam, c)}
-                    className="rounded-md bg-brand px-4 py-2 font-medium text-on-brand hover:bg-brand-strong"
+                    className="rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-strong"
                   >
                     {t("startCase")}
                   </Link>

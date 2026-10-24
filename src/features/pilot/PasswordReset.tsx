@@ -8,7 +8,7 @@ import { type AuthErrorKey, passwordProblem } from "./account-state";
 import type { ActionResult } from "./useAccount";
 
 const field = "mt-1 block w-full rounded-md border border-line bg-panel px-3 py-2 text-base";
-const primary = "rounded-md bg-brand px-4 py-2 font-semibold text-on-brand hover:bg-brand-strong disabled:opacity-60";
+const primary = "rounded-md bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-strong disabled:opacity-60";
 const secondary = "rounded-md border border-line px-4 py-2";
 const box = "rounded-lg border border-line bg-panel p-5";
 type FormError = AuthErrorKey | "passwordShort" | "passwordClasses" | "passwordMismatch";

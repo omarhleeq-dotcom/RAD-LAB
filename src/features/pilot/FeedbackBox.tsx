@@ -66,7 +66,7 @@ export function FeedbackBox({ examId }: { examId: string }) {
             <span dir="ltr">{t("counter", { n: noteLength(text), max: FEEDBACK_MAX })}</span>
           </p>
           {phase === "failed" && <p role="alert" data-testid="feedback-failed" className="mt-2 text-bad">{t("failed")}</p>}
-          <button type="button" disabled={!note || phase === "sending"} className="mt-3 rounded-md bg-brand px-4 py-2 font-semibold text-on-brand hover:bg-brand-strong disabled:opacity-60" onClick={() => void send()}>
+          <button type="button" disabled={!note || phase === "sending"} className="mt-3 rounded-md bg-brand px-4 py-2 font-semibold text-white hover:bg-brand-strong disabled:opacity-60" onClick={() => void send()}>
             {phase === "sending" ? t("sending") : t("send")}
           </button>
         </>

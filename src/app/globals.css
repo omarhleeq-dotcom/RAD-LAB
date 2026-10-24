@@ -336,3 +336,7 @@ html { scroll-padding-block-start: calc(var(--site-bar-height, 4.75rem) + .75rem
 .drawer-theme { margin-block-end: 1.25rem; }
 /* The simulator console is dark in both themes: its native controls (radios, checkboxes, scrollbars) keep the light-scheme rendering they always had. */
 :root[data-theme="dark"] .bg-console { color-scheme: light; }
+/* Dark theme: text on brand / amber fills. The class names stay unchanged (the scene and result DOM hashes include them); only the colour changes. */
+:root[data-theme="dark"] .bg-brand.text-white, :root[data-theme="dark"] .bg-brand .text-white, :root[data-theme="dark"] .focus\:bg-brand:focus { color: var(--color-on-brand); }
+:root[data-theme="dark"] .bg-signal.text-ink { color: var(--color-on-signal); }
+:root[data-theme="dark"] .ring-white { --tw-ring-color: var(--color-panel); }

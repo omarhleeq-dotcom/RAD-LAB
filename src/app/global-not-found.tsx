@@ -35,7 +35,7 @@ export default function GlobalNotFound() {
               <h1 className="text-2xl font-bold">{m.notFound.title}</h1>
               <p className="mt-3 text-lg text-muted">{m.notFound.body}</p>
               <p className="mt-4">
-                <a href={`/${code}`} className="inline-flex min-h-6 items-center rounded-md bg-brand px-4 py-2 font-medium text-on-brand hover:bg-brand-strong">
+                <a href={`/${code}`} className="inline-flex min-h-6 items-center rounded-md bg-brand px-4 py-2 font-medium text-white hover:bg-brand-strong">
                   {m.common.backHome}
                 </a>
               </p>
