@@ -28,7 +28,7 @@ This is the shared workflow for Codex, Claude and human contributors. [CLAUDE.md
 | Documentation only | `npm run docs:check -- --base origin/main`, status transition below, `git diff --check`; no app build |
 | Documentation tooling | The above + `npm run docs:test` and lint of changed scripts; no app build when product code is unchanged |
 | Refactor | Relevant tests, byte-identity proof, full check/build once |
-| Exam / product behaviour | Relevant tests while working; full check/build and relevant EN/AR390/1440 browser/axe/family audits once at the end ([`qa:exam-audit`](docs/DOCS_CHECKS.md#browser-audits)); recipe for exam work |
+| Exam / product behaviour | Relevant tests while working; full check/build and relevant EN/AR390/1440 browser/axe/family audits once at the end ([`qa:exam-audit`](docs/DOCS_CHECKS.md#browser-audits)); recipe for exam work; [screenshot policy](docs/DOCS_CHECKS.md#screenshot-policy) |
 
 CI runs the same docs checker/test commands for everyone; [DOCS_CHECKS](docs/DOCS_CHECKS.md) explains flags, guarantees and limits. Do not repeat successful QA without a relevant change or unresolved failure. Automated structure checks do not validate meaning, medicine, licences or deployment.
 
