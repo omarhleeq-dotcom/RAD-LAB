@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) مدموج في #115 (فحص الهاتف باقٍ، [تقرير B](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md))؛ **2c الكتف:** المرحلة A (تشخيص وتتبع A-038، دون كود تطبيق) منجزة على PR مسودة والمرحلة B منجزة بقرارات المالك ([القرار](DECISIONS.md#rad072-2c-owner-2026-10-24)، [تقرير B](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md)) وتنتظر فحص الهاتف؛ ثم الجزء 3 (بنود R وصور النتيجة)؛ بعده RAD-069 ثم RAD-062.
-- **ينتظر المالك:** قراراته على خيارات [الجزء 3 المرحلة A](RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md#7-بنود-مفتوحة-وقرارات-المالك) وفحص الهاتف للحوض والكتف؛ فحص الهاتف لـ2c ([تقرير B §8](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-وar-390-الكاشف-ومنظر-الأعلى-الإرشادات-onoff)) ولـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
+- **الاتجاه الحالي:** RAD-072 قيد التنفيذ: الجزء 1 (الصدر) مدموج في #113؛ الجزء 2a تجربة اليد (رسم من حدود مستخلصة من الصورتين المرجعيتين، [القرار](DECISIONS.md#rad072-2a-hand-owner-2026-10-23)) مدموج في #114 ومقبول من المالك؛ **2b الرسغ ثم القدم** ([القرار](DECISIONS.md#rad072-2b-owner-2026-10-23): الكاحل خرج منه) مدموج في #115 (فحص الهاتف باقٍ، [تقرير B](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md))؛ **2c الكتف:** المرحلة A (تشخيص وتتبع A-038، دون كود تطبيق) منجزة على PR مسودة والمرحلة B منجزة بقرارات المالك ([القرار](DECISIONS.md#rad072-2c-owner-2026-10-24)، [تقرير B](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md)) وتنتظر فحص الهاتف؛ **الجزء 3:** المرحلة A مدموجة (#118)، والمرحلة B (رسم الصدر ونصوص الركبة والقدم ومفتاح الهاشور وسطرا اليد والقدم) منجزة على PR مسودة ([التقرير](RAD-072_PART3_PHASE_B_REPORT_2026-10-24.md))؛ بعده RAD-069 ثم RAD-062. RAD-073 (منع العلامة من المخططات) مخططة بلا بدء.
+- **ينتظر المالك:** فحص الهاتف للجزء 3 المرحلة B ([تقرير B §8](RAD-072_PART3_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-ثم-ar-390-ثم-1440)) وللحوض والكتف؛ فحص الهاتف لـ2c ([تقرير B §8](RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md#8-قائمة-الهاتف-للمالك-en-وar-390-الكاشف-ومنظر-الأعلى-الإرشادات-onoff)) ولـ2b وفق [تقرير B §8](RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md#8-قائمة-الهاتف-للمالك-en-وar)؛ البند 16 من قائمة الصور؛ استئناف Assess بإذن منفصل.
 - **ينتظر مراجِعًا بشريًا:** لا جديد؛ حدود RAD-019 وO108 والمصادر والتراخيص محفوظة في مهامها.
 - **مرجع Git:** `npm run docs:context` للحالة الراهنة؛ قرارات RAD-072 في [الجزء 1](DECISIONS.md#rad072-chest-owner-2026-10-23) و[1b](DECISIONS.md#rad072-1b-owner-2026-10-23) و[2a](DECISIONS.md#rad072-2a-hand-owner-2026-10-23) و[2b](DECISIONS.md#rad072-2b-owner-2026-10-23).
-- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral (2a، [القائمة](RAD-072_PART2A_HASHES_2026-10-23.md)) ثم wrist-pa وwrist-lateral وfoot-ap وfoot-oblique (2b، [القائمة](RAD-072_PART2B_HASHES_2026-10-23.md)) وحدها؛ نماذج اليد والرسغ والطرف السفلي المشتركة وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير.
+- **مخاطر معلنة:** القيم provisional داخليًا بلا ادعاء مصادقة سريرية. تغيّرت مفاتيح scene لـhand-pa وhand-lateral (2a، [القائمة](RAD-072_PART2A_HASHES_2026-10-23.md)) ثم wrist-pa وwrist-lateral وfoot-ap وfoot-oblique (2b، [القائمة](RAD-072_PART2B_HASHES_2026-10-23.md)) وحدها؛ نماذج اليد والرسغ والطرف السفلي المشتركة وصور النتيجة والتوصيف وgolden والتقييم بلا تغيير. الجزء 3 المرحلة B غيّر بصمات الصدر PA/AP والركبة AP والقدم DP والكاحل AP والكتف واليد الجانبية والقدم المائلة وحدها ([القائمة](RAD-072_PART3B_HASHES_2026-10-24.md)).
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 250,
-  "updated_at": "2026-10-24T14:00:00+00:00",
+  "revision": 251,
+  "updated_at": "2026-10-24T16:00:00+00:00",
   "timezone": "UTC",
   "next_id": "RAD-074",
   "tasks": [
@@ -678,7 +678,7 @@
       "status": "in_progress",
       "priority": "high",
       "description": "(1) الصدر #113. (2) الأطراف #114 #115 #116 (فحص الهاتف باقٍ). (3) الجزء 3: A مدموج #118؛ B على PR مسودة بقرارات [المالك](DECISIONS.md#rad072-3b-owner-2026-10-24): رسم الصدر، نص الركبة والقدم، مفتاح الهاشور، سطرا اليد والقدم؛ e = RAD-073.",
-      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-3b-owner-2026-10-24",
+      "source_ref": "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md#image-checklist؛ docs/DECISIONS.md#provisional-evidence-owner-2026-10-22؛ docs/RAD-068_PART1_REPORT_2026-10-22.md؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#rad072-chest-owner-2026-10-23؛ docs/RAD-072_PART1_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-1b-owner-2026-10-23؛ docs/RAD-072_PART1B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2a-hand-owner-2026-10-23؛ docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md؛ docs/DECISIONS.md#rad072-2b-owner-2026-10-23؛ docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md؛ docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md؛ docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-2c-owner-2026-10-24؛ docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad072-3b-owner-2026-10-24؛ docs/RAD-072_PART3_PHASE_B_REPORT_2026-10-24.md؛ docs/RAD-072_PART3B_HASHES_2026-10-24.md",
       "waiting_on": "owner"
     }
   ]
