@@ -663,3 +663,12 @@ Closed question texts and their scope/evidence are retained in the [closed-quest
 الترحيلات المؤجلة بالضبط: `20261024000100_owner_dashboard.sql` ثم `20261024000200_owner_deletion_surveys.sql`. الفحوص المؤجلة: `supabase/checks/owner-dashboard-ready.sql` و`supabase/checks/owner-deletion-surveys-ready.sql`؛ لا إضافة إلى required.
 
 الاستثناء الإضافي للمسار الصحيح `src/features/deployment/owner-dashboard-deferred-schema.test.ts`: توقع أسماء deferred يتوسع إلى ملفَي C1+C2 المذكورين فقط؛ كل توقع آخر ثابت بالبايت. قاعدة same-pattern تجيز إضافة اسم C2 المؤجل فقط إلى عزل fixtures القديمة في `frontend-schema.test.ts` و`assess-d-schema.test.ts` و`assess-e-schema.test.ts` و`assess-f-schema.test.ts` تحت deployment، دون تغيير توقعاتها أو hashes. لا تعديل للحارس أو requiredMigrations/checks أو attestation؛ تبقى `pilot-v1:0bc3743c707cff0fcef456d00096f6e186b759390708d2d963a6eabea55e5d52`. أي توقع من نوع آخر خارج الملفين أو تغيير كائن/توقع قديم يتطلب توقفًا وإذنًا آخر.
+
+<a id="rad069c2-phase2-deferred-ui-2026-10-24"></a>
+### RAD-069 C2 Phase 2 — تجهيز الواجهة دون وصلها، 2026-10-24
+
+**السلطة:** تصحيح المالك الصريح في المحادثة بعد رفض استثناء الحارس. لا إذن بتغيير schema gate أو قواعده أو إتاحة RPC مؤجلة في frontend؛ C1 لم تستدعِ دوالها المؤجلة من الواجهة. هذا يصحح توقيت الوصل في برومبت المرحلة2 من [تقرير المرحلة1](RAD-069C2_REPORT_2026-10-24.md#8-قائمة-المالك-ونص-phase-2)، ولا يبدل سياسة [الحذف والاستبيانات](#rad069c2-owner-2026-10-24).
+
+تُجهز المكونات بعقود وadapters محقونة، وتُختبر بعينات فقط في harness مستقل. كل استدعاءات RPCs الأربع داخل `c2-contract.ts` المصنفة deferred، بلا import إليها من frontend؛ يمكن تغيير قائمة serverModules في إدخال C2 وحده إن احتاج التنفيذ، لكن بصمة SQL وrequired/checks وattestation والحارس وbrowserBoundaries ثابتة. لا تعديل لتوقع اختبار قديم. يُزال عرض بطاقة الرابط الخارجي فقط، مع حفظ كودها وNEXT_PUBLIC_SURVEY_URL. بقية C2 غير موصولة في الصفحات الحية؛ ملاحظة مالك ساكنة اختيارية وليست شرطًا.
+
+الوصل يوم القاعدة فقط وفق [الخطوات الدقيقة](PILOT_SUPABASE_SETUP.md#c2-phase2-wiring)، مع موافقة ونصوص وإطلاق منسقة؛ لا رفع CONSENT_VERSION الآن. [تقرير المرحلة2](RAD-069C2_PHASE2_REPORT_2026-10-24.md) يحفظ التحقق وحدوده. عند الحاجة لتغيير DB boundary الآن يتوقف العمل ويُسأل المالك؛ رفض الاستثناء لا يُعالج بإخفاء أسماء RPC أو تجاوز تحليل الحارس.
