@@ -44,6 +44,7 @@ for (const exam of EXAMS) for (const loc of LOCALES) for (const width of WIDTHS)
   let c = 0, f = 0;
   const ok = (name, cond, extra = "") => { c++; if (!cond) { f++; console.log("  FAIL", `${tag}: ${name}`, extra); } };
   const ctx = await browser.newContext({ ...VIEW(width), locale: loc === "ar" ? "ar" : "en-US" });
+  if (process.env.THEME) await ctx.addInitScript((t) => localStorage.setItem("radlab-theme", t), process.env.THEME); // RAD-069 B2a: THEME=light|dark (default: the site default, dark)
   const page = await ctx.newPage();
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));

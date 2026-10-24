@@ -200,7 +200,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
             onClick={onExpose}
             disabled={!canExpose}
             aria-describedby={locked ? undefined : readinessId}
-            className="min-h-12 w-full rounded-md bg-signal px-4 py-3 text-lg font-bold tracking-widest text-ink hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text"
+            className="min-h-12 w-full rounded-md bg-signal px-4 py-3 text-lg font-bold tracking-widest text-on-signal hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text"
           >
             {locked ? t("locked") : t("expose")}
           </button>

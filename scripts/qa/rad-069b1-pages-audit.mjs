@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { chromium } from 'playwright';
 import { startServer } from '../preview/serve-out.mjs';
 const stage = process.argv.includes('--before') ? 'before' : 'after';
-const root = 'docs/review'; mkdirSync(root, {recursive:true});
+const root = process.env.REVIEW_DIR ?? 'docs/review'; mkdirSync(root, {recursive:true});
 const metricsPath = `${root}/rad-069b1-metrics.json`;
 const metrics = existsSync(metricsPath) ? JSON.parse(readFileSync(metricsPath)) : {};
 const messages = Object.fromEntries(['en','ar'].map(l=>[l,JSON.parse(readFileSync(`messages/${l}.json`))]));
@@ -30,6 +30,7 @@ try{
  for(const locale of ['en','ar']) for(const width of [390,1440]){
  const height=width===390?844:900;
  const ctx=await browser.newContext({viewport:{width,height},hasTouch:width===390,isMobile:width===390});
+ if(process.env.THEME)await ctx.addInitScript(t=>localStorage.setItem('radlab-theme',t),process.env.THEME); // RAD-069 B2a
  await ctx.addInitScript(v=>localStorage.setItem('sb-abcdefghijklmnop-auth-token',v),JSON.stringify(session));
  let reads=0, fixtureMode="normal";const errors=[];
  await ctx.route('**/*',async route=>{
@@ -86,7 +87,7 @@ try{
  for(let i=1;i<await detailButtons.count();i++)await detailButtons.nth(i).click();
  const clipped=await page.locator('.attempt-reason').evaluateAll(n=>n.filter(x=>x.scrollWidth>x.clientWidth+1||getComputedStyle(x).textOverflow==='ellipsis').length);assert.equal(clipped,0,'critical reason must be fully readable');checks++;
  const passedPoint=page.getByTestId('training-chart').getByRole('button',{name:/88\.3/});await passedPoint.focus();
- assert.equal(await passedPoint.evaluate(n=>getComputedStyle(n).color),'rgb(23, 97, 61)');assert.equal(await point.evaluate(n=>getComputedStyle(n).color),'rgb(161, 33, 50)');checks++;
+ const dark=process.env.THEME!=='light';assert.equal(await passedPoint.evaluate(n=>getComputedStyle(n).color),dark?'rgb(102, 217, 154)':'rgb(23, 97, 61)');assert.equal(await point.evaluate(n=>getComputedStyle(n).color),dark?'rgb(255, 143, 134)':'rgb(161, 33, 50)');checks++;
  assert.equal(await page.getByTestId('training-chart').count(),3);checks++;
 
  if(width===390){await page.getByTestId('menu-toggle').click();await audit(page,`${tag}/header-menu`);}

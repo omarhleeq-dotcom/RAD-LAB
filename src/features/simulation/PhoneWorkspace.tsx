@@ -247,7 +247,7 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
               disabled={!readiness.canExpose}
               aria-describedby={locked ? undefined : readinessId}
               className={clsx(
-                "min-h-11 rounded-md bg-signal px-5 py-2 font-bold tracking-widest text-ink hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text",
+                "min-h-11 rounded-md bg-signal px-5 py-2 font-bold tracking-widest text-on-signal hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text",
                 locked && "flex-1",
               )}
             >

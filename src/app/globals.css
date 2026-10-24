@@ -17,6 +17,7 @@
   --color-warn: #8a5300;
   --color-bad: #b3261e;
   --color-on-brand: #ffffff;
+  --color-on-signal: #0f1b24;
   --font-sans: "Segoe UI", "Noto Sans Arabic", Tahoma, system-ui, -apple-system, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
@@ -333,3 +334,5 @@ html { scroll-padding-block-start: calc(var(--site-bar-height, 4.75rem) + .75rem
 .theme-toggle svg { width: 20px; height: 20px; flex-shrink: 0; }
 .theme-toggle[aria-pressed="true"] { background: var(--platform-soft); color: var(--color-brand-strong); border-color: var(--color-brand); }
 .drawer-theme { margin-block-end: 1.25rem; }
+/* The simulator console is dark in both themes: its native controls (radios, checkboxes, scrollbars) keep the light-scheme rendering they always had. */
+:root[data-theme="dark"] .bg-console { color-scheme: light; }
