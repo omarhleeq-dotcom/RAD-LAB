@@ -6,7 +6,8 @@ import {build} from 'esbuild';
 import postcss from 'postcss';import tailwind from '@tailwindcss/postcss';
 import {chromium} from 'playwright';
 import {startPractice,driver} from './workspace.mjs';
-const BEFORE=process.argv.includes('--before'),BASE='e85d7ef311c3f5272dee3faabee91cb5eaca16df',OUT=process.env.OUT??'/tmp/rad081-owner-audit';mkdirSync(OUT,{recursive:true});
+const BEFORE=process.argv.includes('--before'),BASE=process.env.BASE_REF??'e85d7ef311c3f5272dee3faabee91cb5eaca16df',OUT=process.env.OUT??'/tmp/rad081-owner-audit';mkdirSync(OUT,{recursive:true});
+const ITEM1=process.argv.includes('--item1-only');
 const stage=BEFORE?'before':'after',root=process.cwd();
 const read=p=>BEFORE?execFileSync('git',['show',`${BASE}:${p}`],{encoding:'utf8',maxBuffer:16*1024*1024}):readFileSync(p,'utf8');
 const messages=Object.fromEntries(['en','ar'].map(l=>[l,JSON.parse(read(`messages/${l}.json`))]));
@@ -25,7 +26,7 @@ window.mount=c=>{
  window.__calls=[];window.__account={state:{kind:'signedIn',userId:'synthetic',email:'synthetic@example.test',displayName:'Saved Name',consentVersion:CONSENT_VERSION,profile:{status:'approved',role:'participant',code:'P-test'}},recovery:null,consumeRecovery(){},saveName:async v=>{window.__calls.push(v);return true;}};
  const rad=CASES.find(x=>x.id===(c.exam??'wrist-pa'));useSimulationStore.getState().loadCase(rad.id);
  let settings={...rad.initialSettings};
- if(c.kind==='marker')settings={...settings,projection:'wrist-pa',rotationDeg:0,centralRay:{x:0,y:-1/6},collimation:{width:14/18,height:16/24},sideMarker:'L',markerPosition:{x:-.42,y:-.16},sidCm:105,kvp:60,mas:2.5,motionInstruction:'remain-still'};
+ if(c.kind==='marker')settings={...settings,projection:'wrist-pa',rotationDeg:0,centralRay:{x:0,y:-1/6},collimation:{width:14/18,height:16/24},sideMarker:c.markerSide??'L',markerPosition:{x:-.42,y:-.16},sidCm:105,kvp:60,mas:2.5,motionInstruction:'remain-still'};
  if(c.kind==='mixed'){let found;for(const width of [.3,.5,.75,1])for(const height of [.3,.5,.75,1]){const s={...settings,projection:rad.requiredProjection,centralRay:rad.positioning.centering.target,collimation:{width,height},sideMarker:null},r=evaluate(rad,s);if(r.checks.some(x=>x.ruleId==='collimation-clipping'&&x.outcome==='fail')&&r.checks.some(x=>x.ruleId==='collimation-excess'&&x.outcome==='partial'))found=s;}if(!found)throw Error('no mixed witness');settings=found;}
  useSimulationStore.setState({settings});if(c.result)useSimulationStore.getState().expose();
  root.render(<NextIntlClientProvider key={JSON.stringify(c)} locale={c.locale} messages={window.__messages} timeZone="UTC"><AppShell><main id="main-content">{c.account?<div className="mx-auto max-w-3xl p-4"><h1>{window.__messages.account.title}</h1><AccountPanel/></div>:<SimulationWorkspace caseId={rad.id}/>}</main></AppShell></NextIntlClientProvider>);
@@ -37,6 +38,13 @@ window.mount=c=>{
 }}]});
 const axe=readFileSync('node_modules/axe-core/axe.min.js','utf8'),browser=await chromium.launch({executablePath:process.env.CHROMIUM??'/usr/bin/chromium',args:['--no-sandbox']});let axes=0;const frames=[];
 async function audit(p,label){await p.evaluate(axe);const a=await p.evaluate(()=>axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));assert.deepEqual(a.violations.map(x=>({id:x.id,nodes:x.nodes.map(n=>n.target)})),[],label);assert.ok(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),label+' overflow');axes++;}
+// Exclude the 3 CSS-pixel badge border/corners, where guides are allowed to be visible behind it.
+async function badgeInterior(page, bytes){return page.evaluate(async data=>{
+ const img=new Image();img.src='data:image/png;base64,'+data;await img.decode();
+ const canvas=document.createElement('canvas');canvas.width=img.width-6;canvas.height=img.height-6;
+ canvas.getContext('2d').drawImage(img,3,3,canvas.width,canvas.height,0,0,canvas.width,canvas.height);
+ return canvas.toDataURL();
+},bytes.toString('base64'));}
 async function mount(locale,width,theme,c){
  const context=await browser.newContext({viewport:{width,height:900}}),p=await context.newPage();const errors=[];let external=0;p.on('pageerror',e=>errors.push(e.message));
  await context.route('**/*',async route=>{const u=new URL(route.request().url());if(u.hostname!=='rad081.test'){external++;return route.abort();}const asset='public'+decodeURIComponent(u.pathname);if(existsSync(asset)&&!u.pathname.endsWith('/'))return route.fulfill({path:asset});return route.fulfill({contentType:'text/html',body:`<!doctype html><html lang="${locale}" dir="${locale==='ar'?'rtl':'ltr'}" data-theme="${theme}"><head><title>RAD-081 local review</title></head><body><div id="fixture"></div></body></html>`});});
@@ -47,11 +55,23 @@ async function mount(locale,width,theme,c){
 try{
  for(const locale of ['en','ar'])for(const width of [390,1440])for(const theme of ['dark','light']){
   const tag=`${locale}-${width}-${theme}`,m=messages[locale];console.log(stage,tag);
-  const scene=await mount(locale,width,theme,{kind:'marker'}),p=scene.p,dr=driver(p,m);
-  await audit(p,tag+' guides on');await p.screenshot({path:`${OUT}/${stage}-${tag}-marker.jpg`,type:'jpeg',quality:75,fullPage:true});
+  for(const side of (ITEM1?['L','R']:['L'])){
+  const scene=await mount(locale,width,theme,{kind:'marker',markerSide:side}),p=scene.p,dr=driver(p,m);
+  const badge=p.locator('svg g[role=button]').filter({has:p.locator('text',{hasText:new RegExp('^'+side+'$')})});
+  assert.equal(await badge.locator('text').textContent(),side);
+  const paintOrder=await badge.evaluate(el=>[...el.parentElement.querySelectorAll('g[role=img]')].filter(g=>g.querySelector('title')).every(g=>Boolean(g.compareDocumentPosition(el)&4)));
+  if(!BEFORE)assert.ok(paintOrder,tag+' marker behind guide');
+  const badgeOn=await badge.locator('rect[fill="#e8edf1"]').screenshot();const interiorOn=await badgeInterior(p,badgeOn);
+  await p.evaluate(()=>{window.scrollTo(0,0);return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));});
+  await audit(p,tag+' guides on');await p.screenshot({path:`${OUT}/${stage}-${tag}-${side==='L'?'marker':'marker-r'}.jpg`,type:'jpeg',quality:75,fullPage:true});
   const guides=p.getByRole('checkbox',{name:m.positioning.guides,exact:true});await dr.reveal(guides);if(await guides.isChecked())await dr.click(guides.locator("xpath=ancestor::label"));assert.equal(await guides.isChecked(),false);
   assert.equal(await p.locator('svg [aria-label]').filter({hasText:'Measured marker square'}).count(),0);await audit(p,tag+' guides off');
-  await p.screenshot({path:`${OUT}/${stage}-${tag}-off.jpg`,type:'jpeg',quality:75,fullPage:true});assert.deepEqual(scene.errors,[]);assert.equal(scene.external(),0);await scene.context.close();
+  const badgeOff=await badge.locator('rect[fill="#e8edf1"]').screenshot();writeFileSync(`${OUT}/${stage}-${tag}-${side}-badge-on.png`,badgeOn);writeFileSync(`${OUT}/${stage}-${tag}-${side}-badge-off.png`,badgeOff);const samePixels=interiorOn===await badgeInterior(p,badgeOff);if(!BEFORE)assert.ok(samePixels,tag+' '+side+' badge pixels differ ON/OFF');
+  console.log('badge',side,'sameLetterPixels',samePixels,'guideBehind',paintOrder);
+  await p.evaluate(()=>{window.scrollTo(0,0);return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));});
+  await p.screenshot({path:`${OUT}/${stage}-${tag}-${side==='L'?'off':'off-r'}.jpg`,type:'jpeg',quality:75,fullPage:true});assert.deepEqual(scene.errors,[]);assert.equal(scene.external(),0);await scene.context.close();
+  }
+  if(ITEM1)continue;
   for(const exam of ['hand-pa','chest-pa-erect']){
    const r=await mount(locale,width,theme,{exam,kind:'mixed',result:true});await audit(r.p,tag+' mixed '+exam);await r.p.screenshot({path:`${OUT}/${stage}-${tag}-${exam}-mixed.jpg`,type:'jpeg',quality:75,fullPage:true});assert.deepEqual(r.errors,[]);assert.equal(r.external(),0);await r.context.close();
   }
@@ -66,7 +86,7 @@ try{
   assert.deepEqual(a.errors,[]);assert.equal(a.external(),0);await a.context.close();
  }
  // Current main drawing only: all existing frame labels at both sizes, independent of other recorded views' collisions.
- for(const locale of ['en','ar'])for(const width of [390,1440]){
+ if(!ITEM1)for(const locale of ['en','ar'])for(const width of [390,1440]){
   const ids=[...readFileSync('src/data/exams/index.ts','utf8').matchAll(/from "\.\/xray\/([a-z0-9-]+)"/g)].map(m=>m[1]);
   for(const exam of ids){const r=await mount(locale,width,'dark',{exam});const values=await r.p.locator('section[aria-labelledby="pos-heading"] > div figure').first().locator('svg').evaluateAll(nodes=>nodes.map(svg=>{const v=svg.viewBox.baseVal;return {viewBox:svg.getAttribute('viewBox'),labels:[...svg.querySelectorAll('text')].map(t=>{const b=t.getBBox();return {text:t.textContent,x:t.getAttribute('x'),y:t.getAttribute('y'),box:[b.x,b.y,b.width,b.height],outside:b.x-5<v.x||b.x+b.width+5>v.x+v.width||b.y-1<v.y||b.y+b.height+1>v.y+v.height};})};}));assert.ok(values.length,locale+width+exam+" drawing");assert.deepEqual(r.errors,[]);assert.equal(r.external(),0);frames.push({locale,width,exam,values});await r.context.close();}
  }

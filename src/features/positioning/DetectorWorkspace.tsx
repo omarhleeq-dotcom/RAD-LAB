@@ -303,6 +303,8 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       )}
 
+      {/* Guide strokes sit behind the unchanged marker badge and letter on both layouts. */}
+      {showGuides && <MarkerGuideOverlays radCase={radCase} settings={settings} />}
       {!phone && markerNode}
 
       {/* outside the collimated field the detector receives no beam */}
@@ -339,7 +341,6 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       ))}
 
       {phone && markerNode}
-      {showGuides && <MarkerGuideOverlays radCase={radCase} settings={settings} />}
 
       <g {...dragProps({ kind: "ray" })} {...keyProps(settings.centralRay, "centralRay")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("rayHandle")} aria-describedby="ray-status" style={{ cursor: disabled ? "default" : "grab" }}>
         <circle cx={ray.x} cy={ray.y} r={rayHit} fill="transparent" />
