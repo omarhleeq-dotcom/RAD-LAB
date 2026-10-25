@@ -39,8 +39,8 @@
   "browserBoundaries": {
     "src/features/pilot/FeedbackBox.tsx": "c6ae92fc0d39108fc60f8bac3f4028ca3e6b8bb950061e24166c4de47db4e703",
     "src/features/pilot/client.ts": "e4ad823775d64b2e7a650a61674bdbd00d76cff838397e5274c6ea34971ecdf0",
-    "src/features/pilot/AttemptRecorder.tsx": "66548e1e7c1b0eca105f187929a61e6901b9894093d423d81e95d09d70b872e2",
-    "src/features/pilot/attempt-logger.ts": "83894d055186a16bc93eef6e7bfcf78d833e81f3a5bb595993d2aaa8c3e85a4a",
+    "src/features/pilot/AttemptRecorder.tsx": "e282d08e647d245b1a82f1a2695b4105c55afb55a510754a62cfc5e7de5ae7a9",
+    "src/features/pilot/attempt-logger.ts": "871679b87fd9c4d6eca92f5be5de3a6f47d4db9f6d26d7a938ec7a9df5d4196c",
     "src/features/pilot/saved-results.ts": "691407a50686f264bb71e66bc1e6ef08573010c30b69c557c94c253235022f82",
     "src/features/pilot/profile-read.ts": "466b47e31c3433eaa6a6cc93af1beb9a511b20b124071a7e895af0c77ac067a1",
     "src/features/pilot/training.ts": "6040ad4bf434348458319e9746847cecb1b64630f845e85b2f79e9b1b7b970a3",

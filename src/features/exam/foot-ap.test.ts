@@ -10,7 +10,7 @@ import { buildRenderPlan } from "@/features/radiograph/plan";
 import { wordingNsOf } from "@/features/radiograph/wording";
 import { validateCase, validateExam } from "./validate";
 
-/** A fully correct foot AP (DP) attempt (RIGHT foot): marker R inside the field on the lateral margin, CR 10° toward the heel (cephalad = −10) at the base of the 3rd metatarsal, SID ≥ 102 cm. */
+/** A fully correct foot AP (DP) attempt (RIGHT foot): marker R inside the field on the lateral margin, CR 10° toward the heel (cephalad = −10) at the base of the 3rd metatarsal, SID in the 100–110 cm ideal band (RAD-081). */
 const ok: SimulationSettings = {
   projection: "foot-ap",
   rotationDeg: 0,
@@ -135,7 +135,7 @@ describe("technique: Bontrager p.232 kV band 60–70; the partial bands, SID ban
   it.each([[65, "pass"], [60, "pass"], [70, "pass"], [57, "partial"], [73, "partial"], [45, "fail"], [90, "fail"]] as const)("%d kV → %s", (kvp, outcome) => {
     expect(check(run({ kvp }), "kvp").outcome).toBe(outcome);
   });
-  it.each([[102, "pass"], [110, "pass"], [100, "partial"], [120, "partial"], [85, "fail"], [150, "fail"]] as const)("SID %d cm → %s", (sidCm, outcome) => {
+  it.each([[102, "pass"], [100, "pass"], [101, "pass"], [99, "partial"], [110, "pass"], [111, "partial"], [120, "partial"], [85, "fail"], [150, "fail"]] as const)("SID %d cm → %s", (sidCm, outcome) => {
     expect(check(run({ sidCm }), "sid").outcome).toBe(outcome);
   });
   it("no AEC: the technique has no aec section, the exposure model reads manual, low kV draws low penetration", () => {
