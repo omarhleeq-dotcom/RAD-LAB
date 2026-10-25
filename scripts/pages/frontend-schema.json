@@ -32,7 +32,29 @@
     "supabase/checks/owner-dashboard-ready.sql",
     "supabase/checks/owner-deletion-surveys-ready.sql"
   ],
-  "deferredMigrations": {},
+  "deferredMigrations": {
+    "20261026000100_assess_supervisor_scope.sql": {
+      "sha256": "10fc03a219dcbb224569cf5e241bdaedea9da657d450e6a216b3c54855ba13e7",
+      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
+      "serverModules": [
+        "src/features/assess/server-rad085-contracts.ts"
+      ]
+    },
+    "20261026000200_assess_authoring_drafts.sql": {
+      "sha256": "eb9d81e7f3f3953b0355318c9d43624bfdb6f10ae9b3b136ce2d97fc86bcc719",
+      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
+      "serverModules": [
+        "src/features/assess/server-rad085-contracts.ts"
+      ]
+    },
+    "20261026000300_assess_assignment_review.sql": {
+      "sha256": "4835f6bed7ef9c378315b6b76c9bce7186d523e88ad5ee719285741e3f118ac7",
+      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
+      "serverModules": [
+        "src/features/assess/server-rad085-contracts.ts"
+      ]
+    }
+  },
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
