@@ -62,6 +62,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   const tEv = useTranslations("evidence");
   const locale = useLocale();
   const { score } = result;
+  const criticalFail = !score.passed && score.thresholdMet && result.criticalFindings.length > 0;
   const plan = useMemo(() => buildRenderPlan(result.resultState, radCase), [result.resultState, radCase]);
   // Core categories use their message keys; a category an exam adds brings its own bilingual label (S11).
   const categoryLabel = (id: string) => {
@@ -111,7 +112,8 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
     const critical = criticalForCheck(k, radCase, result.criticalFindings);
     const target = displayTarget(radCase.rules.find((r) => r.id === k.ruleId), radCase, locale);
     const label = localize(k.label, locale);
-    const labelIncludesNotScored = label.toLocaleLowerCase(locale).includes(t("notScored").toLocaleLowerCase(locale));
+    const labelIncludesNotScored = [t("notScored"), t("notPartOfScore")].some((phrase) =>
+      label.toLocaleLowerCase(locale).includes(phrase.toLocaleLowerCase(locale)));
     return (
       <li key={k.ruleId} className={clsx("rounded border-s-4 bg-paper/60", OUTCOME_STYLE[k.outcome])}>
         <ResultDisclosure title={<>
@@ -153,9 +155,10 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
     <section aria-labelledby="result-heading" className="space-y-4 rounded-lg border border-line bg-panel p-3 sm:p-4">
       <div className="space-y-2 rounded border border-line p-3" role="status">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="result-heading" className={clsx("font-bold", score.passed ? "text-ok" : "text-bad")}>{score.passed ? t("passed") : t("failed")}</h2>
+          <h2 id="result-heading" className={clsx("font-bold", score.passed ? "text-ok" : "text-bad")}>{score.passed ? t("passed") : criticalFail ? t("criticalFailed") : t("failed")}</h2>
           <span dir="ltr" className="font-mono text-2xl font-bold text-brand-strong">{score.total} <span className="text-sm">/ 100</span></span>
         </div>
+        {criticalFail && <p className="text-sm text-bad">{t("criticalFailSummary", { total: score.total })}</p>}
         {result.criticalFindings.length > 0 && <p className="text-sm text-bad">{result.criticalFindings.map((f) => localize(f.label, locale)).join(" / ")}</p>}
         <p className="flex flex-wrap gap-x-4 text-xs">
           {(["fail", "partial", "pass"] as const).map((outcome) => <span key={outcome}>{t(`outcome.${outcome}`)}: {result.checks.filter((k) => k.outcome === outcome).length}</span>)}

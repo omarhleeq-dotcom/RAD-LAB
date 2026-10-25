@@ -63,8 +63,9 @@ describe("phone-review display values", () => {
     expect(image).toContain('aria-expanded="false"');
     expect(image).toContain("<svg");
     expect(html).not.toContain(msgs.result.imageCaption);
-    const marker = buttons.find((b) => b.includes(locale === "en" ? "Side marker (not scored)" : "علامة الجانب (غير محسوبة)"))!;
-    expect(marker.split(msgs.result.notScored)).toHaveLength(2);
+    const marker = buttons.find((b) => b.includes(locale === "en" ? "Side marker (not part of the score, but a critical error)" : "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)"))!;
+    expect(marker.split(msgs.result.notPartOfScore)).toHaveLength(2);
+    expect(marker).not.toContain(msgs.result.notScored);
     expect(marker).toContain(`<span class="sr-only">${msgs.result.outcome.fail}</span>`);
     expect(marker).toContain('aria-expanded="false"');
     const kvp = buttons.find((b) => b.includes('70 kVp'))!;

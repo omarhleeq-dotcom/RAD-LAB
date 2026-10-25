@@ -562,8 +562,8 @@
    "id": "side-marker",
    "kind": "marker",
    "label": {
-    "ar": "علامة الجانب (غير محسوبة)",
-    "en": "Side marker (not scored)"
+    "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+    "en": "Side marker (not part of the score, but a critical error)"
    },
    "weight": 0
   },
