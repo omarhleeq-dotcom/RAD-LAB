@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 
 // Number of paragraphs (keys p1…pN) per section of the `terms` messages.
-const SECTIONS = [["keep", 4], ["why", 3], ["who", 2], ["protect", 1], ["howLong", 2], ["rights", 3], ["patients", 6]] as const;
+const SECTIONS = [["keep", 4], ["why", 3], ["who", 2], ["protect", 1], ["howLong", 4], ["rights", 3], ["patients", 6]] as const;
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/terms">) {
   const { locale } = await params;

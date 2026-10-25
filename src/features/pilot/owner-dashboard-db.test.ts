@@ -70,41 +70,38 @@ it("converts browser calendar dates over DST and rejects malformed dates",()=>{
  const old=process.env.TZ;process.env.TZ="America/New_York";
  try {expect(Date.parse(localDateBound("2026-11-01",true))-Date.parse(localDateBound("2026-11-01"))+1).toBe(25*3600000);expect(()=>localDateBound("2026-02-30")).toThrow();}finally{if(old===undefined)delete process.env.TZ;else process.env.TZ=old;}
 });
-it("falls back only for a missing RPC, with bounded server search and no broad error fallback",async()=>{
+it("falls back from the old C1 directory only to C2 for a missing RPC",async()=>{
  const calls:string[]=[];
  const client={rpc:async(name:string,args:Record<string,unknown>)=>{
   calls.push(name);
   if(name==="owner_dashboard_v1")return {error:{code:"PGRST202"}};
   expect(args.p_limit).toBe(20);expect(args.p_search).toBe("remote@example.test");
-  return {data:{version:1,boundary:"2026-01-01T00:00:00Z",summary:null,rows:[],next:null},error:null};
- },from:()=>({select:()=>({eq:async()=>({count:0,error:null})})})} as unknown as SupabaseClient;
+  return {data:{version:1,boundary:"2026-01-01T00:00:00Z",counts:{pending:0,approved:0,suspended:0},rows:[],next:null},error:null};
+ }} as unknown as SupabaseClient;
  const page=await directoryPage(client,"remote@example.test","",{cursor:null,boundary:null});
- expect(page.legacy).toBe(true);expect(page.next).toBeNull();expect(calls).toEqual(["owner_dashboard_v1","training_page_v1_with_comparison","training_page_v1_with_comparison","training_page_v1_with_comparison"]);
+ expect(page.legacy).toBe(false);expect(page.next).toBeNull();expect(calls).toEqual(["owner_dashboard_v1","owner_account_directory_v1"]);
  await expect(directoryPage({rpc:async()=>({error:{code:"42501"}})} as unknown as SupabaseClient,"","",{cursor:null,boundary:null})).rejects.toThrow();
 });
-
-it("uses only installed directory APIs and returns the summary waiting state without any future RPC",async()=>{
+it("uses the required C2 directory and C1 summary after DB day",async()=>{
  const calls:Record<string,unknown>[]=[];
  const client={rpc:async(name:string,args:Record<string,unknown>)=>{
-   expect(name).toBe("training_page_v1_with_comparison");calls.push(args);
-   return {data:{version:1,boundary:"2026-01-01T00:00:00Z",summary:null,rows:[],next:null},error:null};
- },from:()=>({select:()=>({eq:async()=>({count:0,error:null})})})} as unknown as SupabaseClient;
- const p=await currentDirectoryPage(client,"outside-page@example.test","suspended",{cursor:{id:"00000000-0000-0000-0000-000000000001"},boundary:"2026-01-01T00:00:00Z"});
- expect(p.legacy).toBe(true);expect(p.next).toBeNull();
- expect(calls).toMatchObject([{p_search:"outside-page@example.test",p_status:"suspended",p_limit:20,p_cursor:{id:"00000000-0000-0000-0000-000000000001"}}]);
- const before=calls.length;
- expect(await examSummaryPage(client,EMPTY_FILTERS,{cursor:null,boundary:null})).toBeNull();
- expect(calls).toHaveLength(before);
+   calls.push({name,...args});
+   return {data:{version:1,boundary:"2026-01-01T00:00:00Z",counts:{pending:0,approved:0,suspended:0},rows:[],next:null},error:null};
+ }} as unknown as SupabaseClient;
+ const p=await currentDirectoryPage(client,"outside-page@example.test","suspended",{cursor:{id:"00000000-0000-0000-0000-000000000001",rank:"2"},boundary:"2026-01-01T00:00:00Z"});
+ expect(p.legacy).toBe(false);expect(p.next).toBeNull();
+ expect(calls).toMatchObject([{name:"owner_account_directory_v1",p_search:"outside-page@example.test",p_status:"suspended",p_limit:20,p_cursor:{id:"00000000-0000-0000-0000-000000000001",rank:"2"}}]);
+ expect(await examSummaryPage(client,EMPTY_FILTERS,{cursor:null,boundary:null})).toEqual({rows:[],next:null});
+ expect(calls[1]).toMatchObject({name:"owner_dashboard_v1",p_view:"summary",p_limit:20});
 });
-
-it("searches the next status when the pending partition is empty, preserving bounded reads",async()=>{
+it("lets C2 search across statuses in one bounded call",async()=>{
  const statuses:string[]=[];
  const client={rpc:async(name:string,args:Record<string,unknown>)=>{
-  expect(name).toBe("training_page_v1_with_comparison");expect(args.p_limit).toBe(20);statuses.push(String(args.p_status));
-  return {data:{version:1,boundary:"2026-01-01T00:00:00Z",summary:null,rows:[],next:null},error:null};
- },from:()=>({select:()=>({eq:async()=>({count:0,error:null})})})} as unknown as SupabaseClient;
+  expect(name).toBe("owner_account_directory_v1");expect(args.p_limit).toBe(20);statuses.push(String(args.p_status));
+  return {data:{version:1,boundary:"2026-01-01T00:00:00Z",counts:{pending:0,approved:0,suspended:0},rows:[],next:null},error:null};
+ }} as unknown as SupabaseClient;
  expect((await currentDirectoryPage(client,"matching@example.test","",{cursor:null,boundary:null})).rows).toHaveLength(0);
- expect(statuses).toEqual(["pending","approved","suspended"]);
+ expect(statuses).toEqual([""]);
 });
 
 it("reads and exports notes against the installed migration ceiling without dashboard SQL",async()=>{

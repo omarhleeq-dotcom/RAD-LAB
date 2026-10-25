@@ -6,16 +6,25 @@ import type { ProfileStatus } from "./account-state";
 import { getPilotClient } from "./client";
 import { PILOT } from "./config";
 import { ParticipantActivity } from "./OwnerActivity";
-import { EMPTY_FILTERS } from "./owner-data";
-import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, type Participant } from "./owner-state";
+import { EMPTY_FILTERS, readOwnerPage } from "./owner-data";
+import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, parseParticipants } from "./owner-state";
 import { useSessionAccount } from "./SessionGate";
 import { OwnerAssessPanel } from "@/features/assess/OwnerAssessPanel";
 import { OwnerDirectory, ownerButton as btn } from "./OwnerDirectory";
 import { OwnerTraining } from "./OwnerTraining";
+import type { DirectoryPerson } from "./owner-dashboard-data";
+import { useC2Adapter } from "./C2Session";
+import { OwnerDeletion } from "./OwnerDeletion";
+import { OwnerSurveys } from "./OwnerSurveys";
 const tabs=["participants","training","assess"] as const;
 type Tab=typeof tabs[number];
 function tabFromUrl():Tab {const v=new URL(location.href).searchParams.get("tab");return tabs.includes(v as Tab)?v as Tab:"participants";}
 export function OwnerPanel() {
+ const {state}=useSessionAccount();
+ const identity=state.kind==="signedIn"?`${state.userId}:${state.profile.role}:${state.profile.status}`:state.kind;
+ return <OwnerPanelSession key={identity}/>;
+}
+function OwnerPanelSession() {
  const t=useTranslations("owner"),d=useTranslations("owner.dashboard");
  const {state}=useSessionAccount();
  const [tab,setTab]=useState<Tab>("participants"),[version,setVersion]=useState(0);
@@ -23,11 +32,17 @@ export function OwnerPanel() {
  useEffect(()=>{const sync=()=>setTab(tabFromUrl());sync();window.addEventListener("popstate",sync);return()=>window.removeEventListener("popstate",sync);},[]);
  const ownerId=state.kind==="signedIn"?state.userId:"";
  const isOwner=state.kind==="signedIn"&&state.profile.role==="owner"&&state.profile.status==="approved";
- async function setStatus(p:Participant,target:ProfileStatus) {
-  if(needsConfirmedEmail(p,target)&&warn!==p.userId){setWarn(p.userId);return;}
-  setBusy(p.userId);setWarn(null);
-  try {const c=await getPilotClient();if(!c)throw new Error();const r=await c.rpc("set_participant_status",{target:p.userId,new_status:target});if(r.error)throw new Error();setError(false);setVersion(v=>v+1);}catch{setError(true);}finally{setBusy(null);}
+ async function setStatus(p:DirectoryPerson,target:ProfileStatus) {
+  setBusy(p.userId);
+  try {const c=await getPilotClient();if(!c)throw new Error();if(target==="approved") {
+   const detail=await readOwnerPage(args=>c.rpc("owner_page_v1",args),"participants",{...EMPTY_FILTERS,participant:p.userId},null,null,false,1);
+   const confirmed=parseParticipants(detail.rows).find(row=>row.userId===p.userId);
+   if(!confirmed)throw new Error();
+   if(needsConfirmedEmail(confirmed,target)&&warn!==p.userId){setWarn(p.userId);return;}
+  }
+  const r=await c.rpc("set_participant_status",{target:p.userId,new_status:target});if(r.error)throw new Error();setWarn(null);setError(false);setVersion(v=>v+1);}catch{setError(true);}finally{setBusy(null);}
  }
+ const adapter=useC2Adapter(isOwner?ownerId:null);
  if(!PILOT)return <p data-testid="owner-off">{t("notEnabled")}</p>;
  if(state.kind==="loading")return <p role="status">{t("loading")}</p>;
  if(state.kind==="signedOut")return <p data-testid="owner-signed-out">{t("signInFirst")} <Link href="/account">{t("goAccount")}</Link></p>;
@@ -51,14 +66,15 @@ export function OwnerPanel() {
      </div>
      {warn===p.userId&&<p role="alert">{t("warnUnconfirmed")}</p>}
      <details className="mt-1"><summary className="min-h-11 cursor-pointer text-sm">{d("details")}</summary>
-      <dl className="space-y-1 text-sm"><div><dt className="inline">{d("code")}: </dt><dd className="inline break-all font-mono" dir="ltr">{p.code}</dd></div><div><dt className="inline">{t("registered")}: </dt><dd className="inline"><bdi>{when(p.createdAt)}</bdi></dd></div><div><dt className="inline">{t("emailLabel")}: </dt><dd className="inline">{t(p.emailConfirmed?"confirmed":"unconfirmed")}</dd></div></dl>
+      <dl className="space-y-1 text-sm"><div><dt className="inline">{d("code")}: </dt><dd className="inline break-all font-mono" dir="ltr">{p.code}</dd></div><div><dt className="inline">{t("registered")}: </dt><dd className="inline"><bdi>{when(p.createdAt)}</bdi></dd></div>{p.emailConfirmed!==null&&<div><dt className="inline">{t("emailLabel")}: </dt><dd className="inline">{t(p.emailConfirmed?"confirmed":"unconfirmed")}</dd></div>}</dl>
       {actions.slice(1).map(a=><button key={a} className={btn} disabled={busy===p.userId} onClick={()=>void setStatus(p,a)}>{t(`actions.${a}`)}</button>)}
       <ParticipantActivity code={p.code} userId={p.userId} filters={EMPTY_FILTERS} version={version}/>
      </details>
     </>;
    }}</OwnerDirectory>
   </>}
-  {tab==="training"&&<OwnerTraining/>}
+  {tab==="training"&&<OwnerTraining key={version}/>}
+  {adapter&&<><OwnerDeletion adapter={adapter} ownerId={ownerId} onChanged={()=>setVersion(v=>v+1)}/><OwnerSurveys adapter={adapter} ownerId={ownerId}/></>}
   {tab==="assess"&&<OwnerAssessPanel key={ownerId}/>}
  </section>;
 }

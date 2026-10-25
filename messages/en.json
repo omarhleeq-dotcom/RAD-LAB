@@ -1470,7 +1470,7 @@
       "p1": "You create your account using your email address and a password you choose. The account service stores and verifies your password. Your password is not shown to the project owner. We also keep the name you add to your profile; you can edit it in Account.",
       "p2": "We keep details of your practice attempts, their results and times, and some website usage and technical information to help us improve the practice experience.",
       "p3": "We also record the version of the terms you accepted and when you accepted it.",
-      "p4": "If you choose to submit a note, we keep its text with the linked attempt. A note can contain up to 1,000 characters. Please do not include your name, contact details or information about real people."
+      "p4": "If you choose to submit a note, we keep its text with the linked attempt. A note can contain up to 1,000 characters. Please do not include your name, contact details or information about real people. If you answer a survey, we save your answers linked to your participant account. Please do not include identifying or patient information."
     },
     "why": {
       "title": "How do we use the data?",
@@ -1480,7 +1480,7 @@
     },
     "who": {
       "title": "Who can access it?",
-      "p1": "The project owner can access pilot data and download attempts and notes in separate files for analysis. The notes file includes the text as submitted by the participant.",
+      "p1": "The project owner can access pilot data and download attempts and notes in separate files for analysis. The notes file includes the text as submitted by the participant. Survey answers are visible only to the project owner. Survey exports use the participant code.",
       "p2": "Your account is linked to a participant code that the project owner can match to your email when needed. The website allows each participant to access their own data. Your profile name and email help the project owner identify you when reviewing your training."
     },
     "protect": {
@@ -1490,12 +1490,14 @@
     "howLong": {
       "title": "How long do we keep it?",
       "p1": "The project owner announces the end of the pilot via the website or email after participation and review are complete.",
-      "p2": "We delete participant-linked data within six months of that announcement. We may retain general statistics and summaries that do not identify participants, to improve the user experience or for scientific research."
+      "p2": "We delete participant-linked data within six months of that announcement. We may retain general statistics and summaries that do not identify participants, to improve the user experience or for scientific research.",
+      "p3": "When the owner starts account deletion, the account is disabled. The owner can restore it during a 30-day restore window.",
+      "p4": "After the 30-day restore window, final deletion permanently removes the account and all associated data, including attempts, notes, events and survey answers. Provider backups may persist until the provider’s retention period ends."
     },
     "rights": {
       "title": "Accessing or deleting your data",
       "p1": "You can request access to or deletion of your data by emailing: radlab.pilot@gmail.com",
-      "p2": "If you request deletion, we delete your account and associated data from the pilot database and export files under our control, without waiting for the pilot to end. We may need to verify that the account belongs to you.",
+      "p2": "We may need to verify that the account belongs to you. For a deletion request, the owner then starts deletion without waiting for the pilot to end or the six-month period above, with the 30-day restore window described above. Final deletion covers all your data in the pilot database and export files under our control.",
       "p3": "You can stop participating whenever you wish. Stopping alone does not delete saved data; you can request deletion by email."
     },
     "patients": {
@@ -1544,7 +1546,8 @@
     "closeMenu": "Close navigation",
     "training": "Training",
     "theme": "Dark theme",
-    "themeShort": "Dark"
+    "themeShort": "Dark",
+    "feedback": "Your feedback"
   },
   "library": {
     "title": "Exam library",
