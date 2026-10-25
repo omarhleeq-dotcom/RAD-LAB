@@ -43,19 +43,19 @@ function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; 
  }
  function cancel() { active.current?.abort(); clear(); setContext(undefined); setBusy(false); setError(t.cancelled); }
  function change(d: Draft) { setDraft(d); setPreview(undefined); setPlan(undefined); setIssues([]); setReceipt(false); setDiscarding(false); }
- function validate() { const found = draftIssues(draft!, adapter.parts); setIssues(found); return !found.length; }
+ function validate() { const found = draftIssues(draft!, adapter.parts, adapter.practicals); setIssues(found); return !found.length; }
  if (!context) return <div className="space-y-3">{error ? <p role="alert">{error}</p> : <><p role="status">{t.loading}</p><button className={control} onClick={cancel}>{t.cancel}</button></>}</div>;
  return <div ref={container} className="space-y-5"><h2 className="text-xl break-words">{context.group.name}</h2>{error && <p role="alert">{error}</p>}
   {busy && <div><p role="status">{t.busy}</p><button className={control} onClick={cancel}>{t.cancel}</button></div>}
   {preview ? <div ref={region}><StudentPreview data={preview} t={t} locale={locale} close={() => { setPreview(undefined); requestAnimationFrame(() => [...(container.current?.querySelectorAll('button') ?? [])].find(b => b.textContent === t.preview)?.focus()); }}/></div> :
-   draft ? <AuthoringView draft={draft} parts={adapter.parts} t={t} busy={busy} dirty={JSON.stringify(draft) !== JSON.stringify(baseline)} issues={issues} plan={plan} receipt={receipt} discarding={discarding} change={change}
+   draft ? <AuthoringView draft={draft} parts={adapter.parts} practicals={adapter.practicals} t={t} busy={busy} dirty={JSON.stringify(draft) !== JSON.stringify(baseline)} issues={issues} plan={plan} receipt={receipt} discarding={discarding} change={change}
     save={() => void operation(s => adapter.save(scope, draft, s), d => { setDraft(d); setBaseline(d); setPlan(undefined); })}
-    preview={() => { if (validate()) { setPlan(undefined); setPreview(studentPreview(draft, adapter.parts)); } }}
+    preview={() => { if (validate()) { setPlan(undefined); setPreview(studentPreview(draft, adapter.parts, adapter.practicals)); } }}
     prepare={() => { if (validate()) void operation(s => adapter.prepare(scope, draft, s), setPlan); }}
     confirm={() => plan && void operation(s => adapter.confirm(scope, plan.token, s), () => { setPlan(undefined); setReceipt(true); })}
     cancelReview={() => setPlan(undefined)} paging={cursor => plan && void operation(s => adapter.targets(scope, plan.token, cursor, s), targets => setPlan({ ...plan, targets }))}
-    discard={() => setDiscarding(true)} keep={() => setDiscarding(false)} confirmDiscard={() => { change(baseline ? structuredClone(baseline) : newDraft()); }}/>
-   : <button className={control} onClick={() => { setDraft(newDraft()); setBaseline(undefined); }}>{t.create}</button>}
+    discard={() => setDiscarding(true)} keep={() => setDiscarding(false)} confirmDiscard={() => { change(baseline ? structuredClone(baseline) : newDraft(draft.track)); }}/>
+   : <div className="flex flex-wrap gap-2"><button className={control} onClick={() => { setDraft(newDraft()); setBaseline(undefined); }}>{t.create}</button><button className={control} disabled={!adapter.practicals?.length} onClick={() => { setDraft(newDraft('full-practical')); setBaseline(undefined); }}>{t.createPractical}</button></div>}
  </div>;
 }
 export function AuthoringSession(props: { adapter: AuthoringAdapter; scope: Scope; locale: 'en' | 'ar' }) {

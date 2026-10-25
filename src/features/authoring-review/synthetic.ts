@@ -1,11 +1,11 @@
 import { createSyntheticReview } from '../supervisor-review/synthetic';
 import { ReviewError } from '../supervisor-review/contracts';
-import type { AuthoringAdapter, AssignmentReview, Draft, Member, Page, PartReference, ReviewFixture, Scenario, Scope } from './contracts';
-import { DRAFT_BYTES, draftIssues } from './draft';
+import type { AuthoringAdapter, AssignmentReview, Draft, Member, Page, PartReference, PracticalReference, ReviewFixture, Scenario, Scope } from './contracts';
+import { DRAFT_BYTES, draftIssues, separated } from './draft';
 const key = (s: Scope) => JSON.stringify([s.actorId, s.groupId]);
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
 /** Memory only; no storage, fetch, RPC, Supabase, worker or publication conversion. */
-export function createAuthoringFixture(parts: readonly PartReference[], options: { delay?: number; now?: () => number } = {}): ReviewFixture {
+export function createAuthoringFixture(parts: readonly PartReference[], options: { delay?: number; now?: () => number; practicals?: readonly PracticalReference[] } = {}): ReviewFixture {
  const membership = createSyntheticReview(options), now = options.now ?? Date.now;
  const drafts = new Map<string, Draft>();
  const plans = new Map<string, { scope: Scope; draft: Draft; groupRevision: number; targets: Member[]; expiresAt: number }>();
@@ -46,16 +46,17 @@ export function createAuthoringFixture(parts: readonly PartReference[], options:
   return { rows: structuredClone(rows.slice(offset, offset + 20)), next: offset + 20 < rows.length ? String(offset + 20) : null };
  };
  const adapter: AuthoringAdapter = {
-  accounts: membership.adapter.accounts.filter(p => p.role === 'supervisor'), parts: structuredClone(parts),
+  accounts: membership.adapter.accounts.filter(p => p.role === 'supervisor'), parts: structuredClone(parts), practicals: structuredClone(options.practicals ?? []),
   async groups(actorId, cursor, signal) { const s = await membership.adapter.read({ actorId, groupsCursor: cursor }, signal); if (!s.appointed) throw new ReviewError('denied'); return s.groups; },
   context,
   async save(scope, draft, signal) {
    await context(scope, signal);
    mutation();
    const old = drafts.get(key(scope));
-   if (old && (old.id !== draft.id || old.revision !== draft.revision) || !old && draft.revision !== 0) throw new ReviewError('conflict');
+   if (old && (old.id !== draft.id || old.revision !== draft.revision || (old.track ?? 'mixed') !== (draft.track ?? 'mixed')) || !old && draft.revision !== 0) throw new ReviewError('conflict');
    // Incomplete drafts can be saved locally; downstream preview/assignment require the full validation.
-   if (draft.schemaVersion !== 1 || draft.items.length > 200 || new TextEncoder().encode(JSON.stringify(draft)).length > DRAFT_BYTES) throw new ReviewError('invalid');
+   if (draft.items.some(i => i.type === 'full-practical' && (i.maximum !== undefined || !options.practicals?.some(p => p.caseRef.id === i.caseRef.id && p.caseRef.version === i.caseRef.version && p.evaluatorVersion === i.evaluatorVersion)))) throw new ReviewError('invalid');
+   if (!separated(draft) || draft.schemaVersion !== 1 || draft.items.length > 200 || new TextEncoder().encode(JSON.stringify(draft)).length > DRAFT_BYTES) throw new ReviewError('invalid');
    signal.throwIfAborted();
    const result = structuredClone({ ...draft, revision: draft.revision + 1 }); drafts.set(key(scope), result);
    for (const [token, p] of plans) if (same(p.scope, scope)) plans.delete(token);
@@ -63,7 +64,7 @@ export function createAuthoringFixture(parts: readonly PartReference[], options:
   },
   async prepare(scope, draft, signal) {
    const { group } = await context(scope, signal); saved(scope, draft);
-   if (draftIssues(draft, parts).length) throw new ReviewError('invalid');
+   if (draftIssues(draft, parts, options.practicals).length) throw new ReviewError('invalid');
    mutation();
    const targets = await targetSnapshot(scope, signal);
    if (!targets.length) throw new ReviewError('invalid');
