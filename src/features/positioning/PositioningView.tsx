@@ -10,6 +10,7 @@ import type { SimulationMode, SimulationSettings, SideMarkerId } from "@/domain/
 import { centeringStatus } from "@/features/evaluation/centering";
 import { roundTo } from "@/features/simulation/coords";
 import { DetectorWorkspace } from "./DetectorWorkspace";
+import { normalizedSize, normalizedCentreX, normalizedCentreY } from "./cm-controls";
 import { phoneFit } from "./fit-view";
 import { CHEST_PA_LAYOUT, type SceneLayout } from "./scene-layouts";
 
@@ -121,10 +122,10 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
     <details className="sm:col-span-2" open={!phone}>
       <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{phone ? t("fineAdjustPhone") : t("fineAdjust")}</summary>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
-        <RangeField label={t("centerX")} unit="cm" min={-W / 2} max={W / 2} step={0.5} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: roundTo(v / (W / 2)) })} />
-        <RangeField label={t("centerY")} unit="cm" min={0} max={H} step={0.5} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: roundTo((v / H) * 2 - 1) })} />
-        <RangeField label={t("collWidth")} unit="cm" min={Math.ceil(positioning.minCollimation * W)} max={W} step={1} value={roundTo(settings.collimation.width * W, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, width: roundTo(v / W) })} />
-        <RangeField label={t("collHeight")} unit="cm" min={Math.ceil(positioning.minCollimation * H)} max={H} step={1} value={roundTo(settings.collimation.height * H, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, height: roundTo(v / H) })} />
+        <RangeField label={t("centerX")} unit="cm" min={-W / 2} max={W / 2} step={0.5} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: normalizedCentreX(v, W) })} />
+        <RangeField label={t("centerY")} unit="cm" min={0} max={H} step={0.5} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: normalizedCentreY(v, H) })} />
+        <RangeField label={t("collWidth")} unit="cm" min={Math.ceil(positioning.minCollimation * W)} max={W} step={1} value={roundTo(settings.collimation.width * W, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, width: normalizedSize(v, W) })} />
+        <RangeField label={t("collHeight")} unit="cm" min={Math.ceil(positioning.minCollimation * H)} max={H} step={1} value={roundTo(settings.collimation.height * H, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, height: normalizedSize(v, H) })} />
       </div>
     </details>
   );

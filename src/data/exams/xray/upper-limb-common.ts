@@ -591,7 +591,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       clippedSides: p.clippedSides,
       feedback: {
         pass: T(`The field covers ${p.covered.en}.`, `المجال يغطي ${p.covered.ar}.`),
-        fail: T("Anatomy outside the field is missing from the image. Open the field or re-centre the central ray.", "التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي."),
+        fail: familyOf(k) === "wrist" ? T("Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately.", "حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.") : T("Anatomy outside the field is missing from the image. Open the field or re-centre the central ray.", "التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي."),
       },
       evidence: ev("educational-simplification", `BONTRAGER-9 ${pg} (${f.clipRef(p)})`, f.clipNote),
     },
@@ -602,6 +602,12 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       category: "positioning",
       weight: 1,
       maxMarginCm: p.excessCm,
+      ...(familyOf(k) === "wrist" ? { excessSides: {
+        left: T("Too wide at the left edge: move that edge inward without clipping anatomy or the marker.", "المجال واسع أكثر من اللازم عند الحافة اليسرى: حرّكها للداخل دون قطع التشريح أو العلامة."),
+        right: T("Too wide at the right edge: move that edge inward without clipping anatomy or the marker.", "المجال واسع أكثر من اللازم عند الحافة اليمنى: حرّكها للداخل دون قطع التشريح أو العلامة."),
+        top: T("Too wide at the top edge: move that edge inward without clipping anatomy or the marker.", "المجال واسع أكثر من اللازم عند الحافة العلوية: حرّكها للداخل دون قطع التشريح أو العلامة."),
+        bottom: T("Too wide at the bottom edge: move that edge inward without clipping anatomy or the marker.", "المجال واسع أكثر من اللازم عند الحافة السفلية: حرّكها للداخل دون قطع التشريح أو العلامة."),
+      } } : {}),
       beyondNeeded: true, // S2: an opening the geometry forces (field centred on the ray) or the marker needs is not excess.
       label: T("Collimation — field size", "التحديد — حجم المجال"),
       feedback: {
