@@ -6,7 +6,7 @@ import type { SimulationSettings } from "@/domain/simulation";
 import { HeadProfile, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, STROKE } from "./scene-style";
 
-/** Educational reference SID (S14.1b-1, S14.2a, S14.2b phase 2: Bontrager's minimum 40 in = 102 cm). Mirrors the SID rule of the exams. */
+/** Educational reference SID (S14.1b-1, S14.2a, S14.2b phase 2: Bontrager's minimum 40 in = 102 cm). The tick remains an illustrative point within the owner-approved provisional 100–110 cm full-credit band. */
 const SID_REFERENCE_CM = 102;
 const DIM_OFFSET = 34;
 
@@ -99,7 +99,7 @@ export function SeatedLimbSideView({ settings, showGuides, surfaceY: S, sidPxPer
             <UnderStroked stroke={SCENE.good} width={3}>
               {(p) => <line x1={dimX - 8} y1={S - refPx} x2={dimX + 8} y2={S - refPx} {...p} />}
             </UnderStroked>
-            <SceneLabel x={dimX + side * 14} y={S - refPx + 5} size={LABEL_SIZE.view - 2} anchor={anchor} fill={SCENE.good}>{t("sidTarget", { sid: SID_REFERENCE_CM })}</SceneLabel>
+            <SceneLabel x={dimX + side * 14} y={S - refPx + 5} size={LABEL_SIZE.view - 2} anchor={anchor} fill={SCENE.good}>{t("extremitySidTarget")}</SceneLabel>
           </>
         )}
       </g>
