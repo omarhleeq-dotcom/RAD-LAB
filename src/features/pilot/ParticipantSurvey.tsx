@@ -39,10 +39,12 @@ function SurveyForm({adapter,pending}:{adapter:C2Adapter;pending:Pending}) {
   <p>{t('instructions')}</p><p className="text-sm text-muted">{t('privacy')}</p>
   {pending.definition.scoring==='sus'&&<p>{t('susEnglish')}</p>}
   {pending.definition.questions.map(q=>{
-   const general=pending.survey_type==='General'&&pending.version===1&&['rating','liked','improve','bug'].includes(q.id);
-   const label=general?t(`general.${q.id}`):q.label;
-   const language=general?locale:pending.definition.locale;
-   const direction=general?(locale==='ar'?'rtl':'ltr'):english?'ltr':'auto';
+   // Display only: definitions, answer ids/values and submission order stay untouched.
+   const key=`surveyDisplay.${pending.survey_type}.v${pending.version}.${q.id}`;
+   const translated=locale==='ar'&&english&&t.has(key);
+   const label=translated?t(key):q.label;
+   const language=translated?'ar':pending.definition.locale;
+   const direction=translated?'rtl':english?'ltr':'auto';
    if(q.kind==='rating')return <fieldset key={q.id} disabled={busy} lang={locale} dir={locale==='ar'?'rtl':'ltr'} className="min-w-0 space-y-2">
     <legend className="mb-2 block w-full" lang={language} dir={direction}>{label}{q.optional?` (${t('optional')})`:''}</legend>
     <div className="grid grid-cols-5 gap-2">
