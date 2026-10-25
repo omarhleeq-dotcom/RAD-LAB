@@ -1292,8 +1292,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -1891,8 +1891,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -8076,8 +8076,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -8635,8 +8635,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -9209,8 +9209,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -9768,8 +9768,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -11436,8 +11436,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -11995,8 +11995,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الحافة السفلية للمجال تقطع الزوايا الضلعية الحجابية وأسفل الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The bottom of the field cuts off the costophrenic angles and the lower lungs. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -12569,8 +12569,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -13128,8 +13128,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -14797,8 +14797,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The right side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The right side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -15359,8 +15359,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The right side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The right side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -15936,8 +15936,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -16498,8 +16498,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الحافة العلوية للمجال تقطع قمم الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -17077,8 +17077,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -17662,8 +17662,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -18327,8 +18327,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -19115,8 +19115,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -23325,8 +23325,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -23872,8 +23872,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الجانب الأيمن للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The right side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -25706,8 +25706,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -26295,8 +26295,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",
@@ -32463,8 +32463,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-     "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+     "ar": "المجال واسع أكثر من اللازم عند الحافة السفلية: حرّكها للداخل دون قطع التشريح أو العلامة. ضيّق حواف الزيادة المذكورة فقط، مع إبقاء التشريح المطلوب والعلامة كاملة داخل المجال. حرّك حواف القص إلى الخارج بشكل مستقل. حدّ الهامش 5 سم؛ تسمح القاعدة القائمة بالفتح الذي يفرضه موضع الشعاع أو العلامة.",
+     "en": "Too wide at the bottom edge: move that edge inward without clipping anatomy or the marker. Reduce only the named excessive edges, keeping required anatomy and the whole marker inside the field. Adjust any clipped edges outward separately. Margin limit: 5 cm; an opening required by the ray position or marker is allowed by the existing rule."
     },
     "label": {
      "ar": "التحديد — حجم المجال",
@@ -33033,8 +33033,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "المجال مفتوح أكثر من اللازم. المجال الأكبر يعرّض مزيدًا من الأنسجة خارج المنطقة المطلوبة، وهذا تعريض إشعاعي غير ضروري. قرّب حواف المجال من التشريح دون أن تقطعه.",
-      "en": "The field is opened wider than necessary. A larger field exposes more tissue outside the area of interest, which is unnecessary radiation exposure. Close the shutters closer to the anatomy, without cutting it off."
+      "ar": "المجال واسع أكثر من اللازم عند الحافة السفلية: حرّكها للداخل دون قطع التشريح أو العلامة. ضيّق حواف الزيادة المذكورة فقط، مع إبقاء التشريح المطلوب والعلامة كاملة داخل المجال. حرّك حواف القص إلى الخارج بشكل مستقل. حدّ الهامش 5 سم؛ تسمح القاعدة القائمة بالفتح الذي يفرضه موضع الشعاع أو العلامة.",
+      "en": "Too wide at the bottom edge: move that edge inward without clipping anatomy or the marker. Reduce only the named excessive edges, keeping required anatomy and the whole marker inside the field. Adjust any clipped edges outward separately. Margin limit: 5 cm; an opening required by the ray position or marker is allowed by the existing rule."
      },
      "label": {
       "ar": "التحديد — حجم المجال",
@@ -33597,8 +33597,8 @@
      "status": "educational-simplification"
     },
     "feedback": {
-     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الحافة العلوية للمجال تقطع قمم الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+     "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الحافة العلوية للمجال تقطع قمم الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+     "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
     },
     "label": {
      "ar": "التحديد — تغطية التشريح",
@@ -34355,8 +34355,8 @@
       "status": "educational-simplification"
      },
      "feedback": {
-      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الحافة العلوية للمجال تقطع قمم الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي.",
-      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray."
+      "ar": "الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الحافة العلوية للمجال تقطع قمم الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل.",
+      "en": "The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately."
      },
      "label": {
       "ar": "التحديد — تغطية التشريح",

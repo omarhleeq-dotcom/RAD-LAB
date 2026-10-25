@@ -1,3 +1,4 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
 import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { ExamDefinition } from "@/domain/exam";
 import { chestPaTechnique } from "./chest-pa-technique";
@@ -171,7 +172,7 @@ export const chestPaErectExam: ExamDefinition = {
       },
     ],
   },
-  rules: [
+  rules: withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -654,7 +655,7 @@ export const chestPaErectExam: ExamDefinition = {
         note: "Patient or respiratory motion reduces sharpness (principle). Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       },
     },
-  ],
+  ]),
   possibleErrors: [
     {
       id: "rotated",

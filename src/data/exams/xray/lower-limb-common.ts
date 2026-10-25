@@ -1,3 +1,4 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
 import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule, PositioningSpec } from "@/domain/case";
 import type { AnyExamDefinition } from "@/domain/exam";
@@ -463,7 +464,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
       ? ev("provisional", `BONTRAGER-9 ${pg}; S14.4-5`, "The plantar angle 30°–40° (40° recommended) and the criteria are Bontrager's. The console value is the absolute angle; the picture's own obliquity is unmeasured (O63).")
       : ev("provisional", `BONTRAGER-9 ${pg}; S14.4-3`, "The criteria are Bontrager's (Bontrager gives no angle). The sign of the value is defined by the RESULT IMAGE (positive = toward the viewer's right); no direction of turn is claimed."),
   };
-  return [
+  return withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -694,7 +695,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
       },
       evidence: ev("provisional", `BONTRAGER-9 p.224-225 (SID 40 in); Radiopaedia wrist PA/lateral (100 cm, owner-supplied); Owner decision 2026-10-25 (100–110 cm); S14.4-3`, "The full-credit band is 100–110 cm. The 100 cm threshold is accepted as practical rounding of the 40 in convention; the upper limit and 95–130 cm acceptable band are unchanged."),
     },
-  ];
+  ]);
 };
 
 /** One knee / foot exam (S14.4). The four instances are `knee-ap.ts`, `knee-lateral.ts`, `foot-ap.ts` and `foot-oblique.ts`. */

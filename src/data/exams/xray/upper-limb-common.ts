@@ -1,3 +1,4 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
 import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule, PositioningSpec } from "@/domain/case";
 import type { AnyExamDefinition } from "@/domain/exam";
@@ -567,7 +568,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
   const pg = p.page;
   const [kvLo, kvHi] = p.kv.full;
   const [pLo, pHi] = p.kv.partial;
-  return [
+  return withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -815,7 +816,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       },
       evidence: ev("provisional", `BONTRAGER-9 ${pg} (SID 40 in); Radiopaedia wrist PA/lateral (100 cm, owner-supplied); Owner decision 2026-10-25 (100–110 cm); ${f.techniqueRef}`, "The full-credit band is 100–110 cm. The 100 cm threshold is accepted as practical rounding of the 40 in convention; the upper limit and 95–130 cm acceptable band are unchanged."),
     },
-  ];
+  ], familyOf(k) === "wrist");
 };
 
 /** One upper-limb exam. The six instances are `wrist-pa.ts`, `wrist-lateral.ts`, `hand-pa.ts`, `hand-lateral.ts`, `elbow-ap.ts` and `elbow-lateral.ts`. */

@@ -1,3 +1,4 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
 import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule } from "@/domain/case";
 import type { ExamDefinition } from "@/domain/exam";
@@ -141,7 +142,7 @@ export const chestApSupineExam: ExamDefinition = {
       },
     ],
   },
-  rules: [
+  rules: withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -475,7 +476,7 @@ export const chestApSupineExam: ExamDefinition = {
       evidence: { status: "common-reference", reference: "BONTRAGER-9 p.96-97", note: "No rib-count rule is claimed (8–9 posterior ribs is stated as acceptable, not scored)." },
     },
     pa("motion-instruction"),
-  ],
+  ]),
   possibleErrors: chestPaErectExam.possibleErrors,
   imageCriteria: [
     { id: "rotation", description: { en: "No rotation (equal spine-to-rib-border and sternoclavicular distances)", ar: "لا يوجد دوران (مسافات متساوية من العمود الفقري إلى الحدّين الضلعيين وإلى المفصلين القصّيين الترقويين)" } },

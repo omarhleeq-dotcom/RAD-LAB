@@ -1,3 +1,4 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
 import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule } from "@/domain/case";
 import type { ExamDefinition } from "@/domain/exam";
@@ -146,7 +147,7 @@ export const chestLateralErectExam: ExamDefinition = {
       },
     ],
   },
-  rules: [
+  rules: withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -494,7 +495,7 @@ export const chestLateralErectExam: ExamDefinition = {
       evidence: { status: "common-reference", reference: "BONTRAGER-9 p.94", note: "No rib-count rule is claimed for the lateral (source needed)." },
     },
     pa("motion-instruction"),
-  ],
+  ]),
   possibleErrors: chestPaErectExam.possibleErrors,
   imageCriteria: [
     { id: "rotation", description: { en: "No rotation (posterior ribs and costophrenic angles close together)", ar: "لا يوجد دوران (الأضلاع الخلفية والزوايا الضلعية الحجابية متقاربة)" } },
