@@ -1670,7 +1670,9 @@
     "allSavedRange": "كل المحاولات المحفوظة ({count}) حتى {to}.",
     "loadOlder": "تحميل النتائج الأقدم",
     "passedShort": "ناجح",
-    "notPassedShort": "دون النجاح"
+    "notPassedShort": "دون النجاح",
+    "editName": "تعديل",
+    "cancelName": "إلغاء"
   },
   "assessAdmin": {
     "title": "مجموعات Assess والإسناد",

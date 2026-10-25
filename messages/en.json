@@ -1670,7 +1670,9 @@
     "allSavedRange": "All {count} saved attempts through {to}.",
     "loadOlder": "Load older results",
     "passedShort": "Passed",
-    "notPassedShort": "Below pass"
+    "notPassedShort": "Below pass",
+    "editName": "Edit",
+    "cancelName": "Cancel"
   },
   "assessAdmin": {
     "title": "Assess groups and assignments",
