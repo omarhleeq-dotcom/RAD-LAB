@@ -19,6 +19,7 @@ import { collimatedField } from "@/features/simulation/geometry";
 import { CHEST_PA_FIGURE, DETECTOR_FIGURES, U, type DetectorFigure } from "./detector-figures";
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, STROKE, UNDER } from "./scene-style";
+import { MarkerGuideOverlays, MarkerGuideLegend } from "./MarkerGuides";
 import { detectorViewBox, phoneFit } from "./fit-view";
 import { PhoneFrameLabels } from "./PhoneFrameLabels";
 import { markerBox, nearestTouchTarget, touchGeometry, type TouchCandidate } from "./touch-geometry";
@@ -338,6 +339,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       ))}
 
       {phone && markerNode}
+      {showGuides && <MarkerGuideOverlays radCase={radCase} settings={settings} />}
 
       <g {...dragProps({ kind: "ray" })} {...keyProps(settings.centralRay, "centralRay")} tabIndex={disabled ? -1 : 0} role="button" aria-label={t("rayHandle")} aria-describedby="ray-status" style={{ cursor: disabled ? "default" : "grab" }}>
         <circle cx={ray.x} cy={ray.y} r={rayHit} fill="transparent" />
@@ -360,6 +362,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
       <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>
     </PhoneFrameLabels>}
+    {showGuides && <MarkerGuideLegend size={positioning.markerSizeCm} />}
     </>
   );
 }

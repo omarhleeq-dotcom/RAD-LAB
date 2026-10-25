@@ -1,3 +1,4 @@
+import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule } from "@/domain/case";
 import type { AnyExamDefinition } from "@/domain/exam";
 import type { Evidence } from "@/domain/technique";
@@ -8,7 +9,7 @@ const t = (en: string, ar: string) => ({ en, ar });
 const evidence: Evidence = { status: "provisional", reference: "BONTRAGER-9 p.271-272,279; docs/DECISIONS.md S-PELVIS-1-1…5", note: "Clinical facts: common reference." };
 const feedback = (en: string, ar: string, badEn: string, badAr: string) => ({ pass: t(en, ar), fail: t(badEn, badAr), low: t(badEn, badAr), high: t(badEn, badAr) });
 const markerFeedback = (...args: Parameters<typeof feedback>) => ({ ...feedback(...args),
-  overlap: t("Move the marker off essential pelvic anatomy.", "أبعد العلامة عن التشريح الأساسي للحوض."),
+  ...markerOverlapFeedback,
   outsideField: t("Move the marker inside the collimated field.", "انقل العلامة إلى داخل المجال المحدد."),
   wrongSide: t("The pelvis is a bilateral exam, so the marker must sit in the half that matches its letter: R on the patient's right (the viewer's left in an AP display), L on the patient's left. In the other half it would label the wrong side.", "الحوض فحص ثنائي الجانب، لذا يجب أن تكون العلامة في النصف الذي يطابق حرفها: R على يمين المريض (يسار المشاهد في عرض AP) وL على يساره. في النصف الآخر تسمّي الجانب الخطأ."),
 });

@@ -181,6 +181,11 @@ export interface MarkerRule extends RuleBase {
   /** `fail` = nothing placed. */
   feedback: RuleFeedback & {
     overlap: LocalizedText;
+    /** Optional presentation-only room directions, using existing geometry. */
+    overlapLeft?: LocalizedText;
+    overlapRight?: LocalizedText;
+    overlapTop?: LocalizedText;
+    overlapBottom?: LocalizedText;
     outsideField: LocalizedText;
     wrongSide: LocalizedText;
     /** Detector-side rule only: non-critical note when the right letter sits in the other display half (S3 option D). Absent = the pass text. */

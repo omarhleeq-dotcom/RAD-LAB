@@ -1,3 +1,4 @@
+import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule } from "@/domain/case";
 import type { AnyExamDefinition } from "@/domain/exam";
 import type { Evidence } from "@/domain/technique";
@@ -8,7 +9,7 @@ const t = (en: string, ar: string) => ({ en, ar });
 const evidence: Evidence = { status: "provisional", reference: "BONTRAGER-9 p.196; docs/DECISIONS.md S-SHOULDER-2-1…7, S-SHOULDER-3-1…5", note: "Clinical facts: common reference." };
 const feedback = (en: string, ar: string, badEn: string, badAr: string) => ({ pass: t(en, ar), fail: t(badEn, badAr), low: t(badEn, badAr), high: t(badEn, badAr) });
 const markerFeedback = (...args: Parameters<typeof feedback>) => ({ ...feedback(...args),
-  overlap: t("Move the marker off the shoulder anatomy.", "أبعد العلامة عن تشريح الكتف."),
+  ...markerOverlapFeedback,
   outsideField: t("Move the marker inside the collimated field.", "انقل العلامة إلى داخل المجال المحدد."),
   wrongSide: t("The marker letter must match the patient's side: this is the RIGHT shoulder (R).", "يجب أن يطابق حرف العلامة جانب المريض: هذا هو الكتف الأيمن (R)."),
 });

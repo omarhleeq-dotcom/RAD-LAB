@@ -113,7 +113,9 @@
     "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
     "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left.",
     "touchHint": "Drag the crosshair and handles on the detector",
-    "fineAdjustPhone": "Fine adjustment"
+    "fineAdjustPhone": "Fine adjustment",
+    "markerExclusionGuide": "Marker exclusion area (reference rectangles)",
+    "markerSquareGuide": "Measured marker square: {size} cm"
   },
   "console": {
     "title": "X-ray console",

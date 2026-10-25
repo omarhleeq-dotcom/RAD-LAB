@@ -1,3 +1,4 @@
+import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule, PositioningSpec } from "@/domain/case";
 import type { AnyExamDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
@@ -529,7 +530,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
           `No side marker placed. Choose the letter of the patient's side (this is the ${sideWords(k).low} ${partEn}) and place it inside the field.`,
           `لم توضع علامة جانب. اختر حرف جانب المريض (هذه ${p.part.ar} ${sideWords(k).ar}) وضعه داخل المجال.`,
         ),
-        overlap: T(`The marker covers the anatomy. Move it to ${p.markerSideText}.`, "العلامة تغطي التشريح. انقلها إلى حافة المجال بعيدًا عن التشريح المطلوب."),
+        ...markerOverlapFeedback,
         wrongSide: T(
           `The marker letter does not match the patient's side: this is the ${sideWords(k).up} ${partEn}. A wrong marker misidentifies the patient's side.`,
           `حرف العلامة لا يطابق جانب المريض: هذه ${p.part.ar} ${sideWords(k).ar}. العلامة الخاطئة تُحدِّد جانب المريض خطأً.`,

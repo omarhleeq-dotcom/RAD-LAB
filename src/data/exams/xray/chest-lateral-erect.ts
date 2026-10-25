@@ -1,3 +1,4 @@
+import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule } from "@/domain/case";
 import type { ExamDefinition } from "@/domain/exam";
 import { chestLateralTechnique } from "./chest-lateral-technique";
@@ -284,10 +285,7 @@ export const chestLateralErectExam: ExamDefinition = {
           en: "No side marker placed. Choose L or R: the letter is the side of the patient closest to the detector.",
           ar: "لم توضع علامة جانب. اختر L أو R: الحرف هو جانب المريض الأقرب إلى الكاشف.",
         },
-        overlap: {
-          en: "The marker covers the lungs. Move it into the margin, away from the anatomy of interest.",
-          ar: "العلامة تغطي الرئتين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
-        },
+        ...markerOverlapFeedback,
         wrongSide: {
           en: "The marker letter is wrong. It must name the side of the patient closest to the detector, as set in \"Side against the detector\".",
           ar: "حرف العلامة خاطئ. يجب أن يكون جانب المريض الأقرب إلى الكاشف، كما هو محدد في «الجانب الملاصق للكاشف».",

@@ -547,8 +547,24 @@
      "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "overlap": {
-     "ar": "العلامة تغطي الحقلين الرئويين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
-     "en": "The marker covers the lung fields. Move it into the margin, away from the anatomy of interest."
+     "ar": "أبعد العلامة أكثر عن منطقة التشريح المرجعية، بحيث يكون مربع العلامة كاملًا خارجها وداخل المجال. عند الحاجة، وسّع المجال قليلًا نحو تلك الجهة لاحتواء العلامة كاملةً.",
+     "en": "Move the marker farther from the anatomy reference so the WHOLE marker square is outside that area and inside the field. If needed, widen the field slightly toward that side to include the whole marker."
+    },
+    "overlapBottom": {
+     "ar": "يوجد متسع عند الحافة السفلية للمجال (في عرض الكاشف).",
+     "en": "There is room at the bottom edge of the field (in the detector view)."
+    },
+    "overlapLeft": {
+     "ar": "يوجد متسع عند الحافة اليسرى للمجال (في عرض الكاشف).",
+     "en": "There is room at the left edge of the field (in the detector view)."
+    },
+    "overlapRight": {
+     "ar": "يوجد متسع عند يمين المجال (في عرض الكاشف).",
+     "en": "There is room at the right edge of the field (in the detector view)."
+    },
+    "overlapTop": {
+     "ar": "يوجد متسع عند الحافة العلوية للمجال (في عرض الكاشف).",
+     "en": "There is room at the top edge of the field (in the detector view)."
     },
     "pass": {
      "ar": "علامة الجانب موضوعة داخل الصورة وبعيدًا عن الحقلين الرئويين.",
