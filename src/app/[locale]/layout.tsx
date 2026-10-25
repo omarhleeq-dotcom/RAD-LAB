@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { ConsentGate } from "@/features/pilot/ConsentGate";
 import { AppShell } from "@/components/shell/AppShell";
 import { RouteFocus } from "@/components/shell/RouteFocus";
 import { SessionGate, SessionProvider } from "@/features/pilot/SessionGate";
@@ -43,12 +44,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
             {t("skipToContent")}
           </a>
           <SessionProvider>
-            <AppShell>
-              <RouteFocus />
-              <main id="main-content" tabIndex={-1} className="outline-none">
-                <SessionGate>{children}</SessionGate>
-              </main>
-            </AppShell>
+            <ConsentGate>
+              <AppShell>
+                <RouteFocus />
+                <main id="main-content" tabIndex={-1} className="outline-none">
+                  <SessionGate>{children}</SessionGate>
+                </main>
+              </AppShell>
+            </ConsentGate>
           </SessionProvider>
         </NextIntlClientProvider>
       </body>

@@ -6,6 +6,7 @@ import { localize } from "@/lib/localized";
 import { ResultPanel } from "@/features/evaluation/ResultPanel";
 import { PatientInstructionsPanel } from "@/features/patient/PatientInstructionsPanel";
 import { PositioningScene } from "@/features/positioning/scenes";
+import { AttemptSaveNote } from "@/features/pilot/AttemptSaveNote";
 import { AttemptRecorder } from "@/features/pilot/AttemptRecorder";
 import { ResultDisclosure } from "@/features/evaluation/ResultDisclosure";
 import { savedAttempt } from "@/features/pilot/saved-attempt";
@@ -46,6 +47,7 @@ export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string
 
   const resultPanels = result && (
     <>
+      <AttemptSaveNote />
       <ResultPanel radCase={c} settings={settings} result={result} onRetry={retry} onRestart={reset} />
       {saved?.status === "saved" && <ResultDisclosure title={tr("addNote")} className="mt-5 rounded-lg border border-line bg-panel [&>div>section]:mt-0 [&>div>section]:border-0 [&>div>section]:p-0">
         <FeedbackBox examId={splitCaseId(c.id).examId} />
