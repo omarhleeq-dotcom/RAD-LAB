@@ -4,9 +4,11 @@
 
 الهدف تنفيذ [وصل DB day](PILOT_SUPABASE_SETUP.md#c2-phase2-wiring) بأمر المالك، لا تطبيق SQL جديد. شغلت docs:context وstatus:summary -- --id RAD-069، وقرأت AGENTS وHANDOFF ومرجعَي الإعداد وقرارات C2 وPhase 2 وتقريرها. الفرع من أحدث origin/main بعد fetch؛ تحقق docs:context -- --pr 128 أثبت دمج تجهيز Phase 2، وتطابق قاعدة الفرع مع main وقت القراءة. لا worktree أو subagents.
 
-أعلنت24ملفًا قبل التحرير، ثم26 لإضافة عزل OwnerDirectory واختبارات انتظار DB day القديمة، ثم27 لإضافة لقطة مراجعة واحدة. الفعلي26ملفًا؛ frontend-schema.test.ts بقي بلا تغيير لأنه يعزل B أصلًا. القائمة النهائية: assess-staging-ready.sql؛ owner-dashboard-data.ts وOwnerPanel.tsx وOwnerDirectory.tsx وC2Session.tsx؛ `src/app/[locale]/page.tsx` و`src/app/[locale]/feedback/page.tsx` وAppShell.tsx؛ consent.ts ورسالتا EN/AR؛ frontend-schema.json؛ اختبارات deployment: owner-dashboard-deferred-schema وc2-deferred-schema وassess-d-schema وassess-e-schema وassess-f-schema؛ owner-dashboard-db.test.ts وdb-day-wiring.test.ts؛ rad-069-db-day-audit.mjs؛ PILOT_SUPABASE_SETUP وDECISIONS وproject-status وHANDOFF وهذا التقرير؛ review/rad069-db-day.jpg. لا ملفات مشتركة أخرى أو تعديل ترحيلات أو gate.
+أعلنت24ملفًا قبل التحرير، ثم26 لإضافة عزل OwnerDirectory واختبارات انتظار DB day القديمة، ثم27 لإضافة لقطة مراجعة واحدة. الفعلي للدفعة الأصلية26ملفًا؛ وبعد تصحيح Terms صار إجمالي PR27ملفًا. frontend-schema.test.ts بقي بلا تغيير لأنه يعزل B أصلًا. القائمة النهائية: assess-staging-ready.sql؛ owner-dashboard-data.ts وOwnerPanel.tsx وOwnerDirectory.tsx وC2Session.tsx؛ `src/app/[locale]/page.tsx` و`src/app/[locale]/feedback/page.tsx` وAppShell.tsx؛ consent.ts ورسالتا EN/AR؛ frontend-schema.json؛ اختبارات deployment: owner-dashboard-deferred-schema وc2-deferred-schema وassess-d-schema وassess-e-schema وassess-f-schema؛ owner-dashboard-db.test.ts وdb-day-wiring.test.ts؛ rad-069-db-day-audit.mjs؛ PILOT_SUPABASE_SETUP وDECISIONS وproject-status وHANDOFF وهذا التقرير؛ review/rad069-db-day.jpg. لا ملفات مشتركة أخرى أو تعديل ترحيلات أو gate.
 
-الاستثناء المسمّى من المالك يشمل جدول TRIAL والدوال المطابقة فقط في staging، وتغييرات توقعات deferred/attestation اللازمة لـDB day أدناه. تبقى كل التوقعات والبيانات والبصمات الأخرى ثابتة. أزيل من Terms وعد الستة أشهر والاحتفاظ بملخصات عامة، لأن الطلب يمنع ادعاء سياسة احتفاظ عامة؛ لا سياسة بديلة لـS-PILOT-15.
+الاستثناء المسمّى من المالك يشمل جدول TRIAL والدوال المطابقة فقط في staging، وتغييرات توقعات deferred/attestation اللازمة لـDB day أدناه. تبقى كل التوقعات والبيانات والبصمات الأخرى ثابتة. حذفت الدفعة الأولى بالخطأ فقرتَي الاحتفاظ العام. صحّح المالك ذلك في مراجعة PR #131 بتاريخ2026-10-24: أعيدتا حرفيًا، وأضيفت أحكام الحذف الفردي بجانبهما؛ S-PILOT-15 لا تتغير.
+
+ميزانية تصحيح Terms بعد مراجعة المالك:8ملفات إضافية/معدلة محددة قبل التحرير: رسالتا EN/AR؛ صفحة Terms؛ سكربت rad-069-db-day-audit.mjs لخيار --terms-only؛ لقطة review/rad069-terms-review.jpg؛ هذا التقرير؛ DECISIONS؛ project-status. لا تعديل لاختبارات أو حدود DB أو إصدار الموافقة. هذا تصحيح مراجعة على المسودة نفسها.
 
 ## 2. المنجز والمؤجل
 
@@ -19,6 +21,8 @@
 - requiredMigrations تنتهي بـC1 ثم C2؛ checks تنتهي بفحصيهما. deferred فارغة؛ source pins المراجعة محدثة، وgate دون تغيير.
 
 لا SQL حي أو متغير GitHub أو خدمة أو cron أو استئناف Assess من الوكيل. ما زال تعيين الشهادة وإعادة CI والدمج والهاتف على المالك.
+
+تصحيح مراجعة المالك: howLong.p1/p2 مطابقتان حرفيًا لـorigin/main في EN/AR؛ انتقلت نافذة الاستعادة والحذف النهائي والنسخ الاحتياطية إلى p3/p4، وتعرض صفحة Terms الفقرات الأربع. rights.p2 تحتفظ بالنص الجديد وتوضح أن طلب الحذف الفردي لا ينتظر نهاية التجربة أو فترة الستة أشهر. who.p1 تبقي إجابات الاستبيان للمالك وحده والصادرات برمز المشارك، وتحذف ذكر المشرفين لعدم وجود هذا الدور. CONSENT_VERSION تبقى2026-10-24.
 
 ## 3. حسب المهمة
 
@@ -98,9 +102,17 @@ pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10
 
 المتغيرات الاصطناعية للبناء نفسها، مع `PILOT_SCHEMA_VERIFIED` الجديدة داخل أمر البناء المحلي فقط. لم يُعيّن أي متغير GitHub. القديمة لا تشهد متطلبات اليوم.
 
+### تصحيح Terms — تنفيذ 2026-10-25، مراجعة المالك بتاريخ2026-10-24
+
+نجح `npm run typecheck` و`npm run lint` (0errors وتحذيرا vb/inv السابقان فقط)، ثم consent.test.ts في pilot وpilot-db وmessages.test.ts وdisplayed-text.test.ts:4ملفات/58اختبارًا ناجحة. لم يتغير أي expect أو hash. أكد فحص مستقل تطابق howLong.p1/p2 حرفيًا مع origin/main في EN/AR، وبقاء CONSENT_VERSION=2026-10-24.
+
+نجح `node scripts/qa/rad-069-db-day-audit.mjs --terms-only`:16تحققًا و4axe، EN/AR عند390، بلا overflow أو violations أو page errors أو طلب شبكة. الفقرات الأربع ظاهرة في صفحة Terms الفعلية؛ اللقطات المحلية في `/tmp/rad069-terms-review`، و[لقطة المراجعة EN/AR](review/rad069-terms-review.jpg) حجمها598351بايت ضمن حد5MB، وراجعتها بصريًا. تعثر محدد الفقرات الأول لأنه استهدف عنوان القسم بدل القسم نفسه؛ صُحح المحدد في الأداة فقط ثم نجح التدقيق، ولم تُعد المصفوفة السابقة غير المتأثرة.
+
+أعيد تشغيل أمر --print-marker نفسه بالمشروع العام ومفتاح اصطناعي؛ خرج exit0 بالقيمة نفسها حرفيًا: `pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10`. نجحت docs:check بلا أخطاء أو review warnings، وstatus transition مع require-previous وgit diff --check. راجعت HANDOFF كاملًا؛ قائمة المالك والحدود والمفتوح لم تتغير، والتقرير المرتبط يحمل التصحيح. لا إعادة للمجموعة الكاملة أو البناء السابقين لهذا التعديل النصي المحدود وفق طلب المالك. لا SQL أو متغيرات GitHub أو تعديل gate/manifest/consent.ts أو توقعات اختبارات.
+
 ## 7. المفتوح
 
-ينتظر المالك إعادة staging المحدثة، ثم الشهادة وCI والدمج والهاتف. readiness لا تثبت GoTrue/JWT lifetime أو backup/restore/provider retention؛ القيود الذرية لـCASCADE باقية وقد تمنع حذف حسابات بعلاقات Assess محمية، دون تعطيل triggers أو تغيير FK. لا finalise على حساب حقيقي لاختبار ذلك. لا ادعاء نتيجة CI أو نشر. لا استئناف Assess أو قرار S-PILOT-15 عام. SUS تبقى الإنجليزية الأصلية بتعليمات عربية؛ العربية المنشورة تحتاج citation كاملًا واعتمادًا منفصلًا. حالات pending survey required الصادقة وحدود CSV/FK كما في التقرير السابق.
+ينتظر المالك إعادة staging المحدثة، ثم الشهادة وCI والدمج والهاتف. readiness لا تثبت GoTrue/JWT lifetime أو backup/restore/provider retention؛ القيود الذرية لـCASCADE باقية وقد تمنع حذف حسابات بعلاقات Assess محمية، دون تعطيل triggers أو تغيير FK. لا finalise على حساب حقيقي لاختبار ذلك. لا ادعاء نتيجة CI أو نشر. لا استئناف Assess أو تغيير لقاعدة S-PILOT-15 القائمة. SUS تبقى الإنجليزية الأصلية بتعليمات عربية؛ العربية المنشورة تحتاج citation كاملًا واعتمادًا منفصلًا. حالات pending survey required الصادقة وحدود CSV/FK كما في التقرير السابق.
 
 ## 8. قائمة المالك والخطوة التالية
 
@@ -112,6 +124,6 @@ pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10
 3. **(c)** أعد تشغيل CI ثم ادمج؛ تخرج المزايا وTerms وCONSENT_VERSION وإعادة الموافقة معًا. لا يغير الوكيل المتغير أو يدمج المسودة.
 4. **(d)** افحص الهاتف EN/AR: الموافقة الجديدة وروابط Terms؛ home والتذكير مع استمرار التدريب؛ feedback وSUS؛ موافقات المالك والحذف والاستعادة والاستبيانات وCSV، ومراجعات A/B/C1 الباقية. لا hosted preview ولا اختبار finalise على حساب حقيقي أو تغيير أوقات حقيقية.
 
-**سؤالا AGENTS:** هل تغير الحكم؟ تغيّر توقيت التأجيل إلى وصل DB day بتفويض المالك الحالي، وترقية المتطلبات والشهادة والموافقة متزامنة؛ سياسة C2 وS-PILOT-15 وحدود Assess لم تتغير. هل بقي رابط الدليل الأصلي؟ نعم: [قرار C1/DB day السابق](DECISIONS.md#rad069-deferred-db-day-2026-10-24)، [قرار C2](DECISIONS.md#rad069c2-owner-2026-10-24)، [تصحيح Phase 2](DECISIONS.md#rad069c2-phase2-deferred-ui-2026-10-24)، [تقريرها](RAD-069C2_PHASE2_REPORT_2026-10-24.md)، و[تقرير TRIAL](ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md) باقية؛ [قرار اليوم](DECISIONS.md#rad069-db-day-owner-2026-10-24) مرتبط بها.
+**سؤالا AGENTS:** هل تغير الحكم؟ تغيّر توقيت التأجيل إلى وصل DB day بتفويض المالك الحالي، وترقية المتطلبات والشهادة والموافقة متزامنة؛ سياسة C2 وS-PILOT-15 وحدود Assess لم تتغير؛ تصحيح مراجعة المالك أعاد نص سياسة الاحتفاظ الأصلي حرفيًا وأبقى نافذة الحذف الفردي إضافة مستقلة. هل بقي رابط الدليل الأصلي؟ نعم: [قرار C1/DB day السابق](DECISIONS.md#rad069-deferred-db-day-2026-10-24)، [قرار C2](DECISIONS.md#rad069c2-owner-2026-10-24)، [تصحيح Phase 2](DECISIONS.md#rad069c2-phase2-deferred-ui-2026-10-24)، [تقريرها](RAD-069C2_PHASE2_REPORT_2026-10-24.md)، و[تقرير TRIAL](ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md) باقية؛ [قرار اليوم](DECISIONS.md#rad069-db-day-owner-2026-10-24) مرتبط بها.
 
 نص المتابعة: «اقرأ AGENTS والتقرير؛ تحقق من نتيجة staging والشهادة وCI والهاتف التي ينفذها المالك، دون إعادة SQL أو افتراض نشر. لا Assess إلا بأمر resume Assess مستقل». **بعد تسليم المسودة يتوقف الوكيل.**

@@ -1480,7 +1480,7 @@
     },
     "who": {
       "title": "Who can access it?",
-      "p1": "The project owner can access pilot data and download attempts and notes in separate files for analysis. The notes file includes the text as submitted by the participant. Survey answers are visible only to the project owner; supervisors cannot read them. Survey exports use the participant code.",
+      "p1": "The project owner can access pilot data and download attempts and notes in separate files for analysis. The notes file includes the text as submitted by the participant. Survey answers are visible only to the project owner. Survey exports use the participant code.",
       "p2": "Your account is linked to a participant code that the project owner can match to your email when needed. The website allows each participant to access their own data. Your profile name and email help the project owner identify you when reviewing your training."
     },
     "protect": {
@@ -1489,13 +1489,15 @@
     },
     "howLong": {
       "title": "How long do we keep it?",
-      "p1": "When the owner starts account deletion, the account is disabled. The owner can restore it during a 30-day restore window.",
-      "p2": "After the 30-day restore window, final deletion permanently removes the account and all associated data, including attempts, notes, events and survey answers. Provider backups may persist until the provider’s retention period ends."
+      "p1": "The project owner announces the end of the pilot via the website or email after participation and review are complete.",
+      "p2": "We delete participant-linked data within six months of that announcement. We may retain general statistics and summaries that do not identify participants, to improve the user experience or for scientific research.",
+      "p3": "When the owner starts account deletion, the account is disabled. The owner can restore it during a 30-day restore window.",
+      "p4": "After the 30-day restore window, final deletion permanently removes the account and all associated data, including attempts, notes, events and survey answers. Provider backups may persist until the provider’s retention period ends."
     },
     "rights": {
       "title": "Accessing or deleting your data",
       "p1": "You can request access to or deletion of your data by emailing: radlab.pilot@gmail.com",
-      "p2": "We may need to verify that the account belongs to you. The owner then starts deletion without waiting for the pilot to end, with the 30-day restore window described above. Final deletion covers all your data in the pilot database and export files under our control.",
+      "p2": "We may need to verify that the account belongs to you. For a deletion request, the owner then starts deletion without waiting for the pilot to end or the six-month period above, with the 30-day restore window described above. Final deletion covers all your data in the pilot database and export files under our control.",
       "p3": "You can stop participating whenever you wish. Stopping alone does not delete saved data; you can request deletion by email."
     },
     "patients": {

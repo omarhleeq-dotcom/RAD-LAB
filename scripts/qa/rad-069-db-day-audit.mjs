@@ -60,10 +60,11 @@ window.mount=async config=>{
  });b.onLoad({filter:/.*/,namespace:'mock'},args=>({contents:mocks[args.path],loader:'tsx',resolveDir:process.cwd()}));
 }}]});
 const browser=await chromium.launch({executablePath:process.env.CHROMIUM??'/usr/bin/chromium',args:['--no-sandbox']});
-const dir='/tmp/rad069-db-day';mkdirSync(dir,{recursive:true});let checks=0,axes=0;const ok=(v,label)=>{assert.ok(v,label);checks++;};
+const termsOnly=process.argv.includes('--terms-only');
+const dir=termsOnly?'/tmp/rad069-terms-review':'/tmp/rad069-db-day';mkdirSync(dir,{recursive:true});let checks=0,axes=0;const ok=(v,label)=>{assert.ok(v,label);checks++;};
 async function audit(page,label){await page.evaluate(axe);const result=await page.evaluate(()=>axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}));assert.deepEqual(result.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>n.target)})),[],label);axes++;ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),label+' overflow');}
 try {
- for(const locale of ['en','ar'])for(const width of [390,1440])for(const screen of ['owner','home','feedback','account','terms']) {
+ for(const locale of ['en','ar'])for(const width of (termsOnly?[390]:[390,1440]))for(const screen of (termsOnly?['terms']:['owner','home','feedback','account','terms'])) {
   console.log(JSON.stringify({locale,width,screen}));
   const context=await browser.newContext({viewport:{width,height:900}}),page=await context.newPage();page.setDefaultTimeout(10000);let network=0;const errors=[];
   await context.route('**/*',async r=>{network++;await r.abort();});page.on('pageerror',e=>errors.push(e.message));
@@ -72,6 +73,7 @@ try {
   await page.addScriptTag({content:bundle.outputFiles[0].text});const config={locale,screen,oldConsent:screen==='account'};
   await page.evaluate(c=>window.mount(c),config);await page.locator('h1').waitFor();await page.evaluate(()=>document.fonts.ready);
   const m=messages[locale];
+  if(screen==='terms') {for(const key of ['p1','p2','p3','p4'])ok(await page.locator('section[aria-labelledby="terms-howLong"]').getByText(m.terms.howLong[key],{exact:true}).count()===1,'retention paragraph '+key);}
   if(screen==='owner') {
    await page.getByTestId('owner-row').waitFor();await page.getByTestId('c2-deletion').waitFor();await page.getByTestId('c2-surveys').waitFor();
    await page.getByTestId('owner-row').getByRole('button',{name:m.owner.actions.approved,exact:true}).click();
@@ -119,5 +121,5 @@ try {
   if(width===390){await page.getByTestId('menu-toggle').click();await page.locator('dialog[open] .site-nav a[href="/feedback"]').waitFor();await audit(page,`${locale} ${screen} menu`);ok(await page.locator('dialog[open] .site-nav a[href="/feedback"]').count()===1,'feedback menu link');}
   ok(network===0,'zero network');assert.deepEqual(errors,[]);await context.close();
  }
- writeFileSync(`${dir}/results.json`,JSON.stringify({checks,axes,network:0,screens:['owner','home','feedback','account','terms'],locales:['en','ar'],widths:[390,1440]},null,2));console.log(JSON.stringify({checks,axes,network:0,artifacts:dir}));
+ writeFileSync(`${dir}/results.json`,JSON.stringify({checks,axes,network:0,screens:termsOnly?['terms']:['owner','home','feedback','account','terms'],locales:['en','ar'],widths:termsOnly?[390]:[390,1440]},null,2));console.log(JSON.stringify({checks,axes,network:0,artifacts:dir}));
 }finally{await browser.close();}
