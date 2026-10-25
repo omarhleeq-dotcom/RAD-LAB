@@ -319,7 +319,7 @@ export const chestPaErectExam: ExamDefinition = {
       kind: "marker",
       category: "positioning",
       weight: 0,
-      label: { en: "Side marker (not scored)", ar: "علامة الجانب (غير محسوبة)" },
+      label: { en: "Side marker (not part of the score, but a critical error)", ar: "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)" },
       feedback: {
         pass: {
           en: "Side marker placed inside the image, clear of the lung fields.",

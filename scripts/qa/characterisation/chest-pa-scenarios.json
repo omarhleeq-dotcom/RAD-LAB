@@ -166,8 +166,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -736,8 +736,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -1398,8 +1398,8 @@
      "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -1984,8 +1984,8 @@
       "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "partial",
@@ -2660,8 +2660,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -3179,8 +3179,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -3756,8 +3756,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -4275,8 +4275,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -4852,8 +4852,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -5371,8 +5371,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -5950,8 +5950,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -6488,8 +6488,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -7065,8 +7065,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -7603,8 +7603,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -8182,8 +8182,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -8728,8 +8728,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -9315,8 +9315,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -9861,8 +9861,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -10444,8 +10444,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -10962,8 +10962,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -11542,8 +11542,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -12088,8 +12088,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -12675,8 +12675,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -13221,8 +13221,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -13808,8 +13808,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -14329,8 +14329,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -14903,8 +14903,8 @@
      "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -15452,8 +15452,8 @@
       "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "partial",
@@ -16042,8 +16042,8 @@
      "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -16591,8 +16591,8 @@
       "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "partial",
@@ -17183,8 +17183,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -17755,8 +17755,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -18433,8 +18433,8 @@
      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -19210,8 +19210,8 @@
       "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "partial",
@@ -19973,8 +19973,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -20527,8 +20527,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -21159,8 +21159,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -21711,8 +21711,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -22300,8 +22300,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -22842,8 +22842,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -23431,8 +23431,8 @@
      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -23965,8 +23965,8 @@
       "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side. The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "partial",
@@ -24599,8 +24599,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -25201,8 +25201,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -25812,8 +25812,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -26388,8 +26388,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -26983,8 +26983,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -27533,8 +27533,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -28118,8 +28118,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -28630,8 +28630,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -29197,8 +29197,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "R",
@@ -29709,8 +29709,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "R",
      "outcome": "pass",
@@ -30276,8 +30276,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -30814,8 +30814,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -31458,8 +31458,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -31970,8 +31970,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -32543,8 +32543,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -33103,8 +33103,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -33703,8 +33703,8 @@
      "en": "No side marker placed. Choose L or R and place it inside the image margin."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "—",
@@ -34450,8 +34450,8 @@
       "en": "No side marker placed. Choose L or R and place it inside the image margin."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "—",
      "outcome": "fail",
@@ -35211,8 +35211,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -35731,8 +35731,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -36315,8 +36315,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -36859,8 +36859,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -37441,8 +37441,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -37958,8 +37958,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -38535,8 +38535,8 @@
      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -39056,8 +39056,8 @@
       "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "partial",
@@ -39675,8 +39675,8 @@
      "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "R",
@@ -40196,8 +40196,8 @@
       "en": "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "R",
      "outcome": "partial",
@@ -40815,8 +40815,8 @@
      "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -41330,8 +41330,8 @@
       "en": "The marker is outside the collimated field, so it would not be recorded on the image. Move it inside the field."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "partial",
@@ -41901,8 +41901,8 @@
      "en": "No side marker placed. Choose L or R and place it inside the image margin."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "—",
@@ -42389,8 +42389,8 @@
       "en": "No side marker placed. Choose L or R and place it inside the image margin."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "—",
      "outcome": "fail",
@@ -43004,8 +43004,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -43548,8 +43548,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -44127,8 +44127,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -44671,8 +44671,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -45248,8 +45248,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -45765,8 +45765,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -46342,8 +46342,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -46859,8 +46859,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -47436,8 +47436,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -47956,8 +47956,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -48533,8 +48533,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -49059,8 +49059,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -49680,8 +49680,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -50204,8 +50204,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -50824,8 +50824,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -51348,8 +51348,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -51968,8 +51968,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -52490,8 +52490,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -53067,8 +53067,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -53589,8 +53589,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -54166,8 +54166,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -54688,8 +54688,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -55265,8 +55265,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -55787,8 +55787,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -56364,8 +56364,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -56882,8 +56882,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -57460,8 +57460,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -58010,8 +58010,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -58599,8 +58599,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -59146,8 +59146,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
@@ -59733,8 +59733,8 @@
      "en": "Side marker placed inside the image, clear of the lung fields."
     },
     "label": {
-     "ar": "علامة الجانب (غير محسوبة)",
-     "en": "Side marker (not scored)"
+     "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+     "en": "Side marker (not part of the score, but a critical error)"
     },
     "notDrawnLabel": false,
     "observed": "L",
@@ -60253,8 +60253,8 @@
       "en": "Side marker placed inside the image, clear of the lung fields."
      },
      "label": {
-      "ar": "علامة الجانب (غير محسوبة)",
-      "en": "Side marker (not scored)"
+      "ar": "علامة الجانب (لا تدخل في الدرجة، لكنها خطأ حرج)",
+      "en": "Side marker (not part of the score, but a critical error)"
      },
      "observed": "L",
      "outcome": "pass",
