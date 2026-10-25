@@ -9,7 +9,7 @@ const presentation = [
   "controls", "choiceControls", "availableProjections", "availableBreathing", "availableMotionInstructions", "initialSettings",
   "positioning.defaultMarkerPosition", "positioning.minCollimation",
   "radiograph", "possibleErrors", "imageCriteria", "provisional",
-  "rules.*.label", "rules.*.feedback", "rules.*.evidence", "rules.*.unit", "rules.*.clippedSides",
+  "rules.*.label", "rules.*.feedback", "rules.*.evidence", "rules.*.unit", "rules.*.clippedSides", "rules.*.excessSides",
   "scoring.categoryLabels", "scoring.criticalFindings.*.label", "scoring.criticalFindings.*.reason",
   "scoring.criticalFindings.*.concept", "scoring.criticalFindings.*.evidence",
   "patientCooperation.label", "patientCooperation.evidence",

@@ -140,6 +140,8 @@ export interface CoverageRule extends RuleBase {
   check: "clipping" | "excess";
   maxMarginCm: number;
   variantOnClipped?: ImageVariantId;
+  /** Optional excess edge wording; absent preserves existing feedback. */
+  excessSides?: Record<"left" | "right" | "top" | "bottom", LocalizedText>;
   /** Clipping only: which anatomy is lost when the field cuts off this side of the required region. */
   clippedSides?: Record<"left" | "right" | "top" | "bottom", LocalizedText>;
   /**
