@@ -4,9 +4,10 @@
 import { useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { type AuthErrorKey, passwordProblem, postLoginTarget, recoveryFromHash } from "./account-state";
+import { type AuthErrorKey, passwordProblem, postLoginTarget } from "./account-state";
 import { PILOT } from "./config";
 import { needsConsent } from "./consent";
+import { ConsentPrompt } from "./ConsentGate";
 import { ProfileName } from "./ProfileName";
 import { validFullName } from "./full-name";
 import { ForgotForm, LinkProblem, RecoveryForm } from "./PasswordReset";
@@ -21,7 +22,7 @@ export function AccountPanel() {
   const t = useTranslations("account");
   const tt = useTranslations("training");
   const locale = useLocale();
-  const { state, saveName, signIn, signUp, signOut, retry, acceptTerms, requestReset, updatePassword } = useSessionAccount();
+  const { state, recovery, consumeRecovery, saveName, signIn, signUp, signOut, retry, acceptTerms, requestReset, updatePassword } = useSessionAccount();
   const [mode, setMode] = useState<Mode>("signIn");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,11 +32,11 @@ export function AccountPanel() {
   const [error, setError] = useState<AuthErrorKey | "passwordShort" | "passwordClasses" | "passwordMismatch" | "fullName" | null>(null);
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [agreed, setAgreed] = useState(false);
-  const [acceptFailed, setAcceptFailed] = useState(false);
   const [view, setView] = useState<"form" | "forgot">("form");
-  // The reset link lands here with a fragment; it is read once, before supabase-js clears it. Hydration is unaffected: nothing below uses it while loading.
-  const [fragment, setFragment] = useState<"recovery" | "linkError" | null>(() => (typeof window === "undefined" ? null : recoveryFromHash(window.location.hash)));
+  // The provider captures reset-link intent before Supabase consumes it, including while the consent gate hides this panel.
+  const [fragment, setFragment] = useState<"recovery" | "linkError" | null>(recovery ?? null);
   const [changed, setChanged] = useState(false);
+  useEffect(() => { consumeRecovery?.(); }, [consumeRecovery]);
 
   // The full reload below is kept (same destination rules); while it is pending the account view is replaced by a short status so it does not flash.
   const target = state.kind === "signedIn" && typeof window !== "undefined"
@@ -101,17 +102,7 @@ export function AccountPanel() {
       <>
       {changed && <p role="status" data-testid="password-changed" className="mb-4 rounded-md border border-ok/40 bg-ok/10 px-3 py-2">{t("reset.done")}</p>}
       {needsConsent(state.consentVersion) && (
-        <section className="mb-4 rounded-lg border border-signal bg-signal/10 p-5" data-testid="consent-card" aria-labelledby="consent-title">
-          <h2 id="consent-title" className="text-lg font-semibold">{t("consent.title")}</h2>
-          <p className="mt-2">{t("consent.body")}</p>
-          <p className="mt-2"><Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>
-          <label className="mt-3 flex items-start gap-2">
-            <input type="checkbox" className="mt-1 size-5" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
-            <span>{t("consent.agree")}</span>
-          </label>
-          {acceptFailed && <p role="alert" className="mt-2 text-bad">{t("consent.failed")}</p>}
-          <button type="button" disabled={!agreed} className={`mt-3 ${primary}`} onClick={() => void acceptTerms().then((ok) => setAcceptFailed(!ok))}>{t("consent.accept")}</button>
-        </section>
+        <ConsentPrompt acceptTerms={acceptTerms} />
       )}
       {!needsConsent(state.consentVersion) && status === "approved" && <p data-testid="consent-done" className="mb-4 text-sm text-muted">{t("consent.accepted")} <Link href="/terms" target="_blank" rel="noopener" className="text-brand underline">{t("termsLink")}</Link></p>}
       <section className="rounded-lg border border-line bg-panel p-5" data-testid={`account-${status}`} {...(status === "approved" ? { "aria-label": t("title") } : { "aria-labelledby": "acct-status" })}>
