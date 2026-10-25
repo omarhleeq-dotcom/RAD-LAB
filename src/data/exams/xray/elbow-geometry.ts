@@ -1,3 +1,4 @@
+import { ELBOW_DRAWING, ELBOW_CM_PER_PX } from "@/features/positioning/drawing-data";
 /**
  * Geometry of the two ELBOW baselines on the 24 × 30 cm detector (S14.3; DECISIONS S14.3-9). Everything here is READ BY EYE from the two
  * baseline images (A-019 AP, A-021 lateral) and is an EDUCATIONAL ESTIMATE, not a measurement: TODO(medical-review), O49.
@@ -12,7 +13,7 @@
  *    (365, 525) of A-019, the epicondyles at (128, 330) and (598, 460)); lateral = the mid-elbow joint (p.172; the centre of the condyle
  *    outline, (752, 810) of A-021). The image is placed so that the target lies at the centre of the detector, i.e. at normalised (0, 0).
  */
-export const ELBOW_CM_PER_PX = 0.0155;
+export { ELBOW_CM_PER_PX } from "@/features/positioning/drawing-data";
 
 /** The detector the elbow is imaged on: 24 × 30 cm portrait (Bontrager p.166 / 172: the smallest available receptor; AP one exposure; O43). */
 export const ELBOW_DETECTOR = { widthCm: 24, heightCm: 30 } as const;
@@ -21,9 +22,9 @@ export type ElbowKind = "ap" | "lateral";
 
 const IMAGE = {
   // AP: 849 × 1097 px. Box u 100–640 px, v 60 → 990 px (the target is at y 525: 7.2 cm above, 7.2 cm below).
-  ap: { widthPx: 849, heightPx: 1097, box: { u1: 100 / 849, u2: 640 / 849, v1: 60 / 1097, v2: 990 / 1097 }, targetPx: { x: 365, y: 525 } },
+  ap: { ...ELBOW_DRAWING["ap"], targetPx: { x: 365, y: 525 } },
   // Lateral: 1086 × 1103 px. Box u 350–930 px (forearm beyond the radial head → the back of the elbow), v 350 → 1060 px (distal humerus → the olecranon).
-  lateral: { widthPx: 1086, heightPx: 1103, box: { u1: 350 / 1086, u2: 930 / 1086, v1: 350 / 1103, v2: 1060 / 1103 }, targetPx: { x: 752, y: 810 } },
+  lateral: { ...ELBOW_DRAWING["lateral"], targetPx: { x: 752, y: 810 } },
 } as const;
 
 export const elbowImage = (k: ElbowKind) => IMAGE[k];

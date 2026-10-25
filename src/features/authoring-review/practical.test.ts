@@ -92,7 +92,7 @@ it('navigates repeated full cases with unique IDs, temporary settings, reset on 
  const ids = [...host.querySelectorAll('[id]')].map(n => n.id); expect(new Set(ids).size).toBe(ids.length);
  await click(host, t.item + ' 1'); expect(input().value).not.toBe(initial);
  await click(host, t.closePreview); await click(host, t.preview); expect(input().value).toBe(initial);
- expect(host.querySelectorAll('svg')).toHaveLength(0); expect(host.textContent).toContain(t.sceneBoundary); expect(network).not.toHaveBeenCalled();
+ expect(host.querySelectorAll('svg')).toHaveLength(2); expect(host.textContent).toContain(t.sceneBoundary); expect(network).not.toHaveBeenCalled();
 });
 it('reuses saved revisions and bounded assignment review, invalidates stale tokens, and detects membership changes', async () => {
  const f = await fixture(), d = await f.adapter.save(f.scope, complete(), signal()), plan = await f.adapter.prepare(f.scope, d, signal());
@@ -133,5 +133,5 @@ it('erases full-practical control values automatically when group visibility exp
  const adapter = { ...f.adapter, context: async (...args: Parameters<typeof f.adapter.context>) => { const c = await f.adapter.context(...args); return { ...c, group: { ...c.group, endsAt: c.now + 300 } }; } };
  const { host } = await mount(createElement(AuthoringSession, { adapter, scope: f.scope, locale: 'en' })); await settle(); await click(host, t.preview);
  await act(async () => { await new Promise(r => setTimeout(r, 320)); });
- expect(host.textContent).toContain(t.expired); expect(host.textContent).not.toContain('Synthetic practical review'); expect(host.querySelectorAll('input,textarea')).toHaveLength(0);
+ expect(host.textContent).toContain(t.expired); expect(host.textContent).not.toContain('Synthetic practical review'); expect(host.querySelectorAll('input,textarea,svg')).toHaveLength(0);
 });

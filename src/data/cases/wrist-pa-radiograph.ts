@@ -1,3 +1,4 @@
+import { WRIST_PA_DISPLACEMENT } from "@/features/positioning/drawing-data";
 import type { RadiographAssetSpec } from "@/domain/radiograph";
 
 /**
@@ -33,7 +34,7 @@ export const wristPaRadiograph: RadiographAssetSpec = {
   denseZones: [{ cu: 0.5, cv: 0.36, ru: 0.36, rv: 0.2 }],
   // 2.5D wrist model (S-VIS-1b, features/wrist-model): the forearm rows start at the radiocarpal joint (row ≈ 510 of 980); the contact line between
   // the ulna (columns ≈ 105–310) and the radius (≈ 320–600) is at column ≈ 315. Read by eye, approximate.
-  limbRotation: { kind: "wrist-pa", forearm: { v1: 0.52, v2: 1, splitU: 0.457 } },
+  limbRotation: WRIST_PA_DISPLACEMENT,
   // Result canvas at 48 px/cm (the baseline has ≈ 80 px/cm at the assumed 0.01245 cm/px: no upscaling; S-VIS-1b-5). Capped by the canvas.
   render: { pxPerCm: 48 },
 };

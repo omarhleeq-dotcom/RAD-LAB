@@ -1,3 +1,4 @@
+import { WRIST_PA_DISPLACEMENT, WRIST_LATERAL_DISPLACEMENT } from "@/features/positioning/drawing-data";
 /**
  * Wrist detector-view drawing from the TRACED outlines (RAD-072 2b; owner decision DECISIONS #rad072-2b-owner-2026-10-23). Pure (no React):
  * the outlines in `wrist-outlines.json` (traced from A-011 / A-013, approved by the owner; illustrative, drawing-only, not a measurement) are
@@ -17,8 +18,6 @@
  */
 import outlines from "./wrist-outlines.json";
 import { interpolateAnchors, wristLateralCopies, wristPaShifts, WRIST_MODEL } from "@/features/wrist-model/wrist-model";
-import { wristLateralRadiograph } from "@/data/cases/wrist-lateral-radiograph";
-import { wristPaRadiograph } from "@/data/cases/wrist-pa-radiograph";
 import { TUNING } from "@/features/radiograph/tuning";
 import { closeOnBorder, followNearest, type DrawnPart as SharedPart, type Pt } from "./outline-geometry";
 
@@ -60,7 +59,7 @@ type PointMap = (q: Pt) => Pt;
 function paMaps(rotationDeg: number): Record<string, PointMap> {
   const W = WRIST_IMAGE.pa.widthPx, H = WRIST_IMAGE.pa.heightPx;
   const sh = wristPaShifts(rotationDeg);
-  const { v1 } = wristPaRadiograph.limbRotation!.kind === "wrist-pa" ? wristPaRadiograph.limbRotation!.forearm : { v1: 0.52 };
+  const { v1 } = WRIST_PA_DISPLACEMENT.kind === "wrist-pa" ? WRIST_PA_DISPLACEMENT.forearm : { v1: 0.52 };
   const s = TUNING.limbRotation.bandSoft;
   const warp = (x: number) => interpolateAnchors(sh.anchors, x / W) * W;
   // weight of the forearm layers at a row: 0 above the radiocarpal joint, 1 in the forearm (the result image's `elbowApValue`)
@@ -73,7 +72,7 @@ function paMaps(rotationDeg: number): Record<string, PointMap> {
 function lateralMaps(rotationDeg: number): Record<string, PointMap[]> {
   const W = WRIST_IMAGE.lateral.widthPx, H = WRIST_IMAGE.lateral.heightPx;
   const c = wristLateralCopies(rotationDeg);
-  const bands = wristLateralRadiograph.limbRotation!.kind === "wrist-lateral" ? wristLateralRadiograph.limbRotation!.bands : [];
+  const bands = WRIST_LATERAL_DISPLACEMENT.kind === "wrist-lateral" ? WRIST_LATERAL_DISPLACEMENT.bands : [];
   const copyMaps = (band: (typeof bands)[number], copies: { du: number }[]): PointMap[] =>
     copies.map((cp) => ([x, y]) => {
       const u = x / W;

@@ -1,5 +1,7 @@
 import { TUNING } from "@/features/radiograph/tuning";
-import { SHOULDER_BAND_DEG } from "@/data/exams/xray/shoulder-geometry";
+// Existing visual rest interval, kept separate from the private exam scoring band.
+// The public drawing model reveals only its existing displacement behaviour.
+const REST_BAND_DEG: readonly [number, number] = [35, 45];
 
 /**
  * ONE-CUE rotation model of the Shoulder AP oblique glenoid (Grashey) exam (S-SHOULDER-2-4 / 2-6, S-SHOULDER-3).
@@ -21,7 +23,7 @@ export const SHOULDER_MAX_DEG = TUNING.limbRotation.shoulderMaxDeg;
 
 /** Model value for a console obliquity: 0 inside the source band, the signed distance to the nearest band edge outside it. */
 export function shoulderValue(consoleDeg: number): number {
-  const [lo, hi] = SHOULDER_BAND_DEG;
+  const [lo, hi] = REST_BAND_DEG;
   return consoleDeg < lo ? consoleDeg - lo : consoleDeg > hi ? consoleDeg - hi : 0;
 }
 

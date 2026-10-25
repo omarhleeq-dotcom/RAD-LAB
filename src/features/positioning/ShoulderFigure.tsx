@@ -5,7 +5,7 @@ import { SceneLabel } from "./SceneParts";
 import { LABEL_SIZE } from "./scene-style";
 import { OutlineLayers, r } from "./outline-layers";
 import { shoulderOutlineDrawing } from "./shoulder-outline-drawing";
-import { SHOULDER_CM_PER_PX, SHOULDER_IMAGE } from "@/data/exams/xray/shoulder-geometry";
+import { SHOULDER_CM_PER_PX, SHOULDER_DRAWING } from "@/features/positioning/drawing-data";
 
 /**
  * Setup anatomy of the right shoulder in the AP oblique glenoid (Grashey) view. Since RAD-072 2c it is drawn from the outlines TRACED from the baseline
@@ -15,7 +15,7 @@ import { SHOULDER_CM_PER_PX, SHOULDER_IMAGE } from "@/data/exams/xray/shoulder-g
  * posture and hidden surfaces are not drawn (S-SHOULDER-2-6). Right shoulder, fixed (the exam's marker rule is fixed R); anatomy is never mirrored by RTL.
  */
 export function ShoulderDrawing({ radCase, settings, W, H }: FigureProps) {
-  const a = radCase.requiredAnatomy, im = SHOULDER_IMAGE, k = SHOULDER_CM_PER_PX * 10;
+  const a = radCase.requiredAnatomy, im = SHOULDER_DRAWING, k = SHOULDER_CM_PER_PX * 10;
   const left = im.anatomyBox.u1 * im.widthPx;
   const toSvg = ([x, y]: [number, number]) => `${r(a.xCm * 10 + (x - left) * k)},${r(a.yCm * 10 + y * k)}`;
   return <>

@@ -1,3 +1,4 @@
+import { LOWER_LIMB_DRAWING } from "@/features/positioning/drawing-data";
 /**
  * Geometry of the four KNEE / FOOT baselines (S14.5 adds the two ANKLE baselines A-031 / A-033 below) on the 24 × 30 cm detector (S14.4; DECISIONS S14.4-10). Everything here is READ BY EYE from the
  * four baseline images (A-023 knee AP, A-025 knee lateral, A-027 foot AP, A-029 foot oblique; web copies, px) and is an EDUCATIONAL ESTIMATE, not a
@@ -20,20 +21,20 @@ export type LowerLimbKind = "knee-ap" | "knee-lateral" | "foot-ap" | "foot-obliq
 
 const IMAGE = {
   // Knee AP: 1067 × 1913 px. Box x 60–980, y 370–1520 (±575 px about the target at y 945: 7.2 cm above and below).
-  "knee-ap": { cmPerPx: 0.0125, widthPx: 1067, heightPx: 1913, box: { u1: 60 / 1067, u2: 980 / 1067, v1: 370 / 1913, v2: 1520 / 1913 }, targetPx: { x: 545, y: 945 } },
+  "knee-ap": { ...LOWER_LIMB_DRAWING["knee-ap"], targetPx: { x: 545, y: 945 } },
   // Knee lateral: 1133 × 1939 px. Box x 60–1100, y 335–1455 (±560 px about the target at y 895).
-  "knee-lateral": { cmPerPx: 0.0125, widthPx: 1133, heightPx: 1939, box: { u1: 60 / 1133, u2: 1100 / 1133, v1: 335 / 1939, v2: 1455 / 1939 }, targetPx: { x: 590, y: 895 } },
+  "knee-lateral": { ...LOWER_LIMB_DRAWING["knee-lateral"], targetPx: { x: 590, y: 895 } },
   // Foot AP: 1061 × 2405 px (the web copy: the master's bottom frame line was cropped). Box x 60–1010, y 20–1900 (toes to navicular / cuboid); the target (base of the 3rd metatarsal) is at (598, 1235).
-  "foot-ap": { cmPerPx: 0.01, widthPx: 1061, heightPx: 2405, box: { u1: 60 / 1061, u2: 1010 / 1061, v1: 20 / 2405, v2: 1900 / 2405 }, targetPx: { x: 598, y: 1235 } },
+  "foot-ap": { ...LOWER_LIMB_DRAWING["foot-ap"], targetPx: { x: 598, y: 1235 } },
   // Foot oblique: 1077 × 1960 px. Box x 100–1050, y 80–1960 (distal phalanges to the bottom edge of the image, O61); the target (base of the 3rd metatarsal) is at (565, 1335).
-  "foot-oblique": { cmPerPx: 0.009, widthPx: 1077, heightPx: 1960, box: { u1: 100 / 1077, u2: 1050 / 1077, v1: 80 / 1960, v2: 1 }, targetPx: { x: 565, y: 1335 } },
+  "foot-oblique": { ...LOWER_LIMB_DRAWING["foot-oblique"], targetPx: { x: 565, y: 1335 } },
   // Ankle AP (S14.5, LEFT ankle inferred, O76): 728 × 1631 px, scale ASSUMED 0.0125 (the knee images' scale: the bimalleolar breadth, ≈ 600 px, is ≈ 7.5 cm; O80). Box x 40–700, y 330–1631
   // (about 10 cm of the distal leg above the CR down to the bottom edge of the image, where the talus / calcaneus end: the proximal half of the metatarsals is NOT in the image, O77);
   // the target (midway between the malleoli, at the joint) is at (360, 1150).
-  "ankle-ap": { cmPerPx: 0.0125, widthPx: 728, heightPx: 1631, box: { u1: 40 / 728, u2: 700 / 728, v1: 330 / 1631, v2: 1 }, targetPx: { x: 360, y: 1150 } },
+  "ankle-ap": { ...LOWER_LIMB_DRAWING["ankle-ap"], targetPx: { x: 360, y: 1150 } },
   // Ankle lateral (S14.5): 932 × 1678 px, same scale. Box x 0–905, y 130–1640 (the distal leg to the heel pad; it starts at the left edge of the image, where the navicular / cuboid are only partly
   // shown and the 5th metatarsal tuberosity is not, O77); the target (the medial malleolus in a true lateral, over the talus) is at (380, 895).
-  "ankle-lateral": { cmPerPx: 0.0125, widthPx: 932, heightPx: 1678, box: { u1: 0, u2: 905 / 932, v1: 130 / 1678, v2: 1640 / 1678 }, targetPx: { x: 380, y: 895 } },
+  "ankle-lateral": { ...LOWER_LIMB_DRAWING["ankle-lateral"], targetPx: { x: 380, y: 895 } },
 } as const;
 
 export const lowerLimbImage = (k: LowerLimbKind) => IMAGE[k];

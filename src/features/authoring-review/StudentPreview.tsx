@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { NextIntlClientProvider } from 'next-intl';
+import { PracticalScene } from '../assess/PracticalScene';
 import { PracticalControls } from '../assess/PracticalControls';
 import { PartControls } from '../assess/PartControls';
 import en from '../../../messages/en.json';
@@ -19,7 +20,7 @@ export function StudentPreview({ data, t, locale, close }: { data: StudentPrevie
    <nav lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'} aria-label={t.item} className="flex flex-wrap gap-2">{data.items.map((item, n) => <button key={item.ref.id} className={button} aria-current={index === n ? 'step' : undefined} onClick={() => setIndex(n)}>{t.item} {n + 1}</button>)}</nav>
    {data.items.slice(index, index + 1).map(item => <fieldset key={item.ref.id} className="min-w-0 rounded-lg border border-line p-4">
     <legend className="max-w-full break-words px-2">{index + 1}. {item.prompt}</legend>
-    {item.type === 'full-practical' ? <NextIntlClientProvider locale={locale} messages={{ assess: (locale === 'ar' ? ar : en).assess }} timeZone="UTC"><p lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>{t.sceneBoundary}</p><PracticalControls view={item.practicalView!} values={values[item.ref.id] ?? item.practicalView!.initial} disabled={false} onChange={v => setValues(old => ({ ...old, [item.ref.id]: v }))}/></NextIntlClientProvider> : item.type === 'single-choice' ? item.options.map(option => <label key={option.id} className="flex min-h-11 items-center gap-3 break-words"><input type="radio" name={item.ref.id} value={option.id} checked={answers[item.ref.id] === option.id} onChange={() => setAnswers(a => ({ ...a, [item.ref.id]: option.id }))}/><span className="min-w-0 break-words">{option.text}</span></label>) :
+    {item.type === 'full-practical' ? <NextIntlClientProvider locale={locale} messages={{ assess: (locale === 'ar' ? ar : en).assess }} timeZone="UTC"><p lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>{t.sceneBoundary}</p><PracticalScene view={item.practicalView!} values={values[item.ref.id] ?? item.practicalView!.initial} disabled={false} onChange={v => setValues(old => ({ ...old, [item.ref.id]: v }))}/><PracticalControls view={item.practicalView!} values={values[item.ref.id] ?? item.practicalView!.initial} disabled={false} onChange={v => setValues(old => ({ ...old, [item.ref.id]: v }))}/></NextIntlClientProvider> : item.type === 'single-choice' ? item.options.map(option => <label key={option.id} className="flex min-h-11 items-center gap-3 break-words"><input type="radio" name={item.ref.id} value={option.id} checked={answers[item.ref.id] === option.id} onChange={() => setAnswers(a => ({ ...a, [item.ref.id]: option.id }))}/><span className="min-w-0 break-words">{option.text}</span></label>) :
      <NextIntlClientProvider locale={locale} messages={{ assess: { part: (locale === 'ar' ? ar : en).assess.part } }} timeZone="UTC"><PartControls item={item} view={item.view!} values={values[item.ref.id] ?? item.view!.initial} disabled={false} onChange={v => setValues(old => ({ ...old, [item.ref.id]: v }))}/></NextIntlClientProvider>}
    </fieldset>)}
   </div>

@@ -56,11 +56,20 @@ if (process.argv.includes('--serve')) {
      await first.selectOption(ref.id); await button(t.preview).click();
      const preview = page.getByRole('region', { name: t.previewTitle });
      await preview.locator('#practical-control-kvp').waitFor();
-     assert.equal(await preview.locator('svg').count(), 0); await preview.getByText(t.sceneBoundary, { exact: true }).waitFor();
+     assert.equal(await preview.locator('svg').count(), 2); await preview.getByText(t.sceneBoundary, { exact: true }).waitFor();
      assert.equal(await preview.getByText(/PRIVATE SOURCE|PRIVATE LICENCE|PRIVATE AUTHOR NOTE/).count(), 0);
      const ids = await preview.locator('[id]').evaluateAll(nodes => nodes.map(n => n.id)); assert.equal(new Set(ids).size, ids.length);
      await preview.locator('#practical-control-kvp').focus(); await page.keyboard.press('ArrowRight');
-     await audit('existing family ' + ref.examId); await button(t.closePreview).click(); interactions += 4;
+     // Scene keyboard and pointer gestures edit the same temporary controls.
+     const beam = preview.locator('svg [role=button]').last();
+     const x = preview.locator('[id="practical-control-centralRay.x"]');
+     const before = Number(await x.inputValue());
+     await beam.focus(); await page.keyboard.press('ArrowRight'); assert.equal(Number(await x.inputValue()), Math.round(Math.min(1, before + 0.02) * 1000) / 1000);
+     const box = await beam.boundingBox(); assert.ok(box);
+     await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2); await page.mouse.down();
+     await page.mouse.move(box.x + box.width / 2 + 8, box.y + box.height / 2 + 5, { steps: 3 }); await page.mouse.up();
+     assert.notEqual(Number(await x.inputValue()), Math.round(Math.min(1, before + 0.02) * 1000) / 1000);
+     await audit('existing family ' + ref.examId); await button(t.closePreview).click(); interactions += 6;
     }
     await first.selectOption(practicals[0].id);
    } else {
@@ -75,12 +84,13 @@ if (process.argv.includes('--serve')) {
    await sim.getByRole('button', { name: t.up, exact: true }).click(); await page.getByRole('button', { name: t.down, exact: true }).first().click();
    }
    await button(t.save).click(); await page.getByText(new RegExp(t.saved)).waitFor(); await audit('authoring'); interactions += 22;
-   if (practical && width === 390 && theme === 'dark') { const path = `docs/review/rad085-practical-${locale}.jpg`; await page.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
+
    await button(t.preview).focus(); await page.keyboard.press('Enter'); await page.getByRole('heading', { name: t.previewTitle, exact: true }).waitFor();
    assert.equal(await page.getByText(/PRIVATE SOURCE|PRIVATE LICENCE|PRIVATE AUTHOR NOTE/).count(), 0); assert.equal(await page.getByLabel(t.correct).count(), 0);
    if (practical) {
     const preview = page.getByRole('region', { name: t.previewTitle }), kvp = preview.locator('#practical-control-kvp');
     const initial = await kvp.inputValue(); await kvp.focus(); await page.keyboard.press('ArrowRight'); const changed = await kvp.inputValue(); assert.notEqual(changed, initial);
+    if (width === 390 && theme === 'dark') { const path = `docs/review/rad085-scene-${locale}.jpg`; await page.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
     await audit('practical preview'); await preview.getByRole('button', { name: `${t.item} 2`, exact: true }).click(); assert.equal(await kvp.inputValue(), initial);
     const ids = await preview.locator('[id]').evaluateAll(nodes => nodes.map(n => n.id)); assert.equal(new Set(ids).size, ids.length);
     await preview.getByRole('button', { name: `${t.item} 1`, exact: true }).click(); assert.equal(await kvp.inputValue(), changed);

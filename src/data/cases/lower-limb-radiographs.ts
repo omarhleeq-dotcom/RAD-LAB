@@ -1,3 +1,5 @@
+import { FOOT_OBLIQUE_DISPLACEMENT } from "@/features/positioning/drawing-data";
+import { FOOT_AP_DISPLACEMENT } from "@/features/positioning/drawing-data";
 import type { ImageEllipse, RadiographAssetSpec } from "@/domain/radiograph";
 import { lowerLimbImage, type LowerLimbKind } from "../exams/xray/lower-limb-geometry";
 
@@ -96,15 +98,7 @@ export const FOOT_AP_RADIOGRAPH: RadiographAssetSpec = {
   ...common("foot-ap"),
   // the tarsal bones (rows ≈ 1500–2300 of 2405).
   denseZones: [zone(0.45, 0.79, 0.35, 0.15)],
-  limbRotation: {
-    kind: "limb-warp",
-    model: "foot-ap",
-    bands: [
-      // The toes (rows 0–640 of 2405) and the metatarsals (rows ≈ 640–1330): adjacent bands, so their weights add up to 1 at the boundary.
-      { v1: -0.05, v2: 0.266 },
-      { v1: 0.266, v2: 0.553 },
-    ],
-  },
+  limbRotation: FOOT_AP_DISPLACEMENT,
 };
 
 export const FOOT_OBLIQUE_RADIOGRAPH: RadiographAssetSpec = {
@@ -120,15 +114,7 @@ export const FOOT_OBLIQUE_RADIOGRAPH: RadiographAssetSpec = {
   ),
   ...common("foot-oblique"),
   denseZones: [zone(0.5, 0.85, 0.4, 0.12)],
-  limbRotation: {
-    kind: "limb-warp",
-    model: "foot-oblique",
-    bands: [
-      // The toes (rows 0–650 of 1960) and the metatarsals (rows ≈ 650–1420).
-      { v1: -0.05, v2: 0.33 },
-      { v1: 0.33, v2: 0.72 },
-    ],
-  },
+  limbRotation: FOOT_OBLIQUE_DISPLACEMENT,
 };
 
 export const ANKLE_AP_RADIOGRAPH: RadiographAssetSpec = {

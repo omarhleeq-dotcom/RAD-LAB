@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ELBOW_CM_PER_PX, elbowImage } from "@/data/exams/xray/elbow-geometry";
+import { ELBOW_CM_PER_PX, elbowDrawingImage } from "@/features/positioning/drawing-data";
 import { ELBOW_MODEL, LATERAL_COPY_WEIGHTS, LATERAL_HALF_PX, elbowApShifts, elbowDrawnRad, interpolateAnchors } from "@/features/elbow-model/elbow-model";
 import { SCENE, STROKE, UNDER } from "./scene-style";
 import { AP_OUTLINES, LATERAL_OUTLINES, smoothClosedPath, smoothOpenPath, type Pt } from "./elbow-visual";
@@ -18,7 +18,7 @@ import type { FigureProps } from "./detector-figures";
  */
 export function ElbowDrawing({ radCase, settings, showGuides }: FigureProps) {
   const lateral = settings.projection === "elbow-lateral";
-  const im = elbowImage(lateral ? "lateral" : "ap");
+  const im = elbowDrawingImage(lateral ? "lateral" : "ap");
   const a = radCase.requiredAnatomy;
   const U = 10; // SVG units per detector cm (`detector-figures.tsx` U)
   const k = ELBOW_CM_PER_PX * U; // SVG units per image pixel
