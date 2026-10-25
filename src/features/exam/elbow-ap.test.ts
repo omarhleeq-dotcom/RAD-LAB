@@ -10,7 +10,7 @@ import { buildRenderPlan } from "@/features/radiograph/plan";
 import { wordingNsOf } from "@/features/radiograph/wording";
 import { validateCase, validateExam } from "./validate";
 
-/** A fully correct elbow AP attempt (left elbow): marker L inside the field, CR perpendicular at the mid-elbow joint, SID ≥ 102 cm. */
+/** A fully correct elbow AP attempt (left elbow): marker L inside the field, CR perpendicular at the mid-elbow joint, SID in the 100–110 cm ideal band (RAD-081). */
 const ok: SimulationSettings = {
   projection: "elbow-ap",
   rotationDeg: 0,
@@ -122,7 +122,7 @@ describe("technique: Bontrager p.166 kV band 65–75; the partial bands, SID ban
   it.each([[70, "pass"], [65, "pass"], [75, "pass"], [62, "partial"], [78, "partial"], [50, "fail"], [95, "fail"]] as const)("%d kV → %s", (kvp, outcome) => {
     expect(check(run({ kvp }), "kvp").outcome).toBe(outcome);
   });
-  it.each([[102, "pass"], [110, "pass"], [100, "partial"], [120, "partial"], [85, "fail"], [150, "fail"]] as const)("SID %d cm → %s", (sidCm, outcome) => {
+  it.each([[102, "pass"], [100, "pass"], [101, "pass"], [99, "partial"], [110, "pass"], [111, "partial"], [120, "partial"], [85, "fail"], [150, "fail"]] as const)("SID %d cm → %s", (sidCm, outcome) => {
     expect(check(run({ sidCm }), "sid").outcome).toBe(outcome);
   });
   it("no AEC: the technique has no aec section, the exposure model reads manual, low kV draws low penetration", () => {

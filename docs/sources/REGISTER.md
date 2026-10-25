@@ -6,7 +6,7 @@
 
 **Governing authority (S10b-25, owner decision 2026-10-06, final, binding):** **BONTRAGER-9 is the governing authority for X-ray positioning and technique.** Other sources are supporting. On any conflict Bontrager wins; where it is silent use the next official source (EC16260, ACR-CHEST / ACR-PORTABLE, WHO-TECH, WHO-CHEST), then owner decision. Textbooks may be used as sources (S10-5 as amended): facts paraphrased and cited by printed page, no text or figures reused (S10-3); third-party student notes are never cited.
 
-**Commercial use (S10-3):** RAD-LAB is a commercial product. "Cite / paraphrase facts only" = facts are paraphrased with a locator; no text, table or figure is reproduced. Radiopaedia is not used. Textbooks: see the governing-authority rule above.
+**Commercial use (S10-3):** RAD-LAB is a commercial product. "Cite / paraphrase facts only" = facts are paraphrased with a locator; no text, table or figure is reproduced. Radiopaedia assets/content are not used. The owner-supplied wrist SID fact citations are the sole exception ([RAD-081 decision](../DECISIONS.md#rad081-owner-2026-10-25)); no images/text/tables/figures are acquired or reproduced, and the links were not independently verified. Textbooks: see the governing-authority rule above.
 
 ## 1. Sources read through the library (Session 10b)
 

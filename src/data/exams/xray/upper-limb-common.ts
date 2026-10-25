@@ -1,3 +1,5 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
+import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule, PositioningSpec } from "@/domain/case";
 import type { AnyExamDefinition } from "@/domain/exam";
 import type { LocalizedText } from "@/domain/localized";
@@ -18,7 +20,7 @@ import { upperLimbTechnique } from "./upper-limb-technique";
  * Governing authority: BONTRAGER-9 p.156 / p.158 (wrist), p.150 / p.153 (hand) and p.166 / p.172 (elbow), cited by printed page (S10b-25).
  * Every clinical value is PROVISIONAL until the educator / medical-physicist review (O5). Labels used below: BONTRAGER = taken from the
  * textbook page; ENGINE TEACHING CHOICE (S12-1) = the simulator's own number, named as such in the learner-visible feedback text and in
- * `REVIEW_PACKAGE.md`: the kV partial bands, the SID band above the 102 cm minimum, the rotation tolerances (±2° / ±5°), the centring
+ * `REVIEW_PACKAGE.md`: the kV partial bands, the owner-approved SID band (100–110 cm; RAD-081), the rotation tolerances (±2° / ±5°), the centring
  * tolerances, the excess-collimation margins (wrist 3.5 cm; hand PA 3.5 cm, lateral 6.5 cm: O40; elbow AP 3 cm, lateral 4.5 cm), the forearm
  * coverage of the hand and the extent of the elbow region, the 28 / 22 / 17 / 22 / 11 category weights and the manual reference point.
  * Manual technique only (no AEC, no grid control, no tube-angle control: the central ray is perpendicular), no chin / shoulder / breathing.
@@ -566,7 +568,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
   const pg = p.page;
   const [kvLo, kvHi] = p.kv.full;
   const [pLo, pHi] = p.kv.partial;
-  return [
+  return withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -635,7 +637,7 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
           `No side marker placed. Choose the letter of the patient's side (this is the left ${f.part.en}) and place it inside the field.`,
           `لم توضع علامة جانب. اختر حرف جانب المريض (${f.sideIs}) وضعه داخل المجال.`,
         ),
-        overlap: T(`The marker covers the ${f.part.en} anatomy. Move it to the edge of the field, away from the required anatomy.`, `العلامة تغطي تشريح ${f.part.ar}. انقلها إلى حافة المجال بعيدًا عن التشريح المطلوب.`),
+        ...markerOverlapFeedback,
         wrongSide: T(
           `The marker letter does not match the patient's side: this is the LEFT ${f.part.en}. A wrong marker misidentifies the patient's side.`,
           `حرف العلامة لا يطابق جانب المريض: ${f.sideIs}. العلامة الخاطئة تُحدِّد جانب المريض خطأً.`,
@@ -790,28 +792,31 @@ const rules = (k: UpperLimbKind): CheckRule[] => {
       kind: "range",
       category: "sid",
       setting: "sidCm",
-      // Bontrager: minimum 40 in = 102 cm (wrist p.156 / 158, hand p.150 / 153, elbow p.166 / 172). ENGINE TEACHING CHOICES: the upper
-      // full-credit limit (110 cm) and the partial band (95–130 cm).
-      ideal: [102, 110],
+      // RAD-081 owner decision (2026-10-25), PROVISIONAL: accept 100 cm as the practical rounded counterpart of Bontrager's
+      // 40 in (wrist p.156 / 158, hand p.150 / 153, elbow p.166 / 172). Owner supplied Radiopaedia wrist PA/lateral SID 100 cm:
+      // https://images.radiopaedia.org/articles/wrist-pa-view-2 ; https://radiopaedia.org/articles/wrist-lateral-view-2
+      // These wrist citations are not a new hand/elbow source: the owner extends this grading band to all extremities.
+      // The upper full-credit limit (110 cm) and partial band (95–130 cm) remain teaching choices. TODO(medical-review).
+      ideal: [100, 110],
       acceptable: [95, 130],
       unit: "cm",
       variantOnLow: "magnified-geometry",
       label: T("Source-to-image distance (SID)", "المسافة بين المصدر والكاشف (SID)"),
       feedback: {
-        pass: T("SID is at least the 102 cm (40 in) minimum and inside this simulator's teaching band (102–110 cm).", "قيمة SID لا تقل عن الحد الأدنى 102 سم (40 بوصة) وضمن النطاق التعليمي للمحاكي (102–110 سم)."),
+        pass: T("SID is within the full-credit band (100–110 cm).", "قيمة SID ضمن نطاق الدرجة الكاملة (100–110 سم)."),
         low: T(
-          `SID is shorter than the 102 cm (40 in) minimum Bontrager gives for the ${f.part.en}. A shorter distance increases magnification and unsharpness (not drawn in this version) and raises the exposure at the detector (inverse square).`,
-          `قيمة SID أقصر من الحد الأدنى 102 سم (40 بوصة) الذي يذكره Bontrager ${f.sidForPart}. المسافة الأقصر تزيد التكبير وعدم الحدّة (لا يُرسمان في هذه النسخة) وتزيد التعريض عند الكاشف (قانون التربيع العكسي).`,
+          `SID for the ${f.part.en} is below the full-credit band (100–110 cm). A shorter distance increases magnification and unsharpness (not drawn in this version) and raises the exposure at the detector (inverse square).`,
+          `قيمة SID ${f.sidForPart} أقل من نطاق الدرجة الكاملة (100–110 سم). المسافة الأقصر تزيد التكبير وعدم الحدّة (لا يُرسمان في هذه النسخة) وتزيد التعريض عند الكاشف (قانون التربيع العكسي).`,
         ),
         high: T(
-          "SID is longer than this simulator's teaching band (102–110 cm); exposure at the detector drops (inverse square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum.)",
-          "قيمة SID أطول من النطاق التعليمي في المحاكي (102–110 سم)؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط.)",
+          "SID is longer than this simulator's teaching band (100–110 cm); exposure at the detector drops (inverse square), so in manual mode the technique would need adjusting. (The textbook gives only a minimum.)",
+          "قيمة SID أطول من النطاق التعليمي في المحاكي (100–110 سم)؛ ينخفض التعريض عند الكاشف (قانون التربيع العكسي) فيحتاج الوضع اليدوي إلى تعديل العوامل. (الكتاب يذكر حدًا أدنى فقط.)",
         ),
         fail: T(`SID is outside this case's protocol range for the ${f.part.en} (below about 95 cm or above 130 cm).`, `قيمة SID خارج نطاق بروتوكول هذه الحالة ${f.forPart} (أقل من نحو 95 سم أو أكثر من 130 سم).`),
       },
-      evidence: ev("provisional", `BONTRAGER-9 ${pg} (SID minimum 40 in / 102 cm); ${f.techniqueRef}`, "The 102 cm minimum is Bontrager (inch-to-cm conversion)."),
+      evidence: ev("provisional", `BONTRAGER-9 ${pg} (SID 40 in); Radiopaedia wrist PA/lateral (100 cm, owner-supplied); Owner decision 2026-10-25 (100–110 cm); ${f.techniqueRef}`, "The full-credit band is 100–110 cm. The 100 cm threshold is accepted as practical rounding of the 40 in convention; the upper limit and 95–130 cm acceptable band are unchanged."),
     },
-  ];
+  ], familyOf(k) === "wrist");
 };
 
 /** One upper-limb exam. The six instances are `wrist-pa.ts`, `wrist-lateral.ts`, `hand-pa.ts`, `hand-lateral.ts`, `elbow-ap.ts` and `elbow-lateral.ts`. */

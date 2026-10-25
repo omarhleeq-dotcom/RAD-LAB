@@ -1,3 +1,4 @@
+import { markerRoomSide } from "./marker-room";
 import type {
   CenteringRule,
   CheckRule,
@@ -141,6 +142,9 @@ function evalMarker(rule: MarkerRule, s: SimulationSettings, c: RadCase): Partia
     issues.push(rule.feedback.outsideField);
   } else if ((c.positioning.markerKeepOut ?? [c.requiredAnatomy]).some((zone) => rectsOverlap(rect, regionToRect(zone)))) {
     issues.push(rule.feedback.overlap);
+    const roomSide = markerRoomSide(c, s);
+    const roomText = roomSide && rule.feedback[({ left: "overlapLeft", right: "overlapRight", top: "overlapTop", bottom: "overlapBottom" } as const)[roomSide]];
+    if (roomText) issues.push(roomText);
   }
   // Display-half convention (detector-side rule only): a note, never an issue. It adds no deduction and no fail.
   const note = isMarkerDisplayHalfNote(c.positioning, { side: s.sideMarker, position: s.markerPosition }, s.choices) && rule.feedback.displayHalf;

@@ -7,7 +7,7 @@ import { LABEL_SIZE, SCENE, STROKE } from "./scene-style";
 import { LOWER_LIMB_SIDE, slabX } from "./lower-limb-visual";
 import { footSideProportions } from "./foot-side-proportions";
 
-/** Educational reference SID (Bontrager's minimum 40 in = 102 cm, p.224-225). Mirrors the SID rule of the exam. */
+/** Educational reference SID (Bontrager's minimum 40 in = 102 cm, p.224-225). The tick remains an illustrative point within the owner-approved provisional 100–110 cm full-credit band. */
 const SID_REFERENCE_CM = 102;
 const S = LOWER_LIMB_SIDE.surfaceY;
 const DIM_OFFSET = 34;
@@ -145,7 +145,7 @@ export function LowerLimbSideView({ radCase, settings, showGuides }: Props) {
             <UnderStroked stroke={SCENE.good} width={3}>
               {(p) => <line {...tick(dr)} {...p} />}
             </UnderStroked>
-            <SceneLabel x={dr.x + side * 14} y={dr.y + 5} size={LABEL_SIZE.view - 2} anchor={side > 0 ? "start" : "end"} fill={SCENE.good}>{t("sidTarget", { sid: SID_REFERENCE_CM })}</SceneLabel>
+            <SceneLabel x={dr.x + side * 14} y={dr.y + 5} size={LABEL_SIZE.view - 2} anchor={side > 0 ? "start" : "end"} fill={SCENE.good}>{t("extremitySidTarget")}</SceneLabel>
           </>
         )}
       </g>

@@ -1,3 +1,5 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
+import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { ExamDefinition } from "@/domain/exam";
 import { chestPaTechnique } from "./chest-pa-technique";
 
@@ -170,7 +172,7 @@ export const chestPaErectExam: ExamDefinition = {
       },
     ],
   },
-  rules: [
+  rules: withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -329,10 +331,7 @@ export const chestPaErectExam: ExamDefinition = {
           en: "No side marker placed. Choose L or R and place it inside the image margin.",
           ar: "لم توضع علامة جانب. اختر L أو R وضعها داخل هامش الصورة.",
         },
-        overlap: {
-          en: "The marker covers the lung fields. Move it into the margin, away from the anatomy of interest.",
-          ar: "العلامة تغطي الحقلين الرئويين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
-        },
+        ...markerOverlapFeedback,
         wrongSide: {
           en: "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In a PA display the patient's left appears on the viewer's right, so L belongs on the viewer's right and R on the viewer's left. A marker over the other side's anatomy misidentifies the patient's side.",
           ar: "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في عرض PA يظهر يسار المريض على يمين المشاهد، لذا تُوضع L على يمين المشاهد وR على يساره. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
@@ -656,7 +655,7 @@ export const chestPaErectExam: ExamDefinition = {
         note: "Patient or respiratory motion reduces sharpness (principle). Caps the breathing category at the engine's partial credit when the instruction is missing (owner 2026-10-22); no instruction-quality rubric is claimed.",
       },
     },
-  ],
+  ]),
   possibleErrors: [
     {
       id: "rotated",

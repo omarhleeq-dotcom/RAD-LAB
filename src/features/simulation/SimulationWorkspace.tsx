@@ -36,7 +36,10 @@ export function SimulationWorkspace({ caseId, backHref = "/" }: { caseId: string
   const resultRef = useRef<HTMLDivElement>(null);
   const phone = usePhoneLayout();
 
-  useEffect(() => loadCase(caseId), [caseId, loadCase]);
+  useEffect(() => {
+    // Locale navigation remounts this workspace; only a different case starts a new simulation.
+    if (useSimulationStore.getState().activeCase?.id !== caseId) loadCase(caseId);
+  }, [caseId, loadCase]);
   useEffect(() => {
     if (phase === "result") resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [phase]);

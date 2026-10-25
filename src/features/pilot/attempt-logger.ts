@@ -97,9 +97,11 @@ export function createAttemptLogger(deps: LoggerDeps) {
     if (p.phase === "setup" && s.phase === "result" && s.result && s.settings) {
       const id = attemptId;
       const { result, settings } = s;
+      // Bind the submitted language before asynchronous hashing; a later locale switch belongs to the next attempt.
+      const locale = deps.locale();
       const finishedAt = now();
       const row = Promise.all([definitionVersion(c), evaluationComparison(result)]).then(([version]) =>
-        buildAttemptRow({ id, radCase: c, version, attemptNo: s.attempt, settings, result, locale: deps.locale(), device: deps.device(), startedAt, finishedAt }),
+        buildAttemptRow({ id, radCase: c, version, attemptNo: s.attempt, settings, result, locale, device: deps.device(), startedAt, finishedAt }),
       );
       report({ id, status: "pending" });
       void run(async (client) => {

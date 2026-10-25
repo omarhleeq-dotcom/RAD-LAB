@@ -1,3 +1,5 @@
+import { withCoverageEdgeWording } from "./coverage-edge-feedback";
+import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule } from "@/domain/case";
 import type { ExamDefinition } from "@/domain/exam";
 import { chestApTechnique } from "./chest-ap-technique";
@@ -140,7 +142,7 @@ export const chestApSupineExam: ExamDefinition = {
       },
     ],
   },
-  rules: [
+  rules: withCoverageEdgeWording([
     {
       id: "projection",
       kind: "equals",
@@ -265,10 +267,7 @@ export const chestApSupineExam: ExamDefinition = {
           en: "No side marker placed. Choose L or R (the patient's side) and place it inside the image margin.",
           ar: "لم توضع علامة جانب. اختر L أو R (جانب المريض) وضعها داخل هامش الصورة.",
         },
-        overlap: {
-          en: "The marker covers the lungs. Move it into the margin, away from the anatomy of interest.",
-          ar: "العلامة تغطي الرئتين. انقلها إلى الهامش بعيدًا عن التشريح المطلوب.",
-        },
+        ...markerOverlapFeedback,
         wrongSide: {
           en: "The marker is on the wrong side of the image: the letter sits over the anatomy of the opposite side, even if the letter itself is the correct one. In this display the patient's left appears on the viewer's right, as in a PA, so L belongs on the viewer's right and R on the viewer's left, in the lateral edge of the field. A marker over the other side's anatomy misidentifies the patient's side.",
           ar: "العلامة على الجانب الخطأ من الصورة: الحرف موضوع فوق تشريح الجانب المقابل، حتى لو كان الحرف نفسه صحيحًا. في هذا العرض يظهر يسار المريض على يمين المشاهد كما في PA، لذا تُوضع L على يمين المشاهد وR على يساره، عند الحافة الجانبية للمجال. العلامة الموضوعة فوق تشريح الجانب الآخر تُحدِّد جانب المريض خطأً.",
@@ -477,7 +476,7 @@ export const chestApSupineExam: ExamDefinition = {
       evidence: { status: "common-reference", reference: "BONTRAGER-9 p.96-97", note: "No rib-count rule is claimed (8–9 posterior ribs is stated as acceptable, not scored)." },
     },
     pa("motion-instruction"),
-  ],
+  ]),
   possibleErrors: chestPaErectExam.possibleErrors,
   imageCriteria: [
     { id: "rotation", description: { en: "No rotation (equal spine-to-rib-border and sternoclavicular distances)", ar: "لا يوجد دوران (مسافات متساوية من العمود الفقري إلى الحدّين الضلعيين وإلى المفصلين القصّيين الترقويين)" } },

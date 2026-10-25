@@ -36,6 +36,8 @@ export function TechniqueResult({ radCase, kvp, manualMas, exposure: x }: Props)
   const t = useTranslations("technique");
   const locale = useLocale();
   const { deviation } = radCase.technique;
+  const sidRule = radCase.rules.find(r => r.kind === "range" && r.setting === "sidCm");
+  const extremitySidBand = sidRule?.kind === "range" && sidRule.ideal[0] === 100 && sidRule.ideal[1] === 110;
   const aec = x.mode === "aec";
   const fmt = (n: number, d = 2) => String(Math.round(n * 10 ** d) / 10 ** d);
 
@@ -143,6 +145,7 @@ export function TechniqueResult({ radCase, kvp, manualMas, exposure: x }: Props)
           <li>
             {aec
               ? t("why.sidAec", { mas: fmt(x.deliveredMas) })
+              : extremitySidBand ? t("why.sidBand", { factor: fmt(x.sid.inverseSquareFactor), sid: x.sid.sidCm })
               : t("why.sid", { factor: fmt(x.sid.inverseSquareFactor), sid: x.sid.sidCm, ref: x.sid.referenceCm })}
           </li>
           {aec && <li>{t("why.aec")}</li>}

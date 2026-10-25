@@ -63,13 +63,13 @@ const lowerLimbProfile = (kind: LowerLimbKind): AnyExamTechniqueProfile => {
       },
     },
     manual: {
-      // A MODEL ANCHOR (DI = 0), never shown as "the correct technique": 2.5 mAs at the SID minimum. ENGINE TEACHING CONSTANT, no clinical claim.
+      // A MODEL ANCHOR (DI = 0), never shown as "the correct technique": 2.5 mAs at a fixed calibration SID within the 100–110 cm full-credit band. ENGINE TEACHING CONSTANT, no clinical claim.
       reference: { kvp: c.centre, mas: 2.5, sidCm: 102 },
       kvpExponent: 3,
       evidence: {
         status: "provisional",
         reference: "S14.4-3; S10b-9; O26",
-        note: `Reference point (${c.centre} kV, 2.5 mAs, 102 cm → DI 0) is an ENGINE TEACHING CONSTANT with no clinical claim: Bontrager (as supplied) gives no mAs for the lower limb and no supporting source was read (O26). The kV exponent is a teaching simplification.`,
+        note: `Reference point (${c.centre} kV, 2.5 mAs, fixed calibration SID within the 100–110 cm full-credit band → DI 0) is an ENGINE TEACHING CONSTANT with no clinical claim: Bontrager (as supplied) gives no mAs for the lower limb and no supporting source was read (O26). The kV exponent is a teaching simplification.`,
       },
     },
     kvp: {
@@ -97,7 +97,7 @@ const lowerLimbProfile = (kind: LowerLimbKind): AnyExamTechniqueProfile => {
       },
       {
         id: `reference-point-${kind}`,
-        label: { en: `Manual reference point (${c.centre} kVp, 2.5 mAs at 102 cm → DI 0)`, ar: `نقطة المرجع اليدوية (‎${c.centre}‎ kVp و2.5 mAs عند 102 سم → DI 0)` },
+        label: { en: `Manual reference point (${c.centre} kVp, 2.5 mAs at fixed calibration SID within the 100–110 cm full-credit band → DI 0)`, ar: `نقطة المرجع اليدوية (‎${c.centre}‎ kVp و2.5 mAs؛ معايرة SID ثابتة داخل نطاق الدرجة الكاملة 100–110 سم → DI 0)` },
         value: {
           en: "A model anchor so exposure can be computed relative to a target; not a recommended technique and not a clinical value.",
           ar: "نقطة ارتكاز للنموذج لحساب التعريض نسبةً إلى هدف؛ وليست تقنية موصى بها ولا قيمة سريرية.",

@@ -83,6 +83,7 @@
     "centeringYHigh": "Too low",
     "rotationGuide": "Square to detector",
     "sidTarget": "Reference {sid} cm",
+    "extremitySidTarget": "Reference band 100–110 cm",
     "fineAdjust": "Fine adjustment (keyboard / slider alternative)",
     "centerX": "Central ray — lateral offset from midline",
     "centerY": "Central ray — distance from top edge",
@@ -113,7 +114,9 @@
     "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
     "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left.",
     "touchHint": "Drag the crosshair and handles on the detector",
-    "fineAdjustPhone": "Fine adjustment"
+    "fineAdjustPhone": "Fine adjustment",
+    "markerExclusionGuide": "Marker exclusion area (reference rectangles)",
+    "markerSquareGuide": "Measured marker square: {size} cm"
   },
   "console": {
     "title": "X-ray console",
@@ -317,6 +320,7 @@
       "kvp": "kVp sets the energy spectrum of the beam: it changes penetration and X-ray output. It is not a brightness control — on digital systems processing sets the displayed brightness.",
       "mas": "With other factors equal, mAs sets how many X-rays are produced. Too little gives too little signal and more quantum noise; more than needed adds radiation without a matching benefit.",
       "sid": "X-ray intensity falls with the square of the distance (inverse-square law). In manual mode a different SID changes detector exposure: ×{factor} at {sid} cm compared with {ref} cm. The simulator applies only this relationship; a real imaging chain involves more.",
+      "sidBand": "X-ray intensity falls with the square of the distance (inverse-square law). At {sid} cm the manual exposure factor is ×{factor} relative to the fixed model calibration. The full-credit SID band is 100–110 cm; it is not a band of DI 0 values. The simulator applies only this relationship; a real imaging chain involves more.",
       "sidAec": "With AEC the model re-terminates at the target, so a different SID changes the mAs the AEC delivers (here {mas} mAs) rather than the detector exposure. SID still changes the geometry (for example magnification).",
       "aec": "AEC aims for consistent, reproducible receptor exposure. In this model it senses only the selected chambers inside the field, and a chamber under dense anatomy makes it expose for longer. Chamber layout and selection are vendor / local-protocol dependent.",
       "di": "DI compares detector exposure with a target: 0 = on target, +3 ≈ twice, −3 ≈ half. It is not a patient dose, and there is no universal pass/fail band.",
@@ -1668,7 +1672,9 @@
     "allSavedRange": "All {count} saved attempts through {to}.",
     "loadOlder": "Load older results",
     "passedShort": "Passed",
-    "notPassedShort": "Below pass"
+    "notPassedShort": "Below pass",
+    "editName": "Edit",
+    "cancelName": "Cancel"
   },
   "assessAdmin": {
     "title": "Assess groups and assignments",

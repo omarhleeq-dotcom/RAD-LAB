@@ -19,6 +19,7 @@ import { collimatedField } from "@/features/simulation/geometry";
 import { CHEST_PA_FIGURE, DETECTOR_FIGURES, U, type DetectorFigure } from "./detector-figures";
 import { SceneArrow, SceneLabel, UnderStroked } from "./SceneParts";
 import { LABEL_SIZE, SCENE, STROKE, UNDER } from "./scene-style";
+import { MarkerGuideOverlays, MarkerGuideLegend } from "./MarkerGuides";
 import { detectorViewBox, phoneFit } from "./fit-view";
 import { PhoneFrameLabels } from "./PhoneFrameLabels";
 import { markerBox, nearestTouchTarget, touchGeometry, type TouchCandidate } from "./touch-geometry";
@@ -302,6 +303,8 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       )}
 
+      {/* Guide strokes sit behind the unchanged marker badge and letter on both layouts. */}
+      {showGuides && <MarkerGuideOverlays radCase={radCase} settings={settings} />}
       {!phone && markerNode}
 
       {/* outside the collimated field the detector receives no beam */}
@@ -326,7 +329,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         <SceneArrow x1={-20} y1={-48} x2={-20} y2={-80} />
         <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
         <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
-        <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
+        <SceneLabel bounds={phone ? undefined : whole} x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
         <Orientation W={W} showGuides={showGuides} projection={settings.projection} />
       </g>}
 
@@ -354,12 +357,13 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       </g>
 
-      {!frameRows && <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>}
+      {!frameRows && <SceneLabel bounds={phone ? undefined : whole} x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>}
     </svg>
     {frameRows && <PhoneFrameLabels>
       <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
       <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>
     </PhoneFrameLabels>}
+    {showGuides && <MarkerGuideLegend size={positioning.markerSizeCm} />}
     </>
   );
 }
