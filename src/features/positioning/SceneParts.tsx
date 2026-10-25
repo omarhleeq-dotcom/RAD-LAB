@@ -12,6 +12,8 @@ interface LabelProps {
   anchor?: "start" | "middle" | "end";
   fill?: string;
   children: string;
+  /** Desktop frame labels only: minimally translate a measured pill inside the unchanged SVG bounds. */
+  bounds?: Box;
 }
 
 interface Box {
@@ -27,27 +29,49 @@ interface Box {
  * render) the text is drawn without the pill. Decorative to assistive tech: the drawing's text alternative carries the meaning
  * (callers wrap labels in an `aria-hidden` group where the label is not itself the accessible name).
  */
-export function SceneLabel({ x, y, size, anchor = "start", fill = SCENE.label, children }: LabelProps) {
+export function SceneLabel({ x, y, size, anchor = "start", fill = SCENE.label, children, bounds }: LabelProps) {
   const rows = useContext(PhoneFrameLabelContext);
   const key = frameLabelKey(x, y, size, children);
-  if (rows) {
-    const position = rows.positions[key];
-    x = position?.x ?? 0; y = position?.y ?? 0; anchor = "start";
-  }
+  const position = rows?.positions[key];
+  const labelX = rows ? position?.x ?? 0 : x;
+  const labelY = rows ? position?.y ?? 0 : y;
+  const labelAnchor = rows ? "start" : anchor;
   const ref = useRef<SVGTextElement>(null);
   const [box, setBox] = useState<Box | null>(null);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const boundsX = bounds?.x, boundsY = bounds?.y, boundsWidth = bounds?.width, boundsHeight = bounds?.height;
   useLayoutEffect(() => {
+    let active = true;
     const measure = () => {
-      const b = ref.current?.getBBox();
-      if (b && b.width > 0) setBox((o) => (o && o.x === b.x && o.y === b.y && o.width === b.width && o.height === b.height ? o : { x: b.x, y: b.y, width: b.width, height: b.height }));
+      if (!active) return;
+      const text = ref.current;
+      if (!text) return;
+      // Measure at the authored position, then restore it immediately. This avoids a feedback loop from rounded SVG bounds.
+      const oldX = text.getAttribute("x"), oldY = text.getAttribute("y");
+      if (boundsX !== undefined) { text.setAttribute("x", String(labelX)); text.setAttribute("y", String(labelY)); }
+      const b = text.getBBox();
+      if (oldX !== null) text.setAttribute("x", oldX);
+      if (oldY !== null) text.setAttribute("y", oldY);
+      if (b.width > 0) {
+        let dx = 0, dy = 0;
+        if (boundsX !== undefined && boundsY !== undefined && boundsWidth !== undefined && boundsHeight !== undefined) {
+          // Pill padding is 5/1; one extra drawing unit keeps font rounding inside the unchanged frame.
+          dx = Math.max(boundsX + 6 - b.x, Math.min(0, boundsX + boundsWidth - 6 - b.x - b.width));
+          dy = Math.max(boundsY + 2 - b.y, Math.min(0, boundsY + boundsHeight - 2 - b.y - b.height));
+        }
+        const next = { x: b.x + dx, y: b.y + dy, width: b.width, height: b.height };
+        setBox(o => o && o.x === next.x && o.y === next.y && o.width === next.width && o.height === next.height ? o : next);
+        setOffset(o => o.x === dx && o.y === dy ? o : { x: dx, y: dy });
+      }
     };
     measure();
     void document.fonts?.ready.then(measure);
-  }, [x, y, size, anchor, children]);
+    return () => { active = false; };
+  }, [labelX, labelY, size, labelAnchor, children, boundsX, boundsY, boundsWidth, boundsHeight]);
   return (
     <g style={{ pointerEvents: "none" }}>
       {box && <rect x={box.x - 5} y={box.y - 1} width={box.width + 10} height={box.height + 2} rx={5} fill={SCENE.underStroke} opacity={0.82} />}
-      <text ref={ref} data-phone-frame-label={rows ? key : undefined} x={x} y={y} fontSize={size} textAnchor={anchor} fill={fill}>
+      <text ref={ref} data-phone-frame-label={rows ? key : undefined} x={labelX + offset.x} y={labelY + offset.y} fontSize={size} textAnchor={labelAnchor} fill={fill}>
         {children}
       </text>
     </g>

@@ -1225,3 +1225,12 @@
 | `chest-pa-scenarios.json` / `initial-state.checks.1.feedback.en` | The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray. | The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately. |
 | `chest-pa-scenarios.json` / `initial-state.result.checks.1.feedback.ar` | الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الحافة العلوية للمجال تقطع قمم الرئتين. التشريح الواقع خارج المجال يغيب عن الصورة. وسّع المجال أو أعد توسيط الشعاع المركزي. | الجانب الأيسر للمجال (في عرض الكاشف) يقطع الحافة الجانبية للرئة. الحافة العلوية للمجال تقطع قمم الرئتين. حرّك حواف القص المذكورة فقط إلى الخارج، أو أعد توسيط الشعاع. أبقِ التشريح المطلوب والعلامة داخل المجال، وضيّق حواف الزيادة المذكورة بشكل مستقل. |
 | `chest-pa-scenarios.json` / `initial-state.result.checks.1.feedback.en` | The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Anatomy outside the field is missing from the image. Open the field or re-centre the central ray. | The left side of the field (in the detector view) cuts off the lateral edge of the lung. The top of the field cuts off the lung apices. Adjust only the named clipped edges outward, or re-centre the ray. Keep the required anatomy and marker included; reduce any edges identified as excessive separately. |
+
+## البند 3 — البصمات
+
+0 مفتاحًا تغير ضمن الاستثناء المسمى.
+
+| الملف / المفتاح | قبل | بعد |
+|---|---|---|
+
+برهان البند3 المتصفحي:15 فحصًا/30 حالة لغة انتقلت تسميات الأسفل إلى الداخل،34 حالة هاتف بإحداثيات مطابقة وviewBox ثابت، وصفر footer خارج. تغير إحداثيات القياس عميل فقط؛ لا تغيير hash SSR. لا توقع قائم عُدّل؛ أضيف اختبار جديد لاحتواء النص وعدم تحريك الهاتف.

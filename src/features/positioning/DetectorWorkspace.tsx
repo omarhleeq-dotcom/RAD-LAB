@@ -327,7 +327,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         <SceneArrow x1={-20} y1={-48} x2={-20} y2={-80} />
         <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
         <SceneArrow x1={32} y1={H + 4} x2={32} y2={H + 30} />
-        <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
+        <SceneLabel bounds={phone ? undefined : whole} x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
         <Orientation W={W} showGuides={showGuides} projection={settings.projection} />
       </g>}
 
@@ -356,7 +356,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
       </g>
 
-      {!frameRows && <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>}
+      {!frameRows && <SceneLabel bounds={phone ? undefined : whole} x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>}
     </svg>
     {frameRows && <PhoneFrameLabels>
       <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
