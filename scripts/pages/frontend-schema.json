@@ -48,7 +48,7 @@
       ]
     },
     "20261026000300_assess_assignment_review.sql": {
-      "sha256": "4835f6bed7ef9c378315b6b76c9bce7186d523e88ad5ee719285741e3f118ac7",
+      "sha256": "d2a5f52c8a5404e33545a9f76c253e46c261e45c4c3d96ef53047ba06d958f09",
       "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
       "serverModules": [
         "src/features/assess/server-rad085-contracts.ts"

@@ -1,4 +1,5 @@
-// Synthetic loopback acceptance only. No app route, live database, publisher or assignment RPC.
+// Synthetic loopback acceptance only. --assignments uses a reviewed engineering fixture through the local bridge.
+// No app route, live database, worker process or real review.
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
@@ -8,11 +9,12 @@ import { build } from 'esbuild';
 import postcss from 'postcss';
 import tailwind from '@tailwindcss/postcss';
 const require = createRequire(import.meta.url);
-const serverBundle = await build({ stdin: { resolveDir: process.cwd(), contents: `export {openRad085Database,fixtureId} from './src/features/assess/rad085-local-db'; export {localPartCatalog,localPracticalCatalog} from './src/features/authoring-review/catalog'; export {copy,sqlCopy} from './src/features/authoring-review/copy';` }, bundle: true, write: false, platform: 'node', format: 'esm', packages: 'external' });
+const serverBundle = await build({ stdin: { resolveDir: process.cwd(), contents: `export {openRad085Database,fixtureId} from './src/features/assess/rad085-local-db'; export {localPartCatalog,localPracticalCatalog} from './src/features/authoring-review/catalog'; export {newDraft,newMCQ} from './src/features/authoring-review/draft'; export {verifyReviewedAuthoring,authoringBridge} from './src/features/assess/server-authoring-bridge'; export {postgresAuthoringBridge} from './src/features/assess/server-authoring-bridge-postgres'; export {copy,sqlCopy,assignmentSqlCopy} from './src/features/authoring-review/copy';` }, bundle: true, write: false, platform: 'node', format: 'esm', packages: 'external' });
 const helperDir = mkdtempSync('/tmp/rad085-p2-helper-');
 writeFileSync(helperDir + '/helper.mjs', serverBundle.outputFiles[0].text);
-const { openRad085Database, fixtureId: id, localPartCatalog, localPracticalCatalog, copy, sqlCopy } = await import(pathToFileURL(helperDir + '/helper.mjs').href);
+const { openRad085Database, fixtureId: id, localPartCatalog, localPracticalCatalog, copy, sqlCopy, assignmentSqlCopy, newDraft, newMCQ, verifyReviewedAuthoring, authoringBridge, postgresAuthoringBridge } = await import(pathToFileURL(helperDir + '/helper.mjs').href);
 rmSync(helperDir, { recursive: true });
+const assignments = process.argv.includes('--assignments');
 const parts = localPartCatalog(), practicals = localPracticalCatalog();
 const references = [...parts.map(p => ({ key: p.id, revision: p.caseRef.version })), ...practicals.map(p => ({ key: p.caseRef.id, revision: p.caseRef.version }))];
 const catalog = JSON.stringify({ parts, practicals, references }).replaceAll('<', '\\u003c');
@@ -20,15 +22,15 @@ const css = (await postcss([tailwind()]).process(readFileSync('src/app/globals.c
 const browserBundle = await build({ stdin: { resolveDir: process.cwd(), loader: 'tsx', contents: `
  import React,{useMemo,useRef,useState} from 'react'; import {createRoot} from 'react-dom/client';
  import {AuthoringSession,GroupPicker} from './src/features/authoring-review/Session';
- import {createSqlAuthoring} from './src/features/authoring-review/sql-adapter'; import {copy,sqlCopy} from './src/features/authoring-review/copy';
+ import {createSqlAuthoring} from './src/features/authoring-review/sql-adapter'; import {copy,sqlCopy,assignmentSqlCopy} from './src/features/authoring-review/copy';
  const catalog=${catalog}; const locale=new URL(location.href).searchParams.get('locale')==='ar'?'ar':'en';
  document.documentElement.lang=locale; document.documentElement.dir=locale==='ar'?'rtl':'ltr';
  const accounts=[{n:2,id:'${id(2)}',role:'supervisor',name:'Synthetic supervisor A'},{n:3,id:'${id(3)}',role:'supervisor',name:'Synthetic supervisor B'},{n:4,id:'${id(4)}',role:'student',name:'Synthetic student'}];
- function App(){const [n,setN]=useState(2),[groupId,setGroup]=useState(),[epoch,setEpoch]=useState(0),mode=useRef('normal'); const self=accounts.find(a=>a.n===n),t=useMemo(()=>({...copy[locale],...sqlCopy[locale]}),[]);
+ function App(){const [n,setN]=useState(2),[groupId,setGroup]=useState(),[epoch,setEpoch]=useState(0),mode=useRef('normal'); const self=accounts.find(a=>a.n===n),t=useMemo(()=>({...copy[locale],...sqlCopy[locale],...(${assignments}?assignmentSqlCopy[locale]:{})}),[]);
  const adapter=useMemo(()=>{let observed=0,ready=Promise.resolve(); return createSqlAuthoring(self,{
-  async rpc(name,args,signal){await ready; signal.throwIfAborted(); const fault=mode.current; if(name==='draft_save_v1')mode.current='normal'; const response=await fetch('/rpc/'+n,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,args,fault}),signal});const value=await response.json(); observed=Math.max(observed,value.epoch);if(!response.ok)throw value;return value.data;},
+  async rpc(name,args,signal){await ready; signal.throwIfAborted(); const fault=mode.current; if(['draft_save_v1','assignment_prepare_v1','assignment_confirm_v1','assignment_close_v2'].includes(name))mode.current='normal'; const response=await fetch('/rpc/'+n,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,args,fault}),signal});const value=await response.json(); observed=Math.max(observed,value.epoch);if(!response.ok)throw value;return value.data;},
   subscribe(invalidate){let opened=false,resolveReady;ready=new Promise(r=>resolveReady=r);const events=new EventSource('/events');events.onmessage=e=>{const next=Number(e.data);if(!opened){opened=true;observed=Math.max(observed,next);resolveReady();return;}if(next>observed){observed=next;invalidate();}};events.onerror=()=>{invalidate();resolveReady();};return ()=>{events.close();resolveReady();};}
- },catalog);},[n]);
+ },catalog,${assignments});},[n]);
  async function control(action){await fetch('/control',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action})});}
  return <main className="platform-page mx-auto max-w-5xl space-y-5 px-4 py-8"><h1 className="text-3xl font-bold">{t.title}</h1><p>{t.notice}</p><label className="block">{t.account}<select className="min-h-11 w-full rounded border bg-panel p-2" value={n} onChange={e=>{setN(Number(e.target.value));setGroup(undefined);}}>{accounts.map(a=><option key={a.n} value={a.n}>{a.name}</option>)}</select></label>
  <label className="block">{t.scenario}<select className="min-h-11 w-full rounded border bg-panel p-2" onChange={e=>mode.current=e.target.value}><option value="normal">{t.normal}</option><option value="lost">ACK lost after commit</option><option value="before">Transport fails before send</option><option value="late">Delayed read</option></select></label>
@@ -53,9 +55,25 @@ async function reset(configured = !process.argv.includes('--unconfigured')) {
  }
  initialGroup = await db.rpc(2, 'supervisor_group_v1', ['create', null, null, 'Synthetic SQL group', new Date(Date.now() + 3600000).toISOString()]);
  await db.rpc(3, 'supervisor_group_v1', ['create', null, null, 'Other supervisor scope', new Date(Date.now() + 3600000).toISOString()]);
+ if (assignments) await assignmentFixture();
  invalidate();
 }
-const rpcNames = new Set(['scope_page_v1', 'draft_save_v1', 'draft_page_v1']);
+// Trusted synthetic review provisioning only; candidate/install/link run through the bridge.
+async function assignmentFixture() {
+ await db.admin.query('update assess.sharing_policy set required_version=$1,text_digest=$2',['SYNTHETIC/1','a'.repeat(64)]);
+ await db.rpc(4,'sharing_consent_v1',['SYNTHETIC/1','a'.repeat(64),true]);
+ const request=await db.rpc(4,'join_request_v1',[initialGroup.code]); await db.rpc(2,'join_decide_v1',[request.id,request.revision,'approve']);
+ const d=newDraft(),q=newMCQ(); d.name='SYNTHETIC installed alphabet'; q.prompt='SYNTHETIC ALPHA'; q.correctOptionId=q.options[0].id;
+ q.authoring={author:'Synthetic fixture',reference:'Own letters',licenceNotes:'Own test text only',notes:'No medical approval'}; d.items=[q];
+ const saved=await db.rpc(2,'draft_save_v1',[initialGroup.id,d.id,0,JSON.stringify({...d,track:'mixed'}),'[]']);
+ const row=(await db.admin.query('select digest from assess.authoring_revisions where draft_id=$1 and revision=1',[d.id])).rows[0];
+ const ref={id:q.id,version:'1'};
+ const document={schemaVersion:1,assessment:{schemaVersion:1,ref:{id:d.id,version:'1'},name:d.name,track:'mixed',maximum:'1',policy:d.policy,items:[{schemaVersion:1,ref,type:'single-choice',contentLanguage:'en',prompt:q.prompt,options:q.options}]},itemMarks:[{item:ref,maximum:'1'}],privateItems:[{schemaVersion:1,ref,type:'single-choice',correctOptionId:q.correctOptionId,review:{sources:[{reference:'Own synthetic alphabet',licenceEvidence:'Own engineering test text'}],reviewedBy:'SYNTHETIC independent engineering fixture',reviewedAt:'2026-10-26T00:00:00.000Z',scope:'Synthetic letters only; no clinical approval'}}]};
+ verifyReviewedAuthoring({document:saved.document,refs:[],digest:row.digest},{sourceDigest:row.digest,publication:document},{parts,practicals});
+ await db.admin.query('insert into assess.authoring_reviewed_packages values($1,1,$2,$3)',[d.id,row.digest,JSON.stringify(document)]);
+ await authoringBridge(postgresAuthoringBridge(()=>db.connect(),id(2),initialGroup.id),{parts,practicals}).publish(d.id,1);
+}
+const rpcNames = new Set(['scope_page_v1', 'draft_save_v1', 'draft_page_v1', ...(assignments ? ['assignment_prepare_v1','assignment_targets_v1','assignment_confirm_v1','assignment_page_v2','assignment_close_v2'] : [])]);
 const server = createServer(async (req, res) => {
  try {
   if (req.headers.host !== `127.0.0.1:${port}` || (req.headers.origin && req.headers.origin !== `http://127.0.0.1:${port}`)) { res.writeHead(403).end(); return; }
@@ -81,7 +99,7 @@ const server = createServer(async (req, res) => {
      if (name === 'draft_save_v1' && fault === 'before') throw Error('synthetic transport unavailable before send');
      if (name === 'draft_save_v1') writes++;
      const value = await db.rpc(who, name, args);
-     if (name === 'draft_save_v1' && fault === 'lost') throw Error('synthetic ACK lost after commit');
+     if (['draft_save_v1','assignment_prepare_v1','assignment_confirm_v1','assignment_close_v2'].includes(name) && fault === 'lost') throw Error('synthetic ACK lost after commit');
      if (name === 'draft_page_v1' && fault === 'late') { delayedRead?.(); await new Promise(r => setTimeout(r, 700)); }
      res.writeHead(200, { 'Content-Type': 'application/json' }).end(JSON.stringify({ data: value, epoch: readEpoch }));
     } catch (e) { res.writeHead(400, { 'Content-Type': 'application/json' }).end(JSON.stringify({ code: typeof e.code === 'string' ? e.code : '', epoch })); }
@@ -92,7 +110,7 @@ const server = createServer(async (req, res) => {
   res.writeHead(404).end();
  } catch { if (!res.headersSent) res.writeHead(400); res.end(); }
 });
-await reset(); await new Promise(r => server.listen(0, '127.0.0.1', r)); port = server.address().port;
+await reset().catch(async e => { await db?.close(); throw e; }); await new Promise(r => server.listen(0, '127.0.0.1', r)); port = server.address().port;
 const base = `http://127.0.0.1:${port}`;
 async function close() { for (const res of subscribers) res.end(); server.closeAllConnections(); await new Promise(r => server.close(r)); await db?.close(); }
 if (process.argv.includes('--transport-only')) {
@@ -123,7 +141,7 @@ if (process.argv.includes('--transport-only')) {
    await reset(); console.log(`Matrix ${locale}/${width}/${theme}`);
    const context = await browser.newContext({ viewport: { width, height: 900 } });
    await context.route('**/*', route => { const u = route.request().url(); if (u.startsWith(base + '/')) return route.continue(); outbound.push(u); return route.abort(); });
-   const t = { ...copy[locale], ...sqlCopy[locale] };
+   const t = { ...copy[locale], ...sqlCopy[locale], ...(assignments ? assignmentSqlCopy[locale] : {}) };
    const button = (p, name) => p.getByRole('button', { name, exact: true });
    async function openPage() { const p = await context.newPage(); p.on('pageerror', e => errors.push(e.message)); await p.goto(`${base}/?locale=${locale}`); await p.evaluate(theme => document.documentElement.dataset.theme = theme, theme); await button(p, 'Synthetic SQL group').click(); await p.getByRole('heading', { name: t.draftList, exact: true }).waitFor(); return p; }
    async function audit(p, label) {
@@ -132,6 +150,26 @@ if (process.argv.includes('--transport-only')) {
     assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), label + ' overflow'); audits++;
    }
    const page = await openPage(); await audit(page, 'list');
+   if (assignments) {
+    const tClose = locale==='ar' ? {read:'قراءة الإسنادات',close:'إغلاق الإسناد',confirm:'تأكيد إغلاق الإسناد',closed:'أُغلق في (UTC)'} : {read:'Read assignments',close:'Close assignment',confirm:'Confirm assignment closure',closed:'Closed at (UTC)'};
+    await page.getByRole('button',{name:/^SYNTHETIC installed alphabet/}).click();
+    await button(page,t.prepare).click(); await page.getByRole('heading',{name:t.assignment,exact:true}).waitFor();
+    await audit(page,'assignment-snapshot');
+    await page.getByLabel(t.scenario).selectOption('lost');
+    await button(page,t.confirm).click(); await page.getByText(t.error,{exact:true}).waitFor();
+    assert.equal((await db.admin.query('select * from assess.assignments')).rows.length,1);
+    await button(page,tClose.read).click(); await button(page,tClose.close).waitFor();
+    await audit(page,'issued-open'); await button(page,tClose.close).click(); await audit(page,'closure-confirm');
+    await page.getByLabel(t.scenario).selectOption('lost');
+    await button(page,tClose.confirm).click();
+    await page.getByText(locale==='ar'?'قد يكون الإجراء نُفذ. اقرأ الإسنادات قبل إجراء صريح آخر. لا إعادة تلقائية.':'The action may have committed. Read assignments before another explicit action. No automatic retry.',{exact:true}).waitFor();
+    await button(page,tClose.read).click(); await page.getByText(new RegExp(tClose.closed.replace(/[()]/g,'\\$&'))).waitFor();
+    await audit(page,'issued-closed');
+    assert.equal((await db.admin.query('select * from assess.assignments')).rows.length,1);
+    assert.equal((await db.admin.query('select * from assess.targets')).rows.length,1);
+    await page.screenshot({path:`${output}/assignments-${locale}-${width}-${theme}.jpg`,fullPage:true});
+    interactions+=9; await context.close(); continue;
+   }
    for (const track of ['mixed', 'full-practical']) {
     const title = 'Synthetic ' + track;
     await button(page, track === 'mixed' ? t.create : t.createPractical).click();
@@ -174,7 +212,7 @@ if (process.argv.includes('--transport-only')) {
     await button(page, t.save).click(); await page.getByText(t.error, { exact: true }).waitFor(); const unsentWrites = writes;
     await button(page, t.verify).click(); await page.getByLabel(t.localCopy, { exact: true }).waitFor(); assert.equal(writes, unsentWrites);
     assert.ok((await page.getByLabel(t.localCopy, { exact: true }).inputValue()).includes('unsent')); await button(page, t.editVerified).click(); await button(page, t.dismissRecovery).click(); interactions += 4;
-    if (width === 390 && theme === 'dark' && track === 'full-practical') { const path = `docs/review/rad085-p2-sql-${locale}.jpg`; await page.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
+    if (width === 390 && theme === 'dark' && track === 'full-practical') { const path = `${output}/rad085-p2-sql-${locale}.jpg`; await page.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
     await button(page, t.draftList).click();
     await page.reload(); await button(page, 'Synthetic SQL group').click(); await page.getByRole('button', { name: new RegExp('^' + title + ' ACK') }).waitFor(); interactions++;
    }
@@ -187,6 +225,7 @@ if (process.argv.includes('--transport-only')) {
    assert.equal(await page.locator('input,textarea,svg').count(), 0); await audit(page, 'revoked'); interactions++;
    await controller.close(); await context.close();
   }
+  if (!assignments) {
   // Server expiry without a user click; retained copy and preview are removed too.
   await reset();
   const context = await browser.newContext(), page = await context.newPage(); await page.goto(base);
@@ -211,8 +250,9 @@ if (process.argv.includes('--transport-only')) {
   await closed.getByRole('button', { name: copy.en.addPractical, exact: true }).click(); await closed.getByRole('button', { name: sqlCopy.en.save, exact: true }).click();
   await closed.getByText(copy.en.expired, { exact: true }).waitFor(); assert.equal((await db.admin.query('select count(*)::int n from assess.authoring_references')).rows[0].n, 0);
   assert.equal((await db.admin.query('select count(*)::int n from assess.authoring_drafts')).rows[0].n, 0); await unconfigured.close(); interactions++;
+  }
   assert.deepEqual(errors, []); assert.deepEqual(outbound, []);
-  const summary = { matrix: 'EN/AR × 390/1440 × light/dark; both tracks; real PostgreSQL', audits, interactions, errors, outbound, captures, forbidden, browserBytes: browserBundle.outputFiles[0].contents.length };
+  const summary = { matrix: assignments ? 'EN/AR × 390/1440 × light/dark; integrated synthetic draft/review/install/link/assignment/close' : 'EN/AR × 390/1440 × light/dark; both tracks; real PostgreSQL', audits, interactions, errors, outbound, captures, forbidden, browserBytes: browserBundle.outputFiles[0].contents.length };
   writeFileSync(`${output}/summary.json`, JSON.stringify(summary, null, 2)); console.log(JSON.stringify(summary));
  } finally { await browser.close(); await close(); }
 }

@@ -4,13 +4,14 @@ import { ReviewError } from '../supervisor-review/contracts';
 import { draftIssues, newDraft, studentPreview, type Issue } from './draft';
 import { AuthoringView } from './AuthoringView';
 import { StudentPreview } from './StudentPreview';
-import { copy, sqlCopy, type Copy } from './copy';
+import { IssuedAssignments } from './IssuedAssignments';
+import { copy, sqlCopy, assignmentSqlCopy, type Copy } from './copy';
 const control = 'min-h-11 max-w-full rounded-lg border border-line bg-panel px-4 py-2 text-sm';
 const failure = (e: unknown, t: Copy) => e instanceof ReviewError ? t[e.reason === 'offline' ? 'error' : e.reason] : t.error;
 /** Every await is guarded even if a future adapter ignores AbortSignal. */
 function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; scope: Scope; locale: 'en' | 'ar' }) {
  const recoveryId = useId();
- const t = useMemo(() => adapter.service === 'sql' ? { ...copy[locale], ...sqlCopy[locale] } : copy[locale], [adapter, locale]);
+ const t = useMemo(() => adapter.service === 'sql' ? { ...copy[locale], ...sqlCopy[locale], ...(adapter.assignmentsEnabled ? assignmentSqlCopy[locale] : {}) } : copy[locale], [adapter, locale]);
  const [context, setContext] = useState<{ group: Group; now: number; receivedAt: number }>();
  const [draft, setDraft] = useState<Draft>(), [baseline, setBaseline] = useState<Draft>();
  const [preview, setPreview] = useState<StudentPreviewData>(), [plan, setPlan] = useState<AssignmentReview>();
@@ -28,7 +29,7 @@ function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; 
  useEffect(() => adapter.subscribe?.(() => { active.current?.abort(); clear(); setContext(undefined); setBusy(false); setError(t.denied); }), [adapter, t]);
  useEffect(() => {
   if (!context) return;
-  const duration = Math.min(context.group.endsAt - context.now - (performance.now() - context.receivedAt), plan ? plan.expiresAt - Date.now() : Infinity), start = performance.now();
+  const duration = Math.min(context.group.endsAt - context.now - (performance.now() - context.receivedAt), plan ? plan.remainingMs !== undefined && plan.receivedAt !== undefined ? plan.remainingMs - (performance.now() - plan.receivedAt) : plan.expiresAt - Date.now() : Infinity), start = performance.now();
   let timer: ReturnType<typeof setTimeout>;
   const tick = () => {
    const remaining = duration - (performance.now() - start);
@@ -38,11 +39,11 @@ function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; 
   tick(); return () => clearTimeout(timer);
  }, [context, plan, t]);
  useEffect(() => { if (preview) region.current?.querySelector<HTMLElement>('h2')?.focus(); }, [preview]);
- async function operation<T>(run: (signal: AbortSignal) => Promise<T>, accept: (value: T) => void) {
+ async function operation<T>(run: (signal: AbortSignal) => Promise<T>, accept: (value: T) => void, assignment = false) {
   if (busy) return;
   active.current?.abort(); const c = new AbortController(); active.current = c; setBusy(true); setError(undefined); setReceipt(false); setPreview(undefined); setDiscarding(false);
   try { const value = await run(c.signal); if (current(c)) accept(value); }
-  catch (e) { if (current(c)) { if (adapter.service === 'sql' && draft && e instanceof ReviewError && ['conflict', 'offline', 'invalid'].includes(e.reason)) { setRecovery({ local: structuredClone(draft), checked: false, resolved: false }); setPreview(undefined); setPlan(undefined); } else { clear(); setContext(undefined); } setError(failure(e, t)); } }
+  catch (e) { if (current(c)) { if (adapter.service === 'sql' && draft && e instanceof ReviewError && ['conflict', 'offline', 'invalid'].includes(e.reason)) { if (!assignment) setRecovery({ local: structuredClone(draft), checked: false, resolved: false }); setPreview(undefined); setPlan(undefined); } else { clear(); setContext(undefined); } setError(failure(e, t)); } }
   finally { if (current(c)) setBusy(false); }
  }
  function cancel() { active.current?.abort(); if (adapter.service === 'sql' && draft) { setRecovery({ local: structuredClone(draft), checked: false, resolved: false }); setPreview(undefined); setPlan(undefined); } else { clear(); setContext(undefined); } setBusy(false); setError(t.cancelled); }
@@ -69,16 +70,17 @@ function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; 
  </section>;
  if (!context || recovery && !recovery.checked && (error === t.error || error === t.cancelled)) return <div className="space-y-3">{recoveryPanel}{error ? <p role="alert">{error}</p> : <><p role="status">{t.loading}</p><button className={control} onClick={cancel}>{t.cancel}</button></>}</div>;
  return <div ref={container} className="space-y-5"><h2 className="text-xl break-words">{context.group.name}</h2>{error && <p role="alert">{error}</p>}{recoveryPanel}
+  {adapter.assignments && <IssuedAssignments adapter={adapter} scope={scope} locale={locale}/>}
   {adapter.drafts && !draft && !recovery && <section aria-label={t.draftList} className="space-y-3"><h2 className="text-xl">{t.draftList}</h2>{drafts?.rows.map(d => <button key={d.id} className={control} disabled={busy} onClick={() => void operation(s => adapter.open!(scope, d.id, s), value => { setDraft(value); setBaseline(value); })}>{d.name || t.untitled} · {d.track} · {t.revision}: {d.revision}</button>)}<div className="flex gap-2"><button className={control} disabled={busy || !cursor} onClick={() => setCursor(undefined)}>{t.first}</button><button className={control} disabled={busy || !drafts?.next} onClick={() => setCursor(drafts!.next!)}>{t.next}</button></div></section>}
   {adapter.drafts && draft && <button className={control} disabled={busy || JSON.stringify(draft) !== JSON.stringify(baseline) || !!recovery} onClick={() => void operation(s => adapter.drafts!(scope, cursor, s), list => { setDrafts(list); setDraft(undefined); setBaseline(undefined); setRecovery(undefined); })}>{t.draftList}</button>}
   {busy && <div><p role="status">{t.busy}</p><button className={control} onClick={cancel}>{t.cancel}</button></div>}
   {preview ? <div ref={region}><StudentPreview data={preview} t={t} locale={locale} close={() => { setPreview(undefined); requestAnimationFrame(() => [...(container.current?.querySelectorAll('button') ?? [])].find(b => b.textContent === t.preview)?.focus()); }}/></div> :
-   draft ? <AuthoringView draft={draft} parts={adapter.parts} practicals={adapter.practicals} t={t} busy={busy || !!recovery && !recovery.resolved} assignments={adapter.service !== 'sql'} saveBlocked={!!recovery} dirty={JSON.stringify(draft) !== JSON.stringify(baseline)} issues={issues} plan={plan} receipt={receipt} discarding={discarding} change={change}
+   draft ? <AuthoringView draft={draft} parts={adapter.parts} practicals={adapter.practicals} t={t} busy={busy || !!recovery && !recovery.resolved} assignments={adapter.service !== 'sql' || adapter.assignmentsEnabled === true} saveBlocked={!!recovery} dirty={JSON.stringify(draft) !== JSON.stringify(baseline)} issues={issues} plan={plan} receipt={receipt} discarding={discarding} change={change}
     save={() => void operation(s => adapter.save(scope, draft, s), d => { setDraft(d); setBaseline(d); setPlan(undefined); })}
     preview={() => { if (validate()) { setPlan(undefined); setPreview(studentPreview(draft, adapter.parts, adapter.practicals)); } }}
-    prepare={() => { if (validate()) void operation(s => adapter.prepare(scope, draft, s), setPlan); }}
-    confirm={() => plan && void operation(s => adapter.confirm(scope, plan.token, s), () => { setPlan(undefined); setReceipt(true); })}
-    cancelReview={() => setPlan(undefined)} paging={cursor => plan && void operation(s => adapter.targets(scope, plan.token, cursor, s), targets => setPlan({ ...plan, targets }))}
+    prepare={() => { if (validate()) void operation(s => adapter.prepare(scope, draft, s), setPlan, true); }}
+    confirm={() => plan && void operation(s => adapter.confirm(scope, plan.token, s), () => { setPlan(undefined); setReceipt(true); }, true)}
+    cancelReview={() => setPlan(undefined)} paging={cursor => plan && void operation(s => adapter.targets(scope, plan.token, cursor, s), targets => setPlan({ ...plan, targets }), true)}
     discard={() => setDiscarding(true)} keep={() => setDiscarding(false)} confirmDiscard={() => { change(baseline ? structuredClone(baseline) : newDraft(draft.track)); }}/>
    : <div className="flex flex-wrap gap-2"><button className={control} disabled={busy} onClick={() => { setDraft(newDraft()); setBaseline(undefined); }}>{t.create}</button><button className={control} disabled={busy || !adapter.practicals?.length} onClick={() => { setDraft(newDraft('full-practical')); setBaseline(undefined); }}>{t.createPractical}</button></div>}
  </div>;

@@ -1,6 +1,6 @@
--- RAD-085 LOCAL ONLY. No publication creator/installer or worker grant is added.
+-- RAD-085 LOCAL ONLY. Scoped trusted bridge; no browser publication or new worker grant.
 begin;
--- Later trusted publisher contract: only AFTER existing validators + required independent
+-- Trusted publisher contract: only AFTER existing validators + required independent
 -- reviews + immutable installation, bind the exact private author revision to that version.
 -- No API role (including assess_worker) can write this table in this local batch.
 create table assess.authoring_publication_links (
@@ -224,4 +224,118 @@ revoke all on function assess.linked_version_v1(uuid,integer),assess.review_curr
 grant execute on function assess.assignment_prepare_v1(uuid,uuid,integer,uuid),assess.assignment_targets_v1(uuid,uuid,integer),
  assess.assignment_confirm_v1(uuid),assess.assignment_close_v2(uuid,integer),assess.assignment_page_v2(uuid,uuid,integer),
  assess.supervisor_results_v1(uuid,uuid,integer) to authenticated;
+-- Trusted local bridge capability; NOLOGIN and no membership. Never an API/user/worker grant.
+create role assess_authoring_bridge nologin noinherit nosuperuser nobypassrls nocreatedb nocreaterole noreplication;
+create table assess.authoring_reviewed_packages (
+ draft_id uuid not null, draft_revision integer not null,
+ source_digest text not null check(source_digest ~ '^[a-f0-9]{64}$'),
+ document jsonb not null check(jsonb_typeof(document)='object' and pg_column_size(document)<=131072 and octet_length(document::text)<=131072),
+ primary key(draft_id,draft_revision),
+ foreign key(draft_id,draft_revision) references assess.authoring_revisions(draft_id,revision) on delete cascade
+);
+alter table assess.authoring_reviewed_packages enable row level security;
+revoke all on assess.authoring_reviewed_packages from public,anon,authenticated,assess_worker,assess_authoring_bridge;
+-- Provisioned by an independently reviewed trusted process only. Starts EMPTY.
+-- Read holds scope, draft, reference and review locks through install+bind COMMIT.
+create function assess.authoring_bridge_read_v1(p_group uuid,p_draft uuid,p_revision integer) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare d assess.authoring_drafts; r assess.authoring_revisions; pkg assess.authoring_reviewed_packages; linked uuid;
+begin
+ perform assess.scope_enter_v1(true); perform assess.supervised_group_v1(p_group);
+ select * into d from assess.authoring_drafts where id=p_draft and group_id=p_group and writer_id=auth.uid() for update;
+ if d.id is null then raise exception 'draft denied' using errcode='42501'; end if;
+ if d.revision is distinct from p_revision then raise exception 'draft changed' using errcode='40001'; end if;
+ perform ar.key from assess.authoring_references ar join jsonb_array_elements(d.refs) q on ar.key=q->>'key' order by ar.key for share of ar;
+ perform assess.validate_draft_v1(d.document,d.refs);
+ select * into strict r from assess.authoring_revisions where draft_id=d.id and revision=d.revision;
+ if r.document is distinct from d.document or r.refs is distinct from d.refs then raise exception 'revision changed' using errcode='40001'; end if;
+ select * into pkg from assess.authoring_reviewed_packages where draft_id=d.id and draft_revision=d.revision for share;
+ if pkg.draft_id is null or pkg.source_digest<>r.digest then raise exception 'independent review required' using errcode='55000'; end if;
+ if pkg.document->'assessment'->'ref'->>'id' is distinct from d.id::text
+ or pkg.document->'assessment'->'ref'->>'version' is distinct from d.revision::text
+ or pkg.document->'assessment'->>'track' is distinct from d.track then raise exception 'review revision changed' using errcode='40001'; end if;
+ if exists(select 1 from assess.authoring_publication_links where draft_id=d.id and draft_revision=d.revision) then
+  linked:=assess.linked_version_v1(d.id,d.revision);
+  if not exists(select 1 from assess.publications where version_id=linked and document=pkg.document) then raise exception 'publication changed' using errcode='40001'; end if;
+ end if;
+ return jsonb_build_object('snapshot',jsonb_build_object('document',r.document,'refs',r.refs,'digest',r.digest),
+  'reviewed',jsonb_build_object('sourceDigest',pkg.source_digest,'publication',pkg.document),'installedVersion',linked);
+end $$;
+create or replace function assess.content_submit_v1(p_document jsonb) returns uuid
+language plpgsql security definer set search_path='' as $$
+declare a jsonb; vid uuid; aid uuid; gid uuid; checked jsonb;
+begin
+  if current_setting('role',true)='assess_authoring_bridge' then
+    select group_id into gid from assess.authoring_drafts where id=(p_document->'assessment'->'ref'->>'id')::uuid and writer_id=auth.uid();
+    if gid is null then raise exception 'draft denied' using errcode='42501'; end if;
+    checked:=assess.authoring_bridge_read_v1(gid,(p_document->'assessment'->'ref'->>'id')::uuid,(p_document->'assessment'->'ref'->>'version')::integer);
+    if p_document is distinct from checked->'reviewed'->'publication' then raise exception 'review package changed' using errcode='40001'; end if;
+  else
+    perform 1 from public.profiles where user_id=auth.uid() for update;
+    if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
+  end if;
+  if p_document is null or pg_column_size(p_document)>2000000 or octet_length(p_document::text)>2000000 then
+    raise exception 'document limit' using errcode='22023'; end if;
+  a:=p_document->'assessment';
+  if coalesce(a->>'track','') not in ('mixed','full-practical') or a->>'schemaVersion' is distinct from '1'
+    or length(btrim(a->>'name')) not between 1 and 200
+    or length(a->'ref'->>'version') not between 1 and 100 then raise exception 'invalid metadata' using errcode='22023'; end if;
+  aid:=(a->'ref'->>'id')::uuid;
+  -- Serialize all versions of one assessment and prevent another owner's version takeover.
+  perform pg_advisory_xact_lock(hashtextextended(aid::text,0));
+  if exists(select 1 from assess.versions where assessment_id=aid and owner_id<>auth.uid()) then raise exception 'denied' using errcode='42501'; end if;
+  if (select count(*) from assess.content_submissions c join assess.versions v on v.id=c.version_id where v.owner_id=auth.uid() and c.state='pending')>=20 then
+    raise exception 'pending limit' using errcode='54000'; end if;
+  insert into assess.versions(owner_id,assessment_id,version,name,track)
+    values(auth.uid(),aid,a->'ref'->>'version',a->>'name',a->>'track') returning id into vid;
+  insert into assess.content_submissions(version_id,document) values(vid,p_document);
+  return vid;
+end $$;
+
+create function assess.authoring_bridge_bind_v1(p_group uuid,p_draft uuid,p_revision integer,p_version uuid) returns void
+language plpgsql security definer set search_path='' as $$
+declare checked jsonb; d assess.authoring_drafts; r assess.authoring_revisions;
+begin
+ checked:=assess.authoring_bridge_read_v1(p_group,p_draft,p_revision);
+ select * into strict d from assess.authoring_drafts where id=p_draft;
+ select * into strict r from assess.authoring_revisions where draft_id=p_draft and revision=p_revision;
+ perform 1 from assess.versions where id=p_version for share;
+ if not exists(select 1 from assess.versions v join assess.content_submissions c on c.version_id=v.id and c.state='installed'
+ join assess.publications p on p.version_id=v.id and p.document=checked->'reviewed'->'publication'
+ where v.id=p_version and v.owner_id=auth.uid() and v.assessment_id=d.id and v.version=d.revision::text and v.track=d.track and v.schema_version=1 and v.available
+ and (v.track='mixed' or exists(select 1 from assess.practical_presentations pp where pp.version_id=v.id))) then
+  raise exception 'exact installed publication required' using errcode='55000'; end if;
+ if exists(select 1 from assess.authoring_publication_links where draft_id=p_draft and draft_revision=p_revision and (version_id<>p_version or source_digest<>r.digest)) then
+  raise exception 'publication link conflict' using errcode='40001'; end if;
+ insert into assess.authoring_publication_links values(p_version,p_draft,p_revision,r.digest) on conflict(draft_id,draft_revision) do nothing;
+end $$;
+-- Narrow installer wrapper: the bridge role cannot read/install another candidate.
+create function assess.authoring_bridge_candidate_v1(p_group uuid,p_draft uuid,p_revision integer,p_version uuid) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare checked jsonb; doc jsonb;
+begin
+ checked:=assess.authoring_bridge_read_v1(p_group,p_draft,p_revision);
+ select c.document into doc from assess.content_submissions c join assess.versions v on v.id=c.version_id
+ where c.version_id=p_version and c.state='pending' and v.owner_id=auth.uid() and v.assessment_id=p_draft and v.version=p_revision::text for update of c,v;
+ if doc is null or doc is distinct from checked->'reviewed'->'publication' then raise exception 'candidate denied' using errcode='42501'; end if;
+ return doc;
+end $$;
+create function assess.authoring_bridge_install_v1(p_group uuid,p_draft uuid,p_revision integer,p_version uuid,p_specs jsonb,p_views jsonb) returns void
+language plpgsql security definer set search_path='' as $$
+declare doc jsonb;
+begin
+ doc:=assess.authoring_bridge_candidate_v1(p_group,p_draft,p_revision,p_version);
+ if doc->'assessment'->>'track'='full-practical' then
+  perform assess.content_install_practical_v1(p_version,p_specs,p_views);
+ else
+  if p_views is not null then raise exception 'mixed views denied' using errcode='22023'; end if;
+  perform assess.content_install_v1(p_version,p_specs);
+ end if;
+end $$;
+revoke all on function assess.authoring_bridge_read_v1(uuid,uuid,integer),assess.authoring_bridge_bind_v1(uuid,uuid,integer,uuid),
+ assess.authoring_bridge_candidate_v1(uuid,uuid,integer,uuid),assess.authoring_bridge_install_v1(uuid,uuid,integer,uuid,jsonb,jsonb) from public,anon,authenticated,assess_worker;
+grant usage on schema assess to assess_authoring_bridge;
+grant execute on function assess.authoring_bridge_read_v1(uuid,uuid,integer),assess.authoring_bridge_bind_v1(uuid,uuid,integer,uuid),
+ assess.authoring_bridge_candidate_v1(uuid,uuid,integer,uuid),assess.authoring_bridge_install_v1(uuid,uuid,integer,uuid,jsonb,jsonb),
+ assess.content_submit_v1(jsonb) to assess_authoring_bridge;
 commit;

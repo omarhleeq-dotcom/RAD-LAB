@@ -19,12 +19,16 @@ export type DraftItem = MixedDraftItem | PracticalDraftItem;
 export type Draft = { track?: 'mixed' | 'full-practical'; schemaVersion: 1; id: string; revision: number; name: string; policy: AttemptPolicy; items: DraftItem[] };
 /** Whitelist only. No DraftItem, key, authoring, source, rubric or review record. */
 export type StudentPreviewData = { name: string; policy: AttemptPolicy; items: ((SingleChoiceItem | SimulatorPartItem | FullPracticalItem) & { view?: ItemView; practicalView?: PracticalView })[] };
-export type AssignmentReview = { token: string; draftName: string; draftRevision: number; groupName: string; groupRevision: number; targetCount: number; expiresAt: number; targets: Page<Member> };
+export type AssignmentReview = { token: string; draftName: string; draftRevision: number; groupName: string; groupRevision: number; targetCount: number; expiresAt: number; targets: Page<Pick<Member, 'id' | 'name'>>; remainingMs?: number; receivedAt?: number };
+export type IssuedAssignment = { id: string; name: string; revision: number; closedAt: string | null };
 export type DraftSummary = { id: string; track: NonNullable<Draft['track']>; revision: number; name: string };
 export type DraftReference = { key: string; revision: string };
 export type SqlDraft = { document: Draft & { track: NonNullable<Draft['track']> }; refs: DraftReference[] };
 export interface AuthoringAdapter {
  readonly service?: 'sql';
+ readonly assignmentsEnabled?: boolean;
+ assignments?(scope: Scope, cursor: string | undefined, signal: AbortSignal): Promise<Page<IssuedAssignment>>;
+ close?(scope: Scope, assignment: IssuedAssignment, signal: AbortSignal): Promise<void>;
  subscribe?(invalidate: () => void): () => void;
  drafts?(scope: Scope, cursor: string | undefined, signal: AbortSignal): Promise<Page<DraftSummary>>;
  open?(scope: Scope, id: string, signal: AbortSignal): Promise<Draft>;
@@ -35,7 +39,7 @@ export interface AuthoringAdapter {
  context(scope: Scope, signal: AbortSignal): Promise<{ group: Group; now: number; draft?: Draft }>;
  save(scope: Scope, draft: Draft, signal: AbortSignal): Promise<Draft>;
  prepare(scope: Scope, draft: Draft, signal: AbortSignal): Promise<AssignmentReview>;
- targets(scope: Scope, token: string, cursor: string | undefined, signal: AbortSignal): Promise<Page<Member>>;
+ targets(scope: Scope, token: string, cursor: string | undefined, signal: AbortSignal): Promise<Page<Pick<Member, 'id' | 'name'>>>;
  confirm(scope: Scope, token: string, signal: AbortSignal): Promise<void>;
 }
 export type ReviewFixture = { adapter: AuthoringAdapter; membership: ReviewAdapter; scenario(value: Scenario): void; expire(): void; revoke(actorId: string): void };

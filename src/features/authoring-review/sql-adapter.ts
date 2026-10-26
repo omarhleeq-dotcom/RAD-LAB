@@ -2,6 +2,7 @@ import type { AuthoringAdapter, Draft, DraftReference, DraftSummary, Group, Page
 import { separated } from './draft';
 import { ReviewError } from '../supervisor-review/contracts';
 import type { ScopeTransport } from '../supervisor-review/sql-adapter';
+import { assignmentActions } from './sql-assignments';
 
 const invalid = (): never => { throw new ReviewError('invalid'); };
 const record = (v: unknown): Record<string, unknown> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : invalid();
@@ -36,10 +37,10 @@ function receipt(value: unknown): Draft {
  return structuredClone(draft);
 }
 
-export function createSqlAuthoring(self: Person, transport: ScopeTransport, catalog: { parts: readonly PartReference[]; practicals: readonly PracticalReference[]; references: readonly DraftReference[] }): AuthoringAdapter {
+export function createSqlAuthoring(self: Person, transport: ScopeTransport, catalog: { parts: readonly PartReference[]; practicals: readonly PracticalReference[]; references: readonly DraftReference[] }, assignmentsEnabled = false): AuthoringAdapter {
  let epoch = 0, release: (() => void) | undefined;
  const listeners = new Set<() => void>(), cursors = new Map<string, string | undefined>();
- const invalidate = () => { epoch++; for (const fn of listeners) fn(); };
+ const invalidate = () => { epoch++; actions?.clear(); for (const fn of listeners) fn(); };
  function actor(actorId: string) { if (actorId !== self.id || self.role !== 'supervisor') throw new ReviewError('denied'); }
  async function call(name: string, args: unknown[], signal: AbortSignal) {
   signal.throwIfAborted(); const generation = epoch;
@@ -75,6 +76,7 @@ export function createSqlAuthoring(self: Person, transport: ScopeTransport, cata
   return result;
  }
  const disabled = async (): Promise<never> => { throw new ReviewError('denied'); };
+ const actions = assignmentsEnabled ? assignmentActions(call, guarded, context) : undefined;
  return {
   service: 'sql', accounts: [self], parts: catalog.parts, practicals: catalog.practicals,
   subscribe(fn) { listeners.add(fn); if (listeners.size === 1) release = transport.subscribe?.(invalidate); return () => { listeners.delete(fn); if (!listeners.size) { release?.(); release = undefined; } }; },
@@ -95,5 +97,6 @@ export function createSqlAuthoring(self: Person, transport: ScopeTransport, cata
    return guarded(scope, signal, async () => { const d = receipt(await call('draft_save_v1', [scope.groupId, id(draft.id), revision(draft.revision), JSON.stringify(document), JSON.stringify(refs)], signal)); if (d.id !== draft.id || d.track !== document.track || d.revision !== draft.revision + 1) return invalid(); return d; });
   },
   prepare: disabled, targets: disabled, confirm: disabled,
+  ...(actions ? actions.adapter : {}),
  };
 }
