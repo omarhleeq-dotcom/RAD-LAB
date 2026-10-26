@@ -58,16 +58,23 @@ export async function openLocalDatabase(backend, {through='latest',lineEndings='
       return {async call(name,args) {
         if(!/^[a-z][a-z0-9_]*$/.test(name)||Object.keys(args).some(k=>!/^p_[a-z0-9_]+$/.test(k)))throw new Error('invalid_local_rpc');
         const sql=`select assess.${name}(${Object.keys(args).map((k,i)=>`${k}=>$${i+1}`).join(',')}) v`;
+        let committing=false;
         const invoke=async tx=>{
           await tx.query(`set local role ${role}`);
           await tx.query("select set_config('request.jwt.claim.sub',$1,true)",[user]);
-          return (await tx.query(sql,Object.values(args))).rows[0].v;
+          const value=(await tx.query(sql,Object.values(args))).rows[0].v;
+          committing=true;return value;
         };
-        if(db)return db.transaction(invoke);
+        if(db)return db.transaction(invoke).catch(error=>{
+          // PGlite has completed its local rollback. A completed invocation could
+          // instead have failed at COMMIT, so it must remain uncertain.
+          if(!committing)Object.defineProperty(error,'writeOutcome',{value:'rolled_back'});
+          throw error;
+        });
         // Separate connections/transactions even when two workers share this local port object.
         const c=await connect();
         try{await c.query('begin');const value=await invoke(c);await c.query('commit');return value;}
-        catch(error){await c.query('rollback');throw error;}
+        catch(error){await c.query('rollback');if(!committing)Object.defineProperty(error,'writeOutcome',{value:'rolled_back'});throw error;}
         finally{await c.end();clients.delete(c);}
       }};
     }
