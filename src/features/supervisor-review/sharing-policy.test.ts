@@ -25,9 +25,11 @@ it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance,
   const consent = (accept: boolean, version: string = sharingPolicy.version, digest: string = sharingPolicy.digest) => a.execute(id(4), { kind: 'sharing', version, digest, accept }, signal());
   expect((await read()).sharing).toBe(false);
   await expect(consent(true)).rejects.toMatchObject({ reason: 'expired' });
-  // Proposed configuration is exercised only inside this disposable synthetic fixture.
+  // Owner-approved file is exercised only inside this disposable synthetic fixture.
   const proposed = readFileSync('docs/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch', 'utf8').split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.slice(1)).join('\n');
-  await db.admin.query(proposed); await db.admin.query(proposed);
+  const sql = readFileSync('supabase/manual/rad085-sharing-policy-local.sql', 'utf8');
+  expect(sql).toBe(proposed + '\n');
+  await db.admin.query(sql); await db.admin.query(sql);
   expect((await db.admin.query('select * from assess.sharing_consents')).rowCount).toBe(0);
   expect((await read()).sharingPolicy?.known).toBe(true);
   expect((await db.admin.query('select * from assess.sharing_consents')).rowCount).toBe(0); // Declining means no mutation.
@@ -35,6 +37,8 @@ it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance,
   await expect(consent(true, sharingPolicy.version, '0'.repeat(64))).rejects.toMatchObject({ reason: 'denied' });
   await consent(true); expect((await read()).sharing).toBe(true);
   const first = (await db.admin.query('select accepted_at from assess.sharing_consents')).rows[0].accepted_at;
+  await db.admin.query(sql);
+  expect((await db.admin.query('select accepted_at from assess.sharing_consents')).rows).toEqual([{ accepted_at: first }]);
   await consent(true); expect((await db.admin.query('select accepted_at from assess.sharing_consents')).rows[0].accepted_at).toEqual(first);
   await db.rpc(1, 'appointment_v1', [id(2), true]);
   const group = await db.rpc<{id:string;code:string}>(2, 'supervisor_group_v1', ['create', null, null, 'SYNTHETIC', new Date(Date.now()+3600000).toISOString()]);
@@ -48,7 +52,7 @@ it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance,
   await record(101); expect((await visible()).total).toBe(1);
   await db.admin.query("update assess.sharing_policy set required_version='unknown-v2'");
   expect((await read()).sharing).toBe(false); expect((await read()).sharingPolicy?.known).toBe(false);
-  await expect(db.admin.query(proposed)).rejects.toMatchObject({ code: '55000' });
+  await expect(db.admin.query(sql)).rejects.toMatchObject({ code: '55000' });
   await db.admin.query('rollback');
   expect((await db.admin.query('select required_version from assess.sharing_policy')).rows[0].required_version).toBe('unknown-v2');
   await expect(consent(true)).rejects.toMatchObject({reason:'expired'});
@@ -63,5 +67,30 @@ it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance,
   await db.admin.query('delete from auth.users where id=$1', [id(4)]);
   expect((await db.admin.query('select * from assess.sharing_consents')).rowCount).toBe(0);
   await expect(consent(true)).rejects.toMatchObject({reason:'denied'});
+ } finally { await db.close(); }
+},30000);
+
+it('approved initializer matches the exact proposal bytes and rolls back an update failure without creating consent', async () => {
+ const sql = readFileSync('supabase/manual/rad085-sharing-policy-local.sql');
+ const proposal = readFileSync('docs/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch', 'utf8').split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.slice(1)).join('\n') + '\n';
+ expect(sql.equals(Buffer.from(proposal, 'utf8'))).toBe(true);
+ expect(createHash('sha256').update(sql).digest('hex')).toBe('a16e49058098263ab71e09cf24a7d43333e35ee09512bc7890e600c740ae3448');
+ expect(sql.toString('utf8').split('\n')).toHaveLength(19); // 18 LF-terminated lines.
+ const db = await openRad085Database();
+ try {
+  await db.admin.query(`create function assess.synthetic_policy_failure() returns trigger language plpgsql as $$begin raise exception 'SYNTHETIC rollback witness' using errcode='P0001'; end$$;
+   create trigger synthetic_policy_failure after update on assess.sharing_policy for each row execute function assess.synthetic_policy_failure()`);
+  await expect(db.admin.query(sql.toString('utf8'))).rejects.toMatchObject({ code: 'P0001' });
+  await db.admin.query('rollback');
+  expect((await db.admin.query('select required_version,text_digest from assess.sharing_policy')).rows).toEqual([{ required_version: null, text_digest: null }]);
+  expect((await db.admin.query('select * from assess.sharing_consents')).rowCount).toBe(0);
+  await db.admin.query('drop trigger synthetic_policy_failure on assess.sharing_policy; drop function assess.synthetic_policy_failure()');
+  await db.admin.query(sql.toString('utf8'));
+  expect((await db.admin.query('select required_version,text_digest from assess.sharing_policy')).rows).toEqual([{ required_version: sharingPolicy.version, text_digest: sharingPolicy.digest }]);
+  await db.admin.query('update assess.sharing_policy set text_digest=$1', ['0'.repeat(64)]);
+  await expect(db.admin.query(sql.toString('utf8'))).rejects.toMatchObject({ code: '55000' });
+  await db.admin.query('rollback');
+  expect((await db.admin.query('select text_digest from assess.sharing_policy')).rows[0].text_digest).toBe('0'.repeat(64));
+  expect((await db.admin.query('select * from assess.sharing_consents')).rowCount).toBe(0);
  } finally { await db.close(); }
 },30000);
