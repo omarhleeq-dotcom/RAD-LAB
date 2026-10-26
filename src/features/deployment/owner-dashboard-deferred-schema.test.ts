@@ -1,3 +1,4 @@
+import {RAD085_MIGRATIONS,RAD085_BOUNDARY,RAD085_DEFER_REASON} from "../assess/server-rad085-contracts";
 import { cpSync,mkdtempSync,readFileSync,rmSync,writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { tmpdir } from "node:os";
@@ -9,7 +10,7 @@ const marker="pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7
 it("requires C1 then C2 with their checks and the new DB-day attestation",()=>{
  const m=JSON.parse(readFileSync("scripts/pages/frontend-schema.json","utf8"));
  expect(m.requiredMigrations.slice(-2)).toEqual([migration,"20261024000200_owner_deletion_surveys.sql"]);expect(m.checks.slice(-2)).toEqual([check,"supabase/checks/owner-deletion-surveys-ready.sql"]);
- expect(m.deferredMigrations).toEqual({});
+ expect(m.deferredMigrations).toEqual(Object.fromEntries(RAD085_MIGRATIONS.map(file=>[file,{sha256:createHash("sha256").update(readFileSync(join(process.cwd(),"supabase/migrations",file))).digest("hex"),reason:RAD085_DEFER_REASON,serverModules:[RAD085_BOUNDARY]}])));
  expect(createHash("sha256").update(readFileSync(`supabase/migrations/${migration}`)).digest("hex")).toBe("d7c932ca54d1724ef8ffeb1f78c0a69834609e9e9dd49d1d0b8bb6c8b701bef2");
  const env={...process.env,NEXT_PUBLIC_SUPABASE_URL:"https://vlacestfruxooznrcjqc.supabase.co",NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_synthetic_local_test_123456",PILOT_SCHEMA_VERIFIED:marker};
  const r=spawnSync(process.execPath,["scripts/pages/pilot-schema-gate.mjs"],{env,encoding:"utf8"});

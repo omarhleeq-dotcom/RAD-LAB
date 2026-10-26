@@ -97,7 +97,8 @@ begin
  perform assess.scope_enter_v1(true);
  if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
  perform 1 from public.profiles where user_id=p_user for share;
- if p_appoint is null or not exists(select 1 from public.profiles where user_id=p_user and role='participant' and status='approved')
+ if p_appoint is null or not exists(select 1 from public.profiles where user_id=p_user)
+ or (p_appoint and not exists(select 1 from public.profiles where user_id=p_user and role='participant' and status='approved'))
  then raise exception 'invalid appointment' using errcode='22023'; end if;
  if p_appoint then
   insert into assess.supervisor_appointments(user_id,appointed_by,appointed_at) values(p_user,auth.uid(),clock_timestamp())

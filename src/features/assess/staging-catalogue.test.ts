@@ -1,3 +1,4 @@
+import {historicalRad085Input} from "./server-rad085-contracts";
 import { readFileSync,readdirSync } from "node:fs";
 import { expect,it } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
@@ -16,7 +17,7 @@ it("the read-only staging catalogue detects absent objects, ACL and security reg
       create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
       create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
       grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
-    for(const file of readdirSync("supabase/migrations").filter(f=>f.endsWith(".sql")).sort()) await db.exec(readFileSync(`supabase/migrations/${file}`,"utf8"));
+    for(const file of historicalRad085Input(readdirSync("supabase/migrations")).filter(f=>f.endsWith(".sql")).sort()) await db.exec(readFileSync(`supabase/migrations/${file}`,"utf8"));
     const before=(await db.query("select count(*)::int n from public.profiles")).rows;
     expect((await inspect()).catalogue_ready).toBe(true);
     expect((await db.query("select enabled from assess.launch_gate")).rows).toEqual([{enabled:false}]);

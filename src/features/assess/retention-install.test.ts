@@ -1,3 +1,4 @@
+import {historicalRad085Input} from "./server-rad085-contracts";
 import {createHash} from "node:crypto";
 import {spawnSync} from "node:child_process";
 import {readFileSync,readdirSync} from "node:fs";
@@ -15,7 +16,7 @@ it("contains only exact retention DDL inside one guarded transaction, finite rev
  expect(manual.replace(interior,"")).not.toMatch(/create role|create schema|insert into (auth|public|assess)\.|update assess\.launch_gate|PILOT_SCHEMA_VERIFIED|select assess\.[a-z_]+\(/i);
  expect(manual).toContain("WITHOUT a current backup");expect(manual).toContain("in access exclusive mode;");
  const defs=new Map<string,string>();
- for(const f of readdirSync("supabase/migrations").filter(f=>f.endsWith(".sql")&&f>="20261020000600").sort())for(const d of read(`migrations/${f}`).matchAll(/create(?: or replace)? function assess\.([a-z_0-9]+)\([\s\S]*?\bas \$\$([\s\S]*?)\$\$;/gi))defs.set(d[1]!,d[2]!);
+ for(const f of historicalRad085Input(readdirSync("supabase/migrations")).filter(f=>f.endsWith(".sql")&&f>="20261020000600").sort())for(const d of read(`migrations/${f}`).matchAll(/create(?: or replace)? function assess\.([a-z_0-9]+)\([\s\S]*?\bas \$\$([\s\S]*?)\$\$;/gi))defs.set(d[1]!,d[2]!);
  expect(defs.size).toBe(36);
  // Independent lexical review before accepting LF and uniform CRLF hashes. No normalisation.
  for(const [name,body] of defs){

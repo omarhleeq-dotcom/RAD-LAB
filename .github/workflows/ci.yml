@@ -20,6 +20,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Prepare pinned isolated PostgreSQL (required, no skip)
+        run: node scripts/assess/setup-rad085-postgres.mjs
       - run: npm run docs:check
       - run: npm run docs:test
       - name: Test first-version secret uploader (synthetic only)

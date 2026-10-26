@@ -30,7 +30,7 @@ it("accepts exactly the conditional reviewed trial catalogue and still rejects e
  import assert from 'node:assert/strict';
  import {readFileSync} from 'node:fs';
  import {openLocalDatabase} from './scripts/assess/local-database.mjs';
- const db=await openLocalDatabase('pglite');
+ const db=await openLocalDatabase('pglite',{through:'pre-rad085'});
  try {
   const sql=readFileSync('supabase/checks/assess-staging-ready.sql','utf8');
   const body=sql.slice(sql.indexOf('with expected_tables'),sql.lastIndexOf('rollback;'));

@@ -1,3 +1,4 @@
+import {spawnSync} from "node:child_process";
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 import { openRad085Database, fixtureId as id } from './rad085-local-db';
@@ -335,3 +336,135 @@ it('serializes concurrent draft saves, decisions and confirm/replay against memb
   await blocked(db, 'rad085-confirm-revoke'); await revoking.query('commit'); expect(await denied).toBe('42501');
  } finally { await db.close(); }
 }, 30000);
+
+it('expanded schema rejects historical staging and preserves legacy ownership, paging and closure semantics', async () => {
+ const db=await fixture();
+ try {
+  const results=await db.admin.query(readFileSync('supabase/checks/assess-staging-ready.sql','utf8'));
+  const batches=Array.isArray(results)?results:[results];
+  const witness=batches.flatMap(r=>r.rows).find(r=>r.contract==='assess-staging-catalogue/1');
+  expect(witness.catalogue_ready).toBe(false); expect(witness.no_unreviewed_relations).toBe(false);
+  expect(witness.runtime_or_launch_verified).toBe(false);
+  const legacy=await db.rpc<string>(1,'group_write_v1',[null,'Legacy synthetic',false]);
+  await db.rpc(1,'members_write_v1',[legacy,[id(4),id(5)],true]);
+  expect(await db.rpc(1,'owner_page_v1',['members',legacy,'',null,1])).toMatchObject({rows:[{id:id(4)}],next:id(4)});
+  await expect(db.rpc(34,'members_write_v1',[legacy,[id(6)],true])).rejects.toMatchObject({code:'42501'});
+  await db.rpc(1,'members_write_v1',[legacy,[id(4)],false]);
+  expect((await db.admin.query('select period_id from assess.memberships where group_id=$1',[legacy])).rows).toEqual([{period_id:null}]);
+  await db.rpc(1,'group_write_v1',[legacy,null,true]);
+  expect((await db.admin.query('select id from assess.groups where id=$1',[legacy])).rows).toEqual([]);
+ } finally {await db.close();}
+},30000);
+
+async function assignedFixture(db: Awaited<ReturnType<typeof fixture>>, base=600) {
+ const group=await db.create(); await db.join(4,group); const d=await saved(db,group,base);
+ await seedBinding(db,d.id,1,base+10); await db.rpc(2,'assignment_prepare_v1',[group.id,d.id,1,id(base+20)]);
+ const assignment=await db.rpc<string>(2,'assignment_confirm_v1',[id(base+20)]);
+ await db.rpc(4,'consent_v2',['assess-pilot-2026-10-20-v2']);
+ return {group,d,assignment};
+}
+async function graded(db: Db, assignment:string,n:number, visibility='hidden', offset='0 seconds', expiry='1 hour') {
+ await db.admin.query(`insert into assess.sessions(id,assignment_id,user_id,ordinal,state,started_at,submitted_at,expires_at)
+ values($1,$2,$3,$4,'graded',clock_timestamp()+$5::interval,clock_timestamp(),clock_timestamp()+$6::interval)`,[id(n),assignment,id(4),n,offset,expiry]);
+ await db.admin.query("insert into assess.results values($1,7,2,10,'SYNTHETIC', 'mixed',$2)",[id(n),visibility]);
+}
+it('results enforce issuer, current period, start window, hidden grades and server expiry before count and paging', async()=>{
+ const db=await fixture();try {
+  const {group,assignment}=await assignedFixture(db);
+  await graded(db,assignment,700); await graded(db,assignment,701,'after-submission');
+  await graded(db,assignment,702,'after-submission','-1 day'); await graded(db,assignment,703,'after-submission','0 seconds','-1 second');
+  const result=await db.rpc<Page>(2,'supervisor_results_v1',[group.id,null,1]);
+  expect(result.total).toBe(2); expect(result.rows).toHaveLength(1);expect(result.rows[0]?.grade).toEqual({visibility:'hidden'});
+  const next=await db.rpc<Page>(2,'supervisor_results_v1',[group.id,result.next,1]);
+  expect(next.total).toBe(2);expect(next.rows[0]?.grade).toEqual({visibility:'shown',earnedNumerator:'7',earnedDenominator:'2',maximum:'10'});
+  await expect(db.rpc(3,'supervisor_results_v1',[group.id])).rejects.toMatchObject({code:'42501'});
+  for(const who of [4,32,'anon','worker'] as const)await expect(db.rpc(who,'supervisor_results_v1',[group.id])).rejects.toMatchObject({code:'42501'});
+  await db.rpc(4,'group_leave_v1',[group.id]);expect((await db.rpc<Page>(2,'supervisor_results_v1',[group.id])).total).toBe(0);
+  await db.join(4,group);expect((await db.rpc<Page>(2,'supervisor_results_v1',[group.id])).total).toBe(0);
+  await db.rpc(1,'appointment_v1',[id(2),false]); await expect(db.rpc(2,'supervisor_results_v1',[group.id])).rejects.toMatchObject({code:'42501'});
+ }finally{await db.close();}
+},30000);
+
+it('revalidates publication/reference changes and rolls back partial target installation; deletion never bypasses terminal retention',async()=>{
+ const db=await fixture();try{
+  const group=await db.create();await db.join(4,group);const d=await saved(db,group);
+  await seedBinding(db,d.id); const prepare=(n:number)=>db.rpc(2,'assignment_prepare_v1',[group.id,d.id,1,id(n)]);
+  await prepare(450);await db.admin.query('update assess.versions set available=false where id=$1',[id(300)]);
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(450)])).rejects.toMatchObject({code:'55000'});
+  await db.admin.query('update assess.versions set available=true where id=$1',[id(300)]);
+  await db.admin.query("insert into assess.authoring_references values('part-synthetic','simulator-part','p1','synthetic-case','case-v1','synthetic-evaluator',true)");
+  const part={...draft(230),items:[{id:id(231),type:'simulator-part',prompt:'SYNTHETIC',maximum:'1',partId:'part-synthetic',authoring:{author:'Synthetic',reference:'Engineering only',licenceNotes:'No clinical content',notes:''}}]};
+  const refs=JSON.stringify([{key:'part-synthetic',revision:'p1'}]);
+  await db.rpc(2,'draft_save_v1',[group.id,part.id,0,part,refs]);await seedBinding(db,part.id,1,310);
+  await db.rpc(2,'assignment_prepare_v1',[group.id,part.id,1,id(451)]);
+  await db.admin.query("update assess.authoring_references set revision='p2'");
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(451)])).rejects.toMatchObject({code:'55000'});
+  await prepare(452);
+  await db.admin.query(`create function assess.synthetic_fail_target() returns trigger language plpgsql as $$begin raise exception 'synthetic target failure' using errcode='23514'; end$$;
+   create trigger synthetic_target_failure before insert on assess.targets for each row execute function assess.synthetic_fail_target()`);
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(452)])).rejects.toMatchObject({code:'23514'});
+  expect((await db.admin.query('select count(*)::int n from assess.assignments')).rows[0].n).toBe(0);
+  expect((await db.admin.query('select assignment_id from assess.assignment_reviews where id=$1',[id(452)])).rows[0].assignment_id).toBeNull();
+  await db.admin.query('drop trigger synthetic_target_failure on assess.targets;drop function assess.synthetic_fail_target()');
+  const aid=await db.rpc<string>(2,'assignment_confirm_v1',[id(452)]);
+  await db.rpc(2,'assignment_close_v2',[aid,1]);
+  await expect(db.admin.query('delete from assess.assignments where id=$1',[aid])).rejects.toMatchObject({code:'42501'});
+  await db.admin.query('delete from auth.users where id=$1',[id(4)]);
+  expect((await db.admin.query('select * from assess.memberships where user_id=$1',[id(4)])).rows).toEqual([]);
+  expect((await db.admin.query('select * from assess.assignment_review_targets where user_id=$1',[id(4)])).rows).toEqual([]);
+  expect((await db.admin.query('select * from assess.targets where user_id=$1',[id(4)])).rows).toEqual([]);
+ }finally{await db.close();}
+},30000);
+
+it('server expiry after waiting and status/policy changes block confirmation without side effects',async()=>{
+ const db=await fixture();try{
+  const g=await db.create();await db.join(4,g);const d=await saved(db,g);await seedBinding(db,d.id);
+  for(const n of [460,461,462]) await db.rpc(2,'assignment_prepare_v1',[g.id,d.id,1,id(n)]);
+  const lock=await held(db,2);await lock.query("select assess.scope_page_v1('members',$1)",[g.id]);
+  const pending=db.rpc(2,'assignment_confirm_v1',[id(460)],'rad085-expiry-wait').then(()=>'',(e:{code:string})=>e.code);
+  await blocked(db,'rad085-expiry-wait');
+  await db.admin.query("update assess.assignment_reviews set expires_at=clock_timestamp()-interval '1 second' where id=$1",[id(460)]);
+  await lock.query('commit');expect(await pending).toBe('55000');
+  await db.admin.query("update public.profiles set status='suspended' where user_id=$1",[id(4)]);
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(461)])).rejects.toMatchObject({code:'40001'});
+  await db.admin.query("update public.profiles set status='approved' where user_id=$1",[id(4)]);
+  await db.admin.query("update assess.sharing_policy set required_version='synthetic-policy/2'");
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(462)])).rejects.toMatchObject({code:'40001'});
+  expect((await db.admin.query('select count(*)::int n from assess.assignments')).rows[0].n).toBe(0);
+ }finally{await db.close();}
+},30000);
+
+it('historical trial source attestation accepts only its exact old schema and rejects the expanded schema',()=>{
+ const code=`import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';
+ import {openLocalDatabase} from './scripts/assess/local-database.mjs';
+ import {buildTrialInstallPackage} from './scripts/assess/trial-install.mjs';
+ const db=await openLocalDatabase('pglite',{through:'pre-rad085'});
+ try {await db.exec("create role assess_job_a nologin noinherit valid until '2000-01-01';grant assess_worker to assess_job_a");const files=await buildTrialInstallPackage();await db.exec(files['preinstall.sql']);await db.exec('rollback');
+ for(const f of ['20261026000100_assess_supervisor_scope.sql','20261026000200_assess_authoring_drafts.sql','20261026000300_assess_assignment_review.sql'])await db.exec(readFileSync('supabase/migrations/'+f,'utf8'));
+ await assert.rejects(()=>db.exec(files['preinstall.sql']),{code:'55000'});await db.exec('rollback');
+ }finally{await db.close();}`;
+ const r=spawnSync(process.execPath,['--input-type=module','-e',code],{encoding:'utf8',timeout:20000});expect(r.status,r.stderr).toBe(0);
+},30000);
+
+it('draft revisions, ended scope and suspended/revoked staff deny pending confirmation; managed legacy writes cannot bypass periods',async()=>{
+ const db=await fixture();try{
+  const g=await db.create();await db.join(4,g);const d=await saved(db,g);await seedBinding(db,d.id);
+  await db.rpc(2,'assignment_prepare_v1',[g.id,d.id,1,id(470)]);
+  await db.rpc(2,'draft_save_v1',[g.id,d.id,1,d.document]);
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(470)])).rejects.toMatchObject({code:'40001'});
+  await seedBinding(db,d.id,2,301);await db.rpc(2,'assignment_prepare_v1',[g.id,d.id,2,id(471)]);
+  await db.admin.query("update public.profiles set role='owner' where user_id=$1",[id(2)]);
+  await expect(db.rpc(2,'members_write_v1',[g.id,[id(5)],true])).rejects.toMatchObject({code:'42501'});
+  await expect(db.rpc(2,'group_write_v1',[g.id,null,true])).rejects.toMatchObject({code:'42501'});
+  await db.admin.query("update public.profiles set role='participant',status='suspended' where user_id=$1",[id(2)]);
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(471)])).rejects.toMatchObject({code:'42501'});
+  await db.rpc(1,'appointment_v1',[id(2),false]);
+  await db.admin.query("update public.profiles set status='approved' where user_id=$1",[id(2)]);
+  await db.rpc(1,'appointment_v1',[id(2),true]);
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(471)])).rejects.toMatchObject({code:'40001'});
+  await db.rpc(2,'assignment_prepare_v1',[g.id,d.id,2,id(472)]);
+  await db.rpc(2,'supervisor_group_v1',['end',g.id,await db.revision(g)]);
+  await expect(db.rpc(2,'assignment_confirm_v1',[id(472)])).rejects.toMatchObject({code:'55000'});
+  expect((await db.admin.query('select count(*)::int n from assess.assignments')).rows[0].n).toBe(0);
+ }finally{await db.close();}
+},30000);

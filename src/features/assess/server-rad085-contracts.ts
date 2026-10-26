@@ -23,3 +23,5 @@ export type AssignmentReviewReceipt = {
   versionId: string; sourceDigest: string; targetDigest: string; targetCount: number;
   expiresAt: string; serverNow: string;
 };
+
+export const historicalRad085Input = (files: string[]) => files.filter(file => !(RAD085_MIGRATIONS as readonly string[]).includes(file));

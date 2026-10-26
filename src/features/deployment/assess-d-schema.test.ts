@@ -1,3 +1,4 @@
+import {RAD085_MIGRATIONS,RAD085_BOUNDARY,RAD085_DEFER_REASON} from "../assess/server-rad085-contracts";
 import {cpSync,mkdtempSync,readFileSync,rmSync,writeFileSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
@@ -11,7 +12,7 @@ it("D requires both lifecycle and UI migrations, rejects the old B attestation a
   for(const part of ["src","supabase","scripts/pages"])cpSync(part,join(dir,part),{recursive:true});
   const manifestPath=join(dir,"scripts/pages/frontend-schema.json"),m=JSON.parse(readFileSync(manifestPath,"utf8"));
   writeFileSync(join(dir,"scripts/pages/frontend-schema.json"),JSON.stringify(m));
-  expect(m.requiredMigrations).toContain("20261020000700_assess_lifecycle.sql");expect(m.requiredMigrations).toContain("20261020000800_assess_mixed_ui.sql");expect(m.deferredMigrations).toEqual({});
+  expect(m.requiredMigrations).toContain("20261020000700_assess_lifecycle.sql");expect(m.requiredMigrations).toContain("20261020000800_assess_mixed_ui.sql");expect(m.deferredMigrations).toEqual(Object.fromEntries(RAD085_MIGRATIONS.map(file=>[file,{sha256:createHash("sha256").update(readFileSync(join(process.cwd(),"supabase/migrations",file))).digest("hex"),reason:RAD085_DEFER_REASON,serverModules:[RAD085_BOUNDARY]}])));
   const run=(print=false)=>spawnSync(process.execPath,["--input-type=module","-e",`import {runSchemaGate} from ${JSON.stringify(script)};try{console.log(runSchemaGate({NEXT_PUBLIC_SUPABASE_URL:'https://vlacestfruxooznrcjqc.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'sb_publishable_synthetic_local_test_123456',PILOT_SCHEMA_VERIFIED:'pilot-v1:26b88b9dd0b1aa96e0b25ea9bb16c358c5710fb2c89a773e4a55c995720b4df5'},${print},${JSON.stringify(dir)}));}catch(e){console.error(e.message);process.exitCode=1;}`],{encoding:"utf8",timeout:15000});
   const blocked=run();expect(blocked.status).toBe(1);expect(blocked.stderr).toContain("schema compatibility has not been attested");
   const print=run(true);expect(print.status).toBe(0);expect(print.stdout.trim()).not.toBe("pilot-v1:26b88b9dd0b1aa96e0b25ea9bb16c358c5710fb2c89a773e4a55c995720b4df5");
