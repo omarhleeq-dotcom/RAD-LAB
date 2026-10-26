@@ -2,7 +2,7 @@
 
 ## 1. الانحرافات والميزانية
 
-الهدف الواحد: استكمال تحقق SQL المحلي للمشرف وP1/P2، وحفظ حدود fixtures التاريخية، وتجهيز PostgreSQL في CI مع check ناجح. الميزانية الأولية24ملفًا، عُدلت علنًا إلى26 لإضافة ملفَي اعتماد PostgreSQL المقفولين. استُخدم24ملفًا من26؛ لم تُعدّل ترحيلتا المسودات والإسناد المحجوزتان للإصلاح.
+الهدف الواحد: استكمال تحقق SQL المحلي للمشرف وP1/P2، وحفظ حدود fixtures التاريخية، وتجهيز PostgreSQL في CI مع check ناجح. الميزانية الأولية24ملفًا، عُدلت علنًا إلى26 لإضافة ملفَي اعتماد PostgreSQL المقفولين، ثم27 لإضافة حاجز Draft في .github/workflows/deploy-pages.yml بعد كشف نشر تلقائي غير مأذون. استُخدم25ملفًا من27؛ لم تُعدّل ترحيلتا المسودات والإسناد المحجوزتان للإصلاح.
 
 الأسماء المحجوزة: اختبارات deployment الأربعة assess-d-schema وassess-e-schema وowner-dashboard-deferred-schema وfrontend-schema؛ اختبارات assess الأربعة retention-install وserver-trial-catalog-diff وserver-trial-reviewed وstaging-catalogue؛ pilot/db-day-wiring؛ assess/server-rad085-contracts وrad085-db؛ scripts/assess/local-database.mjs وtrial-install-rehearsal.mjs وsetup-rad085-postgres.mjs وpostgres-test/package.json وpackage-lock.json؛ .github/workflows/ci.yml؛ scripts/pages/frontend-schema.json؛ ترحيلات RAD-085 الثلاثة؛ الخطة والحالة وHANDOFF وعقود SQL وهذا التقرير. كل أسماء الاختبارات تنتهي .test.ts وتحت src/features. لم تتغير ترحيلتا المسودات والإسناد.
 
@@ -37,9 +37,13 @@ RAD-085 تبقى review، دون completion_evidence أو ادعاء اكتما�
 ## 6. QA
 
 - الاختبارات التاريخية الموجهة:40/40 في10ملفات، دون تغيير بصمة أو توقع أمني؛ الاختبارات الجديدة:14/14. اختبار الشهادة الإضافي متسلسل فقط، وسباقات العضوية/الصلاحية/التأكيد على PostgreSQL متعدد الاتصالات مع pg_blocking_pids.
-- check النهائي نجح: TypeScript وlint (تحذيران قديمان فقط) وكل اختبارات Vitest بلا فشل أو skip؛ الإحصاء النهائي في وصف PR مع نتيجة CI. نجح build وbuild:pages محليًا دون نشر، وdocs:test75/75 وconnection-probe10/10 وPython8/8، وdocs:check بلا أخطاء أو تنبيهات مراجعة وstatus:check --base origin/main --require-previous وgit diff --check.
+- check النهائي نجح:2924اختبارًا في199ملفًا بلا فشل أو skip (299.75ثانية)، وTypeScript وlint (تحذيران قديمان فقط) وكل اختبارات Vitest بلا فشل أو skip؛ الإحصاء النهائي في وصف PR مع نتيجة CI. نجح build وbuild:pages محليًا دون نشر، وdocs:test75/75 وconnection-probe10/10 وPython8/8، وdocs:check بلا أخطاء أو تنبيهات مراجعة وstatus:check --base origin/main --require-previous وgit diff --check.
 - CI على آخر رأس يُتحقق بعد دفع هذا التقرير؛ تُسجل النتيجة ورابط التشغيل وSHA في وصف PR دون إنشاء التزام توثيق لاحق يجعل دليل CI لرأس سابق. قبل الرفع لا يوجد ادعاء نجاح CI، ولا يُستنتج من النجاح المحلي.
-- لا QA واجهات/axe/أسَر معادة بلا تغيير واجهة؛ لا هاتف أو قبول مالك أو خدمة/قاعدة حية أو Supabase أو DB day حي أو عامل أو نشر أو hosted preview أو شهادة جديدة. لا تغيير variables/PILOT_SCHEMA_VERIFIED/launch_gate/CONSENT_VERSION.
+- لا QA واجهات/axe/أسَر معادة بلا تغيير واجهة؛ لا هاتف أو قبول مالك أو خدمة/قاعدة حية أو Supabase أو DB day حي أو عامل أو شهادة جديدة. حصل استثناء تشغيلي غير مأذون موضح أدناه: نشر المعاينة التلقائي من workflow القائم. لا تغيير variables/PILOT_SCHEMA_VERIFIED/launch_gate/CONSENT_VERSION.
+
+### واقعة نشر تلقائي وحاجز منع التكرار
+
+بعد دفع9945187 شغّل المستودع Deploy Pages تلقائيًا على pull_request. كُشف التشغيل أثناء متابعة CI، وأُرسل طلب إلغاء40273648911، لكن سجل الخطوات أثبت اكتمال Deploy to Cloudflare Pages وComment preview URL on PR قبل وصول الإلغاء. هذا نشر معاينة فعلي غير مأذون، وليس نجاح بناء محلي فقط؛ لم يُفتح رابط المعاينة أو يُنقل إلى هذا التقرير. لم تُغيّر variables أو شهادة أو قاعدة/عامل، ولم يُحذف نشر قائم عبر إجراء تدميري. أضيف شرط يمنع job النشر على Draft PR مع حفظ مسار main والطلبات غير Draft. تُتحقق نتيجة المنع على الرأس النهائي مع CI، دون استنتاج تراجع النشر السابق من إضافة الحاجز.
 
 ## 7. غير المتحقق وبوابات الربط
 
