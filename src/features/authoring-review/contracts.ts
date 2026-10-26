@@ -1,4 +1,4 @@
-/** Local review DTO v1; neither a schema nor final RPC names. Never a publication. */
+/** Editable author DTO; the SQL adapter maps legacy mixed to the explicit private contract. Never a publication. */
 import type { AttemptPolicy, FullPracticalItem, SingleChoiceItem, SimulatorPartItem, VersionRef } from '../assess/contracts';
 import type { PracticalView } from '../assess/practical-presentation';
 import type { ItemView } from '../assess/presentation';
@@ -20,7 +20,14 @@ export type Draft = { track?: 'mixed' | 'full-practical'; schemaVersion: 1; id: 
 /** Whitelist only. No DraftItem, key, authoring, source, rubric or review record. */
 export type StudentPreviewData = { name: string; policy: AttemptPolicy; items: ((SingleChoiceItem | SimulatorPartItem | FullPracticalItem) & { view?: ItemView; practicalView?: PracticalView })[] };
 export type AssignmentReview = { token: string; draftName: string; draftRevision: number; groupName: string; groupRevision: number; targetCount: number; expiresAt: number; targets: Page<Member> };
+export type DraftSummary = { id: string; track: NonNullable<Draft['track']>; revision: number; name: string };
+export type DraftReference = { key: string; revision: string };
+export type SqlDraft = { document: Draft & { track: NonNullable<Draft['track']> }; refs: DraftReference[] };
 export interface AuthoringAdapter {
+ readonly service?: 'sql';
+ subscribe?(invalidate: () => void): () => void;
+ drafts?(scope: Scope, cursor: string | undefined, signal: AbortSignal): Promise<Page<DraftSummary>>;
+ open?(scope: Scope, id: string, signal: AbortSignal): Promise<Draft>;
  readonly accounts: readonly Person[];
  readonly parts: readonly PartReference[];
  readonly practicals?: readonly PracticalReference[];
