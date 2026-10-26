@@ -38,7 +38,7 @@ try {
         JSON.stringify(manifest.versions) !== JSON.stringify(workerVersions())) throw Error();
     for (const file of ['worker.cjs', 'worker-main.mjs'])
       if (sha(await readFile(new URL('./' + file, import.meta.url))) !== manifest.files[file]) throw Error();
-    config = await json('/run/secrets/rad085-synthetic-worker.json');
+    config = await json('/run/rad085/worker.json');
     // A deliberate local-only destination, not a general provider allowlist.
     if (config.host !== 'rad085-postgres' || config.database !== 'rad085_synthetic' || config.port !== 5432 ||
         config.user !== 'rad085_synthetic_worker') throw Error();
@@ -46,8 +46,8 @@ try {
   }, stop.signal, async () => {
     // Mounted by the isolated host after reconcileSynthetic completes, with its
     // external head frozen for this execution. No operational verifier exists.
-    const permit = await json('/run/recovery/permit.json');
-    const current = await json('/run/recovery/current.json');
+    const permit = await json('/run/rad085/permit.json');
+    const current = await json('/run/rad085/current.json');
     if (permit.contract !== 'rad085-synthetic-reconciliation/1' || permit.status !== 'synthetic-verified' ||
         permit.manifestSha256 !== manifestHash || permit.sequence !== current.sequence || permit.mac !== current.mac ||
         !/^[0-9a-f]{64}$/.test(permit.mac) || !Number.isSafeInteger(permit.sequence) || permit.sequence < 0 ||

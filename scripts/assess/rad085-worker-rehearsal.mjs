@@ -16,11 +16,12 @@ const dockerEnv = { ...process.env };
 for (const name of ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH']) delete dockerEnv[name];
 const prefix = `rad085-worker-${randomBytes(6).toString('hex')}`;
 const pgName = prefix + '-postgres', network = prefix + '-net', image = prefix + ':local';
+const inputVolume = prefix + '-inputs', hostUid = process.getuid(), hostGid = process.getgid();
 const dir = mkdtempSync(join(tmpdir(), 'rad085-worker-qa-'));
 const owned = new Set(), clients = new Set(), builds = [];
 const checks = [], measurements = [];
 let admin, f, dbConfig, config, manifestSha256, evidence, recoveryHead, phase = 'docker', outcome = 'STOP', cleanup = true;
-let networkCreated = false, imageBuilt = false, pgPaused = false;
+let networkCreated = false, imageBuilt = false, pgPaused = false, volumeCreated = false, lastInputs;
 const now = () => performance.now();
 const sha = b => createHash('sha256').update(b).digest('hex');
 const id = n => `00000000-0000-0000-0000-${String(n).padStart(12, '0')}`;
@@ -91,11 +92,30 @@ async function tick(worker = binding(), stop = new AbortController(), observe) {
 function containerArgs(name, extra = []) {
   return ['run', '--name', name, '--network', network, '--read-only', '--cap-drop=ALL', '--security-opt=no-new-privileges',
     '--pids-limit=64', '--cpus=1', '--memory=192m', '--tmpfs', '/tmp:rw,noexec,nosuid,size=8m',
-    '--mount', `type=bind,src=${join(dir, 'worker.json')},dst=/run/secrets/rad085-synthetic-worker.json,readonly`,
-    '--mount', `type=bind,src=${join(dir, 'recovery')},dst=/run/recovery,readonly`,
+    '--mount', `type=volume,src=${inputVolume},dst=/run/rad085,readonly`,
     '--env', 'RAD085_SYNTHETIC_WORKER=1', ...extra, image];
 }
+function syncInputs() {
+  // Host UID can be 1001 in CI. Never make a credential world-readable or run the
+  // worker as root to accommodate that. Populate a private owned Docker volume
+  // over stdin in a networkless, unprivileged helper; the worker mounts it RO.
+  const files = {};
+  for (const [name, path] of [['worker.json', join(dir, 'worker.json')], ['permit.json', join(dir, 'recovery', 'permit.json')], ['current.json', join(dir, 'recovery', 'current.json')]])
+    if (existsSync(path)) files[name] = readFileSync(path, 'utf8');
+  const payload = JSON.stringify(files); if (payload === lastInputs) return;
+  const name = prefix + '-input-' + randomBytes(3).toString('hex'); owned.add(name);
+  docker(['run', '-i', '--name', name, '--network=none', '--read-only', '--cap-drop=ALL', '--security-opt=no-new-privileges',
+    '--user=1000:1000', '--mount', `type=volume,src=${inputVolume},dst=/inputs`, '--entrypoint=node', image, '-e',
+    `const fs=require('node:fs');let data='';process.stdin.setEncoding('utf8');process.stdin.on('data',b=>data+=b);process.stdin.on('end',()=>{
+      const files=JSON.parse(data);for(const name of ['worker.json','permit.json','current.json']){
+        const path='/inputs/'+name;if(fs.existsSync(path))fs.unlinkSync(path);
+        if(Object.hasOwn(files,name)){fs.writeFileSync(path,files[name],{mode:0o600});const s=fs.statSync(path);if(s.uid!==1000||(s.mode&0o777)!==0o600)throw Error('file_mode');}
+      }
+    });`], { input: payload });
+  lastInputs = payload;
+}
 function runContainer(extra = []) {
+  syncInputs();
   const name = prefix + '-' + randomBytes(3).toString('hex'); owned.add(name);
   const child = spawn('docker', ['--host=unix:///var/run/docker.sock', ...containerArgs(name, extra)], { env: dockerEnv, stdio: ['ignore', 'pipe', 'pipe'] });
   let stdout = '', stderr = '';
@@ -131,6 +151,13 @@ try {
   f = createRequire(import.meta.url)(join(dir, 'fixture.cjs'));
   assert.deepEqual(manifest.versions, f.workerVersions());
   docker(['build', '--network=none', '--tag', image, builds[0].output]); imageBuilt = true;
+  docker(['volume', 'create', inputVolume]); volumeCreated = true;
+  const initName = prefix + '-input-init'; owned.add(initName);
+  // This preparer sees no credentials, DB/network or Docker socket. Its sole
+  // capability is CHOWN on the new volume, before any private input exists.
+  docker(['run', '--name', initName, '--network=none', '--read-only', '--user=0:0', '--cap-drop=ALL', '--cap-add=CHOWN',
+    '--security-opt=no-new-privileges', '--mount', `type=volume,src=${inputVolume},dst=/inputs`, '--entrypoint=node', image,
+    '-e', "const fs=require('node:fs');fs.chmodSync('/inputs',0o700);fs.chownSync('/inputs',1000,1000)"]);
   const imageInfo = JSON.parse(docker(['image', 'inspect', image]))[0];
   docker(['build', '--network=none', '--tag', image, builds[1].output]);
   assert.equal(JSON.parse(docker(['image', 'inspect', image]))[0].Id, imageInfo.Id);
@@ -142,7 +169,7 @@ try {
   assert.deepEqual(JSON.parse(contents), { uid: 1000, files: ['manifest.json', 'worker-main.mjs', 'worker.cjs'] });
   checks.push('reproducible-build-versions-curated-nonroot-image');
   measurements.push({ manifestSha256, localImageId: imageInfo.Id, imageBytes: imageInfo.Size,
-    workerBundleBytes: readFileSync(join(builds[0].output, 'worker.cjs')).length });
+    workerBundleBytes: readFileSync(join(builds[0].output, 'worker.cjs')).length, hostUid, postgresUid: hostUid, workerUid: 1000 });
 
   phase = 'postgres';
   const subnetOctet = randomBytes(1)[0];
@@ -158,9 +185,9 @@ try {
   owned.add(pgName);
   phase = 'postgres-container';
   docker(['run', '--detach', '--name', pgName, '--network', network, '--network-alias', 'rad085-postgres',
-    '--user=1000:1000', '--read-only', '--cap-drop=ALL', '--security-opt=no-new-privileges', '--cpus=1', '--memory=384m', '--pids-limit=128',
-    '--ip', serviceHost, '--tmpfs', '/var/lib/postgresql:rw,uid=1000,gid=1000,mode=700', '--tmpfs', '/tmp:rw,mode=1777',
-    '--tmpfs', '/var/run/postgresql:rw,uid=1000,gid=1000,mode=700',
+    `--user=${hostUid}:${hostGid}`, '--read-only', '--cap-drop=ALL', '--security-opt=no-new-privileges', '--cpus=1', '--memory=384m', '--pids-limit=128',
+    '--ip', serviceHost, '--tmpfs', `/var/lib/postgresql:rw,uid=${hostUid},gid=${hostGid},mode=700`, '--tmpfs', '/tmp:rw,mode=1777',
+    '--tmpfs', `/var/run/postgresql:rw,uid=${hostUid},gid=${hostGid},mode=700`,
     '--mount', `type=bind,src=${join(dir, 'admin-password')},dst=/run/admin-password,readonly`,
     '--mount', `type=bind,src=${join(dir, 'server.key')},dst=/run/server.key,readonly`,
     '--mount', `type=bind,src=${join(dir, 'server.crt')},dst=/run/server.crt,readonly`,
@@ -281,6 +308,7 @@ try {
   writeFileSync(permitPath, JSON.stringify(permit), { mode: 0o600 });
   const badManifest = structuredClone(manifest); badManifest.versions.worker = 'mismatch';
   jsonFile('bad-manifest.json', badManifest);
+  command('chmod', ['444', join(dir, 'bad-manifest.json')]); // Public source metadata only, never a credential.
   assert.equal((await imageResult(['--mount', `type=bind,src=${join(dir, 'bad-manifest.json')},dst=/app/manifest.json,readonly`])).report.code, 'configuration');
   checks.push('image-refuses-missing-stale-unreconciled-or-unrevoked-permit');
 
@@ -485,6 +513,7 @@ try {
   if (pgPaused) try { docker(['unpause', pgName]); } catch { cleanup = false; }
   for (const c of clients) try { await c.end(); } catch { cleanup = false; }
   for (const name of owned) try { docker(['rm', '--force', '--volumes', name]); } catch { cleanup = false; }
+  if (volumeCreated) try { docker(['volume', 'rm', inputVolume]); } catch { cleanup = false; }
   if (imageBuilt) try { docker(['image', 'rm', image]); } catch { cleanup = false; }
   if (networkCreated) try { docker(['network', 'rm', network]); } catch { cleanup = false; }
   for (const b of builds) rmSync(b.output, { recursive: true, force: true });
