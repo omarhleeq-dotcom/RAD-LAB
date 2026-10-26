@@ -1,3 +1,4 @@
+import { knownSharingPolicy } from './sharing-policy';
 import { ReviewError, type Command, type Group, type JoinRequest, type Page, type Person, type Query, type ReviewAdapter, type Snapshot } from './contracts';
 
 /** Bound to one authenticated session by the host. Actor IDs are never RPC arguments.
@@ -73,7 +74,9 @@ export function createSqlReview(self: Person, transport: ScopeTransport): Review
     data.people = page(observe(await scope('appointments', undefined, q.peopleCursor, signal)), r => ({ id: id(r.id), name: r.display_name === null ? id(r.id) : str(r.display_name), role: 'supervisor', appointed: r.revoked_at === null }));
    } else if (self.role === 'student') {
     const policy = object(await call('sharing_consent_v1', [], signal));
-    data.sharing = policy.accepted === true && typeof policy.version === 'string' && typeof policy.textDigest === 'string';
+    const known = knownSharingPolicy(policy.version, policy.textDigest);
+    data.sharing = known && policy.accepted === true;
+    if (typeof policy.version === 'string' && typeof policy.textDigest === 'string') data.sharingPolicy = { version: policy.version, digest: policy.textDigest, known };
     data.requests = page(observe(await scope('my-requests', undefined, q.requestsCursor, signal)), r => request(r, self));
    } else {
     data.groups = page(observe(await scope('groups', undefined, q.groupsCursor, signal)), group);
@@ -105,7 +108,12 @@ export function createSqlReview(self: Person, transport: ScopeTransport): Review
   async execute(actorId: string, c: Command, signal) {
    actor(actorId); codeGroupId = undefined; invalidate();
    try {
-    if (c.kind === 'appoint' || c.kind === 'revoke') await call('appointment_v1', [c.personId, c.kind === 'appoint'], signal);
+    if (c.kind === 'sharing') {
+     if (self.role !== 'student' || (c.accept && !knownSharingPolicy(c.version, c.digest))) throw new ReviewError('denied');
+     const r = object(await call('sharing_consent_v1', [c.version, c.digest, c.accept], signal));
+     if (c.accept && (!knownSharingPolicy(r.version, r.textDigest) || r.accepted !== true)) throw new ReviewError('expired');
+     if (!c.accept && r.accepted !== false) return invalid();
+    } else if (c.kind === 'appoint' || c.kind === 'revoke') await call('appointment_v1', [c.personId, c.kind === 'appoint'], signal);
     else if (c.kind === 'create' || c.kind === 'rotate' || c.kind === 'end' || c.kind === 'revoke-code') {
      const r = object(await call('supervisor_group_v1', c.kind === 'create' ? ['create', null, null, c.name, new Date(c.endsAt).toISOString()] : [c.kind, c.groupId, c.revision], signal));
      if (r.code != null) { const code = str(r.code); if (!/^[a-f0-9]{64}$/.test(code)) return invalid(); codeGroupId = id(r.id); return { code, groupId: codeGroupId }; }

@@ -1,3 +1,4 @@
+import { SharingConsent } from './SharingConsent';
 import type { ReactNode } from 'react';
 import type { Command, Page, Person, Query, Snapshot } from './contracts';
 import type { ReviewCopy } from './copy';
@@ -16,6 +17,7 @@ export function SupervisorReview({ t, actor, data, act, paging, selectGroup, cod
   {actor.role === 'supervisor' && data.appointed === false && <p role="alert">{t.revoked}</p>}
   {actor.role === 'supervisor' && data.appointed !== false && <form className="space-y-3 rounded-xl border border-line bg-panel p-4" onSubmit={e => { e.preventDefault(); const form = new FormData(e.currentTarget); act({ kind: 'create', name: String(form.get('name')), endsAt: Date.parse(String(form.get('ends')) + 'Z') }); }}><h2 className="text-xl font-semibold">{t.create}</h2><label className="block">{t.name}<input className={`${control} mt-1 block w-full`} name="name" required maxLength={100}/></label><label className="block">{t.ends}<input className={`${control} mt-1 block w-full`} type="datetime-local" name="ends" required /></label><button className={control}>{t.create}</button><p className="text-sm text-muted">{t.groupHint}</p></form>}
   {code && <section className="rounded-xl border border-line bg-panel p-4" role="status"><h2 className="text-xl font-semibold">{t.code}</h2><p className="break-all font-mono" dir="ltr">{code}</p><p>{t.codeHint}</p></section>}
+  {actor.role === 'student' && data.service === 'sql' && <SharingConsent data={data} locale={locale} act={act}/>}
   {actor.role === 'student' && data.sharing === false && <p role="alert">{t.sharingClosed}</p>}
   {actor.role === 'student' && data.sharing !== false && <form className="space-y-3 rounded-xl border border-line bg-panel p-4" onSubmit={e => { e.preventDefault(); act({ kind: 'join', code: String(new FormData(e.currentTarget).get('code')) }); }}><label className="block">{t.enter}<input className={`${control} mt-1 block w-full`} name="code" required maxLength={100} autoComplete="off" dir="ltr"/></label><button className={control}>{t.join}</button><p>{t.codeHint}</p></form>}
   {actor.role !== 'owner' && (actor.role !== 'student' || data.groups.rows.length > 0) && list(t.group, data.groups, 'groupsCursor', item => <button aria-pressed={g?.id === item.id} className={control} onClick={() => selectGroup(item.id)}>{item.name}</button>)}

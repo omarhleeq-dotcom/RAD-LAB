@@ -8,10 +8,10 @@ import { build } from 'esbuild';
 import postcss from 'postcss';
 import tailwind from '@tailwindcss/postcss';
 const require = createRequire(import.meta.url);
-const serverBundle = await build({ stdin: { resolveDir: process.cwd(), contents: `export {openRad085Database,fixtureId} from './src/features/assess/rad085-local-db';` }, bundle: true, write: false, platform: 'node', format: 'esm', packages: 'external' });
+const serverBundle = await build({ stdin: { resolveDir: process.cwd(), contents: `export {sharingPolicy} from './src/features/supervisor-review/sharing-policy'; export {openRad085Database,fixtureId} from './src/features/assess/rad085-local-db';` }, bundle: true, write: false, platform: 'node', format: 'esm', packages: 'external' });
 const helperDir = mkdtempSync('/tmp/rad085-p1-helper-');
 writeFileSync(helperDir + '/helper.mjs', serverBundle.outputFiles[0].text);
-const { openRad085Database, fixtureId: id } = await import(pathToFileURL(helperDir + '/helper.mjs').href);
+const { openRad085Database, fixtureId: id, sharingPolicy } = await import(pathToFileURL(helperDir + '/helper.mjs').href);
 rmSync(helperDir, { recursive: true });
 const css = (await postcss([tailwind()]).process(readFileSync('src/app/globals.css', 'utf8'), { from: 'src/app/globals.css' })).css.replace(/url\("(\/fonts\/[^"?]+)"\)/g, (_, p) => `url("data:font/woff2;base64,${readFileSync('public' + p).toString('base64')}")`);
 const accounts = [{ n: 1, role: 'owner', name: 'Synthetic owner' }, { n: 2, role: 'supervisor', name: 'Synthetic supervisor A' }, { n: 3, role: 'supervisor', name: 'Synthetic supervisor B' }, { n: 4, role: 'student', name: 'Synthetic student' }].map(a => ({ ...a, id: id(a.n) }));
@@ -22,9 +22,9 @@ const browserBundle = await build({ stdin: { resolveDir: process.cwd(), loader: 
  const accounts=${JSON.stringify(accounts)}; const locale=new URL(location.href).searchParams.get('locale')==='ar'?'ar':'en';
  document.documentElement.lang=locale; document.documentElement.dir=locale==='ar'?'rtl':'ltr';
  function App(){ const [n,setN]=useState(2),[groupId,setGroup]=useState(); const self=accounts.find(a=>a.n===n),t=copy[locale];
- const adapter=useMemo(()=>{let observed=0,ready=Promise.resolve(); return createSqlReview(self,{
-  async rpc(name,args,signal){ await ready; signal.throwIfAborted(); const response=await fetch('/rpc/'+n,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,args}),signal}); const value=await response.json(); observed=Math.max(observed,value.epoch); if(!response.ok)throw value; return value.data; },
-  subscribe(invalidate){let opened=false,resolveReady; ready=new Promise(resolve=>resolveReady=resolve); const events=new EventSource('/events'); events.onmessage=e=>{const epoch=Number(e.data); if(!opened){opened=true;observed=Math.max(observed,epoch);resolveReady();return;} if(epoch>observed){observed=epoch; invalidate();}}; events.onerror=()=>{invalidate();resolveReady();}; return ()=>{events.close();resolveReady();};}
+ const adapter=useMemo(()=>{let observed=0,ready=Promise.resolve(); const mark=()=>{document.documentElement.dataset.scopeEpoch=String(observed)}; return createSqlReview(self,{
+  async rpc(name,args,signal){ await ready; signal.throwIfAborted(); const response=await fetch('/rpc/'+n,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,args}),signal}); const value=await response.json(); observed=Math.max(observed,value.epoch); mark(); if(!response.ok)throw value; return value.data; },
+  subscribe(invalidate){let opened=false,resolveReady; ready=new Promise(resolve=>resolveReady=resolve); const events=new EventSource('/events'); events.onmessage=e=>{const epoch=Number(e.data); if(!opened){opened=true;observed=Math.max(observed,epoch);mark();resolveReady();return;} if(epoch>observed){observed=epoch; mark(); invalidate();}}; events.onerror=()=>{invalidate();resolveReady();}; return ()=>{events.close();resolveReady();};}
  });},[n]);
  return <main className="platform-page mx-auto max-w-5xl space-y-4 px-4 py-8"><h1 className="text-3xl font-bold">{t.title}</h1><p>{locale==='ar'?'PostgreSQL محلي معزول وبيانات اصطناعية. القبول في الإعداد التجريبي فقط؛ لا موافقة فعلية أو اتصال حي.':'Isolated local PostgreSQL and synthetic data. Test setup consent only; no real acceptance or live connection.'}</p><label className="block">{t.account}<select className="min-h-11 w-full border rounded p-2" value={n} onChange={e=>{setN(Number(e.target.value));setGroup(undefined)}}>{accounts.map(a=><option key={a.n} value={a.n}>{a.name}</option>)}</select></label><ReviewSession key={n} adapter={adapter} actorId={self.id} groupId={groupId} selectGroup={setGroup} locale={locale}/></main>;
  } createRoot(document.getElementById('root')).render(<App/>);` }, bundle: true, write: false, format: 'iife', jsx: 'automatic', define: { 'process.env.NODE_ENV': '"production"' }, metafile: true });
@@ -39,8 +39,8 @@ async function reset(configured = true) {
  await db.admin.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end", [id(1)]);
  for (const n of [2, 3]) await db.rpc(1, 'appointment_v1', [id(n), true]);
  if (configured) {
-  await db.admin.query("update assess.sharing_policy set required_version='synthetic-browser-only',text_digest=$1", ['a'.repeat(64)]);
-  for (let n = 4; n <= 28; n++) await db.rpc(n, 'sharing_consent_v1', ['synthetic-browser-only', 'a'.repeat(64), true]);
+  await db.admin.query("update assess.sharing_policy set required_version=$1,text_digest=$2", [sharingPolicy.version, sharingPolicy.digest]);
+  for (let n = 4; n <= 28; n++) await db.rpc(n, 'sharing_consent_v1', [sharingPolicy.version, sharingPolicy.digest, true]);
  }
  initialGroup = await db.rpc(2, 'supervisor_group_v1', ['create', null, null, 'Synthetic SQL group', new Date(Date.now() + 3600000).toISOString()]);
  if (configured) for (let n = 4; n <= 28; n++) {
@@ -63,8 +63,8 @@ const server = createServer(async (req, res) => {
   if (req.method === 'POST' && /^\/rpc\/[1-4]$/.test(url.pathname) && req.headers['content-type'] === 'application/json') {
    let body = ''; for await (const chunk of req) { body += chunk; if (body.length > 8192) { res.writeHead(413).end(); return; } }
    const { name, args } = JSON.parse(body), who = Number(url.pathname.at(-1));
-   if (!rpcNames.has(name) || !Array.isArray(args) || args.length > 5 || (name === 'sharing_consent_v1' && args.length)) { res.writeHead(403).end(); return; }
-   const write = name !== 'scope_page_v1' && name !== 'sharing_consent_v1';
+   if (!rpcNames.has(name) || !Array.isArray(args) || args.length > 5 || (name === 'sharing_consent_v1' && args.length !== 0 && (args.length !== 3 || typeof args[2] !== 'boolean'))) { res.writeHead(403).end(); return; }
+   const write = name !== 'scope_page_v1' && (name !== 'sharing_consent_v1' || args.length === 3);
    if (write) invalidate();
    const readEpoch = epoch;
    try {
@@ -102,7 +102,7 @@ if (process.argv.includes('--serve')) {
    const page = await context.newPage(), t = copy[locale]; page.on('pageerror', e => errors.push(e.message));
    await page.goto(`${base}/?locale=${locale}`); await page.evaluate(theme => document.documentElement.dataset.theme = theme, theme);
    const choose = async (p, n) => { await p.getByLabel(t.account).selectOption(String(n)); };
-   const refresh = p => p.getByRole('button', { name: t.retry, exact: true }).click();
+   const refresh = async p => { await p.waitForFunction(expected => Number(document.documentElement.dataset.scopeEpoch ?? -1) >= expected, epoch); await p.getByRole('button', { name: t.retry, exact: true }).click(); };
    const selectGroup = p => p.getByRole('button', { name: 'Synthetic SQL group', exact: true }).click();
    async function audit(p, label) {
     await p.evaluate(axe); const r = await p.evaluate(() => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } }));
@@ -116,9 +116,21 @@ if (process.argv.includes('--serve')) {
    await page.getByRole('button', { name: t.rotate, exact: true }).click();
    const codePanel = page.getByRole('heading', { name: t.code, exact: true }).locator('..'); await codePanel.waitFor();
    const code = await codePanel.locator('p[dir=ltr]').textContent(); assert.match(code, /^[a-f0-9]{64}$/); interactions++;
-   if (width === 390 && theme === 'dark') { const path = `docs/review/rad085-p1-sql-${locale}.jpg`; await page.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
+   if (width === 390 && theme === 'dark') { const path = `${output}/rad085-p1-sql-${locale}.jpg`; await page.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
    const student = await context.newPage(); student.on('pageerror', e => errors.push(e.message)); await student.goto(`${base}/?locale=${locale}`); await student.evaluate(theme => document.documentElement.dataset.theme = theme, theme); await choose(student, 4);
-   await student.getByRole('button', { name: t.leave, exact: true }).click(); await student.getByRole('button', { name: t.confirmLeave, exact: true }).click();
+   const withdraw = locale === 'ar' ? 'سحب موافقتي' : 'Withdraw my consent';
+   const accept = locale === 'ar' ? 'تأكيد موافقتي' : 'Confirm my consent';
+   await student.getByText(sharingPolicy[locale], { exact: true }).waitFor();
+   await student.getByRole('button', { name: withdraw, exact: true }).click();
+   const checkbox = student.getByRole('checkbox'); await checkbox.waitFor(); assert.equal(await checkbox.isChecked(), false);
+   if (width === 390 && theme === 'dark') { const path = `docs/review/rad085-sharing-${locale}.jpg`; await student.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
+   await student.getByRole('button', { name: accept, exact: true }).click();
+   assert.equal(await student.getByRole('button', { name: withdraw, exact: true }).count(), 0);
+   assert.equal(await student.getByRole('button', { name: t.join, exact: true }).count(), 0);
+   await audit(student, 'sharing-unchecked');
+   await checkbox.check(); await student.getByRole('button', { name: accept, exact: true }).click();
+   await student.getByRole('button', { name: withdraw, exact: true }).waitFor(); await audit(student, 'sharing-active'); interactions += 3;
+   await student.getByRole('button', { name: t.leave, exact: true }).click(); await Promise.all([student.waitForResponse(r => r.url().endsWith('/rpc/4') && r.request().postDataJSON().name === 'group_leave_v1' && r.ok()), student.getByRole('button', { name: t.confirmLeave, exact: true }).click()]);
    await page.getByText(t.denied, { exact: true }).waitFor(); assert.equal(await page.getByRole('heading', { name: t.results, exact: true }).count(), 0); interactions++;
    await refresh(page); await resultPanel().getByText(`${t.total}: 24`, { exact: true }).waitFor();
    for (const decision of ['cancel', 'reject', 'approve']) {
@@ -130,7 +142,7 @@ if (process.argv.includes('--serve')) {
      for (let n = 0; n < 2 && !await requests.getByRole('button', { name: t[decision], exact: true }).count(); n++) {
       await requests.getByRole('button', { name: t.next, exact: true }).click(); await requests.waitFor();
      }
-     await requests.getByRole('button', { name: t[decision], exact: true }).click();
+     await Promise.all([page.waitForResponse(r => r.url().endsWith('/rpc/2') && r.request().postDataJSON().name === 'join_decide_v1' && r.ok()), requests.getByRole('button', { name: t[decision], exact: true }).click()]);
     }
     await refresh(student); await student.getByText(new RegExp(t[decision === 'cancel' ? 'cancelled' : decision === 'reject' ? 'rejected' : 'approved'])).first().waitFor(); interactions++;
    }
@@ -140,7 +152,7 @@ if (process.argv.includes('--serve')) {
    await refresh(page);
    await held;
    const ownerPanel = student.getByRole('heading', { name: t.owner, exact: true }).locator('..');
-   await ownerPanel.getByRole('listitem').filter({ hasText: id(2) }).getByRole('button', { name: t.revoke, exact: true }).click(); await student.getByRole('button', { name: t.confirmRevoke, exact: true }).click();
+   await ownerPanel.getByRole('listitem').filter({ hasText: id(2) }).getByRole('button', { name: t.revoke, exact: true }).click(); await Promise.all([student.waitForResponse(r => r.url().endsWith('/rpc/1') && r.request().postDataJSON().name === 'appointment_v1' && r.ok()), student.getByRole('button', { name: t.confirmRevoke, exact: true }).click()]);
    await page.getByText(t.denied, { exact: true }).waitFor(); await new Promise(resolve => setTimeout(resolve, 800));
    assert.equal(await page.getByRole('heading', { name: t.results, exact: true }).count(), 0); interactions++;
    slow = false; await refresh(page); await page.getByText(t.denied, { exact: true }).waitFor();
@@ -165,8 +177,10 @@ if (process.argv.includes('--serve')) {
   await context.close();
   // Real group deadline clears the rendered view without a click.
   await reset();
-  await db.rpc(2, 'supervisor_group_v1', ['create', null, null, 'Synthetic expiring group', new Date(Date.now()+1500).toISOString()]);
   const expiryContext = await browser.newContext(), expiryPage = await expiryContext.newPage(); await expiryPage.goto(base);
+  await expiryPage.getByLabel(copy.en.name, { exact: true }).waitFor();
+  await db.rpc(2, 'supervisor_group_v1', ['create', null, null, 'Synthetic expiring group', new Date(Date.now()+1500).toISOString()]);
+  await expiryPage.getByRole('button', { name: copy.en.retry, exact: true }).click();
   await expiryPage.getByRole('button', { name: 'Synthetic expiring group', exact: true }).click();
   await expiryPage.getByRole('heading', { name: copy.en.results, exact: true }).waitFor();
   await expiryPage.getByText(copy.en.expired, { exact: true }).waitFor();
