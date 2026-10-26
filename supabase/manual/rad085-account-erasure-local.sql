@@ -1,0 +1,143 @@
+-- RAD-085 LOCAL ONLY. Requires named RAD085-SQL-ERASURE-LOCAL-20261026 approval.
+-- Apply only to a synthetic disposable database after the existing three RAD-085 sources.
+-- No FK/trigger/worker/retention-duration changes. Existing cascades remain authoritative.
+begin;
+create function assess.account_erasure_preview_v1(p_user uuid) returns jsonb
+language plpgsql security definer set search_path='' as $$
+declare blockers jsonb; counts jsonb;
+begin
+ if not public.is_owner() or p_user is null or p_user=auth.uid() then
+  raise exception 'owner target required' using errcode='42501'; end if;
+ perform assess.scope_enter_v1(false);
+ -- Aggregate categories only. No IDs, names, document bodies, grades or addresses returned.
+ select jsonb_build_object(
+  'assignedVersions',exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where v.owner_id=p_user),
+  'assignments',exists(select 1 from assess.assignments where owner_id=p_user),
+  'sharedGroups',exists(select 1 from assess.groups g where (g.owner_id=p_user or g.supervisor_id=p_user) and
+   (g.owner_id<>p_user or exists(select 1 from assess.memberships m where m.group_id=g.id and m.user_id<>p_user)
+    or exists(select 1 from assess.membership_periods m where m.group_id=g.id and m.user_id<>p_user)
+    or exists(select 1 from assess.group_join_requests r where r.group_id=g.id and r.user_id<>p_user)
+    or exists(select 1 from assess.authoring_drafts d where d.group_id=g.id and d.writer_id<>p_user)
+    or exists(select 1 from assess.assignments a where g.id=any(a.source_group_ids))
+    or exists(select 1 from assess.assignment_scopes s where s.group_id=g.id))),
+  'appointments',exists(select 1 from assess.supervisor_appointments where appointed_by=p_user and user_id<>p_user),
+  'decisions',exists(select 1 from assess.group_join_requests where decided_by=p_user and user_id<>p_user),
+  'scopes',exists(select 1 from assess.assignment_scopes where supervisor_id=p_user),
+  'foreignProvenance',exists(select 1 from assess.authoring_publication_links l
+   join assess.authoring_drafts d on d.id=l.draft_id join assess.versions v on v.id=l.version_id
+   where (d.writer_id=p_user or v.owner_id=p_user) and d.writer_id<>v.owner_id),
+  'foreignReviews',exists(select 1 from assess.assignment_reviews r where r.writer_id<>p_user and
+   (exists(select 1 from assess.authoring_drafts d where d.id=r.draft_id and d.writer_id=p_user)
+    or exists(select 1 from assess.versions v where v.id=r.version_id and v.owner_id=p_user)
+    or exists(select 1 from assess.groups g where g.id=r.group_id and g.owner_id=p_user))),
+  'confirmedReviews',exists(select 1 from assess.assignment_reviews where writer_id=p_user and assignment_id is not null)
+ ) into blockers;
+ select jsonb_build_object(
+  'versions',(select count(*) from assess.versions where owner_id=p_user),
+  'links',(select count(*) from assess.authoring_publication_links l join assess.authoring_drafts d on d.id=l.draft_id where d.writer_id=p_user),
+  'publications',(select count(*) from assess.publications p join assess.versions v on v.id=p.version_id where v.owner_id=p_user),
+  'drafts',(select count(*) from assess.authoring_drafts where writer_id=p_user),
+  'revisions',(select count(*) from assess.authoring_revisions r join assess.authoring_drafts d on d.id=r.draft_id where d.writer_id=p_user),
+  'packages',(select count(*) from assess.authoring_reviewed_packages r join assess.authoring_drafts d on d.id=r.draft_id where d.writer_id=p_user),
+  'reviews',(select count(*) from assess.assignment_reviews where writer_id=p_user),
+  'reviewTargets',(select count(*) from assess.assignment_review_targets where user_id=p_user),
+  'sessions',(select count(*) from assess.sessions where user_id=p_user),
+  'practice',(select count(*) from public.attempts where user_id=p_user)
+ ) into counts;
+ return jsonb_build_object('contract','rad085-erasure-preview/1','counts',counts,'blockers',blockers,
+  'blocked',exists(select 1 from jsonb_each(blockers) e where e.value='true'::jsonb),
+  'due',exists(select 1 from public.c2_account_deletions where user_id=p_user and requested_at+interval '30 days'<=clock_timestamp()));
+end $$;
+revoke all on function assess.account_erasure_preview_v1(uuid) from public,anon,authenticated,assess_worker,assess_authoring_bridge;
+grant execute on function assess.account_erasure_preview_v1(uuid) to authenticated;
+-- Private primitive: C2 checks its original 30-day deadline; restore operator instead
+-- proves a previously finalised event against the external latest authenticated journal.
+-- No EXECUTE grant to ANY API role, including authenticated owner, bridge or worker.
+create function assess.erase_account_v1(p_user uuid) returns void
+language plpgsql security definer set search_path='' as $$
+begin
+ if not public.is_owner() or p_user is null or p_user=auth.uid() then
+  raise exception 'owner target required' using errcode='42501'; end if;
+ perform assess.scope_enter_v1(true);
+ lock table public.profiles in share row exclusive mode;
+ perform 1 from public.profiles where user_id=p_user for update;
+ if not found then return; end if;
+ if exists(select 1 from public.profiles where user_id=p_user and role='owner') and not exists(
+  select 1 from public.profiles p where p.user_id<>p_user and p.role='owner' and p.status='approved'
+   and not exists(select 1 from public.c2_account_deletions q where q.user_id=p.user_id)) then
+  raise exception 'last owner' using errcode='42501'; end if;
+ -- Same scope boundary as publish/prepare/confirm; version lock also covers legacy assign.
+ perform 1 from assess.versions where owner_id=p_user order by id for update;
+ if (assess.account_erasure_preview_v1(p_user)->>'blocked')::boolean then
+  raise exception 'erasure policy unresolved' using errcode='55000'; end if;
+ delete from assess.assignment_reviews where writer_id=p_user and assignment_id is null;
+ delete from assess.authoring_publication_links l using assess.authoring_drafts ad
+  where l.draft_id=ad.id and ad.writer_id=p_user;
+ delete from assess.publications pub using assess.versions v where pub.version_id=v.id and v.owner_id=p_user;
+ -- Existing cascades erase private drafts/revisions/packages/candidates, empty owned
+ -- groups and personal Practice/Assess rows. No FK/trigger is disabled or replaced.
+ delete from auth.users where id=p_user;
+end $$;
+revoke all on function assess.erase_account_v1(uuid) from public,anon,authenticated,assess_worker,assess_authoring_bridge;
+create or replace function public.owner_account_deletion_v1(p_action text,p_user uuid default null,p_after uuid default null,p_limit integer default 20)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare p public.profiles%rowtype; d public.c2_account_deletions%rowtype; prior_ban timestamptz;
+ ids uuid[]:='{}'; target uuid; rows jsonb; lim integer:=least(p_limit,100);
+begin
+ if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
+ if p_action is null or p_action not in ('deactivate','restore','finalise','list') or p_limit is null or p_limit<1 then
+  raise exception 'invalid deletion request' using errcode='22023'; end if;
+ if p_action='finalise' then perform assess.scope_enter_v1(true); end if;
+ -- Serialise owner deletion operations and role/status writes while checking last owner.
+ lock table public.profiles in share row exclusive mode;
+ if p_action='list' then
+  select coalesce(jsonb_agg(v order by id),'[]') into rows from (
+   select q.user_id id,jsonb_build_object('user_id',q.user_id,'participant_code',profile_info.participant_code,
+    'name',profile_info.display_name,'email',u.email,'status','pending deletion','requested_at',q.requested_at,
+    'expires_at',q.requested_at+interval '30 days','days_left',greatest(0,ceil(extract(epoch from(q.requested_at+interval '30 days'-clock_timestamp()))/86400))) v
+   from public.c2_account_deletions q join public.profiles profile_info using(user_id) join auth.users u on u.id=q.user_id
+   where p_after is null or q.user_id>p_after order by q.user_id limit lim+1
+  ) x;
+  return jsonb_build_object('rows',rows-lim,'next',case when jsonb_array_length(rows)>lim then rows->(lim-1)->'user_id' else null end);
+ end if;
+ if p_action='finalise' then
+  select coalesce(array_agg(user_id order by requested_at,user_id),'{}') into ids from (
+   select user_id,requested_at from public.c2_account_deletions where requested_at+interval '30 days'<=clock_timestamp()
+   order by requested_at,user_id limit lim
+  ) x;
+ else
+  if p_user is null then raise exception 'participant required' using errcode='22023'; end if;
+  ids:=array[p_user];
+ end if;
+ foreach target in array ids loop
+  select * into p from public.profiles where user_id=target for update;
+  if not found then raise exception 'participant not found' using errcode='22023'; end if;
+  if p_action<>'restore' and p.role='owner' and not exists(select 1 from public.profiles other_owner
+    where other_owner.role='owner' and other_owner.status='approved' and other_owner.user_id<>target
+    and not exists(select 1 from public.c2_account_deletions q where q.user_id=other_owner.user_id)) then
+   raise exception 'last owner' using errcode='42501'; end if;
+  if target=auth.uid() then raise exception 'cannot delete yourself' using errcode='42501'; end if;
+  select * into d from public.c2_account_deletions where user_id=target for update;
+  if p_action='deactivate' then
+   if found then raise exception 'already pending deletion' using errcode='22023'; end if;
+   select coalesce(banned_until,'-infinity') into prior_ban from auth.users where id=target for update;
+   insert into public.c2_account_deletions(user_id,restore_status,previous_banned_until) values(target,p.status,prior_ban);
+   update public.profiles set status='suspended' where user_id=target;
+   -- Auth ban persists past the grace window until explicit restore/finalise.
+   update auth.users set banned_until=clock_timestamp()+interval '100 years' where id=target;
+   -- Revoke refreshable sessions; already-issued JWTs expire normally, status blocks new writes.
+   if to_regclass('auth.sessions') is not null then execute 'delete from auth.sessions where user_id=$1' using target; end if;
+   if to_regclass('auth.refresh_tokens') is not null then execute 'delete from auth.refresh_tokens where user_id::text=$1' using target::text; end if;
+  elsif p_action='restore' then
+   if d.user_id is null or d.requested_at+interval '30 days'<=clock_timestamp() then raise exception 'restore window expired or absent' using errcode='22023'; end if;
+   update auth.users set banned_until=nullif(d.previous_banned_until,'-infinity'::timestamptz) where id=target;
+   update public.profiles set status=d.restore_status where user_id=target;
+   delete from public.c2_account_deletions where user_id=target;
+  else
+   -- No tombstone, reparenting or retained copies; existing CASCADE is authoritative.
+   perform assess.erase_account_v1(target);
+  end if;
+ end loop;
+ return jsonb_build_object('processed',cardinality(ids));
+end $$;
+commit;
