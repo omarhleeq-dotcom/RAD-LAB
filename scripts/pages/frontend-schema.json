@@ -34,7 +34,7 @@
   ],
   "deferredMigrations": {
     "20261026000100_assess_supervisor_scope.sql": {
-      "sha256": "fcc48e78bddd948a97c96e7e2ec37bc5851148d5441a6904b7d64442278af9a2",
+      "sha256": "c7b5966ce327e1e2e1f05b93ea20a0f7152cb1728884ded8e93fcc4b0d4e1a9b",
       "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
       "serverModules": [
         "src/features/assess/server-rad085-contracts.ts"
@@ -48,7 +48,7 @@
       ]
     },
     "20261026000300_assess_assignment_review.sql": {
-      "sha256": "d2a5f52c8a5404e33545a9f76c253e46c261e45c4c3d96ef53047ba06d958f09",
+      "sha256": "3c1defa58e03443e6d61bb1610ad2a14d53e851338992e2ef30cc61c87602ce3",
       "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
       "serverModules": [
         "src/features/assess/server-rad085-contracts.ts"

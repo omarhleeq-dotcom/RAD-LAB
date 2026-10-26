@@ -258,6 +258,8 @@ begin
   linked:=assess.linked_version_v1(d.id,d.revision);
   if not exists(select 1 from assess.publications where version_id=linked and document=pkg.document) then raise exception 'publication changed' using errcode='40001'; end if;
  end if;
+ -- Locks above can wait beyond the group deadline. Recheck before returning private data.
+ perform assess.supervised_group_v1(p_group);
  return jsonb_build_object('snapshot',jsonb_build_object('document',r.document,'refs',r.refs,'digest',r.digest),
   'reviewed',jsonb_build_object('sourceDigest',pkg.source_digest,'publication',pkg.document),'installedVersion',linked);
 end $$;
@@ -289,6 +291,8 @@ begin
   insert into assess.versions(owner_id,assessment_id,version,name,track)
     values(auth.uid(),aid,a->'ref'->>'version',a->>'name',a->>'track') returning id into vid;
   insert into assess.content_submissions(version_id,document) values(vid,p_document);
+  -- The bridge may have waited on the assessment advisory lock or INSERT constraints.
+  if gid is not null then perform assess.supervised_group_v1(gid); end if;
   return vid;
 end $$;
 
@@ -308,6 +312,7 @@ begin
  if exists(select 1 from assess.authoring_publication_links where draft_id=p_draft and draft_revision=p_revision and (version_id<>p_version or source_digest<>r.digest)) then
   raise exception 'publication link conflict' using errcode='40001'; end if;
  insert into assess.authoring_publication_links values(p_version,p_draft,p_revision,r.digest) on conflict(draft_id,draft_revision) do nothing;
+ perform assess.supervised_group_v1(p_group);
 end $$;
 -- Narrow installer wrapper: the bridge role cannot read/install another candidate.
 create function assess.authoring_bridge_candidate_v1(p_group uuid,p_draft uuid,p_revision integer,p_version uuid) returns jsonb
@@ -318,6 +323,7 @@ begin
  select c.document into doc from assess.content_submissions c join assess.versions v on v.id=c.version_id
  where c.version_id=p_version and c.state='pending' and v.owner_id=auth.uid() and v.assessment_id=p_draft and v.version=p_revision::text for update of c,v;
  if doc is null or doc is distinct from checked->'reviewed'->'publication' then raise exception 'candidate denied' using errcode='42501'; end if;
+ perform assess.supervised_group_v1(p_group);
  return doc;
 end $$;
 create function assess.authoring_bridge_install_v1(p_group uuid,p_draft uuid,p_revision integer,p_version uuid,p_specs jsonb,p_views jsonb) returns void
@@ -331,6 +337,7 @@ begin
   if p_views is not null then raise exception 'mixed views denied' using errcode='22023'; end if;
   perform assess.content_install_v1(p_version,p_specs);
  end if;
+ perform assess.supervised_group_v1(p_group);
 end $$;
 revoke all on function assess.authoring_bridge_read_v1(uuid,uuid,integer),assess.authoring_bridge_bind_v1(uuid,uuid,integer,uuid),
  assess.authoring_bridge_candidate_v1(uuid,uuid,integer,uuid),assess.authoring_bridge_install_v1(uuid,uuid,integer,uuid,jsonb,jsonb) from public,anon,authenticated,assess_worker;

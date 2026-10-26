@@ -153,7 +153,10 @@ begin
  select * into g from assess.groups where id=case when tg_op='DELETE' then old.group_id else new.group_id end;
  if g.supervisor_id is null then if tg_op='DELETE' then return old; else return new; end if; end if;
  -- Legacy owner membership writes must not bypass approval/periods on managed groups.
- if public.is_owner() then raise exception 'managed membership requires join decision' using errcode='42501'; end if;
+ -- Cascading profile deletion must preserve the existing account-finalisation contract.
+ -- A direct membership edit still has an existing profile and remains denied.
+ if public.is_owner() and (tg_op<>'DELETE' or exists(select 1 from public.profiles where user_id=old.user_id)) then
+  raise exception 'managed membership requires join decision' using errcode='42501'; end if;
  if tg_op='DELETE' then
   update assess.membership_periods set left_at=ts where id=old.period_id and left_at is null;
   update assess.groups set scope_revision=scope_revision+1 where id=old.group_id;
