@@ -22,6 +22,8 @@ jobs:
       - run: npm ci
       - name: Prepare pinned isolated PostgreSQL (required, no skip)
         run: node scripts/assess/setup-rad085-postgres.mjs
+      - name: Required RAD-085 pinned lock and cascading membership witnesses
+        run: node --test scripts/assess/rad085-lock-witness.test.mjs
       - run: npm run docs:check
       - run: npm run docs:test
       - name: Test first-version secret uploader (synthetic only)

@@ -18,8 +18,8 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
   const clients = new Set<PgClient>();
   const ctl = (args: string[]) => execFileSync(binaries.pg_ctl, ['-D', join(dir, 'data'), ...args], { stdio: 'pipe', timeout: 15000, env: childEnv });
   let started = false;
-  async function connect(label = 'rad085-local') {
-    const c = new Client({ host: dir, port: 55432, user: 'postgres', database: 'postgres', password: '', ssl: false,
+  async function connect(label = 'rad085-local', user = 'postgres') {
+    const c = new Client({ host: dir, port: 55432, user, database: 'postgres', password: '', ssl: false,
       application_name: label, connectionTimeoutMillis: 10000, query_timeout: 10000 });
     clients.add(c); await c.connect(); return c;
   }
@@ -56,6 +56,8 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
       if (!/^[a-z][a-z0-9_]*$/.test(name)) throw Error('invalid_test_rpc');
       return transaction(who, async c => (await c.query<{ v: T }>(`select assess.${name}(${args.map((_, i) => `$${i + 1}`).join(',')}) v`, args)).rows[0]!.v, label);
     }
-    return { admin, connect, transaction, rpc, close };
+    // Synthetic LOGIN tests only; the host/socket cannot be selected by a caller.
+    const poolConfig = (user: string) => ({ host: dir, port: 55432, user, database: 'postgres', password: '', ssl: false as const, max: 1, connectionTimeoutMillis: 5000 });
+    return { admin, connect, poolConfig, transaction, rpc, close };
   } catch (error) { await close(); throw error; }
 }

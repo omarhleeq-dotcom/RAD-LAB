@@ -3,22 +3,42 @@
 import type { Client } from 'pg';
 import type { AuthoringBridgePort, IndependentPublication, StoredAuthoringRevision } from './server-authoring-bridge';
 type Read = { snapshot: StoredAuthoringRevision; reviewed: IndependentPublication; installedVersion: string | null };
+export type BridgeConnection = Pick<Client, 'query' | 'end'>;
+export interface BridgeBoundary {
+ check(): Promise<void>;
+ readonly signal: AbortSignal;
+}
 const uuid = (v: string) => /^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(v);
-export function postgresAuthoringBridge(connect: () => Promise<Client>, identity: string, group: string): AuthoringBridgePort & { receipt(draft: string, revision: number): Promise<string | null> } {
+export function postgresAuthoringBridge(connect: () => Promise<BridgeConnection>, identity: string, group: string, boundary?: BridgeBoundary): AuthoringBridgePort & { receipt(draft: string, revision: number): Promise<string | null> } {
  if (!uuid(identity) || !uuid(group)) throw Error('invalid_bound_scope');
  async function transaction<T>(draft: string, revision: number, run: (read: Read, call: (sql: string, args: unknown[]) => Promise<unknown>) => Promise<T>, readOnly = false) {
   if (!uuid(draft) || !Number.isSafeInteger(revision) || revision < 1 || revision > 100) throw Error('invalid_revision');
+  await boundary?.check();
   const client = await connect();
+  const abort = () => { void client.end().catch(() => {}); };
+  let succeeded = false;
+  boundary?.signal.addEventListener('abort', abort, { once: true });
+  async function check() { boundary?.signal.throwIfAborted(); await boundary?.check(); boundary?.signal.throwIfAborted(); }
   try {
+   await check();
    await client.query('begin isolation level read committed');
    await client.query('set local role assess_authoring_bridge');
    await client.query("select set_config('request.jwt.claim.sub',$1,true)", [identity]);
    const read = (await client.query<{ v: Read }>('select assess.authoring_bridge_read_v1($1,$2,$3) v', [group,draft,revision])).rows[0]!.v;
-   const result = await run(read, async (sql, args) => (await client.query<{ v: unknown }>(sql, args)).rows[0]!.v);
+   await check();
+   const result = await run(read, async (sql, args) => {
+    await check(); const value = (await client.query<{ v: unknown }>(sql, args)).rows[0]!.v; await check(); return value;
+   });
+   // Recheck SQL time/scope even when the caller only reconciles an existing link.
+   await client.query('select assess.authoring_bridge_read_v1($1,$2,$3)', [group,draft,revision]);
+   await check();
    // Receipt takes locks for an authorized consistent read, but writes no domain data.
-   await client.query(readOnly ? 'rollback' : 'commit'); return result;
-  } catch (error) { await client.query('rollback'); throw error; }
-  finally { await client.end(); }
+   await client.query(readOnly ? 'rollback' : 'commit'); await check(); succeeded = true; return result;
+  } catch (error) { try { await client.query('rollback'); } catch { /* disconnected/uncertain COMMIT: never retry */ } throw error; }
+  finally {
+   try { await client.end(); if (succeeded) await check(); }
+   finally { boundary?.signal.removeEventListener('abort', abort); }
+  }
  }
  return {
   receipt(draft, revision) { return transaction(draft, revision, async read => read.installedVersion, true); },

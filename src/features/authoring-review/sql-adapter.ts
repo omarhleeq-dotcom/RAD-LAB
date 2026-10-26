@@ -40,7 +40,7 @@ function receipt(value: unknown): Draft {
 export function createSqlAuthoring(self: Person, transport: ScopeTransport, catalog: { parts: readonly PartReference[]; practicals: readonly PracticalReference[]; references: readonly DraftReference[] }, assignmentsEnabled = false): AuthoringAdapter {
  let epoch = 0, release: (() => void) | undefined;
  const listeners = new Set<() => void>(), cursors = new Map<string, string | undefined>();
- const invalidate = () => { epoch++; actions?.clear(); for (const fn of listeners) fn(); };
+ const invalidate = () => { epoch++; cursors.clear(); actions?.clear(); for (const fn of listeners) fn(); };
  function actor(actorId: string) { if (actorId !== self.id || self.role !== 'supervisor') throw new ReviewError('denied'); }
  async function call(name: string, args: unknown[], signal: AbortSignal) {
   signal.throwIfAborted(); const generation = epoch;
@@ -49,8 +49,10 @@ export function createSqlAuthoring(self: Person, transport: ScopeTransport, cata
    signal.throwIfAborted(); if (generation !== epoch) throw new ReviewError('denied');
    return value;
   } catch (e) {
-   signal.throwIfAborted(); if (e instanceof ReviewError) throw e;
+   signal.throwIfAborted(); if (generation !== epoch) throw new ReviewError('denied');
+   if (e instanceof ReviewError) throw e;
    const code = e && typeof e === 'object' && 'code' in e ? String(e.code) : '';
+   if (code === '42501') invalidate();
    throw new ReviewError(code === '42501' ? 'denied' : code === '40001' || code === '23505' ? 'conflict' : code === '55000' ? 'expired' : code.startsWith('22') || code === '54000' ? 'invalid' : 'offline');
   }
  }
@@ -63,7 +65,7 @@ export function createSqlAuthoring(self: Person, transport: ScopeTransport, cata
   actor(scope.actorId); const started = performance.now();
   if (!cursors.has(scope.groupId)) throw new ReviewError('denied');
   const { groups, now } = await groupPage(cursors.get(scope.groupId), signal), group = groups.rows.find(g => g.id === scope.groupId);
-  if (!group) throw new ReviewError('denied');
+  if (!group) { invalidate(); throw new ReviewError('denied'); }
   if (group.endsAt - (performance.now() - started) <= now) throw new ReviewError('expired');
   // Charge the entire round-trip against the server's remaining visibility window.
   return { group: { ...group, endsAt: group.endsAt - (performance.now() - started) }, now };

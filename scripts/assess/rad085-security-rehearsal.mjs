@@ -14,7 +14,7 @@ const files = ['20261026000100_assess_supervisor_scope.sql','20261026000200_asse
 const auditedHead='99bc07c72544ffb3a40c12b98c23a415b7d26246';
 const sha = s => createHash('sha256').update(s).digest('hex');
 const toolsDir = '/tmp/rad085-pgtools/postgres-REL_18_0/src/bin';
-export async function rehearse({baseline=false}={}) {
+export async function rehearse({baseline=false,lockWitnessOnly=false}={}) {
  const sql = f => baseline&&files.includes(f)?execFileSync('git',['show',`${auditedHead}:supabase/migrations/${f}`],{encoding:'utf8'}):readFileSync(`supabase/migrations/${f}`,'utf8');
  const {Client} = require('pg');
  const binaries = await import(require.resolve('@embedded-postgres/linux-x64'));
@@ -227,6 +227,7 @@ export async function rehearse({baseline=false}={}) {
   await blocker.query('commit');await waits;
   evidence.checks.globalLockWaitMs=Math.round(performance.now()-lockStart);
   evidence.checks.databaseBytes=await scalar(c,'select pg_database_size(current_database())::text');
+  if (!lockWitnessOnly) {
   // Dumps use explicit local sockets, no inherited PG*, no passwords, no remote destinations.
   const run=(bin,args)=>execFileSync(join(toolsDir,bin.startsWith('pg_')?'pg_dump':'psql',bin),args,{env:{PATH:process.env.PATH},stdio:'pipe',timeout:30000});
   const args=['-h',source.dir,'-p','55432','-U','postgres'];
@@ -265,6 +266,7 @@ export async function rehearse({baseline=false}={}) {
   assert.equal(await scalar(restored.admin,'select enabled from assess.launch_gate'),false);
   evidence.checks.dumpRestoreExact=true;
   evidence.checks.restoreVersion=run('pg_dump',['--version']).toString().trim();
+  }
  } finally {
   await Promise.allSettled([...clients].map(c=>c.end()));
   for(const {dir,ctl} of clusters.reverse()){ctl(['-m','fast','-w','stop']);rmSync(dir,{recursive:true,force:true});}
