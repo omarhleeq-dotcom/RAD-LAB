@@ -130,6 +130,7 @@ it('keeps self/last-owner and private ACL protection, rejects unresolved attribu
  try {
   await expect(c2(db, 'deactivate', 1)).rejects.toMatchObject({ code: '42501' });
   await db.admin.query("update public.profiles set status='suspended' where user_id=$1", [id(6)]);
+  await expect(c2(db, 'deactivate', 1)).rejects.toThrow(/last owner/);
   await expect(c2(db, 'deactivate', 6, 6)).rejects.toMatchObject({ code: '42501' });
   await pending(db, 2, '1 day'); const inv = await preview(db);
   await expect(db.rpc(1, 'account_management_v1', ['transfer', id(2), inv.inventoryDigest])).rejects.toMatchObject({ code: '55000' });
