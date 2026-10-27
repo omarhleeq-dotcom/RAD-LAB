@@ -1,7 +1,11 @@
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { Client } from 'pg';
 import { expect, it } from 'vitest';
 import { openRad085Database, fixtureId as id } from './rad085-local-db';
+import { openSyntheticRecoveryEvidence } from '../../../scripts/assess/rad085-erasure-recovery.mjs';
 
 type Db = Awaited<ReturnType<typeof fixture>>;
 async function fixture(shared = true, content = true, closed = true) {
@@ -111,7 +115,8 @@ it('student-only C2 still has its recovery window; an unpublished private superv
  for (const who of [4, 2]) {
   const db = await fixture(false, false);
   try {
-   await pending(db, who); if (who === 2) await transfer(db);
+   await pending(db, who);
+   if (who === 2) expect((await preview(db)).contentReviewRequired).toBe(false); // Nothing retained: no transfer/clearance needed.
    expect((await c2(db, 'finalise', who)).processed).toBe(0);
    await deadline(db); expect((await c2(db, 'finalise', who)).processed).toBe(1);
    expect((await db.admin.query('select * from auth.users where id=$1', [id(who)])).rowCount).toBe(0);
@@ -137,10 +142,12 @@ it('keeps self/last-owner and private ACL protection, rejects unresolved attribu
   for (const who of [3, 4, 'anon', 'worker'] as const) await expect(db.rpc(who, 'account_management_v1', ['preview', id(2)])).rejects.toMatchObject({ code: '42501' });
   await db.admin.query('create table public.synthetic_new_fk(user_id uuid references public.profiles(user_id))');
   await expect(preview(db)).rejects.toMatchObject({ code: '55000' });
+  await db.admin.query('drop table public.synthetic_new_fk; create table auth.synthetic_new_fk(user_id uuid references auth.users(id))');
+  await expect(preview(db)).rejects.toMatchObject({ code: '55000' });
  } finally { await db.close(); }
 }, 30000);
 it('reports/escalates transfer at day 25 and overdue day 30/37 without extending requested_at or allowing late transfer', async () => {
- const db = await fixture(false, false);
+ const db = await fixture(true, false);
  try {
   await pending(db, 2, '-8 days'); const inv = await preview(db);
   const before = (await db.admin.query('select requested_at from public.c2_account_deletions')).rows;
@@ -169,27 +176,63 @@ it('rolls back complete identity minimisation on failure and serialises scope ch
   expect((await c2(db, 'finalise')).processed).toBe(1);
  } finally { await lock.query('rollback'); await db.close(); }
 }, 30000);
-it('restores a pre-transfer PostgreSQL snapshot and explicitly replays verified management/erasure twice without resurrecting data', async () => {
- const db = await fixture(); let restored: Client | undefined;
+it('restores a pre-request PostgreSQL snapshot and verifies external encrypted evidence before replaying management/erasure twice', async () => {
+ const db = await fixture(), evidence = await openSyntheticRecoveryEvidence(); let restored: Client | undefined;
+ const receiptDir = mkdtempSync(join(tmpdir(), 'rad085-d3-encrypted-'));
  try {
-  await pending(db); const inv = await preview(db); await clearance(db, inv);
+  // Backup predates even the original deletion request and management transfer.
   await db.admin.query('create database d3_before template postgres');
+  await pending(db); const inv = await preview(db); await clearance(db, inv);
   await db.rpc(1, 'account_management_v1', ['transfer', id(2), inv.inventoryDigest]);
-  const receipt = (await db.admin.query('select * from assess.erasure_transfers')).rows[0];
-  const before = await retained(db); await deadline(db); await c2(db, 'finalise');
+  // JSON timestamps preserve all six PostgreSQL fractional digits, unlike JS Date.
+  const receipt = (await db.admin.query('select to_jsonb(t) v from assess.erasure_transfers t')).rows[0].v;
+  const rights = (await db.admin.query('select to_jsonb(r) v from assess.erasure_rights r')).rows[0].v;
+  const before = await retained(db); await deadline(db);
+  evidence.prepare({ operation: id(980), action: 'account-delete', target: id(2), at: new Date().toISOString() });
+  // A lost ACK leaves an unresolved external intent until explicit state inspection.
+  await c2(db, 'finalise'); expect(() => evidence.head()).toThrow();
+  expect((await db.admin.query("select clock_timestamp()<=($1::timestamptz+interval '37 days') ok", [receipt.requested_at])).rows[0].ok).toBe(true);
+  expect((await db.admin.query('select * from auth.users where id=$1', [id(2)])).rowCount).toBe(0);
+  evidence.complete(id(980), true);
+  const head = evidence.head(), event = evidence.page(0, 1)[0]!;
+  expect(evidence.journal.verify(event)).toBe(true); expect(event.target).toBe(id(2));
+  const key = randomBytes(32), iv = randomBytes(12), cipher = createCipheriv('aes-256-gcm', key, iv);
+  cipher.setAAD(Buffer.from(head.mac));
+  const encrypted = Buffer.concat([cipher.update(JSON.stringify({ receipt, rights, operation: event.operation })), cipher.final()]);
+  const tag = cipher.getAuthTag(), file = join(receiptDir, 'completed-transfer.enc');
+  writeFileSync(file, Buffer.concat([iv, tag, encrypted]), { mode: 0o600 });
+  expect(statSync(file).mode & 0o777).toBe(0o600);
+  const decrypt = (bytes: Buffer, mac: string) => {
+   const decipher = createDecipheriv('aes-256-gcm', key, bytes.subarray(0, 12));
+   decipher.setAuthTag(bytes.subarray(12, 28)); decipher.setAAD(Buffer.from(mac));
+   return JSON.parse(Buffer.concat([decipher.update(bytes.subarray(28)), decipher.final()]).toString('utf8'));
+  };
+  const bytes = readFileSync(file), corrupt = Buffer.from(bytes); corrupt[corrupt.length - 1] = (corrupt[corrupt.length - 1] ?? 0) ^ 1;
+  expect(() => decrypt(corrupt, head.mac)).toThrow();
+  expect(() => decrypt(bytes, '0'.repeat(64))).toThrow();
+  expect(evidence.head()).toEqual(head); // Latest independently anchored head, outside snapshot.
+  const verified = decrypt(bytes, head.mac);
+  expect(verified.operation).toBe(event.operation); expect(verified.receipt.user_id).toBe(event.target);
   await db.admin.query('create database d3_restored template d3_before');
   restored = new Client({ ...db.poolConfig('postgres'), database: 'd3_restored' }); await restored.connect();
   // Privileged isolated restore operator ONLY, after verifying the latest external
   // journal's completed transfer and deletion. No API can supply a replay timestamp.
   for (let pass = 0; pass < 2; pass++) {
    await restored.query('begin'); await restored.query("select set_config('request.jwt.claim.sub',$1,true)", [id(1)]);
-   if (pass === 0) await restored.query('select assess.transfer_management_d3_v1($1,$2,$3)', [id(2), inv.inventoryDigest, receipt.transferred_at]);
+   if (pass === 0) {
+    await restored.query("select public.owner_account_deletion_v1('deactivate',$1)", [id(2)]);
+    // Restore the authenticated ORIGINAL request time, never a renewed live window.
+    await restored.query('update public.c2_account_deletions set requested_at=$2 where user_id=$1', [id(2), verified.receipt.requested_at]);
+    await restored.query('insert into assess.erasure_rights(user_id,content_digest,disposition,reviewed_by,reviewed_at) values($1,$2,$3,$4,$5)',
+     [id(2), verified.rights.content_digest, verified.rights.disposition, verified.rights.reviewed_by, verified.rights.reviewed_at]);
+    await restored.query('select assess.transfer_management_d3_v1($1,$2,$3)', [id(2), verified.receipt.inventory_digest, verified.receipt.transferred_at]);
+   }
    await restored.query('select assess.erase_account_d3_v1($1)', [id(2)]); await restored.query('commit');
   }
   expect((await restored.query('select * from auth.users where id=$1', [id(2)])).rowCount).toBe(0);
   expect((await restored.query('select to_jsonb(x) v from assess.results x order by to_jsonb(x)::text')).rows).toEqual(before.results);
   expect((await restored.query("select to_jsonb(a)-'owner_id' v from assess.assignments a")).rows).toEqual(before.assignment);
- } finally { await restored?.end(); await db.close(); }
+ } finally { await restored?.end(); await db.close(); evidence.close(); rmSync(receiptDir, { recursive: true, force: true }); }
 }, 30000);
 
 it('lets the owner close a transferred open assignment without changing authorship or targets', async () => {

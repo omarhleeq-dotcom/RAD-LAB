@@ -19,7 +19,7 @@ with objects(kind,key,value) as (
 ), inventory as (select kind,count(*) n,encode(sha256(convert_to(jsonb_agg(jsonb_build_array(key,value) order by key)::text,'UTF8')),'hex') digest from objects group by kind), expected(kind,n,digest) as (values
  ('columns',186,'583afac6d0d92423b3abe1025fc663e4ba70782a64f90a8a448e1b4c1a3e0a5e'),
  ('constraints',154,'10f9293400d08f381a83ece877251e22d2c600a26c0c810570d2924d50b6a480'),
- ('functions',74,'f7934b2a48135c990ed312a80dfb0e81f46569392c4ddae2177b80d15dcd51e8'),
+ ('functions',74,'d01b8b0f53221bf4bbc7d0f6da0446271e8b5b38c1cbdada2b7a3750e1fc7a91'),
  ('indexes',72,'e7e25afa23961dbf428bb6ace151463f9a9ab224697368b085106e252d9dbd69'),
  ('relations',39,'f9702f100fce917867b680cbbe31e1b6df8d8d91e4f9142b99fe5aa5882001c0'),
  ('schema',1,'1b0781c4ad8e2e9c1a2411746559468e4746ac95a359ac14741bcd98490cf91e'),

@@ -1,8 +1,8 @@
 # RAD-085 — Terms P1 · approved proposal for DB day
 
-معتمد بقرار [O1/O5](DECISIONS.md#rad085-db-day-owner-2026-10-27)؛ **ليس النص المنشور**. لا تغيير في messages.terms أو CONSENT_VERSION الآن. يُراجع النصان معًا، ويُضافان إلى قسم «من يرى البيانات» يوم DB day بعد موافقة المالك فقط؛ عندها تُرفع CONSENT_VERSION وتُطلب موافقة كل مستخدم بنفسه. نسخة المشاركة المستقلة [v2](../src/features/supervisor-review/sharing-policy.ts) معتمدة بنصها الحالي ولا تتغير هنا. الأصل: [الخطة §4](RAD-085_PLAN_2026-10-25.md#4-نموذج-البيانات-وrls-ونوافذ-الرؤية) و[D3](DECISIONS.md#rad085-owner-tidy-2026-10-27).
+معتمد بقرار [O1/O5](DECISIONS.md#rad085-db-day-owner-2026-10-27)؛ **ليس النص المنشور**. لا تغيير في messages.terms أو CONSENT_VERSION الآن. النصان معتمدان معًا بحدود O1/O5، ويُضافان إلى قسم «من يرى البيانات» يوم DB day فقط؛ عندها تُرفع CONSENT_VERSION وتُطلب موافقة كل مستخدم بنفسه. نسخة المشاركة المستقلة [v2](../src/features/supervisor-review/sharing-policy.ts) معتمدة بنصها الحالي ولا تتغير هنا. الأصل: [الخطة §4](RAD-085_PLAN_2026-10-25.md#4-نموذج-البيانات-وrls-ونوافذ-الرؤية) و[D3](DECISIONS.md#rad085-owner-tidy-2026-10-27).
 
-## AR — النص المطلوب اعتماده
+## AR — النص المعتمد ليوم DB day
 
 مشرف المجموعة شخص عيّنه مالك الموقع للإشراف على مجموعته، بحساب معتمد وتعيين سارٍ. تعيينه لا يمنحه صلاحيات مالك الموقع: لا يعتمد الحسابات أو يعلقها أو يحذفها، ولا يرى جميع سجلات التدريب أو إجابات الاستبيانات. إجابات الاستبيانات يقرأها مالك الموقع وحده.
 
@@ -14,7 +14,7 @@
 
 لا يغيّر هذا التحديث سياسة الاحتفاظ: يعلن المالك نهاية التجربة بعد اكتمال المشاركات ومراجعتها عبر الموقع أو البريد، وتحذف البيانات المرتبطة بالمشاركين خلال ستة أشهر من الإعلان؛ قد تبقى إحصاءات وملخصات عامة لا تحدد الهوية. يُعطّل حسابك فورًا. يمكنك إلغاء طلب الحذف خلال 30 يومًا. بعد ذلك يُحذف نهائيًا خلال 7 أيام. إذا كنت مشرفًا أو مؤلفًا، تُنقل مسؤولية إدارة المحتوى اللازم الاحتفاظ به إلى المالك قبل اليوم الثلاثين وقبل الحذف، مع احترام الإسناد والترخيص، دون نسب تأليفك للمالك أو حجب الحذف لأجل غير محدد. لا يمدد انتقال الإدارة احتفاظ نتائج الطلاب.
 
-## EN — text for approval
+## EN — approved text for DB day
 
 A group supervisor is a person appointed by the site owner to supervise their group, with an approved account and an active appointment. Appointment does not give them the site owner's powers: they cannot approve, suspend or delete accounts, or see all practice records or survey answers. Only the site owner can read survey answers.
 

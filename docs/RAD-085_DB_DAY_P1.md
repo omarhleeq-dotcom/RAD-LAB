@@ -15,17 +15,21 @@ Exact local restore procedure (the owner supplies the private local archive path
 umask 077
 # LOCAL_RESTORE_DIR contains the freshly verified/decrypted pilot.dump and reviewed globals.sql.
 # PG_IMAGE_FROM_BACKUP is the reviewed postgres:<matching-major>@sha256:<digest>.
-docker run --detach --name rad085-dbday-restore --network none   --env POSTGRES_HOST_AUTH_METHOD=trust   --mount type=bind,src="$LOCAL_RESTORE_DIR",dst=/restore,readonly   "$PG_IMAGE_FROM_BACKUP"
+docker run --detach --name rad085-dbday-restore --network none \
+  --env POSTGRES_HOST_AUTH_METHOD=trust \
+  --mount type=bind,src="$LOCAL_RESTORE_DIR",dst=/restore,readonly \
+  "$PG_IMAGE_FROM_BACKUP"
 docker exec rad085-dbday-restore pg_isready -U postgres
 # If not ready, STOP and inspect local container startup; no provider fallback.
 docker exec rad085-dbday-restore psql -X -U postgres -v ON_ERROR_STOP=1 -f /restore/globals.sql
 docker exec rad085-dbday-restore createdb -U postgres --template=template0 rad085_restore
-docker exec rad085-dbday-restore pg_restore -U postgres --dbname=rad085_restore   --exit-on-error --single-transaction /restore/pilot.dump
+docker exec rad085-dbday-restore pg_restore -U postgres --dbname=rad085_restore \
+  --exit-on-error --single-transaction /restore/pilot.dump
 ```
 
 This container has no network and no published ports. Use Docker exec/Unix sockets only. Missing extensions/roles/ACLs, incompatible versions, restore errors, timeout or incomplete archive = STOP; resolve the local restoration faithfully before proceeding. The owner's real backup is not present in this PR; the automated witnesses use a fully synthetic isolated PostgreSQL.
 
-- [ ] Compare the restored catalogue against the independently reviewed expected source/provider inventory using [application inventory](../scripts/assess/rad085-application-inventory.sql), including ownership, ACL, role membership, CREATE/TEMP, RLS, indexes, triggers and all FKs. D3 pins source profile edges (including other schemas) and source public/assess Auth edges; provider-native Auth dependencies require the separate provider review. Source catalogue is not provider attestation.
+- [ ] Compare the restored catalogue against the independently reviewed expected source/provider inventory using [application inventory](../scripts/assess/rad085-application-inventory.sql), including ownership, ACL, role membership, CREATE/TEMP, RLS, indexes, triggers and all FKs. D3 inventories every FK to profiles or Auth users across all schemas. Only the exact source edges and two explicitly reviewed optional Auth session/refresh-token CASCADE edges are accepted at installation. Any other provider-native Auth edge stops migration4 until an independently reviewed, explicitly authorized source/catalogue difference is prepared on the local restore; never drop or ignore the edge to pass. Source catalogue is not provider attestation.
 - [ ] Inspect only the migration version column after confirming its actual schema. First installation requires all four sources absent; partial installation or unknown ACK requires read-only reconciliation, never blind replay of historical migrations.
 - [ ] On the restored pre-RAD085 schema, run C1/C2 and assess-staging-ready plus the other current checks at their expected historical phase. Runtime/launch verification remains false. Match each source hash below without editor normalization.
 
@@ -36,15 +40,38 @@ This container has no network and no published ports. Use Docker exec/Unix socke
 | 1 | [20261026000100_assess_supervisor_scope.sql](../supabase/migrations/20261026000100_assess_supervisor_scope.sql) | c7b5966ce327e1e2e1f05b93ea20a0f7152cb1728884ded8e93fcc4b0d4e1a9b |
 | 2 | [20261026000200_assess_authoring_drafts.sql](../supabase/migrations/20261026000200_assess_authoring_drafts.sql) | eb9d81e7f3f3953b0355318c9d43624bfdb6f10ae9b3b136ce2d97fc86bcc719 |
 | 3 | [20261026000300_assess_assignment_review.sql](../supabase/migrations/20261026000300_assess_assignment_review.sql) | 3c1defa58e03443e6d61bb1610ad2a14d53e851338992e2ef30cc61c87602ce3 |
-| 4 | [20261027000100_assess_management_erasure.sql](../supabase/migrations/20261027000100_assess_management_erasure.sql) | 674bd2f371e29b7e60d3ce21b3718241c49cafc7966edb789ef899005c27613a |
+| 4 | [20261027000100_assess_management_erasure.sql](../supabase/migrations/20261027000100_assess_management_erasure.sql) | a5f704bc673ba89a0e801d2b24c9c1b415d3e8e587627de0742a39814d713146 |
 
-For the isolated restored database, run each entire file with ON_ERROR_STOP, one at a time:
+For the isolated restored database, run these **separately, one numbered phase at a time**. After each command, inspect COMMIT and run the read-only application inventory below; review that phase before starting the next command. Do not paste the four phases as an unattended batch.
+
+1. Scope:
 
 ```bash
-for rad085_file in   20261026000100_assess_supervisor_scope.sql   20261026000200_assess_authoring_drafts.sql   20261026000300_assess_assignment_review.sql   20261027000100_assess_management_erasure.sql
-do
-  docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1     < "supabase/migrations/$rad085_file" || break
-done
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < supabase/migrations/20261026000100_assess_supervisor_scope.sql
+```
+
+2. Drafts:
+
+```bash
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < supabase/migrations/20261026000200_assess_authoring_drafts.sql
+```
+
+3. Review/assignment bridge:
+
+```bash
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < supabase/migrations/20261026000300_assess_assignment_review.sql
+```
+
+4. D3:
+
+```bash
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < supabase/migrations/20261027000100_assess_management_erasure.sql
+```
+
+Run after each phase and review against its expected catalogue before continuing:
+
+```bash
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < scripts/assess/rad085-application-inventory.sql
 ```
 
 Verify COMMIT and the full catalogue after **each** file; never proceed after any error. On live DB day the owner pastes each byte-identical complete BEGIN…COMMIT file into a separate SQL Editor query after matching the project selector to NEXT_PUBLIC_SUPABASE_URL. Metadata alone cannot prove that origin. These are independent transactions: failure of4 leaves1–3 committed. Never wrap them in an outer transaction, run a down migration, replay history, or apply the historical local erasure manual on top of D3. D3 replaces C2's finalise deletion primitive while preserving its eligibility/recovery expectations. The third source replaces content_submit_v1; P2 structure does not authorize P2 use.
@@ -54,7 +81,7 @@ Verify COMMIT and the full catalogue after **each** file; never proceed after an
 O2 / **RAD085-SQL-SHARING-POLICY-LIVE-P1-20261027** approves [rad085-sharing-policy-live-p1.sql](../supabase/manual/rad085-sharing-policy-live-p1.sql), extracted byte-identically from [the proposal](RAD-085_SHARING_LIVE_P1_PROPOSAL.patch). SHA-256 **2b00dfc8bcf1f79524ee18733d3da3f9ee92b7ad432b00d77ae9d8d93555386e**. Its historical PROPOSAL comments remain byte-identical; authority is O2. Test only locally in this PR.
 
 ```bash
-docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1   < supabase/manual/rad085-sharing-policy-live-p1.sql
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < supabase/manual/rad085-sharing-policy-live-p1.sql
 ```
 
 It locks scope/policy, accepts null/null or the identical pair, rejects drift/missing or extra singleton, and creates no acceptance. Expected pair: supervisor-sharing-2026-10-27-v2 / cf93db16deff71f3cd949c04ae41145bc92c7dc0bc8017204b0c9d404f6753cb. No Terms, CONSENT_VERSION or grant change comes from this initializer.
@@ -66,8 +93,8 @@ Run the complete new [rad085-d3-ready.sql](../supabase/checks/rad085-d3-ready.sq
 Historical [rad085-p1-ready.sql](../supabase/checks/rad085-p1-ready.sql) describes the first three sources only, and assess-staging-ready describes the earlier schema. Neither is a final four-source readiness claim; both remain unchanged. Their rejection after D3 is expected, not a successful attestation.
 
 ```bash
-docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1   < supabase/checks/rad085-d3-ready.sql
-docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1   < scripts/assess/rad085-restored-authorization.sql
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < supabase/checks/rad085-d3-ready.sql
+docker exec -i rad085-dbday-restore psql -X -U postgres -d rad085_restore -v ON_ERROR_STOP=1 < scripts/assess/rad085-restored-authorization.sql
 ```
 
 The exact [authorization script](../scripts/assess/rad085-restored-authorization.sql) creates only namespace f0850000 synthetic accounts and rolls the entire fixture back. It refuses collisions. Run it **only on the local restore**, not SQL Editor/live. It tests owner/two supervisors/common student/pending/suspended/anon, zero-group appointment metadata, pending without membership, real role denials, no direct tables or surveys, separate groups, policy v1/unknown rejection, server recording time, filtered counts, withdrawal, leave/rejoin with a fresh window, old-code rejection and appointment revocation. Its synthetic setup is not acceptance for a real account.
@@ -134,4 +161,4 @@ The owner checks the [operations reminder](RAD-085_REMAINING_OPERATIONS_2026-10-
 
 Any error/false/timeout/drift/missing backup/unknown ACK = STOP at that phase. No blind retry, DROP CASCADE, trigger disabling, down migration or rehash to conceal drift. Before COMMIT only that file rolls back; afterward the owner chooses an independently reviewed forward repair or isolated restore/reconciliation, never automatic overwrite.
 
-Keep restored access quarantined until the latest authenticated external encrypted local journal is verified and deletion, withdrawal, revocation and closure events replayed idempotently with original times. D3's private replay timestamp is available only to the privileged restore operator after verifying the completed external transfer receipt; no API role can supply it or create an early deletion. Lost ACK requires explicit inspection. Resolve writes newer than the backup before any switch. No cloud journal/backup, invented RPO/RTO, live SQL or provider certificate is produced by this PR. Remove the local restore container and decrypted temporary directory after recording encrypted evidence according to the owner's backup procedure.
+Keep restored access quarantined until the latest authenticated external encrypted local journal is verified and deletion, withdrawal, revocation and closure events replayed idempotently with original times. A completed transfer receipt and its exact content clearance must be authenticated/encrypted outside the snapshot and bound to the completed deletion journal event; restore the authenticated original request time if the backup predates the request, never renew it. D3's private replay timestamp is available only to the privileged restore operator after verifying the completed external transfer receipt; no API role can supply it or create an early deletion. Lost ACK requires explicit inspection. Resolve writes newer than the backup before any switch. No cloud journal/backup, invented RPO/RTO, live SQL or provider certificate is produced by this PR. Remove the local restore container and decrypted temporary directory after recording encrypted evidence according to the owner's backup procedure.

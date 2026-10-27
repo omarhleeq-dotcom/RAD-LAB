@@ -58,7 +58,6 @@ language sql stable security definer set search_path='' as $$
  select coalesce(jsonb_agg(jsonb_build_array(n.nspname,c.relname,k.conname,pg_get_constraintdef(k.oid)) order by n.nspname,c.relname,k.conname),'[]')
  from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace
  where k.contype='f' and k.confrelid in ('public.profiles'::regclass,'auth.users'::regclass)
- and (k.confrelid='public.profiles'::regclass or n.nspname in ('public','assess'))
 $$;
 create table assess.erasure_fk_contract (
  singleton boolean primary key default true check(singleton), inventory jsonb not null
@@ -67,7 +66,12 @@ create table assess.erasure_fk_contract (
 -- source inventory independently in readiness/tests; installation must reject extras.
 do $contract$
 begin
- if assess.d3_fk_inventory_v1() is distinct from $inventory$[
+ -- The two optional synthetic/provider Auth session edges are reviewed exactly.
+ -- Every other Auth/profile FK, in ANY schema, must match the source inventory.
+ if (select coalesce(jsonb_agg(edge),'[]'::jsonb)
+  from jsonb_array_elements(assess.d3_fk_inventory_v1()) e(edge)
+  where edge<>jsonb_build_array('auth','sessions','sessions_user_id_fkey','FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE')
+   and edge<>jsonb_build_array('auth','refresh_tokens','refresh_tokens_user_id_fkey','FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE')) is distinct from $inventory$[
  [
   "assess",
   "account_stops",
@@ -286,13 +290,27 @@ insert into assess.erasure_fk_contract select true,assess.d3_fk_inventory_v1();
 alter table assess.erasure_fk_contract enable row level security;
 revoke all on assess.erasure_fk_contract from public,anon,authenticated,assess_worker,assess_authoring_bridge;
 
+create function assess.d3_shared_group_v1(p_group uuid,p_user uuid) returns boolean
+language sql stable security definer set search_path='' as $$
+ select exists(select 1 from assess.groups g where g.id=p_group and
+  (g.owner_id is distinct from p_user
+   or exists(select 1 from assess.memberships m where m.group_id=g.id and m.user_id<>p_user)
+   or exists(select 1 from assess.membership_periods m where m.group_id=g.id and m.user_id<>p_user)
+   or exists(select 1 from assess.group_join_requests r where r.group_id=g.id and r.user_id<>p_user)
+   or exists(select 1 from assess.authoring_drafts d where d.group_id=g.id and d.writer_id is distinct from p_user)
+   or exists(select 1 from assess.assignments a where g.id=any(a.source_group_ids))
+   or exists(select 1 from assess.assignment_scopes a where a.group_id=g.id)))
+$$;
+
 create function assess.d3_needs_transfer_v1(p_user uuid) returns boolean
 language sql stable security definer set search_path='' as $$
- select exists(select 1 from assess.groups where owner_id=p_user or supervisor_id=p_user)
-  or exists(select 1 from assess.versions where owner_id=p_user)
+ select exists(select 1 from assess.groups g where (g.owner_id=p_user or g.supervisor_id=p_user) and assess.d3_shared_group_v1(g.id,p_user))
+  or exists(select 1 from assess.versions v where v.owner_id=p_user and exists(select 1 from assess.assignments a where a.version_id=v.id))
   or exists(select 1 from assess.assignments where owner_id=p_user)
-  or exists(select 1 from assess.authoring_drafts where writer_id=p_user)
-  or exists(select 1 from assess.assignment_reviews where writer_id=p_user)
+  or exists(select 1 from assess.authoring_drafts d where d.writer_id=p_user and
+   (exists(select 1 from assess.authoring_publication_links l join assess.assignments a on a.version_id=l.version_id where l.draft_id=d.id)
+    or exists(select 1 from assess.assignment_reviews r where r.draft_id=d.id and r.assignment_id is not null)))
+  or exists(select 1 from assess.assignment_reviews where writer_id=p_user and assignment_id is not null)
   or exists(select 1 from assess.group_managers where manager_id=p_user)
   or exists(select 1 from assess.version_managers where manager_id=p_user)
   or exists(select 1 from assess.assignment_managers where manager_id=p_user)
@@ -343,7 +361,7 @@ begin
   union all select 'draft',d.id::text,to_jsonb(d)-'writer_id' from assess.authoring_drafts d where d.writer_id=p_user and
    (exists(select 1 from assess.authoring_publication_links l join assess.assignments a on a.version_id=l.version_id where l.draft_id=d.id)
     or exists(select 1 from assess.assignment_reviews ar where ar.draft_id=d.id and ar.assignment_id is not null))
-  union all select 'group',g.id::text,to_jsonb(g.name) from assess.groups g where g.owner_id=p_user or g.supervisor_id=p_user or exists(select 1 from assess.group_managers m where m.group_id=g.id and m.manager_id=p_user)
+  union all select 'group',g.id::text,to_jsonb(g.name) from assess.groups g where ((g.owner_id=p_user or g.supervisor_id=p_user) and assess.d3_shared_group_v1(g.id,p_user)) or exists(select 1 from assess.group_managers m where m.group_id=g.id and m.manager_id=p_user)
  ), bounded as (select * from documents limit 1001)
  select count(*),coalesce(jsonb_agg(jsonb_build_array(kind,key,value) order by kind,key),'[]') into n,content from bounded;
  if n>1000 then raise exception 'D3 content exceeds reviewed pilot ceiling' using errcode='54000'; end if;
@@ -354,17 +372,6 @@ end $$;
 
 -- This transaction-scoped capability lives in a private table; no caller-controlled
 -- GUC, trigger disabling or widened is_owner() can authorize identity minimisation.
-create function assess.d3_shared_group_v1(p_group uuid,p_user uuid) returns boolean
-language sql stable security definer set search_path='' as $$
- select exists(select 1 from assess.groups g where g.id=p_group and
-  (g.owner_id is distinct from p_user
-   or exists(select 1 from assess.memberships m where m.group_id=g.id and m.user_id<>p_user)
-   or exists(select 1 from assess.membership_periods m where m.group_id=g.id and m.user_id<>p_user)
-   or exists(select 1 from assess.group_join_requests r where r.group_id=g.id and r.user_id<>p_user)
-   or exists(select 1 from assess.authoring_drafts d where d.group_id=g.id and d.writer_id is distinct from p_user)
-   or exists(select 1 from assess.assignments a where g.id=any(a.source_group_ids))
-   or exists(select 1 from assess.assignment_scopes a where a.group_id=g.id)))
-$$;
 create function assess.d3_erasing_v1(p_user uuid) returns boolean
 language sql stable security definer set search_path='' as $$
  select public.is_owner() and exists(select 1 from assess.erasure_transfers t
@@ -410,6 +417,7 @@ declare q public.c2_account_deletions; inv jsonb; ts timestamptz;
 begin
  if not public.is_owner() or p_user is null or p_user=auth.uid() then raise exception 'owner target required' using errcode='42501'; end if;
  perform assess.scope_enter_v1(true);
+ if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
  lock table public.profiles in share row exclusive mode;
  perform 1 from public.profiles where user_id in (p_user,auth.uid()) order by user_id for update;
  if exists(select 1 from public.c2_account_deletions where user_id=auth.uid()) then raise exception 'active owner required' using errcode='42501'; end if;
@@ -429,7 +437,7 @@ begin
  insert into assess.group_managers select id,auth.uid() from assess.groups g where ((g.owner_id=p_user or g.supervisor_id=p_user) and assess.d3_shared_group_v1(g.id,p_user))
   or exists(select 1 from assess.group_managers m where m.group_id=g.id and m.manager_id=p_user)
  on conflict(group_id) do update set manager_id=excluded.manager_id;
- insert into assess.version_managers select id,auth.uid() from assess.versions v where v.owner_id=p_user or exists(select 1 from assess.version_managers m where m.version_id=v.id and m.manager_id=p_user)
+ insert into assess.version_managers select id,auth.uid() from assess.versions v where (v.owner_id=p_user and exists(select 1 from assess.assignments a where a.version_id=v.id)) or exists(select 1 from assess.version_managers m where m.version_id=v.id and m.manager_id=p_user)
  on conflict(version_id) do update set manager_id=excluded.manager_id;
  insert into assess.assignment_managers select id,auth.uid() from assess.assignments a where a.owner_id=p_user or exists(select 1 from assess.assignment_managers m where m.assignment_id=a.id and m.manager_id=p_user)
  on conflict(assignment_id) do update set manager_id=excluded.manager_id;
@@ -438,14 +446,16 @@ begin
  update assess.groups set ended_at=coalesce(ended_at,ts),scope_revision=scope_revision+1 where (owner_id=p_user or supervisor_id=p_user) and ended_at is null;
  update assess.group_join_codes set revoked_at=coalesce(revoked_at,ts) where group_id in(select id from assess.groups where supervisor_id=p_user);
  update assess.erasure_transfers set manager_id=auth.uid() where manager_id=p_user;
+ -- Bind clearance to post-transfer content (the archived group name is unchanged).
+ inv:=assess.d3_inventory_v1(p_user);
  -- Completion, rather than lock acquisition, must be before the deadline.
  ts:=coalesce(p_replay_at,clock_timestamp());
  if q.requested_at+interval '30 days'<=ts then raise exception 'transfer overdue: escalate to owner' using errcode='55000'; end if;
- -- Bind clearance to post-transfer content (the archived group name is unchanged).
- inv:=assess.d3_inventory_v1(p_user);
  insert into assess.erasure_transfers(user_id,requested_at,manager_id,inventory_digest,content_digest,transferred_at)
  values(p_user,q.requested_at,auth.uid(),p_digest,inv->>'contentDigest',ts)
  on conflict(user_id) do update set requested_at=excluded.requested_at,manager_id=excluded.manager_id,inventory_digest=excluded.inventory_digest,content_digest=excluded.content_digest,transferred_at=excluded.transferred_at,erasing_xid=null;
+ if p_replay_at is null and q.requested_at+interval '30 days'<=clock_timestamp() then
+  raise exception 'transfer overdue: escalate to owner' using errcode='55000'; end if;
  return jsonb_build_object('transferred',true,'replayed',false);
 end $$;
 
@@ -455,6 +465,7 @@ declare inv jsonb; q public.c2_account_deletions; needs_transfer boolean;
 begin
  if not public.is_owner() or p_user is null or p_user=auth.uid() then raise exception 'owner target required' using errcode='42501'; end if;
  perform assess.scope_enter_v1(true);
+ if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
  lock table public.profiles in share row exclusive mode;
  perform 1 from public.profiles where user_id=p_user for update;
  if not found then return; end if;
@@ -505,6 +516,7 @@ begin
  if p_limit is null or p_limit not between 1 and 100 then raise exception 'invalid page' using errcode='22023'; end if;
  if p_action='list' then
   perform assess.scope_enter_v1(false);
+  if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
   select coalesce(jsonb_agg(to_jsonb(x) order by x.user_id),'[]') into rows from (
    select q.user_id,q.requested_at,q.requested_at+interval '30 days' transfer_before,q.requested_at+interval '37 days' erase_by,
     t.transferred_at,assess.d3_needs_transfer_v1(q.user_id) requires_transfer,
@@ -516,7 +528,11 @@ begin
   return jsonb_build_object('rows',rows,'next',case when jsonb_array_length(rows)=p_limit then rows->-1->>'user_id' else null end);
  end if;
  if p_user is null or p_user=auth.uid() then raise exception 'owner target required' using errcode='42501'; end if;
- if p_action='preview' then perform assess.scope_enter_v1(false); return assess.d3_inventory_v1(p_user); end if;
+ if p_action='preview' then
+  perform assess.scope_enter_v1(false);
+  if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
+  return assess.d3_inventory_v1(p_user);
+ end if;
  if p_action='transfer' then return assess.transfer_management_d3_v1(p_user,p_digest); end if;
  raise exception 'invalid action' using errcode='22023';
 end $$;
@@ -528,6 +544,7 @@ language plpgsql security definer set search_path='' as $$
 begin
  if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
  perform assess.scope_enter_v1(true);
+ if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
  perform 1 from assess.assignments a where a.id=p_assignment and (a.owner_id=auth.uid()
   or exists(select 1 from assess.assignment_managers m where m.assignment_id=a.id and m.manager_id=auth.uid())) for update;
  if not found then raise exception 'assignment denied' using errcode='42501'; end if;
@@ -545,6 +562,7 @@ begin
  if p_action in ('deactivate','restore','finalise') then perform assess.scope_enter_v1(true); end if;
  -- Serialise owner deletion operations and role/status writes while checking last owner.
  lock table public.profiles in share row exclusive mode;
+ if not public.is_owner() then raise exception 'owner only after profile wait' using errcode='42501'; end if;
  if p_action='list' then
   select coalesce(jsonb_agg(v order by id),'[]') into rows from (
    select q.user_id id,jsonb_build_object('user_id',q.user_id,'participant_code',profile_info.participant_code,
