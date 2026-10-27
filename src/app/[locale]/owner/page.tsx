@@ -3,6 +3,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { OwnerPanel } from "@/features/pilot/OwnerPanel";
 import { routing } from "@/i18n/routing";
+import { P1_AVAILABLE } from "@/features/supervisor/p1-availability";
+import { P1Session } from "@/features/supervisor/P1Session";
 
 export async function generateMetadata({ params }: PageProps<"/[locale]/owner">) {
   const { locale } = await params;
@@ -21,6 +23,7 @@ export default async function OwnerPage({ params }: PageProps<"/[locale]/owner">
       <p className="mt-3 text-muted">{t("intro")}</p>
       <div className="mt-6">
         <OwnerPanel />
+        {P1_AVAILABLE && <P1Session role="owner" />}
       </div>
     </div>
   );

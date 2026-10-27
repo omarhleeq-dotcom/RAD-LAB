@@ -102,5 +102,27 @@
     "src/features/assess/server-job.ts",
     "src/features/assess/server-presentation.ts",
     "src/features/assess/server-practical.ts"
-  ]
+  ],
+  "guardedFeatures": {
+    "supervisorP1": {
+      "migrations": [
+        "20261026000100_assess_supervisor_scope.sql",
+        "20261026000200_assess_authoring_drafts.sql",
+        "20261026000300_assess_assignment_review.sql"
+      ],
+      "guard": {
+        "path": "src/features/supervisor/p1-availability.ts",
+        "symbol": "P1_AVAILABLE",
+        "sha256": "5ad90af9efa03acfe3802bfb0c3672d1d068ada9b0b93244224b7d3d27a11b33"
+      },
+      "boundaries": {
+        "src/features/supervisor/p1-live.ts": "221cec120edd22fffededab43f5cbc664ad8db31055dc75997c947f8188a4d8c",
+        "src/features/supervisor-review/sql-adapter.ts": "4f9b4e8d9cd4dab63f8ec72899dafe58a73f40bf2e6b802e73bb6f6786ca643c"
+      },
+      "consumer": {
+        "path": "src/features/supervisor/P1Session.tsx",
+        "sha256": "ccb3f7f992dca3204daa52dd8a3281447adaff4b8f0325bfee785873c66d8dd6"
+      }
+    }
+  }
 }

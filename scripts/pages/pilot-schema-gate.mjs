@@ -48,7 +48,24 @@ export function inspectBrowserBoundaries(projectRoot = root) {
   if (!pending.length) throw new Error("Frontend contract has no client roots.");
   // Reviewed adapters pinned by name in the contract, independent of how their source happens to read.
   const manifestPath = resolve(projectRoot, "scripts/pages/frontend-schema.json");
-  const explicit = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")).explicitBoundaries ?? [] : [];
+  const manifest = existsSync(manifestPath) ? JSON.parse(readFileSync(manifestPath, "utf8")) : {};
+  const explicit = manifest.explicitBoundaries ?? [];
+  // Reviewed, manifest-derived feature guards may keep an adapter dormant. Only a
+  // positive if(GUARD) branch around a literal import is eligible; ordinary imports,
+  // unguarded clients and every other API boundary retain the conservative rules.
+  const features = Object.values(manifest.guardedFeatures ?? {});
+  for (const feature of features) {
+    if (!Array.isArray(feature.migrations) || !feature.migrations.length || !feature.guard || !feature.boundaries
+      || !/^src\/[a-zA-Z0-9_./-]+\.ts$/.test(feature.guard.path) || feature.guard.path.includes("..")
+      || !/^[A-Z][A-Z0-9_]*$/.test(feature.guard.symbol)
+      || digest(readFileSync(resolve(projectRoot, feature.guard.path))) !== feature.guard.sha256) throw new Error("Unreviewed schema feature guard.");
+    if (!feature.consumer?.path?.startsWith("src/") || feature.consumer.path.includes("..")
+      || digest(readFileSync(resolve(projectRoot, feature.consumer.path))) !== feature.consumer.sha256) throw new Error("Unreviewed schema feature consumer.");
+    for (const [path, hash] of Object.entries(feature.boundaries)) {
+      if (!path.startsWith("src/") || path.includes("..") || digest(readFileSync(resolve(projectRoot, path))) !== hash) throw new Error("Unreviewed guarded database boundary.");
+    }
+    if (feature.migrations.some(file => !manifest.requiredMigrations?.includes(file) && !manifest.deferredMigrations?.[file])) throw new Error("Unclassified feature migration.");
+  }
   if (!Array.isArray(explicit) || explicit.some((f) => typeof f !== "string" || !f.startsWith("src/") || f.includes(".."))) throw new Error("Invalid explicit boundary list.");
   const seen = new Set(), boundaries = {}, calls = [], literals = [];
   while (pending.length) {
@@ -63,7 +80,37 @@ export function inspectBrowserBoundaries(projectRoot = root) {
       if (target) pending.push(target);
       else if (!/\.(css|json|svg|png|jpg|woff2?)$/.test(specifier)) throw new Error(`Unresolved frontend import in ${path}`);
     };
+    const guarded = new Map();
+    for (const statement of tree.statements) {
+      if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+      const bindings = statement.importClause?.namedBindings;
+      if (!bindings || !ts.isNamedImports(bindings)) continue;
+      const specifier = statement.moduleSpecifier.text;
+      const base = specifier.startsWith("@/") ? resolve(projectRoot, "src", specifier.slice(2)) : resolve(dirname(file), specifier);
+      for (const feature of features) if (path === feature.consumer.path && base + ".ts" === resolve(projectRoot, feature.guard.path)) {
+        for (const binding of bindings.elements) if (!binding.isTypeOnly && (binding.propertyName ?? binding.name).text === feature.guard.symbol) {
+          guarded.set(binding.name.text, feature.migrations.every(m => manifest.requiredMigrations.includes(m) && !manifest.deferredMigrations[m]));
+        }
+      }
+    }
     const visit = (node) => {
+      if (ts.isIfStatement(node) && ts.isIdentifier(node.expression) && guarded.get(node.expression.text) === false) {
+        // Still inspect the condition/else branch. No API call may be hidden in the
+        // branch itself: only the import of the separately pinned adapter is dormant.
+        const inspectDormant = (child) => {
+          if (ts.isCallExpression(child) && child.expression.kind === ts.SyntaxKind.ImportKeyword) {
+            if (child.arguments.length !== 1 || !ts.isStringLiteral(child.arguments[0])) throw new Error(`Computed frontend import requires review: ${path}`);
+            return;
+          }
+          if (ts.isPropertyAccessExpression(child) && ["rpc", "schema", "from"].includes(child.name.text)) throw new Error(`Inline API inside schema guard: ${path}`);
+          if (ts.isIdentifier(child) && ["getPilotClient", "fetch", "XMLHttpRequest", "WebSocket", "EventSource"].includes(child.text)) throw new Error(`Inline network inside schema guard: ${path}`);
+          ts.forEachChild(child, inspectDormant);
+        };
+        inspectDormant(node.thenStatement);
+        visit(node.expression);
+        if (node.elseStatement) visit(node.elseStatement);
+        return;
+      }
       if ((ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
         if (!typeOnly(node)) follow(node.moduleSpecifier.text);
         // Type imports of the SDK also mark a DB adapter requiring explicit review.
@@ -148,7 +195,10 @@ export function frontendRequirements(projectRoot = root) {
   // Required migrations do not make private Node modules safe to ship to participants.
   if (manifest.serverModules !== undefined && (!Array.isArray(manifest.serverModules) || manifest.serverModules.some((file) => typeof file !== "string" || !file.startsWith("src/") || !existsSync(resolve(projectRoot, file))))) throw new Error("Invalid server-only module list.");
   for (const file of manifest.serverModules ?? []) if (graph.reachable.includes(file)) throw new Error(`Server-only backend reached the frontend: ${file}`);
-  const expected = manifest.browserBoundaries;
+  const expected = { ...manifest.browserBoundaries };
+  for (const feature of Object.values(manifest.guardedFeatures ?? {})) if (feature.migrations.every(m => required.includes(m) && !manifest.deferredMigrations[m])) {
+    Object.assign(expected, feature.boundaries);
+  }
   if (Object.keys(expected).length !== Object.keys(graph.boundaries).length || Object.entries(graph.boundaries).some(([file, hash]) => expected[file] !== hash)) {
     throw new Error("Frontend database boundary changed. Review frontend-schema.json and promote any newly required backend migrations before attestation.");
   }
