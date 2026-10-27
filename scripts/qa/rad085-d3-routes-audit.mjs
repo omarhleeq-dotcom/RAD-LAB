@@ -1,0 +1,161 @@
+// Actual exported app routes, isolated PostgreSQL, intercepted synthetic Auth/PostgREST.
+// No hosted URL, provider connection, subscription, polling, real credentials or data.
+// Run after NEXT_PUBLIC_SUPABASE_URL=https://synthetic.supabase.co and a synthetic
+// publishable key npm run build:pages. The required manifest is built in a disposable
+// non-git test copy; the repository's manifest and marker remain deferred.
+import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
+import { spawn, execFileSync } from 'node:child_process';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { build } from 'esbuild';
+import { chromium } from 'playwright';
+const root = process.cwd(), dir = mkdtempSync('/tmp/rad085-p1-routes-');
+const syntheticOrigin = 'https://synthetic.supabase.co';
+const publicEnv = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: syntheticOrigin, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_synthetic_local_test_123456' };
+const msgs = Object.fromEntries(['en', 'ar'].map(l => [l, JSON.parse(readFileSync(`messages/${l}.json`))]));
+const axe = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
+const helper = await build({ stdin: { resolveDir: root, contents: "export {openRad085Database,fixtureId} from './src/features/assess/rad085-local-db';" }, bundle: true, write: false, format: 'esm', platform: 'node', packages: 'external' });
+writeFileSync(join(dir, 'db.mjs'), helper.outputFiles[0].text);
+const { openRad085Database, fixtureId: id } = await import(join(dir, 'db.mjs'));
+
+const params = { scope_page_v1: ['p_kind', 'p_group', 'p_after', 'p_limit'], sharing_consent_v1: ['p_version', 'p_digest', 'p_accept'], appointment_v1: ['p_user', 'p_appoint'], supervisor_group_v1: ['p_action', 'p_group', 'p_revision', 'p_name', 'p_ends'], join_request_v1: ['p_code'], join_decide_v1: ['p_request', 'p_revision', 'p_action'], group_leave_v1: ['p_group'] };
+let db;
+async function reset() {
+ await db?.close(); db = await openRad085Database();
+ for (let n = 1; n <= 6; n++) await db.admin.query("insert into auth.users values($1,$2,now(),$3)", [id(n), `synthetic${n}@example.test`, JSON.stringify({ display_name: 'Synthetic P1', consent_version: '2026-10-24' })]);
+ await db.admin.query("update public.profiles set status=case when user_id=$2 then 'pending' else 'approved' end,role=case when user_id=$1 then 'owner' else 'participant' end", [id(1), id(5)]);
+ for (const n of [2, 3]) await db.rpc(1, 'appointment_v1', [id(n), true]);
+ await db.admin.query(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql', 'utf8'));
+ // Verify the new read-only readiness file and the packet probe on the real local DB.
+ const checks = await db.admin.query(readFileSync('supabase/checks/rad085-d3-ready.sql', 'utf8'));
+ assert.ok(checks.find(r => r.rows?.length).rows.every(row => row.ready === true));
+ const probe = readFileSync('docs/RAD-085_DB_DAY_P1.md', 'utf8').match(/```sql\n([\s\S]*?)```/)[1];
+ const result = await db.admin.query(probe); assert.ok(Object.values(result.find(r => r.rows?.length).rows[0]).every(v => v === true));
+ await db.rpc(2, 'supervisor_group_v1', ['create', null, null, 'Synthetic route group', new Date(Date.now() + 3600000).toISOString()]);
+ // Supervisor3 intentionally has zero groups: appointment is independent of rows.
+ await practice(901, 9); // Before joining: excluded by the server window.
+}
+async function practice(n, score) {
+ await db.transaction(4, c => c.query(`insert into public.attempts(id,user_id,attempt_no,exam_id,case_id,definition_version,settings,result,locale) values($1,$2,1,'synthetic','synthetic','v1','{}',$3,'en')`, [id(n), id(4), JSON.stringify({ total: score })]));
+}
+const mime = path => path.endsWith('.js') ? 'text/javascript' : path.endsWith('.css') ? 'text/css' : path.endsWith('.woff2') ? 'font/woff2' : path.endsWith('.svg') ? 'image/svg+xml' : path.endsWith('.json') ? 'application/json' : 'text/html; charset=utf-8';
+async function serve(folder) {
+ const server = createServer((req, res) => {
+  const pathname = decodeURIComponent(new URL(req.url, 'http://127.0.0.1').pathname);
+  const path = resolve(folder, '.' + pathname);
+  if (!path.startsWith(resolve(folder) + '/') && path !== resolve(folder)) return res.writeHead(403).end();
+  const target = [path, path + '.html', join(path, 'index.html')].find(p => existsSync(p) && statSync(p).isFile());
+  res.setHeader('Cache-Control', 'no-store');
+  if (!target) return res.writeHead(404, { 'Content-Type': 'text/html' }).end(readFileSync(join(folder, '404.html')));
+  res.writeHead(200, { 'Content-Type': mime(target) }).end(readFileSync(target));
+ });
+ await new Promise(r => server.listen(0, '127.0.0.1', r));
+ return { base: `http://127.0.0.1:${server.address().port}`, close: async () => { server.closeAllConnections(); await new Promise(r => server.close(r)); } };
+}
+let p1Calls = 0; const outbound = [], errors = [], rows = [], captures = []; let audits = 0;
+const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/usr/bin/chromium', args: ['--no-sandbox'] });
+async function context(base, who, locale, width, theme) {
+ const ctx = await browser.newContext({ viewport: { width, height: width === 390 ? 844 : 900 }, locale });
+ await ctx.addInitScript(({ who, userId, theme }) => {
+  localStorage.setItem('radlab-theme', theme);
+  const user = { id: userId, aud: 'authenticated', role: 'authenticated', email: `synthetic${who}@example.test`, app_metadata: {}, user_metadata: {}, created_at: new Date().toISOString() };
+  const payload = btoa(JSON.stringify({ sub: userId, exp: Math.floor(Date.now() / 1000) + 3600 })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  localStorage.setItem('sb-synthetic-auth-token', JSON.stringify({ access_token: 'eyJhbGciOiJIUzI1NiJ9.' + payload + '.synthetic', refresh_token: 'synthetic-local-only', token_type: 'bearer', expires_in: 3600, expires_at: Math.floor(Date.now() / 1000) + 3600, user }));
+ }, { who, userId: id(who), theme });
+ await ctx.route('**/*', async route => {
+  const request = route.request(), url = new URL(request.url());
+  if (url.origin === base) return route.continue();
+  if (url.origin !== syntheticOrigin) { outbound.push(url.origin + url.pathname); return route.abort(); }
+  const respond = (data, status = 200) => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(data) });
+  if (url.pathname.startsWith('/auth/')) return respond({ id: id(who), aud: 'authenticated', role: 'authenticated', email: `synthetic${who}@example.test` });
+  if (url.pathname === '/rest/v1/profiles') {
+   const result = await db.admin.query('select status,role,participant_code,consent_version,display_name from public.profiles where user_id=$1', [id(who)]);
+   return respond(result.rows[0]);
+  }
+  const name = url.pathname.split('/').at(-1);
+  if (params[name] && request.headers()['content-profile'] === 'assess') {
+   p1Calls++; const input = request.postDataJSON() ?? {}, names = params[name];
+   assert.ok(Object.keys(input).every(k => names.includes(k)), 'no actor substitution');
+   const args = names.map(k => input[k] ?? null);
+   // Omitted arguments use SQL defaults; the app intentionally sends none on policy reads.
+   while (args.length && !(names[args.length - 1] in input)) args.pop();
+   try { return await respond(await db.rpc(who, name, args)); }
+   catch (e) { return respond({ code: e.code ?? '', message: 'Synthetic RPC denied', details: null, hint: null }, 400); }
+  }
+  if (url.pathname === '/rest/v1/events') return respond([], 201);
+  if (name === 'owner_account_directory_v1') return respond({ version: 1, boundary: new Date().toISOString(), rows: [], counts: { pending: 0, approved: 0, suspended: 0 }, next: null });
+  if (name === 'owner_account_deletion_v1' || name === 'owner_surveys_v1') return respond({ rows: [], next: null });
+  if (name === 'owner_page_v1') return respond({ version: 1, boundary: new Date().toISOString(), rows: [], next: null });
+  return respond(null);
+ });
+ return ctx;
+}
+async function audit(page, label) {
+ await page.evaluate(axe);
+ const violations = await page.evaluate(() => window.axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } }).then(r => r.violations.map(v => ({ id: v.id, nodes: v.nodes.map(n => n.target) }))));
+ assert.deepEqual(violations, [], label); assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), label + ' overflow');
+ assert.equal(await page.getByRole('heading', { level: 1 }).count(), 1, label + ' h1'); audits++;
+}
+async function open(ctx, base, locale, route) {
+ const page = await ctx.newPage(); page.on('pageerror', e => errors.push(e.message));
+ page.on('console', message => { if (message.type() === 'error' && !/Failed to load resource:.*404/.test(message.text())) errors.push(message.text()); });
+ await page.goto(`${base}/${locale}/${route}`); return page;
+}
+let deferredServer, requiredServer;
+try {
+ await reset(); deferredServer = await serve(join(root, 'out'));
+ for (const locale of ['en', 'ar']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+  const ctx = await context(deferredServer.base, 2, locale, width, theme), before = p1Calls;
+  try {
+   const page = await open(ctx, deferredServer.base, locale, 'supervisor'); await page.waitForLoadState('networkidle');
+   assert.equal(await page.locator('[data-p1-role]').count(), 0);
+   assert.equal(await page.locator('.site-nav a[href$="/supervisor"]').count(), 0); assert.equal(p1Calls, before);
+  } finally { await ctx.close(); }
+ }
+ await deferredServer.close(); deferredServer = null;
+ const copy = join(dir, 'required'); mkdirSync(copy);
+ for (const file of ['src', 'messages', 'public', 'scripts', 'supabase', 'package.json', 'package-lock.json', 'tsconfig.json', 'next.config.ts', 'next-env.d.ts', 'postcss.config.mjs']) if (existsSync(file)) cpSync(file, join(copy, file), { recursive: true });
+ execFileSync('cp', ['-a', '--reflink=auto', join(root, 'node_modules'), join(copy, 'node_modules')]);
+ const file = join(copy, 'scripts/pages/frontend-schema.json'), m = JSON.parse(readFileSync(file));
+ for (const migration of m.guardedFeatures.supervisorP1.migrations) { m.requiredMigrations.push(migration); delete m.deferredMigrations[migration]; }
+ writeFileSync(file, JSON.stringify(m, null, 2) + '\n');
+ console.log('Building an isolated required-manifest fixture; no git checkout/worktree.');
+ await new Promise((resolveBuild, reject) => {
+  const child = spawn('npm', ['run', 'build:pages'], { cwd: copy, env: publicEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+  let output = ''; child.stdout.on('data', c => output += c); child.stderr.on('data', c => output += c);
+  child.on('exit', code => code === 0 ? resolveBuild() : reject(Error(output))); child.on('error', reject);
+ });
+ requiredServer = await serve(join(copy, 'out'));
+ for (const width of [390, 1440]) for (const locale of ['en', 'ar']) for (const theme of ['light', 'dark']) {
+  console.log(`Supervisor/nav ${locale}/${width}/${theme}`); await reset(); const t = msgs[locale].supervisor;
+  for (const [who, appointed, state] of [[2, true, 'active'], [3, true, 'zero-groups'], [4, false, 'not-supervisor'], [1, false, 'owner']]) {
+   const ctx = await context(requiredServer.base, who, locale, width, theme);
+   try {
+    const page = await open(ctx, requiredServer.base, locale, 'supervisor');
+    if (appointed) await page.getByRole('heading', { name: t.create, exact: true }).waitFor();
+    else await page.getByText(t.notSupervisor, { exact: true }).waitFor();
+    assert.equal((await page.locator('.site-nav a[href$="/supervisor"]').count()) > 0, appointed);
+    await audit(page, state + ' route');
+    if (width === 390) {
+     await page.getByTestId('menu-toggle').click(); await audit(page, state + ' nav'); await page.keyboard.press('Escape');
+    }
+    if (width === 390 && theme === 'dark' && ['active', 'not-supervisor'].includes(state)) {
+     const path = `docs/review/rad085-d3-${locale}-${state}.jpg`; mkdirSync('docs/review', { recursive: true });
+     await page.screenshot({ path, type: 'jpeg', quality: 55, fullPage: true }); captures.push(path);
+    }
+    if (who === 2) {
+     await db.rpc(1, 'appointment_v1', [id(2), false]);
+     await page.getByRole('button', { name: t.retry, exact: true }).click();
+     await page.getByText(t.notSupervisor, { exact: true }).waitFor();
+     assert.equal(await page.locator('.site-nav a[href$="/supervisor"]').count(), 0); await audit(page, 'revoked');
+    }
+    rows.push({ locale, width, theme, state, passed: true });
+   } finally { await ctx.close(); }
+  }
+ }
+ assert.deepEqual(errors, []); assert.deepEqual(outbound, []);
+ const screenshotBytes = captures.reduce((sum, path) => sum + statSync(path).size, 0); assert.ok(screenshotBytes <= 5 * 1024 * 1024);
+ const summary = { deferredChecks: 8, deferredCalls: 0, matrix: rows, audits, p1Calls, errors, outbound, screenshotBytes, captures };
+ writeFileSync('/tmp/rad085-d3-routes-summary.json', JSON.stringify(summary, null, 2)); console.log(JSON.stringify(summary));
+} finally { await browser.close(); await deferredServer?.close(); await requiredServer?.close(); await db?.close(); rmSync(dir, { recursive: true, force: true }); }

@@ -71,3 +71,10 @@
 ## حد القرار
 
 لم يتغير أي حكم قديم باختصار هذه المصفوفة، وروابط أصوله باقية. الجديد هو [قرار المالك المحدد](DECISIONS.md#rad085-erasure-owner-2026-10-26): الحجب المؤقت، والمحو التابع الآمن، والاستثناء الأدنى للمصالحة. لا موافقة قانونية أو تخزين معتمد بالنيابة. قرار نقل مسؤولية الإدارة وإزالة الهوية حيث يمكن معتمد الآن بالمرجع الأحدث، أما تطبيقه التقني ومراجعة الحقوق فما زالا محجوبين بما سبق. الحجب لا يحل التزامات Terms تجاه الكاتب؛ قرار المهلة محسوم في D3؛ يلزم التنفيذ الآمن ومراجعته قبل بيانات حقيقية.
+
+
+## Current O5 / deferred D3 overlay — 2026-10-27
+
+The inventory/blocker descriptions above remain evidence for the historical local manual, not the new live contract. [O5](DECISIONS.md#rad085-db-day-owner-2026-10-27) corrects the original D3 timing: **management before30; normal C2 erasure after the recovery window and within7 further days**, not erasure within30. The [new deferred migration and resolved gap](RAD-085_D3_SQL_GAP.md) add separate managers, narrow identity minimisation, confirmed/closed provenance preservation, private replay and exact-byte rights review; the old manual must not be applied over D3. No original evidence links or student retention rules are removed.
+
+Current shared/assigned/closed cases transfer management before30 after reviewed content clearance; creator/decision/appointment/scope identities are removed where unnecessary without changing publications/digests/closed_at/results or assigning authorship to the owner. Required minimal attribution stays only after independent exact-byte review; unresolved rights/unnecessary identity escalates before30 and blocks real-content intake rather than silently keeping all identity. A missing transfer never extends requested_at. The owner operates the [daily finalise reminder](RAD-085_REMAINING_OPERATIONS_2026-10-26.md#o5-daily-deletion-reminder); source PostgreSQL witnesses and the combined packet do not attest provider backups, exported files, live installation or legal acceptance.

@@ -9,10 +9,11 @@ const parameters: Record<string, readonly string[]> = {
  supervisor_group_v1: ['p_action', 'p_group', 'p_revision', 'p_name', 'p_ends'],
  join_request_v1: ['p_code'], join_decide_v1: ['p_request', 'p_revision', 'p_action'], group_leave_v1: ['p_group'],
 };
-export async function bindP1(self: Person) {
+export async function bindP1(self: Person, appointment?: (appointed: boolean) => void) {
  const client = await getPilotClient();
  if (!client) throw Error('unavailable');
  const transport: ScopeTransport = {
+  appointment,
   async rpc(name, args, signal) {
    const names = parameters[name];
    if (!names || args.length > names.length) throw Error('invalid operation');

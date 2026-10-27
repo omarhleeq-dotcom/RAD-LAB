@@ -48,7 +48,8 @@ export async function openLocalDatabase(backend, {through='latest',lineEndings='
       create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
       create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
       grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
-    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'||(through==='pre-rad085'?!['20261026000100_assess_supervisor_scope.sql','20261026000200_assess_authoring_drafts.sql','20261026000300_assess_assignment_review.sql'].includes(f):f<'20261020001100'))).sort()) {
+    // RAD085-D3-DEFERRED-20261027: the historical ceiling excludes all four deferred sources.
+    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'||(through==='pre-rad085'?!['20261026000100_assess_supervisor_scope.sql','20261026000200_assess_authoring_drafts.sql','20261026000300_assess_assignment_review.sql','20261027000100_assess_management_erasure.sql'].includes(f):f<'20261020001100'))).sort()) {
       const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
       await exec(lineEndings==='crlf'&&file>='20261020000600'?sql.replaceAll('\n','\r\n'):sql);
     }

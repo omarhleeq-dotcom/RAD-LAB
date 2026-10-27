@@ -7,6 +7,7 @@ import { ReviewError, type Command, type Group, type JoinRequest, type Page, typ
  */
 export interface ScopeTransport {
  rpc(name: string, args: unknown[], signal: AbortSignal): Promise<unknown>;
+ appointment?(appointed: boolean): void;
  subscribe?(invalidate: () => void): () => void;
 }
 const blank = <T>(): Page<T> => ({ rows: [], next: null });
@@ -67,6 +68,7 @@ export function createSqlReview(self: Person, transport: ScopeTransport): Review
    const observe = (raw: unknown) => {
     const p = object(raw), serverNow = time(p.serverNow);
     data.now = Math.max(data.now, serverNow);
+    if (self.role === 'supervisor' && typeof p.appointed === 'boolean') { data.appointed = p.appointed; transport.appointment?.(p.appointed); }
     if (p.visibleUntil !== null) boundary = Math.min(boundary, time(p.visibleUntil) - serverNow);
     return raw;
    };

@@ -804,7 +804,9 @@ B/C الملتزمان سابقًا ثابتان، كما الإصدار/8 وcom
 >
 > D2: RAD-082 (automated daily local Docker backup on the owner's laptop) must be complete BEFORE the first real exam, in any session before that exam. No cloud backups. The reconciliation log is an encrypted local file next to the Docker backups, with no cloud storage. Recommend a weekly copy to external USB.
 >
-> D3: The author/supervisor deletion block is time-bounded. Management transfers to the owner and erasure completes within the Terms 30-day window; no open-ended block.
+> D3 (current): see [O5](#rad085-db-day-owner-2026-10-27) for the corrected timing. Management transfers before day 30; normal C2 finalise follows the recovery window and completes within 7 further days.
+>
+> Historical D3, superseded only as to timing by O5: The author/supervisor deletion block is time-bounded. Management transfers to the owner and erasure completes within the Terms 30-day window; no open-ended block.
 >
 > D4: Written answers: warn the owner on day 5. The owner may grade before day 7. Void only if still ungraded on day 7.
 >
@@ -819,3 +821,18 @@ B/C الملتزمان سابقًا ثابتان، كما الإصدار/8 وcom
 > D8: Before a group ends, the supervisor can export the group's final grades once. Record this as a planned later-phase item; do not implement it now.
 
 [التقرير الموحد](RAD-085_REPORT_2026-10-27.md) يحفظ جدول القيم المحسوبة والنص النهائي AR/EN لموافقة المالك وأدلة التنفيذ وحدوده. [الخطة](RAD-085_PLAN_2026-10-25.md) و[التشغيل](RAD-085_REMAINING_OPERATIONS_2026-10-26.md) و[المصفوفة](RAD-085_ERASURE_MATRIX_2026-10-26.md) تفصل المتطلبات عن الكود القائم. لا SQL حي أو عامل منشور أو واجهة جديدة؛ لا تغيير لشرط C2 في الكود أو ترحيل تاريخي أو بصمة مخطط/مشهد. اكتمال نقل الإدارة والمحو خلال نافذة Terms عائق قبل بيانات حقيقية، لا ادعاء تنفيذ من هذه الدفعة. PR #137 يبقى open/Draft/unmerged بلا auto-merge، ولا فتح/مشاركة روابط المعاينة رغم عودة توليدها آليًا.
+
+<a id="rad085-db-day-owner-2026-10-27"></a>
+### RAD-085 — O1–O5: combined DB day and corrected D3 timing, 2026-10-27
+
+Authority: the owner's W1–W3/O1–O4 instruction and subsequent O5 clarification in this session. This anchor governs the current packet; [original D3](#rad085-owner-tidy-2026-10-27) remains as history, with its original evidence links.
+
+- **O1:** The EN/AR [Terms proposal](RAD-085_TERMS_P1_PROPOSAL.md) is approved as written, with **only the O5 timing correction below**. Publish it only on DB day together with the CONSENT_VERSION bump; neither is changed in this PR. Acceptance remains personal.
+- **O2:** **RAD085-SQL-SHARING-POLICY-LIVE-P1-20261027** approves adding `supabase/manual/rad085-sharing-policy-live-p1.sql` byte-identical to the added-file payload in [the proposal patch](RAD-085_SHARING_LIVE_P1_PROPOSAL.patch), recording SHA-256 and testing only an isolated local fixture. This is no live SQL authorization.
+- **O3:** Staging is the owner's fresh local Docker backup restored to isolated local PostgreSQL, followed by the packet §4 authorization tests. There is no second Supabase project. Backups and reconciliation evidence remain encrypted locally.
+- **O4:** One combined DB day: the three RAD-085 migrations, the new D3 migration, live sharing initializer, then the coordinated Terms/CONSENT_VERSION and manifest/attestation update after verification. No split activation that leaves D3 absent.
+- **O5 (D3 clarification, no C2 change):** Management MUST transfer to the owner **before day 30**. Final erasure uses the **normal existing C2 finalise after the 30-day recovery window**, like a student account, and completes **no later than 7 days after that window ends**. No early finalise, changed requested_at, extended window, or altered historical expectation. Failure to complete transfer before day 30 escalates to the owner through the operations list/alert; it never permits an open-ended block. The owner runs the existing finalise path daily and clears all due batches before day 37; [operations](RAD-085_REMAINING_OPERATIONS_2026-10-26.md) records the reminder and escalation.
+
+O5 Terms wording: “Your account is disabled immediately. You can cancel within 30 days. After that, it is permanently deleted within 7 days.” For supervisors/authors, management of necessary retained content transfers to the owner before deletion, without crediting the owner as author. The proposal carries matching Arabic. Any published “within 30 days” promise is prepared for correction in the DB-day packet, never published in this PR.
+
+**RAD085-D3-DEFERRED-20261027** covers only adding the new D3 source to RAD085 deferred lists/constants, its frontend-schema.json deferred entry and tests deriving expectations from that list. All changed pins are listed file:line/old/new/reason in the implementation report. W2 separately authorizes consistent guardedFeatures guard/consumer/boundary hashes for the supervisor navigation correction. Any other required existing pin/expectation change: STOP and list it. No existing migration, scoring, scenes, exam data or current schema marker changes; Draft PR only, never ready/merge/auto-merge.
