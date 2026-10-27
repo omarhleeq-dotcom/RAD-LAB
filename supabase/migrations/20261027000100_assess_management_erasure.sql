@@ -411,12 +411,24 @@ begin
  return new;
 end $$;
 
+-- RAD085-SEC-FIXES-20261027 SEC-03: platform account-deletion management requires an
+-- approved site owner, never Assess eligibility (account_stops). Same scope -> profile
+-- lock order as scope_enter_v1; callers still re-check is_owner after every wait.
+create function assess.owner_scope_enter_v1(p_write boolean) returns void
+language plpgsql security definer set search_path='' as $$
+begin
+ if current_setting('transaction_isolation')<>'read committed' then raise exception 'read committed required' using errcode='55000'; end if;
+ if p_write then perform 1 from assess.scope_lock for update; else perform 1 from assess.scope_lock for share; end if;
+ perform 1 from public.profiles where user_id=auth.uid() for share;
+ if not public.is_owner() then raise exception 'approved owner required' using errcode='42501'; end if;
+end $$;
+
 create function assess.transfer_management_d3_v1(p_user uuid,p_digest text,p_replay_at timestamptz default null) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare q public.c2_account_deletions; inv jsonb; ts timestamptz;
 begin
  if not public.is_owner() or p_user is null or p_user=auth.uid() then raise exception 'owner target required' using errcode='42501'; end if;
- perform assess.scope_enter_v1(true);
+ perform assess.owner_scope_enter_v1(true);
  if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
  lock table public.profiles in share row exclusive mode;
  perform 1 from public.profiles where user_id in (p_user,auth.uid()) order by user_id for update;
@@ -464,7 +476,7 @@ language plpgsql security definer set search_path='' as $$
 declare inv jsonb; q public.c2_account_deletions; needs_transfer boolean;
 begin
  if not public.is_owner() or p_user is null or p_user=auth.uid() then raise exception 'owner target required' using errcode='42501'; end if;
- perform assess.scope_enter_v1(true);
+ perform assess.owner_scope_enter_v1(true);
  if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
  lock table public.profiles in share row exclusive mode;
  perform 1 from public.profiles where user_id=p_user for update;
@@ -515,7 +527,7 @@ begin
  if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
  if p_limit is null or p_limit not between 1 and 100 then raise exception 'invalid page' using errcode='22023'; end if;
  if p_action='list' then
-  perform assess.scope_enter_v1(false);
+  perform assess.owner_scope_enter_v1(false);
   if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
   select coalesce(jsonb_agg(to_jsonb(x) order by x.user_id),'[]') into rows from (
    select q.user_id,q.requested_at,q.requested_at+interval '30 days' transfer_before,q.requested_at+interval '37 days' erase_by,
@@ -529,7 +541,7 @@ begin
  end if;
  if p_user is null or p_user=auth.uid() then raise exception 'owner target required' using errcode='42501'; end if;
  if p_action='preview' then
-  perform assess.scope_enter_v1(false);
+  perform assess.owner_scope_enter_v1(false);
   if not public.is_owner() then raise exception 'owner only after scope wait' using errcode='42501'; end if;
   return assess.d3_inventory_v1(p_user);
  end if;
@@ -559,7 +571,7 @@ begin
  if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
  if p_action is null or p_action not in ('deactivate','restore','finalise','list') or p_limit is null or p_limit<1 then
   raise exception 'invalid deletion request' using errcode='22023'; end if;
- if p_action in ('deactivate','restore','finalise') then perform assess.scope_enter_v1(true); end if;
+ if p_action in ('deactivate','restore','finalise') then perform assess.owner_scope_enter_v1(true); end if;
  -- Serialise owner deletion operations and role/status writes while checking last owner.
  lock table public.profiles in share row exclusive mode;
  if not public.is_owner() then raise exception 'owner only after profile wait' using errcode='42501'; end if;
@@ -646,9 +658,15 @@ begin
     select v.user_id id,p.display_name,v.period_id,v.visible_from from assess.visible_members_v1(g.id) v
     join public.profiles p on p.user_id=v.user_id where p_after is null or v.user_id>p_after order by v.user_id limit p_limit) q;
   elsif p_kind='requests' then
+   -- RAD085-SEC-FIXES-20261027 SEC-02: only pending requests of accounts still eligible
+   -- to join, filtered before paging. Decided/historical rows never reveal a student
+   -- who left, withdrew sharing or is out of scope; owner audit data is not exposed here.
    select coalesce(jsonb_agg(to_jsonb(q) order by q.id),'[]') into rows from (
-    select id,user_id,state,revision from assess.group_join_requests where group_id=g.id
-    and (p_after is null or id>p_after) order by id limit p_limit) q;
+    select r.id,r.user_id,r.state,r.revision from assess.group_join_requests r join public.profiles p on p.user_id=r.user_id
+    where r.group_id=g.id and r.state='pending' and p.status='approved' and p.role='participant'
+    and not exists(select 1 from assess.account_stops s where s.user_id=r.user_id) and assess.sharing_allowed_v1(r.user_id)
+    and not exists(select 1 from assess.memberships m where m.group_id=g.id and m.user_id=r.user_id)
+    and (p_after is null or r.id>p_after) order by r.id limit p_limit) q;
   elsif p_kind='practice' then
    with visible as materialized (
     select r.attempt_id id,r.user_id,r.recorded_at,a.exam_id,a.case_id,
@@ -666,19 +684,67 @@ end $$;
 
 create or replace function assess.assignment_close_v2(p_assignment uuid,p_revision integer) returns void
 language plpgsql security definer set search_path='' as $$
-declare a assess.assignments;
+declare a assess.assignments; gid uuid;
 begin
  perform assess.scope_enter_v1(true);
  select * into a from assess.assignments where id=p_assignment and (owner_id=auth.uid() or (public.is_owner() and exists(select 1 from assess.assignment_managers m where m.assignment_id=p_assignment and m.manager_id=auth.uid()))) for update;
  if a.id is null then raise exception 'assignment denied' using errcode='42501'; end if;
+ -- The owner/D3-manager path is separate and unchanged.
+ if public.is_owner() then
+  if a.closed_at is not null then return; end if;
+  if a.revision is distinct from p_revision then raise exception 'assignment changed' using errcode='40001'; end if;
+  perform assess.close_assignment_v1(a.id); return;
+ end if;
+ -- RAD085-SEC-FIXES-20261027 SEC-01: after the locks and before any receipt or change,
+ -- the issuing group must belong to the caller, be unended and keep an active appointment.
+ select s.group_id into gid from assess.assignment_scopes s where s.assignment_id=a.id and s.supervisor_id=auth.uid();
+ if gid is null then raise exception 'assignment denied' using errcode='42501'; end if;
+ perform assess.supervised_group_v1(gid);
  if a.closed_at is not null then return; end if;
  if a.revision is distinct from p_revision then raise exception 'assignment changed' using errcode='40001'; end if;
- if public.is_owner() then perform assess.close_assignment_v1(a.id); return; end if;
- if not exists(select 1 from assess.assignment_scopes s join assess.groups g on g.id=s.group_id
-  join assess.supervisor_appointments ap on ap.user_id=s.supervisor_id
-  where s.assignment_id=a.id and s.supervisor_id=auth.uid() and g.supervisor_id=auth.uid() and ap.revoked_at is null) then
-  raise exception 'assignment denied' using errcode='42501'; end if;
  update assess.assignments set closed_at=clock_timestamp(),revision=revision+1 where id=a.id;
+ -- The deadline may pass while writing; a failure here rolls the closure back.
+ perform assess.supervised_group_v1(gid);
+end $$;
+-- RAD085-SEC-FIXES-20261027 SEC-01: the M3 body is unchanged except the replay branch,
+-- which now re-checks the same group scope as a new confirmation before returning a receipt.
+create or replace function assess.assignment_confirm_v1(p_review uuid) returns uuid
+language plpgsql security definer set search_path='' as $$
+declare r assess.assignment_reviews; g assess.groups; d assess.authoring_drafts; aid uuid; ts timestamptz;
+begin
+ perform assess.scope_enter_v1(true);
+ select * into r from assess.assignment_reviews where id=p_review and writer_id=auth.uid();
+ if r.id is null then raise exception 'review denied' using errcode='42501'; end if;
+ -- Authorized replay returns the original receipt after review expiry, never after
+ -- group end/expiry, revocation or loss of the group; never recreates targets.
+ if r.assignment_id is not null then
+  perform assess.supervised_group_v1(r.group_id);
+  return r.assignment_id;
+ end if;
+ g:=assess.supervised_group_v1(r.group_id); ts:=clock_timestamp();
+ if r.expires_at<=ts then raise exception 'review expired' using errcode='55000'; end if;
+ if r.group_revision<>g.scope_revision or not exists(select 1 from assess.supervisor_appointments where user_id=auth.uid() and revision=r.appointment_revision and revoked_at is null) then
+  raise exception 'scope changed' using errcode='40001'; end if;
+ select * into d from assess.authoring_drafts where id=r.draft_id and writer_id=auth.uid() and group_id=g.id;
+ if d.revision is distinct from r.draft_revision then raise exception 'draft changed' using errcode='40001'; end if;
+ perform assess.validate_draft_v1(d.document,d.refs);
+ if assess.linked_version_v1(d.id,d.revision)<>r.version_id then raise exception 'version changed' using errcode='40001'; end if;
+ perform 1 from assess.versions where id=r.version_id for share;
+ perform p.user_id from public.profiles p join assess.memberships m on m.user_id=p.user_id where m.group_id=g.id order by p.user_id for share of p;
+ if exists(
+  (select user_id,period_id,visible_from from assess.visible_members_v1(g.id)
+   except select user_id,period_id,visible_from from assess.assignment_review_targets where review_id=r.id)
+  union all
+  (select user_id,period_id,visible_from from assess.assignment_review_targets where review_id=r.id
+   except select user_id,period_id,visible_from from assess.visible_members_v1(g.id))
+ ) then raise exception 'targets changed' using errcode='40001'; end if;
+ -- Recheck server time after all possibly blocking locks, not transaction start time.
+ if clock_timestamp()>=least(r.expires_at,g.ends_at) then raise exception 'review expired' using errcode='55000'; end if;
+ insert into assess.assignments(owner_id,version_id,source_group_ids) values(auth.uid(),r.version_id,array[g.id]) returning id into aid;
+ insert into assess.targets select aid,user_id from assess.assignment_review_targets where review_id=r.id;
+ insert into assess.assignment_scopes values(aid,g.id,auth.uid(),r.id);
+ update assess.assignment_reviews set assignment_id=aid where id=r.id;
+ return aid;
 end $$;
 create or replace function assess.assignment_page_v2(p_group uuid default null,p_after uuid default null,p_limit integer default 20)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -696,7 +762,7 @@ end $$;
 
 revoke all on function assess.d3_fk_inventory_v1(),assess.d3_needs_transfer_v1(uuid),assess.d3_inventory_v1(uuid),assess.d3_erasing_v1(uuid),assess.d3_shared_group_v1(uuid,uuid),
  assess.transfer_management_d3_v1(uuid,text,timestamptz),assess.erase_account_d3_v1(uuid),
- assess.account_management_v1(text,uuid,text,uuid,integer)
+ assess.account_management_v1(text,uuid,text,uuid,integer),assess.owner_scope_enter_v1(boolean)
  from public,anon,authenticated,assess_worker,assess_authoring_bridge;
 grant execute on function assess.account_management_v1(text,uuid,text,uuid,integer) to authenticated;
 commit;

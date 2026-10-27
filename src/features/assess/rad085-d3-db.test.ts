@@ -263,7 +263,8 @@ it('checks complete D3/C2 catalogue read-only and rejects an unreviewed FK at in
  try {
   const results = await db.admin.query(readFileSync('supabase/checks/rad085-d3-ready.sql', 'utf8'));
   const flags = (results as unknown as { rows: { ready: boolean }[] }[]).find(r => r.rows.length)?.rows;
-  expect(flags?.length).toBe(8); expect(flags?.every(r => r.ready)).toBe(true);
+  // RAD085-SEC-FIXES-20261027 SEC-05: +effective privileges, role attributes/memberships, scope lock, sharing policy.
+  expect(flags?.length).toBe(13); expect(flags?.every(r => r.ready)).toBe(true);
   await db.admin.query("create table assess.synthetic_drift(id uuid)");
   const drift = await db.admin.query(readFileSync('supabase/checks/rad085-d3-ready.sql', 'utf8'));
   expect((drift as unknown as { rows: { ready: boolean }[] }[]).find(r => r.rows.length)?.rows.some(r => !r.ready)).toBe(true);

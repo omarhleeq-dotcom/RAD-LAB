@@ -33,8 +33,11 @@ export function inspectBrowserBoundaries(projectRoot = root) {
   const files = sourceFiles(resolve(projectRoot, "src"));
   const sources = new Map(files.map((file) => [file, readFileSync(file, "utf8")]));
   const parsed = new Map();
+  // Each file is parsed at most once. JSDoc is never visited by forEachChild, so skipping
+  // its parse (RAD-SCHEMA-GATE S8) leaves every import/call/literal check unchanged.
+  const parse = (path, text) => ts.createSourceFile(path, text, { languageVersion: ts.ScriptTarget.Latest, jsDocParsingMode: ts.JSDocParsingMode.ParseNone }, false);
   const load = (path) => {
-    if (!parsed.has(path)) parsed.set(path, ts.createSourceFile(path, sources.get(path) ?? readFileSync(path, "utf8"), ts.ScriptTarget.Latest, false));
+    if (!parsed.has(path)) parsed.set(path, parse(path, sources.get(path) ?? readFileSync(path, "utf8")));
     return parsed.get(path);
   };
   const pending = files.filter((file) => {
@@ -65,6 +68,21 @@ export function inspectBrowserBoundaries(projectRoot = root) {
       if (!path.startsWith("src/") || path.includes("..") || digest(readFileSync(resolve(projectRoot, path))) !== hash) throw new Error("Unreviewed guarded database boundary.");
     }
     if (feature.migrations.some(file => !manifest.requiredMigrations?.includes(file) && !manifest.deferredMigrations?.[file])) throw new Error("Unclassified feature migration.");
+    // RAD085-SEC-FIXES-20261027 SEC-04: availability is one exported const boolean literal
+    // with no runtime imports/re-exports, so no client module can change it before it is
+    // evaluated. It must equal this manifest's classification, read here from disk.
+    feature.available = feature.migrations.every(m => manifest.requiredMigrations.includes(m) && !manifest.deferredMigrations[m]);
+    const guardTree = load(resolve(projectRoot, feature.guard.path));
+    const named = (s) => ts.isFunctionDeclaration(s) || ts.isClassDeclaration(s) || ts.isEnumDeclaration(s) || ts.isModuleDeclaration(s)
+      ? [s.name?.text] : ts.isVariableStatement(s) ? s.declarationList.declarations.map(d => ts.isIdentifier(d.name) ? d.name.text : undefined) : [];
+    const switches = guardTree.statements.filter(s => named(s).includes(feature.guard.symbol));
+    const literal = switches.length === 1 && ts.isVariableStatement(switches[0]) && switches[0].declarationList.declarations.length === 1
+      && (switches[0].declarationList.flags & ts.NodeFlags.Const) && switches[0].modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)
+      ? switches[0].declarationList.declarations[0] : undefined;
+    if (guardTree.statements.some(s => ts.isImportDeclaration(s) || ts.isImportEqualsDeclaration(s) || ts.isExportDeclaration(s) || ts.isExportAssignment(s))
+      || !literal || (literal.type && literal.type.kind !== ts.SyntaxKind.BooleanKeyword)
+      || ![ts.SyntaxKind.TrueKeyword, ts.SyntaxKind.FalseKeyword].includes(literal.initializer?.kind)) throw new Error("Schema feature guard must be a literal constant.");
+    if ((literal.initializer.kind === ts.SyntaxKind.TrueKeyword) !== feature.available) throw new Error("Schema feature guard does not match the manifest.");
   }
   if (!Array.isArray(explicit) || explicit.some((f) => typeof f !== "string" || !f.startsWith("src/") || f.includes(".."))) throw new Error("Invalid explicit boundary list.");
   const seen = new Set(), boundaries = {}, calls = [], literals = [];
@@ -89,7 +107,7 @@ export function inspectBrowserBoundaries(projectRoot = root) {
       const base = specifier.startsWith("@/") ? resolve(projectRoot, "src", specifier.slice(2)) : resolve(dirname(file), specifier);
       for (const feature of features) if (path === feature.consumer.path && base + ".ts" === resolve(projectRoot, feature.guard.path)) {
         for (const binding of bindings.elements) if (!binding.isTypeOnly && (binding.propertyName ?? binding.name).text === feature.guard.symbol) {
-          guarded.set(binding.name.text, feature.migrations.every(m => manifest.requiredMigrations.includes(m) && !manifest.deferredMigrations[m]));
+          guarded.set(binding.name.text, feature.available);
         }
       }
     }
