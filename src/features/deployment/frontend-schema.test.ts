@@ -1,3 +1,5 @@
+// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
+import {RAD085_MIGRATIONS} from "../assess/server-rad085-contracts";
 import { cpSync,mkdirSync,existsSync,mkdtempSync,readFileSync,rmSync,writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join,resolve } from "node:path";
@@ -26,6 +28,7 @@ beforeAll(()=>{
   // Keep the historical B fixture isolated from the additive owner dashboard.
   rmSync(join(root,"supabase/migrations/20261024000100_owner_dashboard.sql"),{force:true});
   rmSync(join(root,"supabase/migrations/20261024000200_owner_deletion_surveys.sql"),{force:true});
+  for(const file of RAD085_MIGRATIONS) rmSync(join(root,"supabase/migrations",file),{force:true});
   mkdirSync(join(root,"src/features/assess"),{recursive:true});
   mkdirSync(join(root,"src/features/positioning"),{recursive:true});
   cpSync("src/features/assess/admin-data.ts",join(root,"src/features/assess/admin-data.ts"));

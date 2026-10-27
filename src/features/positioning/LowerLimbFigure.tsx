@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { lowerLimbImage, type LowerLimbKind } from "@/data/exams/xray/lower-limb-geometry";
+import { lowerLimbDrawingImage, type LowerLimbKind } from "@/features/positioning/drawing-data";
 import { ankleApAnchors, ankleLateralCopies, ANKLE_AP_MODEL, ANKLE_LATERAL_WIDTH_PX, kneeApShifts, kneeLateralCopies, interpolateAnchors, KNEE_AP_MODEL, KNEE_LATERAL_COPY_WEIGHTS } from "@/features/lower-limb-model/lower-limb-model";
 import { SCENE, STROKE } from "./scene-style";
 import { smoothClosedPath, smoothOpenPath } from "./elbow-visual";
@@ -27,7 +27,7 @@ import type { FigureProps } from "./detector-figures";
  */
 export function LowerLimbDrawing({ radCase, settings, showGuides, W, H }: FigureProps) {
   const kind = (["knee-ap", "knee-lateral", "foot-ap", "foot-oblique", "ankle-ap", "ankle-lateral"].includes(settings.projection) ? settings.projection : radCase.requiredProjection) as LowerLimbKind;
-  const im = lowerLimbImage(kind);
+  const im = lowerLimbDrawingImage(kind);
   const a = radCase.requiredAnatomy;
   const U = 10; // SVG units per detector cm (`detector-figures.tsx` U)
   const k = im.cmPerPx * U; // SVG units per image pixel

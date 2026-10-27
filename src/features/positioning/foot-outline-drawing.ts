@@ -19,7 +19,7 @@
  */
 import outlines from "./foot-outlines.json";
 import { footAnchors, footValue, FOOT_MODEL, type FootKind } from "@/features/lower-limb-model/lower-limb-model";
-import { LOWER_LIMB_RADIOGRAPHS } from "@/data/cases/lower-limb-radiographs";
+import { FOOT_AP_DISPLACEMENT, FOOT_OBLIQUE_DISPLACEMENT } from "@/features/positioning/drawing-data";
 import { footShiftPx } from "./lower-limb-visual";
 import { centroid, closeOnBorder, followNearest, type DrawnPart as SharedPart, type Pt } from "./outline-geometry";
 
@@ -38,7 +38,7 @@ const structures = (kind: FootKind) => outlines.views[kind].structures as unknow
 const isBone = (s: Structure) => s.group !== "soft" && s.group !== "joints" && s.points.length > 2;
 const drawn = (s: Structure) => s.drawn !== false && s.points.length > 2;
 const bandsOf = (kind: FootKind) => {
-  const lm = LOWER_LIMB_RADIOGRAPHS[kind === "ap" ? "foot-ap" : "foot-oblique"].limbRotation;
+  const lm = (kind === "ap" ? FOOT_AP_DISPLACEMENT : FOOT_OBLIQUE_DISPLACEMENT);
   return lm && "bands" in lm ? lm.bands : [];
 };
 

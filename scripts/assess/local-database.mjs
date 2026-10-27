@@ -9,7 +9,7 @@ import { execFileSync } from 'node:child_process';
 export async function openLocalDatabase(backend, {through='latest',lineEndings='lf'}={}) {
   if(!['pglite','postgres'].includes(backend))throw new Error('invalid_backend');
   // A finite migration ceiling exists only for destructive synthetic upgrade QA.
-  if(!['latest','f'].includes(through))throw new Error('invalid_migration_ceiling');
+  if(!['latest','f','pre-rad085'].includes(through))throw new Error('invalid_migration_ceiling');
   if(!['lf','crlf'].includes(lineEndings))throw new Error('invalid_line_endings');
   let db,admin,dir,ctl,started=false;
   const clients=new Set();
@@ -48,7 +48,7 @@ export async function openLocalDatabase(backend, {through='latest',lineEndings='
       create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
       create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
       grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
-    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'||f<'20261020001100')).sort()) {
+    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'||(through==='pre-rad085'?!['20261026000100_assess_supervisor_scope.sql','20261026000200_assess_authoring_drafts.sql','20261026000300_assess_assignment_review.sql'].includes(f):f<'20261020001100'))).sort()) {
       const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
       await exec(lineEndings==='crlf'&&file>='20261020000600'?sql.replaceAll('\n','\r\n'):sql);
     }
@@ -58,16 +58,23 @@ export async function openLocalDatabase(backend, {through='latest',lineEndings='
       return {async call(name,args) {
         if(!/^[a-z][a-z0-9_]*$/.test(name)||Object.keys(args).some(k=>!/^p_[a-z0-9_]+$/.test(k)))throw new Error('invalid_local_rpc');
         const sql=`select assess.${name}(${Object.keys(args).map((k,i)=>`${k}=>$${i+1}`).join(',')}) v`;
+        let committing=false;
         const invoke=async tx=>{
           await tx.query(`set local role ${role}`);
           await tx.query("select set_config('request.jwt.claim.sub',$1,true)",[user]);
-          return (await tx.query(sql,Object.values(args))).rows[0].v;
+          const value=(await tx.query(sql,Object.values(args))).rows[0].v;
+          committing=true;return value;
         };
-        if(db)return db.transaction(invoke);
+        if(db)return db.transaction(invoke).catch(error=>{
+          // PGlite has completed its local rollback. A completed invocation could
+          // instead have failed at COMMIT, so it must remain uncertain.
+          if(!committing)Object.defineProperty(error,'writeOutcome',{value:'rolled_back'});
+          throw error;
+        });
         // Separate connections/transactions even when two workers share this local port object.
         const c=await connect();
         try{await c.query('begin');const value=await invoke(c);await c.query('commit');return value;}
-        catch(error){await c.query('rollback');throw error;}
+        catch(error){await c.query('rollback');if(!committing)Object.defineProperty(error,'writeOutcome',{value:'rolled_back'});throw error;}
         finally{await c.end();clients.delete(c);}
       }};
     }

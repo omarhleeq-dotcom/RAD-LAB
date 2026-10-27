@@ -4,7 +4,7 @@ import type { FigureProps, OrientationProps, DetectorFigure } from "./detector-f
 import { SceneLabel } from "./SceneParts";
 import { SCENE, STROKE, LABEL_SIZE } from "./scene-style";
 import { pelvisShift } from "@/features/pelvis-model/pelvis-model";
-import { PELVIS_IMAGE } from "@/data/exams/xray/pelvis-geometry";
+import { PELVIS_IMAGE } from "@/features/positioning/drawing-data";
 
 /** Hand-authored setup anatomy, not the result image. The same horizontal
  * displacement field drives the pelvis here and the one-image result warp.

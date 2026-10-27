@@ -1,0 +1,78 @@
+--- a/supabase/migrations/20261026000100_assess_supervisor_scope.sql
++++ b/supabase/migrations/20261026000100_assess_supervisor_scope.sql
+@@ -153,7 +153,10 @@
+  select * into g from assess.groups where id=case when tg_op='DELETE' then old.group_id else new.group_id end;
+  if g.supervisor_id is null then if tg_op='DELETE' then return old; else return new; end if; end if;
+  -- Legacy owner membership writes must not bypass approval/periods on managed groups.
+- if public.is_owner() then raise exception 'managed membership requires join decision' using errcode='42501'; end if;
++ -- Cascading profile deletion must preserve the existing account-finalisation contract.
++ -- A direct membership edit still has an existing profile and remains denied.
++ if public.is_owner() and (tg_op<>'DELETE' or exists(select 1 from public.profiles where user_id=old.user_id)) then
++  raise exception 'managed membership requires join decision' using errcode='42501'; end if;
+  if tg_op='DELETE' then
+   update assess.membership_periods set left_at=ts where id=old.period_id and left_at is null;
+   update assess.groups set scope_revision=scope_revision+1 where id=old.group_id;
+--- a/supabase/migrations/20261026000300_assess_assignment_review.sql
++++ b/supabase/migrations/20261026000300_assess_assignment_review.sql
+@@ -258,6 +258,8 @@
+   linked:=assess.linked_version_v1(d.id,d.revision);
+   if not exists(select 1 from assess.publications where version_id=linked and document=pkg.document) then raise exception 'publication changed' using errcode='40001'; end if;
+  end if;
++ -- Locks above can wait beyond the group deadline. Recheck before returning private data.
++ perform assess.supervised_group_v1(p_group);
+  return jsonb_build_object('snapshot',jsonb_build_object('document',r.document,'refs',r.refs,'digest',r.digest),
+   'reviewed',jsonb_build_object('sourceDigest',pkg.source_digest,'publication',pkg.document),'installedVersion',linked);
+ end $$;
+@@ -289,6 +291,8 @@
+   insert into assess.versions(owner_id,assessment_id,version,name,track)
+     values(auth.uid(),aid,a->'ref'->>'version',a->>'name',a->>'track') returning id into vid;
+   insert into assess.content_submissions(version_id,document) values(vid,p_document);
++  -- The bridge may have waited on the assessment advisory lock or INSERT constraints.
++  if gid is not null then perform assess.supervised_group_v1(gid); end if;
+   return vid;
+ end $$;
+ 
+@@ -308,6 +312,7 @@
+  if exists(select 1 from assess.authoring_publication_links where draft_id=p_draft and draft_revision=p_revision and (version_id<>p_version or source_digest<>r.digest)) then
+   raise exception 'publication link conflict' using errcode='40001'; end if;
+  insert into assess.authoring_publication_links values(p_version,p_draft,p_revision,r.digest) on conflict(draft_id,draft_revision) do nothing;
++ perform assess.supervised_group_v1(p_group);
+ end $$;
+ -- Narrow installer wrapper: the bridge role cannot read/install another candidate.
+ create function assess.authoring_bridge_candidate_v1(p_group uuid,p_draft uuid,p_revision integer,p_version uuid) returns jsonb
+@@ -318,6 +323,7 @@
+  select c.document into doc from assess.content_submissions c join assess.versions v on v.id=c.version_id
+  where c.version_id=p_version and c.state='pending' and v.owner_id=auth.uid() and v.assessment_id=p_draft and v.version=p_revision::text for update of c,v;
+  if doc is null or doc is distinct from checked->'reviewed'->'publication' then raise exception 'candidate denied' using errcode='42501'; end if;
++ perform assess.supervised_group_v1(p_group);
+  return doc;
+ end $$;
+ create function assess.authoring_bridge_install_v1(p_group uuid,p_draft uuid,p_revision integer,p_version uuid,p_specs jsonb,p_views jsonb) returns void
+@@ -331,6 +337,7 @@
+   if p_views is not null then raise exception 'mixed views denied' using errcode='22023'; end if;
+   perform assess.content_install_v1(p_version,p_specs);
+  end if;
++ perform assess.supervised_group_v1(p_group);
+ end $$;
+ revoke all on function assess.authoring_bridge_read_v1(uuid,uuid,integer),assess.authoring_bridge_bind_v1(uuid,uuid,integer,uuid),
+  assess.authoring_bridge_candidate_v1(uuid,uuid,integer,uuid),assess.authoring_bridge_install_v1(uuid,uuid,integer,uuid,jsonb,jsonb) from public,anon,authenticated,assess_worker;
+--- a/scripts/pages/frontend-schema.json
++++ b/scripts/pages/frontend-schema.json
+@@ -34,7 +34,7 @@
+   ],
+   "deferredMigrations": {
+     "20261026000100_assess_supervisor_scope.sql": {
+-      "sha256": "fcc48e78bddd948a97c96e7e2ec37bc5851148d5441a6904b7d64442278af9a2",
++      "sha256": "c7b5966ce327e1e2e1f05b93ea20a0f7152cb1728884ded8e93fcc4b0d4e1a9b",
+       "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
+       "serverModules": [
+         "src/features/assess/server-rad085-contracts.ts"
+@@ -48,7 +48,7 @@
+       ]
+     },
+     "20261026000300_assess_assignment_review.sql": {
+-      "sha256": "d2a5f52c8a5404e33545a9f76c253e46c261e45c4c3d96ef53047ba06d958f09",
++      "sha256": "3c1defa58e03443e6d61bb1610ad2a14d53e851338992e2ef30cc61c87602ce3",
+       "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
+       "serverModules": [
+         "src/features/assess/server-rad085-contracts.ts"

@@ -1,3 +1,4 @@
+// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
 import { spawnSync } from "node:child_process";
 import { expect,it } from "vitest";
 it("derives exact reviewed references, preserves original pins and rejects semantic, permission and NOT NULL drift",()=>{
@@ -13,7 +14,7 @@ it("derives exact reviewed references, preserves original pins and rejects seman
  await assert.rejects(()=>buildTrialInstallPackage({profile:'unknown'}));
  const refs=JSON.parse(files['reference.json']);assert.equal(refs.contract,'assess-trial-install-reference/2');
  assert.equal(refs.before.length,4);assert.equal(refs.after.length,8);
- const db=await openLocalDatabase('pglite');
+ const db=await openLocalDatabase('pglite',{through:'pre-rad085'});
  try{
   await db.exec("create role assess_job_a nologin noinherit valid until '2000-01-01';grant assess_worker to assess_job_a");
   const run=async(name,crlf=false)=>db.exec(crlf?files[name+'.sql'].replaceAll('\\n','\\r\\n'):files[name+'.sql']);

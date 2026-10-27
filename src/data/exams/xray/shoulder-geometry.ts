@@ -1,3 +1,4 @@
+import { SHOULDER_CM_PER_PX, SHOULDER_DRAWING } from "@/features/positioning/drawing-data";
 /**
  * Geometry of the Shoulder AP oblique glenoid (Grashey) baseline on the 24 × 30 cm detector (S-SHOULDER-3; DECISIONS S-SHOULDER-3-1…).
  * Everything here is READ BY EYE from the baseline image (A-037 / A-038, 1193 × 1800 px) and is an EDUCATIONAL ESTIMATE, not a
@@ -10,20 +11,14 @@
  *    the glenoid line; the image is placed so that this pixel lies at the centre of the detector, i.e. at normalised (0, 0).
  *  - DETECTOR: 24 × 30 cm landscape (owner choice S-SHOULDER-3-1; Bontrager p.196 allows 18 × 24 or 24 × 30 cm landscape).
  */
-export const SHOULDER_CM_PER_PX = 0.011;
+export { SHOULDER_CM_PER_PX };
 
 export const SHOULDER_DETECTOR = { widthCm: 30, heightCm: 24 } as const;
 
 /** Source band of the body obliquity toward the affected side (Bontrager p.196: 35°–45°). An equal-credit plateau: NO 40° optimum (S-SHOULDER-2-4). */
 export const SHOULDER_BAND_DEG: readonly [number, number] = [35, 45];
 
-export const SHOULDER_IMAGE = {
-  widthPx: 1193,
-  heightPx: 1800,
-  // Box u 120–1193 px (the left edge of the arm's soft tissue → the frame's right edge), v 0 → 1350 px (the top of the acromion region → mid-humerus).
-  anatomyBox: { u1: 120 / 1193, u2: 1, v1: 0, v2: 1350 / 1800 },
-  targetPx: { x: 815, y: 515 },
-} as const;
+export const SHOULDER_IMAGE = { ...SHOULDER_DRAWING, targetPx: { x: 815, y: 515 } } as const;
 
 /** The required-anatomy region (cm on the detector): the anatomy box at `SHOULDER_CM_PER_PX`, placed so the target sits at the detector centre. */
 export function shoulderRegion() {

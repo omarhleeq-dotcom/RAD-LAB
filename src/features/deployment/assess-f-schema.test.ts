@@ -1,3 +1,5 @@
+import {createHash} from "node:crypto";
+import {RAD085_MIGRATIONS,RAD085_BOUNDARY,RAD085_DEFER_REASON} from "../assess/server-rad085-contracts";
 import {cpSync,mkdtempSync,readFileSync,rmSync,writeFileSync} from "node:fs";
 import {tmpdir} from "node:os";
 import {join} from "node:path";
@@ -8,7 +10,11 @@ it("Current retention frontend retains F, requires v2 SQL, rejects the actual E/
   for(const p of ["src","supabase","scripts/pages"])cpSync(p,join(dir,p),{recursive:true});
   const path=join(dir,"scripts/pages/frontend-schema.json"),m=JSON.parse(readFileSync(path,"utf8"));
   writeFileSync(join(dir,"scripts/pages/frontend-schema.json"),JSON.stringify(m));
-  expect(m.contract).toBe("pilot-through-assess-retention/1");expect(m.requiredMigrations).toContain("20261020001100_assess_retention.sql");expect(m.checks).toContain("supabase/checks/assess-retention-ready.sql");expect(m.requiredMigrations).toContain("20261020001000_assess_history_consent.sql");expect(m.checks).toContain("supabase/checks/assess-history-ready.sql");expect(m.deferredMigrations).toEqual({});
+  expect(m.contract).toBe("pilot-through-assess-retention/1");expect(m.requiredMigrations).toContain("20261020001100_assess_retention.sql");expect(m.checks).toContain("supabase/checks/assess-retention-ready.sql");expect(m.requiredMigrations).toContain("20261020001000_assess_history_consent.sql");expect(m.checks).toContain("supabase/checks/assess-history-ready.sql");// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
+  expect(m.deferredMigrations).toEqual(Object.fromEntries(RAD085_MIGRATIONS.map(file=>[file,{
+   sha256:createHash("sha256").update(readFileSync(join(process.cwd(),"supabase/migrations",file))).digest("hex"),
+   reason:RAD085_DEFER_REASON,serverModules:[RAD085_BOUNDARY]
+  }])));
   const env={NEXT_PUBLIC_SUPABASE_URL:"https://vlacestfruxooznrcjqc.supabase.co",NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_synthetic_local_test_123456",PILOT_SCHEMA_VERIFIED:"pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f"};
   const gate=(print=false)=>spawnSync(process.execPath,["--input-type=module","-e",`import {runSchemaGate} from ${JSON.stringify(join(process.cwd(),"scripts/pages/pilot-schema-gate.mjs"))};try{console.log(runSchemaGate(${JSON.stringify(env)},${print},${JSON.stringify(dir)}));}catch(e){console.error(e.message);process.exitCode=1;}`],{encoding:"utf8",timeout:15000});
   expect(gate().stderr).toContain("schema compatibility has not been attested");

@@ -14,7 +14,7 @@
  */
 import outlines from "./shoulder-outlines.json";
 import { shoulderShift, shoulderValue } from "@/features/shoulder-model/shoulder-model";
-import { SHOULDER_IMAGE } from "@/data/exams/xray/shoulder-geometry";
+import { SHOULDER_DRAWING } from "@/features/positioning/drawing-data";
 import { TUNING } from "@/features/radiograph/tuning";
 import { closeOnBorder, type DrawnPart as SharedPart, type Pt } from "./outline-geometry";
 
@@ -53,14 +53,14 @@ const bandWeight = (v: number) => {
 
 /** The closing field as a point map at a console angle (the dead band and the closure per degree live in the model). */
 export function shoulderPointMap(consoleDeg: number): (q: Pt) => Pt {
-  const { widthPx: W, heightPx: H } = SHOULDER_IMAGE;
+  const { widthPx: W, heightPx: H } = SHOULDER_DRAWING;
   const value = shoulderValue(consoleDeg);
   return ([x, y]) => [x + shoulderShift(x / W, value) * W * bandWeight(y / H), y];
 }
 
 /** The shoulder drawing at a console body obliquity (degrees, absolute). */
 export function shoulderOutlineDrawing(consoleDeg: number): ShoulderOutlineDrawing {
-  const { widthPx: W, heightPx: H } = SHOULDER_IMAGE;
+  const { widthPx: W, heightPx: H } = SHOULDER_DRAWING;
   const m = shoulderPointMap(consoleDeg);
   const part = (s: Structure, fill?: Pt[]): DrawnPart => ({ id: s.id, group: s.group, closed: s.closed, copy: 0, copies: 1, points: s.points.map(m), ...(fill?.length ? { fillPoints: fill.map(m) } : {}) });
   const drawn = (s: Structure) => s.drawn !== false && s.points.length > 2 && !NOT_DRAWN.has(s.id);

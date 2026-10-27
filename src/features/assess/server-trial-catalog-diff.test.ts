@@ -1,3 +1,4 @@
+// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
 import { spawnSync } from "node:child_process";
 import { expect,it } from "vitest";
 it("pinpoints catalog fields read-only, accepts existing references, bounds output and never prints function bodies",()=>{
@@ -10,7 +11,7 @@ it("pinpoints catalog fields read-only, accepts existing references, bounds outp
  const sql=await buildCatalogDiffSql();
  const read=async db=>{await db.exec(sql.slice(0,sql.indexOf('with reference')));try{return (await db.query(sql.slice(sql.indexOf('with reference'),sql.lastIndexOf('rollback;')).replace(/;\\s*$/,'')))[0].diagnostic;}finally{await db.exec('rollback')}};
  for(const lineEndings of ['lf','crlf']){
-  const db=await openLocalDatabase('pglite',{lineEndings});
+  const db=await openLocalDatabase('pglite',{lineEndings,through:'pre-rad085'});
   try{
    let result=await read(db);assert.equal(result.referenceMatched,true);assert.equal(result.totalDifferences,0);
    // Allowed extra public extension functions must be treated just like preinstall.
@@ -43,7 +44,7 @@ it("isolates owner-list formatting from changed source without exposing provider
  import assert from 'node:assert/strict';
  import {buildOwnerListDetailSql} from './scripts/assess/trial-catalog-diff.mjs';
  import {openLocalDatabase} from './scripts/assess/local-database.mjs';
- const sql=await buildOwnerListDetailSql(),db=await openLocalDatabase('pglite');
+ const sql=await buildOwnerListDetailSql(),db=await openLocalDatabase('pglite',{through:'pre-rad085'});
  const read=async()=>{await db.exec(sql.slice(0,sql.indexOf('with expected')));try{return (await db.query(sql.slice(sql.indexOf('with expected'),sql.lastIndexOf('rollback;')).replace(/;\\s*$/,'')))[0].diagnostic;}finally{await db.exec('rollback')}};
  try{
   const original=(await db.query("select prosrc,pg_get_functiondef(oid) def from pg_proc where oid='public.owner_list_participants()'::regprocedure"))[0];
@@ -63,7 +64,7 @@ it("isolates owner-list formatting from changed source without exposing provider
 it("reproduces the reported 28 representation differences without adopting the unknown owner-list source",()=>{
  const source=`
  import assert from 'node:assert/strict';import {openLocalDatabase} from './scripts/assess/local-database.mjs';
- const db=await openLocalDatabase('pglite');
+ const db=await openLocalDatabase('pglite',{through:'pre-rad085'});
  const functions={
  can_read_training:['6b60ecbd6c86359bfabc8312c4f7acdd','c77394f625b2b0b2f059d38565723772'],
  handle_new_user:['e8a4f67e42ddd6af61714445a845b1bc','6fbc9fb0ac13256b4c9a2f2494820fe7'],

@@ -1,3 +1,4 @@
+import { HAND_DRAWING, HAND_CM_PER_PX } from "@/features/positioning/drawing-data";
 /**
  * Geometry of the two HAND baselines on the 24 × 30 cm detector (S14.2b; DECISIONS S14.2-10). Everything here is READ BY EYE from
  * the two baseline images (A-015 / A-017) and is an EDUCATIONAL ESTIMATE, not a measurement: TODO(medical-review).
@@ -9,7 +10,7 @@
  *  - CENTRAL-RAY TARGET (PA: third MCP joint, p.150; lateral: centre of the second–fifth MCP joints, p.153): the images are placed
  *    so that the target lies at the centre of the detector, i.e. at normalised (0, 0).
  */
-export const HAND_CM_PER_PX = 0.0113;
+export { HAND_CM_PER_PX } from "@/features/positioning/drawing-data";
 
 /** The detector the hand is imaged on: 24 × 30 cm portrait (Bontrager p.150 / 152 / 153: the smallest available receptor). */
 export const HAND_DETECTOR = { widthCm: 24, heightCm: 30 } as const;
@@ -19,9 +20,9 @@ export type HandKind = "pa" | "lateral";
 const IMAGE = {
   // PA: 1466 × 2082 px. Box u 29–1422 px (little-finger edge → thumb edge), v 0 → 2030 px (fingertip → 2.5 cm below the radiocarpal joint ≈ 1810 px).
   // Third MCP joint read at (632, 895).
-  pa: { widthPx: 1466, heightPx: 2082, box: { u1: 29 / 1466, u2: 1422 / 1466, v1: 0, v2: 2030 / 2082 }, targetPx: { x: 632, y: 895 } },
+  pa: { ...HAND_DRAWING["pa"], targetPx: { x: 632, y: 895 } },
   // Lateral (extension): 686 × 2123 px. Box u 14–650 px, v 0 → 2061 px (radiocarpal joint ≈ 1840 px). Centre of the 2nd–5th MCP joints read at (450, 785).
-  lateral: { widthPx: 686, heightPx: 2123, box: { u1: 14 / 686, u2: 650 / 686, v1: 0, v2: 2061 / 2123 }, targetPx: { x: 450, y: 785 } },
+  lateral: { ...HAND_DRAWING["lateral"], targetPx: { x: 450, y: 785 } },
 } as const;
 
 export const handImage = (k: HandKind) => IMAGE[k];

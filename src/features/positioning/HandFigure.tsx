@@ -1,4 +1,4 @@
-import { HAND_CM_PER_PX, handImage } from "@/data/exams/xray/hand-geometry";
+import { HAND_CM_PER_PX, handDrawingImage } from "@/features/positioning/drawing-data";
 import { handOutlineDrawing, type DrawnPart } from "./hand-outline-drawing";
 import { copyOpacity, OutlineLayers, outlineLayers, r, type OutlineLayer } from "./outline-layers";
 import type { FigureProps } from "./detector-figures";
@@ -19,7 +19,7 @@ import type { FigureProps } from "./detector-figures";
  */
 export function HandDrawing({ radCase, settings }: FigureProps) {
   const kind = settings.projection === "hand-lateral" ? "lateral" : "pa";
-  const im = handImage(kind);
+  const im = handDrawingImage(kind);
   const a = radCase.requiredAnatomy;
   const U = 10; // SVG units per detector cm (`detector-figures.tsx` U)
   const k = HAND_CM_PER_PX * U; // SVG units per image pixel

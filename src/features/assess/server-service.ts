@@ -62,23 +62,56 @@ interface GradingClaim {
 /** One bounded tick for a scheduler. No student response or logs contain the private claim/grade.
  * At-least-once execution is safe: DB lease/token prevents stale finalisation and SQL commits grade+deletion atomically.
  */
-export async function runAssessJobs(worker:AssessRpc,limit=50,signal?:AbortSignal) {
+export interface JobControls {
+  /** General worker quarantines a claimed lease on STOP; legacy callers drain it. */
+  stopBeforeFinalize?: true;
+  /** Trusted host checks quarantine/revocation, never launch_gate alone. */
+  verify?: () => Promise<void>;
+  /** Best effort, fixed numeric events only. Monitoring cannot change writes. */
+  observe?: (event: { phase: "grade" | "uncertain" | "stop"; milliseconds: number }) => void;
+}
+export async function runAssessJobs(worker:AssessRpc,limit=50,signal?:AbortSignal,controls?:JobControls) {
   if(!Number.isInteger(limit)||limit<1||limit>100)throw new AssessServiceError("invalid");
   // Stop cooperatively: never cancel an in-flight RPC or abandon its acknowledgement.
   // A process killed outright still relies on SQL lease expiry/recovery, not this signal.
   if(signal?.aborted)throw new AssessServiceError("stopped");
+  const emit=(phase:"grade"|"uncertain"|"stop",milliseconds=0)=>{try{controls?.observe?.({phase,milliseconds});}catch{/* No payload or mutation retry on monitor failure. */}};
+  await controls?.verify?.();
+  if(signal?.aborted&&controls?.stopBeforeFinalize)throw new AssessServiceError("stopped");
   const maintenance=await safe(()=>worker.call<{expired:number;purged:number;reservationsPurged?:number;consentsPurged?:number}>("maintain_v1",{p_limit:limit}));
   let graded=0,failed=0;
   for(let i=0;i<limit;i++) {
-    if(signal?.aborted)break;
+    if(signal?.aborted){emit("stop");break;}
+    await controls?.verify?.();
+    if(signal?.aborted&&controls?.stopBeforeFinalize){emit("stop");break;}
     const claim=await safe(()=>worker.call<GradingClaim|null>("claim_v1",{}));if(!claim)break;
+    // A committed claim may outlive STOP. Leave its lease for contractual reconciliation.
+    if(signal?.aborted&&controls?.stopBeforeFinalize){emit("stop");break;}
+    await controls?.verify?.();
+    let grade:ReturnType<typeof gradePublication>;
+    const began=performance.now();
     try {
-      const grade=gradePublication(claim.publication,claim.answers,claim.locked);
-      await worker.call("finish_v1",{p_session:claim.attemptId,p_token:claim.token,p_n:grade.numerator,p_d:grade.denominator});graded++;
+      grade=gradePublication(claim.publication,claim.answers,claim.locked);
     } catch {
-      // A lost finalize acknowledgement can mean commit succeeded: fail only under a still-current claim.
+      // Only a known local evaluation failure may mark the current lease failed.
       try {await worker.call("fail_v1",{p_session:claim.attemptId,p_token:claim.token});}catch{/* Counts/health, not raw error text, drive operational recovery. */}
       failed++;
+      continue;
+    }
+    emit("grade",performance.now()-began);
+    await controls?.verify?.();
+    if(signal?.aborted&&controls?.stopBeforeFinalize){emit("stop");break;}
+    try {
+      await worker.call("finish_v1",{p_session:claim.attemptId,p_token:claim.token,p_n:grade.numerator,p_d:grade.denominator});graded++;
+    } catch (error) {
+      // A trusted adapter may explicitly acknowledge rollback BEFORE COMMIT was
+      // attempted. Raw SQLSTATE/message alone is never evidence of that outcome.
+      if(error&&typeof error==="object"&&"writeOutcome" in error&&error.writeOutcome==="rolled_back") {
+        try {await worker.call("fail_v1",{p_session:claim.attemptId,p_token:claim.token});}catch{/* Current lease still governs. */}
+        failed++;continue;
+      }
+      // COMMIT may have succeeded. No fail/recover/finish or next claim after uncertain ACK.
+      failed++;emit("uncertain");break;
     }
   }
   const health=await safe(()=>worker.call<{failed:number;alert:number;overdue:number;purgeDue:number}>("health_v1",{}));

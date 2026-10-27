@@ -9,7 +9,7 @@ try{
  const backend=args.find(a=>a.startsWith('--backend='))?.slice(10),lineEndings=args.find(a=>a.startsWith('--line-endings='))?.slice(15);
  assert(['pglite','postgres'].includes(backend));assert(['lf','crlf'].includes(lineEndings));
  phase='reference';const files=await buildTrialInstallPackage();
- phase='setup';db=await openLocalDatabase(backend,{lineEndings});
+ phase='setup';db=await openLocalDatabase(backend,{lineEndings,through:'pre-rad085'});
  await db.exec("create role assess_job_a nologin noinherit valid until '2000-01-01';grant assess_worker to assess_job_a");
  const id=n=>`00000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
  for(const n of [1,2,3])await db.query('insert into auth.users values($1,$2,now(),$3)',[id(n),`synthetic${n}@example.test`,JSON.stringify({display_name:'Synthetic'})]);
@@ -26,7 +26,7 @@ try{
  await reject("alter function assess.health_v1() rename to health_modified_v1", "alter function assess.health_modified_v1() rename to health_v1");
  await reject("create or replace function assess.health_v1() returns jsonb language sql as $$select '{}'::jsonb$$", "-- restored below");
  // Restore from a fresh disposable reference: never adopt the observed body/hash.
- const ref=await openLocalDatabase(backend,{lineEndings});
+ const ref=await openLocalDatabase(backend,{lineEndings,through:'pre-rad085'});
  try{await db.exec((await ref.query("select pg_get_functiondef('assess.health_v1()'::regprocedure) d"))[0].d);}finally{await ref.close();}
  await reject('grant execute on function assess.health_v1() to authenticated','revoke execute on function assess.health_v1() from authenticated');
  await reject('alter table assess.sessions disable trigger all','alter table assess.sessions enable trigger all');

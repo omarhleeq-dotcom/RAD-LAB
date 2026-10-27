@@ -764,3 +764,58 @@ B/C الملتزمان سابقًا ثابتان، كما الإصدار/8 وcom
 ### RAD-019 — تحديث دليل إغلاق القيم (المالك،2026-10-25)
 
 أبلغ المالك أن القيم راجعها مع مساعد بحث بتاريخ2026-10-25، وطلب إغلاق RAD-019. تبقى المهمةdone (كانت مغلقة أصلًا بموجب [قرار2026-10-22](#review-closure-owner-2026-10-22))، ويضاف هذا البلاغ دليلًا أحدث، لا إغلاقًا جديدًا من الوكيل أو تحققًا مستقلًا منه. لا تُستنتج مؤهلات المساعد أو مصادقة سريرية من هذا البلاغ؛ التطبيق لا يعلن clinical validation، وتبقى حالات/عبارات provisional وeducational القائمة إلى قرار مالك لاحق. هذا القرار لا يثبت مراجعة صور/تراخيص أو يغير حدودها السابقة، ولا يغير أرقامًا أو scoring أوcomparisonVersion. [تقرير البنود](RAD-081_OWNER_ITEMS_2026-10-25.md#3-لكل-بند) يحفظ أثر التوثيق فقط.
+
+<a id="rad085-erasure-owner-2026-10-26"></a>
+### RAD-085 — قرار المحو والمصالحة المحلي، 2026-10-26
+
+**السلطة:** أجاب المالك صراحة عن الأسئلة الثلاثة في جلسة استكمال RAD-085 دون لابتوبه: «اعتماد الحجب مع بقاء التعطيل»، و«أوافق على الاستثناء المحدود المقترح»، و«اعتماد النطاق المحدود». هذه قرارات جديدة محدودة؛ لا اختصار يبدل [C2](#rad069c2-owner-2026-10-24) أو [Terms/DB day](#rad069-db-day-owner-2026-10-24) أو [S-ASSESS-15](#assess-retention-owner-2026-10-20).
+
+1. حذف الكاتب/المشرف النهائي يبقى محجوبًا عندما يمس محتوى/امتحانًا/نتائج يجب حفظها، مع استمرار التعطيل ومنع الدخول. كان نقل المسؤولية أو إزالة الهوية يحتاج قرارًا منفصلًا؛ صدر الآن [قرار المالك الأحدث](#rad085-owner-final-local-2026-10-26)، ويبقى التنفيذ الآمن واستثناء SQL ومراجعة الإسناد/الرخص شروطًا مستقلة. الحجب مؤقت تشغيلي، وليس إذنًا بإبقاء بيانات شخصية إلى الأبد أو إغلاق عائق Terms.
+2. **استثناء محدد من منع tombstone:** دليل مصالحة محمي خارج النسخة المراد استعادتها، بأقل بيانات لازمة: operation عشوائي، UUID الهدف ونوع الأثر ووقته وتسلسله، ومعلومات سلامة السلسلة فقط؛ بلا اسم/بريد/محتوى/أجوبة/درجات. وصول مسؤول الاستعادة وحده؛ يحذف حين لا تبقى أي نسخة قابلة للاستعادة تحتاجه، بعد التحقق من نسخ المزوّد. لا مخزن تشغيلي أو IAM منشأ، ولا مدة جديدة أو افتراض7أيام للمزوّد. سجل قاعدة العمل وCASCADE C2 يظلان دون tombstone.
+3. المحو التابع للمسودات/نسخها/packages/links والمراجعات والإيصالات عند طلب حذف الحساب مسموح فقط عندما لا يمس محتوى أو امتحانًا/نتائج يجب حفظها؛ أي تعارض يحجب التنفيذ. لا تنظيف تلقائي لمجرد انتهاء المجموعة، ولا TTL جديد. لا توسع استعمال البيانات أو صلاحيات المشرف/العامل.
+
+[المصفوفة](RAD-085_ERASURE_MATRIX_2026-10-26.md) تفصل الطالب عن الكاتب والبيانات الشخصية عن المحتوى اللازم للآخرين. [الإجراء](archive/RAD-085_ERASURE_RECOVERY_2026-10-26.md) يفصل المحو الذري عن الحجر والإبطال ودليل replay. إذن SQL/البصمات يحتاج استثناءً مسمى جديدًا مستقلًا؛ قبول هذه السياسة لا يمنحه ضمنيًا. لا SQL حي/عامل/نشر/قبول مالك أو هاتف.
+
+**استثناء SQL لهذه الدفعة فقط:** بعد تجهيز [الفرق](archive/RAD-085_ERASURE_SQL_PROPOSAL_2026-10-26.patch) وأسماء الملفات ونجاح الشاهد المحلي، أجاب المالك «أوافق على الاستثناء المحدد» على **RAD085-SQL-ERASURE-LOCAL-20261026**. يجيز إضافة `supabase/manual/rad085-account-erasure-local.sql` وحده،143سطرًا، SHA-256 `383b1400532c4f8a4bf93d21daeb71242993279c4c2e90750e6620761e1de8b2`، وتطبيقه على fixture صناعية فقط. معاينة owner-only وprimitive خاصة مشتركة مع C2، دون منح API لها أو إلغاء نافذة30يومًا في finalise. لا تعديل ترحيل تاريخي أو FK أو بصمة/توقع قديم أو شهادة أو حارس. لا إذن SQL حي أو استثناء دائم؛ [التقرير](archive/RAD-085_ERASURE_REPORT_2026-10-26.md) يسجل التطابق والحدود.
+
+<a id="rad085-owner-final-local-2026-10-26"></a>
+### RAD-085 — قرارات المالك لاستكمال المشاركة والكاتب محليًا، 2026-10-26
+
+السلطة: تعليمات المالك في جلسة الاستكمال الحالية، البنود1–10 والنص العربي الوارد فيها؛ لا إعادة طلب لهذه القرارات. [تقرير الدفعة](archive/RAD-085_SHARING_OWNER_REPORT_2026-10-26.md) يحفظ التنفيذ وحدوده، و[قائمة التشغيل الوحيدة لهذه الدفعة](RAD-085_REMAINING_OPERATIONS_2026-10-26.md) تميز الدليل التاريخي والمجهز وما يحتاج دخولًا لاحقًا.
+
+- المالك مسؤول الإدارة والتشغيل حاليًا. تُفصل هوية المسؤول وصلاحياته عن عنوان بريده وعن هوية الخدمة، مع إمكان إضافة مسؤولين لاحقًا بحساباتهم ومنح محددة؛ لا مشاركة أسراره ولا نظام أدوار جديد الآن.
+- بريد الموقع للتنبيهات التشغيلية والمراسلات الآلية؛ البريد الشخصي يستقبل طلبات الحسابات التي تحتاج موافقته. الوصول لصندوق البريد لا يمنح الموافقة؛ تفويضها لحساب المالك المعتمد. Brevo قائم بدليل تاريخي مع Supabase ورسالة ناجحة، ولا مزوّد ثانٍ أو صلاحية حالية مفترضة.
+- التجربة بصفر تكلفة قدر الإمكان؛ أي تكلفة متوقعة تُعرض قبل التفعيل. تنبيه الميزانية ليس سقفًا يوقف الإنفاق. البنية Cloudflare Pages / Supabase / Google Cloud Run ثابتة، وإعادة استعمال Secret Manager وArtifact Registry والمراقبة والجدولة القائمة حيث أمكن، بعد تحقق لاحق؛ لا إنشاء/تفعيل خارجي بهذه الجلسة.
+- حذف منشئ الامتحان يحفظ الامتحانات والنتائج اللازمة، وينقل **مسؤولية إدارتها** للمالك مع إزالة بيانات المنشئ الشخصية حيث يمكن واحترام الإسناد والترخيص. ليس نقلًا تلقائيًا شاملًا، ولا نسبة تأليف للمالك، ولا تفويضًا بإبقاء بيانات شخصية دون مبرر. الحالات التي تحتاج حقوقًا أو تغيير سياسة غير محسوم تبقى محجوبة بسبب محدد، مع بقاء التعطيل ونافذة30يومًا وحماية النفس/آخر مالك. [المصفوفة](RAD-085_ERASURE_MATRIX_2026-10-26.md) تفصل الحالات والحراس الفعلية.
+- اعتمد معنى نص المشاركة العربي. النص الحرفي وEN مطابق المعنى محفوظان في [مصدر السياسة](../src/features/supervisor-review/sharing-policy.ts)، بنسخة مستقلة `supervisor-sharing-2026-10-26-v1` وبصمة SHA-256 على UTF-8 لـJSON.stringify({version, ar, en}) بترتيب المفاتيح المذكور ودون newline نهائية. النص يعرض قبل قبول الذات الصريح غير المحدد مسبقًا، مع السحب؛ لا قبول نيابة عن المستخدم أو نسخة مجهولة أو تغيير CONSENT_VERSION العامة. SQL الفعلية والنوافذ والدرجات وtargets تبقى حاكمة وفق [العقود](RAD-085_SQL_CONTRACTS_2026-10-26.md).
+- RAD-082: النسخ اليومية الآلية المحلية عبر Docker على لابتوب المالك شرط مكتمل قبل أول امتحان حقيقي، في أي جلسة تسبقه. لا نسخ سحابية. سجل المصالحة ملف محلي مشفر بجانب نسخ Docker، بلا تخزين سحابي؛ تجهيز التشفير والحداثة والإبطال والاستعادة ما زال مطلوبًا. القرار الحالي يحل محل توقيت قرار2026-10-26؛ [الدليل](#rad085-owner-tidy-2026-10-27).
+
+أي SQL/بصمة/توقع محمي جديد يحتاج استثناءً مسمى جديدًا بعد تجهيز الفرق والملفات والأدلة. [مقترح تهيئة السياسة](archive/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch) لم يكن إذنًا؛ صدر الاستثناء المحدد أدناه لإضافته محليًا فقط، وليس لتطبيق حي. الاستثناءات السابقة محفوظة بحدودها وليست دائمة. لا قبول قانوني/سريري أو مالك/هاتف أو تشغيل حي من الاختبارات المحلية.
+
+
+**تنفيذ الاستثناء RAD085-SQL-SHARING-POLICY-LOCAL-20261026:** وافق المالك في رسالة الاستكمال الحالية صراحة على إضافة `supabase/manual/rad085-sharing-policy-local.sql` بالنص المطابق لمقترح18سطرًا على الرأس `e356318` فقط، مع التهيئة والاختبار المحليين. أضيف [الملف](../supabase/manual/rad085-sharing-policy-local.sql) دون تعديل أي بايت مستخرج من المقترح؛ SHA-256 `a16e49058098263ab71e09cf24a7d43333e35ee09512bc7890e600c740ae3448`. التعليق `PROPOSAL ONLY` محفوظ حرفيًا للالتزام بالموافقة، ولا يعيد فتحها أو يجعل الملف إذنًا حيًا. [التقرير](archive/RAD-085_SHARING_OWNER_REPORT_2026-10-26.md#7-البوابات-والاستثناء-المعتمد) يسجل المطابقة والتكرار ورفض drift وrollback وعدم إنشاء قبول بالنيابة. لا CONSENT_VERSION عامة أو ترحيلات/بصمات محمية أخرى أو requiredMigrations/checks أو شهادات تغيرت. لا تطبيق حي/نشر/دمج، و#137 تبقى Draft؛ لا امتداد للاستثناء إلى حالة الكاتب أو تهيئة مزوّد.
+
+<a id="rad085-owner-tidy-2026-10-27"></a>
+### RAD-085 — قرارات المالك لتنظيف المسودة، 2026-10-27
+
+السلطة: أمر المالك D1–D8 وF1–F3 بتاريخ2026-10-27، ثم رسالته التي وسعت D7 بعد التوقف عند بصمة اختبار SQL. النص التالي **اقتباس لقرارات المالك**، وهو الحاكم عند التعارض مع قرارات2026-10-26 أعلاه؛ الروابط الأصلية والأدلة مؤرشفة وليست أوامر تنفيذ حالية.
+
+> D1: Revert the deploy-pages.yml draft-preview condition (commit 9a49076): Draft PRs get previews again.
+>
+> D2: RAD-082 (automated daily local Docker backup on the owner's laptop) must be complete BEFORE the first real exam, in any session before that exam. No cloud backups. The reconciliation log is an encrypted local file next to the Docker backups, with no cloud storage. Recommend a weekly copy to external USB.
+>
+> D3: The author/supervisor deletion block is time-bounded. Management transfers to the owner and erasure completes within the Terms 30-day window; no open-ended block.
+>
+> D4: Written answers: warn the owner on day 5. The owner may grade before day 7. Void only if still ungraded on day 7.
+>
+> D5: The RAD-059 emergency stop is a hard prerequisite of the first real exam. It must actually stop spending, not only send a budget alert.
+>
+> D6: RAD085-DEFERRED-SCHEMA-TESTS-20261027 covers ONLY the deferredMigrations expectation in the 5 deployment tests and the through:'pre-rad085' / historicalRad085Input filters in the 6 existing tests. Cite it in each changed test with one short comment, and change nothing else in them.
+>
+> D7: RAD085-SQL-SHARING-POLICY-LOCAL-V2-20261027: exam results are those "assigned to me within this group"; practice attempts are those "saved since I joined this group". Arabic is primary; English must have the same meaning. Use supervisor-sharing-2026-10-27-v2 with its new digest; regenerate the local manual SQL byte-for-byte. Unknown or old versions still block acceptance.
+>
+> D7 extension: the exception also covers the local sharing SQL SHA-256, its line count, the policy version/digest and equivalent v1 sharing-text pins in existing sharing/SQL tests only. Before changing a pin, list file:line, old/new values and why D7 forces it in the report. Compute every new value from regenerated files; cite the exception at each changed pin. Keep v1/unknown rejection, idempotency, drift-rejection and rollback. Anything outside this sharing-policy scope is NOT covered: stop and list it.
+>
+> D8: Before a group ends, the supervisor can export the group's final grades once. Record this as a planned later-phase item; do not implement it now.
+
+[التقرير الموحد](RAD-085_REPORT_2026-10-27.md) يحفظ جدول القيم المحسوبة والنص النهائي AR/EN لموافقة المالك وأدلة التنفيذ وحدوده. [الخطة](RAD-085_PLAN_2026-10-25.md) و[التشغيل](RAD-085_REMAINING_OPERATIONS_2026-10-26.md) و[المصفوفة](RAD-085_ERASURE_MATRIX_2026-10-26.md) تفصل المتطلبات عن الكود القائم. لا SQL حي أو عامل منشور أو واجهة جديدة؛ لا تغيير لشرط C2 في الكود أو ترحيل تاريخي أو بصمة مخطط/مشهد. اكتمال نقل الإدارة والمحو خلال نافذة Terms عائق قبل بيانات حقيقية، لا ادعاء تنفيذ من هذه الدفعة. PR #137 يبقى open/Draft/unmerged بلا auto-merge، ولا فتح/مشاركة روابط المعاينة رغم عودة توليدها آليًا.

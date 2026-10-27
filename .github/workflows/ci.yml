@@ -20,6 +20,14 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Prepare pinned isolated PostgreSQL (required, no skip)
+        run: node scripts/assess/setup-rad085-postgres.mjs
+      - name: Required RAD-085 pinned lock and cascading membership witnesses
+        run: node --test scripts/assess/rad085-lock-witness.test.mjs
+      - name: Required synthetic erasure recovery failures (no skip)
+        run: node --test scripts/assess/rad085-erasure-recovery.test.mjs
+      - name: Required RAD-085 local worker image and PostgreSQL witnesses (no skip)
+        run: node scripts/assess/rad085-worker-rehearsal.mjs
       - run: npm run docs:check
       - run: npm run docs:test
       - name: Test first-version secret uploader (synthetic only)
