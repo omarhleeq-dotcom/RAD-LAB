@@ -4,12 +4,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { expect, it } from 'vitest';
+import { demoteP1 } from './p1-dormant-fixture';
 const marker = 'pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10';
 const env = { NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_synthetic_local_test_123456', PILOT_SCHEMA_VERIFIED: marker };
 it('accepts dormant wiring with the current marker and requires a fresh marker when the test manifest promotes P1', () => {
  const root = mkdtempSync(join(tmpdir(), 'rad085-p1-schema-'));
  try {
   for (const file of ['src', 'supabase', 'scripts/pages']) cpSync(file, join(root, file), { recursive: true });
+  demoteP1(root); // RAD085-DB-DAY-PROMOTION-20261027: start from the dormant classification, then promote in the copy.
   const gate = (print = false) => spawnSync(process.execPath, ['--input-type=module', '-e', `import {runSchemaGate} from ${JSON.stringify(join(process.cwd(), 'scripts/pages/pilot-schema-gate.mjs'))};try { console.log(runSchemaGate(${JSON.stringify(env)},${print},${JSON.stringify(root)})); } catch(e) { console.error(e.message); process.exitCode=1; }`], { encoding: 'utf8' });
   expect(gate(true).stdout.trim()).toBe(marker);
   expect(gate().status).toBe(0);
@@ -31,6 +33,7 @@ it('rejects an unguarded deferred import and edits to the availability source wi
  const root = mkdtempSync(join(tmpdir(), 'rad085-p1-unguarded-'));
  try {
   for (const file of ['src', 'supabase', 'scripts/pages']) cpSync(file, join(root, file), { recursive: true });
+  demoteP1(root); // RAD085-DB-DAY-PROMOTION-20261027
   const run = () => spawnSync(process.execPath, ['--input-type=module', '-e', `import {frontendRequirements} from ${JSON.stringify(join(process.cwd(), 'scripts/pages/pilot-schema-gate.mjs'))};try { frontendRequirements(${JSON.stringify(root)}); } catch(e) { console.error(e.message); process.exitCode=1; }`], { encoding: 'utf8' });
   const session = join(root, 'src/features/supervisor/P1Session.tsx'), source = readFileSync(session, 'utf8');
   writeFileSync(session, source.replace('if (P1_AVAILABLE) {', 'if (true) {'));
@@ -48,3 +51,11 @@ it('rejects an unguarded deferred import and edits to the availability source wi
   expect(run().stderr).toContain('Unreviewed schema feature guard');
  } finally { rmSync(root, { recursive: true, force: true }); }
 }, 20000);
+// RAD085-DB-DAY-PROMOTION-20261027: the promoted repository itself (no demotion) carries the new marker.
+it('the promoted repository prints the new marker, accepts it, and rejects the pre-DB-day marker', () => {
+ const promoted = 'pilot-v1:42cc4a1a2cab288bfc814bc853cb760efaf151316a24ac1d47674ebe36ec73cf';
+ const run = (attestation: string, print = false) => spawnSync(process.execPath, ['--input-type=module', '-e', `import {runSchemaGate} from ${JSON.stringify(join(process.cwd(), 'scripts/pages/pilot-schema-gate.mjs'))};try { console.log(runSchemaGate(${JSON.stringify({ ...env, PILOT_SCHEMA_VERIFIED: attestation })},${print})); } catch(e) { console.error(e.message); process.exitCode=1; }`], { encoding: 'utf8' });
+ const printed = run(promoted, true); expect(printed.stdout.trim()).toBe(promoted);
+ expect(run(promoted).status).toBe(0);
+ const old = run(marker); expect(old.status).toBe(1); expect(old.stderr).toContain('schema compatibility has not been attested');
+});

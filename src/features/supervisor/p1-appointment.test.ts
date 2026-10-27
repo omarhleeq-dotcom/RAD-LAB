@@ -3,11 +3,12 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { afterEach, expect, it, vi } from 'vitest';
 import en from '../../../messages/en.json';
+import { CONSENT_VERSION } from '../pilot/consent';
 const f = vi.hoisted(() => ({ available: true, appointed: false, role: 'participant', status: 'approved', user: '00000000-0000-0000-0000-000000000004', fail: false, client: vi.fn(), calls: vi.fn() }));
 vi.mock('./p1-availability', () => ({ get P1_AVAILABLE() { return f.available; } }));
 vi.mock('../pilot/config', () => ({ PILOT: true }));
 vi.mock('../pilot/SessionGate', () => {
- const account = () => ({ state: { kind: 'signedIn', userId: f.user, profile: { role: f.role, status: f.status }, consentVersion: '2026-10-24' } });
+ const account = () => ({ state: { kind: 'signedIn', userId: f.user, profile: { role: f.role, status: f.status }, consentVersion: CONSENT_VERSION } });
  return { useSessionAccount: account, useOptionalSessionAccount: account };
 });
 vi.mock('next-intl', () => ({ useLocale: () => 'en' }));

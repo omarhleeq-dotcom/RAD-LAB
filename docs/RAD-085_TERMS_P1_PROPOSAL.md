@@ -33,6 +33,8 @@ This update does not change retention: the owner announces the end of the trial 
 
 ## Current published Terms inspection and exact DB-day correction
 
+> **Promotion PR (RAD085-DB-DAY-PROMOTION-20261027):** the five approved paragraphs below are published in `terms.who.p3–p7` (EN/AR), `terms.howLong.p3/p4` and `c2.permanent`/`c2.confirmDeactivate` carry the table values, and `CONSENT_VERSION` is raised. It is Draft and unmerged until the owner finishes DB day; the text of this section below is the pre-promotion inspection and is kept unchanged.
+
 Inspected messages/en.json and messages/ar.json: `terms.howLong.p3` already describes a **30-day recovery window**, and p4 deletes **after** it; neither currently promises deletion “within 30 days”. They omit the seven-day completion limit. `c2.permanent`/`c2.confirmDeactivate` also need the O5 timing wording on DB day. No published Terms/message value below is changed in this PR.
 
 At the same release as the approved sharing paragraphs and CONSENT_VERSION bump, prepare these exact timing replacements:

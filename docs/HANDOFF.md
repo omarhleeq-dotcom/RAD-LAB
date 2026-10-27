@@ -3,7 +3,7 @@
 اقرأ [AGENTS](../AGENTS.md)، ثم docs:context وstatus:summary -- --id RAD-085. [project-status](project-status.md) مصدر الحالة الوحيد. تحقق من PR الحالي مباشرة، واعمل في checkout نفسه دون worktree/subagents.
 
 ## ملخص الحالة
-- **الاتجاه الحالي:** [B1–B5](DECISIONS.md#rad085-db-day-nolaptop-owner-2026-10-27) فوق [S1–S8](DECISIONS.md#rad085-sec-fixes-owner-2026-10-27) و[O1–O5](DECISIONS.md#rad085-db-day-owner-2026-10-27). إصلاحات SEC-01..05 دُمجت (#142). الحزمة مكتوبة من جديد بلا Docker: نسخة CSV من المتصفح، فحص ساعة هادئة، تراجع مُختبر، فحوص دخان. التقرير: [تقرير DB day](RAD-085_DB_DAY_NOLAPTOP_REPORT_2026-10-27.md).
+- **الاتجاه الحالي:** [B1–B5](DECISIONS.md#rad085-db-day-nolaptop-owner-2026-10-27) فوق [S1–S8](DECISIONS.md#rad085-sec-fixes-owner-2026-10-27) و[O1–O5](DECISIONS.md#rad085-db-day-owner-2026-10-27). إصلاحات SEC-01..05 دُمجت (#142). الحزمة مكتوبة من جديد بلا Docker: نسخة CSV من المتصفح، فحص ساعة هادئة، تراجع مُختبر، فحوص دخان. التقريران: [تقرير DB day](RAD-085_DB_DAY_NOLAPTOP_REPORT_2026-10-27.md) و[تقرير الترقية](RAD-085_PROMOTION_REPORT_2026-10-27.md) (PR Draft منفصل غير مدموج: الترحيلات وP1_AVAILABLE وTerms وCONSENT_VERSION وmarker).
 - **ينتظر المالك:** إذن حي منفصل ثم تنفيذ [حزمة DB day](RAD-085_DB_DAY_P1.md) بخطواتها الخمس عشرة؛ بعدها فقط مراجعة PR الترقية (Draft منفصل) وضبط `PILOT_SCHEMA_VERIFIED` على marker المطبوع فيه بعد نجاح SQL.
 - **ينتظر مراجِعًا:** مراجعة مستقلة للإصلاحات والحزمة والتراجع، ثم الأمن/ACL/الحقوق والمزوّد والقبول كما في الحزمة.
 - **مرجع Git:** docs:context لحالة الفرع وDraft PR؛ نتيجة CI على الرأس النهائي في وصف كل PR.

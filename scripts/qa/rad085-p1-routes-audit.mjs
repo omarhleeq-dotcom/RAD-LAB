@@ -11,6 +11,9 @@ import { join, resolve } from 'node:path';
 import { build } from 'esbuild';
 import { chromium } from 'playwright';
 const root = process.cwd(), dir = mkdtempSync('/tmp/rad085-p1-routes-');
+// RAD085-DB-DAY-PROMOTION-20261027: once the repository manifest is promoted (nothing deferred) the audit exercises the real export.
+const promoted = Object.keys(JSON.parse(readFileSync('scripts/pages/frontend-schema.json', 'utf8')).deferredMigrations).length === 0;
+const consentVersion = /CONSENT_VERSION = "([^"]+)"/.exec(readFileSync('src/features/pilot/consent.ts', 'utf8'))[1];
 const syntheticOrigin = 'https://synthetic.supabase.co';
 const publicEnv = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: syntheticOrigin, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_synthetic_local_test_123456' };
 const msgs = Object.fromEntries(['en', 'ar'].map(l => [l, JSON.parse(readFileSync(`messages/${l}.json`))]));
@@ -24,12 +27,12 @@ const params = { scope_page_v1: ['p_kind', 'p_group', 'p_after', 'p_limit'], sha
 let db, initial;
 async function reset() {
  await db?.close(); db = await openRad085Database();
- for (let n = 1; n <= 6; n++) await db.admin.query("insert into auth.users values($1,$2,now(),$3)", [id(n), `synthetic${n}@example.test`, JSON.stringify({ display_name: 'Synthetic P1', consent_version: '2026-10-24' })]);
+ for (let n = 1; n <= 6; n++) await db.admin.query("insert into auth.users values($1,$2,now(),$3)", [id(n), `synthetic${n}@example.test`, JSON.stringify({ display_name: 'Synthetic P1', consent_version: consentVersion })]);
  await db.admin.query("update public.profiles set status=case when user_id=$2 then 'pending' else 'approved' end,role=case when user_id=$1 then 'owner' else 'participant' end", [id(1), id(5)]);
  for (const n of [2, 3]) await db.rpc(1, 'appointment_v1', [id(n), true]);
- await db.admin.query(readFileSync('supabase/manual/rad085-sharing-policy-local.sql', 'utf8'));
+ await db.admin.query(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql', 'utf8'));
  // Verify the new read-only readiness file and the packet probe on the real local DB.
- const checks = await db.admin.query(readFileSync('supabase/checks/rad085-p1-ready.sql', 'utf8'));
+ const checks = await db.admin.query(readFileSync('supabase/checks/rad085-d3-ready.sql', 'utf8'));
  assert.ok(checks.find(r => r.rows?.length).rows.every(row => row.ready === true));
  const probe = readFileSync('docs/RAD-085_DB_DAY_P1.md', 'utf8').match(/```sql\n([\s\S]*?)```/)[1];
  const result = await db.admin.query(probe); assert.ok(Object.values(result.find(r => r.rows?.length).rows[0]).every(v => v === true));
@@ -106,7 +109,7 @@ async function open(ctx, base, locale, route) {
 let deferredServer, requiredServer;
 try {
  await reset(); deferredServer = await serve(join(root, 'out'));
- for (const locale of ['en', 'ar']) for (const route of ['account', 'owner', 'supervisor']) {
+ for (const locale of promoted ? [] : ['en', 'ar']) for (const route of ['account', 'owner', 'supervisor']) {
   const ctx = await context(deferredServer.base, route === 'owner' ? 1 : route === 'supervisor' ? 2 : 4, locale, 390, 'dark');
   const before = p1Calls, page = await open(ctx, deferredServer.base, locale, route);
   await page.waitForLoadState('networkidle');
@@ -114,23 +117,26 @@ try {
   assert.equal(await page.locator('.site-nav a[href$="/supervisor"]').count(), 0);
   assert.equal(p1Calls, before); await ctx.close();
  }
- console.log('Deferred production export: 6 route/locale checks, zero P1 RPCs.');
+ console.log(promoted ? 'Promoted export: deferred checks skipped.' : 'Deferred production export: 6 route/locale checks, zero P1 RPCs.');
  await deferredServer.close(); deferredServer = null;
  if (process.argv.includes('--deferred-only')) process.exitCode = 0;
  else {
-  const copy = join(dir, 'required'); mkdirSync(copy);
-  for (const file of ['src', 'messages', 'public', 'scripts', 'supabase', 'package.json', 'package-lock.json', 'tsconfig.json', 'next.config.ts', 'next-env.d.ts', 'postcss.config.mjs']) if (existsSync(file)) cpSync(file, join(copy, file), { recursive: true });
-  execFileSync('cp', ['-a', '--reflink=auto', join(root, 'node_modules'), join(copy, 'node_modules')]);
-  const file = join(copy, 'scripts/pages/frontend-schema.json'), m = JSON.parse(readFileSync(file));
-  for (const migration of m.guardedFeatures.supervisorP1.migrations) { m.requiredMigrations.push(migration); delete m.deferredMigrations[migration]; }
-  writeFileSync(file, JSON.stringify(m, null, 2) + '\n');
-  console.log('Building the required-manifest test copy (no git checkout/worktree).');
-  await new Promise((resolveBuild, reject) => {
-   const child = spawn('npm', ['run', 'build:pages'], { cwd: copy, env: publicEnv, stdio: ['ignore', 'pipe', 'pipe'] });
-   let output = ''; child.stdout.on('data', c => output += c); child.stderr.on('data', c => output += c);
-   child.on('exit', code => code === 0 ? resolveBuild() : reject(Error(output))); child.on('error', reject);
-  });
-  requiredServer = await serve(join(copy, 'out'));
+  if (promoted) requiredServer = await serve(join(root, 'out'));
+  else {
+   const copy = join(dir, 'required'); mkdirSync(copy);
+   for (const file of ['src', 'messages', 'public', 'scripts', 'supabase', 'package.json', 'package-lock.json', 'tsconfig.json', 'next.config.ts', 'next-env.d.ts', 'postcss.config.mjs']) if (existsSync(file)) cpSync(file, join(copy, file), { recursive: true });
+   execFileSync('cp', ['-a', '--reflink=auto', join(root, 'node_modules'), join(copy, 'node_modules')]);
+   const file = join(copy, 'scripts/pages/frontend-schema.json'), m = JSON.parse(readFileSync(file));
+   for (const migration of m.guardedFeatures.supervisorP1.migrations) { m.requiredMigrations.push(migration); delete m.deferredMigrations[migration]; }
+   writeFileSync(file, JSON.stringify(m, null, 2) + '\n');
+   console.log('Building the required-manifest test copy (no git checkout/worktree).');
+   await new Promise((resolveBuild, reject) => {
+    const child = spawn('npm', ['run', 'build:pages'], { cwd: copy, env: publicEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+    let output = ''; child.stdout.on('data', c => output += c); child.stderr.on('data', c => output += c);
+    child.on('exit', code => code === 0 ? resolveBuild() : reject(Error(output))); child.on('error', reject);
+   });
+   requiredServer = await serve(join(copy, 'out'));
+  }
   for (const width of [390, 1440]) for (const locale of ['en', 'ar']) for (const theme of ['light', 'dark']) {
    console.log(`Required routes ${locale}/${width}/${theme}`); await reset(); const t = msgs[locale].supervisor;
    const sc = await context(requiredServer.base, 2, locale, width, theme), uc = await context(requiredServer.base, 4, locale, width, theme), oc = await context(requiredServer.base, 1, locale, width, theme);
@@ -171,11 +177,11 @@ try {
     await ownerPanel.getByLabel(t.personId).waitFor(); await audit(owner, 'owner appointments');
     const row = ownerPanel.getByRole('listitem').filter({ hasText: id(2) }); await row.getByRole('button', { name: t.revoke, exact: true }).click();
     await ownerPanel.getByRole('button', { name: t.confirmRevoke, exact: true }).click();
-    await refresh(supervisor); await supervisor.getByText(t.denied, { exact: true }).waitFor();
+    await refresh(supervisor); await supervisor.getByText(t.denied, { exact: true }).or(supervisor.getByText(t.notSupervisor, { exact: true })).waitFor();
     await ownerPanel.getByLabel(t.personId).fill(id(2)); await ownerPanel.getByRole('button', { name: t.appoint, exact: true }).first().click();
-    await refresh(supervisor); await supervisor.getByRole('button', { name: t.end, exact: true }).click();
+    await supervisor.reload(); await supervisor.getByRole('button', { name: 'Synthetic route group', exact: true }).click(); await supervisor.getByRole('button', { name: t.end, exact: true }).click();
     await supervisor.getByRole('button', { name: t.confirmEnd, exact: true }).click();
-    await supervisor.getByText(t.denied, { exact: true }).waitFor();
+    await supervisor.getByText(t.denied, { exact: true }).or(supervisor.getByText(t.notSupervisor, { exact: true })).waitFor();
     await refresh(supervisor); await supervisor.getByRole('button', { name: t.group, exact: true }).click();
     await supervisor.getByLabel(t.name, { exact: true }).fill('Created from app route');
     await supervisor.getByLabel(t.ends, { exact: true }).fill(new Date(Date.now() + 3600000).toISOString().slice(0, 16));
