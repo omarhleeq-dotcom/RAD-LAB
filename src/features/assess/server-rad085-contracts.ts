@@ -6,6 +6,8 @@ export const RAD085_MIGRATIONS = [
   '20261026000100_assess_supervisor_scope.sql',
   '20261026000200_assess_authoring_drafts.sql',
   '20261026000300_assess_assignment_review.sql',
+  // RAD085-D3-DEFERRED-20261027: new source remains deferred.
+  '20261027000100_assess_management_erasure.sql',
 ] as const;
 export const RAD085_BOUNDARY = 'src/features/assess/server-rad085-contracts.ts';
 export const RAD085_DEFER_REASON = 'RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.';

@@ -11,6 +11,8 @@ import { pathToFileURL } from 'node:url';
 const require = createRequire('/tmp/radlab-ops-postgres/package.json');
 const id = n => `00000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
 const files = ['20261026000100_assess_supervisor_scope.sql','20261026000200_assess_authoring_drafts.sql','20261026000300_assess_assignment_review.sql'];
+// RAD085-D3-DEFERRED-20261027: preserve the historical three-source audit's input ceiling.
+const deferredMigrations=[...files,'20261027000100_assess_management_erasure.sql'];
 const auditedHead='99bc07c72544ffb3a40c12b98c23a415b7d26246';
 const sha = s => createHash('sha256').update(s).digest('hex');
 const toolsDir = '/tmp/rad085-pgtools/postgres-REL_18_0/src/bin';
@@ -49,7 +51,7 @@ export async function rehearse({baseline=false,lockWitnessOnly=false}={}) {
    create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
    grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
   // Historical replay constructs ONLY the synthetic pre-upgrade fixture; never a provider plan.
-  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&!files.includes(f)).sort())await c.query(sql(f));
+  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&!deferredMigrations.includes(f)).sort())await c.query(sql(f));
   await c.query(readFileSync('scripts/assess/rad085-application-inventory.sql','utf8'));
   for(let n=1;n<=4;n++)await c.query('insert into auth.users values($1,$2,now(),$3)',[id(n),`synthetic${n}@example.test`,JSON.stringify({display_name:'SYNTHETIC',consent_version:'2026-10-16'})]);
   await c.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end",[id(1)]);

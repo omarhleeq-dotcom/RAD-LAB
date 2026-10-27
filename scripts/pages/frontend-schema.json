@@ -53,6 +53,13 @@
       "serverModules": [
         "src/features/assess/server-rad085-contracts.ts"
       ]
+    },
+    "20261027000100_assess_management_erasure.sql": {
+      "sha256": "a5f704bc673ba89a0e801d2b24c9c1b415d3e8e587627de0742a39814d713146",
+      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
+      "serverModules": [
+        "src/features/assess/server-rad085-contracts.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -108,20 +115,21 @@
       "migrations": [
         "20261026000100_assess_supervisor_scope.sql",
         "20261026000200_assess_authoring_drafts.sql",
-        "20261026000300_assess_assignment_review.sql"
+        "20261026000300_assess_assignment_review.sql",
+        "20261027000100_assess_management_erasure.sql"
       ],
       "guard": {
         "path": "src/features/supervisor/p1-availability.ts",
         "symbol": "P1_AVAILABLE",
-        "sha256": "5ad90af9efa03acfe3802bfb0c3672d1d068ada9b0b93244224b7d3d27a11b33"
+        "sha256": "c15a68a506bb746502c94073a9ee19820ba79d86c4cdd345c7acc307c19c17c3"
       },
       "boundaries": {
-        "src/features/supervisor/p1-live.ts": "221cec120edd22fffededab43f5cbc664ad8db31055dc75997c947f8188a4d8c",
-        "src/features/supervisor-review/sql-adapter.ts": "4f9b4e8d9cd4dab63f8ec72899dafe58a73f40bf2e6b802e73bb6f6786ca643c"
+        "src/features/supervisor/p1-live.ts": "6a19d4f3876ba8be7313fdeac02f324f7609a9bf9cb7725692231d79ed64a44c",
+        "src/features/supervisor-review/sql-adapter.ts": "cd5bc9b98656f7b5ace8f082bac539fd7df7e2a32e2cbfe2f32de9dc163f53f5"
       },
       "consumer": {
         "path": "src/features/supervisor/P1Session.tsx",
-        "sha256": "ccb3f7f992dca3204daa52dd8a3281447adaff4b8f0325bfee785873c66d8dd6"
+        "sha256": "f9a9ecb67e2871ff41e8c8cc634e443cb6c4cfc9fd6116372a8dc03a5cb0c3fb"
       }
     }
   }

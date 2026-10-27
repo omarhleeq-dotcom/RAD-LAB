@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** دُمج #137؛ [متابعة P1](RAD-085_P1_WIRING_REPORT_2026-10-27.md) تربط المالك/المشرف/Account خلف حارس manifest واحد وتبقي الإنتاج محجوبًا. [حزمة DB day](RAD-085_DB_DAY_P1.md) تجهيز فقط؛ لا تطبيق حي.
-- **ينتظر المالك:** مراجعة P1 والهاتف، واعتماد Terms EN/AR وinitializer الحي باستثنائه المستقل. قرار نقل الإدارة والاحتفاظ محسوم؛ [D3](RAD-085_D3_SQL_GAP.md) مانع قبل تعيين أي مشرف حقيقي، ولا قبول بالنيابة عن الطالب.
-- **ينتظر مراجِعًا بشريًا:** الأمن/ACL والتزامن والمحو والحقوق والمحتوى والمصادر والرخص وO108 والمزوّد والقبول؛ لا مراجعة مستقلة أو إغلاق RAD-063 من المحلي. بقية مهام المراجعين محفوظة.
-- **مرجع Git:** docs:context للحالة الراهنة، وتقرير P1 ووصف Draft PR لدليل CI للرأس نفسه؛ دمج سابق لا يثبت نشرًا أو هاتفًا أو نجاح الرأس الحالي. لا ready/merge/auto-merge مأذون.
-- **مخاطر معلنة:** نقل الإدارة غير منفذ؛ لا تجاوز حراس الإغلاق/provenance أو نسبة التأليف للمالك. نسخة Docker يدوية حديثة قبل SQL إلزامية، وRAD-082 اليومية الآلية وRAD-059 شرطان قبل الأول الحقيقي؛ سجل المصالحة محلي مشفر بلا سحابة.
+- **الاتجاه الحالي:** دُمج #139؛ دفعة D3 وقائمة المشرف وحزمة DB day واحدة مجهزة محليًا في Draft. [O1–O5](DECISIONS.md#rad085-db-day-owner-2026-10-27) و[التقرير](RAD-085_D3_REPORT_2026-10-27.md) يحكمان؛ الإنتاج محجوب خلف الترحيلات المؤجلة.
+- **ينتظر المالك:** مراجعة P1 والهاتف والتغطية اليومية للحذف؛ Terms/initializer معتمدان بحدود O1/O2/O5، والنشر يوم DB day فقط. لا قبول مستخدم بالنيابة.
+- **ينتظر مراجِعًا بشريًا:** الأمن/ACL والتزامن والمحو وحقوق المحتوى وأقل إسناد لازم والمصادر والرخص وO108 والمزوّد والقبول؛ لا إغلاق RAD-063 من المحلي. بقية مهام المراجعين محفوظة.
+- **مرجع Git:** docs:context للحالة الراهنة، والتقرير ووصف Draft PR لدليل QA/CI للرأس نفسه. لا ready/merge/auto-merge مأذون، ولا نشر أو هاتف مستنتج من دمج.
+- **مخاطر معلنة:** نقل الإدارة قبل30 ثم C2 الطبيعي بعد الاستعادة وخلال7أيام؛ SQL مؤجل ومراجعة المحتوى ونسخة المالك المستعادة باقيتان. RAD-082 وRAD-059 شرطان قبل الأول الحقيقي؛ السجل والنسخ محلية مشفرة دون سحابة.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 310,
-  "updated_at": "2026-10-27T02:47:47.733264+00:00",
+  "revision": 311,
+  "updated_at": "2026-10-27T06:12:06.659257+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -764,11 +764,11 @@
     },
     {
       "id": "RAD-085",
-      "title": "ربط P1 للمشرف محجوب حتى DB day وحزمة موافقات المالك",
+      "title": "D3 مؤجل وقائمة المشرف وحزمة DB day واحدة وفق O1–O5",
       "status": "review",
       "priority": "high",
-      "description": "دُمج #137؛ متابعة P1 في Draft: مراجعة المالك والهاتف وTerms وinitializer الحي والحزمة. D3 نقل الإدارة والمحو ضمن30يومًا مانع قبل تعيين مشرف حقيقي؛ لا DB day أو SQL حي. RAD-082 وRAD-059 شرطان قبل أول امتحان؛ P2 وباقي المراجعات مؤجلة.",
-      "source_ref": "docs/RAD-085_PLAN_2026-10-25.md؛ docs/archive/RAD-085_P1_UI_REPORT_2026-10-25.md؛ docs/archive/RAD-085_P2_UI_REPORT_2026-10-25.md؛ أمر المالك P2-UI وتأجيل القاعدة2026-10-25؛ docs/archive/RAD-085_FULL_PRACTICAL_UI_REPORT_2026-10-25.md؛ أمر المالك full-practical وتأجيل تقييم P1/P2 بتاريخ2026-10-25؛ docs/archive/RAD-085_SCENE_PREVIEW_REPORT_2026-10-25.md؛ أمر المالك استكمال المشهد وتوقيت مراجعة الواجهات2026-10-25؛ docs/archive/RAD-085_UI_READINESS_REPORT_2026-10-25.md؛ أمر المالك الجرد النهائي وتجهيز مراجعة الواجهات2026-10-25؛ docs/archive/RAD-085_SQL_BLOCKER_REPORT_2026-10-26.md؛ قرار المالك SQL المحلي وتأجيل مراجعة الواجهات2026-10-26؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ إذن المالك استثناء توقع F المسمى2026-10-26؛ docs/archive/RAD-085_SQL_COMPLETION_REPORT_2026-10-26.md؛ إذن المالك استكمال SQL وCI والاستثناءات المسماة2026-10-26؛ docs/archive/RAD-085_P1_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P1 المحلي فقط2026-10-26؛ docs/archive/RAD-085_P2_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P2 المحلي فقط2026-10-26؛ docs/archive/RAD-085_ASSIGNMENT_BRIDGE_REPORT_2026-10-26.md؛ أمر المالك استكمال محلي للجسر والإسناد والإغلاق2026-10-26؛ إذن المالك المحدد لبصمة SQL الجسر المحلي غير المطبق2026-10-26؛ docs/archive/RAD-085_SECURITY_AUDIT_2026-10-26.md؛ docs/archive/RAD-085_APPLICATION_PACKET_2026-10-26.md؛ إذن المالك RAD085-SQL-AUDIT-EXPIRY-DELETE-20261026؛ docs/archive/RAD-085_CONNECTION_IDENTITY_2026-10-26.md؛ أمر المالك هوية الاتصال والإبطال المحلي والشواهد الآلية2026-10-26؛ docs/archive/RAD-085_ERASURE_REPORT_2026-10-26.md؛ docs/RAD-085_ERASURE_MATRIX_2026-10-26.md؛ docs/archive/RAD-085_ERASURE_RECOVERY_2026-10-26.md؛ قرار المالك المحو والمصالحة والاستثناء RAD085-SQL-ERASURE-LOCAL-20261026؛ docs/archive/RAD-085_WORKER_LOCAL_REPORT_2026-10-26.md؛ أمر المالك تجهيز العامل واختباره محليًا للمسارين دون نشر أو Supabase حي2026-10-26؛ docs/archive/RAD-085_SHARING_OWNER_REPORT_2026-10-26.md؛ قرارات المالك لاستكمال المشاركة والكاتب2026-10-26؛ docs/RAD-085_REMAINING_OPERATIONS_2026-10-26.md؛ اعتماد المالك RAD085-SQL-SHARING-POLICY-LOCAL-20261026 لمقترح e356318 ذي18سطرًا وإضافته واختباره محليًا فقط؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-085_REPORT_2026-10-27.md؛ أمر المالك P1 supervisor wiring2026-10-27 والتحقق المباشر من دمج #137؛ docs/RAD-085_P1_WIRING_REPORT_2026-10-27.md؛ docs/RAD-085_DB_DAY_P1.md؛ docs/RAD-085_TERMS_P1_PROPOSAL.md؛ docs/RAD-085_D3_SQL_GAP.md",
+      "description": "دُمج #139؛ D3 وقائمة المشرف والحزمة مجهزة محليًا للمراجعة في Draft #140. نقل الإدارة قبل30 ثم C2 الطبيعي بعدها وخلال7أيام؛ لا تفعيل حي. تبقى مراجعة المالك/الهاتف والأمن/الحقوق والمزوّد ونسخة Docker مستعادة؛ Terms/CONSENT_VERSION يوم DB day فقط. RAD-082 وRAD-059 شرطان قبل أول امتحان.",
+      "source_ref": "docs/RAD-085_PLAN_2026-10-25.md؛ docs/archive/RAD-085_P1_UI_REPORT_2026-10-25.md؛ docs/archive/RAD-085_P2_UI_REPORT_2026-10-25.md؛ أمر المالك P2-UI وتأجيل القاعدة2026-10-25؛ docs/archive/RAD-085_FULL_PRACTICAL_UI_REPORT_2026-10-25.md؛ أمر المالك full-practical وتأجيل تقييم P1/P2 بتاريخ2026-10-25؛ docs/archive/RAD-085_SCENE_PREVIEW_REPORT_2026-10-25.md؛ أمر المالك استكمال المشهد وتوقيت مراجعة الواجهات2026-10-25؛ docs/archive/RAD-085_UI_READINESS_REPORT_2026-10-25.md؛ أمر المالك الجرد النهائي وتجهيز مراجعة الواجهات2026-10-25؛ docs/archive/RAD-085_SQL_BLOCKER_REPORT_2026-10-26.md؛ قرار المالك SQL المحلي وتأجيل مراجعة الواجهات2026-10-26؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ إذن المالك استثناء توقع F المسمى2026-10-26؛ docs/archive/RAD-085_SQL_COMPLETION_REPORT_2026-10-26.md؛ إذن المالك استكمال SQL وCI والاستثناءات المسماة2026-10-26؛ docs/archive/RAD-085_P1_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P1 المحلي فقط2026-10-26؛ docs/archive/RAD-085_P2_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P2 المحلي فقط2026-10-26؛ docs/archive/RAD-085_ASSIGNMENT_BRIDGE_REPORT_2026-10-26.md؛ أمر المالك استكمال محلي للجسر والإسناد والإغلاق2026-10-26؛ إذن المالك المحدد لبصمة SQL الجسر المحلي غير المطبق2026-10-26؛ docs/archive/RAD-085_SECURITY_AUDIT_2026-10-26.md؛ docs/archive/RAD-085_APPLICATION_PACKET_2026-10-26.md؛ إذن المالك RAD085-SQL-AUDIT-EXPIRY-DELETE-20261026؛ docs/archive/RAD-085_CONNECTION_IDENTITY_2026-10-26.md؛ أمر المالك هوية الاتصال والإبطال المحلي والشواهد الآلية2026-10-26؛ docs/archive/RAD-085_ERASURE_REPORT_2026-10-26.md؛ docs/RAD-085_ERASURE_MATRIX_2026-10-26.md؛ docs/archive/RAD-085_ERASURE_RECOVERY_2026-10-26.md؛ قرار المالك المحو والمصالحة والاستثناء RAD085-SQL-ERASURE-LOCAL-20261026؛ docs/archive/RAD-085_WORKER_LOCAL_REPORT_2026-10-26.md؛ أمر المالك تجهيز العامل واختباره محليًا للمسارين دون نشر أو Supabase حي2026-10-26؛ docs/archive/RAD-085_SHARING_OWNER_REPORT_2026-10-26.md؛ قرارات المالك لاستكمال المشاركة والكاتب2026-10-26؛ docs/RAD-085_REMAINING_OPERATIONS_2026-10-26.md؛ اعتماد المالك RAD085-SQL-SHARING-POLICY-LOCAL-20261026 لمقترح e356318 ذي18سطرًا وإضافته واختباره محليًا فقط؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-085_REPORT_2026-10-27.md؛ أمر المالك P1 supervisor wiring2026-10-27 والتحقق المباشر من دمج #137؛ docs/RAD-085_P1_WIRING_REPORT_2026-10-27.md؛ docs/RAD-085_DB_DAY_P1.md؛ docs/RAD-085_TERMS_P1_PROPOSAL.md؛ docs/RAD-085_D3_SQL_GAP.md؛ docs/DECISIONS.md#rad085-db-day-owner-2026-10-27؛ docs/RAD-085_D3_REPORT_2026-10-27.md؛ أمر المالك O1–O5 وW1–W3 بتاريخ2026-10-27؛ Draft PR #140",
       "waiting_on": "owner"
     }
   ]

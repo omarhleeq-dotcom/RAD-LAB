@@ -2013,6 +2013,7 @@
     "ownerRole": "Owner"
   },
   "supervisor": {
+    "notSupervisor": "This account is not a supervisor. An active supervisor appointment is required.",
     "sqlHint": "Practice saved within the current sharing and membership window. Saved totals are shown without regrading. Group exam results are not displayed here.",
     "total": "Total in scope",
     "personId": "Approved participant UUID",
