@@ -8,7 +8,7 @@ import type { Client as PgClient } from 'pg';
 import { RAD085_MIGRATIONS } from './server-rad085-contracts';
 
 export const fixtureId = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, '0')}`;
-export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Promise<void>) {
+export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Promise<void>, migrations: readonly string[] = RAD085_MIGRATIONS) {
   // Only a local package selector; never a database connection selector.
   const require = createRequire('/tmp/radlab-ops-postgres/package.json');
   const { Client } = require('pg') as typeof import('pg');
@@ -41,7 +41,7 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
     const names = readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort();
     for (const file of names.filter(f => !(RAD085_MIGRATIONS as readonly string[]).includes(f))) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
     if (beforeUpgrade) await beforeUpgrade(admin);
-    for (const file of RAD085_MIGRATIONS) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
+    for (const file of migrations) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
     async function transaction<T>(who: number | 'anon' | 'worker', work: (c: PgClient) => Promise<T>, label = 'rad085-rpc') {
       const c = await connect(label);
       try {

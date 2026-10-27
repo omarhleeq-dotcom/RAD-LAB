@@ -852,3 +852,18 @@ Authority: the owner's instruction in this session answering the [independent re
 - **S8 (CI flake):** `src/features/pilot/schema-gate.test.ts:11` timed out at 5000 ms on GitHub runners. Preferred fix: make the gate fast again without weakening checks. Only if it is still legitimately slower, **RAD-SCHEMA-GATE-TIMEOUT-20261027** allows an explicit timeout on THAT test only, at least 3× the measured CI runtime, with numbers reported and 20 local repetitions.
 
 Production stays hidden; marker `pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10` unchanged; no live SQL/Supabase, `qa:golden` or `qa:characterise`; one Draft PR, never ready/merge/auto-merge.
+
+<a id="rad085-db-day-nolaptop-owner-2026-10-27"></a>
+### RAD-085 — B1–B5: DB day without the laptop, 2026-10-27
+
+Authority: the owner's instruction in this session, after PR #142 (S1–S8) was merged. It changes **how** DB day is run, not [O1–O5](#rad085-db-day-owner-2026-10-27) or [S1–S8](#rad085-sec-fixes-owner-2026-10-27); every O4/S step still needs a separate live authorization. Packet: [RAD-085_DB_DAY_P1](RAD-085_DB_DAY_P1.md).
+
+- **B1:** DB day happens **without the laptop and without a Docker backup**. RAD-082 and the full Docker backup (and the restored-database rehearsal of O3) are deferred until the laptop returns; the plan's rule stands that **RAD-082 completes before the first real exam**. The replacement safeguards are B2–B5.
+- **B2:** Browser backup: read-only SQL Editor queries, one per table, whose results the owner downloads as CSV before any change, with expected row counts and a final count query to compare after DB day. They cover every table holding participant or operational data (public profiles, attempts, events, feedback, `c2_*` and survey tables, assess tables with rows) and minimal `auth.users` columns (`id`, `email`, `created_at`, `banned_until`, `consent_version`; never password hashes or tokens). The files contain personal data and are deleted once DB day is verified.
+- **B3:** Rollback: a tested manual script `supabase/manual/rad085-db-day-rollback.sql` that returns the live behaviour to pre-DB-day without deleting data: it restores the exact previous bodies and ACL of every pre-existing function the four migrations redefine, drops the triggers they add to pre-existing tables, and leaves new tables (with rows) in place. Proven locally from main's schema up to C2 with synthetic data. A new manual file needs no named exception; no existing pin changes.
+- **B4:** Smoke checks right after applying: practice attempt saving, owner dashboard, C2 list, and the readiness checks before and after the initializer all true. Any failure: run B3 immediately.
+- **B5:** Timing: a quiet hour, confirmed by a read-only pre-check of recent attempts, feedback, events and activity before the first change.
+
+**RAD085-DB-DAY-PROMOTION-20261027** (owner, same instruction) covers ONLY the separate promotion Draft PR, prepared but not merged until the owner finishes DB day: moving the four sources to `requiredMigrations`; flipping the literal `P1_AVAILABLE` and re-pinning its guard; switching manifest checks per the packet; publishing the approved Terms EN/AR (O1/O5 wording, including the 7-day completion and the `c2.*` messages) and raising `CONSENT_VERSION`; and the expected new marker, which the owner sets as `PILOT_SCHEMA_VERIFIED` only after the SQL succeeded. Every changed test pin is listed file:line/old/new/why in that PR's report. Anything else: STOP and list it.
+
+Still true: Draft PRs only, never ready/merge/auto-merge; no live SQL/Supabase, secrets or preview URLs; `qa:golden` and `qa:characterise` are not run.
