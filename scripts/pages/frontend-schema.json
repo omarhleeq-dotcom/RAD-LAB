@@ -55,7 +55,7 @@
       ]
     },
     "20261027000100_assess_management_erasure.sql": {
-      "sha256": "a5f704bc673ba89a0e801d2b24c9c1b415d3e8e587627de0742a39814d713146",
+      "sha256": "7e77817c1cf5ffa2ad344f509fa31b418f0724443b68c4a354314dba1424826e",
       "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
       "serverModules": [
         "src/features/assess/server-rad085-contracts.ts"
@@ -121,7 +121,7 @@
       "guard": {
         "path": "src/features/supervisor/p1-availability.ts",
         "symbol": "P1_AVAILABLE",
-        "sha256": "c15a68a506bb746502c94073a9ee19820ba79d86c4cdd345c7acc307c19c17c3"
+        "sha256": "aa3d569b745cd4418bc61900f277d6291504ee87be87f15f881e15fbc824ca5b"
       },
       "boundaries": {
         "src/features/supervisor/p1-live.ts": "6a19d4f3876ba8be7313fdeac02f324f7609a9bf9cb7725692231d79ed64a44c",

@@ -16,7 +16,8 @@ it("blocks an enabled deployment without a matching project attestation", () => 
   expect(run({ ...env, PILOT_SCHEMA_VERIFIED: "true" }).status).toBe(1);
   expect(run({ ...env, PILOT_SCHEMA_VERIFIED: marker.stdout.trim() }).status).toBe(0);
   expect(run({ ...env, NEXT_PUBLIC_SUPABASE_URL: "https://different-project.supabase.co", PILOT_SCHEMA_VERIFIED: marker.stdout.trim() }).status).toBe(1);
-});
+  // RAD-SCHEMA-GATE-TIMEOUT-20261027: five serial gate processes; >=3x the 4298 ms CI run.
+}, 15000);
 it("allows an explicitly disabled pilot and rejects incomplete or unsafe configuration without printing keys", () => {
   expect(run().status).toBe(0);
   expect(run({ NEXT_PUBLIC_SUPABASE_URL: project }).status).toBe(1);

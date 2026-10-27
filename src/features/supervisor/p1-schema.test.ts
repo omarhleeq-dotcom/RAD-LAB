@@ -15,6 +15,10 @@ it('accepts dormant wiring with the current marker and requires a fresh marker w
   expect(gate().status).toBe(0);
   const path = join(root, 'scripts/pages/frontend-schema.json'), m = JSON.parse(readFileSync(path, 'utf8'));
   for (const file of m.guardedFeatures.supervisorP1.migrations) { m.requiredMigrations.push(file); delete m.deferredMigrations[file]; }
+  // RAD085-SEC-FIXES-20261027 SEC-04: promotion also updates the reviewed literal guard and its pin.
+  const guardPath = join(root, 'src/features/supervisor/p1-availability.ts');
+  writeFileSync(guardPath, readFileSync(guardPath, 'utf8').replace('P1_AVAILABLE: boolean = false;', 'P1_AVAILABLE: boolean = true;'));
+  m.guardedFeatures.supervisorP1.guard.sha256 = createHash('sha256').update(readFileSync(guardPath)).digest('hex');
   writeFileSync(path, JSON.stringify(m));
   expect(gate().stderr).toContain('schema compatibility has not been attested');
   const printed = gate(true); expect(printed.status, printed.stderr).toBe(0); expect(printed.stdout.trim()).not.toBe(marker);
