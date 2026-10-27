@@ -10,6 +10,8 @@ async function run(role:"owner"|"participant",o:{fault?:Fault;populated?:boolean
  const id=role==="owner"?owner:participant,other=role==="owner"?participant:owner;
  const prompts=[o.key??key,o.other===undefined?other:o.other],out:string[]=[],calls:{path:string;body:Record<string,unknown>|null;signed:boolean}[]=[];
  await runInNewContext(source,{
+  // Keep the CI collision reproducible without changing the script clock.
+  Date:class extends Date {constructor(value?:string){super(value??"2026-10-25T12:44:21.253Z");}},
   location:{protocol:"https:",hostname:"signed-in-application.test"},URL,AbortSignal,TextEncoder,Uint8Array,crypto:webcrypto,
   localStorage:{getItem:(name:string)=>{expect(name).toBe("sb-vlacestfruxooznrcjqc-auth-token");return o.noSession?null:JSON.stringify({access_token:token,user:{id}});}},
   prompt:()=>prompts.shift(),console:{log:(s:string)=>out.push(s)},
@@ -44,8 +46,16 @@ async function run(role:"owner"|"participant",o:{fault?:Fault;populated?:boolean
   }
  });
  expect(out).toHaveLength(1);expect(out[0]).toMatch(/^RADLAB_ASSESS_RETENTION_CLOSED_CHECK /);
- for(const v of [token,key,owner,participant,cursor,"private-name","1.25","10.00"])expect(out[0]).not.toContain(v);
- return {result:JSON.parse(out[0]!.replace("RADLAB_ASSESS_RETENTION_CLOSED_CHECK ","")),calls};
+ const result=JSON.parse(out[0]!.replace("RADLAB_ASSESS_RETENTION_CLOSED_CHECK ",""));
+ const {at,...nonTimestampFields}=result;
+ expect(at).toEqual(expect.any(String));
+ expect(Number.isFinite(Date.parse(at))).toBe(true);
+ expect(new Date(at).toISOString()).toBe(at);
+ expect(at).toContain("1.25");
+ // RAD-RETENTION-CHECK-FLAKE-20261027: only the validated timestamp is excluded.
+ const privateOutput=JSON.stringify(nonTimestampFields);
+ for(const v of [token,key,owner,participant,cursor,"private-name","1.25","10.00"])expect(privateOutput).not.toContain(v);
+ return {result,calls};
 }
 it("verifies both approved roles, read-only consent status and four-field history without writes or private output",async()=>{
  const a=await run("owner",{populated:true,shown:true,accepted:true}),b=await run("participant",{populated:true,anonymous401:true,hiddenTable:true});
