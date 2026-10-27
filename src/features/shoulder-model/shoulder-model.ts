@@ -1,7 +1,7 @@
 import { TUNING } from "@/features/radiograph/tuning";
 // Existing visual rest interval, kept separate from the private exam scoring band.
 // The public drawing model reveals only its existing displacement behaviour.
-const REST_BAND_DEG: readonly [number, number] = [35, 45];
+export const REST_BAND_DEG: readonly [number, number] = [35, 45];
 
 /**
  * ONE-CUE rotation model of the Shoulder AP oblique glenoid (Grashey) exam (S-SHOULDER-2-4 / 2-6, S-SHOULDER-3).

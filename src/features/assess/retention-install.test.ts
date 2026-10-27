@@ -1,3 +1,4 @@
+// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
 import {historicalRad085Input} from "./server-rad085-contracts";
 import {createHash} from "node:crypto";
 import {spawnSync} from "node:child_process";

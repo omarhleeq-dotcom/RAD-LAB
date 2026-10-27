@@ -152,7 +152,7 @@ export async function rehearse({baseline=false,lockWitnessOnly=false}={}) {
   for(const path of ['supabase/migrations/'+files[0],'supabase/migrations/'+files[2],'scripts/pages/frontend-schema.json']){
    mkdirSync(dirname(join(proposalDir,path)),{recursive:true});writeFileSync(join(proposalDir,path),execFileSync('git',['show',`${auditedHead}:${path}`]));
   }
-  execFileSync('patch',['--batch','--fuzz=0','-p1','-d',proposalDir],{input:readFileSync('docs/RAD-085_SQL_AUDIT_PROPOSAL_2026-10-26.patch'),stdio:['pipe','pipe','pipe']});
+  execFileSync('patch',['--batch','--fuzz=0','-p1','-d',proposalDir],{input:readFileSync('docs/archive/RAD-085_SQL_AUDIT_PROPOSAL_2026-10-26.patch'),stdio:['pipe','pipe','pipe']});
   for(const file of [files[0],files[2]])assert.equal(readFileSync(join(proposalDir,'supabase/migrations',file),'utf8'),readFileSync('supabase/migrations/'+file,'utf8'));
   const names=['membership_period_v1','authoring_bridge_read_v1','authoring_bridge_candidate_v1','authoring_bridge_install_v1','authoring_bridge_bind_v1','content_submit_v1'];
   const originals=[];

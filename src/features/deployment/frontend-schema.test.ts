@@ -1,3 +1,4 @@
+// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
 import {RAD085_MIGRATIONS} from "../assess/server-rad085-contracts";
 import { cpSync,mkdirSync,existsSync,mkdtempSync,readFileSync,rmSync,writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";

@@ -5,7 +5,7 @@ import { openRad085Database, fixtureId as id } from './rad085-local-db';
 import { openSyntheticRecoveryEvidence, reconcileSynthetic } from '../../../scripts/assess/rad085-erasure-recovery.mjs';
 
 // Owner-approved SQL is applied only inside this disposable fixture, after the three sources.
-const proposedSql = () => readFileSync('docs/RAD-085_ERASURE_SQL_PROPOSAL_2026-10-26.patch','utf8').split('\n').filter(l=>l.startsWith('+')&&!l.startsWith('+++')).map(l=>l.slice(1)).join('\n');
+const proposedSql = () => readFileSync('docs/archive/RAD-085_ERASURE_SQL_PROPOSAL_2026-10-26.patch','utf8').split('\n').filter(l=>l.startsWith('+')&&!l.startsWith('+++')).map(l=>l.slice(1)).join('\n');
 type Db = Awaited<ReturnType<typeof fixture>>;
 async function fixture() {
  const db=await openRad085Database();

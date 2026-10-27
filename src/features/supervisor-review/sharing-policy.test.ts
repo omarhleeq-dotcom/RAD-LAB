@@ -11,6 +11,8 @@ it('pins both displayed languages to one versioned UTF-8 digest, independent of 
  expect(knownSharingPolicy(version, digest)).toBe(true);
  expect(knownSharingPolicy(version, '0'.repeat(64))).toBe(false);
  expect(knownSharingPolicy('unknown', digest)).toBe(false);
+ expect(knownSharingPolicy("supervisor-sharing-2026-10-26-v1", digest)).toBe(false);
+ expect(knownSharingPolicy(version, "c1ad94d66041af575cd7c53635bf97b6938618fcca397f75b92d5401cb0cf510")).toBe(false);
 });
 it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance, changed policy, lost ACK and lost authority', async () => {
  const db = await openRad085Database();
@@ -26,7 +28,7 @@ it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance,
   expect((await read()).sharing).toBe(false);
   await expect(consent(true)).rejects.toMatchObject({ reason: 'expired' });
   // Owner-approved file is exercised only inside this disposable synthetic fixture.
-  const proposed = readFileSync('docs/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch', 'utf8').split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.slice(1)).join('\n');
+  const proposed = readFileSync('docs/archive/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch', 'utf8').split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.slice(1)).join('\n');
   const sql = readFileSync('supabase/manual/rad085-sharing-policy-local.sql', 'utf8');
   expect(sql).toBe(proposed + '\n');
   await db.admin.query(sql); await db.admin.query(sql);
@@ -34,6 +36,8 @@ it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance,
   expect((await read()).sharingPolicy?.known).toBe(true);
   expect((await db.admin.query('select * from assess.sharing_consents')).rowCount).toBe(0); // Declining means no mutation.
   await expect(consent(true, 'unknown')).rejects.toMatchObject({ reason: 'denied' });
+  await expect(consent(true, "supervisor-sharing-2026-10-26-v1", "c1ad94d66041af575cd7c53635bf97b6938618fcca397f75b92d5401cb0cf510")).rejects.toMatchObject({ reason: 'denied' });
+  await expect(consent(true, sharingPolicy.version, "c1ad94d66041af575cd7c53635bf97b6938618fcca397f75b92d5401cb0cf510")).rejects.toMatchObject({ reason: 'denied' });
   await expect(consent(true, sharingPolicy.version, '0'.repeat(64))).rejects.toMatchObject({ reason: 'denied' });
   await consent(true); expect((await read()).sharing).toBe(true);
   const first = (await db.admin.query('select accepted_at from assess.sharing_consents')).rows[0].accepted_at;
@@ -72,9 +76,10 @@ it('real PostgreSQL self consent: refusal, acceptance, withdrawal, reacceptance,
 
 it('approved initializer matches the exact proposal bytes and rolls back an update failure without creating consent', async () => {
  const sql = readFileSync('supabase/manual/rad085-sharing-policy-local.sql');
- const proposal = readFileSync('docs/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch', 'utf8').split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.slice(1)).join('\n') + '\n';
+ const proposal = readFileSync('docs/archive/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch', 'utf8').split('\n').filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.slice(1)).join('\n') + '\n';
  expect(sql.equals(Buffer.from(proposal, 'utf8'))).toBe(true);
- expect(createHash('sha256').update(sql).digest('hex')).toBe('a16e49058098263ab71e09cf24a7d43333e35ee09512bc7890e600c740ae3448');
+ // RAD085-SQL-SHARING-POLICY-LOCAL-V2-20261027: hash computed from regenerated local SQL.
+ expect(createHash('sha256').update(sql).digest('hex')).toBe('3085c1fb07c84b589fcdc9ef802b0fcedda8d750b755e992aa87573e4d4734d2');
  expect(sql.toString('utf8').split('\n')).toHaveLength(19); // 18 LF-terminated lines.
  const db = await openRad085Database();
  try {

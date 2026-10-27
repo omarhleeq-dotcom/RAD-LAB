@@ -1,8 +1,14 @@
 import { expect, it } from "vitest";
-import { SHOULDER_COLUMNS, shoulderAnchors, shoulderClosureU, shoulderShift, shoulderValue } from "./shoulder-model";
+import { REST_BAND_DEG, SHOULDER_COLUMNS, shoulderAnchors, shoulderClosureU, shoulderShift, shoulderValue } from "./shoulder-model";
 import { limbRotationPlan } from "@/features/radiograph/limb-effects";
 import { limbRotationValue } from "@/features/radiograph/pipeline";
 import { shoulderGrasheyRadiograph } from "@/data/cases/shoulder-grashey-radiograph";
+
+import { SHOULDER_BAND_DEG } from "@/data/exams/xray/shoulder-geometry";
+
+it("keeps the public rest interval equal to the reviewed shoulder band", () => {
+  expect(REST_BAND_DEG).toEqual(SHOULDER_BAND_DEG);
+});
 
 const lm = shoulderGrasheyRadiograph.limbRotation!;
 it("has a dead band over the whole source range 35°–45° and grows only outside it (no 40° optimum)", () => {

@@ -1,3 +1,4 @@
+// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
 import { spawnSync } from "node:child_process";
 import { expect,it } from "vitest";
 it("derives exact reviewed references, preserves original pins and rejects semantic, permission and NOT NULL drift",()=>{

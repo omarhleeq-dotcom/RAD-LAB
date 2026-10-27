@@ -2,7 +2,7 @@
 
 ## 1. الانحرافات والميزانية
 
-الهدف الواحد: مسودة full-practical مستقلة من الفحوص والحالات القائمة، ومعاينة آمنة وتجربة إسناد اصطناعي لمجموعات المشرف. الميزانية المعلنة16ملفًا:8ملفات authoring-review قائمة عدا اختبار P2 السابق، [اختبار عملي جديد](../src/features/authoring-review/practical.test.ts)، [سكربت تدقيق P2](../scripts/qa/rad-085-authoring-audit.mjs)، الخطة والحالة وHANDOFF وهذا التقرير ولقطتاEN/AR. صفر وحدات assess مشتركة أو قاعدة بيانات معدلة، ولا توسع ملفات أو إصلاح جانبي. استُكمل checkout نفسه دون worktree أو subagents.
+الهدف الواحد: مسودة full-practical مستقلة من الفحوص والحالات القائمة، ومعاينة آمنة وتجربة إسناد اصطناعي لمجموعات المشرف. الميزانية المعلنة16ملفًا:8ملفات authoring-review قائمة عدا اختبار P2 السابق، [اختبار عملي جديد](../../src/features/authoring-review/practical.test.ts)، [سكربت تدقيق P2](../../scripts/qa/rad-085-authoring-audit.mjs)، الخطة والحالة وHANDOFF وهذا التقرير ولقطتاEN/AR. صفر وحدات assess مشتركة أو قاعدة بيانات معدلة، ولا توسع ملفات أو إصلاح جانبي. استُكمل checkout نفسه دون worktree أو subagents.
 
 **حد تنفيذي معلن:** المعاينة تعرض PracticalControls القائمة فقط. استيراد PracticalScene فشل حارس browser imports القائم: يجلب ملفات geometry وراديوغراف من مجلدات data/exams وdata/cases. لم تُستثنَ الملفات من الحارس، ولم يُعدّل مكوّن المشهد أو تُنشأ آلية رسم بديلة. تفصح المعاينة EN/AR أن runner الطالب يعرض مشهدًا أيضًا؛ **لا تطابق بصري كامل أو اكتمال قبول المعاينة**. تضمين المشهد يحتاج فصل بيانات الرسم العامة الآمنة بعقد مأذون ومراجعة لاحقة، دون أهداف التقييم أو تخفيف الحارس.
 
@@ -22,11 +22,11 @@
 
 ## 3. حسب المهمة
 
-RAD-085 تبقىreview/waiting_on owner دونcompletion_evidence أوdone. **تقييم المالك لواجهتيP1/P2 مؤجل إلى نهاية تجهيز الواجهات؛ ليس قبولًا أو اكتمالًا ولا يُطلب الآن.** حُدثت [الخطة](RAD-085_PLAN_2026-10-25.md) و[الحالة](project-status.md) و[HANDOFF](HANDOFF.md). المهام الأخرى، خصوصًاRAD-056/059/060/062/063، محفوظة؛ لا إعلان اكتمال التأليف أو الإسناد أو صلاحيات المشرف الحقيقية.
+RAD-085 تبقىreview/waiting_on owner دونcompletion_evidence أوdone. **تقييم المالك لواجهتيP1/P2 مؤجل إلى نهاية تجهيز الواجهات؛ ليس قبولًا أو اكتمالًا ولا يُطلب الآن.** حُدثت [الخطة](../RAD-085_PLAN_2026-10-25.md) و[الحالة](../project-status.md) و[HANDOFF](../HANDOFF.md). المهام الأخرى، خصوصًاRAD-056/059/060/062/063، محفوظة؛ لا إعلان اكتمال التأليف أو الإسناد أو صلاحيات المشرف الحقيقية.
 
 ## 4. المشترك وScale وعقود الربط
 
-لا تعديل لوحدة assess أو محرك أو عرض مشترك قائم. [contracts](../src/features/authoring-review/contracts.ts) يمددDTO المحلي ببندPracticalDraftItem ومرجعPracticalReference؛ [draft](../src/features/authoring-review/draft.ts) يطبق الفصل والتحقق والإسقاط؛ [catalog](../src/features/authoring-review/catalog.ts) يعمل فيNode فقط. تبقى [Session](../src/features/authoring-review/Session.tsx) و[AuthoringView](../src/features/authoring-review/AuthoringView.tsx) و[StudentPreview](../src/features/authoring-review/StudentPreview.tsx) و[synthetic](../src/features/authoring-review/synthetic.ts) منفصلة المسؤوليات.
+لا تعديل لوحدة assess أو محرك أو عرض مشترك قائم. [contracts](../../src/features/authoring-review/contracts.ts) يمددDTO المحلي ببندPracticalDraftItem ومرجعPracticalReference؛ [draft](../../src/features/authoring-review/draft.ts) يطبق الفصل والتحقق والإسقاط؛ [catalog](../../src/features/authoring-review/catalog.ts) يعمل فيNode فقط. تبقى [Session](../../src/features/authoring-review/Session.tsx) و[AuthoringView](../../src/features/authoring-review/AuthoringView.tsx) و[StudentPreview](../../src/features/authoring-review/StudentPreview.tsx) و[synthetic](../../src/features/authoring-review/synthetic.ts) منفصلة المسؤوليات.
 
 | العقد المعاد استخدامه | فرق full-practical وحد الربط |
 |---|---|
@@ -71,8 +71,8 @@ RAD-085 تبقىreview/waiting_on owner دونcompletion_evidence أوdone. **ت
 
 لا تقييم مطلوب الآن. عند وقته، شغّل`node scripts/qa/rad-085-authoring-audit.mjs --serve` وافتح عنوانloopback المطبوع معlocale=en أوlocale=ar. اختر مجموعة وإنشاءfull-practical، واختبر السياسات والمراجع والترتيب والحذف والحفظ الاصطناعي والضوابط والإغلاق والإسناد المصفح والإلغاء والتبديل والسحب والانتهاء. المعاينة للضوابط فقط مع إفصاح عن المشهد الغائب؛ إعادة تحميل الصفحة تمحو الذاكرة.
 
-تدقيقfull-practical بالأمر نفسه مع--practical دون--serve؛ تدقيقmixed بدونflags. Playwright1.56.1 وaxe-core خارج المستودع في`/tmp/rad085-p2-browser` وChromium محلي؛ لا تعديلpackage/lock. [EN](review/rad085-practical-en.jpg) و[AR](review/rad085-practical-ar.jpg) لقطتا مراجعة مضغوطتان فقط.
+تدقيقfull-practical بالأمر نفسه مع--practical دون--serve؛ تدقيقmixed بدونflags. Playwright1.56.1 وaxe-core خارج المستودع في`/tmp/rad085-p2-browser` وChromium محلي؛ لا تعديلpackage/lock. [EN](../review/rad085-practical-en.jpg) و[AR](../review/rad085-practical-ar.jpg) لقطتا مراجعة مضغوطتان فقط.
 
 برومبت المتابعة: «اقرأAGENTS وdocs:context لـ#137 وأحدثmain ورأسه، وstatus:summary وخطةRAD-085 وتقاريرP1/P2 ومتابعةfull-practical. إن أُغلق أو دُمج توقف وأبلغ المالك قبل بديل. استمر فيcheckout نفسه دونworktree/subagents وأعلن هدفًا واحدًا وميزانية قبل التحرير. تقييم المالك مؤجل لنهاية الواجهات؛ كلSQL واختباراته الجديدة جلسة أخيرة واحدة. لا تخفف حارس المشهد أو تخترعpublication/مراجعة. لا قاعدة أو ربط حي أو عامل أو نشر أوhosted preview أوready/merge/auto-merge».
 
-**هل تغير الحكم؟** نعم، إذن المالك الحالي يضيف تأليفfull-practical محليًا مستقلًا ويؤجل تقييمP1/P2 لنهاية تجهيز الواجهات دون قبول؛ لا يفتح الربط أو القاعدة أو يغير الطب والتصحيح وتجميعSQL. **هل بقي رابط الدليل الأصلي؟** نعم: [P1](RAD-085_P1_UI_REPORT_2026-10-25.md) و[P2](RAD-085_P2_UI_REPORT_2026-10-25.md) و[سجل التخطيط](RAD-085_PLAN_2026-10-25.md#planning-report) و[قراراتAssess](DECISIONS.md#assess-owner-2026-10-19) محفوظة بسياقها التاريخي، بلا اعتماد أو مراجعة لم تحدث.
+**هل تغير الحكم؟** نعم، إذن المالك الحالي يضيف تأليفfull-practical محليًا مستقلًا ويؤجل تقييمP1/P2 لنهاية تجهيز الواجهات دون قبول؛ لا يفتح الربط أو القاعدة أو يغير الطب والتصحيح وتجميعSQL. **هل بقي رابط الدليل الأصلي؟** نعم: [P1](RAD-085_P1_UI_REPORT_2026-10-25.md) و[P2](RAD-085_P2_UI_REPORT_2026-10-25.md) و[سجل التخطيط](../RAD-085_PLAN_2026-10-25.md#planning-report) و[قراراتAssess](../DECISIONS.md#assess-owner-2026-10-19) محفوظة بسياقها التاريخي، بلا اعتماد أو مراجعة لم تحدث.

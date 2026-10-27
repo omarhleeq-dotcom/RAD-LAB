@@ -10,7 +10,7 @@ it("Current retention frontend retains F, requires v2 SQL, rejects the actual E/
   for(const p of ["src","supabase","scripts/pages"])cpSync(p,join(dir,p),{recursive:true});
   const path=join(dir,"scripts/pages/frontend-schema.json"),m=JSON.parse(readFileSync(path,"utf8"));
   writeFileSync(join(dir,"scripts/pages/frontend-schema.json"),JSON.stringify(m));
-  expect(m.contract).toBe("pilot-through-assess-retention/1");expect(m.requiredMigrations).toContain("20261020001100_assess_retention.sql");expect(m.checks).toContain("supabase/checks/assess-retention-ready.sql");expect(m.requiredMigrations).toContain("20261020001000_assess_history_consent.sql");expect(m.checks).toContain("supabase/checks/assess-history-ready.sql");// Named owner-approved exception (2026-10-26): explicit deferred RAD-085 SQL, never blanket acceptance.
+  expect(m.contract).toBe("pilot-through-assess-retention/1");expect(m.requiredMigrations).toContain("20261020001100_assess_retention.sql");expect(m.checks).toContain("supabase/checks/assess-retention-ready.sql");expect(m.requiredMigrations).toContain("20261020001000_assess_history_consent.sql");expect(m.checks).toContain("supabase/checks/assess-history-ready.sql");// RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
   expect(m.deferredMigrations).toEqual(Object.fromEntries(RAD085_MIGRATIONS.map(file=>[file,{
    sha256:createHash("sha256").update(readFileSync(join(process.cwd(),"supabase/migrations",file))).digest("hex"),
    reason:RAD085_DEFER_REASON,serverModules:[RAD085_BOUNDARY]
