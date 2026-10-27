@@ -1,15 +1,20 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ReviewError, type Command, type Query, type ReviewAdapter, type Snapshot } from './contracts';
-import { copy } from './copy';
+import { copy, type ReviewCopy } from './copy';
 import { control, SupervisorReview } from './SupervisorReview';
 import { createSyntheticReview } from './synthetic';
-type Props = { adapter: ReviewAdapter; actorId: string; groupId?: string; selectGroup: (id: string) => void; locale: 'en' | 'ar' };
+type Props = { adapter: ReviewAdapter; actorId: string; groupId?: string; selectGroup: (id: string) => void; locale: 'en' | 'ar'; text?: ReviewCopy };
 export function ReviewSession(props: Props) {
- return <Session key={`${props.actorId}:${props.groupId ?? ''}`} {...props}/>;
+ return <Session key={props.actorId} {...props}/>;
 }
-function Session({ adapter, actorId, groupId, selectGroup, locale }: Props) {
- const t = copy[locale], actor = adapter.accounts.find(p => p.id === actorId);
- const [query, setQuery] = useState<Query>({ actorId, groupId });
+function Session({ adapter, actorId, groupId, selectGroup, locale, text }: Props) {
+ const t = text ?? copy[locale], actor = adapter.accounts.find(p => p.id === actorId);
+ const [pages, setPages] = useState<Query>({ actorId, groupId });
+ // Preserve the groups page when selecting one of its rows. Per-group cursors
+ // cannot follow a different group; the derived query clears its data immediately.
+ const query = useMemo<Query>(() => ({ ...pages, actorId, groupId,
+  ...(pages.groupId !== groupId ? { requestsCursor: undefined, membersCursor: undefined, resultsCursor: undefined } : {}),
+ }), [pages, actorId, groupId]);
  const [loaded, setLoaded] = useState<{ value: Snapshot; adapter: ReviewAdapter; query: Query; revision: number }>(), [error, setError] = useState<string>(), [busy, setBusy] = useState(false), [revision, setRevision] = useState(0), [receipt, setReceipt] = useState<{ code?: string; groupId?: string }>(), [confirming, setConfirming] = useState<Command>();
  const data = loaded?.adapter === adapter && loaded.query === query && loaded.revision === revision ? loaded.value : undefined;
  const request = useRef<AbortController | null>(null), action = useRef<AbortController | null>(null), mounted = useRef(true), generation = useRef(0), applying = useRef(false);
@@ -42,6 +47,7 @@ function Session({ adapter, actorId, groupId, selectGroup, locale }: Props) {
   };
   tick(); return () => clearTimeout(timer);
  }, [data, t]);
+ function chooseGroup(id: string) { generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setError(undefined); selectGroup(id); }
  function refresh() { generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setError(undefined); setRevision(v => v + 1); }
  async function execute(command: Command) {
   if (applying.current) return;
@@ -54,7 +60,7 @@ function Session({ adapter, actorId, groupId, selectGroup, locale }: Props) {
  }
  function act(c: Command) { if (c.kind === 'end' || c.kind === 'revoke' || c.kind === 'leave' || c.kind === 'revoke-code') setConfirming(c); else void execute(c); }
  if (!actor) return <p role="alert">{t.denied}</p>;
- return <div className="space-y-4"><div className="flex flex-wrap gap-2"><button className={control} onClick={refresh} disabled={busy}>{t.retry}</button>{groupId && <button className={control} disabled={busy} onClick={() => selectGroup('')}>{t.group}</button>}</div>{error && <p role="alert">{error}</p>}{!data && !error && <p role="status">{busy ? t.saving : t.loading}</p>}{data && <SupervisorReview t={t} actor={actor} data={data} code={receipt?.groupId && data.codeGroupId !== receipt.groupId ? undefined : receipt?.code} locale={locale} act={act} confirming={confirming} confirm={() => confirming && void execute(confirming)} cancel={() => setConfirming(undefined)} selectGroup={selectGroup} paging={(key, value) => { generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setQuery(q => ({ ...q, [key]: value })); }}/>}</div>;
+ return <div className="space-y-4"><div className="flex flex-wrap gap-2"><button className={control} onClick={refresh} disabled={busy}>{t.retry}</button>{groupId && <button className={control} disabled={busy} onClick={() => chooseGroup('')}>{t.group}</button>}</div>{error && <p role="alert">{error}</p>}{!data && !error && <p role="status">{busy ? t.saving : t.loading}</p>}{data && <SupervisorReview t={t} actor={actor} data={data} code={receipt?.groupId && data.codeGroupId !== receipt.groupId ? undefined : receipt?.code} locale={locale} act={act} confirming={confirming} confirm={() => confirming && void execute(confirming)} cancel={() => setConfirming(undefined)} selectGroup={chooseGroup} paging={(key, value) => { generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setPages(q => ({ ...q, groupId, [key]: value })); }}/>}</div>;
 }
 /** Mounted only by the local review harness. Never imported by app routes or pilot auth. */
 export function LocalSupervisorReview({ locale = 'en' }: { locale?: 'en' | 'ar' }) {

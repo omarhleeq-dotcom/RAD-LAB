@@ -9,6 +9,7 @@ import { PILOT } from "@/features/pilot/config";
 import { useOptionalSessionAccount } from "@/features/pilot/SessionGate";
 import { Link, usePathname } from "@/i18n/navigation";
 import { localize } from "@/lib/localized";
+import { P1_AVAILABLE } from "@/features/supervisor/p1-availability";
 
 function Icon({ kind }: { kind: string }) {
   const paths: Record<string, string> = {
@@ -26,6 +27,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const t = useTranslations("shell");
   const tc = useTranslations("common");
   const ta = useTranslations("account");
+  const ts = useTranslations("supervisor");
   const locale = useLocale();
   const pathname = usePathname();
   const account = useOptionalSessionAccount();
@@ -41,6 +43,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     { href: "/", label: tc("home"), icon: "home" },
     ...available.map((modality) => ({ href: `/${modality.id}`, label: available.length === 1 ? t("library") : `${t("library")} · ${localize(modality.name, locale)}`, icon: "library" })),
     ...(PILOT ? [{ href: "/feedback", label: t("feedback"), icon: "assess" }, { href: "/training", label: t("training"), icon: "assess" }, { href: "/account", label: t("account"), icon: "account" }] : []),
+    ...(P1_AVAILABLE && PILOT && approved && account?.state.kind === "signedIn" && account.state.profile.role === "participant" ? [{ href: "/supervisor", label: ts("title"), icon: "assess" }] : []),
     { ...(PILOT ? { href: "/assess" } : {}), label: t("assess"), icon: "assess" },
     { label: t("learn"), icon: "learn" },
     { href: "/credits", label: tc("creditsLink"), icon: "credits" },
