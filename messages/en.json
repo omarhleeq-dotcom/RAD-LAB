@@ -1494,7 +1494,7 @@
       "p4": "If you choose to join a group, we show the sharing policy before you submit a request and require your explicit personal agreement through an initially unchecked box. Entering a group code creates a pending request; it does not itself give the supervisor access. Neither the owner nor a supervisor accepts the Terms of Use or sharing on your behalf.",
       "p5": "After the group supervisor approves your request, and while your membership, consent, their appointment and the group remain active, they can see practice attempts saved since you joined within the sharing window, and your exam results assigned to you within this group. The practice window starts at the latest of joining, group start, supervisor appointment and sharing acceptance, using the server's recording time; it excludes earlier practice history. Exam results are limited to group assignments and attempts started within the window; hidden or expired results stay hidden. Sharing does not give access to another supervisor's exams.",
       "p6": "From Account you can leave the group or withdraw sharing consent. The supervisor's access stops when you leave, withdraw, the group ends, their appointment is revoked or access conditions cease to hold. Rejoining, consenting again or reappointing the supervisor starts a new window and does not restore earlier history. Leaving or withdrawing does not itself delete your records or cancel an exam already assigned to you; the site owner's access remains governed by the Terms of Use.",
-      "p7": "This update does not change retention: the owner announces the end of the trial through the site or email after participation and review are complete, and participant-linked data is deleted within six months of that announcement; general statistics and summaries that do not identify anyone may remain. Your account is disabled immediately. You can cancel within 30 days. After that, it is permanently deleted within 7 days. For supervisors or authors, management of necessary retained content transfers to the owner before day 30 and before deletion, respecting attribution and licensing, without crediting the owner as author or blocking deletion indefinitely. Management transfer does not extend retention of students' results."
+      "p7": "This update does not change retention: the owner announces the end of the trial through the site or email after participation and review are complete, and participant-linked data is deleted within six months of that announcement; general statistics and summaries that do not identify anyone may remain. Once your deletion request is verified, your account is disabled immediately. Within 30 days you can ask the owner to restore it. After that, it is permanently deleted within 7 days. For supervisors or authors, management of necessary retained content transfers to the owner before day 30 and before deletion, respecting attribution and licensing, without crediting the owner as author or blocking deletion indefinitely. Management transfer does not extend retention of students' results."
     },
     "protect": {
       "title": "How do we handle it?",
@@ -1504,7 +1504,7 @@
       "title": "How long do we keep it?",
       "p1": "The project owner announces the end of the pilot via the website or email after participation and review are complete.",
       "p2": "We delete participant-linked data within six months of that announcement. We may retain general statistics and summaries that do not identify participants, to improve the user experience or for scientific research.",
-      "p3": "Your account is disabled immediately. You can cancel within 30 days.",
+      "p3": "Once your deletion request is verified, your account is disabled immediately. Within 30 days you can ask the owner to restore it. After that, it is permanently deleted within 7 days.",
       "p4": "After that, it is permanently deleted within 7 days. Final deletion permanently removes the account and all associated data, including attempts, notes, events and survey answers. For supervisors or authors, management of necessary retained content transfers to the owner before deletion, without crediting the owner as author. Provider backups may persist until the provider’s retention period ends."
     },
     "rights": {
@@ -1847,7 +1847,7 @@
     "deletionTitle": "Account deactivation and deletion",
     "deactivate": "Deactivate",
     "confirmTitle": "Deactivate participant {code}?",
-    "permanent": "Your account is disabled immediately. You can cancel within 30 days. After that, it is permanently deleted within 7 days.",
+    "permanent": "The account will be disabled now and can be restored within 30 days. After that, it is permanently deleted within 7 days.",
     "backups": "Provider backups may retain data for the provider’s own retention period.",
     "understand": "I understand the permanent deletion and backup retention described above.",
     "confirmDeactivate": "Confirm deactivation and deletion after the 30-day recovery window",

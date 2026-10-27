@@ -17,7 +17,11 @@ import { P1Session, P1SupervisorScope, useSupervisorAppointment } from './P1Sess
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 afterEach(() => { document.body.innerHTML = ''; f.available = true; f.role = 'participant'; f.status = 'approved'; f.appointed = false; f.fail = false; vi.clearAllMocks(); });
 function Nav() { return useSupervisorAppointment() ? createElement('a', { href: '/supervisor' }, 'Supervisor') : null; }
-async function mount() {
+// RAD085-P1-APPOINTMENT-FLAKE-20261027: wait for the observed state instead of a fixed 60 ms. Same assertions.
+async function settle(done: () => boolean) {
+ for (let i = 0; i < 600 && !done(); i++) await act(async () => { await new Promise(r => setTimeout(r, 5)); });
+}
+async function mount(done?: (host: HTMLElement) => boolean) {
  f.client.mockResolvedValue({ schema: () => ({ rpc: f.calls }) });
  f.calls.mockImplementation(() => ({ abortSignal: async () => {
   if (f.fail) throw Error('PRIVATE database stack and raw error');
@@ -25,21 +29,21 @@ async function mount() {
  } }));
  const host = document.createElement('div'); document.body.append(host); const root = createRoot(host);
  await act(async () => { root.render(createElement(P1SupervisorScope, null, createElement(Nav), createElement(P1Session, { role: 'supervisor' }))); await new Promise(r => setTimeout(r, 30)); });
- await act(async () => { await new Promise(r => setTimeout(r, 30)); });
+ if (done) await settle(() => done(host)); else await act(async () => { await new Promise(r => setTimeout(r, 30)); });
  return { host, root };
 }
 it.each([false, true])('uses appointment metadata even with zero groups and no probe RPC (appointed=%s)', async appointed => {
- f.appointed = appointed; const { host, root } = await mount();
+ f.appointed = appointed; const { host, root } = await mount(h => appointed ? !!h.querySelector('a[href="/supervisor"]') : !!h.textContent?.includes(en.supervisor.notSupervisor) && f.calls.mock.calls.length > 0);
  expect(!!host.querySelector('a[href="/supervisor"]')).toBe(appointed);
  expect(host.textContent?.includes(en.supervisor.notSupervisor)).toBe(!appointed);
  expect(f.calls.mock.calls.every(([name, args]) => name === 'scope_page_v1' && args.p_kind === 'groups')).toBe(true);
  await act(async () => root.unmount());
 });
 it('hides immediately on identity/status loss, and rechecks revocation on visibility return', async () => {
- f.appointed = true; const { host, root } = await mount(); expect(host.querySelector('a')).not.toBeNull();
+ f.appointed = true; const { host, root } = await mount(h => !!h.querySelector('a')); expect(host.querySelector('a')).not.toBeNull();
  f.appointed = false;
- await act(async () => { document.dispatchEvent(new Event('visibilitychange')); await new Promise(r => setTimeout(r, 30)); });
- await act(async () => { await new Promise(r => setTimeout(r, 30)); });
+ await act(async () => { document.dispatchEvent(new Event('visibilitychange')); });
+ await settle(() => host.querySelector('a') === null && !!host.textContent?.includes(en.supervisor.notSupervisor));
  expect(host.querySelector('a')).toBeNull(); expect(host.textContent).toContain(en.supervisor.notSupervisor);
  f.status = 'suspended';
  await act(async () => root.render(createElement(P1SupervisorScope, null, createElement(Nav), createElement(P1Session, { role: 'supervisor' }))));
@@ -47,7 +51,7 @@ it('hides immediately on identity/status loss, and rechecks revocation on visibi
  await act(async () => root.unmount());
 });
 it('shows a safe service message on failure and never prints a raw error', async () => {
- f.fail = true; const { host, root } = await mount();
+ f.fail = true; const { host, root } = await mount(h => !!h.textContent?.includes(en.supervisor.offline));
  expect(host.textContent).toContain(en.supervisor.offline); expect(host.textContent).not.toContain('PRIVATE'); expect(host.querySelector('a')).toBeNull();
  await act(async () => root.unmount());
 });
