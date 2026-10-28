@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { expect,it } from "vitest";
 const migration="20261024000100_owner_dashboard.sql",check="supabase/checks/owner-dashboard-ready.sql";
-const marker="pilot-v1:42cc4a1a2cab288bfc814bc853cb760efaf151316a24ac1d47674ebe36ec73cf";
+const marker="pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a";
 it("requires C1 then C2 with their checks and the new DB-day attestation",()=>{
  const m=JSON.parse(readFileSync("scripts/pages/frontend-schema.json","utf8"));
  expect(m.requiredMigrations.slice(-6,-4)).toEqual([migration,"20261024000200_owner_deletion_surveys.sql"]);expect(m.requiredMigrations.slice(-4)).toEqual(RAD085_MIGRATIONS);expect(m.checks.slice(-2)).toEqual([check,"supabase/checks/owner-deletion-surveys-ready.sql"]);

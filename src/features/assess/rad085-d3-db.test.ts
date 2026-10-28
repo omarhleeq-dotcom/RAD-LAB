@@ -144,7 +144,8 @@ it('keeps self/last-owner and private ACL protection, rejects unresolved attribu
   await db.admin.query('create table public.synthetic_new_fk(user_id uuid references public.profiles(user_id))');
   await expect(preview(db)).rejects.toMatchObject({ code: '55000' });
   await db.admin.query('drop table public.synthetic_new_fk; create table auth.synthetic_new_fk(user_id uuid references auth.users(id))');
-  await expect(preview(db)).rejects.toMatchObject({ code: '55000' });
+  // Decision A: Supabase owns referencing auth tables; provider evolution stays admissible.
+  await expect(preview(db)).resolves.toBeDefined();
  } finally { await db.close(); }
 }, 30000);
 it('reports/escalates transfer at day 25 and overdue day 30/37 without extending requested_at or allowing late transfer', async () => {

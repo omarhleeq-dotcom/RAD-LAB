@@ -5,7 +5,7 @@ import { expect, it } from "vitest";
 import { C2_CHECK, C2_MIGRATION } from "../pilot/c2-contract";
 
 it("requires unchanged reviewed C2 SQL/check with the DB-day attestation and reachable adapter", () => {
- const current = "pilot-v1:42cc4a1a2cab288bfc814bc853cb760efaf151316a24ac1d47674ebe36ec73cf";
+ const current = "pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a";
  const m = JSON.parse(readFileSync("scripts/pages/frontend-schema.json", "utf8"));
  expect(m.requiredMigrations).toContain(C2_MIGRATION);
  expect(m.checks).toContain(C2_CHECK);

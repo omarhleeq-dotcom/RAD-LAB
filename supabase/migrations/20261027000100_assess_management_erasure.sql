@@ -57,7 +57,7 @@ create function assess.d3_fk_inventory_v1() returns jsonb
 language sql stable security definer set search_path='' as $$
  select coalesce(jsonb_agg(jsonb_build_array(n.nspname,c.relname,k.conname,pg_get_constraintdef(k.oid)) order by n.nspname,c.relname,k.conname),'[]')
  from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace
- where k.contype='f' and k.confrelid in ('public.profiles'::regclass,'auth.users'::regclass)
+ where n.nspname<>'auth' and k.contype='f' and k.confrelid in ('public.profiles'::regclass,'auth.users'::regclass)
 $$;
 create table assess.erasure_fk_contract (
  singleton boolean primary key default true check(singleton), inventory jsonb not null
@@ -66,12 +66,11 @@ create table assess.erasure_fk_contract (
 -- source inventory independently in readiness/tests; installation must reject extras.
 do $contract$
 begin
- -- The two optional synthetic/provider Auth session edges are reviewed exactly.
- -- Every other Auth/profile FK, in ANY schema, must match the source inventory.
- if (select coalesce(jsonb_agg(edge),'[]'::jsonb)
-  from jsonb_array_elements(assess.d3_fk_inventory_v1()) e(edge)
-  where edge<>jsonb_build_array('auth','sessions','sessions_user_id_fkey','FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE')
-   and edge<>jsonb_build_array('auth','refresh_tokens','refresh_tokens_user_id_fkey','FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE')) is distinct from $inventory$[
+ -- Supabase owns the referencing Auth tables; deleting auth.users delegates their
+ -- CASCADE/SET NULL cleanup to the provider. A named Auth allow-list would fail
+ -- closed after routine provider upgrades, breaking the promised deletion window.
+ -- Every non-auth edge to profiles/users, in ANY schema, must match exactly.
+ if assess.d3_fk_inventory_v1() is distinct from $inventory$[
  [
   "assess",
   "account_stops",
