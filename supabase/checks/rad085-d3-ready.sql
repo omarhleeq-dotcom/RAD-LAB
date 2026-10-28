@@ -3,6 +3,7 @@
 -- RAD085-SEC-FIXES-20261027 SEC-05: also effective (inherited) privileges, role
 -- attributes/memberships and the sharing policy state. Default phase: after the O2
 -- initializer. Before it, run with PGOPTIONS='-c rad085.sharing_phase=pre-initializer'.
+-- B7 / RAD085-CRLF-READINESS-20261028: CR is representation only. LF digests stay unchanged.
 begin read only;
 set local statement_timeout='5s';
 set local lock_timeout='1s';
@@ -10,15 +11,15 @@ with objects(kind,key,value) as (
  -- text, not name: a name-typed UNION key truncates to 63 bytes and makes tie order plan-dependent.
  select 'relations',c.relname::text,jsonb_build_object('kind',c.relkind,'rls',c.relrowsecurity,'force',c.relforcerowsecurity,'owner',pg_get_userbyid(c.relowner),'acl',c.relacl::text)
  from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='assess' and c.relkind in ('r','p','v','m','S','f')
- union all select 'columns',c.relname||'.'||a.attname,jsonb_build_object('type',format_type(a.atttypid,a.atttypmod),'required',a.attnotnull,'default',pg_get_expr(d.adbin,d.adrelid),'acl',a.attacl::text)
+ union all select 'columns',c.relname||'.'||a.attname,jsonb_build_object('type',format_type(a.atttypid,a.atttypmod),'required',a.attnotnull,'default',replace(pg_get_expr(d.adbin,d.adrelid),E'\r',''),'acl',a.attacl::text)
  from pg_attribute a join pg_class c on c.oid=a.attrelid join pg_namespace n on n.oid=c.relnamespace left join pg_attrdef d on d.adrelid=c.oid and d.adnum=a.attnum
  where n.nspname='assess' and a.attnum>0 and not a.attisdropped and c.relkind in ('r','p')
- union all select 'functions',p.proname||'('||pg_get_function_identity_arguments(p.oid)||')',jsonb_build_object('owner',pg_get_userbyid(p.proowner),'definer',p.prosecdef,'config',p.proconfig,'acl',p.proacl::text,'source',encode(sha256(convert_to(pg_get_functiondef(p.oid),'UTF8')),'hex'))
+ union all select 'functions',p.proname||'('||pg_get_function_identity_arguments(p.oid)||')',jsonb_build_object('owner',pg_get_userbyid(p.proowner),'definer',p.prosecdef,'config',p.proconfig,'acl',p.proacl::text,'source',encode(sha256(convert_to(replace(pg_get_functiondef(p.oid),E'\r',''),'UTF8')),'hex'))
  from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname='assess' or (n.nspname='public' and p.proname='owner_account_deletion_v1')) and p.prokind in ('f','p')
- union all select 'constraints',c.relname||'.'||k.conname,jsonb_build_object('valid',k.convalidated,'definition',pg_get_constraintdef(k.oid)) from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace where n.nspname='assess' and k.contype<>'n'
- union all select 'triggers',c.relname||'.'||t.tgname,jsonb_build_object('enabled',t.tgenabled,'definition',pg_get_triggerdef(t.oid)) from pg_trigger t join pg_class c on c.oid=t.tgrelid join pg_namespace n on n.oid=c.relnamespace where not t.tgisinternal and (n.nspname='assess' or (n.nspname='public' and c.relname='attempts' and t.tgname='assess_practice_recorded'))
- union all select 'indexes',tablename||'.'||indexname,to_jsonb(indexdef) from pg_indexes where schemaname='assess'
- union all select 'policies',tablename||'.'||policyname,to_jsonb(p)-'schemaname' from pg_policies p where schemaname='assess'
+ union all select 'constraints',c.relname||'.'||k.conname,jsonb_build_object('valid',k.convalidated,'definition',replace(pg_get_constraintdef(k.oid),E'\r','')) from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace where n.nspname='assess' and k.contype<>'n'
+ union all select 'triggers',c.relname||'.'||t.tgname,jsonb_build_object('enabled',t.tgenabled,'definition',replace(pg_get_triggerdef(t.oid),E'\r','')) from pg_trigger t join pg_class c on c.oid=t.tgrelid join pg_namespace n on n.oid=c.relnamespace where not t.tgisinternal and (n.nspname='assess' or (n.nspname='public' and c.relname='attempts' and t.tgname='assess_practice_recorded'))
+ union all select 'indexes',tablename||'.'||indexname,to_jsonb(replace(indexdef,E'\r','')) from pg_indexes where schemaname='assess'
+ union all select 'policies',tablename||'.'||policyname,(to_jsonb(p)-'schemaname'-'qual'-'with_check')||jsonb_build_object('qual',replace(p.qual,E'\r',''),'with_check',replace(p.with_check,E'\r','')) from pg_policies p where schemaname='assess'
  union all select 'schema','assess',jsonb_build_object('owner',pg_get_userbyid(n.nspowner),'acl',n.nspacl::text) from pg_namespace n where n.nspname='assess'
 ), api_roles(name) as (values ('public'),('anon'),('authenticated'),('assess_worker'),('assess_authoring_bridge')
 ), effective(key) as (

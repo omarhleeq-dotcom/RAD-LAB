@@ -6,11 +6,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-export async function openLocalDatabase(backend, {through='latest',lineEndings='lf'}={}) {
+export async function openLocalDatabase(backend, {through='latest',lineEndings='lf',allMigrationLineEndings=false}={}) {
   if(!['pglite','postgres'].includes(backend))throw new Error('invalid_backend');
   // A finite migration ceiling exists only for destructive synthetic upgrade QA.
   if(!['latest','f','pre-rad085'].includes(through))throw new Error('invalid_migration_ceiling');
   if(!['lf','crlf'].includes(lineEndings))throw new Error('invalid_line_endings');
+  if(typeof allMigrationLineEndings!=='boolean')throw new Error('invalid_all_migration_line_endings');
+  // B7 opts into CRLF for ALL history; default preserves older mixed-line-ending witnesses.
   let db,admin,dir,ctl,started=false;
   const clients=new Set();
   async function close() {
@@ -51,7 +53,7 @@ export async function openLocalDatabase(backend, {through='latest',lineEndings='
     // RAD085-D3-DEFERRED-20261027: the historical ceiling excludes all four deferred sources.
     for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'||(through==='pre-rad085'?!['20261026000100_assess_supervisor_scope.sql','20261026000200_assess_authoring_drafts.sql','20261026000300_assess_assignment_review.sql','20261027000100_assess_management_erasure.sql'].includes(f):f<'20261020001100'))).sort()) {
       const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
-      await exec(lineEndings==='crlf'&&file>='20261020000600'?sql.replaceAll('\n','\r\n'):sql);
+      await exec(lineEndings==='crlf'&&(allMigrationLineEndings||file>='20261020000600')?sql.replaceAll('\n','\r\n'):sql);
     }
     function port(role,user='') {
       if(!['anon','authenticated','assess_worker'].includes(role)||
