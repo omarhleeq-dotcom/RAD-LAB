@@ -1,8 +1,9 @@
 -- RAD-085 DB-day rollback (B3). Manual, owner-run, SQL Editor. NOT a migration; never replay history after it.
 -- Returns the LIVE BEHAVIOUR to its pre-DB-day state WITHOUT deleting any data:
 --   1. drops the 3 triggers the RAD-085 migrations added to PRE-EXISTING tables;
---   2. restores the exact previous bodies + ACL of the 4 PRE-EXISTING functions the migrations redefine
---      (bodies below are byte-for-byte pg_get_functiondef of the pre-DB-day catalogue, proven by
+--   2. restores the previous bodies modulo CR + exact ACL of the 4 PRE-EXISTING functions the migrations redefine
+--      (LF bodies below equal the pre-DB-day catalogue after CR removal: B7 permits restoring LF
+--      over former CRLF bodies; behaviour, owner and ACL are preserved, proven by
 --      src/features/assess/rad085-db-day-rollback.test.ts);
 --   3. revokes client EXECUTE on the new RAD-085 functions (the functions and every new table, including
 --      rows, are LEFT IN PLACE; nothing is dropped, truncated or updated);

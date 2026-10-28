@@ -18,8 +18,12 @@ select
    and not exists (select 1 from pg_roles where rolname = 'assess_authoring_bridge')) as four_sources_absent_ok,
  (not exists (select 1 from pg_trigger where not tgisinternal and tgname in ('assess_practice_recorded', 'assess_managed_group', 'assess_membership_period'))) as new_triggers_absent_ok,
  (select count(*) = 1 and bool_and(not enabled) from assess.launch_gate) as launch_gate_closed_ok,
- -- The four functions the migrations redefine still have exactly the repository's pre-DB-day bodies (prosrc md5).
- (select md5(p.prosrc) = '7d99291a3041e5da8b44121c25b06459' from pg_proc p where p.oid = to_regprocedure('assess.assignment_terminal_v1()')) as terminal_body_ok,
- (select md5(p.prosrc) = '028601747323072a31d4487d88657d6d' from pg_proc p where p.oid = to_regprocedure('assess.close_assignment_v1(uuid)')) as close_assignment_body_ok,
- (select md5(p.prosrc) = '82b16937253437bca52354fd33edcb13' from pg_proc p where p.oid = to_regprocedure('assess.content_submit_v1(jsonb)')) as content_submit_body_ok,
- (select md5(p.prosrc) = '14ecf7d3cd6f2af9cf4a8c0d50bc3777' from pg_proc p where p.oid = to_regprocedure('public.owner_account_deletion_v1(text,uuid,uuid,integer)')) as owner_account_deletion_body_ok;
+ -- The four functions the migrations redefine still have the repository's pre-DB-day bodies after CR removal (B7); has_cr is informational.
+ (select md5(replace(p.prosrc,E'\r','')) = '7d99291a3041e5da8b44121c25b06459' from pg_proc p where p.oid = to_regprocedure('assess.assignment_terminal_v1()')) as terminal_body_ok,
+ (select position(E'\r' in p.prosrc)>0 from pg_proc p where p.oid = to_regprocedure('assess.assignment_terminal_v1()')) as terminal_has_cr,
+ (select md5(replace(p.prosrc,E'\r','')) = '028601747323072a31d4487d88657d6d' from pg_proc p where p.oid = to_regprocedure('assess.close_assignment_v1(uuid)')) as close_assignment_body_ok,
+ (select position(E'\r' in p.prosrc)>0 from pg_proc p where p.oid = to_regprocedure('assess.close_assignment_v1(uuid)')) as close_assignment_has_cr,
+ (select md5(replace(p.prosrc,E'\r','')) = '82b16937253437bca52354fd33edcb13' from pg_proc p where p.oid = to_regprocedure('assess.content_submit_v1(jsonb)')) as content_submit_body_ok,
+ (select position(E'\r' in p.prosrc)>0 from pg_proc p where p.oid = to_regprocedure('assess.content_submit_v1(jsonb)')) as content_submit_has_cr,
+ (select md5(replace(p.prosrc,E'\r','')) = '14ecf7d3cd6f2af9cf4a8c0d50bc3777' from pg_proc p where p.oid = to_regprocedure('public.owner_account_deletion_v1(text,uuid,uuid,integer)')) as owner_account_deletion_body_ok,
+ (select position(E'\r' in p.prosrc)>0 from pg_proc p where p.oid = to_regprocedure('public.owner_account_deletion_v1(text,uuid,uuid,integer)')) as owner_account_deletion_has_cr;

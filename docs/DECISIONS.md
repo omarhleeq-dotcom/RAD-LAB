@@ -867,3 +867,18 @@ Authority: the owner's instruction in this session, after PR #142 (S1–S8) was 
 **RAD085-DB-DAY-PROMOTION-20261027** (owner, same instruction) covers ONLY the separate promotion Draft PR, prepared but not merged until the owner finishes DB day: moving the four sources to `requiredMigrations`; flipping the literal `P1_AVAILABLE` and re-pinning its guard; switching manifest checks per the packet; publishing the approved Terms EN/AR (O1/O5 wording, including the 7-day completion and the `c2.*` messages) and raising `CONSENT_VERSION`; and the expected new marker, which the owner sets as `PILOT_SCHEMA_VERIFIED` only after the SQL succeeded. Every changed test pin is listed file:line/old/new/why in that PR's report. Anything else: STOP and list it.
 
 Still true: Draft PRs only, never ready/merge/auto-merge; no live SQL/Supabase, secrets or preview URLs; `qa:golden` and `qa:characterise` are not run.
+
+<a id="rad085-crlf-readiness-owner-2026-10-28"></a>
+### RAD-085 — B7: CRLF readiness representation, 2026-10-28
+
+Authority: the owner's read-only live evidence and decision in this session. The four precheck body columns were false; all four matched the expected md5 after `replace(prosrc,E'\r','')`, with CR present (live lengths 383/411/1566/4319 versus repository 376/405/1545/4261). All other precheck gates passed. Nothing was applied. Line endings are representation, not behaviour.
+
+**RAD085-CRLF-READINESS-20261028** covers only:
+
+- **R1:** `rad085-d3-ready.sql` removes CR before hashing function source and other text definitions that can carry it. Every other comparison stays exact. LF expected digests stay unchanged; any expected value or test pin change must be listed file:line, old/new and why.
+- **R2:** `rad085-db-day-precheck.sql` compares md5 after CR removal and adds informational `*_has_cr` columns (neither true nor false is a failure).
+- **R3:** Rollback must restore behaviour on a CRLF fixture. Restoring repository LF bodies over former CRLF bodies is acceptable; owner and ACL remain exact. This refines B3's previous byte-identity wording only for CR.
+- **R4:** Use `openLocalDatabase` with `lineEndings:'crlf'` for all pre-RAD-085 migrations. Apply the four RAD-085 sources and live initializer in two independent runs: LF paste and CRLF paste. In each: precheck all OK/quiet, correct progress, D3 readiness 13/13 before and after initializer, smoke OK, rollback final row true/0/true with every synthetic row intact.
+- **R5:** Search progress, smoke, counts-after, probe and the nine current checks for CR sensitivity; fix only B7's scope and list anything else.
+
+Keep `pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10` on this branch. #144 is read-only: list its readiness-byte-dependent pins for a later rebase. No live SQL, merge/ready/auto-merge, preview URLs or subscribe/poll. Evidence and QA: [B7 report](RAD-085_CRLF_READINESS_REPORT_2026-10-28.md). O1–O5, S1–S8 and B1–B5 otherwise stand; original evidence links remain above.
