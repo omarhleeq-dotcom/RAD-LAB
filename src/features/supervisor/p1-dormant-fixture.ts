@@ -14,7 +14,7 @@ export function demoteP1(root: string) {
  const files: string[] = m.guardedFeatures.supervisorP1.migrations;
  m.requiredMigrations = m.requiredMigrations.filter((f: string) => !files.includes(f));
  for (const file of files) m.deferredMigrations[file] = { sha256: createHash('sha256').update(readFileSync(join(root, 'supabase/migrations', file))).digest('hex'), reason: RAD085_DEFER_REASON, serverModules: [RAD085_BOUNDARY] };
- m.checks = m.checks.map((c: string) => c === 'supabase/checks/rad085-d3-ready.sql' ? 'supabase/checks/assess-staging-ready.sql' : c);
+ m.checks = m.checks.map((c: string) => c === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/assess-staging-ready.sql' : c);
  m.guardedFeatures.supervisorP1.guard.sha256 = createHash('sha256').update(guard).digest('hex');
  writeFileSync(manifestPath, JSON.stringify(m));
 }

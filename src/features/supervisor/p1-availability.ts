@@ -4,6 +4,8 @@ export const P1_MIGRATIONS = [
  '20261026000300_assess_assignment_review.sql',
  // RAD085-D3-DEFERRED-20261027 / W2: P1 cannot activate without D3.
  '20261027000100_assess_management_erasure.sql',
+ // RAD085-P1-B-20261028: names and short codes require the mini DB day.
+ '20261028000100_p1_short_codes_names.sql',
 ] as const;
 /** The promotion rule. No environment override, role promotion or probe RPC. */
 export function p1Available(schema: { requiredMigrations: readonly string[]; deferredMigrations: object }) {

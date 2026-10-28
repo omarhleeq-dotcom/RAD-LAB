@@ -53,9 +53,12 @@ it('rejects an unguarded deferred import and edits to the availability source wi
 }, 20000);
 // RAD085-DB-DAY-PROMOTION-20261027: the promoted repository itself (no demotion) carries the new marker.
 it('the promoted repository prints the new marker, accepts it, and rejects the pre-DB-day marker', () => {
- const promoted = 'pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a';
+ // RAD085-P1-B-20261028: reviewed additive migration/check; reject the live M1-M4 marker.
+ const promoted = 'pilot-v1:8b19a6ad329334a5b4a56df671ad9138debe50a974384ff6d7954b05477ff5cd';
+
  const run = (attestation: string, print = false) => spawnSync(process.execPath, ['--input-type=module', '-e', `import {runSchemaGate} from ${JSON.stringify(join(process.cwd(), 'scripts/pages/pilot-schema-gate.mjs'))};try { console.log(runSchemaGate(${JSON.stringify({ ...env, PILOT_SCHEMA_VERIFIED: attestation })},${print})); } catch(e) { console.error(e.message); process.exitCode=1; }`], { encoding: 'utf8' });
  const printed = run(promoted, true); expect(printed.stdout.trim()).toBe(promoted);
  expect(run(promoted).status).toBe(0);
+ const live = run('pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a'); expect(live.status).toBe(1);
  const old = run(marker); expect(old.status).toBe(1); expect(old.stderr).toContain('schema compatibility has not been attested');
 });

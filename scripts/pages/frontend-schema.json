@@ -23,14 +23,15 @@
     "20261026000100_assess_supervisor_scope.sql",
     "20261026000200_assess_authoring_drafts.sql",
     "20261026000300_assess_assignment_review.sql",
-    "20261027000100_assess_management_erasure.sql"
+    "20261027000100_assess_management_erasure.sql",
+    "20261028000100_p1_short_codes_names.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/assess-mixed-ready.sql",
     "supabase/checks/assess-practical-ready.sql",
-    "supabase/checks/rad085-d3-ready.sql",
+    "supabase/checks/rad085-p1-b-ready.sql",
     "supabase/checks/assess-history-ready.sql",
     "supabase/checks/assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
@@ -91,16 +92,17 @@
         "20261026000100_assess_supervisor_scope.sql",
         "20261026000200_assess_authoring_drafts.sql",
         "20261026000300_assess_assignment_review.sql",
-        "20261027000100_assess_management_erasure.sql"
+        "20261027000100_assess_management_erasure.sql",
+        "20261028000100_p1_short_codes_names.sql"
       ],
       "guard": {
         "path": "src/features/supervisor/p1-availability.ts",
         "symbol": "P1_AVAILABLE",
-        "sha256": "97b79b42e11c24c1ca018461aae669a7b1234859bff6b277547c8f8824660f63"
+        "sha256": "649c1700845438f30f3c9a33b25cf65c0261c7445ae1e707f8048022c57f419f"
       },
       "boundaries": {
         "src/features/supervisor/p1-live.ts": "6a19d4f3876ba8be7313fdeac02f324f7609a9bf9cb7725692231d79ed64a44c",
-        "src/features/supervisor-review/sql-adapter.ts": "1588e0d83e443756d67ae07556a7961c3c9e2acca9f969018ed25fbe2209cc22"
+        "src/features/supervisor-review/sql-adapter.ts": "d61d586ba6b9477908d682a09ff5d1d078da4527826d99ed736107d6cd93a7f0"
       },
       "consumer": {
         "path": "src/features/supervisor/P1Session.tsx",
