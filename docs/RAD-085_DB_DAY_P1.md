@@ -2,6 +2,12 @@
 
 **Preparation only; do not execute live now.** [B7 CRLF exception](DECISIONS.md#rad085-crlf-readiness-owner-2026-10-28) applies to readiness and rollback representation; [witness/report](RAD-085_CRLF_READINESS_REPORT_2026-10-28.md). [O1–O5](DECISIONS.md#rad085-db-day-owner-2026-10-27), [B1–B5](DECISIONS.md#rad085-db-day-nolaptop-owner-2026-10-27), [B7](DECISIONS.md#rad085-crlf-readiness-owner-2026-10-28) and [B8](DECISIONS.md#rad085-trial-removal-owner-2026-10-28) govern. There is **one** DB day and **no second Supabase project**. The owner alone operates the intended existing project, in the Supabase **SQL Editor in the browser**, after separate live authorization and independent review of the S1–S8 fixes. B1: DB day happens **without the laptop and without a Docker backup**; the Docker backup, the restored-database rehearsal and RAD-082 are deferred to [When the laptop returns](#when-the-laptop-returns). The plan's rule stands: **RAD-082 completes before the first real exam**, and so does RAD-059's spending stop. Replacement safeguards are the browser backup (B2), the tested rollback (B3), the smoke checks (B4) and the quiet-hour gate (B5). D3 must be reviewed before any real supervisor appointment.
 
+## Live pause — 2026-10-28 (owner-run PostgreSQL 17.11)
+
+Backups taken; trial isolation removed successfully with unchanged data counts. M1–M3 are **applied** and must not be replayed or edited. M4 failed atomically (`55000: unreviewed D3 FK inventory`); none of M4 applied. The sharing initializer has **not** run; launch_gate remains closed. [Decision A](DECISIONS.md#rad085-auth-fk-owner-2026-10-28) and its [regression/pin report](RAD-085_AUTH_FK_REPORT_2026-10-28.md) address provider-owned Auth internals.
+
+After this fix is merged, the owner resumes at **step 9, M4 only**, using the new hash below. Keep the maintenance window and closed gate; run progress to confirm M1/M2/M3 true, M4 false, trial objects absent and sharing policy unset before resuming. The original precheck intentionally targets the pre-M1 baseline and must not be used as a resume gate after M3. Continue steps 10–16, including 13/13 readiness in both phases; if the actual state differs, stop and diagnose. Do not repeat trial removal or M1–M3. #144 stays unchanged; recompute its marker after DB day.
+
 ## 0. The order in one table
 
 Paste the **contents** of each file into its **own** SQL Editor query (a new tab per step), after matching the project selector to `NEXT_PUBLIC_SUPABASE_URL`. Never paste two steps together. Files are in the repository on `main`; copy the raw file text without editing.
@@ -47,7 +53,7 @@ This backup is data-only. It does not restore Auth settings, objects, grants or 
 
 ### B8 — remove the finished engineering trial (step 5)
 
-Owner read-only evidence (2026-10-28; nothing applied): backup 28 has 65 functions and 33 triggers. After removing CR it matches pre-RAD-085 plus [trial-isolation.sql](../scripts/assess/sql/trial-isolation.sql), except two public objects outside D3's scope: Supabase `public.rls_auto_enable()` and the known `owner_list_participants` representation difference. `trial_scope` is singleton/active. Reviewer reproduction with the trial objects leaves seven D3 rows false; without them all 13 pass. The active trial also requires groups/memberships to stay empty, preventing P1.
+Historical pre-removal read-only evidence (2026-10-28): backup 28 has 65 functions and 33 triggers. After removing CR it matches pre-RAD-085 plus [trial-isolation.sql](../scripts/assess/sql/trial-isolation.sql), except two public objects outside D3's scope: Supabase `public.rls_auto_enable()` and the known `owner_list_participants` representation difference. `trial_scope` is singleton/active. Reviewer reproduction with the trial objects leaves seven D3 rows false; without them all 13 pass. The active trial also requires groups/memberships to stay empty, preventing P1.
 
 [B8](DECISIONS.md#rad085-trial-removal-owner-2026-10-28) replaces only the active-scope rule of the [2026-10-22 close-out](DECISIONS.md#assess-trial-closeout-owner-2026-10-22): the engineering trial is over. After the second precheck, paste the entire [removal file](../supabase/manual/rad085-db-day-trial-remove.sql) alone. It is one READ COMMITTED transaction with `lock_timeout='5s'`. It locks pre-existing public/assess tables, returns the scope configuration as its **first result**, and refuses unless the singleton launch gate is closed and no session is active/grading/grading-failed. Save that first result too. Only the exact 30 trial triggers, 12 functions and configuration table are dropped, using dependency-restricting drops. No CASCADE, data cleanup or permanent helper object is used.
 
@@ -66,7 +72,7 @@ The nine manifest checks, each pasted alone, are: [training-ready](../supabase/c
 | 1 | [20261026000100_assess_supervisor_scope.sql](../supabase/migrations/20261026000100_assess_supervisor_scope.sql) | c7b5966ce327e1e2e1f05b93ea20a0f7152cb1728884ded8e93fcc4b0d4e1a9b |
 | 2 | [20261026000200_assess_authoring_drafts.sql](../supabase/migrations/20261026000200_assess_authoring_drafts.sql) | eb9d81e7f3f3953b0355318c9d43624bfdb6f10ae9b3b136ce2d97fc86bcc719 |
 | 3 | [20261026000300_assess_assignment_review.sql](../supabase/migrations/20261026000300_assess_assignment_review.sql) | 3c1defa58e03443e6d61bb1610ad2a14d53e851338992e2ef30cc61c87602ce3 |
-| 4 | [20261027000100_assess_management_erasure.sql](../supabase/migrations/20261027000100_assess_management_erasure.sql) | 7e77817c1cf5ffa2ad344f509fa31b418f0724443b68c4a354314dba1424826e |
+| 4 | [20261027000100_assess_management_erasure.sql](../supabase/migrations/20261027000100_assess_management_erasure.sql) | adb7a3341c22885d0592608680974b04c9b5bb70b6da16af594a5888a7f6818a |
 
 The hashes are pinned in `scripts/pages/frontend-schema.json` and checked by CI against the files on `main`, so the file you copy from `main` is the file in this table. Paste each complete `BEGIN … COMMIT` file into its own query, confirm COMMIT, then run [rad085-db-day-progress.sql](../supabase/manual/rad085-db-day-progress.sql). Expected after migration *N*: `m1…mN` true, later ones false; `new_triggers_expected_3_after_m1` = 3; `launch_gate_closed` and `trial_objects_absent_ok` true after every migration, including migration 1. Any error or unexpected value: STOP, and run the rollback if any source committed. The third source replaces `content_submit_v1`; P2 structure does not authorize P2 use. D3 replaces C2's finalise deletion primitive while preserving its eligibility/recovery expectations.
 
@@ -217,7 +223,7 @@ On a restore containing the old trial, also rehearse the B8 backup and removal a
 | 1 | [20261026000100_assess_supervisor_scope.sql](../supabase/migrations/20261026000100_assess_supervisor_scope.sql) | c7b5966ce327e1e2e1f05b93ea20a0f7152cb1728884ded8e93fcc4b0d4e1a9b |
 | 2 | [20261026000200_assess_authoring_drafts.sql](../supabase/migrations/20261026000200_assess_authoring_drafts.sql) | eb9d81e7f3f3953b0355318c9d43624bfdb6f10ae9b3b136ce2d97fc86bcc719 |
 | 3 | [20261026000300_assess_assignment_review.sql](../supabase/migrations/20261026000300_assess_assignment_review.sql) | 3c1defa58e03443e6d61bb1610ad2a14d53e851338992e2ef30cc61c87602ce3 |
-| 4 | [20261027000100_assess_management_erasure.sql](../supabase/migrations/20261027000100_assess_management_erasure.sql) | 7e77817c1cf5ffa2ad344f509fa31b418f0724443b68c4a354314dba1424826e |
+| 4 | [20261027000100_assess_management_erasure.sql](../supabase/migrations/20261027000100_assess_management_erasure.sql) | adb7a3341c22885d0592608680974b04c9b5bb70b6da16af594a5888a7f6818a |
 
 For the isolated restored database, run these **separately, one numbered phase at a time**. After each command, inspect COMMIT and run the read-only application inventory below; review that phase before starting the next command. Do not paste the four phases as an unattended batch.
 
