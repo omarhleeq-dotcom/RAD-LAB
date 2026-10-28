@@ -147,7 +147,11 @@ try {
     await supervisor.getByRole('button', { name: t.rotate, exact: true }).click();
     const receipt = supervisor.getByRole('heading', { name: t.code, exact: true }).locator('..'); await receipt.waitFor();
     const code = await receipt.locator('p[dir=ltr]').textContent(); assert.match(code, /^[a-f0-9]{64}$/);
+    // P1-USABILITY-F1: refresh must retain the code until explicit Done.
+    await supervisor.getByRole('button', { name: t.copyCode, exact: true }).click();
     await supervisor.getByRole('button', { name: t.retry, exact: true }).click();
+    await supervisor.getByRole('heading', { name: t.code, exact: true }).waitFor();
+    await supervisor.getByRole('button', { name: t.done, exact: true }).click();
     await supervisor.getByRole('heading', { name: t.results, exact: true }).waitFor(); assert.equal(await supervisor.getByRole('heading', { name: t.code, exact: true }).count(), 0);
     const student = await open(uc, requiredServer.base, locale, 'account'), studentPanel = student.locator('[data-p1-role=student]');
     await studentPanel.getByRole('checkbox').waitFor(); assert.equal(await studentPanel.getByRole('checkbox').isChecked(), false);
@@ -166,7 +170,7 @@ try {
     await practice(902, 37); await refresh(supervisor);
     await supervisor.getByText(`${t.total}: 1`, { exact: true }).last().waitFor();
     const results = supervisor.getByRole('heading', { name: t.results, exact: true }).locator('..'); assert.ok((await results.textContent()).includes('37')); await audit(supervisor, 'practice window');
-    if (width === 390 && theme === 'dark') { const path = `docs/review/rad085-p1-routes-${locale}.jpg`; mkdirSync('docs/review', { recursive: true }); await supervisor.screenshot({ path, type: 'jpeg', quality: 65, fullPage: true }); captures.push(path); }
+    if (width === 390 && theme === 'dark') { const path = `docs/review/p1-usability-${locale}.jpg`; mkdirSync('docs/review', { recursive: true }); await supervisor.screenshot({ path, type: 'jpeg', quality: 65, fullPage: true }); captures.push(path); }
     await studentPanel.getByRole('button', { name: t.withdraw, exact: true }).click();
     await studentPanel.getByRole('checkbox').waitFor(); await refresh(supervisor);
     await results.getByText(`${t.total}: 0`, { exact: true }).waitFor(); await audit(student, 'withdrawn');
@@ -174,22 +178,27 @@ try {
     await studentPanel.getByRole('button', { name: t.leave, exact: true }).click(); await studentPanel.getByRole('button', { name: t.confirmLeave, exact: true }).click();
     await studentPanel.getByRole('button', { name: t.retry, exact: true }).waitFor();
     const owner = await open(oc, requiredServer.base, locale, 'owner'), ownerPanel = owner.locator('[data-p1-role=owner]');
-    await ownerPanel.getByLabel(t.personId).waitFor(); await audit(owner, 'owner appointments');
+    // P1-USABILITY-F6: revoke returns success; #149 owns the appointment picker.
+    await ownerPanel.getByLabel(t.appointmentSearch).waitFor(); await audit(owner, 'owner appointments');
     const row = ownerPanel.getByRole('listitem').filter({ hasText: id(2) }); await row.getByRole('button', { name: t.revoke, exact: true }).click();
     await ownerPanel.getByRole('button', { name: t.confirmRevoke, exact: true }).click();
     await refresh(supervisor); await supervisor.getByText(t.denied, { exact: true }).or(supervisor.getByText(t.notSupervisor, { exact: true })).waitFor();
-    await ownerPanel.getByLabel(t.personId).fill(id(2)); await ownerPanel.getByRole('button', { name: t.appoint, exact: true }).first().click();
+    await ownerPanel.getByText(t.success, { exact: true }).waitFor();
+    await db.rpc(1, 'appointment_v1', [id(2), true]);
     await supervisor.reload(); await supervisor.getByRole('button', { name: 'Synthetic route group', exact: true }).click(); await supervisor.getByRole('button', { name: t.end, exact: true }).click();
     await supervisor.getByRole('button', { name: t.confirmEnd, exact: true }).click();
-    await supervisor.getByText(t.denied, { exact: true }).or(supervisor.getByText(t.notSupervisor, { exact: true })).waitFor();
-    await refresh(supervisor); await supervisor.getByRole('button', { name: t.group, exact: true }).click();
+    // P1-USABILITY-F6: successful end returns the list, never denied.
+    await supervisor.getByText(t.success, { exact: true }).waitFor();
+    assert.equal(await supervisor.getByText(t.denied, { exact: true }).count(), 0);
+    await supervisor.getByText(t.selectGroupHint, { exact: true }).waitFor();
+    await supervisor.getByText(t.create, { exact: true }).first().click();
     await supervisor.getByLabel(t.name, { exact: true }).fill('Created from app route');
     await supervisor.getByLabel(t.ends, { exact: true }).fill(new Date(Date.now() + 3600000).toISOString().slice(0, 16));
     await supervisor.getByRole('button', { name: t.create, exact: true }).click(); await supervisor.getByRole('heading', { name: t.code, exact: true }).waitFor();
     const otherContext = await context(requiredServer.base, 3, locale, width, theme);
     const other = await open(otherContext, requiredServer.base, locale, 'supervisor'); await other.getByRole('button', { name: 'Other supervisor group', exact: true }).waitFor();
     assert.equal(await other.getByRole('button', { name: 'Synthetic route group', exact: true }).count(), 0);
-    assert.equal(await other.getByLabel(t.personId).count(), 0); await audit(other, 'other supervisor'); await otherContext.close();
+    assert.equal(await other.getByLabel(t.appointmentSearch).count(), 0); await audit(other, 'other supervisor'); await otherContext.close();
     // Direct SQL authorization witnesses complement the UI, using synthetic identities only.
     await assert.rejects(() => db.rpc(2, 'appointment_v1', [id(3), true]), e => e.code === '42501');
     await assert.rejects(() => db.rpc(1, 'appointment_v1', [id(5), true]), e => e.code === '22023');

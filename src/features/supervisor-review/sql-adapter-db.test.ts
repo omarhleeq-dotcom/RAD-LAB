@@ -116,8 +116,10 @@ it('unconfigured sharing stays closed without synthesizing acceptance; expired g
   expect((await f.admin.query('select * from assess.sharing_consents')).rows).toEqual([]);
   expect(f.calls.filter(c => c.name === 'sharing_consent_v1').every(c => c.args.length === 0)).toBe(true);
   // Wait for an actual server boundary, without changing immutable group provenance.
-  await f.run(f.supervisor, { kind: 'create', name: 'Synthetic short group', endsAt: Date.now() + 150 });
-  const short = (await f.read(f.supervisor)).groups.rows.find(g => g.name === 'Synthetic short group')!;
+  // P1-USABILITY-F6-EXPIRY: use the creation receipt, avoiding a read racing a 150ms deadline.
+  // The expired group's denied assertion below remains unchanged.
+  const shortReceipt = await f.run(f.supervisor, { kind: 'create', name: 'Synthetic short group', endsAt: Date.now() + 150 });
+  const short = { id: shortReceipt.groupId! };
   await new Promise(resolve => setTimeout(resolve, 180));
   await expect(f.read(f.supervisor, { groupId: short.id })).rejects.toMatchObject({ reason: 'denied' });
   expect((await f.read(f.supervisor, { groupId: g.id })).results.total).toBe(0);

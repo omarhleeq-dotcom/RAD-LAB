@@ -78,7 +78,10 @@ async function settle() { await act(async () => { await new Promise(r => setTime
 it('actual UI switches accounts, clears old rows synchronously and aborts a slow response', async () => {
  const host = document.createElement('div'); document.body.append(host); const root = createRoot(host);
  await act(async () => { root.render(createElement(LocalSupervisorReview)); }); await settle();
- const group = [...host.querySelectorAll('button')].find(b => b.textContent?.includes('Synthetic group'))!;
+ // P1-USABILITY-F3: automatic opening adds a second scoped read; wait for its visible card.
+ for (let n = 0; n < 20 && !host.querySelector('button[aria-label]'); n++) await settle();
+ // P1-USABILITY-F3: group cards expose the group name as the button's accessible name.
+ const group = [...host.querySelectorAll('button')].find(b => b.getAttribute('aria-label')?.includes('Synthetic group'))!;
  await act(async () => group.click()); await settle(); expect(host.textContent).toContain(copy.en.results);
  const scenario = host.querySelectorAll('select')[1]!;
  await act(async () => { scenario.value = 'slow'; scenario.dispatchEvent(new Event('change', { bubbles: true })); });
