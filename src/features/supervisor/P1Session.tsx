@@ -7,6 +7,7 @@ import { needsConsent } from '../pilot/consent';
 import { PILOT } from '../pilot/config';
 import type { Person, ReviewAdapter } from '../supervisor-review/contracts';
 import { ReviewSession } from '../supervisor-review/ReviewSession';
+import { OwnerSupervisorPicker } from './OwnerSupervisorPicker';
 import { appCopy } from '../supervisor-review/copy';
 
 type SupervisorScope = { status: 'loading' | 'appointed' | 'not-supervisor' | 'offline'; adapter?: ReviewAdapter; refresh: () => void };
@@ -87,5 +88,5 @@ export function P1View({ adapter, actorId, locale }: { adapter: ReviewAdapter; a
   document.addEventListener('visibilitychange', change);
   return () => document.removeEventListener('visibilitychange', change);
  }, []);
- return visible ? <><p>{appCopy[locale].archiveHint}</p><p>{appCopy[locale].refreshHint}</p><ReviewSession key={epoch} adapter={adapter} actorId={actorId} groupId={groupId} selectGroup={setGroupId} locale={locale} text={appCopy[locale]}/></> : null;
+ return visible ? <><p>{appCopy[locale].archiveHint}</p><p>{appCopy[locale].refreshHint}</p><ReviewSession key={epoch} adapter={adapter} actorId={actorId} groupId={groupId} selectGroup={setGroupId} locale={locale} text={appCopy[locale]} ownerAppointments={act => <OwnerSupervisorPicker adapter={adapter} act={act} locale={locale}/>}/></> : null;
 }

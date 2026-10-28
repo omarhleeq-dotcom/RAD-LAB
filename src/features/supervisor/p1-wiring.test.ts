@@ -87,3 +87,14 @@ it('keeps a selected group on its server page instead of falling back to the fir
  expect(host.textContent).toContain(en.supervisor.results);
  await act(async () => root.unmount());
 });
+
+// RAD085-OWNER-APPOINT-PICKER-20261028: exact bounded appointment read uses current authenticated transport.
+it('wires picker appointment status through the existing P1 scope RPC with limit one', async () => {
+ const abortSignal = vi.fn().mockResolvedValue({ data: { version: 1, rows: [], next: null }, error: null });
+ fixture.calls.mockReturnValue({ abortSignal });
+ fixture.client.mockResolvedValue({ schema: () => ({ rpc: fixture.calls }) });
+ const adapter = await bindP1({ id: fixture.userId, role: 'owner', name: 'Synthetic owner' }), s = signal();
+ expect(await adapter.readAppointment!('00000000-0000-0000-0000-000000000026', s)).toBe(false);
+ expect(fixture.calls).toHaveBeenCalledExactlyOnceWith('scope_page_v1', { p_kind: 'appointments', p_group: null, p_after: '00000000-0000-0000-0000-000000000025', p_limit: 1 });
+ expect(abortSignal).toHaveBeenCalledWith(s);
+});

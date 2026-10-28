@@ -22,11 +22,12 @@ const browserBundle = await build({ stdin: { resolveDir: process.cwd(), loader: 
  const accounts=${JSON.stringify(accounts)}; const locale=new URL(location.href).searchParams.get('locale')==='ar'?'ar':'en';
  document.documentElement.lang=locale; document.documentElement.dir=locale==='ar'?'rtl':'ltr';
  function App(){ const [n,setN]=useState(2),[groupId,setGroup]=useState(); const self=accounts.find(a=>a.n===n),t=copy[locale];
- const adapter=useMemo(()=>{let observed=0,ready=Promise.resolve(); const mark=()=>{document.documentElement.dataset.scopeEpoch=String(observed)}; return createSqlReview(self,{
+ const [restore,setRestore]=useState(false); const adapter=useMemo(()=>{let observed=0,ready=Promise.resolve(); const mark=()=>{document.documentElement.dataset.scopeEpoch=String(observed)}; return createSqlReview(self,{
   async rpc(name,args,signal){ await ready; signal.throwIfAborted(); const response=await fetch('/rpc/'+n,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,args}),signal}); const value=await response.json(); observed=Math.max(observed,value.epoch); mark(); if(!response.ok)throw value; return value.data; },
   subscribe(invalidate){let opened=false,resolveReady; ready=new Promise(resolve=>resolveReady=resolve); const events=new EventSource('/events'); events.onmessage=e=>{const epoch=Number(e.data); if(!opened){opened=true;observed=Math.max(observed,epoch);mark();resolveReady();return;} if(epoch>observed){observed=epoch; mark(); invalidate();}}; events.onerror=()=>{invalidate();resolveReady();}; return ()=>{events.close();resolveReady();};}
  });},[n]);
- return <main className="platform-page mx-auto max-w-5xl space-y-4 px-4 py-8"><h1 className="text-3xl font-bold">{t.title}</h1><p>{locale==='ar'?'PostgreSQL محلي معزول وبيانات اصطناعية. القبول في الإعداد التجريبي فقط؛ لا موافقة فعلية أو اتصال حي.':'Isolated local PostgreSQL and synthetic data. Test setup consent only; no real acceptance or live connection.'}</p><label className="block">{t.account}<select className="min-h-11 w-full border rounded p-2" value={n} onChange={e=>{setN(Number(e.target.value));setGroup(undefined)}}>{accounts.map(a=><option key={a.n} value={a.n}>{a.name}</option>)}</select></label><ReviewSession key={n} adapter={adapter} actorId={self.id} groupId={groupId} selectGroup={setGroup} locale={locale}/></main>;
+ return <main className="platform-page mx-auto max-w-5xl space-y-4 px-4 py-8"><h1 className="text-3xl font-bold">{t.title}</h1><p>{locale==='ar'?'PostgreSQL محلي معزول وبيانات اصطناعية. القبول في الإعداد التجريبي فقط؛ لا موافقة فعلية أو اتصال حي.':'Isolated local PostgreSQL and synthetic data. Test setup consent only; no real acceptance or live connection.'}</p><label className="block">{t.account}<select className="min-h-11 w-full border rounded p-2" value={n} onChange={e=>{setN(Number(e.target.value));setGroup(undefined)}}>{accounts.map(a=><option key={a.n} value={a.n}>{a.name}</option>)}</select></label><ReviewSession key={n} adapter={adapter} actorId={self.id} groupId={groupId} selectGroup={setGroup} locale={locale} ownerAppointments={act=><section><button className="min-h-11 rounded border border-line px-3" onClick={()=>setRestore(true)}>{t.appoint}</button>{restore&&<div role="alert"><p>Synthetic supervisor A</p><button className="min-h-11 rounded border border-line px-3" onClick={()=>{setRestore(false);act({kind:'appoint',personId:accounts[1].id})}}>{t.confirmAction}</button><button className="min-h-11 rounded border border-line px-3" onClick={()=>setRestore(false)}>{t.cancelAction}</button></div>}</section>}/>
+</main>;
  } createRoot(document.getElementById('root')).render(<App/>);` }, bundle: true, write: false, format: 'iife', jsx: 'automatic', define: { 'process.env.NODE_ENV': '"production"' }, metafile: true });
 assert.ok(!Object.keys(browserBundle.metafile.inputs).some(p => /supabase|features\/(pilot|assess)|rad085-local-db/.test(p)), 'browser contains no private DB or live adapter');
 const html = `<!doctype html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Local P1 SQL acceptance</title><style>${css}</style></head><body><div id="root"></div><script>${browserBundle.outputFiles[0].text}</script></body></html>`;
@@ -90,9 +91,10 @@ if (process.argv.includes('--serve')) {
  for (const event of ['SIGINT', 'SIGTERM']) process.once(event, async () => { await close(); process.exit(0); });
 } else {
  const { chromium } = require('playwright'), axe = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
- const { copy } = await import('../../src/features/supervisor-review/copy.ts');
+ // Node 24 requires JSON import attributes; read the same catalogues directly in tooling.
+ const copy = Object.fromEntries(['en', 'ar'].map(locale => [locale, JSON.parse(readFileSync(`messages/${locale}.json`, 'utf8')).supervisorReview]));
  const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/usr/bin/chromium', args: ['--no-sandbox'] });
- const output = '/tmp/rad085-p1-sql'; mkdirSync(output, { recursive: true }); mkdirSync('docs/review', { recursive: true });
+ const output = '/tmp/rad085-p1-sql'; mkdirSync(output, { recursive: true });
  let audits = 0, interactions = 0; const errors = [], outbound = [], captures = [];
  try {
   for (const locale of ['en', 'ar']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
@@ -123,7 +125,7 @@ if (process.argv.includes('--serve')) {
    await student.getByText(sharingPolicy[locale], { exact: true }).waitFor();
    await student.getByRole('button', { name: withdraw, exact: true }).click();
    const checkbox = student.getByRole('checkbox'); await checkbox.waitFor(); assert.equal(await checkbox.isChecked(), false);
-   if (width === 390 && theme === 'dark') { const path = `docs/review/rad085-sharing-${locale}.jpg`; await student.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
+   if (width === 390 && theme === 'dark') { const path = `${output}/rad085-sharing-${locale}.jpg`; await student.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
    await student.getByRole('button', { name: accept, exact: true }).click();
    assert.equal(await student.getByRole('button', { name: withdraw, exact: true }).count(), 0);
    assert.equal(await student.getByRole('button', { name: t.join, exact: true }).count(), 0);
@@ -156,7 +158,8 @@ if (process.argv.includes('--serve')) {
    await page.getByText(t.denied, { exact: true }).waitFor(); await new Promise(resolve => setTimeout(resolve, 800));
    assert.equal(await page.getByRole('heading', { name: t.results, exact: true }).count(), 0); interactions++;
    slow = false; await refresh(page); await page.getByText(t.denied, { exact: true }).waitFor();
-   await student.getByLabel(t.personId).fill(id(2)); await student.getByRole('button', { name: t.appoint, exact: true }).first().click();
+   // RAD085-OWNER-APPOINT-PICKER-20261028: synthetic lifecycle restore; actual directory UI is in p1-owner-picker-audit.mjs.
+   await student.getByRole('button', { name: t.appoint, exact: true }).click(); await student.getByRole('button', { name: t.confirmAction, exact: true }).click();
    await student.getByRole('heading', { name: t.owner, exact: true }).waitFor(); await refresh(page);
    await resultPanel().getByText(`${t.total}: 0`, { exact: true }).waitFor(); interactions++;
    await page.getByRole('button', { name: t.revokeCode, exact: true }).click(); await page.getByRole('button', { name: t.revokeCode, exact: true }).first().click();

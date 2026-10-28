@@ -55,6 +55,17 @@ export function createSqlReview(self: Person, transport: ScopeTransport): Review
  function actor(actorId: string) { if (actorId !== self.id) throw new ReviewError('denied'); }
  return {
   accounts: [self],
+  async readAppointment(personId, signal) {
+   if (self.role !== 'owner') throw new ReviewError('denied');
+   // RAD085-OWNER-APPOINT-PICKER-20261028: exact UUID lookup using the existing
+   // exclusive UUID cursor and limit 1; never scan/accumulate appointment pages.
+   const target = id(personId).toLowerCase(), value = BigInt('0x' + target.replaceAll('-', ''));
+   const hex = value === 0n ? null : (value - 1n).toString(16).padStart(32, '0');
+   const after = hex === null ? null : `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+   const result = page(await call('scope_page_v1', ['appointments', null, after, 1], signal), r => ({ id: id(r.id).toLowerCase(), appointed: r.revoked_at === null }));
+   if (result.rows.length > 1 || (result.rows[0] && result.rows[0].id < target)) return invalid();
+   return result.rows[0]?.id === target && result.rows[0].appointed;
+  },
   subscribe(listener) {
    listeners.add(listener);
    if (listeners.size === 1) release = transport.subscribe?.(invalidate);

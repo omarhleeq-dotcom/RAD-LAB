@@ -58,7 +58,7 @@
     "src/features/pilot/OwnerTraining.tsx": "23c2bfad50c50c5833270597bd767acf2b52a702b01d355e7b2a42838b1f0fd1",
     "src/features/pilot/owner-dashboard-data.ts": "7eeeefd28b84f9406bd017e547ea2dba1a9db6c308c81199df3b0fdcceaadc10",
     "src/features/pilot/owner-dashboard-deferred.ts": "efe0b0a805bb69c1f1dd4e82ea06afb9ae9018066488157a93f496db1883e702",
-    "src/features/pilot/OwnerDirectory.tsx": "093dbbb3c1a625b9d4803f71eb60936d491bf90781b0509c4b0417aabcb02713",
+    "src/features/pilot/OwnerDirectory.tsx": "6366210e4d150e53af4415d639729e5684e25966d18cac3cbcb9b641b0874032",
     "src/features/pilot/OwnerActivity.tsx": "9ebd86037a0874fb366b42e0718348cec62ea2a9a368b48a4395c82e544c7f1d",
     "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
     "src/features/pilot/OwnerPanel.tsx": "cc274b6ff26e8d402fed22ead298228276d6d27784ff257caf99f35016ac6698",
@@ -100,11 +100,11 @@
       },
       "boundaries": {
         "src/features/supervisor/p1-live.ts": "6a19d4f3876ba8be7313fdeac02f324f7609a9bf9cb7725692231d79ed64a44c",
-        "src/features/supervisor-review/sql-adapter.ts": "cd5bc9b98656f7b5ace8f082bac539fd7df7e2a32e2cbfe2f32de9dc163f53f5"
+        "src/features/supervisor-review/sql-adapter.ts": "1588e0d83e443756d67ae07556a7961c3c9e2acca9f969018ed25fbe2209cc22"
       },
       "consumer": {
         "path": "src/features/supervisor/P1Session.tsx",
-        "sha256": "f9a9ecb67e2871ff41e8c8cc634e443cb6c4cfc9fd6116372a8dc03a5cb0c3fb"
+        "sha256": "226670907b7ca28fbc16c32688e93362149dc6762a5ada30a22a1b9a8fc92609"
       }
     }
   }

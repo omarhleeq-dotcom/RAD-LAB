@@ -1,13 +1,13 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ReviewError, type Command, type Query, type ReviewAdapter, type Snapshot } from './contracts';
 import { copy, type ReviewCopy } from './copy';
 import { control, SupervisorReview } from './SupervisorReview';
 import { createSyntheticReview } from './synthetic';
-type Props = { adapter: ReviewAdapter; actorId: string; groupId?: string; selectGroup: (id: string) => void; locale: 'en' | 'ar'; text?: ReviewCopy };
+type Props = { adapter: ReviewAdapter; actorId: string; groupId?: string; selectGroup: (id: string) => void; locale: 'en' | 'ar'; text?: ReviewCopy; ownerAppointments?: (act: (command: Command) => void) => ReactNode };
 export function ReviewSession(props: Props) {
  return <Session key={props.actorId} {...props}/>;
 }
-function Session({ adapter, actorId, groupId, selectGroup, locale, text }: Props) {
+function Session({ adapter, actorId, groupId, selectGroup, locale, text, ownerAppointments }: Props) {
  const t = text ?? copy[locale], actor = adapter.accounts.find(p => p.id === actorId);
  const [pages, setPages] = useState<Query>({ actorId, groupId });
  // Preserve the groups page when selecting one of its rows. Per-group cursors
@@ -55,12 +55,12 @@ function Session({ adapter, actorId, groupId, selectGroup, locale, text }: Props
   const controller = new AbortController(); action.current = controller;
   setLoaded(undefined); setReceipt(undefined); setError(undefined); setConfirming(undefined); setBusy(true);
   try { const result = await adapter.execute(actorId, command, controller.signal); if (mounted.current && !controller.signal.aborted) { setReceipt(result); setError(undefined); setRevision(v => v + 1); } }
-  catch (e) { if (mounted.current && !controller.signal.aborted) setError(e instanceof ReviewError ? t[e.reason] : t.offline); }
+  catch (e) { if (mounted.current && !controller.signal.aborted) { setError(e instanceof ReviewError ? t[e.reason] : t.offline); if (command.kind === 'appoint' || command.kind === 'revoke') setRevision(v => v + 1); } }
   finally { applying.current = false; if (mounted.current && !controller.signal.aborted) setBusy(false); }
  }
  function act(c: Command) { if (c.kind === 'end' || c.kind === 'revoke' || c.kind === 'leave' || c.kind === 'revoke-code') setConfirming(c); else void execute(c); }
  if (!actor) return <p role="alert">{t.denied}</p>;
- return <div className="space-y-4"><div className="flex flex-wrap gap-2"><button className={control} onClick={refresh} disabled={busy}>{t.retry}</button>{groupId && <button className={control} disabled={busy} onClick={() => chooseGroup('')}>{t.group}</button>}</div>{error && <p role="alert">{error}</p>}{!data && !error && <p role="status">{busy ? t.saving : t.loading}</p>}{data && <SupervisorReview t={t} actor={actor} data={data} code={receipt?.groupId && data.codeGroupId !== receipt.groupId ? undefined : receipt?.code} locale={locale} act={act} confirming={confirming} confirm={() => confirming && void execute(confirming)} cancel={() => setConfirming(undefined)} selectGroup={chooseGroup} paging={(key, value) => { generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setPages(q => ({ ...q, groupId, [key]: value })); }}/>}</div>;
+ return <div className="space-y-4"><div className="flex flex-wrap gap-2"><button className={control} onClick={refresh} disabled={busy}>{t.retry}</button>{groupId && <button className={control} disabled={busy} onClick={() => chooseGroup('')}>{t.group}</button>}</div>{error && <p role="alert">{error}</p>}{!data && !error && <p role="status">{busy ? t.saving : t.loading}</p>}{data && <SupervisorReview ownerAppointments={ownerAppointments} t={t} actor={actor} data={data} code={receipt?.groupId && data.codeGroupId !== receipt.groupId ? undefined : receipt?.code} locale={locale} act={act} confirming={confirming} confirm={() => confirming && void execute(confirming)} cancel={() => setConfirming(undefined)} selectGroup={chooseGroup} paging={(key, value) => { generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setPages(q => ({ ...q, groupId, [key]: value })); }}/>}</div>;
 }
 /** Mounted only by the local review harness. Never imported by app routes or pilot auth. */
 export function LocalSupervisorReview({ locale = 'en' }: { locale?: 'en' | 'ar' }) {
