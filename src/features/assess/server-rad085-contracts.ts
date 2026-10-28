@@ -26,4 +26,4 @@ export type AssignmentReviewReceipt = {
   expiresAt: string; serverNow: string;
 };
 
-export const historicalRad085Input = (files: string[]) => files.filter(file => !(RAD085_MIGRATIONS as readonly string[]).includes(file));
+export const historicalRad085Input = (files: string[]) => files.filter(file => file < RAD085_MIGRATIONS[0]);

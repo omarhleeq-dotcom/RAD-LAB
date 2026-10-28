@@ -51,6 +51,20 @@ it('F4/F7: unselected group has a selection hint; student UUIDs never appear', a
  const props = { actor: self, t, data, act: () => {}, paging: () => {}, selectGroup: () => {}, confirm: () => {}, cancel: () => {}, locale: 'en' };
  await act(async () => root.render(createElement(SupervisorReview, props))); expect(host.textContent).toContain(t.selectGroupHint); expect(host.textContent).not.toContain(t.empty + t.requests);
  const uuid = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'; data.group = group; data.requests.rows = [{ id: 'request', studentId: uuid, groupId: group.id, status: 'pending', revision: 1 }]; data.members.rows = [{ id: uuid, name: uuid, joinedAt: Date.now() }];
- await act(async () => root.render(createElement(SupervisorReview, props))); expect(host.textContent).not.toContain(uuid); expect(host.textContent).toContain('Student 1');
+ await act(async () => root.render(createElement(SupervisorReview, props))); expect(host.textContent).not.toContain(uuid); // RAD085-P1-B-20261028: legacy fallback is neutral, never an index identity.
+ expect(host.textContent).toContain(t.nameUnavailable);
  await act(async () => root.unmount());
+});
+
+it('RAD085-P1-B names are independent of member paging and student requests carry group names', async () => {
+ const {host,root}=mount(),data=snapshot(); data.group=group;
+ data.requests.rows=[{id:'r',studentId:'off-page',studentName:'Named Pending Student',groupId:group.id,status:'pending',revision:1}];
+ data.results.rows=[{id:'a',studentId:'off-page',studentName:'Named Practice Student',kind:'practice',at:Date.now(),score:'37',visibleUntil:Infinity}];
+ const props={actor:self,t,data,act:()=>{},paging:()=>{},selectGroup:()=>{},confirm:()=>{},cancel:()=>{},locale:'en'};
+ await act(async()=>root.render(createElement(SupervisorReview,props)));
+ expect(host.textContent).toContain('Named Pending Student'); expect(host.textContent).toContain('Named Practice Student');
+ expect(host.textContent).not.toContain(t.nameUnavailable); expect(host.textContent).not.toContain('Student 1');
+ data.requests.rows[0]!.groupName='Returned Group Name';data.groups=blank();data.group=undefined;
+ await act(async()=>root.render(createElement(SupervisorReview,{...props,actor:{...self,role:'student'}})));
+ expect(host.textContent).toContain('Returned Group Name'); await act(async()=>root.unmount());
 });

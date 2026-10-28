@@ -1,3 +1,5 @@
+// RAD085-P1-B-20261028: exercise the additive B contract, including short codes.
+import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
 import { fixtureId as id, openRad085Database } from '../assess/rad085-local-db';
 import { createSqlReview, type ScopeTransport } from './sql-adapter';
@@ -6,6 +8,7 @@ import type { Command, Person, Query, ReviewAdapter } from './contracts';
 const signal = () => new AbortController().signal;
 async function fixture(configured = true) {
  const db = await openRad085Database();
+ await db.admin.query(readFileSync('supabase/migrations/20261028000100_p1_short_codes_names.sql', 'utf8'));
  try {
   for (let n = 1; n <= 28; n++) await db.admin.query("insert into auth.users values($1,$2,now(),'{\"display_name\":\"Synthetic P1\",\"consent_version\":\"2026-10-16\"}')", [id(n), `synthetic${n}@example.test`]);
   await db.admin.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end", [id(1)]);
@@ -51,11 +54,14 @@ async function fixture(configured = true) {
 it('P1 SQL adapter completes owner/supervisor/student lifecycle, revision conflicts, retries and one-time codes', async () => {
  const f = await fixture();
  try {
-  const { group: g, code } = await f.create(); expect(code).toMatch(/^[a-f0-9]{64}$/);
+  const { group: g, code } = await f.create(); expect(code).toMatch(/^[0-9A-HJKMNP-TV-Z]{8}$/);
   expect((await f.read(f.owner)).people.rows[0]).toMatchObject({ id: id(2), appointed: true });
   expect(JSON.stringify(await f.read(f.supervisor))).not.toContain(code);
   await f.run(f.student, { kind: 'join', code }); await f.run(f.student, { kind: 'join', code });
   let r = (await f.read(f.student)).requests.rows[0]!;
+  // RAD085-P1-B-20261028: direct names survive the DTO boundary independently of member pages.
+  expect(r.groupName).toBe('Synthetic P1 group');
+  expect((await f.read(f.supervisor, {groupId:g.id})).requests.rows[0]!.studentName).toBe('Synthetic P1');
   expect((await f.read(f.student)).requests.rows).toHaveLength(1); expect((await f.read(f.student)).isMember).toBeNull();
   await f.run(f.student, { kind: 'cancel', requestId: r.id, revision: r.revision });
   await f.run(f.student, { kind: 'join', code }); r = (await f.read(f.student)).requests.rows[0]!;
@@ -63,6 +69,7 @@ it('P1 SQL adapter completes owner/supervisor/student lifecycle, revision confli
   await expect(f.run(f.supervisor, { kind: 'approve', requestId: r.id, revision: r.revision })).rejects.toMatchObject({ reason: 'conflict' });
   await f.join(code); await f.practice(4, 100);
   let d = await f.read(f.supervisor, { groupId: g.id });
+  expect(d.results.rows[0]!.studentName).toBe('Synthetic P1');
   expect(d.members.total).toBe(1); expect(d.results.total).toBe(1); expect(d.results.rows[0]).toMatchObject({ score: '37', kind: 'practice' });
   expect(JSON.stringify(d)).not.toContain('never-project'); expect(d.results.rows[0]!.at).toBeGreaterThan(Date.parse('2026-01-01'));
   await expect(f.run(f.supervisor, { kind: 'rotate', groupId: g.id, revision: g.revision })).rejects.toMatchObject({ reason: 'conflict' });
@@ -152,7 +159,7 @@ it('validates a code receipt outside the first group page without scanning and p
   const outside = receipts.find(r => !first.rows.some(g => g.id === r.groupId))!;
   const rotated = await f.run(f.supervisor, { kind: 'rotate', groupId: outside.groupId!, revision: 1 });
   const before = f.calls.length, snapshot = await f.read(f.supervisor);
-  expect(snapshot.codeGroupId).toBe(outside.groupId); expect(rotated.code).toMatch(/^[a-f0-9]{64}$/);
+  expect(snapshot.codeGroupId).toBe(outside.groupId); expect(rotated.code).toMatch(/^[0-9A-HJKMNP-TV-Z]{8}$/);
   expect(snapshot.groups.rows.some(g => g.id === outside.groupId)).toBe(false);
   expect(f.calls.slice(before).map(c => c.args[0])).toEqual(['groups', 'members']);
   expect((await f.read(f.supervisor, { groupsCursor: first.next! })).groups.rows).toHaveLength(1);

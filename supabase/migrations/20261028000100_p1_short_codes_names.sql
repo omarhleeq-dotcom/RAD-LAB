@@ -105,8 +105,8 @@ begin
     and (p_after is null or grp.id>p_after) order by grp.id limit p_limit) q;
  elsif p_kind='my-requests' then
   select coalesce(jsonb_agg(to_jsonb(q) order by q.id),'[]') into rows from (
-   select r.id,r.group_id,r.state,r.revision,g.name group_name
-   from assess.group_join_requests r left join assess.groups g on g.id=r.group_id where r.user_id=auth.uid()
+   select r.id,r.group_id,r.state,r.revision,grp.name group_name
+   from assess.group_join_requests r left join assess.groups grp on grp.id=r.group_id where r.user_id=auth.uid()
    and (p_after is null or r.id>p_after) order by r.id limit p_limit) q;
  elsif p_kind='appointments' then
   if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
