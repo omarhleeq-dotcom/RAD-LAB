@@ -81,7 +81,8 @@ it('keeps a selected group on its server page instead of falling back to the fir
  await act(async () => root.render(createElement(P1View, { adapter, actorId: fixture.userId, locale: 'en' })));
  const next = [...host.querySelectorAll('button')].find(b => b.textContent === en.supervisor.next)!;
  await act(async () => next.click());
- const group = [...host.querySelectorAll('button')].find(b => b.textContent === 'Second page group')!;
+ // P1-USABILITY-F3: card selection uses its accessible group name.
+ const group = [...host.querySelectorAll('button')].find(b => b.getAttribute('aria-label') === 'Second page group')!;
  await act(async () => group.click());
  expect(read.mock.calls.at(-1)![0]).toMatchObject({ groupId: 'two', groupsCursor: 'page-two' });
  expect(host.textContent).toContain(en.supervisor.results);
