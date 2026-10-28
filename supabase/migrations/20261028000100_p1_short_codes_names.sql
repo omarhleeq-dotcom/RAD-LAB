@@ -44,6 +44,11 @@ begin
    for i in reverse 7..0 loop
     raw:=raw||substr('0123456789ABCDEFGHJKMNPQRSTVWXYZ',((bits>>(i*5))&31)::integer+1,1);
    end loop;
+   -- Rotating to the same digest must also retry, rather than keep the old code valid.
+   if exists(select 1 from assess.group_join_codes where group_id=g.id and digest=encode(sha256(convert_to(raw,'UTF8')),'hex')) then
+    if attempt=16 then raise exception 'code allocation exhausted' using errcode='54000'; end if;
+    continue;
+   end if;
    begin
     insert into assess.group_join_codes values(g.id,encode(sha256(convert_to(raw,'UTF8')),'hex'),g.ends_at,null)
     on conflict(group_id) do update set digest=excluded.digest,expires_at=excluded.expires_at,revoked_at=null;

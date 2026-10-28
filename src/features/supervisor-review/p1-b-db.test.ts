@@ -42,6 +42,10 @@ it('real digest collisions retry; bounded exhaustion rolls back the group and pr
   await db.admin.query("create sequence public.synthetic_random_calls; create function public.synthetic_uuid() returns uuid language sql as $$select case when nextval('public.synthetic_random_calls')<=2 then '00000000-0000-4000-8000-000000000000'::uuid else gen_random_uuid() end$$");
   await db.admin.query(original.replace('gen_random_uuid()','public.synthetic_uuid()'));
   const next=await db.create();expect(next.code).not.toBe('00000000');expect(Number((await db.admin.query('select last_value from public.synthetic_random_calls')).rows[0].last_value)).toBe(3);
+  await db.admin.query('alter sequence public.synthetic_random_calls restart with 1');
+  const rotated=await db.rpc<{code:string}>(2,'supervisor_group_v1',['rotate',g.id,g.revision]);
+  expect(rotated.code).not.toBe('00000000');expect(Number((await db.admin.query('select last_value from public.synthetic_random_calls')).rows[0].last_value)).toBe(3);
+  await db.admin.query("update assess.group_join_codes set digest=encode(sha256(convert_to('00000000','UTF8')),'hex') where group_id=$1",[g.id]);
   await db.admin.query("create or replace function public.synthetic_uuid() returns uuid language sql as $$select '00000000-0000-4000-8000-000000000000'::uuid$$");
   const before=(await db.admin.query('select * from assess.groups order by id')).rows;
   await expect(db.create()).rejects.toMatchObject({code:'54000'});

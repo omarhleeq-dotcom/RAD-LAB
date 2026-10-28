@@ -54,7 +54,7 @@ it('rejects an unguarded deferred import and edits to the availability source wi
 // RAD085-DB-DAY-PROMOTION-20261027: the promoted repository itself (no demotion) carries the new marker.
 it('the promoted repository prints the new marker, accepts it, and rejects the pre-DB-day marker', () => {
  // RAD085-P1-B-20261028: reviewed additive migration/check; reject the live M1-M4 marker.
- const promoted = 'pilot-v1:8b19a6ad329334a5b4a56df671ad9138debe50a974384ff6d7954b05477ff5cd';
+ const promoted = 'pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be';
 
  const run = (attestation: string, print = false) => spawnSync(process.execPath, ['--input-type=module', '-e', `import {runSchemaGate} from ${JSON.stringify(join(process.cwd(), 'scripts/pages/pilot-schema-gate.mjs'))};try { console.log(runSchemaGate(${JSON.stringify({ ...env, PILOT_SCHEMA_VERIFIED: attestation })},${print})); } catch(e) { console.error(e.message); process.exitCode=1; }`], { encoding: 'utf8' });
  const printed = run(promoted, true); expect(printed.stdout.trim()).toBe(promoted);

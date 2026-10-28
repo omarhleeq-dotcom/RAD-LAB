@@ -4,13 +4,13 @@
 
 الهدف: ترحيل إضافي واحد للرمز القصير والأسماء ضمن الرؤية نفسها، وmini DB day قابل للمراجعة على الهاتف. تم التحقق مباشرة من دمج [#150](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/150) إلى main بتاريخ2026-10-28؛ الفرع بدأ من ذلك main. فُتحت [المسودة #151](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/151) مبكرًا، ثم commit/push مستقل بعد مراحل الترحيل، السلوك والاختبارات، الجاهزية وpins، وحزمة الهاتف؛ التوثيق مرحلة مستقلة أخيرة. لا worktree أو subagents.
 
-الميزانية النهائية33 ملفًا بعد توسعتها علنًا من24 لتغطية النقل المولّد والإثبات الإلزامي وتدقيقي المتصفح ولقطتي المراجعة. القائمة المحددة:
+الميزانية النهائية36 ملفًا بعد توسعتها علنًا من24 لتغطية النقل المولّد والإثبات الإلزامي وتدقيقي المتصفح ولقطتي المراجعة. القائمة المحددة:
 
 | المجموعة | الملفات |
 |---|---|
 | SQL (2) | `supabase/migrations/20261028000100_p1_short_codes_names.sql`؛ `supabase/checks/rad085-p1-b-ready.sql` |
 | الواجهة والعقد (5) | `src/features/supervisor-review/contracts.ts`؛ `sql-adapter.ts`؛ `SupervisorReview.tsx` في المجلد نفسه؛ `messages/en.json`؛ `messages/ar.json` |
-| الجاهزية والحدود (6) | `scripts/pages/frontend-schema.json`؛ `src/features/supervisor/p1-availability.ts`؛ `p1-dormant-fixture.ts`؛ `p1-schema.test.ts` في المجلد نفسه؛ `src/features/assess/rad085-trial-removal.test.ts`؛ `src/features/deployment/frontend-schema.test.ts` |
+| الجاهزية والحدود (9) | `scripts/pages/frontend-schema.json`؛ `src/features/supervisor/p1-availability.ts`؛ `p1-dormant-fixture.ts`؛ `p1-schema.test.ts` في المجلد نفسه؛ `src/features/assess/rad085-trial-removal.test.ts`؛ `src/features/deployment/frontend-schema.test.ts`؛ `owner-dashboard-deferred-schema.test.ts`؛ `c2-deferred-schema.test.ts`؛ `assess-e-schema.test.ts` في المجلد نفسه |
 | السلوك ومدخلات التاريخ (7) | `src/features/supervisor-review/p1-b-db.test.ts`؛ `sql-adapter-db.test.ts`؛ `usability.test.ts` في المجلد نفسه؛ `src/features/assess/rad085-local-db.ts`؛ `server-rad085-contracts.ts` في المجلد نفسه؛ `scripts/assess/local-database.mjs`؛ `scripts/assess/rad085-security-rehearsal.mjs` |
 | المولّد وإثباته (3) | `scripts/assess/phone-sql-packet.mjs`؛ `phone-sql-packet.test.mjs` في المجلد نفسه؛ `src/features/assess/phone-sql-packet.test.ts` |
 | المتصفح (4) | `scripts/qa/rad085-p1-routes-audit.mjs`؛ `scripts/qa/rad-085-p1-sql-audit.mjs`؛ `docs/review/p1-b-en.jpg`؛ `docs/review/p1-b-ar.jpg` |
@@ -20,7 +20,7 @@
 
 ## 2. المنفّذ والمتروك
 
-الترحيل يستبدل ثلاث دوال قائمة فقط بـCREATE OR REPLACE، مع البوابة المغلقة ووجود M1–M4. إنشاء/تدوير الرمز ينتج8 أحرف من `0123456789ABCDEFGHJKMNPQRSTVWXYZ`، من أول40 بت عشوائية في UUIDv4 قبل بتات version/variant الثابتة. تُحفظ SHA-256 فقط. الإدخال يزيل whitespace والشرطات ويحوّل إلى uppercase؛ الأحرف الملتبسة خارج الأبجدية ترفض. تعارض قيد digest يعيد التوليد حتى16 مرة؛ أي قيد آخر أو نفاد المحاولات يفشل ويعيد المعاملة كلها، بما فيها إنشاء/تعديل المجموعة.
+الترحيل يستبدل ثلاث دوال قائمة فقط بـCREATE OR REPLACE، مع البوابة المغلقة ووجود M1–M4. إنشاء/تدوير الرمز ينتج8 أحرف من `0123456789ABCDEFGHJKMNPQRSTVWXYZ`، من أول40 بت عشوائية في UUIDv4 قبل بتات version/variant الثابتة. تُحفظ SHA-256 فقط. الإدخال يزيل whitespace والشرطات ويحوّل إلى uppercase؛ الأحرف الملتبسة خارج الأبجدية ترفض. تعارض قيد digest أو مطابقة digest السابق للمجموعة عند التدوير يعيد التوليد حتى16 مرة؛ أي قيد آخر أو نفاد المحاولات يفشل ويعيد المعاملة كلها، بما فيها إنشاء/تعديل المجموعة.
 
 فحص join_request_v1 أصبح8 رموز، وفحص adapter مطابق. نافذة throttle القائمة10 محاولات/ساعة/حساب والانتهاء والإبطال والتدوير لم تتغير؛ الإدخال غير الصحيح يستهلك محاولة أيضًا. الرموز القديمة64 hex تحتاج تدويرًا من المشرف بعد B، إذ لا يمكن استرداد الرمز من digest. لا حذف رموز/صفوف أو تحويل افتراضي لها في الترحيل.
 
@@ -61,7 +61,7 @@ Scale: payload الواجهة20 صفًا/طلب مع UUID keyset، وسقف RPC 
 العلامة الجديدة الكاملة، محسوبة دون اتصال حي:
 
 ```text
-pilot-v1:8b19a6ad329334a5b4a56df671ad9138debe50a974384ff6d7954b05477ff5cd
+pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be
 ```
 
 الحي المبلّغ ما زال `pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a`. المالك يضع الجديدة **فقط بعد** mini DB day والجاهزية والدخان في [الدليل](RAD-085_P1_B_DB_DAY.md). نجاح الكتالوج المحلي18.4 لا يدّعي تطبيقًا على الحي17.11 أو فحص الهاتف. لا qa:golden/qa:characterise ولا hosted preview مفتوح/مشترك. workflows GitHub المعتادة مطلوب تشغيلها دون skip ci؛ نتائجها ستوثق مباشرةً دون polling.

@@ -1,3 +1,4 @@
+// RAD085-P1-B-20261028: current contract gains B SQL/readiness; historical hashes and privacy assertions unchanged.
 // RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
 import {RAD085_MIGRATIONS} from "../assess/server-rad085-contracts";
 import { cpSync,mkdtempSync,readFileSync,rmSync,writeFileSync } from "node:fs";
@@ -7,10 +8,10 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { expect,it } from "vitest";
 const migration="20261024000100_owner_dashboard.sql",check="supabase/checks/owner-dashboard-ready.sql";
-const marker="pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a";
+const marker="pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be";
 it("requires C1 then C2 with their checks and the new DB-day attestation",()=>{
  const m=JSON.parse(readFileSync("scripts/pages/frontend-schema.json","utf8"));
- expect(m.requiredMigrations.slice(-6,-4)).toEqual([migration,"20261024000200_owner_deletion_surveys.sql"]);expect(m.requiredMigrations.slice(-4)).toEqual(RAD085_MIGRATIONS);expect(m.checks.slice(-2)).toEqual([check,"supabase/checks/owner-deletion-surveys-ready.sql"]);
+ expect(m.requiredMigrations.slice(m.requiredMigrations.indexOf(migration))).toEqual([migration,"20261024000200_owner_deletion_surveys.sql",...RAD085_MIGRATIONS,"20261028000100_p1_short_codes_names.sql"]);expect(m.checks.slice(-2)).toEqual([check,"supabase/checks/owner-deletion-surveys-ready.sql"]);
  expect(m.deferredMigrations).toEqual({});
  expect(createHash("sha256").update(readFileSync(`supabase/migrations/${migration}`)).digest("hex")).toBe("d7c932ca54d1724ef8ffeb1f78c0a69834609e9e9dd49d1d0b8bb6c8b701bef2");
  const env={...process.env,NEXT_PUBLIC_SUPABASE_URL:"https://vlacestfruxooznrcjqc.supabase.co",NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:"sb_publishable_synthetic_local_test_123456",PILOT_SCHEMA_VERIFIED:marker};

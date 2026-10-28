@@ -1,3 +1,4 @@
+// RAD085-P1-B-20261028: current contract gains B SQL/readiness; historical hashes and privacy assertions unchanged.
 // RAD085-DEFERRED-SCHEMA-TESTS-20261027: only deferred RAD-085 expectations / historical input isolation.
 import {cpSync,mkdtempSync,readFileSync,rmSync,writeFileSync} from "node:fs";
 import {tmpdir} from "node:os";
@@ -11,7 +12,7 @@ it("E requires its reviewed SQL/catalogues, rejects a C/D-only attestation and p
   for(const p of ["src","supabase","scripts/pages"])cpSync(p,join(dir,p),{recursive:true});
   const path=join(dir,"scripts/pages/frontend-schema.json"),m=JSON.parse(readFileSync(path,"utf8"));
   writeFileSync(join(dir,"scripts/pages/frontend-schema.json"),JSON.stringify(m));
-  expect(m.requiredMigrations).toContain("20261020000900_assess_practical_ui.sql");expect(m.checks).toContain("supabase/checks/assess-practical-ready.sql");expect(m.checks).toContain("supabase/checks/rad085-d3-ready.sql");expect(m.checks).not.toContain("supabase/checks/assess-staging-ready.sql");expect(m.deferredMigrations).toEqual({});
+  expect(m.requiredMigrations).toContain("20261020000900_assess_practical_ui.sql");expect(m.checks).toContain("supabase/checks/assess-practical-ready.sql");expect(m.checks).toContain("supabase/checks/rad085-p1-b-ready.sql");expect(m.checks).not.toContain("supabase/checks/assess-staging-ready.sql");expect(m.deferredMigrations).toEqual({});
   // Compute the prior C/D marker from its actual historical files, independent of E source pins.
   const hash=createHash("sha256").update("https://vlacestfruxooznrcjqc.supabase.co\n");
   for(const f of m.requiredMigrations.filter((f:string)=>f<"20261020000900").sort())hash.update(`${f}\0`).update(readFileSync(join(dir,"supabase/migrations",f))).update("\0");
