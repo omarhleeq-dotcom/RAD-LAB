@@ -4,13 +4,13 @@
 
 الهدف: ترحيل إضافي واحد للرمز القصير والأسماء ضمن الرؤية نفسها، وmini DB day قابل للمراجعة على الهاتف. تم التحقق مباشرة من دمج [#150](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/150) إلى main بتاريخ2026-10-28؛ الفرع بدأ من ذلك main. فُتحت [المسودة #151](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/151) مبكرًا، ثم commit/push مستقل بعد مراحل الترحيل، السلوك والاختبارات، الجاهزية وpins، وحزمة الهاتف؛ التوثيق مرحلة مستقلة أخيرة. لا worktree أو subagents.
 
-الميزانية النهائية32 ملفًا بعد توسعتها علنًا من24 لتغطية النقل المولّد والإثبات الإلزامي وتدقيقي المتصفح ولقطتي المراجعة. القائمة المحددة:
+الميزانية النهائية33 ملفًا بعد توسعتها علنًا من24 لتغطية النقل المولّد والإثبات الإلزامي وتدقيقي المتصفح ولقطتي المراجعة. القائمة المحددة:
 
 | المجموعة | الملفات |
 |---|---|
 | SQL (2) | `supabase/migrations/20261028000100_p1_short_codes_names.sql`؛ `supabase/checks/rad085-p1-b-ready.sql` |
 | الواجهة والعقد (5) | `src/features/supervisor-review/contracts.ts`؛ `sql-adapter.ts`؛ `SupervisorReview.tsx` في المجلد نفسه؛ `messages/en.json`؛ `messages/ar.json` |
-| الجاهزية والحدود (5) | `scripts/pages/frontend-schema.json`؛ `src/features/supervisor/p1-availability.ts`؛ `p1-dormant-fixture.ts`؛ `p1-schema.test.ts` في المجلد نفسه؛ `src/features/assess/rad085-trial-removal.test.ts` |
+| الجاهزية والحدود (6) | `scripts/pages/frontend-schema.json`؛ `src/features/supervisor/p1-availability.ts`؛ `p1-dormant-fixture.ts`؛ `p1-schema.test.ts` في المجلد نفسه؛ `src/features/assess/rad085-trial-removal.test.ts`؛ `src/features/deployment/frontend-schema.test.ts` |
 | السلوك ومدخلات التاريخ (7) | `src/features/supervisor-review/p1-b-db.test.ts`؛ `sql-adapter-db.test.ts`؛ `usability.test.ts` في المجلد نفسه؛ `src/features/assess/rad085-local-db.ts`؛ `server-rad085-contracts.ts` في المجلد نفسه؛ `scripts/assess/local-database.mjs`؛ `scripts/assess/rad085-security-rehearsal.mjs` |
 | المولّد وإثباته (3) | `scripts/assess/phone-sql-packet.mjs`؛ `phone-sql-packet.test.mjs` في المجلد نفسه؛ `src/features/assess/phone-sql-packet.test.ts` |
 | المتصفح (4) | `scripts/qa/rad085-p1-routes-audit.mjs`؛ `scripts/qa/rad-085-p1-sql-audit.mjs`؛ `docs/review/p1-b-en.jpg`؛ `docs/review/p1-b-ar.jpg` |

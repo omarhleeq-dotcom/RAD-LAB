@@ -63,7 +63,8 @@ it('projects only display names/group names with identical M4 visibility, keyset
   await db.admin.query(migration());
   for(let i=0;i<queries.length;i++){
    const p=await db.page(...queries[i]!);expect(p.total).toBe(baseline[i]!.total);expect(p.next).toBe(baseline[i]!.next);
-   expect(p.rows.map(({display_name: _n,group_name:_g,...r})=>r)).toEqual(baseline[i]!.rows.map(({display_name:_n,...r})=>r));
+   const withoutNames=(row:Record<string,unknown>)=>Object.fromEntries(Object.entries(row).filter(([key])=>!['display_name','group_name'].includes(key)));
+   expect(p.rows.map(withoutNames)).toEqual(baseline[i]!.rows.map(withoutNames));
    expect(JSON.stringify(p)).not.toContain('@example.test');
   }
   expect((await db.page(2,'requests',g.id)).rows.map(r=>r.display_name)).toEqual(expect.arrayContaining(['Synthetic Three Name 3','Synthetic Three Name 4']));

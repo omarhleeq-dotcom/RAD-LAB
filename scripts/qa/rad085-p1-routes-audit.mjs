@@ -27,15 +27,15 @@ const params = { scope_page_v1: ['p_kind', 'p_group', 'p_after', 'p_limit'], sha
 let db, initial;
 async function reset() {
  await db?.close(); db = await openRad085Database();
+ await db.admin.query(readFileSync('supabase/migrations/20261028000100_p1_short_codes_names.sql', 'utf8')); // RAD085-P1-B-20261028
  for (let n = 1; n <= 6; n++) await db.admin.query("insert into auth.users values($1,$2,now(),$3)", [id(n), `synthetic${n}@example.test`, JSON.stringify({ display_name: 'Synthetic P1', consent_version: consentVersion })]);
  await db.admin.query("update public.profiles set status=case when user_id=$2 then 'pending' else 'approved' end,role=case when user_id=$1 then 'owner' else 'participant' end", [id(1), id(5)]);
  for (const n of [2, 3]) await db.rpc(1, 'appointment_v1', [id(n), true]);
  await db.admin.query(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql', 'utf8'));
  // Verify the new read-only readiness file and the packet probe on the real local DB.
- const checks = await db.admin.query(readFileSync('supabase/checks/rad085-d3-ready.sql', 'utf8'));
+ const checks = await db.admin.query(readFileSync('supabase/checks/rad085-p1-b-ready.sql', 'utf8'));
  assert.ok(checks.find(r => r.rows?.length).rows.every(row => row.ready === true));
- const probe = readFileSync('docs/RAD-085_DB_DAY_P1.md', 'utf8').match(/```sql\n([\s\S]*?)```/)[1];
- const result = await db.admin.query(probe); assert.ok(Object.values(result.find(r => r.rows?.length).rows[0]).every(v => v === true));
+ // RAD085-P1-B-20261028: exact B catalogue checked above; old DB-day probe is historical.
  initial = await db.rpc(2, 'supervisor_group_v1', ['create', null, null, 'Synthetic route group', new Date(Date.now() + 3600000).toISOString()]);
  await db.rpc(3, 'supervisor_group_v1', ['create', null, null, 'Other supervisor group', new Date(Date.now() + 3600000).toISOString()]);
  await practice(901, 9); // Before joining: excluded by the server window.
@@ -146,7 +146,7 @@ try {
     await supervisor.getByRole('heading', { name: t.results, exact: true }).waitFor(); await audit(supervisor, 'supervisor');
     await supervisor.getByRole('button', { name: t.rotate, exact: true }).click();
     const receipt = supervisor.getByRole('heading', { name: t.code, exact: true }).locator('..'); await receipt.waitFor();
-    const code = await receipt.locator('p[dir=ltr]').textContent(); assert.match(code, /^[a-f0-9]{64}$/);
+    const code = await receipt.locator('p[dir=ltr]').textContent(); assert.match(code, /^[0-9A-HJKMNP-TV-Z]{8}$/);
     // P1-USABILITY-F1: refresh must retain the code until explicit Done.
     await supervisor.getByRole('button', { name: t.copyCode, exact: true }).click();
     await supervisor.getByRole('button', { name: t.retry, exact: true }).click();
@@ -159,9 +159,9 @@ try {
     await studentPanel.getByRole('button', { name: t.accept, exact: true }).click(); assert.equal(await studentPanel.getByRole('button', { name: t.withdraw, exact: true }).count(), 0);
     await studentPanel.getByRole('checkbox').check(); await studentPanel.getByRole('button', { name: t.accept, exact: true }).click();
     await studentPanel.getByLabel(t.enter).fill(code); await studentPanel.getByRole('button', { name: t.join, exact: true }).click();
-    await studentPanel.getByRole('button', { name: t.cancel, exact: true }).waitFor(); await audit(student, 'student pending');
+    await studentPanel.getByRole('button', { name: t.cancel, exact: true }).waitFor(); assert.ok((await studentPanel.textContent()).includes('Synthetic route group')); await audit(student, 'student pending');
     const refresh = async p => { await p.getByRole('button', { name: t.retry, exact: true }).click(); };
-    await refresh(supervisor); await supervisor.getByRole('button', { name: t.reject, exact: true }).click();
+    await refresh(supervisor); assert.ok((await supervisor.locator('#p1-requests').textContent()).includes('Synthetic P1')); await supervisor.getByRole('button', { name: t.reject, exact: true }).click();
     await refresh(studentPanel); await studentPanel.getByText(new RegExp(t.rejected)).first().waitFor();
     await studentPanel.getByLabel(t.enter).fill(code); await studentPanel.getByRole('button', { name: t.join, exact: true }).click();
     await studentPanel.getByRole('button', { name: t.cancel, exact: true }).waitFor();
@@ -169,8 +169,8 @@ try {
     await refresh(studentPanel); await studentPanel.getByRole('button', { name: t.leave, exact: true }).waitFor();
     await practice(902, 37); await refresh(supervisor);
     await supervisor.getByText(`${t.total}: 1`, { exact: true }).last().waitFor();
-    const results = supervisor.getByRole('heading', { name: t.results, exact: true }).locator('..'); assert.ok((await results.textContent()).includes('37')); await audit(supervisor, 'practice window');
-    if (width === 390 && theme === 'dark') { const path = `docs/review/p1-usability-${locale}.jpg`; mkdirSync('docs/review', { recursive: true }); await supervisor.screenshot({ path, type: 'jpeg', quality: 65, fullPage: true }); captures.push(path); }
+    const results = supervisor.getByRole('heading', { name: t.results, exact: true }).locator('..'); assert.ok((await results.textContent()).includes('37')); assert.ok((await results.textContent()).includes('Synthetic P1')); await audit(supervisor, 'practice window');
+    if (width === 390 && theme === 'dark') { const path = `docs/review/p1-b-${locale}.jpg`; mkdirSync('docs/review', { recursive: true }); await supervisor.screenshot({ path, type: 'jpeg', quality: 65, fullPage: true }); captures.push(path); }
     await studentPanel.getByRole('button', { name: t.withdraw, exact: true }).click();
     await studentPanel.getByRole('checkbox').waitFor(); await refresh(supervisor);
     await results.getByText(`${t.total}: 0`, { exact: true }).waitFor(); await audit(student, 'withdrawn');
