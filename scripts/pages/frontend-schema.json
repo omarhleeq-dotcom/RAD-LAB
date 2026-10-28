@@ -55,7 +55,7 @@
       ]
     },
     "20261027000100_assess_management_erasure.sql": {
-      "sha256": "7e77817c1cf5ffa2ad344f509fa31b418f0724443b68c4a354314dba1424826e",
+      "sha256": "adb7a3341c22885d0592608680974b04c9b5bb70b6da16af594a5888a7f6818a",
       "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
       "serverModules": [
         "src/features/assess/server-rad085-contracts.ts"

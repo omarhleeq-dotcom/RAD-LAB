@@ -39,7 +39,7 @@ with objects(kind,key,value) as (
  ('columns',186,'583afac6d0d92423b3abe1025fc663e4ba70782a64f90a8a448e1b4c1a3e0a5e'),
  ('constraints',154,'28bd9fc7dcd1d8cabf96f4240e380c03444d94f6b044b505e78ea383fd3a76a8'),
  ('effective_privileges',56,'f23ba4458a4e45da2183774959efb60f8a7560f460ea7513a60304ac25ae7f2c'),
- ('functions',75,'0a728807faa66d8312f0a6a4a7cc89faa86c555dd7eafd8f366d715ad3ed79f8'),
+ ('functions',75,'394aed469deeb5c0c3012b5428d3545e660cd2fb8fa123f088fd8a36fd36770f'),
  ('indexes',72,'dc8d78fb46dca786d9bf818c310023145fc92c3f7ad45e4fcef480b741e50ef4'),
  ('relations',39,'f9702f100fce917867b680cbbe31e1b6df8d8d91e4f9142b99fe5aa5882001c0'),
  ('schema',1,'1b0781c4ad8e2e9c1a2411746559468e4746ac95a359ac14741bcd98490cf91e'),
