@@ -6,17 +6,17 @@ import { directoryPage, FIRST, type DirectoryPage, type DirectoryPerson, type Po
 import { useSessionAccount } from "./SessionGate";
 export const ownerButton = "min-h-11 rounded-md border border-line px-3 py-2 text-sm font-medium hover:bg-paper disabled:opacity-60";
 /** Shared bounded directory for approvals, export selection and Assess selection. */
-export function OwnerDirectory({ revision=0, picker=false, selected=[], onSelect, children }: {
- revision?:number; picker?:boolean; selected?:string[]; onSelect?:(person:DirectoryPerson)=>void; children?:(person:DirectoryPerson)=>React.ReactNode;
+export function OwnerDirectory({ revision=0, picker=false, selected=[], onSelect, children, approvedOnly=false }: {
+ approvedOnly?:boolean; revision?:number; picker?:boolean; selected?:string[]; onSelect?:(person:DirectoryPerson)=>void; children?:(person:DirectoryPerson)=>React.ReactNode;
 }) {
  const {state}=useSessionAccount();
  const owner=state.kind==="signedIn"&&state.profile.status==="approved"&&state.profile.role==="owner"?state.userId:null;
  const t=useTranslations("owner.dashboard");
  const [draft,setDraft]=useState(""),[search,setSearch]=useState(""),[status,setStatus]=useState("");
  const [position,setPosition]=useState<Position>(FIRST),[result,setResult]=useState<{key:string;page?:DirectoryPage;error?:boolean}>({key:""});
- const key=JSON.stringify([owner,search,status,position,revision]);
+ const key=JSON.stringify([owner,search,status,position,revision,approvedOnly]);
  useEffect(()=>{if(!owner)return;let cancelled=false;void (async()=>{
-   try {const c=await getPilotClient();if(!c)throw new Error();const page=await directoryPage(c,search,status,position);if(!cancelled)setResult({key,page});}
+   try {const c=await getPilotClient();if(!c)throw new Error();const page=await directoryPage(c,search,approvedOnly?"approved":status,position);if(!cancelled)setResult({key,page});}
    catch {if(!cancelled)setResult({key,error:true});}
  })();return ()=>{cancelled=true;};
  // key contains the entire request.
@@ -26,7 +26,7 @@ export function OwnerDirectory({ revision=0, picker=false, selected=[], onSelect
  return <section className="min-w-0 space-y-3" aria-label={t("search")} data-testid="owner-directory">
    <form className="flex flex-wrap items-end gap-2" onSubmit={e=>{e.preventDefault();setSearch(draft.trim());setPosition(FIRST);}}>
     <label className="min-w-0 flex-1 text-sm">{t("search")}<input type="search" maxLength={100} className="mt-1 block w-full rounded border border-line bg-panel p-2" value={draft} onChange={e=>setDraft(e.target.value)}/></label>
-    <label className="text-sm">{t("status")}<select className="mt-1 block rounded border border-line bg-panel p-2" value={status} onChange={e=>{setStatus(e.target.value);setPosition(FIRST);}}><option value="">{t("all")}</option>{["pending","approved","suspended"].map(s=><option key={s} value={s}>{t(s)}</option>)}</select></label>
+    {!approvedOnly&&<label className="text-sm">{t("status")}<select className="mt-1 block rounded border border-line bg-panel p-2" value={status} onChange={e=>{setStatus(e.target.value);setPosition(FIRST);}}><option value="">{t("all")}</option>{["pending","approved","suspended"].map(s=><option key={s} value={s}>{t(s)}</option>)}</select></label>}
     <button className={ownerButton}>{t("searchAction")}</button>
    </form>
    {page&&<p data-testid="owner-summary" className="text-sm text-muted">{["pending","approved","suspended"].map(s=>`${t(s)}: ${page.counts[s as keyof typeof page.counts]}`).join(" · ")}{page.legacy?` · ${t("globalCounts")}`:""}</p>}

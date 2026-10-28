@@ -19,6 +19,7 @@ export type Failure = 'denied' | 'expired' | 'conflict' | 'invalid' | 'offline';
 export class ReviewError extends Error { constructor(public reason: Failure) { super(reason); } }
 export interface ReviewAdapter {
  subscribe?(invalidate: () => void): () => void;
+ readAppointment?(personId: string, signal: AbortSignal): Promise<boolean>;
  readonly accounts: readonly Person[];
  read(query: Query, signal: AbortSignal): Promise<Snapshot>;
  execute(actorId: string, command: Command, signal: AbortSignal): Promise<{ code?: string; groupId?: string }>;

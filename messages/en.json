@@ -1947,7 +1947,6 @@
   "supervisorReview": {
     "sqlHint": "Practice recorded within the current sharing and membership window. Saved totals are displayed without regrading. Exam results are outside this P1 connection.",
     "total": "Total in scope",
-    "personId": "Approved participant UUID",
     "revokeCode": "Revoke join code",
     "sharingClosed": "Sharing is unavailable or has not been accepted. Joining is closed until you accept the recognised sharing policy.",
     "title": "Supervisor groups · local review",
@@ -2015,13 +2014,18 @@
     "role": "Review role",
     "student": "Student",
     "supervisor": "Supervisor",
-    "ownerRole": "Owner"
+    "ownerRole": "Owner",
+    "appointmentSearch": "Find an approved participant",
+    "appointmentConfirm": "Appoint this participant as a supervisor?",
+    "appointmentOwner": "The site owner cannot be appointed.",
+    "appointmentNotApproved": "This account is not approved.",
+    "appointmentAlready": "Already appointed.",
+    "confirmAction": "Confirm"
   },
   "supervisor": {
     "notSupervisor": "This account is not a supervisor. An active supervisor appointment is required.",
     "sqlHint": "Practice saved within the current sharing and membership window. Saved totals are shown without regrading. Group exam results are not displayed here.",
     "total": "Total in scope",
-    "personId": "Approved participant UUID",
     "revokeCode": "Revoke join code",
     "sharingClosed": "Sharing is unavailable or has not been accepted. Joining is closed until you accept the recognised sharing policy.",
     "title": "Supervisor groups",
@@ -2103,6 +2107,12 @@
     "unknown": "The sharing text is unavailable or has changed. An unknown version cannot be accepted. Refresh.",
     "entry": "Join a group and manage sharing",
     "archiveHint": "Ending archives the group and stops sharing. Group history is retained under the retention policy.",
-    "refreshHint": "Refresh before reading current practice. Leaving this page clears its data."
+    "refreshHint": "Refresh before reading current practice. Leaving this page clears its data.",
+    "appointmentSearch": "Find an approved participant",
+    "appointmentConfirm": "Appoint this participant as a supervisor?",
+    "appointmentOwner": "The site owner cannot be appointed.",
+    "appointmentNotApproved": "This account is not approved.",
+    "appointmentAlready": "Already appointed.",
+    "confirmAction": "Confirm"
   }
 }
