@@ -30,6 +30,7 @@ from (values
  ('assess.sessions'),
  ('assess.targets'),
  ('assess.versions'),
+ ('assess.trial_scope'),
  ('auth.users')
 ) v(t)
 where to_regclass(t) is not null

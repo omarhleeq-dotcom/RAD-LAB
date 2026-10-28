@@ -99,6 +99,8 @@ Owner instruction in this conversation (2026-10-16): implement the agreed simple
 <a id="assess-trial-closeout-owner-2026-10-22"></a>
 ### إغلاق تجربة Assess الهندسية وقرارات ما بعدها — 2026-10-22 عمّان
 
+**قاعدة النطاق في البند (1) استُبدلت بقرار [B8 بتاريخ2026-10-28](#rad085-trial-removal-owner-2026-10-28)؛ النص التالي يحفظ الدليل التاريخي، وبقية البنود قائمة.**
+
 **السلطة:** بعد [التقرير النهائي](ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md) ناقش المالك البنود المفتوحة وقرر: (1) **النطاق** `assess.trial_scope` **يبقى فعّالًا** (`active=true`) حتى قرار مستقل بتشغيل Assess الحقيقي؛ البوابة والإسنادان وLOGIN مغلقة، وتعطيله بأمر واحد مسموح عند غياب محاولات نشطة. (2) **زر إغلاق الإسناد** في الواجهة يُؤجَّل إلى جلسة إصلاحات الواجهة الشاملة؛ يبقى إجراء console للمالك المسار المعتمد حاليًا. (3) **المراقبة والإلغاء** (قناة إنذار، إيقاف طوارئ مجرّب بما فيه إنهاء الجلسات، ومتابعة التكلفة) **شرط مسبق قبل تفعيل Assess لناس حقيقيين**، لا قبله: تُخطط وتُنفذ قبل ذلك التفعيل، ولا تُنشأ جدولة أو قناة تنبيه الآن.
 
 **الحدود:** لا يمنح القرار إذن تشغيل أو جدولة أو فتح بوابة أو دمج #96، ولا يعتمد قبولًا شاملًا لـAssess أو RAD-056. النسخ الاحتياطي/الاستعادة والمراجعات المستقلة (O108، المصادر والتراخيص، الطبي، Marker) ودمج #96 تبقى بنودًا منفصلة بتوجيه المالك. مهام المتابعة: RAD-059 (شرط ما قبل التفعيل الفعلي) وRAD-060 (زر الإغلاق).
@@ -882,3 +884,12 @@ Authority: the owner's read-only live evidence and decision in this session. The
 - **R5:** Search progress, smoke, counts-after, probe and the nine current checks for CR sensitivity; fix only B7's scope and list anything else.
 
 Keep `pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10` on this branch. #144 is read-only: list its readiness-byte-dependent pins for a later rebase. No live SQL, merge/ready/auto-merge, preview URLs or subscribe/poll. Evidence and QA: [B7 report](RAD-085_CRLF_READINESS_REPORT_2026-10-28.md). O1–O5, S1–S8 and B1–B5 otherwise stand; original evidence links remain above.
+
+<a id="rad085-trial-removal-owner-2026-10-28"></a>
+### RAD-085 — B8: finished trial isolation removed before DB day migration 1, 2026-10-28
+
+Authority: the owner's instruction and read-only live evidence in this session; nothing applied. Live backup step 28 (65 functions + 33 triggers) equals pre-RAD-085 plus `trial-isolation.sql` modulo CR, except Supabase `public.rls_auto_enable()` and the known public `owner_list_participants` representation difference, both outside D3 scope. Scope is singleton/active; reviewer reproduction leaves seven D3 rows false with the trial objects and passes 13/13 without them. Active `trial_assert_v1` forbids groups/memberships, so P1 cannot work.
+
+The engineering trial is over. B8 **replaces only** the [2026-10-22 active-scope rule](#assess-trial-closeout-owner-2026-10-22): DB day removes all isolation objects **before migration 1**, preserving every trial data row and the closed launch gate. R1: one manual transaction, lock timeout 5 s, saved configuration first, refuse open gate or active/grading/grading-failed sessions, exact dependency-restricting drops, final read-only absence/gate/all-table-count proof. R2: read-only config backup (UUID identities only, flags/labels; no participant content) and one-query count coverage. R3: documented-only reinstall using unchanged isolation SQL and exact saved-row re-arm, proven locally. R4: all-CRLF trial baseline, nine checks before/after removal, plain catalogue equivalence modulo CR, LF/CRLF four-source/initializer 13/13 readiness, smoke, P1 create/join, rollback, all synthetic rows preserved. R5: informational precheck scope presence/active; original gates unchanged; progress shows no trial objects after migration 1. R6: existing rollback unchanged and does not reinstall isolation.
+
+No `rad085-d3-ready.sql`, migration, manifest, expected digest/test pin or marker change is authorized or needed. Keep `pilot-v1:a514b79f52c5816ec767730da1f88a38efad7da795bf977abef751ca7542ee10`. No live SQL, ready/merge/auto-merge, preview URL or subscribe/poll. B1–B5, B7 and other close-out rules remain; no separately numbered B6 is present in this ledger. Packet: [DB day](RAD-085_DB_DAY_P1.md); evidence: [B8 report](RAD-085_TRIAL_REMOVAL_REPORT_2026-10-28.md).

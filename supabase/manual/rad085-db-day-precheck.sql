@@ -4,6 +4,11 @@
 select
  now() as db_time_utc,
  current_setting('server_version') as postgres_version,
+ -- B8 informational only; neither column changes the pre-DB-day gates.
+ to_regclass('assess.trial_scope') is not null as trial_scope_present,
+ case when to_regclass('assess.trial_scope') is null then null else
+  (xpath('/row/active/text()', query_to_xml('select active from assess.trial_scope where singleton', false, true, '')))[1]::text::boolean
+ end as trial_scope_active,
  (select count(*) from public.attempts a where greatest(a.started_at, a.finished_at) > now() - interval '60 minutes'
    and a.user_id not in (select user_id from public.profiles where role = 'owner')) as recent_attempts_60m,
  (select count(*) from public.feedback f where f.at > now() - interval '60 minutes'
