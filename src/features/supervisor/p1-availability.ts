@@ -12,4 +12,4 @@ export function p1Available(schema: { requiredMigrations: readonly string[]; def
 // RAD085-SEC-FIXES-20261027 SEC-04: the only availability switch is this literal, never a
 // value read at runtime from the shared, mutable manifest object. The schema gate requires
 // it to equal p1Available(frontend-schema.json); the reviewed DB-day promotion updates both.
-export const P1_AVAILABLE: boolean = false;
+export const P1_AVAILABLE: boolean = true;

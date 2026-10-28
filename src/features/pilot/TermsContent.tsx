@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 // Number of paragraphs (keys p1…pN) per section of the `terms` messages.
-const SECTIONS = [["keep", 4], ["why", 3], ["who", 2], ["protect", 1], ["howLong", 4], ["rights", 3], ["patients", 6]] as const;
+const SECTIONS = [["keep", 4], ["why", 3], ["who", 7], ["protect", 1], ["howLong", 4], ["rights", 3], ["patients", 6]] as const;
 
 export function TermsContent({ nested = false }: { nested?: boolean }) {
   const t = useTranslations("terms");

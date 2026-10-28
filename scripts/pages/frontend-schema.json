@@ -19,49 +19,24 @@
     "20261020001000_assess_history_consent.sql",
     "20261020001100_assess_retention.sql",
     "20261024000100_owner_dashboard.sql",
-    "20261024000200_owner_deletion_surveys.sql"
+    "20261024000200_owner_deletion_surveys.sql",
+    "20261026000100_assess_supervisor_scope.sql",
+    "20261026000200_assess_authoring_drafts.sql",
+    "20261026000300_assess_assignment_review.sql",
+    "20261027000100_assess_management_erasure.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/assess-mixed-ready.sql",
     "supabase/checks/assess-practical-ready.sql",
-    "supabase/checks/assess-staging-ready.sql",
+    "supabase/checks/rad085-d3-ready.sql",
     "supabase/checks/assess-history-ready.sql",
     "supabase/checks/assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
     "supabase/checks/owner-deletion-surveys-ready.sql"
   ],
-  "deferredMigrations": {
-    "20261026000100_assess_supervisor_scope.sql": {
-      "sha256": "c7b5966ce327e1e2e1f05b93ea20a0f7152cb1728884ded8e93fcc4b0d4e1a9b",
-      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
-      "serverModules": [
-        "src/features/assess/server-rad085-contracts.ts"
-      ]
-    },
-    "20261026000200_assess_authoring_drafts.sql": {
-      "sha256": "eb9d81e7f3f3953b0355318c9d43624bfdb6f10ae9b3b136ce2d97fc86bcc719",
-      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
-      "serverModules": [
-        "src/features/assess/server-rad085-contracts.ts"
-      ]
-    },
-    "20261026000300_assess_assignment_review.sql": {
-      "sha256": "3c1defa58e03443e6d61bb1610ad2a14d53e851338992e2ef30cc61c87602ce3",
-      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
-      "serverModules": [
-        "src/features/assess/server-rad085-contracts.ts"
-      ]
-    },
-    "20261027000100_assess_management_erasure.sql": {
-      "sha256": "adb7a3341c22885d0592608680974b04c9b5bb70b6da16af594a5888a7f6818a",
-      "reason": "RAD-085 local SQL only; browser integration, approved sharing policy, reviewed publisher bridge and live installation remain deferred.",
-      "serverModules": [
-        "src/features/assess/server-rad085-contracts.ts"
-      ]
-    }
-  },
+  "deferredMigrations": {},
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
@@ -121,7 +96,7 @@
       "guard": {
         "path": "src/features/supervisor/p1-availability.ts",
         "symbol": "P1_AVAILABLE",
-        "sha256": "aa3d569b745cd4418bc61900f277d6291504ee87be87f15f881e15fbc824ca5b"
+        "sha256": "97b79b42e11c24c1ca018461aae669a7b1234859bff6b277547c8f8824660f63"
       },
       "boundaries": {
         "src/features/supervisor/p1-live.ts": "6a19d4f3876ba8be7313fdeac02f324f7609a9bf9cb7725692231d79ed64a44c",

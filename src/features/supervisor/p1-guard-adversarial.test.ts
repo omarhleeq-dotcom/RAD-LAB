@@ -8,6 +8,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { expect, it } from 'vitest';
+import { demoteP1 } from './p1-dormant-fixture';
 
 const guardPath = 'src/features/supervisor/p1-availability.ts';
 const tamper = `import manifest from '../../../scripts/pages/frontend-schema.json';
@@ -19,6 +20,7 @@ function project() {
  const root = mkdtempSync(join(tmpdir(), 'rad085-p1-guard-'));
  for (const dir of ['src', 'supabase', 'scripts/pages', 'messages']) cpSync(dir, join(root, dir), { recursive: true });
  symlinkSync(resolve('node_modules'), join(root, 'node_modules'));
+ demoteP1(root); // RAD085-DB-DAY-PROMOTION-20261027: the witnesses are about the dormant state.
  writeFileSync(join(root, 'src/features/supervisor/manifest-tamper.ts'), tamper);
  // An unpinned client root imports the tampering module before anything imports P1.
  const shell = join(root, 'src/components/shell/AppShell.tsx'), source = readFileSync(shell, 'utf8');

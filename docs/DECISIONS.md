@@ -870,6 +870,8 @@ Authority: the owner's instruction in this session, after PR #142 (S1–S8) was 
 
 Still true: Draft PRs only, never ready/merge/auto-merge; no live SQL/Supabase, secrets or preview URLs; `qa:golden` and `qa:characterise` are not run.
 
+**T1–T3 (owner, 2026-10-27, on #144):** T1 `c2.permanent` is owner-facing again (the owner sees it in OwnerDeletion); T2 a participant cannot cancel deletion by themselves, so `terms.howLong.p3`, `terms.who.p7` and the Terms proposal use "ask the owner to restore it" wording, keeping the p4 scope and provider-backup sentences; T3 **RAD085-P1-APPOINTMENT-FLAKE-20261027** covers only the wait mechanism of `src/features/supervisor/p1-appointment.test.ts` (observed-state wait instead of a fixed 60 ms), the asserted outcome unchanged. The schema marker is unaffected.
+
 <a id="rad085-crlf-readiness-owner-2026-10-28"></a>
 ### RAD-085 — B7: CRLF readiness representation, 2026-10-28
 

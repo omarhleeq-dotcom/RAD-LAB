@@ -12,7 +12,7 @@
 
 يمكنك من «الحساب» مغادرة المجموعة أو سحب موافقتك على المشاركة. يتوقف وصول المشرف عند المغادرة أو السحب أو انتهاء المجموعة أو سحب تعيينه أو فقد شروط الوصول. إعادة الانضمام أو الموافقة أو تعيين المشرف تبدأ نافذة جديدة ولا تعيد التاريخ السابق. المغادرة أو السحب لا يحذفان سجلاتك ولا يلغيان وحدهما اختبارًا سبق إسناده إليك؛ تبقى صلاحيات مالك الموقع وفق شروط الاستخدام.
 
-لا يغيّر هذا التحديث سياسة الاحتفاظ: يعلن المالك نهاية التجربة بعد اكتمال المشاركات ومراجعتها عبر الموقع أو البريد، وتحذف البيانات المرتبطة بالمشاركين خلال ستة أشهر من الإعلان؛ قد تبقى إحصاءات وملخصات عامة لا تحدد الهوية. يُعطّل حسابك فورًا. يمكنك إلغاء طلب الحذف خلال 30 يومًا. بعد ذلك يُحذف نهائيًا خلال 7 أيام. إذا كنت مشرفًا أو مؤلفًا، تُنقل مسؤولية إدارة المحتوى اللازم الاحتفاظ به إلى المالك قبل اليوم الثلاثين وقبل الحذف، مع احترام الإسناد والترخيص، دون نسب تأليفك للمالك أو حجب الحذف لأجل غير محدد. لا يمدد انتقال الإدارة احتفاظ نتائج الطلاب.
+لا يغيّر هذا التحديث سياسة الاحتفاظ: يعلن المالك نهاية التجربة بعد اكتمال المشاركات ومراجعتها عبر الموقع أو البريد، وتحذف البيانات المرتبطة بالمشاركين خلال ستة أشهر من الإعلان؛ قد تبقى إحصاءات وملخصات عامة لا تحدد الهوية. عند طلب حذف حسابك والتحقق منه، يُعطَّل حسابك فورًا. يمكنك خلال 30 يومًا أن تطلب من المالك استعادته. بعد ذلك يُحذف نهائيًا خلال 7 أيام. إذا كنت مشرفًا أو مؤلفًا، تُنقل مسؤولية إدارة المحتوى اللازم الاحتفاظ به إلى المالك قبل اليوم الثلاثين وقبل الحذف، مع احترام الإسناد والترخيص، دون نسب تأليفك للمالك أو حجب الحذف لأجل غير محدد. لا يمدد انتقال الإدارة احتفاظ نتائج الطلاب.
 
 ## EN — approved text for DB day
 
@@ -24,7 +24,7 @@ After the group supervisor approves your request, and while your membership, con
 
 From Account you can leave the group or withdraw sharing consent. The supervisor's access stops when you leave, withdraw, the group ends, their appointment is revoked or access conditions cease to hold. Rejoining, consenting again or reappointing the supervisor starts a new window and does not restore earlier history. Leaving or withdrawing does not itself delete your records or cancel an exam already assigned to you; the site owner's access remains governed by the Terms of Use.
 
-This update does not change retention: the owner announces the end of the trial through the site or email after participation and review are complete, and participant-linked data is deleted within six months of that announcement; general statistics and summaries that do not identify anyone may remain. Your account is disabled immediately. You can cancel within 30 days. After that, it is permanently deleted within 7 days. For supervisors or authors, management of necessary retained content transfers to the owner before day 30 and before deletion, respecting attribution and licensing, without crediting the owner as author or blocking deletion indefinitely. Management transfer does not extend retention of students' results.
+This update does not change retention: the owner announces the end of the trial through the site or email after participation and review are complete, and participant-linked data is deleted within six months of that announcement; general statistics and summaries that do not identify anyone may remain. Once your deletion request is verified, your account is disabled immediately. Within 30 days you can ask the owner to restore it. After that, it is permanently deleted within 7 days. For supervisors or authors, management of necessary retained content transfers to the owner before day 30 and before deletion, respecting attribution and licensing, without crediting the owner as author or blocking deletion indefinitely. Management transfer does not extend retention of students' results.
 
 ## حدود التطبيق
 
@@ -33,15 +33,17 @@ This update does not change retention: the owner announces the end of the trial 
 
 ## Current published Terms inspection and exact DB-day correction
 
+> **Promotion PR (RAD085-DB-DAY-PROMOTION-20261027):** the five approved paragraphs below are published in `terms.who.p3–p7` (EN/AR), `terms.howLong.p3/p4` and `c2.permanent`/`c2.confirmDeactivate` carry the table values, and `CONSENT_VERSION` is raised. It is Draft and unmerged until the owner finishes DB day; the text of this section below is the pre-promotion inspection and is kept unchanged.
+
 Inspected messages/en.json and messages/ar.json: `terms.howLong.p3` already describes a **30-day recovery window**, and p4 deletes **after** it; neither currently promises deletion “within 30 days”. They omit the seven-day completion limit. `c2.permanent`/`c2.confirmDeactivate` also need the O5 timing wording on DB day. No published Terms/message value below is changed in this PR.
 
 At the same release as the approved sharing paragraphs and CONSENT_VERSION bump, prepare these exact timing replacements:
 
 | Key | EN | AR |
 |---|---|---|
-| terms.howLong.p3 | Your account is disabled immediately. You can cancel within 30 days. | يُعطّل حسابك فورًا. يمكنك إلغاء طلب الحذف خلال 30 يومًا. |
+| terms.howLong.p3 | Once your deletion request is verified, your account is disabled immediately. Within 30 days you can ask the owner to restore it. After that, it is permanently deleted within 7 days. | عند طلب حذف حسابك والتحقق منه، يُعطَّل حسابك فورًا. يمكنك خلال 30 يومًا أن تطلب من المالك استعادته. بعد ذلك يُحذف نهائيًا خلال 7 أيام. |
 | terms.howLong.p4 (timing sentences; retain the existing provider-backup notice) | After that, it is permanently deleted within 7 days. For supervisors or authors, management of necessary retained content transfers to the owner before deletion, without crediting the owner as author. | بعد ذلك يُحذف نهائيًا خلال 7 أيام. إذا كنت مشرفًا أو مؤلفًا، تُنقل مسؤولية إدارة المحتوى اللازم الاحتفاظ به إلى المالك قبل الحذف، دون نسب تأليفك للمالك. |
-| c2.permanent | Your account is disabled immediately. You can cancel within 30 days. After that, it is permanently deleted within 7 days. | يُعطّل حسابك فورًا. يمكنك إلغاء طلب الحذف خلال 30 يومًا. بعد ذلك يُحذف نهائيًا خلال 7 أيام. |
+| c2.permanent | The account will be disabled now and can be restored within 30 days. After that, it is permanently deleted within 7 days. | سيُعطّل الحساب الآن، ويمكن استعادته خلال 30 يومًا. بعد ذلك يُحذف نهائيًا خلال 7 أيام. |
 | c2.confirmDeactivate | Confirm deactivation and deletion after the 30-day recovery window | تأكيد التعطيل والحذف بعد نافذة الاستعادة ذات 30 يومًا |
 
 The full approved proposal above additionally requires management transfer before day30; this table changes timing only and grants no owner authorship, early finalise, new retention extension or acceptance on another person's behalf.

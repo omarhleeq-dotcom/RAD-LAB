@@ -11,6 +11,9 @@ import { join, resolve } from 'node:path';
 import { build } from 'esbuild';
 import { chromium } from 'playwright';
 const root = process.cwd(), dir = mkdtempSync('/tmp/rad085-p1-routes-');
+// RAD085-DB-DAY-PROMOTION-20261027: once the repository manifest is promoted (nothing deferred) the audit exercises the real export.
+const promoted = Object.keys(JSON.parse(readFileSync('scripts/pages/frontend-schema.json', 'utf8')).deferredMigrations).length === 0;
+const consentVersion = /CONSENT_VERSION = "([^"]+)"/.exec(readFileSync('src/features/pilot/consent.ts', 'utf8'))[1];
 const syntheticOrigin = 'https://synthetic.supabase.co';
 const publicEnv = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: syntheticOrigin, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_synthetic_local_test_123456' };
 const msgs = Object.fromEntries(['en', 'ar'].map(l => [l, JSON.parse(readFileSync(`messages/${l}.json`))]));
@@ -23,7 +26,7 @@ const params = { scope_page_v1: ['p_kind', 'p_group', 'p_after', 'p_limit'], sha
 let db;
 async function reset() {
  await db?.close(); db = await openRad085Database();
- for (let n = 1; n <= 6; n++) await db.admin.query("insert into auth.users values($1,$2,now(),$3)", [id(n), `synthetic${n}@example.test`, JSON.stringify({ display_name: 'Synthetic P1', consent_version: '2026-10-24' })]);
+ for (let n = 1; n <= 6; n++) await db.admin.query("insert into auth.users values($1,$2,now(),$3)", [id(n), `synthetic${n}@example.test`, JSON.stringify({ display_name: 'Synthetic P1', consent_version: consentVersion })]);
  await db.admin.query("update public.profiles set status=case when user_id=$2 then 'pending' else 'approved' end,role=case when user_id=$1 then 'owner' else 'participant' end", [id(1), id(5)]);
  for (const n of [2, 3]) await db.rpc(1, 'appointment_v1', [id(n), true]);
  await db.admin.query(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql', 'utf8'));
@@ -105,7 +108,7 @@ async function open(ctx, base, locale, route) {
 let deferredServer, requiredServer;
 try {
  await reset(); deferredServer = await serve(join(root, 'out'));
- for (const locale of ['en', 'ar']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+ for (const locale of promoted ? [] : ['en', 'ar']) for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
   const ctx = await context(deferredServer.base, 2, locale, width, theme), before = p1Calls;
   try {
    const page = await open(ctx, deferredServer.base, locale, 'supervisor'); await page.waitForLoadState('networkidle');
@@ -114,19 +117,22 @@ try {
   } finally { await ctx.close(); }
  }
  await deferredServer.close(); deferredServer = null;
- const copy = join(dir, 'required'); mkdirSync(copy);
- for (const file of ['src', 'messages', 'public', 'scripts', 'supabase', 'package.json', 'package-lock.json', 'tsconfig.json', 'next.config.ts', 'next-env.d.ts', 'postcss.config.mjs']) if (existsSync(file)) cpSync(file, join(copy, file), { recursive: true });
- execFileSync('cp', ['-a', '--reflink=auto', join(root, 'node_modules'), join(copy, 'node_modules')]);
- const file = join(copy, 'scripts/pages/frontend-schema.json'), m = JSON.parse(readFileSync(file));
- for (const migration of m.guardedFeatures.supervisorP1.migrations) { m.requiredMigrations.push(migration); delete m.deferredMigrations[migration]; }
- writeFileSync(file, JSON.stringify(m, null, 2) + '\n');
- console.log('Building an isolated required-manifest fixture; no git checkout/worktree.');
- await new Promise((resolveBuild, reject) => {
-  const child = spawn('npm', ['run', 'build:pages'], { cwd: copy, env: publicEnv, stdio: ['ignore', 'pipe', 'pipe'] });
-  let output = ''; child.stdout.on('data', c => output += c); child.stderr.on('data', c => output += c);
-  child.on('exit', code => code === 0 ? resolveBuild() : reject(Error(output))); child.on('error', reject);
- });
- requiredServer = await serve(join(copy, 'out'));
+ if (promoted) requiredServer = await serve(join(root, 'out'));
+ else {
+  const copy = join(dir, 'required'); mkdirSync(copy);
+  for (const file of ['src', 'messages', 'public', 'scripts', 'supabase', 'package.json', 'package-lock.json', 'tsconfig.json', 'next.config.ts', 'next-env.d.ts', 'postcss.config.mjs']) if (existsSync(file)) cpSync(file, join(copy, file), { recursive: true });
+  execFileSync('cp', ['-a', '--reflink=auto', join(root, 'node_modules'), join(copy, 'node_modules')]);
+  const file = join(copy, 'scripts/pages/frontend-schema.json'), m = JSON.parse(readFileSync(file));
+  for (const migration of m.guardedFeatures.supervisorP1.migrations) { m.requiredMigrations.push(migration); delete m.deferredMigrations[migration]; }
+  writeFileSync(file, JSON.stringify(m, null, 2) + '\n');
+  console.log('Building an isolated required-manifest fixture; no git checkout/worktree.');
+  await new Promise((resolveBuild, reject) => {
+   const child = spawn('npm', ['run', 'build:pages'], { cwd: copy, env: publicEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+   let output = ''; child.stdout.on('data', c => output += c); child.stderr.on('data', c => output += c);
+   child.on('exit', code => code === 0 ? resolveBuild() : reject(Error(output))); child.on('error', reject);
+  });
+  requiredServer = await serve(join(copy, 'out'));
+ }
  for (const width of [390, 1440]) for (const locale of ['en', 'ar']) for (const theme of ['light', 'dark']) {
   console.log(`Supervisor/nav ${locale}/${width}/${theme}`); await reset(); const t = msgs[locale].supervisor;
   for (const [who, appointed, state] of [[2, true, 'active'], [3, true, 'zero-groups'], [4, false, 'not-supervisor'], [1, false, 'owner']]) {

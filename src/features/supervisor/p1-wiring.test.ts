@@ -23,7 +23,7 @@ Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 afterEach(() => { document.body.innerHTML = ''; fixture.available = false; fixture.role = 'participant'; fixture.status = 'approved'; vi.clearAllMocks(); });
 const signal = () => new AbortController().signal;
 it('derives availability from all three classifications, without an environment bypass', () => {
- expect(p1Available(manifest)).toBe(false);
+ expect(p1Available(manifest)).toBe(true); // RAD085-DB-DAY-PROMOTION-20261027: the repository manifest is promoted.
  const promoted = { requiredMigrations: [...manifest.requiredMigrations, ...P1_MIGRATIONS], deferredMigrations: {} };
  expect(p1Available(promoted)).toBe(true);
  for (const file of P1_MIGRATIONS) {
