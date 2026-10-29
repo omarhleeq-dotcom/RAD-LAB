@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** اكتملت حزمة RAD-059 محليًا داخل Draft: [التصميم](RAD-059_OPERATIONS_DESIGN.md) و[دليل الهاتف](RAD-059_PHONE_RUNBOOK.md) و[التقرير](RAD-059_REPORT_2026-10-29.md). لا تفعيل Assess لناس حقيقيين.
-- **ينتظر المالك:** اختيار قنوات الإنذار والمبلغ والبديل، وتشغيل التنبيهات وتجربة الاستلام والإيقاف الحية لاحقًا؛ وحذف CSV وإفراغ المهملات وفق إجراء P1 السابق. غياب البديل يعني gate مغلقة.
-- **ينتظر مراجِعًا بشريًا:** الحقوق/D3 والأمن والخصوصية، بما فيها سجلات Auth بلا FK؛ بقية المهام محفوظة.
+- **الاتجاه الحالي:** RAD-059 في review بعد دمج #153 وتمرين المالك الحي المغلق؛ [التقرير المنقح](RAD-059_OWNER_DRY_RUN_2026-10-29.md) يحفظ الأدلة. لا تفعيل Assess لناس حقيقيين.
+- **ينتظر المالك:** إعداد قنوات الإنذار وتنبيه الميزانية واختبار الاستلام واختيار البديل؛ وحذف CSV وإفراغ المهملات وفق إجراء P1 السابق. غياب البديل يعني gate مغلقة.
+- **ينتظر مراجِعًا بشريًا:** الإيقاف والحقوق/D3 والأمن والخصوصية، بما فيها سجلات Auth بلا FK؛ بقية المهام محفوظة.
 - **مرجع Git:** docs:context لحالة الفرع وPR؛ التقرير ووصف Draft لدليل QA/CI. لا فتح أو مشاركة معاينة مستضافة.
-- **مخاطر معلنة:** launch_gate مغلق وعزل التجربة أزيل وفق B8؛ [إتمام P1 B](RAD-085_P1_B_COMPLETED_2026-10-29.md) محفوظ. RAD-059/RAD-082 قبل أول امتحان؛ cache Supavisor والتراجع الحي غير مثبتين.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED حتى قرار استئناف منفصل؛ cache Supavisor ورفض الاعتماد القديم يحتاجان RAD-082 قبل أول امتحان، مع بقية البوابات القائمة. [إتمام P1 B](RAD-085_P1_B_COMPLETED_2026-10-29.md) محفوظ.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 324,
-  "updated_at": "2026-10-29T02:01:34.572451+00:00",
+  "revision": 325,
+  "updated_at": "2026-10-29T03:24:47.280531+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -549,10 +549,10 @@
     {
       "id": "RAD-059",
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
-      "status": "in_progress",
+      "status": "review",
       "priority": "high",
-      "description": "اكتمل التصميم وأداة الإيقاف وحزمة الهاتف واختبارات PostgreSQL محليًا في Draft #153؛ الحالة in_progress حتى دمج التصميم والأداة والاختبارات بواسطة المالك، ثم review. تشغيل التنبيهات وتجربة الاستلام والإيقاف الحية واختيار المبلغ/البديل أعمال مالك مفتوحة؛ لا موارد/قنوات/جدولة منشأة، ولا تفعيل حقيقي.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md",
+      "description": "دُمجت حزمة #153 وأُنجز تمرين المالك الحي المغلق في2026-10-29. ينتظر المالك إعداد قنوات الإنذار وتنبيه الميزانية واختبار الاستلام واختيار البديل؛ Supavisor cache ورفض الاعتماد القديم يحتاجان RAD-082 قبل أول امتحان. العامل NOLOGIN والسر DISABLED حتى قرار استئناف منفصل؛ لا تفعيل حقيقي.",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md",
       "waiting_on": "owner"
     },
     {
