@@ -921,3 +921,16 @@ S-STD-3 ceiling: **manual phone-only live SQL**. Mitigation is the reviewed tran
 ### RAD-085 — P1 usability after the owner's production phone test, 2026-10-28
 
 Authority: the owner's current F1–F8/two-Draft instruction. All12 production P1 steps passed with two test accounts, including immediate hiding after withdrawal; this is owner evidence, not new agent live verification. Authorize A (frontend only, unchanged required migrations/checks/marker) then B (one additive migration, short codes, scoped display names/group names, reviewed readiness/pins/tests and phone-safe mini DB day/rollback). Test changes must name their reason. Display names only, never email; sharing text remains unchanged. [PR A report](RAD-085_P1_USABILITY_A_2026-10-28.md) records scope and evidence. B must follow the [standing phone rule](#rad085-mobile-sql-owner-2026-10-28). No live SQL, Variables, manual deployment, ready or merge by the agent. Normal CI and Pages preview workflows must run, without skip ci; no hosted preview URL opened/shared. This does not lift the exam, privacy or review prerequisites.
+
+
+<a id="rad059-stop-owner-2026-10-29"></a>
+### RAD-059 — اختيار الإيقاف وحدود التكلفة، 2026-10-29
+
+السلطة: موافقة المالك على الخطة وثلاث مراحل محلية، ثم إضافاته الثلاث. [التصميم](RAD-059_OPERATIONS_DESIGN.md) و[التقرير](RAD-059_REPORT_2026-10-29.md) يحفظان التفاصيل والأدلة.
+
+- تُجمد آخر إجابات محفوظة للحالات active/grading/grading-failed في grading-failed؛ الاستعادة للتصحيح فقط عبر recover_v1 خلال7أيام من التسليم دون تمديد، ولا void للنشطة أو استئناف الامتحان. لا تعديل لأي نتيجة/درجة مسجلة.
+- وقف التكلفة يستهدف تشغيل العامل مع بيان تكاليف التخزين والفوترة الباقية، لا ضمان صفر إنفاق للمشروع. الميزانية والمستلمون والمستجيب البديل مقترحات حتى قرار المالك. غياب البديل عند التصعيد يعني بقاء gate مغلقة.
+- lock_timeout=2s وstatement_timeout=5s لكل مرحلة SQL؛ انتهاء المهلة يظهر PARTIAL/FAILED، ولا نجاح صامت. تنبيه التشغيل الممتد420ثانية: timeout300ث وهامش120ث لتأخر المقاييس.
+- التصميم وSQL والاختبارات محلية فقط؛ ثلاث مراحل commit/push لكل منها، Draft PR ومسارا CI/Pages المعتادان دون skip ci. RAD-059 تبقى in_progress حتى دمج التصميم والأداة والاختبارات، ثم review مع إجراءات المالك الحية مفتوحة. لا SQL حي أو موارد/جدولة/قنوات/أسرار/Variables أو نشر يدوي أو ready/merge/auto-merge من الوكيل.
+
+[قرار الإغلاق البند3](#assess-trial-closeout-owner-2026-10-22) و[قاعدة الهاتف](#rad085-mobile-sql-owner-2026-10-28) و[B8](#rad085-trial-removal-owner-2026-10-28) محفوظة؛ لا إعادة عزل التجربة أو تغيير بايتات ترحيل مطبق أو شروط RAD-082/الحقوق/الخصوصية.

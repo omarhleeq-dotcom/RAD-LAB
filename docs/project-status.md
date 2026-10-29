@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 321,
-  "updated_at": "2026-10-29T01:17:48.081524+00:00",
+  "revision": 322,
+  "updated_at": "2026-10-29T01:44:09.173359+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -549,10 +549,10 @@
     {
       "id": "RAD-059",
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "قبل تفعيل Assess لناس حقيقيين تُخطط وتُنفذ قناة إنذار، وإيقاف طوارئ مجرّب (البوابة وLOGIN وإنهاء الجلسات وتعطيل السر والJob)، ومتابعة التكلفة. لا إنشاء جدولة أو قناة الآن.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md",
+      "description": "بدأ التصميم والتنفيذ المحلي للهاتف؛ review فقط بعد دمج التصميم وأداة الإيقاف والاختبارات. التنبيهات وتجربة الاستلام والإيقاف الحية تبقى إجراءات مالك مفتوحة قبل أول امتحان؛ لا موارد أو جدولة أو قناة تُنشأ هنا.",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md",
       "waiting_on": "owner"
     },
     {
