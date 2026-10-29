@@ -23,10 +23,14 @@ async function audit(page, label) {
   const violations = await page.evaluate(async () => (await axe.run(document, { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] } })).violations.map(v => ({ id: v.id, targets: v.nodes.map(n => n.target) })));
   assert.deepEqual(violations, [], label);
   ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${label}: no overflow`);
+  if (process.env.RAD060_SCREENSHOTS && /-(list|participants|training)$/.test(label)) {
+    mkdirSync(process.env.RAD060_SCREENSHOTS, { recursive: true });
+    await page.screenshot({ path: `${process.env.RAD060_SCREENSHOTS}/${label}.jpg`, type: 'jpeg', quality: 80, fullPage: true });
+  }
   audits++;
 }
 async function setup(locale, width, role = 'owner', scenario = 'ready', path = 'owner?tab=assess') {
-  const ctx = await browser.newContext({ viewport: { width, height: 900 }, isMobile: width === 390, hasTouch: width === 390 });
+  const ctx = await browser.newContext({ viewport: { width, height: 900 }, isMobile: width === 390, hasTouch: width === 390, locale, timezoneId: locale === 'en' ? 'America/New_York' : 'Asia/Riyadh' });
   await ctx.addInitScript(s => localStorage.setItem('sb-abcdefghijklmnop-auth-token', s), JSON.stringify(session));
   const calls = [], errors = [];
   let mode = scenario;
@@ -45,6 +49,7 @@ async function setup(locale, width, role = 'owner', scenario = 'ready', path = '
     calls.push({ fn, p, schema });
     if (schema !== 'assess') {
       if (fn === 'owner_page_v1') return json({ version: 1, boundary: '2026-10-29T12:00:00Z', total: 0, pending: 0, rows: [], next: null });
+      if (fn === 'owner_dashboard_v1' && p.p_view === 'summary') return json({ version: 1, boundary: '2026-10-29T12:00:00Z', rows: [], next: null });
       if (fn === 'owner_account_directory_v1') return json({ version: 1, boundary: '2026-10-29T12:00:00Z', counts: { approved: 0, pending: 0, suspended: 0 }, rows: [], next: null });
       if (fn === 'owner_account_deletion_v1' && p.p_action === 'list') return json({ rows: [], next: null });
       if (fn === 'owner_surveys_v1' && ['versions', 'rounds'].includes(p.p_action)) return json({ rows: [], next: null });
@@ -88,7 +93,33 @@ try {
     ok(await s.page.locator('html').getAttribute('dir') === (locale === 'ar' ? 'rtl' : 'ltr'), `${label}: direction`);
     ok(await root.locator('li').count() === 20, 'first page contains 20');
     ok(await root.locator('time').getAttribute('datetime') === closedAt, 'closed_at shown');
+    const stamp = await root.locator('time').textContent();
+    const localHour = await s.page.evaluate(({ locale, hour }) => {
+      const number = new Intl.NumberFormat(locale, { minimumIntegerDigits: 2 });
+      return `${number.format(hour)}:${number.format(0)}`;
+    }, { locale, hour: locale === 'en' ? 15 : 22 });
+    ok(stamp.includes(localHour), 'viewer local hour in a non-UTC timezone');
+    ok(stamp.includes(locale === 'en' ? 'Eastern Daylight Time' : 'التوقيت العربي الرسمي'), 'localized timezone name');
+    ok(!stamp.includes('2026-10-29T19:00'), 'human readable timestamp');
+    ok(!(await root.locator('time').locator('..').textContent()).includes('(UTC)'), 'closure label does not claim UTC');
+    const panels = s.page.locator('[data-testid="c2-deletion"], [data-testid="c2-surveys"]');
+    ok(await panels.count() === 0, 'Assess excludes deletion and survey panels');
+    ok(count(s, 'owner_account_deletion_v1') === 0 && count(s, 'owner_surveys_v1') === 0, 'Assess does not mount participant panels');
     await audit(s.page, `${label}-list`);
+    const nav = s.page.getByRole('navigation', { name: messages[locale].owner.dashboard.tabs, exact: true });
+    await nav.getByRole('link', { name: messages[locale].owner.dashboard.participants, exact: true }).click();
+    await s.page.getByTestId('c2-surveys').waitFor();
+    await s.page.getByTestId('c2-deletion').waitFor();
+    ok(await root.count() === 0, 'Participants excludes Assess content');
+    await audit(s.page, `${label}-participants`);
+    await nav.getByRole('link', { name: messages[locale].owner.dashboard.training, exact: true }).click();
+    await s.page.getByTestId('owner-training').waitFor();
+    ok(await panels.count() === 0 && await root.count() === 0, 'Training excludes participant panels and Assess');
+    await audit(s.page, `${label}-training`);
+    await s.page.goBack(); await s.page.getByTestId('c2-surveys').waitFor();
+    await s.page.goBack(); await root.getByText('Assessment 20', { exact: true }).waitFor();
+    ok(await panels.count() === 0, 'back navigation restores Assess without participant panels');
+    s.calls.splice(0, s.calls.length, ...s.calls.filter(c => c.fn === 'assignment_page_v2').slice(-1)); // Count from this fresh mount.
     const first = root.locator('li').first();
     await click(first, t.close); await first.getByRole('group', { name: t.confirmTitle }).waitFor();
     ok(count(s, 'assignment_close_v2') === 0, 'Close alone never writes');

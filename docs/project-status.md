@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** تنفيذ RAD-060 المرحلة1 للمالك فقط بعد اعتماد #156؛ [القرارات](DECISIONS.md#assess-phase1-owner-2026-10-29) و[تقرير الدفعة](RAD-060_PHASE1_REPORT_2026-10-29.md). RAD-062 خطة معتمدة تنتظر إذن التنفيذ.
-- **ينتظر المالك:** مراجعة المرحلة1 ثم دمجه وفحص الهاتف؛ RAD-059 قنوات الإنذار/اختبار الاستلام والبديل، والميزانية موجودة ومتحققة؛ حذف CSV وإفراغ المهملات باقٍ وفق P1.
+- **الاتجاه الحالي:** RAD-060 review بعد #157 وفحص هاتف المالك على main المنشور؛ [دليل الهاتف والمتابعة](RAD-060_PHASE1_FOLLOWUP_2026-10-29.md). إصلاحان صغيران للواجهة ضمن مسودة؛ RAD-062 خطة معتمدة تنتظر إذن التنفيذ.
+- **ينتظر المالك:** قبول RAD-060 مع فجوة الإغلاق الحي غير المختبر لغياب إسناد مفتوح ومنع إنشائه؛ RAD-059 قنوات الإنذار/اختبار الاستلام والبديل، والميزانية متحققة؛ حذف CSV وإفراغ المهملات باقٍ وفق P1.
 - **ينتظر مراجِعًا:** الإيقاف والتزامن والمهلات وحفظ الدرجات، والحقوق/D3 والأمن والخصوصية بما فيها Auth بلا FK. لا مشرفين حقيقيين قبل O4.
 - **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد، والتقرير لدليل QA وحدوده.
-- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059/RAD-082 وبوابات الحقوق/الخصوصية قبل أول امتحان حقيقي. لا معاينة مستضافة أو نشر من الوكيل.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059/RAD-082 وبوابات الحقوق/الخصوصية قبل أول امتحان حقيقي. ملاحظة RAD-064 لإدارة مستهدفي الإسناد المغلق مؤجلة؛ لا معاينة مستضافة أو نشر من الوكيل.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 328,
-  "updated_at": "2026-10-29T20:10:25.544785+00:00",
+  "revision": 329,
+  "updated_at": "2026-10-29T21:00:36.936862+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -558,10 +558,10 @@
     {
       "id": "RAD-060",
       "title": "زر إغلاق إسناد Assess ضمن جلسة إصلاحات الواجهة",
-      "status": "in_progress",
+      "status": "review",
       "priority": "medium",
-      "description": "نُفذت المرحلة1 للمالك فقط في Assess بالـRPC الحية مع تأكيد وإعادة قراءة صريحة عند الغموض؛ تقرير RAD-060_PHASE1_REPORT_2026-10-29.md. تنتظر مراجعة المالك ودمجه وفحص الهاتف الناجح قبل الانتقال إلى review. إغلاق المشرف لاحقًا مع P2؛ لا SQL أو نشر من الوكيل.",
-      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md",
+      "description": "دُمجت المرحلة1 للمالك في #157؛ نجح فحص هاتف المالك EN/AR على main المنشور2026-10-29 للقراءة والإغلاق المعروض وحجب participant. ينتظر قبول المالك؛ الإغلاق الحي والتنافس وفقد ACK غير مختبرة لغياب إسناد مفتوح ومنع إنشائه، مع تغطية PostgreSQL المحلية وRPC يوم القاعدة. إصلاح الوقت المحلي وحصر لوحتي المشاركين ضمن مسودة المتابعة؛ ليست done.",
+      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#owner-phone-check",
       "waiting_on": "owner"
     },
     {
@@ -597,8 +597,8 @@
       "status": "done",
       "priority": "medium",
       "description": "جرد الواجهة والمحاكي (لقطات المالك الخاصة، EN/AR هاتفًا) مع تصنيف الملاحظات وتوقيتها، وقرارات المالك D1–D5 وF1–F11. التنفيذ في RAD-065 إلى RAD-070 بترتيب F9.",
-      "source_ref": "docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
-      "completion_evidence": "تقرير الجرد docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md (بلا روابط لقطات ولا بيانات مشاركين)؛ قرار المالك docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ توثيق فقط، لا يثبت صحة أي محتوى طبي."
+      "source_ref": "docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets",
+      "completion_evidence": "تقرير الجرد docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md (بلا روابط لقطات ولا بيانات مشاركين)؛ قرار المالك docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ توثيق فقط، لا يثبت صحة أي محتوى طبي.؛ ملاحظة جرد لاحقة لقائمة Published assignments وإدارة المستهدفين بعد الإغلاق: docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets (تسجيل فقط، فحص RPC مؤجل)."
     },
     {
       "id": "RAD-065",

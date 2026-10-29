@@ -2169,7 +2169,7 @@
     "readRequired": "Read assignments to verify the current state before another action.",
     "empty": "No assignments on this page.",
     "open": "Open",
-    "closedAt": "Closed at (UTC)",
+    "closedAt": "Closed at",
     "close": "Close assignment",
     "confirmTitle": "Confirm assignment closure",
     "confirmText": "Close “{name}”? Closure is final: no reopening or deletion of the assignment. It does not end the group or delete results.",

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { getPilotClient } from "@/features/pilot/client";
 import { useSessionAccount } from "@/features/pilot/SessionGate";
 import { closeOwnerAssignment, OwnerAssignmentError, readOwnerAssignments, type AssignmentFailure, type OwnerAssignment, type OwnerAssignmentPage } from "./owner-assignments";
@@ -19,6 +19,8 @@ export function OwnerAssignments() {
 }
 function AssignmentList() {
   const t = useTranslations("ownerAssignments");
+  const locale = useLocale();
+  const closedTime = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "long" });
   const [page, setPage] = useState<OwnerAssignmentPage>();
   const [cursor, setCursor] = useState<string | null>(null);
   const [selected, setSelected] = useState<OwnerAssignment>();
@@ -76,7 +78,7 @@ function AssignmentList() {
       {!page.rows.length && <p>{t("empty")}</p>}
       <ul className="space-y-4">{page.rows.map(a => <li key={a.id} className="min-w-0 space-y-2 break-words">
         <p><bdi>{a.name}</bdi></p>
-        <p>{a.closedAt ? <>{t("closedAt")}: <time dateTime={a.closedAt} dir="ltr" className="inline-block">{new Date(a.closedAt).toISOString()}</time></> : t("open")}</p>
+        <p>{a.closedAt ? <>{t("closedAt")}: <time dateTime={a.closedAt} className="inline-block"><bdi>{closedTime.format(new Date(a.closedAt))}</bdi></time></> : t("open")}</p>
         {!a.closedAt && <button className={control} disabled={busy} onClick={() => setSelected(a)}>{t("close")}</button>}
         {selected?.id === a.id && <div role="group" aria-label={t("confirmTitle")} className="space-y-2 rounded-lg border border-line p-3">
           <p>{t("confirmText", { name: a.name })}</p>
