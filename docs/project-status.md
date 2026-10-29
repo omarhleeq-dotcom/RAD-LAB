@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** استؤنف تخطيط RAD-060/RAD-062 بقراءة فقط؛ [تقرير المصالحة والخطة](RAD-060_RAD-062_RECONCILIATION_2026-10-29.md) يميز SQL الحي وP1 المقبول عن P2 غير الموصول. التنفيذ ينتظر موافقة المالك.
-- **ينتظر المالك:** اختيار الدفعة التالية وخيارات الخطة؛ قنوات RAD-059 وتنبيه الميزانية واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق الإجراء السابق، باقية في مهامها.
-- **ينتظر مراجِعًا بشريًا:** عقود الكتابي والتفويض والاحتفاظ والمحتوى، والإيقاف والحقوق/D3 والأمن والخصوصية بما فيها Auth بلا FK؛ لا اعتماد جديد من المصالحة.
-- **مرجع Git:** docs:context لحالة الفرع وPR؛ التقرير ووصف Draft لدليل QA/CI. لا فتح أو مشاركة معاينة مستضافة.
-- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059 وRAD-082 وبقية بوابات التشغيل قبل أول امتحان حقيقي. [إتمام P1 B](RAD-085_P1_B_COMPLETED_2026-10-29.md) محفوظ؛ لا إعادة DB day أو المُهيّئ.
+- **الاتجاه الحالي:** تنفيذ RAD-060 المرحلة1 للمالك فقط بعد اعتماد #156؛ [القرارات](DECISIONS.md#assess-phase1-owner-2026-10-29) و[تقرير الدفعة](RAD-060_PHASE1_REPORT_2026-10-29.md). RAD-062 خطة معتمدة تنتظر إذن التنفيذ.
+- **ينتظر المالك:** مراجعة المرحلة1 ثم دمجه وفحص الهاتف؛ RAD-059 قنوات الإنذار/اختبار الاستلام والبديل، والميزانية موجودة ومتحققة؛ حذف CSV وإفراغ المهملات باقٍ وفق P1.
+- **ينتظر مراجِعًا:** الإيقاف والتزامن والمهلات وحفظ الدرجات، والحقوق/D3 والأمن والخصوصية بما فيها Auth بلا FK. لا مشرفين حقيقيين قبل O4.
+- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد، والتقرير لدليل QA وحدوده.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059/RAD-082 وبوابات الحقوق/الخصوصية قبل أول امتحان حقيقي. لا معاينة مستضافة أو نشر من الوكيل.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 326,
-  "updated_at": "2026-10-29T07:40:57.958012+00:00",
+  "revision": 328,
+  "updated_at": "2026-10-29T20:10:25.544785+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -551,17 +551,17 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "review",
       "priority": "high",
-      "description": "دُمجت حزمة #153 وأُنجز تمرين المالك الحي المغلق في2026-10-29. ينتظر المالك إعداد قنوات الإنذار وتنبيه الميزانية واختبار الاستلام واختيار البديل؛ Supavisor cache ورفض الاعتماد القديم يحتاجان RAD-082 قبل أول امتحان. العامل NOLOGIN والسر DISABLED حتى قرار استئناف منفصل؛ لا تفعيل حقيقي.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md",
+      "description": "دُمجت #153 وأُنجز تمرين المالك المغلق. ميزانية GCP موجودة ومتحققة2026-10-29 ($5 شهريًا؛ RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29)؛ استلام البريد غير مختبر. ينتظر قنوات الإنذار/اختبار الاستلام والبديل؛ cache ورفض الاعتماد القديم عبر RAD-082 قبل أول امتحان. العامل NOLOGIN والسر DISABLED؛ لا تفعيل حقيقي.",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29",
       "waiting_on": "owner"
     },
     {
       "id": "RAD-060",
       "title": "زر إغلاق إسناد Assess ضمن جلسة إصلاحات الواجهة",
-      "status": "review",
+      "status": "in_progress",
       "priority": "medium",
-      "description": "SQL الإغلاق وclosed_at مطبقان حيًا ضمن RAD-085؛ زر التأكيد وربط SQL موجودان محليًا في P2 غير الموصول. المتبقي وصل شاشة المالك ثم المشرف وقبول المتصفح/الهاتف. التخطيط مستأنف2026-10-29؛ التنفيذ ينتظر موافقة الخطة، ولا يلزم ترحيل لزر المالك بالقدرات الحالية.",
-      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29",
+      "description": "نُفذت المرحلة1 للمالك فقط في Assess بالـRPC الحية مع تأكيد وإعادة قراءة صريحة عند الغموض؛ تقرير RAD-060_PHASE1_REPORT_2026-10-29.md. تنتظر مراجعة المالك ودمجه وفحص الهاتف الناجح قبل الانتقال إلى review. إغلاق المشرف لاحقًا مع P2؛ لا SQL أو نشر من الوكيل.",
+      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md",
       "waiting_on": "owner"
     },
     {
@@ -576,10 +576,10 @@
     {
       "id": "RAD-062",
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
-      "status": "review",
+      "status": "planned",
       "priority": "high",
-      "description": "التخطيط مستأنف2026-10-29؛ التنفيذ ينتظر موافقة الخطة. P1 حي ومقبول هاتفيًا؛ SQL التأليف حي وP2 محلي غير موصول. المتبقي الكتابي واحتفاظه/تصحيحه، الصور، حسم جدول→JSON والتقريب، CLN-035/036 وF4 وفرض الاسم خادميًا. DB500MB وStorage1GB؛ لا إعادة ترحيلات RAD-085.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29",
+      "description": "خطة #156 معتمدة فقط؛ التنفيذ بعد المرحلة1 ينتظر إذن المالك. القرارات المسجلة في DECISIONS.md#assess-phase1-owner-2026-10-29 تحسم قرب الإجابة والصور الخاصة واستيراد TSV/XLSX/CSV وauto-author والاسم الثلاثي؛ إعادة تقدير مرحلة4ب عند بدئها. لا تنفيذ P2 أو كتابي أو صور الآن.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29",
       "waiting_on": "owner"
     },
     {
