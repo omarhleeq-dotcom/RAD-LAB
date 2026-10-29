@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-060 review بعد #157 وفحص هاتف المالك على main المنشور؛ [دليل الهاتف والمتابعة](RAD-060_PHASE1_FOLLOWUP_2026-10-29.md). إصلاحان صغيران للواجهة ضمن مسودة؛ RAD-062 خطة معتمدة تنتظر إذن التنفيذ.
-- **ينتظر المالك:** قبول RAD-060 مع فجوة الإغلاق الحي غير المختبر لغياب إسناد مفتوح ومنع إنشائه؛ RAD-059 قنوات الإنذار/اختبار الاستلام والبديل، والميزانية متحققة؛ حذف CSV وإفراغ المهملات باقٍ وفق P1.
-- **ينتظر مراجِعًا:** الإيقاف والتزامن والمهلات وحفظ الدرجات، والحقوق/D3 والأمن والخصوصية بما فيها Auth بلا FK. لا مشرفين حقيقيين قبل O4.
-- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد، والتقرير لدليل QA وحدوده.
-- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059/RAD-082 وبوابات الحقوق/الخصوصية قبل أول امتحان حقيقي. ملاحظة RAD-064 لإدارة مستهدفي الإسناد المغلق مؤجلة؛ لا معاينة مستضافة أو نشر من الوكيل.
+- **الاتجاه الحالي:** تصميم RAD-062 المرحلة2 فقط؛ [عقد الكتابي والمراجعة والسعة](RAD-062_PHASE2_DESIGN_2026-10-29.md) مقترح، والمهمة planned بانتظار المالك. RAD-060 review ودليل [متابعة الهاتف](RAD-060_PHASE1_FOLLOWUP_2026-10-29.md) محفوظان.
+- **ينتظر المالك:** خيارات التصميم وإذن مرحلة تنفيذ مسماة؛ قبول RAD-060 مع فجوة الإغلاق الحي، وRAD-059 القنوات/اختبار الاستلام والبديل والميزانية المتحققة؛ حذف CSV وإفراغ المهملات وفق P1 باقٍ.
+- **ينتظر مراجِعًا:** عقود الكتابي/التفويض/الاحتفاظ والإيقاف والتزامن والمهلات، والحقوق/D3 والأمن والخصوصية بما فيها Auth بلا FK. لا مشرفين حقيقيين قبل O4.
+- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد، ووثيقة التصميم ووصف Draft لدليل QA وحدوده. CI وDeploy Pages المعتادان مأذونان.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059/RAD-082 وبوابات الحقوق/الخصوصية قبل أول امتحان حقيقي. متابعة Manage targets للمغلق أصبحت في RAD-062؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 329,
-  "updated_at": "2026-10-29T21:00:36.936862+00:00",
+  "revision": 330,
+  "updated_at": "2026-10-29T21:47:47.113968+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -578,8 +578,8 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "planned",
       "priority": "high",
-      "description": "خطة #156 معتمدة فقط؛ التنفيذ بعد المرحلة1 ينتظر إذن المالك. القرارات المسجلة في DECISIONS.md#assess-phase1-owner-2026-10-29 تحسم قرب الإجابة والصور الخاصة واستيراد TSV/XLSX/CSV وauto-author والاسم الثلاثي؛ إعادة تقدير مرحلة4ب عند بدئها. لا تنفيذ P2 أو كتابي أو صور الآن.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29",
+      "description": "تصميم المرحلة2 مقترح في RAD-062_PHASE2_DESIGN_2026-10-29؛ ينتظر خيارات المالك وإذن التنفيذ. يشمل الكتابي وD4 والتصحيح والمراجعة والسعة وعقد4ب وأيام القاعدة؛ لا تنفيذ P2 أو كتابي أو صور. متابعة من RAD-064: Published assignments تعرض Manage targets للمغلق؛ يلزم فحص عقد RPC قبل تقرير التصحيح. إعادة تقدير4ب عند بدئها.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29",
       "waiting_on": "owner"
     },
     {
@@ -597,8 +597,8 @@
       "status": "done",
       "priority": "medium",
       "description": "جرد الواجهة والمحاكي (لقطات المالك الخاصة، EN/AR هاتفًا) مع تصنيف الملاحظات وتوقيتها، وقرارات المالك D1–D5 وF1–F11. التنفيذ في RAD-065 إلى RAD-070 بترتيب F9.",
-      "source_ref": "docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets",
-      "completion_evidence": "تقرير الجرد docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md (بلا روابط لقطات ولا بيانات مشاركين)؛ قرار المالك docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ توثيق فقط، لا يثبت صحة أي محتوى طبي.؛ ملاحظة جرد لاحقة لقائمة Published assignments وإدارة المستهدفين بعد الإغلاق: docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets (تسجيل فقط، فحص RPC مؤجل)."
+      "source_ref": "docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
+      "completion_evidence": "تقرير الجرد docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md (بلا روابط لقطات ولا بيانات مشاركين)؛ قرار المالك docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ توثيق فقط، لا يثبت صحة أي محتوى طبي."
     },
     {
       "id": "RAD-065",
