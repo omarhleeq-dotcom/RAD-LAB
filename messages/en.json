@@ -2160,5 +2160,29 @@
     "copied": "Code copied.",
     "shared": "Code shared.",
     "copyFailed": "Copy unavailable. Select and copy the code above."
+  },
+  "ownerAssignments": {
+    "title": "Assignment closure",
+    "hint": "Your owned or managed assignments, 20 per page. Closing stops new attempts and is final.",
+    "loading": "Reading assignments…",
+    "read": "Read assignments",
+    "readRequired": "Read assignments to verify the current state before another action.",
+    "empty": "No assignments on this page.",
+    "open": "Open",
+    "closedAt": "Closed at (UTC)",
+    "close": "Close assignment",
+    "confirmTitle": "Confirm assignment closure",
+    "confirmText": "Close “{name}”? Closure is final: no reopening or deletion of the assignment. It does not end the group or delete results.",
+    "confirm": "Confirm",
+    "keep": "Keep open",
+    "first": "First page",
+    "next": "Next page",
+    "closed": "Assignment closed.",
+    "conflict": "This assignment changed. Closure was rejected. Re-reading the page; review its current state before confirming again. If the list is unavailable, select Read assignments.",
+    "ambiguous": "The closure may have completed, but confirmation was lost. Select Read assignments to verify. No automatic retry.",
+    "denied": "You no longer have permission to access this assignment. Read again after verifying permission.",
+    "schema": "The assignment service is unavailable. Read again after the service is verified.",
+    "invalid": "The assignment data could not be verified. Read assignments again.",
+    "unavailable": "Assignments could not be read. Select Read assignments to try reading again."
   }
 }

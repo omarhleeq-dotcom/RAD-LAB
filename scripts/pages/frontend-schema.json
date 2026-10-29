@@ -65,7 +65,7 @@
     "src/features/pilot/OwnerPanel.tsx": "cc274b6ff26e8d402fed22ead298228276d6d27784ff257caf99f35016ac6698",
     "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
     "src/features/pilot/c2-contract.ts": "bbf1d8373042124ba88b5e7b59052dc1c55466972bf3cdfdcf54b448389972ec",
-    "src/features/assess/OwnerAssessPanel.tsx": "f8d38442b9996a0d56f711b01b744b6273a897ddbcbc40a2c7c8db5a371d6ff2",
+    "src/features/assess/OwnerAssessPanel.tsx": "fd62085689b52c6065ba2002b87322b2688f61d96f83aae345d87260fd83a163",
     "src/features/assess/admin-data.ts": "c39b767b2b48b3cd941698f14baef70cc87aa062973f037bb4623e288c3b1576",
     "src/features/assess/OwnerContentPanel.tsx": "2037a5733bef75e1295e9c6aa629babb6961471383e850cd883ad3d6a9295ae6",
     "src/features/assess/content-data.ts": "2c2b06add8358339237055326e256366bbe75d0a88b6feb1ea3b49df89817a2f",
@@ -74,7 +74,9 @@
     "src/features/assess/history-data.ts": "db54e2a06a6f6bf14da903f75d12a37bca72dda4d75fcdf3f2cc994face8fd09",
     "src/features/assess/AssessPanel.tsx": "f89d13471f6a7b4caf09a7532ec8b2d34067ab13ca21d578c38549d8290c28f1",
     "src/features/assess/AssessConsent.tsx": "32f970a60dc71bcc9a8b79ced8e5b08644e6852c78152154c79bc908b7b65dbb",
-    "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31"
+    "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31",
+    "src/features/assess/OwnerAssignments.tsx": "832b3f65562ab754ee06de96e1aa0eecd3f0027df9083f5c147f8f4c0c61471b",
+    "src/features/assess/owner-assignments.ts": "f7baa8533179875df0cd8675bdbb7e408cb7372e6f62252d98b6702827a2697c"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",
