@@ -12,7 +12,7 @@ This is the shared workflow for Codex, Claude and human contributors. [CLAUDE.md
 ## Current boundaries
 
 - New exams/images and Shoulder Y are frozen/deferred (S-SHOULDER-Y-6); forearm remains deferred. Assess programming remains postponed until explicitly resumed; its current design and replacement of the separate My Attempts prerequisite are in [DECISIONS](docs/DECISIONS.md#assess-owner-2026-10-19) and the [implementation plan](docs/ASSESS_IMPLEMENTATION_PLAN.md). Do not re-request already accepted design approval.
-- Practice/platform and the optional Supabase pilot exist. Assess/institutions/payments/full3D/research physics are not authorised by documentation cleanup. Merges do not prove deployment, phone checks or clinical validation.
+- Practice/platform and the optional Supabase pilot exist. Assess/institutions/payments/full3D/research physics are not authorised by documentation cleanup. Merges do not prove deployment, phone checks or clinical validation; [normal PR automation is allowed; no manual/extra deploys or preview URLs](docs/DECISIONS.md#pr-automation-owner-2026-10-29).
 - Never invent medical facts, diagnostic images or verification evidence. BONTRAGER-9 governs X-ray; clinical values/teaching choices remain labelled provisional until the recorded review. Domain-specific architecture, evidence/licensing, scoring, marker, rendering, scenes and runtime constraints are in [ENGINE_GUIDE](docs/ENGINE_GUIDE.md); consult relevant sections before touching those areas.
 - Historical decisions are preserved in the linked ledger; use [DECISIONS](docs/DECISIONS.md) to find the applicable current rule. History does not silently change present policy.
 
@@ -41,4 +41,5 @@ CI runs the same docs checker/test commands for everyone; [DOCS_CHECKS](docs/DOC
 - Arabic report, S-STD-1 order: **1 deviations/budget;2 done/dropped;3 per-task;4 shared changes + Scale;5 medical/scoring;6 QA;7 open items;8 owner checklist/next-session prompt**.
 - Continue on the existing isolated checkout; no worktree/subagents unless explicitly requested. Never open/share hosted preview URLs; owner checks phone. No subscribe/poll. At≈90–95% usage stop new work, preserve a compiling state, commit/push and leave exact handoff; never fake/skip QA.
 - **Draft PR only.** Do not mark ready, merge or enable auto-merge without a later explicit owner instruction.
+- Opening a Draft PR is expected to run the repository's existing automated workflows (CI and Deploy Pages); that is allowed. "No deploy" in a task means no manual or extra deployment. Never use [skip ci] or disable workflows.
 - `next dev` may append an automated block to CLAUDE.md: **do not commit that block**.

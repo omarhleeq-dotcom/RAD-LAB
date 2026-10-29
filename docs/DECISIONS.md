@@ -24,6 +24,8 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 
 Owner instruction in this conversation (2026-10-16): implement the agreed simpler reading/workflow and durable checks on Draft #82. AGENTS is the one shared workflow; CLAUDE is an entry pointer. Domain rules are read by task; old decisions/plans remain evidence in the archive. Scope expressly includes documentation checker/summary scripts, their new tool tests, package commands and CI wiring; no product behaviour/tests/assets/clinical changes. This replaces duplicate workflow placement in CLAUDE/recipe without relaxing S-STD-1…4, Draft-only delivery or the current freeze. The rule summary is here; execution details belong in the [report](DOCS_WORKFLOW_REPORT.md).
 
+<a id="pr-automation-owner-2026-10-29"></a> **قاعدة دائمة — المالك2026-10-29، أكدها بالنص الصريح:** فتح Draft PR يشغّل CI وDeploy Pages المعتادين، وهذا مأذون دون إعادة طلب موافقة؛ «لا deploy» يمنع النشر اليدوي أو الإضافي فقط؛ يُمنع skip ci أو تعطيل workflows، وفتح أو مشاركة روابط المعاينة؛ النص الصريح في AGENTS ضمن State and delivery بعد Draft PR only ([إفادة المالك](RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#pr-automation-rule)).
+
 ### S-MY-ATTEMPTS-1 — استئناف «محاولاتي» فقط
 
 **توضيح حالي:** هذا إذن التدريب المنفذ ومحفوظ بأدلته؛ [تعديل Assess](#assess-owner-2026-10-19) يستبدل فقط اشتراط صفحة «محاولاتي» منفصلة قبل Assess، ولا يحذف وجهة التدريب أو يعيد تنفيذها.

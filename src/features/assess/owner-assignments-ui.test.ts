@@ -28,7 +28,7 @@ afterEach(async () => { await act(async () => root.unmount()); host.remove(); })
 function api(fetcher: typeof fetch) {
   mock.client.mockResolvedValue(createClient("https://synthetic.supabase.co", "public-test-key", { auth: { persistSession: false, autoRefreshToken: false }, global: { fetch: fetcher } }));
 }
-it("requires two steps, Keep open does not write, closes with revision and displays UTC without a reopen control", async () => {
+it("requires two steps, Keep open does not write, closes with revision and preserves the machine timestamp without a reopen control", async () => {
   let writes = 0;
   api(async (input, init) => {
     if (String(input).endsWith("assignment_close_v2")) { writes++; expect(JSON.parse(String(init?.body))).toEqual({ p_assignment: id(1), p_revision: 1 }); return json(null); }
@@ -40,7 +40,19 @@ it("requires two steps, Keep open does not write, closes with revision and displ
   await click(t.keep); expect(writes).toBe(0); expect(button(t.confirm)).toBeUndefined();
   await click(t.close); await click(t.confirm); expect(writes).toBe(1);
   expect(host.querySelector("time")?.dateTime).toBe("2026-10-29T19:00:00Z");
-  expect(host.textContent).toContain("2026-10-29T19:00:00.000Z"); expect(button(t.close)).toBeUndefined();
+  expect(host.querySelector("time")?.textContent).not.toContain("2026-10-29T19:00:00.000Z"); expect(button(t.close)).toBeUndefined();
+});
+it.each(["en", "ar"] as const)("formats a closed assignment in %s with the viewer timezone name", async locale => {
+  const stamp = "2026-10-22T02:23:00+00:00";
+  api(async () => json({ rows: [raw(1, 2, stamp)], next: null }));
+  await mount(locale);
+  const time = host.querySelector("time")!;
+  expect(time.dateTime).toBe(stamp);
+  const parts = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZoneName: "long" }).formatToParts(new Date(stamp));
+  for (const part of parts.filter(p => p.type !== "literal")) expect(time.textContent).toContain(part.value);
+  expect(parts.some(p => p.type === "timeZoneName" && p.value.length > 0)).toBe(true);
+  expect(time.querySelector("bdi")).not.toBeNull();
+  expect(button((locale === "en" ? en : ar).ownerAssignments.close)).toBeUndefined();
 });
 it("keeps page20 cursor, re-reads stale revisions on the same page and requires a new explicit confirmation", async () => {
   const reads: unknown[] = [], revisions: number[] = [];

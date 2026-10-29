@@ -74,7 +74,7 @@ function OwnerPanelSession() {
    }}</OwnerDirectory>
   </>}
   {tab==="training"&&<OwnerTraining key={version}/>}
-  {adapter&&<><OwnerDeletion adapter={adapter} ownerId={ownerId} onChanged={()=>setVersion(v=>v+1)}/><OwnerSurveys adapter={adapter} ownerId={ownerId}/></>}
+  {tab==="participants"&&adapter&&<><OwnerDeletion adapter={adapter} ownerId={ownerId} onChanged={()=>setVersion(v=>v+1)}/><OwnerSurveys adapter={adapter} ownerId={ownerId}/></>}
   {tab==="assess"&&<OwnerAssessPanel key={ownerId}/>}
  </section>;
 }
