@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-059 في review بعد دمج #153 وتمرين المالك الحي المغلق؛ [التقرير المنقح](RAD-059_OWNER_DRY_RUN_2026-10-29.md) يحفظ الأدلة. لا تفعيل Assess لناس حقيقيين.
-- **ينتظر المالك:** إعداد قنوات الإنذار وتنبيه الميزانية واختبار الاستلام واختيار البديل؛ وحذف CSV وإفراغ المهملات وفق إجراء P1 السابق. غياب البديل يعني gate مغلقة.
-- **ينتظر مراجِعًا بشريًا:** الإيقاف والحقوق/D3 والأمن والخصوصية، بما فيها سجلات Auth بلا FK؛ بقية المهام محفوظة.
+- **الاتجاه الحالي:** استؤنف تخطيط RAD-060/RAD-062 بقراءة فقط؛ [تقرير المصالحة والخطة](RAD-060_RAD-062_RECONCILIATION_2026-10-29.md) يميز SQL الحي وP1 المقبول عن P2 غير الموصول. التنفيذ ينتظر موافقة المالك.
+- **ينتظر المالك:** اختيار الدفعة التالية وخيارات الخطة؛ قنوات RAD-059 وتنبيه الميزانية واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق الإجراء السابق، باقية في مهامها.
+- **ينتظر مراجِعًا بشريًا:** عقود الكتابي والتفويض والاحتفاظ والمحتوى، والإيقاف والحقوق/D3 والأمن والخصوصية بما فيها Auth بلا FK؛ لا اعتماد جديد من المصالحة.
 - **مرجع Git:** docs:context لحالة الفرع وPR؛ التقرير ووصف Draft لدليل QA/CI. لا فتح أو مشاركة معاينة مستضافة.
-- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED حتى قرار استئناف منفصل؛ cache Supavisor ورفض الاعتماد القديم يحتاجان RAD-082 قبل أول امتحان، مع بقية البوابات القائمة. [إتمام P1 B](RAD-085_P1_B_COMPLETED_2026-10-29.md) محفوظ.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059 وRAD-082 وبقية بوابات التشغيل قبل أول امتحان حقيقي. [إتمام P1 B](RAD-085_P1_B_COMPLETED_2026-10-29.md) محفوظ؛ لا إعادة DB day أو المُهيّئ.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 325,
-  "updated_at": "2026-10-29T03:24:47.280531+00:00",
+  "revision": 326,
+  "updated_at": "2026-10-29T07:40:57.958012+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -560,9 +560,9 @@
       "title": "زر إغلاق إسناد Assess ضمن جلسة إصلاحات الواجهة",
       "status": "review",
       "priority": "medium",
-      "description": "SQL محلي جزئي: assignment_close_v2 وإسقاط closed_at في assignment_page_v2 مع اختبارات المالك والمشرف وrevision والتكرار. زر التأكيد وربط لوحة المالك/المشرف والمتصفح والهاتف وتطبيق القاعدة متبقية؛ لا اكتمال من نجاح SQL المحلي.",
-      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md",
-      "waiting_on": "code"
+      "description": "SQL الإغلاق وclosed_at مطبقان حيًا ضمن RAD-085؛ زر التأكيد وربط SQL موجودان محليًا في P2 غير الموصول. المتبقي وصل شاشة المالك ثم المشرف وقبول المتصفح/الهاتف. التخطيط مستأنف2026-10-29؛ التنفيذ ينتظر موافقة الخطة، ولا يلزم ترحيل لزر المالك بالقدرات الحالية.",
+      "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29",
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-061",
@@ -576,10 +576,10 @@
     {
       "id": "RAD-062",
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
-      "status": "planned",
+      "status": "review",
       "priority": "high",
-      "description": "بعد UI-4 (F9). حصص Supabase متحقق منها (المالك 2026-10-22): القاعدة 500 MB والتخزين 1000 MB؛ يجب أن يناسبها تصميم الاحتفاظ. أولًا الاحتفاظ والأدوار (RLS) وRAD-060 في أول migration؛ ثم جدول→JSON فالكتابي فالصور. يشمل CLN-035/036 وF4 ولوحة المالك وفرض الاسم في الخادم. لا برمجة قبل الاستئناف. PGlite (ب): يُراجع إن تجاوز CI نحو 5 دقائق أو ملفاته نحو 40",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
+      "description": "التخطيط مستأنف2026-10-29؛ التنفيذ ينتظر موافقة الخطة. P1 حي ومقبول هاتفيًا؛ SQL التأليف حي وP2 محلي غير موصول. المتبقي الكتابي واحتفاظه/تصحيحه، الصور، حسم جدول→JSON والتقريب، CLN-035/036 وF4 وفرض الاسم خادميًا. DB500MB وStorage1GB؛ لا إعادة ترحيلات RAD-085.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29",
       "waiting_on": "owner"
     },
     {
