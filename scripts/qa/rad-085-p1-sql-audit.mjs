@@ -35,8 +35,10 @@ let db, initialGroup, slow = false, heldPractice;
 const subscribers = new Set(); let epoch = 0;
 const invalidate = () => { epoch++; for (const response of subscribers) response.write(`data: ${epoch}\n\n`); };
 async function reset(configured = true) {
- if (db) await db.close(); db = await openRad085Database(); slow = false;
- for (let n = 1; n <= 28; n++) await db.admin.query("insert into auth.users values($1,$2,now(),'{\"display_name\":\"Synthetic P1\",\"consent_version\":\"2026-10-16\"}')", [id(n), `p1synthetic${n}@example.test`]);
+ if (db) await db.close(); db = await openRad085Database();
+ await db.admin.query(readFileSync('supabase/migrations/20261028000100_p1_short_codes_names.sql', 'utf8')); // RAD085-P1-B-20261028
+ slow = false;
+ for (let n = 1; n <= 28; n++) await db.admin.query('insert into auth.users values($1,$2,now(),$3)', [id(n), `p1synthetic${n}@example.test`, {display_name:`Synthetic P1 ${n}`,consent_version:'2026-10-16'}]);
  await db.admin.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end", [id(1)]);
  for (const n of [2, 3]) await db.rpc(1, 'appointment_v1', [id(n), true]);
  if (configured) {
@@ -114,11 +116,12 @@ if (process.argv.includes('--serve')) {
    await selectGroup(page); await page.getByRole('heading', { name: t.results, exact: true }).waitFor();
    const resultPanel = () => page.getByRole('heading', { name: t.results, exact: true }).locator('..');
    await resultPanel().getByText(`${t.total}: 25`, { exact: true }).waitFor(); await audit(page, 'supervisor');
-   await resultPanel().getByRole('button', { name: t.next, exact: true }).click(); await resultPanel().getByText(id(28), { exact: false }).waitFor(); interactions++;
+   await resultPanel().getByRole('button', { name: t.next, exact: true }).click(); await resultPanel().getByText('Synthetic P1 28', { exact: false }).waitFor(); interactions++;
    await page.getByRole('button', { name: t.rotate, exact: true }).click();
    const codePanel = page.getByRole('heading', { name: t.code, exact: true }).locator('..'); await codePanel.waitFor();
-   const code = await codePanel.locator('p[dir=ltr]').textContent(); assert.match(code, /^[a-f0-9]{64}$/); interactions++;
+   const code = await codePanel.locator('p[dir=ltr]').textContent(); assert.match(code, /^[0-9A-HJKMNP-TV-Z]{8}$/); interactions++;
    if (width === 390 && theme === 'dark') { const path = `${output}/rad085-p1-sql-${locale}.jpg`; await page.screenshot({ path, type: 'jpeg', quality: 78, fullPage: true }); captures.push(path); }
+   await page.getByRole('button', { name: t.done, exact: true }).click();
    const student = await context.newPage(); student.on('pageerror', e => errors.push(e.message)); await student.goto(`${base}/?locale=${locale}`); await student.evaluate(theme => document.documentElement.dataset.theme = theme, theme); await choose(student, 4);
    const withdraw = locale === 'ar' ? 'سحب موافقتي' : 'Withdraw my consent';
    const accept = locale === 'ar' ? 'تأكيد موافقتي' : 'Confirm my consent';
@@ -165,9 +168,10 @@ if (process.argv.includes('--serve')) {
    await page.getByRole('button', { name: t.revokeCode, exact: true }).click(); await page.getByRole('button', { name: t.revokeCode, exact: true }).first().click();
    await page.getByRole('heading', { name: t.results, exact: true }).waitFor();
    await page.getByRole('button', { name: t.end, exact: true }).click(); await page.getByRole('button', { name: t.confirmEnd, exact: true }).click();
-   await page.getByText(t.denied, { exact: true }).waitFor(); assert.equal(await page.getByRole('heading', { name: t.results, exact: true }).count(), 0); interactions++;
+   // P1-USABILITY-F6 / B audit: successful own end clears selection; revocation-denied assertions above stay exact.
+   await page.getByText(t.success, { exact: true }).waitFor(); assert.equal(await page.getByRole('heading', { name: t.results, exact: true }).count(), 0); interactions++;
    await choose(page, 2); // A fresh session can create another group after the previous scope ended.
-   await page.reload(); await page.getByLabel(t.name, { exact: true }).fill('Browser-created synthetic group');
+   await page.reload(); await page.locator('summary').click(); await page.getByLabel(t.name, { exact: true }).fill('Browser-created synthetic group');
    await page.getByLabel(t.ends, { exact: true }).fill(new Date(Date.now()+3600000).toISOString().slice(0,16));
    await page.getByRole('button', { name: t.create, exact: true }).click(); await page.getByRole('heading', { name: t.code, exact: true }).waitFor(); interactions++;
 
@@ -181,7 +185,7 @@ if (process.argv.includes('--serve')) {
   // Real group deadline clears the rendered view without a click.
   await reset();
   const expiryContext = await browser.newContext(), expiryPage = await expiryContext.newPage(); await expiryPage.goto(base);
-  await expiryPage.getByLabel(copy.en.name, { exact: true }).waitFor();
+  await expiryPage.locator('summary').click(); await expiryPage.getByLabel(copy.en.name, { exact: true }).waitFor();
   await db.rpc(2, 'supervisor_group_v1', ['create', null, null, 'Synthetic expiring group', new Date(Date.now()+1500).toISOString()]);
   await expiryPage.getByRole('button', { name: copy.en.retry, exact: true }).click();
   await expiryPage.getByRole('button', { name: 'Synthetic expiring group', exact: true }).click();

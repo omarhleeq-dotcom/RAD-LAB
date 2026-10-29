@@ -18,6 +18,7 @@ function object(value: unknown): Record<string, unknown> {
  return value as Record<string, unknown>;
 }
 function str(value: unknown): string { return typeof value === 'string' ? value : invalid(); }
+function name(value: unknown): string | undefined { return value == null ? undefined : str(value).trim() || undefined; }
 function id(value: unknown): string { const v = str(value); return uuid.test(v) ? v : invalid(); }
 function num(value: unknown): number { return typeof value === 'number' && Number.isFinite(value) ? value : invalid(); }
 function integer(value: unknown): number { const n = num(value); return Number.isSafeInteger(n) && n >= 0 ? n : invalid(); }
@@ -33,7 +34,7 @@ function group(r: Record<string, unknown>): Group {
 function request(r: Record<string, unknown>, self: Person, groupId?: string): JoinRequest {
  const status = str(r.state);
  if (!['pending', 'approved', 'rejected', 'cancelled'].includes(status)) return invalid();
- return { id: id(r.id), groupId: groupId ?? id(r.group_id), studentId: r.user_id === undefined ? self.id : id(r.user_id), status: status as JoinRequest['status'], revision: integer(r.revision) };
+ return { id: id(r.id), groupId: groupId ?? id(r.group_id), studentId: r.user_id === undefined ? self.id : id(r.user_id), studentName: name(r.display_name), groupName: name(r.group_name), status: status as JoinRequest['status'], revision: integer(r.revision) };
 }
 export function createSqlReview(self: Person, transport: ScopeTransport): ReviewAdapter {
  let epoch = 0;
@@ -84,7 +85,7 @@ export function createSqlReview(self: Person, transport: ScopeTransport): Review
     return raw;
    };
    if (self.role === 'owner') {
-    data.people = page(observe(await scope('appointments', undefined, q.peopleCursor, signal)), r => ({ id: id(r.id), name: r.display_name === null ? id(r.id) : str(r.display_name), role: 'supervisor', appointed: r.revoked_at === null }));
+    data.people = page(observe(await scope('appointments', undefined, q.peopleCursor, signal)), r => ({ id: id(r.id), name: name(r.display_name) ?? '', role: 'supervisor', appointed: r.revoked_at === null }));
    } else if (self.role === 'student') {
     const policy = object(await call('sharing_consent_v1', [], signal));
     const known = knownSharingPolicy(policy.version, policy.textDigest);
@@ -98,8 +99,8 @@ export function createSqlReview(self: Person, transport: ScopeTransport): Review
     if (data.group) {
      data.appointed = true; boundary = Math.min(boundary, data.group.endsAt - data.now);
      data.requests = page(observe(await scope('requests', q.groupId, q.requestsCursor, signal)), r => request(r, self, q.groupId));
-     data.members = page(observe(await scope('members', q.groupId, q.membersCursor, signal)), r => ({ id: id(r.id), name: r.display_name === null ? id(r.id) : str(r.display_name), joinedAt: time(r.visible_from) }));
-     data.results = page(observe(await scope('practice', q.groupId, q.resultsCursor, signal)), r => ({ id: id(r.id), studentId: id(r.user_id), kind: 'practice', at: time(r.recorded_at), score: r.score === null ? '—' : String(num(r.score)), visibleUntil: data.group!.endsAt }));
+     data.members = page(observe(await scope('members', q.groupId, q.membersCursor, signal)), r => ({ id: id(r.id), name: name(r.display_name) ?? '', joinedAt: time(r.visible_from) }));
+     data.results = page(observe(await scope('practice', q.groupId, q.resultsCursor, signal)), r => ({ id: id(r.id), studentId: id(r.user_id), studentName: name(r.display_name), kind: 'practice', at: time(r.recorded_at), score: r.score === null ? '—' : String(num(r.score)), visibleUntil: data.group!.endsAt }));
      // Every read is a separate short RPC transaction. Recheck the group's generation
      // after assembling the pages; never present a mixture across a membership change.
      const final = page(observe(await scope('groups', undefined, q.groupsCursor, signal)), group).rows.find(g => g.id === q.groupId);
@@ -129,7 +130,7 @@ export function createSqlReview(self: Person, transport: ScopeTransport): Review
     } else if (c.kind === 'appoint' || c.kind === 'revoke') await call('appointment_v1', [c.personId, c.kind === 'appoint'], signal);
     else if (c.kind === 'create' || c.kind === 'rotate' || c.kind === 'end' || c.kind === 'revoke-code') {
      const r = object(await call('supervisor_group_v1', c.kind === 'create' ? ['create', null, null, c.name, new Date(c.endsAt).toISOString()] : [c.kind, c.groupId, c.revision], signal));
-     if (r.code != null) { const code = str(r.code); if (!/^[a-f0-9]{64}$/.test(code)) return invalid(); codeGroupId = id(r.id); return { code, groupId: codeGroupId }; }
+     if (r.code != null) { const code = str(r.code); if (!/^[0-9A-HJKMNP-TV-Z]{8}$/.test(code)) return invalid(); codeGroupId = id(r.id); return { code, groupId: codeGroupId }; }
     } else if (c.kind === 'join') {
      const r = object(await call('join_request_v1', [c.code.trim()], signal));
      if (r.outcome === 'unavailable') throw new ReviewError('invalid');

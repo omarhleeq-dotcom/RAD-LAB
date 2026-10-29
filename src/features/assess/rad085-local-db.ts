@@ -39,7 +39,7 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
       create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
       grant usage on schema auth to authenticated,anon; grant execute on function auth.uid() to authenticated,anon;`);
     const names = readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort();
-    for (const file of names.filter(f => !(RAD085_MIGRATIONS as readonly string[]).includes(f))) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
+    for (const file of names.filter(f => f < RAD085_MIGRATIONS[0])) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
     if (beforeUpgrade) await beforeUpgrade(admin);
     for (const file of migrations) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
     async function transaction<T>(who: number | 'anon' | 'worker', work: (c: PgClient) => Promise<T>, label = 'rad085-rpc') {
