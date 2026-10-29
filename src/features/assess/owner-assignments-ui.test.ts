@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { act, createElement } from "react";
+import { act } from "react";
+import { jsx } from "react/jsx-runtime";
 import { createRoot, type Root } from "react-dom/client";
 import { NextIntlClientProvider } from "next-intl";
 import { createClient } from "@supabase/supabase-js";
@@ -19,7 +20,7 @@ const tick = async () => { await act(async () => { await new Promise(resolve => 
 const button = (name: string) => [...host.querySelectorAll("button")].find(b => b.textContent === name)!;
 async function click(name: string) { expect(button(name)).toBeDefined(); await act(async () => { button(name).click(); }); await tick(); }
 async function mount(locale: "en" | "ar" = "en") {
-  await act(async () => root.render(createElement(NextIntlClientProvider, { locale, messages: locale === "en" ? en : ar }, createElement(OwnerAssignments))));
+  await act(async () => root.render(jsx(NextIntlClientProvider, { locale, messages: locale === "en" ? en : ar, children: jsx(OwnerAssignments, {}) })));
   await tick();
 }
 beforeEach(() => { mock.state = { kind: "signedIn", userId: "owner-a", profile: { role: "owner", status: "approved" } }; mock.client.mockReset(); host = document.createElement("div"); document.body.append(host); root = createRoot(host); });
@@ -75,7 +76,7 @@ it("locks duplicate confirms; ambiguous result hides actions until an explicit r
   await click(t.read); expect(reads).toBe(2); expect(writes).toBe(1); expect(host.querySelector("time")).not.toBeNull();
 });
 it("never mounts controls or reads for participants (including appointed supervisors), unapproved owners or signed-out users", async () => {
-  for (const [kind, role, status] of [["signedIn", "participant", "approved"], ["signedIn", "owner", "suspended"], ["signedOut", "owner", "approved"]]) {
+  for (const [kind, role, status] of [["signedIn", "participant", "approved"], ["signedIn", "owner", "suspended"], ["signedOut", "owner", "approved"]] as const) {
     mock.state = { kind, userId: "student", profile: { role, status } }; await mount(); expect(host.textContent).toBe("");
   }
   expect(mock.client).not.toHaveBeenCalled();

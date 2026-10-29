@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 327,
-  "updated_at": "2026-10-29T19:51:23.203535+00:00",
+  "revision": 328,
+  "updated_at": "2026-10-29T20:10:25.544785+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -551,8 +551,8 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "review",
       "priority": "high",
-      "description": "دُمجت #153 وأُنجز تمرين المالك المغلق. ميزانية GCP موجودة ومتحققة2026-10-29 ($5 شهريًا؛ DECISIONS.md#rad059-budget-owner-2026-10-29)؛ استلام البريد غير مختبر. ينتظر قنوات الإنذار/اختبار الاستلام والبديل؛ cache ورفض الاعتماد القديم عبر RAD-082 قبل أول امتحان. العامل NOLOGIN والسر DISABLED؛ لا تفعيل حقيقي.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/DECISIONS.md#rad059-budget-owner-2026-10-29",
+      "description": "دُمجت #153 وأُنجز تمرين المالك المغلق. ميزانية GCP موجودة ومتحققة2026-10-29 ($5 شهريًا؛ RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29)؛ استلام البريد غير مختبر. ينتظر قنوات الإنذار/اختبار الاستلام والبديل؛ cache ورفض الاعتماد القديم عبر RAD-082 قبل أول امتحان. العامل NOLOGIN والسر DISABLED؛ لا تفعيل حقيقي.",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29",
       "waiting_on": "owner"
     },
     {
@@ -560,9 +560,9 @@
       "title": "زر إغلاق إسناد Assess ضمن جلسة إصلاحات الواجهة",
       "status": "in_progress",
       "priority": "medium",
-      "description": "المرحلة1 مأذونة: وصل إغلاق المالك فقط في تبويب Assess بالـRPC الحية، بلا SQL أو P2. تبقى in_progress حتى دمج المالك ونجاح فحص الهاتف ثم review؛ إغلاق المشرف لاحقًا مع P2.",
+      "description": "نُفذت المرحلة1 للمالك فقط في Assess بالـRPC الحية مع تأكيد وإعادة قراءة صريحة عند الغموض؛ تقرير RAD-060_PHASE1_REPORT_2026-10-29.md. تنتظر مراجعة المالك ودمجه وفحص الهاتف الناجح قبل الانتقال إلى review. إغلاق المشرف لاحقًا مع P2؛ لا SQL أو نشر من الوكيل.",
       "source_ref": "docs/RAD-061_BATCH4_REPORT_2026-10-22.md#rad-060-decision؛ docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ scripts/pilot/assess-close-assignment.js؛ docs/archive/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md",
-      "waiting_on": "code"
+      "waiting_on": "owner"
     },
     {
       "id": "RAD-061",

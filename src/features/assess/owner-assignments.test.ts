@@ -26,7 +26,7 @@ describe("owner assignment contract", () => {
     const rows = Array.from({ length: 20 }, (_, i) => row(i + 1));
     expect(parseOwnerAssignments({ rows, next: id(20) }).next).toBe(id(20));
     const closed = { ...row(21), closed_at: "2026-10-29T19:00:00+00:00" };
-    expect(parseOwnerAssignments({ rows: [closed], next: null }, id(20)).rows[0].closedAt).toBe(closed.closed_at);
+    expect(parseOwnerAssignments({ rows: [closed], next: null }, id(20)).rows[0]!.closedAt).toBe(closed.closed_at);
     for (const raw of [null, { rows: [...rows, row(21)], next: null }, { rows: [row(1)], next: id(1) }, { rows: [row(1), row(1)], next: null },
       { rows: [row(2), row(1)], next: null }, { rows: [{ ...row(1), revision: 0 }], next: null }, { rows: [{ ...row(1), closed_at: "yesterday" }], next: null },
       { rows: [{ ...row(1), name: "" }], next: null }, { rows, next: id(19) }]) expect(() => parseOwnerAssignments(raw)).toThrow();
