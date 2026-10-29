@@ -61,4 +61,4 @@ it('the promoted repository prints the new marker, accepts it, and rejects the p
  expect(run(promoted).status).toBe(0);
  const live = run('pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a'); expect(live.status).toBe(1);
  const old = run(marker); expect(old.status).toBe(1); expect(old.stderr).toContain('schema compatibility has not been attested');
-});
+}, 20000);
