@@ -40,6 +40,8 @@ async function fixture(history='lf') {
   await db.exec(read('supabase/manual/rad085-sharing-policy-live-p1.sql'));
   // Provider auth.created_at is absent from the minimal existing synthetic helper only.
   await db.exec('alter table auth.users add column created_at timestamptz not null default now()');
+  // Minimal provider structures inspected by the unchanged C2 catalogue check.
+  await db.exec('alter table auth.users add column banned_until timestamptz;create table auth.sessions(user_id uuid);create table auth.refresh_tokens(user_id uuid)');
   await db.exec(`insert into auth.users values('${id(1)}','owner@example.test',now(),'{}'),('${id(2)}','student@example.test',now(),'{}');
    update public.profiles set status='approved',role=case when user_id='${id(1)}' then 'owner' else 'participant' end;
    insert into assess.consents(user_id,version) values('${id(2)}','assess-pilot-2026-10-20-v2');
@@ -73,10 +75,15 @@ async function fixture(history='lf') {
   const catalogue=()=>db.query(`select p.oid,pg_get_functiondef(p.oid) definition,p.proowner,p.proacl::text acl,p.proconfig
    from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','assess') order by p.oid`);
   const ready=async()=>{
-   const sql=read('supabase/checks/rad085-p1-b-ready.sql');
    const c=await connect();try{
-    const out=await c.query(sql);const rows=out.flatMap(r=>r.rows);
-    assert.equal(rows.length,13);assert.deepEqual(rows.filter(r=>!r.ready),[]);
+    const paths=JSON.parse(read('scripts/pages/frontend-schema.json')).checks;
+    for(const path of paths){
+     const out=await c.query(read(path));const rows=out.flatMap(r=>r.rows);assert(rows.length>0,path);
+     if(path.endsWith('rad085-p1-b-ready.sql'))assert.equal(rows.length,13);
+     for(const row of rows)for(const [key,value] of Object.entries(row)){
+      if(typeof value==='boolean')assert.equal(value,!['runtime_or_launch_verified','restore_verified'].includes(key),path+':'+key);
+     }
+    }
    }finally{await c.end();clients.delete(c);}
   };
   return {...db,connect,run,scalar,seed,unchanged,catalogue,ready,async close(){
@@ -94,6 +101,7 @@ test('phone transport preserves every DO byte, has bounded parts, and matches ch
  for(const line of parts.join('').split('\n').filter(l=>l.startsWith('DO $phone$')))assert(line.length<15000);
  assert.throws(()=>stopTransport('do $huge$ begin '+ ' '.repeat(15000)+'end $huge$;'),/oversized_phase/);
  assert.equal(renderPacket(),read('docs/RAD-059_PHONE_PACKET.md'));
+ for(const block of renderPacket().matchAll(/```sql\n([\s\S]*?)\n```/g))assert(block[1].length<15000);
  assert(!/create\s+(or replace\s+)?function|assess\.trial_scope/i.test(source));
 });
 
@@ -110,7 +118,8 @@ for(const history of ['lf','crlf'])test(`PostgreSQL ${history}: stop, idempotenc
   for(let n=0;n<10;n++){const c=await db.connect(n%2?'assess_job_a':'assess_job_b',n===9?'synthetic_other':'postgres');await c.query('set role assess_worker');workerConnections.push(c);}
   const other=await db.connect();
   const heldStart=await db.query('select clock_timestamp() ts');
-  const r=await db.run(stop());assert.equal(r.status,'STOPPED',JSON.stringify(r));assert.deepEqual(r.errors,[]);
+  // SQL Editor's session timezone must not alter the seven-day hold representation.
+  const r=await db.run("set timezone='America/New_York';"+stop());assert.equal(r.status,'STOPPED',JSON.stringify(r));assert.deepEqual(r.errors,[]);
   assert.deepEqual(r.verification,{gateClosed:true,loginDisabled:true,missingRoles:0,backendSessions:0,unheldSessions:0});
   for(const c of workerConnections)await assert.rejects(c.query('select 1'));
   assert.equal((await other.query('select 1 v')).rows[0].v,1);

@@ -5,6 +5,7 @@ begin;
 set local search_path='';
 set local lock_timeout='2s';
 set local statement_timeout='5s';
+set local timezone='UTC';
 create temporary table rad059_stop_report (
  gate_ok boolean not null default false,
  login_a_ok boolean not null default false,

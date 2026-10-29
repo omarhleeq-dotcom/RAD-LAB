@@ -4,6 +4,7 @@ set local search_path='';
 set local row_security=off;
 set local lock_timeout='2s';
 set local statement_timeout='5s';
+set local timezone='UTC';
 with facts as (
  select (select count(*)=1 and coalesce(bool_and(not enabled),false) from assess.launch_gate) gate_closed,
  not exists(select 1 from pg_catalog.pg_roles where rolname in ('assess_job_a','assess_job_b') and rolcanlogin) login_disabled,

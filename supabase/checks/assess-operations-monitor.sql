@@ -5,6 +5,7 @@ set local search_path='';
 set local row_security=off;
 set local lock_timeout='2s';
 set local statement_timeout='5s';
+set local timezone='UTC';
 with ts as materialized(select transaction_timestamp() at),
  sessions as materialized(select state,deadline,submitted_at,expires_at,lease_until from assess.sessions order by id limit 1001),
  signups as materialized(select 1 from auth.users,ts where created_at>=ts.at-interval '15 minutes' limit 1001),

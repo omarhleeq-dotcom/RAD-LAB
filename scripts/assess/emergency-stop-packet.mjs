@@ -23,10 +23,18 @@ export function stopTransport(sql=read(stopPath)) {
 export function renderPacket() {
  const section=(title,sql,source)=>`\n## ${title}\n\nالمصدر: ${source}؛ SHA-256: ${sha256(sql)}.\n\n`
   +lineBoundedParts(sql).map((p,i)=>`الجزء${i+1} — ${p.length} حرفًا.\n\n\`\`\`sql\n${p}\n\`\`\`\n`).join('\n');
+ const checks=JSON.parse(read('scripts/pages/frontend-schema.json')).checks;
+ if(!Array.isArray(checks)||checks.some(p=>!/^supabase\/checks\/[a-z0-9-]+\.sql$/.test(p)))throw Error('invalid_repository_checks');
  return '# RAD-059 — حزمة SQL للهاتف\n\nمولّدة من مصادر Git محليًا؛ لا إذن تشغيل حي. اقرأ [دليل الهاتف](RAD-059_PHONE_RUNBOOK.md). اجمع **كل أجزاء الإجراء المختار** في محرر واحد قبل Run مرة واحدة؛ لا تنفيذ جزء أو COMMIT مبكرًا. أقل من15000حرف لكل جزء بعد الغلاف. لا تضف سطرًا داخل base64. لا function DDL أو ترحيل أو بيانات أشخاص.\n\nالإيقاف ست مراحل، lock2s/statement5s لكل مرحلة. PARTIAL/FAILED يعني الإبقاء على الإغلاق ومراجعة errors؛ صف STOPPED قبل COMMIT لا يغني عن استعلام التحقق المستقل بعدها. انقطاع الشبكة/خطأ COMMIT لا يثبت نجاحًا: افتح استعلامًا جديدًا وتحقق.\n'
  +section('1 الإيقاف — معاملة واحدة',stopTransport().join(''),stopPath)
  +section('2 التحقق بعد الإيقاف — قراءة فقط',read(verifyPath),verifyPath)
- +section('3 المراقبة أثناء النافذة — قراءة فقط',read(monitorPath),monitorPath);
+ +section('3 المراقبة أثناء النافذة — قراءة فقط',read(monitorPath),monitorPath)
+ +checks.map((path,i)=>section(`4.${i+1} الجاهزية الحالية — ${path}`,read(path),path)).join('')
+ +['a','b'].map(slot=>{
+  const path='supabase/checks/assess-worker-login-ready.sql';
+  const sql=read(path).replace('begin read only;',`begin read only;\nset local assess.worker_login_target='assess_job_${slot}';\nset local lock_timeout='2s';\nset local statement_timeout='5s';`);
+  return section(`5.${slot} فحص LOGIN — اختر الدور المطابق للسر فقط`,sql,path+' + reviewed target/timeout preamble');
+ }).join('');
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
  if(process.argv.length!==3||!['--write','--check'].includes(process.argv[2]))throw Error('usage: --write|--check');
