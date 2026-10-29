@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 322,
-  "updated_at": "2026-10-29T01:44:09.173359+00:00",
+  "revision": 323,
+  "updated_at": "2026-10-29T01:52:51.613254+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -551,7 +551,7 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "in_progress",
       "priority": "high",
-      "description": "بدأ التصميم والتنفيذ المحلي للهاتف؛ review فقط بعد دمج التصميم وأداة الإيقاف والاختبارات. التنبيهات وتجربة الاستلام والإيقاف الحية تبقى إجراءات مالك مفتوحة قبل أول امتحان؛ لا موارد أو جدولة أو قناة تُنشأ هنا.",
+      "description": "تصميم الهاتف وأداة الإيقاف وحزمة النقل واختبارات PostgreSQL محلية منفذة داخل Draft؛ استكمال دليل السحابة والاستعادة. review فقط بعد دمج التصميم والأداة والاختبارات. التنبيهات وتجربة الاستلام والإيقاف الحية إجراءات مالك مفتوحة قبل أول امتحان؛ لا موارد/قنوات/جدولة منشأة.",
       "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md",
       "waiting_on": "owner"
     },
