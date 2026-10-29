@@ -6,6 +6,8 @@
 
 فُحص #157 عبر docs:context/GitHub وثبت دمجه، ثم حُدث checkout النظيف إلى main بجلب وfast-forward؛ لا worktree أو subagents. يتبع تسليم الدفعة commit/push وDraft PR فقط؛ لا ready/merge/auto-merge أو skip ci أو نشر يدوي/إضافي أو SQL حي أو تغيير Variables؛ CI وDeploy Pages التلقائيان المعتادان مأذونان بأمر المالك اللاحق. لا فتح أو مشاركة روابط معاينة مستضافة.
 
+متابعة توثيقية بطلب المالك في2026-10-29، ميزانيتها3ملفات من القائمة نفسها: AGENTS وDECISIONS وهذا التقرير؛ إضافة النص الحرفي بعد Draft PR only في State and delivery، وتأكيد القرار المؤرخ وأسئلة الحكم/الدليل. لا وحدات مشتركة أو تغيير حالة مهام أو توسعة منتج.
+
 ## 2. المنجز والمستبعد
 
 يعرض `closed_at` نصًا مقروءًا عبر Intl بلغة الواجهة والمنطقة الزمنية المحلية للعارض، بما فيها اسم المنطقة والدقيقة؛ أُزيلت دعوى UTC من تسمية الإغلاق في EN/AR؛ تبقى القيمة الأصلية في `time.dateTime` ويُعزل النص بـbdi للاتجاهين. لا تحويل ثابت إلى UTC ولا منطقة زمنية ثابتة في المنتج. لوحتا OwnerDeletion وOwnerSurveys تُركبان في Participants فقط؛ معالجتهما وadapter والوصول للبيانات لم تتغير، وبقية محتوى التبويبات ثابتة.
@@ -52,6 +54,8 @@
 <a id="pr-automation-rule"></a>
 إفادة المالك اللاحقة2026-10-29: «Allow the existing automated PR workflows (CI and Deploy Pages) to run normally on the draft PR. No deploy only forbids manual or extra deployments. Never use [skip ci]. Do not open or share preview URLs». طلب حفظها قاعدة دائمة بسطر واحد في DECISIONS وربطها من Current boundaries في AGENTS؛ سُجلت [القاعدة](DECISIONS.md#pr-automation-owner-2026-10-29) دون تعديل workflow أو Variables أو تعطيل CI. هذا يحسم توضيح الأتمتة ولا يجيز نشرًا يدويًا أو ready/merge/auto-merge.
 
+أكد المالك القاعدة نفسها لاحقًا في التاريخ نفسه وطلب النص الحرفي في State and delivery مباشرة بعد Draft PR only: «Opening a Draft PR is expected to run the repository's existing automated workflows (CI and Deploy Pages); that is allowed. "No deploy" in a task means no manual or extra deployment. Never use [skip ci] or disable workflows.» أُضيف النص كما طلب، وبقي رابط القرار من Current boundaries والدليل الأصلي أعلاه.
+
 ## 5. الطب والتقييم
 
 صفر تغيير طبي أو درجات أو محتوى أو retention أو goldens/characterisation. لا ادعاء تحقق سريري، ولا فتح launch_gate؛ العامل NOLOGIN والسر DISABLED حتى قرار مستقل.
@@ -64,6 +68,7 @@
 - نجح التدقيق النهائي `scripts/qa/rad-060-owner-close-audit.mjs`: **452فحصًا و36تدقيق axe/overflow** عبر EN/AR ×390/1440، على المسارات الحقيقية من التصدير المحلي مع اعتراض الاتصالات وAPI وهوية اصطناعيتين. Participants يعرض لوحتي الحذف والجولات، وAssess وTraining لا يعرضانهما؛ نُقر بين التبويبات واختُبرت العودة بالسجل. وقت EN في America/New_York هو15:00 وAR في Asia/Riyadh هو22:00 لنفس القيمة19:00Z، مع اسم المنطقة المترجم وdateTime الأصلي. يغطي أيضًا paging وإلغاء التأكيد وstale وACK الغامض والقراءة الصريحة والرفض والتعافي وغياب تحكم المالك عن participant/supervisor. صفر page/console errors غير أخطاء الشبكة المحاكية المتوقعة، وصفر مخالفات axe أو تمرير أفقي. نجحت الجولة السابقة448فحصًا/36تدقيقًا؛ أُعيدت بعد تصحيح النص النهائي وإضافة رفض تسمية UTC، لا لتخفيف عتبة فاشلة.
 - روجعت لقطات الهاتف النهائية للتبويبات الثلاثة في اللغتين محليًا؛ لا صور أو بيانات حية أو روابط معاينة مستضافة في المستودع. اللقطات محلية فقط، ولا تُحسب فحص هاتف المالك للإصلاحين.
 - نجحت75حالة لأدوات الوثائق. أُعيدت فحوص docs:check وstatus:check الانتقالي وdiff بعد تحرير نتيجة QA، ونجحت بصفر أخطاء أو review warnings. HANDOFF من17سطرًا بعد إزالة انتظار توضيح الأتمتة. فحص المحتوى أظهر أن RAD-060 وRAD-064 وحدهما تغيرتا في بيانات المهام.
+- متابعة النص الصريح توثيقية فقط: docs:check وstatus:check الانتقالي وgit diff --check؛ لا إعادة full check أو build أو المتصفح لغياب تغيير المنتج، ولا تغيير نتائج QA السابقة.
 
 لإعادة المتصفح محليًا: ابنِ build:pages بإعداد Supabase اصطناعي يطابق السكربت، ثم `node scripts/qa/rad-060-owner-close-audit.mjs` مع Playwright وChromium وaxe المتاحة محليًا؛ `RAD060_SCREENSHOTS` اختياري لمجلد اللقطات خارج المستودع. لا اعتماد منتج جديد.
 
@@ -77,6 +82,6 @@
 
 برومبت المتابعة: «اقرأ AGENTS وHANDOFF وتقرير متابعة RAD-060 وتحقق من GitHub وproject-status. RAD-060 review/waiting_on owner وليست done؛ لا إغلاق حي مثبت ولا إنشاء إسناد للفحص. راجع إصلاحي الوقت المحلي ومكان لوحتي المشاركين، واترك Manage targets للإسناد المغلق ملاحظة RAD-064 لفحص RPC لاحق مأذون. لا تنفيذ RAD-062 أو P2 أو SQL أو Variables أو نشر يدوي/إضافي أو فتح/مشاركة معاينة مستضافة؛ CI وDeploy Pages المعتادان مأذونان؛ Draft فقط وcommit/push بلا skip ci أو ready/merge/auto-merge أو polling».
 
-**هل تغيّر الحكم؟** أمر المالك الحالي أجاز نقل RAD-060 إلى review رغم تعذر الإغلاق الحي، مع تسجيل الفجوة صراحةً، وأجاز إصلاحي العرض فقط. كما حسم المالك أن «لا deploy» يمنع اليدوي/الإضافي فقط مع السماح الدائم بـCI وDeploy Pages المعتادين على Draft؛ لا تغيير لنهائية الإغلاق أو صلاحياته أو بوابات التشغيل أو إذن مرحلة لاحقة.
+**هل تغيّر الحكم؟** لا في هذه المتابعة التوثيقية؛ السماح بأتمتة CI وDeploy Pages المعتادة على Draft ومنع النشر اليدوي/الإضافي ثابتان، وأصبحا منصوصين صراحةً في الموضع الذي طلبه المالك، مع منع تعطيل workflows. نقل RAD-060 إلى review مع فجوة الإغلاق الحي وإصلاحا العرض موثقة أعلاه؛ لا تغيير لنهائية الإغلاق أو صلاحياته أو بوابات التشغيل أو إذن مرحلة لاحقة.
 
-**هل بقي رابط الدليل الأصلي؟** نعم؛ source_ref السابقة محفوظة مع رابط هذا التقرير، وأدلة المرحلة1 وقرارات المالك والجرد وعقود SQL ويوم القاعدة مرتبطة؛ لم تُحذف أو تُعد صياغة قواعدها التاريخية.
+**هل بقي رابط الدليل الأصلي؟** نعم؛ [قرار المالك المؤرخ](DECISIONS.md#pr-automation-owner-2026-10-29) ما زال يربط [إفادته الأصلية وتأكيده النصي](#pr-automation-rule)، ورابط Current boundaries في AGENTS باقٍ. source_ref وأدلة المرحلة1 والجرد وعقود SQL ويوم القاعدة محفوظة؛ لم تُحذف قواعدها التاريخية.

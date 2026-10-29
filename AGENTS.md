@@ -41,4 +41,5 @@ CI runs the same docs checker/test commands for everyone; [DOCS_CHECKS](docs/DOC
 - Arabic report, S-STD-1 order: **1 deviations/budget;2 done/dropped;3 per-task;4 shared changes + Scale;5 medical/scoring;6 QA;7 open items;8 owner checklist/next-session prompt**.
 - Continue on the existing isolated checkout; no worktree/subagents unless explicitly requested. Never open/share hosted preview URLs; owner checks phone. No subscribe/poll. At≈90–95% usage stop new work, preserve a compiling state, commit/push and leave exact handoff; never fake/skip QA.
 - **Draft PR only.** Do not mark ready, merge or enable auto-merge without a later explicit owner instruction.
+- Opening a Draft PR is expected to run the repository's existing automated workflows (CI and Deploy Pages); that is allowed. "No deploy" in a task means no manual or extra deployment. Never use [skip ci] or disable workflows.
 - `next dev` may append an automated block to CLAUDE.md: **do not commit that block**.
