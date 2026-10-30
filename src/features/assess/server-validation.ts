@@ -8,6 +8,7 @@ import type { AssessmentPublication } from "./server-contracts";
 import { validateProvenanceV2 } from "./provenance-v2";
 import type { AssessmentPublicationV2 } from "./server-contracts-v2";
 import { assertAttemptPolicy, assertAssessmentVersion, decimalPoints, earnedPoints } from "./policies";
+import { randomPoolMaximum } from "./random-pool";
 import { ruleParts } from "./rule-parts";
 
 export type AnswerSpec = Record<string, {kind:"number";min:number;max:number} | {kind:"enum";values:unknown[]}>;
@@ -107,15 +108,16 @@ function validatePublicationContract(input:unknown, schema:1|2) {
   const value:unknown=JSON.parse(raw);safeTree(value);
   keys(value,["schemaVersion","assessment","itemMarks","privateItems"]);
   if(value.schemaVersion!==schema) throw new Error("Unsupported publication");
-  const a=value.assessment;keys(a,["schemaVersion","ref","name","policy","maximum","track","items"]);
+  const a=value.assessment;keys(a,["schemaVersion","ref","name","policy","maximum","track","items",...(schema===2?["randomPool"]:[])]);
   ref(a.ref);text(a.name,200);positive(a.maximum);
   keys(a.policy,["durationSeconds","maxAttempts","gradeVisibility"]);
   if(a.policy.durationSeconds!==null && (typeof a.policy.durationSeconds!=="number" || a.policy.durationSeconds>604800)) throw new Error("Duration exceeds operational ceiling");
   if(typeof a.policy.maxAttempts!=="number" || a.policy.maxAttempts>1000) throw new Error("Attempt ceiling");
   array(a.items);array(value.itemMarks);array(value.privateItems);
   for(const item of a.items) {
-    keys(item,["schemaVersion","ref","prompt","contentLanguage","type","options","presentation","caseRef"]);
+    keys(item,["schemaVersion","ref","prompt","contentLanguage","type","options","presentation","caseRef",...(schema===2?["shuffleOptions"]:[])]);
     ref(item.ref);text(item.prompt,10000);
+    if(schema===2 && item.shuffleOptions!==undefined && (item.type!=="single-choice" || typeof item.shuffleOptions!=="boolean")) throw Error("Invalid option shuffle");
     if(schema===2 && item.type==="written-answer") {
       if(item.options!==undefined || item.presentation!==undefined || item.caseRef!==undefined) throw Error("Wrong written fields");
     } else if(item.type==="single-choice") {
@@ -196,6 +198,11 @@ function validatePublicationContract(input:unknown, schema:1|2) {
         if(!equalPoints(sum,decimalPoints(marks[0]!.maximum))) throw new Error("Part marks mismatch");
       }
     }
+  }
+  if(schema===2 && a.randomPool!==undefined) {
+    if(a.track!=="mixed") throw Error('Pool requires mixed track');
+    const maximum=randomPoolMaximum((a.items as {ref:{id:string;version:string};type:string;shuffleOptions?:boolean}[]).map(i=>({id:i.ref.id,type:i.type,shuffleOptions:i.shuffleOptions,maximum:publication.itemMarks.find(m=>m.item.id===i.ref.id&&m.item.version===i.ref.version)!.maximum})),a.randomPool);
+    if(!equalPoints(decimalPoints(maximum),decimalPoints(a.maximum as string))) throw Error('Pool maximum mismatch');
   }
   // Item points are a raw scale; the final configured maximum may differ and is converted once.
   return {publication,specs};

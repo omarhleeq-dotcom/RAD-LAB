@@ -53,6 +53,21 @@
         "src/features/assess/server-authoring-bridge-v2-postgres.ts",
         "src/features/assess/server-validation-v2.ts"
       ]
+    },
+    "20261030000300_rad062_authoring_limits.sql": {
+      "sha256": "14f88f67d70b462d55f4ff422905384c3ea3bc02a36c66aec1ba90f2d106a62c",
+      "reason": "RAD-062 P3 M03, requires M01/M02. Private quotas and explicit protected cleanup; dormant until complete reviewed DB day and M08/P10. No automatic cleanup or runtime grants.",
+      "serverModules": [
+        "src/features/assess/server-authoring-bridge-v2.ts"
+      ]
+    },
+    "20261030000400_rad062_random_pool.sql": {
+      "sha256": "2c37008f5f2156c426413862e56f35f242afd388f690bbd77b2d9396270f99de",
+      "reason": "RAD-062 P4 M04, requires M01-M03. Private immutable random-pool selection primitive for the future atomic M06 lifecycle. No browser path or runtime grant until reviewed DB day and M08/P10.",
+      "serverModules": [
+        "src/features/assess/server-authoring-bridge-v2.ts",
+        "src/features/assess/server-validation-v2.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -131,7 +146,9 @@
     "rad062": {
       "migrations": [
         "20261030000100_rad062_full_name.sql",
-        "20261030000200_rad062_provenance_v2.sql"
+        "20261030000200_rad062_provenance_v2.sql",
+        "20261030000300_rad062_authoring_limits.sql",
+        "20261030000400_rad062_random_pool.sql"
       ],
       "guard": {
         "path": "src/features/assess/rad062-availability.ts",

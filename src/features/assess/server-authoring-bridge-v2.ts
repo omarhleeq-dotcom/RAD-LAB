@@ -2,7 +2,7 @@
 import type { AuthoringDraftV2, ContentProvenanceV2 } from './contracts-v2';
 import type { AssessmentPublicationV2, PrivateItemVersionV2 } from './server-contracts-v2';
 import type { PartReference } from '../authoring-review/contracts';
-import { decimalPoints } from './policies';
+import { randomPoolMaximum } from './random-pool';
 import { validatePublicationV2 } from './server-validation-v2';
 export type BridgeSnapshotV2 = {
  snapshot: { document: AuthoringDraftV2; refs: { key: string; revision: string }[]; digest: string };
@@ -22,7 +22,7 @@ export function publicationFromDraftV2(stored: BridgeSnapshotV2, parts: readonly
   const base = { schemaVersion: 2 as const, ref, prompt: item.prompt, contentLanguage: 'en' as const };
   if (item.type === 'single-choice' || item.type === 'written-answer') {
    privateItems.push({ schemaVersion: 2, ref, type: item.type, provenance: evidence.provenance, ...(item.type === 'single-choice' ? { correctOptionId: item.correctOptionId } : {}) } as PrivateItemVersionV2);
-   return item.type === 'single-choice' ? { ...base, type: item.type, options: item.options } : { ...base, type: item.type };
+   return item.type === 'single-choice' ? { ...base, type: item.type, options: item.options, ...(item.shuffleOptions === undefined ? {} : { shuffleOptions: item.shuffleOptions }) } : { ...base, type: item.type };
   }
   const key = evidence.reviewedKey;
   if (!key || key.type !== item.type || key.ref.id !== ref.id || key.ref.version !== ref.version || JSON.stringify(key.provenance) !== JSON.stringify(evidence.provenance)) throw Error('real_review_required');
@@ -37,12 +37,8 @@ export function publicationFromDraftV2(stored: BridgeSnapshotV2, parts: readonly
   return { ...base, type: item.type, presentation: { controls: Object.keys(part.view.controls), sceneElements: [] } };
  });
  const marks = d.items.map(i => ({ item: { id: i.id, version: String(d.revision) }, maximum: i.type === 'full-practical' ? '1' : i.maximum }));
- // Exact decimal sum; no binary point arithmetic or scoring/runtime change.
- const scale = Math.max(0, ...marks.map(m => m.maximum.split('.')[1]?.length ?? 0));
- const scaled = marks.reduce((sum, m) => { const p = decimalPoints(m.maximum); return sum + p.numerator * (10n ** BigInt(scale)) / p.denominator; }, 0n);
- const digits = scaled.toString().padStart(scale + 1, '0');
- const maximum = scale ? digits.slice(0, -scale) + '.' + digits.slice(-scale) : digits;
- const publication = { schemaVersion: 2, assessment: { schemaVersion: 2, ref: { id: d.id, version: String(d.revision) }, name: d.name, policy: d.policy, track: d.track, maximum, items }, itemMarks: marks, privateItems } as AssessmentPublicationV2;
+ const maximum = randomPoolMaximum(d.items.map((i, n) => ({ ...i, maximum: marks[n]!.maximum })), d.randomPool);
+ const publication = { schemaVersion: 2, assessment: { schemaVersion: 2, ref: { id: d.id, version: String(d.revision) }, name: d.name, policy: d.policy, track: d.track, maximum, items, ...(d.randomPool === undefined ? {} : { randomPool: d.randomPool }) }, itemMarks: marks, privateItems } as AssessmentPublicationV2;
  return validatePublicationV2(publication).publication;
 }
 export function authoringBridgeV2(port: BridgePortV2 | undefined, parts: readonly PartReference[]) {
