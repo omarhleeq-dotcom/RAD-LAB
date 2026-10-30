@@ -34,6 +34,6 @@ describe("RAD-081 owner SID boundary and confinement", () => {
   });
 
   it.each(other)("$id retains its SID rules", c => {
-    expect(c.rules.find(rule => rule.id === "sid")).toMatchObject({ ideal: c.bodyPart === "chest" ? [180, 185] : [102, 110] });
+    expect(c.rules.find(rule => rule.id === "sid")).toMatchObject({ ideal: c.bodyPart === "chest" ? [180, 185] : [100, 110] });
   });
 });

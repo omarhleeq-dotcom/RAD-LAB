@@ -6,8 +6,8 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-062 planned/waiting_on owner بأمر2026-10-30؛ [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) تخطيط فقط. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
-- **ينتظر المالك:** إذن مرحلة مسماة وفحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 blocked حتى عودة اللابتوب.
+- **الاتجاه الحالي:** قاعدة SID40in منفذة للمراجعة في RAD-087؛ [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 planned/waiting_on owner بأمر2026-10-30؛ [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) تخطيط فقط. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
+- **ينتظر المالك:** RAD-087 مراجعة وفحص الحوض والكتف عند SID100؛ إذن مرحلة مسماة وفحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 blocked حتى عودة اللابتوب.
 - **ينتظر مراجِعًا:** عقود العشوائية والكتابي/التفويض والاحتفاظ والطوارئ والتنافس، وحزمة3+5أ والحقوق/D3 والأمن والخصوصية. لا مشرفين حقيقيين قبل O4.
 - **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[تقرير القرارات](RANDOM_QUESTION_DECISIONS_REPORT_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
 - **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual حاجب. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
@@ -19,10 +19,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 334,
-  "updated_at": "2026-10-30T02:51:39.131543+00:00",
+  "revision": 335,
+  "updated_at": "2026-10-30T03:16:19.066338+00:00",
   "timezone": "UTC",
-  "next_id": "RAD-087",
+  "next_id": "RAD-088",
   "tasks": [
     {
       "id": "RAD-001",
@@ -779,6 +779,15 @@
       "description": "تسجيل مرجع RAD-082 غير المسجل بمعرّف next_id وفق status-format. نسخة Docker محلية يومية آلية على لابتوب المالك وسجل مصالحة محلي مشفر؛ لا نسخ سحابية. استعادة مجربة واختبار Supavisor cache ورفض الاعتماد القديم من RAD-059؛ شرط قبل أول امتحان حقيقي. ينتظر عودة اللابتوب.",
       "source_ref": "docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/status-format.md",
       "blocker": "لابتوب المالك غير متاح؛ يرفع المالك العائق عند عودته لتجهيز النسخ والاستعادة واختبار رفض الاعتماد.",
+      "waiting_on": "owner"
+    },
+    {
+      "id": "RAD-087",
+      "title": "قاعدة SID40in العامة للحوض والكتف والمشتركات",
+      "status": "review",
+      "priority": "medium",
+      "description": "نُفذ نطاق SID100–110 المشترك لفحوص40in، بما فيها الحوض والكتف؛ acceptable95–130 وanchor102 والصدر ثابتة. الإصدار/9 بلا إعادة تقييم للمحفوظ. ينتظر مراجعة المسودة وفحص المالك للحوض والكتف عند100 على main المنشور.",
+      "source_ref": "docs/DECISIONS.md#forty-inch-sid-owner-2026-10-30؛ docs/FORTY_INCH_SID_REPORT_2026-10-30.md؛ docs/FORTY_INCH_SID_CHANGES_2026-10-30.md؛ docs/RAD-081_100_SETTINGS_2026-10-25.md",
       "waiting_on": "owner"
     }
   ]

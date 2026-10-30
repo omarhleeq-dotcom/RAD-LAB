@@ -12,6 +12,7 @@ import { comparisonVersion } from "./comparison-version";
  * See docs/PILOT_SUPABASE_SETUP.md#practice-evaluation-version.
  *
  * Version history (newest first; each entry names the rule that changed saved outcomes):
+ *  - /9: Owner 2026-10-30: general 40-inch SID range includes pelvis/shoulder (ideal lower bound 102 → 100 cm); no exposure/other-bound changes.
  *  - /8: RAD-081 C (owner 2026-10-25). Upper/lower extremity SID ideal lower bound 102 → 100 cm; upper 110 and acceptable 95–130 unchanged.
  *  - /7: RAD-072 part 3 step 2 (owner 2026-10-24). Pelvis AP: the marker takes the chest PA/AP anatomical-side rule (S3 option D) instead
  *    of the fixed-letter rule: R in the patient's left half (viewer's right) is now a wrong-side marker, and L in the viewer's right half is no longer one.
@@ -28,7 +29,7 @@ import { comparisonVersion } from "./comparison-version";
  *    letter that differs from the side against the detector is a wrong marker.
  *  - /1: first declared identity of the evaluation contract.
  */
-export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/8";
+export const PRACTICE_EVALUATION_VERSION = "radlab-practice-evaluation/9";
 
 // Capture provenance at evaluation time, without changing result/score JSON bytes.
 // Weak keys retain no history; clones/deserialised/unidentified results fail closed.
