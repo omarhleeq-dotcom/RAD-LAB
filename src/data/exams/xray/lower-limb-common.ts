@@ -1,3 +1,4 @@
+import { FORTY_INCH_SID_IDEAL_CM } from "./forty-inch-sid";
 import { withCoverageEdgeWording } from "./coverage-edge-feedback";
 import { markerOverlapFeedback } from "./marker-overlap-feedback";
 import type { CheckRule, CriticalFindingRule, PositioningSpec } from "@/domain/case";
@@ -676,7 +677,7 @@ const rules = (k: LowerLimbKind): CheckRule[] => {
       // https://images.radiopaedia.org/articles/wrist-pa-view-2 ; https://radiopaedia.org/articles/wrist-lateral-view-2
       // Bontrager lower-limb SID: 40 in (p.224-225); the wrist citations are not a new knee/ankle/foot source.
       // Upper full-credit limit (110 cm) and partial band (95–130 cm) unchanged teaching choices. TODO(medical-review).
-      ideal: [100, 110],
+      ideal: FORTY_INCH_SID_IDEAL_CM,
       acceptable: [95, 130],
       unit: "cm",
       variantOnLow: "magnified-geometry",
