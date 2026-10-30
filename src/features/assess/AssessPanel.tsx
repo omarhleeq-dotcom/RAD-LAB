@@ -11,7 +11,7 @@ import { FullPracticalRunner } from "./FullPracticalRunner";
 import { PartControls } from "./PartControls";
 import {HistoryPanel} from "./HistoryPanel";
 import {AssessConsent} from "./AssessConsent";
-import {RunnerView,useRunnerController,runnerButton as button} from "./RunnerView";
+import {AssessSetup,RunnerView,useRunnerController,runnerButton as button} from "./RunnerView";
 function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>void}) {
   const t=useTranslations("assess"),locale=useLocale();
   const c=useRunnerController(changed=>new MixedRunner(port,changed),attempt),s=c.session,issue=c.issue;
@@ -24,11 +24,11 @@ function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>v
             {item.type==="single-choice"?<fieldset disabled={c.busy||!!issue||!!c.pending} className="space-y-3"><legend className="sr-only" lang={locale} dir={dir}>{t("chooseOne")}</legend>
               {item.options.map(o=><label key={o.id} className="flex min-h-11 items-center gap-3"><input className="size-5 shrink-0" type="radio" name="assess-choice" checked={answer?.type==="single-choice"&&answer.optionId===o.id} onChange={()=>c.edit(item.ref.id,{type:"single-choice",optionId:o.id})}/>{o.text}</label>)}
               <button lang={locale} dir={dir} className={button} onClick={()=>c.edit(item.ref.id,{type:"single-choice",optionId:null})}>{t("clearAnswer")}</button>
-            </fieldset>:<>
-              <PartControls item={item} view={s.views![item.ref.id]!} values={answer?.type==="simulator-part"?answer.values:s.views![item.ref.id]!.initial} disabled={locked||c.busy||!!issue||!!c.pending} onChange={values=>c.edit(item.ref.id,{type:"simulator-part",values})}/>
+            </fieldset>:<AssessSetup question={item.ref.id} paths={item.presentation.controls} locked={locked} disabled={c.busy||!!issue||!!c.pending}>{step=><>
+              <PartControls item={{...item,presentation:{...item.presentation,controls:[...step.paths]}}} view={s.views![item.ref.id]!} values={answer?.type==="simulator-part"?answer.values:s.views![item.ref.id]!.initial} disabled={locked||c.busy||!!issue||!!c.pending} onChange={values=>c.edit(item.ref.id,{type:"simulator-part",values})}/>
               <p lang={locale} dir={dir}>{locked?t("locked"):t("oneExposure")}</p>
-              <button className={button} disabled={locked||c.busy||!!issue||!!c.pending} lang={locale} dir={dir} onClick={()=>void c.expose()}>{t("expose")}</button>
-            </>}
+              <button className={button} disabled={!step.ready||locked||c.busy||!!issue||!!c.pending} lang={locale} dir={dir} onClick={()=>void c.expose()}>{t("expose")}</button>
+            </>}</AssessSetup>}
           </article>;})()}
     </>}
   </RunnerView>;
