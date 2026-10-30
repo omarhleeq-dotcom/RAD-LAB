@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** تسجيل [قرارات المالك على RAD-062 المرحلة2](DECISIONS.md#rad062-phase2-owner-2026-10-29)؛ المهمة planned بانتظار إذن التنفيذ، وتصميم #159 دليل الأصل. RAD-060 review ودليل [متابعة الهاتف](RAD-060_PHASE1_FOLLOWUP_2026-10-29.md) محفوظان.
-- **ينتظر المالك:** إذن مرحلة تنفيذ مسماة بميزانية نهائية دون إعادة اختيارات حُسمت؛ قبول RAD-060 مع فجوة الإغلاق الحي، وRAD-059 القنوات/اختبار الاستلام والبديل والميزانية المتحققة؛ حذف CSV وإفراغ المهملات وفق P1 باقٍ.
+- **الاتجاه الحالي:** RAD-062 in_progress للمرحلة4أ المأذونة فقط: CLN-035/036 ثم F4؛ [التقرير](RAD-062_PHASE4A_REPORT_2026-10-30.md) للأدلة وحدودها. قرارات المرحلة2 في [السجل](DECISIONS.md#rad062-phase2-owner-2026-10-29) باقية.
+- **ينتظر المالك:** فحص الهاتف الممكن بعد الدمج، وقبول RAD-060 مع فجوة الإغلاق الحي؛ RAD-059 القنوات/اختبار الاستلام والبديل وحذف CSV وإفراغ المهملات وفق P1. لا إذن لبقية مراحل RAD-062 من إذن4أ.
 - **ينتظر مراجِعًا:** عقود v2 للكتابي/التفويض/الاحتفاظ والطوارئ والتزامن والمهلات، والحقوق/D3 والأمن والخصوصية بما فيها Auth بلا FK. لا مشرفين حقيقيين قبل O4.
-- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد، و[تقرير القرارات](RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md) لدليل QA وحدوده. CI وDeploy Pages المعتادان مأذونان بلا skip ci.
-- **مخاطر معلنة:** تحديث طوارئ RAD-059 لتجميد awaiting-manual في يوم القاعدة نفسه شرط حاجب قبل التفعيل؛ gate مغلقة والعامل NOLOGIN والسر DISABLED. RAD-059/RAD-082 وبوابات الحقوق/الخصوصية قبل الامتحان الحقيقي؛ Manage targets للمغلق تحت RAD-062، بلا نشر يدوي/إضافي أو معاينة مستضافة.
+- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد. CI وDeploy Pages المعتادان مأذونان بلا skip ci؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
+- **مخاطر معلنة:** launch_gate مغلقة والعامل NOLOGIN والسر DISABLED؛ فحص runner حي غير متاح بهذا الإذن. تحديث طوارئ RAD-059 لتجميد awaiting-manual شرط حاجب قبل تفعيلها؛ RAD-082 وبوابات الحقوق/الخصوصية باقية.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 331,
-  "updated_at": "2026-10-29T21:59:32.006933+00:00",
+  "revision": 332,
+  "updated_at": "2026-10-30T02:12:28.804925+00:00",
   "timezone": "UTC",
   "next_id": "RAD-086",
   "tasks": [
@@ -576,11 +576,11 @@
     {
       "id": "RAD-062",
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "قرارات المرحلة2 في DECISIONS.md#rad062-phase2-owner-2026-10-29؛ ينتظر إذن المالك لمرحلة تنفيذ مسماة، بلا تنفيذ P2/كتابي/صور الآن. تحديث طوارئ RAD-059 لتجميد awaiting-manual في يوم القاعدة نفسه شرط حاجب. متابعة RAD-064: Manage targets للمغلق تحتاج فحص عقد RPC؛ إعادة تقدير4ب عند بدئها.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29",
-      "waiting_on": "owner"
+      "description": "المرحلة4أ مأذونة: CLN-035/036 ثم F4 بواجهة Assess فقط؛ التنظيف منفذ في Draft، وتدقيق F4 جارٍ. بقية المرحلة2 تحتاج إذنًا منفصلًا، مع حاجب طوارئ RAD-059؛ Manage targets للمغلق وفحص عقد RPC وإعادة تقدير4ب باقية.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29؛ أمر المالك تنفيذ4أ فقط2026-10-30؛ docs/RAD-062_PHASE4A_REPORT_2026-10-30.md",
+      "waiting_on": "code"
     },
     {
       "id": "RAD-063",

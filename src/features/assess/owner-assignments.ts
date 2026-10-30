@@ -1,3 +1,4 @@
+import {isObject as object,isUuid as uuid} from "./data-guards";
 /** Owner-only UI binding to the already-applied M3/M4 RPCs. No authoring runtime. */
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -7,8 +8,6 @@ export type AssignmentFailure = "conflict" | "denied" | "schema" | "invalid" | "
 export class OwnerAssignmentError extends Error {
   constructor(readonly kind: AssignmentFailure) { super("Owner assignments unavailable"); }
 }
-const uuid = (v: unknown): v is string => typeof v === "string" && /^[a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12}$/i.test(v);
-const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === "object" && !Array.isArray(v);
 const revision = (v: unknown): v is number => Number.isSafeInteger(v) && Number(v) >= 1;
 const invalid = (): never => { throw new OwnerAssignmentError("invalid"); };
 export function parseOwnerAssignments(raw: unknown, after: string | null = null): OwnerAssignmentPage {

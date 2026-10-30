@@ -33,6 +33,7 @@ beforeAll(()=>{
   mkdirSync(join(root,"src/features/assess"),{recursive:true});
   mkdirSync(join(root,"src/features/positioning"),{recursive:true});
   cpSync("src/features/assess/admin-data.ts",join(root,"src/features/assess/admin-data.ts"));
+  cpSync("src/features/assess/data-guards.ts",join(root,"src/features/assess/data-guards.ts"));
   for(const file of ["server-service","server-contracts","server-validation","server-grader"])
     writeFileSync(join(root,`src/features/assess/${file}.ts`),file==="server-service"?"export const attemptService=()=>{};":"export {};");
   writeFileSync(join(root,"src/features/assess/OwnerAssessPanel.tsx"),`"use client";import type {SupabaseClient} from "@supabase/supabase-js";import {readAssessAdmin} from "./admin-data";export const Panel=readAssessAdmin;`);
