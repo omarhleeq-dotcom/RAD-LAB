@@ -24,7 +24,7 @@ async function snapshot(db) {
 }
 export async function rehearse() {
   const source = await openLocalDatabase('postgres');
-  let target;
+  let target, original;
   try {
     await source.exec(`create role assess_job_a nologin; create role assess_job_b nologin;
       alter table auth.users add column banned_until timestamptz;
@@ -41,6 +41,12 @@ export async function rehearse() {
     // Existing SQL check requires initialization evidence. Rehearsal explicitly
     // uses its documented pre-initializer phase, never fabricates a live initializer.
     const cfg = (await source.query("select current_setting('unix_socket_directories') host,current_setting('port') port,current_setting('server_version_num') version")).at(0);
+    original = new Client({ host: cfg.host, port: Number(cfg.port), user: 'postgres', database: 'postgres', password: '', ssl: false });
+    await original.connect();
+    await original.query("set rad085.sharing_phase='pre-initializer'");
+    const bCheck = 'supabase/checks/rad085-p1-b-ready.sql';
+    const diagnostic = 'scripts/assess/sql/rad062-b-diagnostic.sql';
+    await checks(original, [bCheck, diagnostic]);
     const common = ['run','--rm','-i','--network=none','--user',`${process.getuid()}:${process.getgid()}`,
       '--mount',`type=bind,src=${cfg.host},dst=${cfg.host}`,'--entrypoint'];
     const archive = docker([...common,'pg_dump',image,'-h',cfg.host,'-p',cfg.port,'-U','postgres','-d','postgres','-Fc']);
@@ -53,12 +59,21 @@ export async function rehearse() {
     const aclRepresentationDifferences = sourceACL.filter((r,n) => r.raw_acl !== restoredACL[n].raw_acl).length;
     const aclEffectiveDifferences = sourceACL.filter((r,n) => JSON.stringify(r.effective_acl) !== JSON.stringify(restoredACL[n].effective_acl)).length;
     await target.query("set rad085.sharing_phase='pre-initializer'");
-    // Diagnostic synthetic QA continues to measure the blocker. The owner-facing
-    // helper always stops; this script never selects a live/owner database.
+    // Frozen B still fails representation-only restore; its normalized diagnostic
+    // must pass before additions. Neither check is a post-M08 acceptance waiver.
+    await checks(target, [diagnostic]);
+    await target.query('begin');
+    await target.query('grant select on assess.sessions to anon');
+    await assert.rejects(checks(target, [diagnostic]));
+    await target.query('rollback');
     let baselineFailures = 0;
+    const baselineFailedFiles = [];
     for (const file of manifest().checks) {
-      try { await checks(target, [file]); } catch { baselineFailures++; }
+      try { await checks(target, [file]); } catch { baselineFailures++; baselineFailedFiles.push(file); }
     }
+    assert.deepEqual(baselineFailedFiles, [bCheck]);
+    const baselineB = await target.query(read(bCheck));
+    assert.deepEqual(baselineB.flatMap(r => r.rows ?? []).filter(r => r.ready !== true).map(r => r.kind), ['relations']);
     const baseline = await snapshot(target);
     let rollbacks = 0;
     for (const [index, file] of verifyMigrations().entries()) {
@@ -72,6 +87,27 @@ export async function rehearse() {
     assert.deepEqual((await snapshot(target))[0].data, baseline[0].data);
     const readiness = await target.query(read('supabase/checks/rad062-ready.sql'));
     const readinessFailures = readiness.rows.filter(r => r.ok !== true).length;
+    assert.equal(aclEffectiveDifferences, 0);
+    assert.equal(readinessFailures, 0);
+    // Restored effective-equal ACLs pass; real relation/function/column grants,
+    // and grantability differences, must all fail. Roll back each independently.
+    let tamperedGrantFailures = 0;
+    for (const drift of [
+      'grant select on assess.sessions to anon',
+      'grant execute on function assess.freeze_v2() to authenticated',
+      'grant select(answers) on assess.session_details to authenticated',
+      'grant execute on function assess.start_v2(uuid,uuid) to authenticated with grant option',
+    ]) {
+      await target.query('begin');
+      await target.query(drift);
+      const changed = await target.query(read('supabase/checks/rad062-ready.sql'));
+      assert.ok(changed.rows.some(r => r.ok === false)); tamperedGrantFailures++;
+      await target.query('rollback');
+    }
+    await checks(target, ['supabase/checks/rad062-ready.sql']);
+    const bDiagnostic = await target.query(read(diagnostic));
+    const diagnosticFailures = bDiagnostic.flatMap(r => r.rows ?? []).filter(r => r.ready !== true).map(r => r.kind).sort();
+    assert.deepEqual(diagnosticFailures, ['columns','constraints','effective_privileges','functions','indexes','relations','triggers']);
     const counts = (await readOnly(target, read('scripts/assess/sql/rad062-precounts.sql'))).rows[0];
     assert.ok(Object.values(counts).every(n => /^\d+$/.test(String(n))));
     // M06/M08 themselves raise on every missing anchor. Readiness additionally
@@ -87,16 +123,20 @@ export async function rehearse() {
       or (proname='d3_inventory_v1' and position('v2-revision' in prosrc)>0)
       or (proname='authoring_write_guard_v1' and position('d3_erasing_v1(old.writer_id)' in prosrc)>0)`)).rows[0].n;
     assert.equal(patches, 8);
+    const installedB = await target.query(read(bCheck));
+    assert.deepEqual(installedB.flatMap(r => r.rows ?? []).filter(r => r.ready !== true).map(r => r.kind).sort(), diagnosticFailures);
     let requiredFailures = 0;
+    const requiredFailedFiles = [];
     for (const file of manifest().checks) {
-      try { await checks(target, [file]); } catch { requiredFailures++; }
+      try { await checks(target, [file]); } catch { requiredFailures++; requiredFailedFiles.push(file); }
     }
-    return { restored_acl_representation_differences: aclRepresentationDifferences, restored_acl_effective_differences: aclEffectiveDifferences, server_version_num: Number(cfg.version), restored_archives: 1, migrations_committed: 8, rollback_witnesses: rollbacks,
+    assert.deepEqual(requiredFailedFiles, [bCheck]);
+    return { original_b_ready: 1, restored_b_diagnostic_ready: 1, tampered_b_diagnostic_failed: 1, post_package_b_diagnostic_failures: diagnosticFailures.length, tampered_grant_failures: tamperedGrantFailures, restored_acl_representation_differences: aclRepresentationDifferences, restored_acl_effective_differences: aclEffectiveDifferences, server_version_num: Number(cfg.version), restored_archives: 1, migrations_committed: 8, rollback_witnesses: rollbacks,
       v1_anchors_found: guards + patches, readiness_passed: Number(readinessFailures === 0), readiness_failures: readinessFailures, baseline_check_failures: baselineFailures, required_check_failures: requiredFailures, ...counts };
-  } finally { if (target) await target.end(); await source.close(); }
+  } finally { if (target) await target.end(); if (original) await original.end(); await source.close(); }
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   if (process.argv.length !== 2) { console.error('STOP synthetic_only'); process.exitCode = 1; }
-  else rehearse().then(r => { console.log(JSON.stringify(r)); if (r.required_check_failures || r.readiness_failures || r.baseline_check_failures) { console.error('STOP required_checks'); process.exitCode = 1; } })
+  else rehearse().then(r => { console.log(JSON.stringify(r)); if (r.readiness_failures || r.baseline_check_failures !== 1 || r.required_check_failures !== 1) { console.error('STOP required_checks'); process.exitCode = 1; } })
     .catch(() => { console.error('STOP restore_rehearsal'); process.exitCode = 1; });
 }
