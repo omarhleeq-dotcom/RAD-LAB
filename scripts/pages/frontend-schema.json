@@ -93,6 +93,13 @@
         "src/features/assess/server-manual-contracts.ts",
         "src/features/assess/server-manual-service.ts"
       ]
+    },
+    "20261030000800_rad062_erasure_operations.sql": {
+      "sha256": "8c23ace63b2a252d4b43b87c01aaa69a62ae3b69064dc01138f161b5e3c087aa",
+      "reason": "RAD-062 P8 M08, requires explicit M01-M07. Erasure, D4, maintenance, selective owner recovery, health and final package grants stay inactive until reviewed DB day and P10. Readiness added separately, not required yet. No UI or live SQL.",
+      "serverModules": [
+        "src/features/assess/server-runtime-v2.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -176,7 +183,8 @@
         "20261030000400_rad062_random_pool.sql",
         "20261030000500_rad062_manual_foundation_freeze.sql",
         "20261030000600_rad062_lifecycle_v2.sql",
-        "20261030000700_rad062_manual_grading.sql"
+        "20261030000700_rad062_manual_grading.sql",
+        "20261030000800_rad062_erasure_operations.sql"
       ],
       "guard": {
         "path": "src/features/assess/rad062-availability.ts",
