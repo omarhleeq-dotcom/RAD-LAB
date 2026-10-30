@@ -53,6 +53,13 @@
         "src/features/assess/server-authoring-bridge-v2-postgres.ts",
         "src/features/assess/server-validation-v2.ts"
       ]
+    },
+    "20261030000300_rad062_authoring_limits.sql": {
+      "sha256": "588236e39d21edf99e68b9f434c64e81d747b8bd60f9239b52213375ecf47bff",
+      "reason": "RAD-062 P3 M03, requires M01/M02. Private quotas and explicit protected cleanup; dormant until complete reviewed DB day and M08/P10. No automatic cleanup or runtime grants.",
+      "serverModules": [
+        "src/features/assess/server-authoring-bridge-v2.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -131,7 +138,8 @@
     "rad062": {
       "migrations": [
         "20261030000100_rad062_full_name.sql",
-        "20261030000200_rad062_provenance_v2.sql"
+        "20261030000200_rad062_provenance_v2.sql",
+        "20261030000300_rad062_authoring_limits.sql"
       ],
       "guard": {
         "path": "src/features/assess/rad062-availability.ts",
