@@ -2,7 +2,12 @@
 
 Authority: [approved plan and owner amendment](RAD-062_3-5A_PLAN_2026-10-30.md#تعديل-المالك-الحاكم-اللابتوب-وcli-واستثناء-الهاتف-للطوارئ), [DECISIONS](DECISIONS.md#rad062-plan-3-5a-owner-2026-10-30), and the owner's P9 instruction. This is a reviewed procedure for later owner execution. This PR executes no live SQL. Merge is dormant. P10 promotion, marker, guards and UI are outside P9.
 
-**Current disposition: STOP before live apply.** The synthetic logical restore exposes a frozen required-check incompatibility; see [P9 evidence](RAD-062_P09_REPORT_2026-10-30.md). No waiver, changed hash, initializer rerun or partial promotion is allowed. The commands below make the complete procedure reviewable, including its failure path. A later reviewed resolution and a fresh successful owner restore are prerequisites to step 5. A synthetic test passing is not production restore evidence.
+**Current disposition: conditional STOP.** [P9b proofs and consumer analysis](RAD-062_P09B_REPORT_2026-10-30.md) resolve the two source-level blockers only when the fresh rehearsal passes: effective-equal restored ACLs pass whole-package readiness, real grants fail, normalized B passes the restored pre-M01 copy and rejects M01–M08, and frozen B still passes the unrestored current schema. No required check, migration, classification or marker changes here. Every other STOP below remains. A synthetic pass never substitutes for the owner's restore/version/operational evidence.
+
+**Chosen path (b): DB day and P10 back to back.** Reserve a maximum **60-minute window from first live M01 COMMIT through successful P10 verification/attestation and normal deployment**. Prepare/review P10 and its exact new complete-catalogue checks before starting; book the owner/reviewer and phone rehearsal in that same window. Do not start if the work cannot fit. There is no accepted overnight/intermediate state. If any unexpected failure occurs or the window expires: stop, keep gate closed/NOLOGIN/secret DISABLED, prohibit promotion and new Assess starts, diagnose on a fresh restore and review a forward fix/rescheduled window. Do not roll back blindly or claim the old marker attests the added schema.
+
+B false is an owner verification failure, not a runtime kill switch: the deployed static site does not execute B, and the offline build gate hashes its unchanged bytes without querying DB. No automatic banner, route shutdown or downtime follows from B itself; existing Practice/account/P1 routes remain served. M01 independently enforces names server-side before the new name UI is promoted: invalid/missing names can reject sign-up, account-name writes and Assess entry/start. Closed gate already prevents new Assess attempts; no open assignments/unsettled sessions are allowed. Tell the owner this possible name-validation rejection is the user-visible risk during the window. Do not promise zero behavioural impact or open the gate to test it. P10 deployment/phone failures keep the hold in place.
+
 
 Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sync, PostgreSQL client tools matching production, Supabase CLI login if needed, Node/npm, Docker and `gcloud` with its own login. Run from repository root on the reviewed commit. Never use shell tracing, command-line passwords, connection strings, terminal recording, `tee`, cloud artifacts, or participant exports. No provider dump is taken in CI or this workspace. Full logical backup is the sole exception for sensitive data files: it stays only on the owner's encrypted laptop, never in Git/chat/PR/cloud. Evidence shared outside the laptop contains counts, versions, checksums and yes/no only.
 
@@ -14,12 +19,12 @@ Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sy
 set -euo pipefail
 set +x
 unset PGSERVICE PGSERVICEFILE PGHOSTADDR PGOPTIONS PGPASSFILE
-npm run docs:context -- --pr 172
+npm run docs:context -- --pr 173
 npm run status:summary -- --id RAD-086
 node scripts/assess/rad062-db-day.mjs verify
 ```
 
-**Expected:** #172 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR.
+**Expected:** #173 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR.
 
 **STOP:** unreviewed changes, unverified prerequisite, missing emergency v1 packet, laptop absent, backup/recovery/old-credential rejection unproved. Read [v1 phone packet](RAD-059_PHONE_PACKET.md) and [containment runbook](RAD-059_PHONE_RUNBOOK.md); keep them available independently of this laptop. Do not execute containment SQL just to satisfy this preflight.
 
@@ -58,6 +63,14 @@ live preflight --execute
 **Expected:** gate_rows=1, open_gates=0, worker_roles=2, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Both assess_job_a/b must exist and be NOLOGIN; assess_worker also must not LOGIN. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
 
 **STOP:** any nonzero prohibited count, missing role, open assignment, unknown/ENABLED secret, failed CLI/permissions/query, or active/grading/awaiting-manual session. Do not start workers, create roles or close assignments to bypass this stop.
+
+Before taking the backup, inspect frozen B on the **unrestored current live schema**, using the already verified direct PG selectors (read only):
+
+```bash
+psql -X -v ON_ERROR_STOP=1 -f supabase/checks/rad085-p1-b-ready.sql
+```
+
+**Expected:** every one of the 13 rows ready=true, initialized phase. **STOP:** any false/null/SQL error; do not use the restored-copy diagnostic to excuse drift on the original schema. This owner command is not executed by the agent.
 
 ## 2. RAD-086 full logical backup — live reads, local files only
 
@@ -122,6 +135,9 @@ localdb preflight --execute
 **Command (eight separate calls, fail-fast):**
 
 ```bash
+# Before any additions, on the restored copy only:
+PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal \
+  psql -X -v ON_ERROR_STOP=1 -f scripts/assess/sql/rad062-b-diagnostic.sql
 localdb apply --migration M01 --execute
 localdb apply --migration M02 --execute
 localdb apply --migration M03 --execute
@@ -130,10 +146,10 @@ localdb apply --migration M05 --execute
 localdb apply --migration M06 --execute
 localdb apply --migration M07 --execute
 localdb apply --migration M08 --execute
-localdb checks --execute
+# Frozen B is deliberately inspected separately during the bounded window below.
 ```
 
-**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT; migration history insertion shares that transaction. `checks` runs **every manifest required check, unchanged**, then `rad062-ready.sql`. It fails on a false/null assertion or SQL error, without printing source rows. Intentional false `restore_verified`/`runtime_or_launch_verified` claims remain false and never attest operations.
+**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT; migration history insertion shares that transaction. `checks` still runs **every manifest required check, unchanged**, then `rad062-ready.sql`, and still fails on false/null/error. It is expected to fail at frozen B after M01–M08; do not call that full acceptance. Use the transition inspection below to measure the exact expected failure and verify the remaining checks independently. Intentional false `restore_verified`/`runtime_or_launch_verified` claims remain false and never attest operations.
 
 M06/M08 fail their own entire transaction if any reviewed v1 body anchor is absent. The final readiness check fingerprints bodies, attributes, ACLs, relations and FK inventory; successful COMMIT alone is insufficient. The synthetic command below explicitly witnesses all ten M06 guards and eight M08 patches, forces failure before each COMMIT and compares catalogue/data/ledger rollback in memory:
 
@@ -141,9 +157,26 @@ M06/M08 fail their own entire transaction if any reviewed v1 body anchor is abse
 node scripts/assess/rad062-restore-rehearsal.mjs
 ```
 
-**Expected:** eight applied, eight rollback witnesses, eighteen anchors; current restored-relation fingerprint and required-check incompatibilities produces `STOP`, exit 1. This command creates synthetic databases only, never consumes a provider backup or credential. **It is diagnostic QA, not permission to continue after the owner restore/checks fail.**
+**Expected:** exit 0; eight applied, eight rollback witnesses, eighteen anchors, zero effective ACL differences, readiness_passed=1/readiness_failures=0, four tampered-grant failures; original_b_ready=1, restored_b_diagnostic_ready=1, tampered_b_diagnostic_failed=1, post_package_b_diagnostic_failures=7, baseline_check_failures=1 and required_check_failures=1 (frozen B only). This command creates synthetic databases only, never consumes a provider backup or credential. **It is diagnostic QA, not permission to continue after the owner restore/checks fail.**
 
-**STOP:** any failure above, unavailable 17.11 compatibility proof, readiness false, required check false or unexplained catalogue/data difference. Current known blocker is the frozen B catalogue check. Stop the day and resolve through review before any live migration; do not change a required check or classification in P9. Preserve v1 OIDs/signatures/owners/ACL/config and restored data, allowing only the reviewed M01/M06/M08 body changes. Existing legacy/P1/RAD-060 and P1–P8 semantic/race tests remain required; run `npm run check` and all CI commands recorded in the report before authorizing the day.
+**STOP:** any unexpected failure above, unavailable 17.11 compatibility proof, readiness false, other required check false or unexplained catalogue/data difference. Frozen B's exact documented catalogue failure is allowed only as a measured transition into immediate P10 under path (b), never as final acceptance. Do not change a required check or classification in P9b. Preserve v1 OIDs/signatures/owners/ACL/config and restored data, allowing only the reviewed M01/M06/M08 body changes. Existing legacy/P1/RAD-060 and P1–P8 semantic/race tests remain required; run `npm run check` and all CI commands recorded in the report before authorizing the day.
+
+### Transition inspection — local restore first, then identical live post-apply reads
+
+Before M01, run the non-required diagnostic above: all 13 rows must be ready=true (default initialized phase). Synthetic QA explicitly selects pre-initializer; never select that phase on production to conceal missing initialization. Frozen B may fail **relations only** on the restored pre-M01 copy due to ACL order; the original unrestored schema must still pass all rows. Any other failure stops.
+
+After M08, inspect the unchanged B and the diagnostic separately on the local copy:
+
+```bash
+for RAD062_CHECK in supabase/checks/rad085-p1-b-ready.sql scripts/assess/sql/rad062-b-diagnostic.sql; do
+  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal \
+    psql -X -v ON_ERROR_STOP=1 -f "$RAD062_CHECK"
+done
+```
+
+Both must report false **exactly** for columns, constraints, effective_privileges, functions, indexes, relations, triggers; all other rows true. The diagnostic is a B-only baseline, **not** an M08 successor; false after additions is required. Its ACL normalization must not normalize bodies, ignore additions or edit catalogues. SQL exit zero alone does not prove boolean readiness.
+
+For **each other** path in `frontend-schema.json.checks`, and `supabase/checks/rad062-ready.sql`, run the same local `psql -X -v ON_ERROR_STOP=1 -f PATH` command separately; inspect every assertion as true, excluding only the explicitly disclaimed operational claims. No filtering rows, suppressing errors or claiming an overall `checks` pass. The source rehearsal verifies every required file and asserts only B fails. Record counts/yes-no only. Repeat these independent reads on live after M08 using the already verified direct PG selectors (omit the local PG overrides), with the same exact failure set. Any other result means STOP. P10 must replace/promote reviewed checks for the **whole installed catalogue**, run them all successfully, then compute/attest the new marker; do not reuse B or this diagnostic as acceptance.
 
 ## 4. Counts only on restored copy
 
@@ -159,14 +192,14 @@ localdb counts --execute
 
 ## 5. Live apply — only after every prior gate succeeds
 
-Current known blockers prohibit reaching this step. Later owner execution needs separately reviewed successful restore evidence; no SQL is authorized to the agent by this document.
+Reaching this step requires the proofs above, reviewed successful owner restore evidence and the booked back-to-back P10 window; no SQL is authorized to the agent by this document.
 
 **Command:**
 
 ```bash
 node scripts/assess/rad062-db-day.mjs verify
 live preflight --execute
-# Only after the independently reviewed complete restore and every check pass:
+# Only after reviewed complete restore, exact transition inspection, all other gates and booked P10 window:
 export RAD062_RESTORE_VERIFIED=yes
 live apply --migration M01
 live apply --migration M01 --execute
@@ -202,16 +235,17 @@ There is **no generic destructive rollback command**: stop and prepare/review an
 **Command:**
 
 ```bash
-live checks --execute
+# Perform the transition inspection above against live PG selectors first.
+# live checks --execute still fails frozen B; it cannot attest final acceptance.
 live preflight --execute
 live counts --execute
 gcloud secrets versions list assess-worker-config --project "$RAD062_CLOUD_PROJECT" --format=json |
   jq '{disabled:([.[]|select(.state=="DISABLED")]|length),other:([.[]|select(.state!="DISABLED" and .state!="DESTROYED")]|length)}'
 ```
 
-**Expected:** all required checks plus RAD-062 readiness pass; gate still closed, both logins NOLOGIN, no worker connections/open assignments/unsettled sessions; secret disabled and zero executions. Record actual live database bytes, reserved peak and threshold flags, with counts only. No marker change.
+**Expected:** transition inspection matches exactly; every other required check and RAD-062 readiness passes; gate still closed, both logins NOLOGIN, no worker connections/open assignments/unsettled sessions; secret disabled and zero executions. Record actual live database bytes, reserved peak and threshold flags, with counts only. No marker change.
 
-**STOP:** any false/unknown result, changed secret/runtime state, capacity issue or required-check incompatibility. Do not promote or begin a real exam.
+**STOP:** any false/unknown result outside the exact B transition set, changed secret/runtime state, capacity issue or expired/unavailable P10 window. Do not promote or begin a real exam.
 
 ## 7. Owner switches to phone — v2 stop dry run and verify
 
@@ -219,7 +253,7 @@ gcloud secrets versions list assess-worker-config --project "$RAD062_CLOUD_PROJE
 
 **Expected:** STOPPED twice; independent STOPPED verification, zero worker backends/unheld sessions, unchanged counts and original timers/answers/results, gate closed. Missing rotation role is visible in packet counts, not hidden as proof of provisioning. Cloud/cache/runtime verification fields remain false until separately proved.
 
-**Owner instruction precedence:** packet prose says after P10; the current P9 instruction explicitly requires this controlled post-install, pre-promotion dry run. This narrow exception applies only after all eight migrations and every readiness gate pass, with product/worker/secret dormant. Both packet files remain byte-identical. It does not authorize v2 on the current schema or early promotion.
+**Owner instruction precedence:** packet prose says after P10; the current P9 instruction explicitly requires this controlled post-install, pre-promotion dry run. This narrow exception applies only after all eight migrations, package readiness and every other gate pass, with only the exact frozen B transition failure measured, with product/worker/secret dormant. Both packet files remain byte-identical. It does not authorize v2 on the current schema or early promotion.
 
 **STOP:** PARTIAL/FAILED/unknown ACK, phone inability, missing awaiting-manual coverage, changed data/timer/counts or any verification/cloud failure. Keep closed and resolve; no written-exam promotion until successful phone evidence.
 
@@ -233,6 +267,6 @@ npm run status:summary -- --id RAD-062
 npm run status:summary -- --id RAD-086
 ```
 
-**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/history, all checks and capacity, and the phone dry run. P10 alone reviews required/check classification and guards, computes the real new marker, and the owner sets it after DB-day evidence. P9 leaves the current marker and deployed product unchanged.
+**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/history, exact transition inspection, package readiness, capacity, and the phone dry run, within the reserved window. No final acceptance until P10 whole-catalogue checks pass. P10 alone reviews required/check classification and guards, computes the real new marker, and the owner sets it after DB-day evidence. P9 leaves the current marker and deployed product unchanged.
 
 **STOP:** any missing evidence or unresolved check/version/rollback issue. Do not mark RAD-062/RAD-086 done from a merge, set a marker, flip availability, open gate, enable logins/secret or claim first-exam readiness. Channels/ACK receipt/alternate responder, privacy/rights/O4 and 4b/5b remain independent.

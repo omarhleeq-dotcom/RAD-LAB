@@ -35,17 +35,22 @@ test('boolean readiness failures stop; explicitly disclaimed operational claims 
 test('both emergency packets and all dormant product/schema boundaries remain byte identical to main', () => {
   for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md','scripts/pages/frontend-schema.json',
     'supabase/manual/assess-emergency-stop.sql','supabase/manual/assess-emergency-stop-v2.sql',
-    'supabase/checks/assess-emergency-stopped.sql','supabase/checks/assess-emergency-stopped-v2.sql']) {
+    'supabase/checks/assess-emergency-stopped.sql','supabase/checks/assess-emergency-stopped-v2.sql',
+    ...JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).checks,
+    ...JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
     assert.deepEqual(readFileSync(path),execFileSync('git',['show',`origin/main:${path}`]));
   }
 });
 test('actual local logical restore applies eight transactions, rolls failures back, finds anchors and emits only counts', {timeout:120000}, async () => {
   const r = await rehearse();
   assert.equal(r.migrations_committed,8); assert.equal(r.rollback_witnesses,8);
-  assert.equal(r.v1_anchors_found,18); assert.ok(r.readiness_failures > 0); assert.ok(r.baseline_check_failures > 0);
+  assert.equal(r.v1_anchors_found,18); assert.equal(r.readiness_failures,0); assert.equal(r.baseline_check_failures,1);
+  assert.equal(r.restored_acl_effective_differences,0); assert.equal(r.tampered_grant_failures,4);
+  assert.equal(r.original_b_ready,1); assert.equal(r.restored_b_diagnostic_ready,1);
+  assert.equal(r.tampered_b_diagnostic_failed,1); assert.equal(r.post_package_b_diagnostic_failures,7);
   assert.ok(Object.values(r).every(n=>typeof n==='number'||/^\d+$/.test(n)));
   assert.doesNotMatch(JSON.stringify(r),/SYNTHETIC_PRIVATE_CANARY|@|[0-9a-f]{8}-[0-9a-f]{4}-/);
   // Frozen B catalogue checker intentionally cannot attest an additive package.
-  // This is a DB-day blocker, never a waiver or a changed existing expectation.
-  assert.ok(r.required_check_failures > 0);
+  // Path (b) requires back-to-back P10; no required-check waiver.
+  assert.equal(r.required_check_failures,1);
 });
