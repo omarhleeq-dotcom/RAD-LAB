@@ -6,10 +6,10 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. قاعدة SID40in في RAD-087 منفذة للمراجعة وفق [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 in_progress/code؛ P2 مدموجة في #167؛ P3 مدفوعة بعد QA ثم P4 خاملة للمراجعة في مسودة واحدة باستثناء المالك لهذه الليلة وفق [التقرير](RAD-062_P03_P04_REPORT_2026-10-30.md) و[الخطة](RAD-062_3-5A_PLAN_2026-10-30.md)؛ التالي P5–P9 خاملة، ويوم CLI واحد بعد RAD-086 والنسخة المحلية الكاملة المتحقق منها، ثم ترقية. [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) محفوظ. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
+- **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. قاعدة SID40in في RAD-087 منفذة للمراجعة وفق [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 in_progress/code؛ P3+P4 مدموجتان في #168 بتحقق GitHub؛ P5 أساس التصحيح والتجميد v2 وحزمة الهاتف خاملة في مسودة مستقلة وفق [تقريرها](RAD-062_P05_REPORT_2026-10-30.md) و[الخطة](RAD-062_3-5A_PLAN_2026-10-30.md)؛ التالي P6–P9 خاملة، ويوم CLI واحد بعد RAD-086 والنسخة المحلية الكاملة المتحقق منها، ثم ترقية. [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) محفوظ. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
 - **ينتظر المالك:** RAD-087 مراجعة وفحص الحوض والكتف عند SID100؛ فحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 blocked حتى عودة اللابتوب.
 - **ينتظر مراجِعًا:** RAD-032 مراجع أشعة خارجي وRAD-056 عبر RAD-063؛ عقود العشوائية والكتابي/التفويض والاحتفاظ والطوارئ والتنافس، وحزمة3+5أ والحقوق/D3 والأمن والخصوصية. لا مشرفين حقيقيين قبل O4.
-- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[التقرير المشترك](RAD-062_P03_P04_REPORT_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
+- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[تقرير P5](RAD-062_P05_REPORT_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
 - **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual والتحقق وdry-run تبقى هاتفية وحاجبة؛ يوم القاعدة محجوب على RAD-086 واللابتوب. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 342,
-  "updated_at": "2026-10-30T08:30:44.748243+00:00",
+  "revision": 343,
+  "updated_at": "2026-10-30T09:09:27.533689+00:00",
   "timezone": "UTC",
   "next_id": "RAD-088",
   "tasks": [
@@ -578,8 +578,8 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "in_progress",
       "priority": "high",
-      "description": "دُمجت P2 في #167. P3 الحصص والتنظيف مدفوعة بعد QA، ثم P4 الحوض والاختيار المثبت خاملة للمراجعة في مسودة واحدة باستثناء هذه الليلة. التالي P5–P9؛ M06 تربط primitive البدء الذري. required/checks والـmarker ثابتة، بلا SQL حي أو منح تشغيل. يوم CLI بعد RAD-086 واللابتوب والنسخة المتحقق منها ثم P10؛ بقايا4ب/5ب والمغلق مستقلة.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29؛ أمر المالك تنفيذ4أ فقط2026-10-30؛ docs/RAD-062_PHASE4A_REPORT_2026-10-30.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ أمر المالك خطة3+5أ المعتمدة وتعديل الجزء2 وتنفيذ P0 فقط2026-10-30؛ docs/DECISIONS.md#rad062-plan-3-5a-owner-2026-10-30؛ docs/RAD-062_3-5A_PLAN_2026-10-30.md؛ docs/RAD-062_P1_NAME_REPORT_2026-10-30.md؛ أمر المالك استثناء20ملفًا لمرة واحدة لإصلاح CI في #166؛ أمر المالك تنفيذ P2 فقط2026-10-30؛ docs/RAD-062_P02_PROVENANCE_REPORT_2026-10-30.md؛ أمر المالك دمج P3+P4 في مسودة واحدة لهذه الليلة2026-10-30؛ docs/RAD-062_P03_P04_REPORT_2026-10-30.md",
+      "description": "دُمجت P3+P4 في #168 بتحقق GitHub. P5 أساس التصحيح/hold وfreeze v2 وحزمة الهاتف خاملة في مسودة مستقلة؛ التالي P6–P9 ثم يوم CLI بعد RAD-086 واللابتوب والنسخة المتحقق منها ثم P10. v1 الحالية ثابتة، required/checks والـmarker ثابتة، لا UI أو SQL حي أو منح تشغيل. بقايا4ب/5ب والمغلق مستقلة.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29؛ أمر المالك تنفيذ4أ فقط2026-10-30؛ docs/RAD-062_PHASE4A_REPORT_2026-10-30.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ أمر المالك خطة3+5أ المعتمدة وتعديل الجزء2 وتنفيذ P0 فقط2026-10-30؛ docs/DECISIONS.md#rad062-plan-3-5a-owner-2026-10-30؛ docs/RAD-062_3-5A_PLAN_2026-10-30.md؛ docs/RAD-062_P1_NAME_REPORT_2026-10-30.md؛ أمر المالك استثناء20ملفًا لمرة واحدة لإصلاح CI في #166؛ أمر المالك تنفيذ P2 فقط2026-10-30؛ docs/RAD-062_P02_PROVENANCE_REPORT_2026-10-30.md؛ أمر المالك دمج P3+P4 في مسودة واحدة لهذه الليلة2026-10-30؛ docs/RAD-062_P03_P04_REPORT_2026-10-30.md؛ أمر المالك تنفيذ P5 فقط2026-10-30؛ docs/RAD-062_P05_REPORT_2026-10-30.md",
       "waiting_on": "code"
     },
     {
