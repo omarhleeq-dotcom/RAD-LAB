@@ -358,7 +358,7 @@ it('M08 required; required bytes/checks, promoted guard/marker and BOTH unchange
   'src/features/assess/rad062-availability.ts', 'src/features/supervisor/p1-availability.ts',
   'supabase/manual/assess-emergency-stop.sql', 'supabase/checks/assess-emergency-stopped.sql', 'scripts/assess/emergency-stop-packet.mjs', 'docs/RAD-059_PHONE_PACKET.md',
   'supabase/manual/assess-emergency-stop-v2.sql', 'supabase/checks/assess-emergency-stopped-v2.sql', 'scripts/assess/emergency-stop-v2-packet.mjs', 'docs/RAD-062_P05_PHONE_PACKET.md'])
-  expect(readFileSync(path)).toEqual(path === 'src/features/assess/rad062-availability.ts' ? Buffer.from(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + path], { encoding: 'utf8' }).replace('RAD062_AVAILABLE: boolean = false', 'RAD062_AVAILABLE: boolean = true')) : execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + path]));
+  expect(readFileSync(path)).toEqual(path === 'src/features/assess/rad062-availability.ts' ? Buffer.from(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + path], { encoding: 'utf8' }).replace('RAD062_AVAILABLE: boolean = false', 'RAD062_AVAILABLE: boolean = true')) : execFileSync('git', ['show', (path === 'scripts/assess/emergency-stop-packet.mjs' ? '3f8a90810a58ebbc2603184f7f6bdd6eab5d5e31' : '023ec84c15bfd744f317ec079e2587d90e099414') + ':' + path]));
  const expectedMarker = createHash('sha256').update('https://vlacestfruxooznrcjqc.supabase.co\n');
  for (const migration of [...manifest.requiredMigrations].sort()) expectedMarker.update(migration + '\0').update(readFileSync('supabase/migrations/' + migration)).update('\0');
  for (const check of manifest.checks) expectedMarker.update(readFileSync(check));

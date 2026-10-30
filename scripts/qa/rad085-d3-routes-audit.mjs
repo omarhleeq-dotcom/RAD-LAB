@@ -1,21 +1,28 @@
 // Actual exported app routes, isolated PostgreSQL, intercepted synthetic Auth/PostgREST.
 // No hosted URL, provider connection, subscription, polling, real credentials or data.
-// Run after NEXT_PUBLIC_SUPABASE_URL=https://synthetic.supabase.co and a synthetic
-// publishable key npm run build:pages. The required manifest is built in a disposable
-// non-git test copy; the repository's manifest and marker remain deferred.
+// Historical pre-B D3 route witness; build the pinned app only in a disposable copy.
+// Current P10 app/schema/marker are exercised separately by RAD-062 QA.
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { spawn, execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { build } from 'esbuild';
 import { chromium } from 'playwright';
-const root = process.cwd(), dir = mkdtempSync('/tmp/rad085-p1-routes-');
-// RAD085-DB-DAY-PROMOTION-20261027: once the repository manifest is promoted (nothing deferred) the audit exercises the real export.
+const repository = process.cwd(), dir = mkdtempSync('/tmp/rad085-p1-routes-');
+const root = join(dir, 'historical-d3'); mkdirSync(root);
+const archive = execFileSync('git', ['archive', '493e26874ae9ed5bf0ad4ce90862f8a06bbde065',
+ 'src', 'supabase', 'scripts', 'messages', 'public', 'package.json', 'package-lock.json',
+ 'tsconfig.json', 'next.config.ts', 'postcss.config.mjs'], { cwd: repository, maxBuffer: 64 * 1024 * 1024 });
+execFileSync('tar', ['-x', '-C', root], { input: archive });
+symlinkSync(join(repository, 'node_modules'), join(root, 'node_modules'));
+process.chdir(root);
+// Classify the immutable D3 tree, never the current P10 deferred registry.
 const promoted = Object.keys(JSON.parse(readFileSync('scripts/pages/frontend-schema.json', 'utf8')).deferredMigrations).length === 0;
 const consentVersion = /CONSENT_VERSION = "([^"]+)"/.exec(readFileSync('src/features/pilot/consent.ts', 'utf8'))[1];
 const syntheticOrigin = 'https://synthetic.supabase.co';
 const publicEnv = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: syntheticOrigin, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_synthetic_local_test_123456' };
+execFileSync('npm', ['run', 'build:pages'], { cwd: root, env: publicEnv, stdio: 'pipe' });
 const msgs = Object.fromEntries(['en', 'ar'].map(l => [l, JSON.parse(readFileSync(`messages/${l}.json`))]));
 const axe = readFileSync('node_modules/axe-core/axe.min.js', 'utf8');
 const helper = await build({ stdin: { resolveDir: root, contents: "export {openRad085Database,fixtureId} from './src/features/assess/rad085-local-db';" }, bundle: true, write: false, format: 'esm', platform: 'node', packages: 'external' });
@@ -164,4 +171,4 @@ try {
  const screenshotBytes = captures.reduce((sum, path) => sum + statSync(path).size, 0); assert.ok(screenshotBytes <= 5 * 1024 * 1024);
  const summary = { deferredChecks: 8, deferredCalls: 0, matrix: rows, audits, p1Calls, errors, outbound, screenshotBytes, captures };
  writeFileSync('/tmp/rad085-d3-routes-summary.json', JSON.stringify(summary, null, 2)); console.log(JSON.stringify(summary));
-} finally { await browser.close(); await deferredServer?.close(); await requiredServer?.close(); await db?.close(); rmSync(dir, { recursive: true, force: true }); }
+} finally { await browser.close(); await deferredServer?.close(); await requiredServer?.close(); await db?.close(); process.chdir(repository); rmSync(dir, { recursive: true, force: true }); }
