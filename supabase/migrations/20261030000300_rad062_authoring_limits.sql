@@ -75,7 +75,7 @@ declare d assess.authoring_drafts; did uuid; rev integer; before_bytes bigint; a
   if octet_length(new.document::text)+octet_length(new.refs::text)>65536 then raise exception 'revision exceeds 64 KiB including refs' using errcode='54000'; end if;
   if tg_op='INSERT' and (select count(*) from assess.authoring_revisions where draft_id=did)>10 then raise exception 'ten retained revisions; no early deletion' using errcode='54000'; end if;
  else
-  rev:=case when tg_table_name='authoring_reviewed_packages' then (to_jsonb(new)->>'draft_revision')::integer else new.revision end;
+  rev:=coalesce((to_jsonb(new)->>'draft_revision')::integer,(to_jsonb(new)->>'revision')::integer);
   select coalesce(sum(n),0) into bundle from (
    select octet_length(to_jsonb(p)::text) n from assess.authoring_provenance_v2 p where draft_id=did and revision=rev
    union all select octet_length(to_jsonb(p)::text) from assess.content_candidates_v2 p where draft_id=did and revision=rev
