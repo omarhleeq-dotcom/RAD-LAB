@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { spawn, execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { build } from 'esbuild';
 import { chromium } from 'playwright';
@@ -13,9 +13,10 @@ const repository = process.cwd(), dir = mkdtempSync('/tmp/rad085-p1-routes-');
 const root = join(dir, 'historical-d3'); mkdirSync(root);
 const archive = execFileSync('git', ['archive', '493e26874ae9ed5bf0ad4ce90862f8a06bbde065',
  'src', 'supabase', 'scripts', 'messages', 'public', 'package.json', 'package-lock.json',
- 'tsconfig.json', 'next.config.ts', 'postcss.config.mjs'], { cwd: repository, maxBuffer: 64 * 1024 * 1024 });
+ 'tsconfig.json', 'next.config.ts', 'postcss.config.mjs', 'docs/RAD-085_DB_DAY_P1.md'], { cwd: repository, maxBuffer: 64 * 1024 * 1024 });
 execFileSync('tar', ['-x', '-C', root], { input: archive });
-symlinkSync(join(repository, 'node_modules'), join(root, 'node_modules'));
+// Turbopack requires dependencies inside the fixture filesystem root.
+execFileSync('cp', ['-a', '--reflink=auto', realpathSync(join(repository, 'node_modules')), join(root, 'node_modules')]);
 process.chdir(root);
 // Classify the immutable D3 tree, never the current P10 deferred registry.
 const promoted = Object.keys(JSON.parse(readFileSync('scripts/pages/frontend-schema.json', 'utf8')).deferredMigrations).length === 0;

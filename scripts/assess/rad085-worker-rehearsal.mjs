@@ -21,7 +21,7 @@ const dir = mkdtempSync(join(tmpdir(), 'rad085-worker-qa-'));
 const owned = new Set(), clients = new Set(), builds = [];
 const checks = [], measurements = [];
 let admin, f, dbConfig, config, manifestSha256, evidence, recoveryHead, phase = 'docker', outcome = 'STOP', cleanup = true;
-let networkCreated = false, imageBuilt = false, pgPaused = false, volumeCreated = false, lastInputs;
+let networkCreated = false, imageBuilt = false, pgPaused = false, volumeCreated = false, lastInputs, migrationOrdinal = 0;
 const now = () => performance.now();
 const sha = b => createHash('sha256').update(b).digest('hex');
 const id = n => `00000000-0000-0000-0000-${String(n).padStart(12, '0')}`;
@@ -210,6 +210,7 @@ try {
   const applied = readdirSync('supabase/migrations').filter(p => p.endsWith('.sql')&&required.includes(p)).sort();
   assert.deepEqual(Object.keys(manifest.migrations),applied);
   for (const file of applied) {
+    migrationOrdinal++;
     const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]); await admin.query(sql.toString());
   }
   // Fixture-only role DDL, never an operational migration or provider grant.
@@ -503,8 +504,18 @@ try {
   checks.push('monitor-sink-failure-no-leak-no-rewrite', 'effective-acl-drift-refused', 'launch-gate-never-changed');
   phase = 'complete'; outcome = 'PASS';
 } catch (error) {
-  // Phase and fixed assertion type only. Never print SQL/error bodies/config/claims.
+  // Fixed phase/ordinal/SQLSTATE and container-state categories only; never
+  // SQL/error bodies, config, credentials or claims. Diagnostic reads do not relax QA.
   checks.push(error?.code === 'ERR_ASSERTION' ? 'assertion-failed' : 'execution-failed');
+  if (phase === 'postgres-migrations') {
+    checks.push('migration-ordinal-' + migrationOrdinal);
+    if (/^[0-9A-Z]{5}$/.test(error?.code ?? '')) checks.push('sqlstate-' + error.code);
+    try {
+      const state = JSON.parse(docker(['inspect', '--format', '{{json .State}}', pgName]));
+      if (state.OOMKilled === true) checks.push('postgres-oom-killed');
+      if (state.Status === 'exited') checks.push('postgres-exited');
+    } catch { checks.push('postgres-state-unavailable'); }
+  }
   if (phase === 'postgres-container') {
     // Docker invocation contains only paths/public config, never passwords.
     // Emit fixed diagnostic categories, not the Docker error body.
