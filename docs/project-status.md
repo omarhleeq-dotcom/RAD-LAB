@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. قاعدة SID40in في RAD-087 منفذة للمراجعة وفق [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 planned/waiting_on owner بأمر2026-10-30؛ [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) تخطيط فقط. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
-- **ينتظر المالك:** RAD-087 مراجعة وفحص الحوض والكتف عند SID100؛ إذن مرحلة مسماة وفحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 blocked حتى عودة اللابتوب.
+- **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. قاعدة SID40in في RAD-087 منفذة للمراجعة وفق [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 in_progress/code لتخطيط P0 فقط وفق [خطة3+5أ](RAD-062_3-5A_PLAN_2026-10-30.md)؛ التالي P1 وPRs خاملة، ويوم CLI واحد بعد RAD-086 والنسخة المحلية الكاملة المتحقق منها، ثم ترقية. [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) محفوظ. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
+- **ينتظر المالك:** RAD-087 مراجعة وفحص الحوض والكتف عند SID100؛ فحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 blocked حتى عودة اللابتوب.
 - **ينتظر مراجِعًا:** RAD-032 مراجع أشعة خارجي وRAD-056 عبر RAD-063؛ عقود العشوائية والكتابي/التفويض والاحتفاظ والطوارئ والتنافس، وحزمة3+5أ والحقوق/D3 والأمن والخصوصية. لا مشرفين حقيقيين قبل O4.
-- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[تقرير القرارات](RANDOM_QUESTION_DECISIONS_REPORT_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
-- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual حاجب. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
+- **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[خطة وتقرير P0](RAD-062_3-5A_PLAN_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual والتحقق وdry-run تبقى هاتفية وحاجبة؛ يوم القاعدة محجوب على RAD-086 واللابتوب. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 336,
-  "updated_at": "2026-10-30T03:41:58.377381+00:00",
+  "revision": 337,
+  "updated_at": "2026-10-30T04:34:21.879276+00:00",
   "timezone": "UTC",
   "next_id": "RAD-088",
   "tasks": [
@@ -576,11 +576,11 @@
     {
       "id": "RAD-062",
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "دُمجت4أ في #161؛ دليلها وفحص الهاتف الممكن محفوظان في تقرير4أ. بأمر المالك2026-10-30: planned بانتظار إذن مرحلة مسماة. التالي4ب/5أ مع Random pool v1 بلا Topic/Difficulty، ضمن يوم3+5أ المراجع وحاجب طوارئ RAD-059. Manage targets للمغلق وفحص RPC وإعادة تقدير4ب باقية.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29؛ أمر المالك تنفيذ4أ فقط2026-10-30؛ docs/RAD-062_PHASE4A_REPORT_2026-10-30.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30",
-      "waiting_on": "owner"
+      "description": "دُمجت4أ في #161؛ دليلها وفحص الهاتف الممكن بتقريرها. P0 تخطيط3+5أ فقط؛ التالي P1 ثم PRs خاملة بmarker ثابت، ويوم CLI واحد محجوب على RAD-086 واللابتوب ونسخة محلية كاملة متحقق منها، ثم ترقية. طوارئ RAD-059 v2 هاتفية وحاجبة. لا Topic/Difficulty؛4ب/5ب وManage targets للمغلق وفحص RPC وإعادة تقدير4ب باقية.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29؛ أمر المالك تنفيذ4أ فقط2026-10-30؛ docs/RAD-062_PHASE4A_REPORT_2026-10-30.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ أمر المالك خطة3+5أ المعتمدة وتعديل الجزء2 وتنفيذ P0 فقط2026-10-30؛ docs/DECISIONS.md#rad062-plan-3-5a-owner-2026-10-30؛ docs/RAD-062_3-5A_PLAN_2026-10-30.md",
+      "waiting_on": "code"
     },
     {
       "id": "RAD-063",
