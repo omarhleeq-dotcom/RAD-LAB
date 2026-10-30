@@ -75,6 +75,16 @@
       "serverModules": [
         "src/features/assess/server-runtime.ts"
       ]
+    },
+    "20261030000600_rad062_lifecycle_v2.sql": {
+      "sha256": "9367906ec3162d38b94c1692693342e7f7f04ae9c268875fedcdb7b5a829734b",
+      "reason": "RAD-062 P6 M06 requires explicit M01-M05. Private version-isolated lifecycle and retained written answers; dormant until the reviewed single DB day, M08 grants and P10 promotion. No runtime grants or browser wiring.",
+      "serverModules": [
+        "src/features/assess/server-service-v2.ts",
+        "src/features/assess/server-runtime-v2.ts",
+        "src/features/assess/server-worker-v2.ts",
+        "src/features/assess/server-grader-v2.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -156,7 +166,8 @@
         "20261030000200_rad062_provenance_v2.sql",
         "20261030000300_rad062_authoring_limits.sql",
         "20261030000400_rad062_random_pool.sql",
-        "20261030000500_rad062_manual_foundation_freeze.sql"
+        "20261030000500_rad062_manual_foundation_freeze.sql",
+        "20261030000600_rad062_lifecycle_v2.sql"
       ],
       "guard": {
         "path": "src/features/assess/rad062-availability.ts",
