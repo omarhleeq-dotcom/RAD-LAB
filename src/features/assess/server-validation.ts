@@ -5,7 +5,9 @@ import type { RadCase } from "@/domain/case";
 import type { SimulationSettings } from "@/domain/simulation";
 import { PRACTICE_EVALUATION_VERSION } from "@/features/evaluation/version";
 import type { AssessmentPublication } from "./server-contracts";
-import { assertAssessmentVersion, decimalPoints, earnedPoints } from "./policies";
+import { validateProvenanceV2 } from "./provenance-v2";
+import type { AssessmentPublicationV2 } from "./server-contracts-v2";
+import { assertAttemptPolicy, assertAssessmentVersion, decimalPoints, earnedPoints } from "./policies";
 import { ruleParts } from "./rule-parts";
 
 export type AnswerSpec = Record<string, {kind:"number";min:number;max:number} | {kind:"enum";values:unknown[]}>;
@@ -93,12 +95,18 @@ export function reconstruct(base:SimulationSettings,spec:AnswerSpec,values:unkno
 }
 
 export function validatePublication(input:unknown): {publication:AssessmentPublication;specs:Record<string,AnswerSpec>} {
+  return validatePublicationContract(input, 1) as {publication:AssessmentPublication;specs:Record<string,AnswerSpec>};
+}
+export function validatePublicationV2(input:unknown): {publication:AssessmentPublicationV2;specs:Record<string,AnswerSpec>} {
+  return validatePublicationContract(input, 2) as unknown as {publication:AssessmentPublicationV2;specs:Record<string,AnswerSpec>};
+}
+function validatePublicationContract(input:unknown, schema:1|2) {
   // Bound before deep traversal. Only JSON from the trusted authoring boundary is accepted.
   const raw=JSON.stringify(input);
   if(!raw || Buffer.byteLength(raw)>2_000_000) throw new Error("Publication too large");
   const value:unknown=JSON.parse(raw);safeTree(value);
   keys(value,["schemaVersion","assessment","itemMarks","privateItems"]);
-  if(value.schemaVersion!==1) throw new Error("Unsupported publication");
+  if(value.schemaVersion!==schema) throw new Error("Unsupported publication");
   const a=value.assessment;keys(a,["schemaVersion","ref","name","policy","maximum","track","items"]);
   ref(a.ref);text(a.name,200);positive(a.maximum);
   keys(a.policy,["durationSeconds","maxAttempts","gradeVisibility"]);
@@ -108,7 +116,9 @@ export function validatePublication(input:unknown): {publication:AssessmentPubli
   for(const item of a.items) {
     keys(item,["schemaVersion","ref","prompt","contentLanguage","type","options","presentation","caseRef"]);
     ref(item.ref);text(item.prompt,10000);
-    if(item.type==="single-choice") {
+    if(schema===2 && item.type==="written-answer") {
+      if(item.options!==undefined || item.presentation!==undefined || item.caseRef!==undefined) throw Error("Wrong written fields");
+    } else if(item.type==="single-choice") {
       if(item.presentation!==undefined || item.caseRef!==undefined) throw new Error("Wrong item fields");
       array(item.options,50);for(const o of item.options) { keys(o,["id","text"]);text(o.id);text(o.text,5000); }
     } else if(item.type==="simulator-part") {
@@ -121,13 +131,19 @@ export function validatePublication(input:unknown): {publication:AssessmentPubli
   }
   for(const mark of value.itemMarks) {keys(mark,["item","maximum"]);ref(mark.item);positive(mark.maximum);}
   for(const p of value.privateItems) {
-    keys(p,["schemaVersion","ref","review","type","correctOptionId","caseRef","evaluatorVersion","fixedSettings","mutablePaths","criteria"]);
-    if(p.schemaVersion!==1) throw new Error("Unsupported key");ref(p.ref);
-    keys(p.review,["sources","reviewedBy","reviewedAt","scope"]);text(p.review.reviewedBy);text(p.review.scope,2000);text(p.review.reviewedAt);
-    if(new Date(p.review.reviewedAt).toISOString()!==p.review.reviewedAt) throw new Error("Review date");
-    array(p.review.sources,50);if(!p.review.sources.length) throw new Error("Sources required");
-    for(const source of p.review.sources) {keys(source,["reference","licenceEvidence"]);text(source.reference,2000);text(source.licenceEvidence,2000);}
-    if(p.type==="single-choice") {
+    keys(p,["schemaVersion","ref",schema===1?"review":"provenance","type","correctOptionId","caseRef","evaluatorVersion","fixedSettings","mutablePaths","criteria"]);
+    if(p.schemaVersion!==schema) throw new Error("Unsupported key");ref(p.ref);
+    if(schema===2) validateProvenanceV2(p.provenance,p.type as string);
+    if(schema===1 || (p.provenance as {kind:string}).kind==='simulator-reviewed') {
+    const review=schema===1?p.review:(p.provenance as {review:unknown}).review;
+    keys(review,["sources","reviewedBy","reviewedAt","scope"]);text(review.reviewedBy);text(review.scope,2000);text(review.reviewedAt);
+    if(new Date(review.reviewedAt).toISOString()!==review.reviewedAt) throw new Error("Review date");
+    array(review.sources,50);if(!review.sources.length) throw new Error("Sources required");
+    for(const source of review.sources) {keys(source,["reference","licenceEvidence"]);text(source.reference,2000);text(source.licenceEvidence,2000);}
+    }
+    if(schema===2 && p.type==="written-answer") {
+      if([p.correctOptionId,p.caseRef,p.evaluatorVersion,p.fixedSettings,p.mutablePaths,p.criteria].some(v=>v!==undefined)) throw Error("Wrong written key fields");
+    } else if(p.type==="single-choice") {
       text(p.correctOptionId);if([p.caseRef,p.evaluatorVersion,p.fixedSettings,p.mutablePaths,p.criteria].some(v=>v!==undefined)) throw new Error("Wrong key fields");
     } else {
       if(p.correctOptionId!==undefined) throw new Error("Wrong key fields");
@@ -140,7 +156,15 @@ export function validatePublication(input:unknown): {publication:AssessmentPubli
     }
   }
   const publication=value as unknown as AssessmentPublication;
-  assertAssessmentVersion(publication.assessment);
+  if(schema===1) assertAssessmentVersion(publication.assessment);
+  else {
+    const decodedItems=a.items as {schemaVersion:number;type:string;contentLanguage:string;ref:{id:string}}[];
+    if(a.schemaVersion!==2 || !a.items.length || a.items.length>200 || !['mixed','full-practical'].includes(a.track as string) || new Set(decodedItems.map(i=>i.ref.id)).size!==a.items.length) throw Error('Invalid v2 assessment');
+    assertAttemptPolicy(publication.assessment.policy);
+    const automatic=decodedItems.filter(i=>i.type!=='written-answer');
+    if(decodedItems.some(i=>i.schemaVersion!==2 || i.contentLanguage!=='en' || (i.type==='written-answer' && a.track!=='mixed')) || decodedItems.filter(i=>i.type==='written-answer').length>10) throw Error('Invalid v2 items');
+    if(automatic.length) assertAssessmentVersion({...publication.assessment,schemaVersion:1,items:automatic.map(i=>({...i,schemaVersion:1}))} as unknown as AssessmentPublication['assessment']);
+  }
   if(publication.itemMarks.length!==a.items.length || publication.privateItems.length!==a.items.length) throw new Error("Incomplete publication");
   const specs:Record<string,AnswerSpec>=Object.create(null);
   for(const item of publication.assessment.items) {
@@ -150,7 +174,7 @@ export function validatePublication(input:unknown): {publication:AssessmentPubli
     const p=privateItems[0]!;if(p.type!==item.type) throw new Error("Key type mismatch");
     if(p.type==="single-choice" && item.type==="single-choice") {
       if(!item.options.some(o=>o.id===p.correctOptionId)) throw new Error("Invalid answer key");specs[item.ref.id]={};
-    } else if(p.type!=="single-choice") {
+    } else if((p.type as string)!=="written-answer" && p.type!=="single-choice") {
       const c=resolveCase(p.caseRef,p.evaluatorVersion), all=settingsSpec(c);
       if(p.type==="full-practical") {
         if(item.type!=="full-practical" || !sameCase(item.caseRef,p.caseRef)) throw new Error("Case mismatch");specs[item.ref.id]=all;

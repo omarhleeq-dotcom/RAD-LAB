@@ -44,6 +44,15 @@
       "serverModules": [
         "src/features/assess/server-runtime.ts"
       ]
+    },
+    "20261030000200_rad062_provenance_v2.sql": {
+      "sha256": "6ca7cb7a902fd9f139aaf8c2a84f138ddfec6dc34f19f60b518bd4d8dcbd1822",
+      "reason": "RAD-062 P2 private v2 provenance staging; M01 required. Dormant until reviewed single DB day and complete M08/P10 prerequisites. No live SQL or runtime grant.",
+      "serverModules": [
+        "src/features/assess/server-authoring-bridge-v2.ts",
+        "src/features/assess/server-authoring-bridge-v2-postgres.ts",
+        "src/features/assess/server-validation-v2.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -121,7 +130,8 @@
     },
     "rad062": {
       "migrations": [
-        "20261030000100_rad062_full_name.sql"
+        "20261030000100_rad062_full_name.sql",
+        "20261030000200_rad062_provenance_v2.sql"
       ],
       "guard": {
         "path": "src/features/assess/rad062-availability.ts",
