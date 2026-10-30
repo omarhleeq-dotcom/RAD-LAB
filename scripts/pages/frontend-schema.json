@@ -85,6 +85,14 @@
         "src/features/assess/server-worker-v2.ts",
         "src/features/assess/server-grader-v2.ts"
       ]
+    },
+    "20261030000700_rad062_manual_grading.sql": {
+      "sha256": "e88c2528f08e27cb9255e2f59551fa3e5e6f2232708d3676b9fff549887f2624",
+      "reason": "RAD-062 P7 private owner-first queue/read/score/finalize/receipt; requires M01-M06. Dormant until complete reviewed DB day and M08/P10. No runtime grants or UI.",
+      "serverModules": [
+        "src/features/assess/server-manual-contracts.ts",
+        "src/features/assess/server-manual-service.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -167,7 +175,8 @@
         "20261030000300_rad062_authoring_limits.sql",
         "20261030000400_rad062_random_pool.sql",
         "20261030000500_rad062_manual_foundation_freeze.sql",
-        "20261030000600_rad062_lifecycle_v2.sql"
+        "20261030000600_rad062_lifecycle_v2.sql",
+        "20261030000700_rad062_manual_grading.sql"
       ],
       "guard": {
         "path": "src/features/assess/rad062-availability.ts",
