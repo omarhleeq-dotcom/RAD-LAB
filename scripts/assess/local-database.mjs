@@ -51,7 +51,8 @@ export async function openLocalDatabase(backend, {through='latest',lineEndings='
       create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
       grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
     // RAD085-D3-DEFERRED-20261027: the historical ceiling excludes all four deferred sources.
-    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'||(through==='pre-rad085'?f<'20261026000100':f<'20261020001100'))).sort()) {
+    const deferred=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
+    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&!Object.hasOwn(deferred,f)&&(through==='latest'||(through==='pre-rad085'?f<'20261026000100':f<'20261020001100'))).sort()) {
       const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
       await exec(lineEndings==='crlf'&&(allMigrationLineEndings||file>='20261020000600')?sql.replaceAll('\n','\r\n'):sql);
     }

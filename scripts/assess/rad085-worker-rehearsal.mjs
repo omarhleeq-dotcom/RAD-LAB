@@ -206,7 +206,10 @@ try {
     create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
     grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
-  for (const file of readdirSync('supabase/migrations').filter(p => p.endsWith('.sql')).sort()) {
+  const deferred=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
+  const applied = readdirSync('supabase/migrations').filter(p => p.endsWith('.sql')&&!Object.hasOwn(deferred,p)).sort();
+  assert.deepEqual(Object.keys(manifest.migrations),applied);
+  for (const file of applied) {
     const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]); await admin.query(sql.toString());
   }
   // Fixture-only role DDL, never an operational migration or provider grant.

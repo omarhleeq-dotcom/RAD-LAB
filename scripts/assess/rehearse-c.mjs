@@ -44,7 +44,9 @@ try {
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
     grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
   // Worker role is cluster-scoped in PostgreSQL; this disposable container must be fresh per real rehearsal.
-  for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await query(readFileSync(`supabase/migrations/${file}`,'utf8'));
+  // Historical C-through-B witness: future deferred parts are tested by explicit named apply.
+  const deferred=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
+  for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&!Object.hasOwn(deferred,f)&&f<'20261030000100').sort())await query(readFileSync(`supabase/migrations/${file}`,'utf8'));
   await query(`insert into auth.users values('${uid(1)}','owner@example.test',now(),'{"display_name":"Synthetic owner"}'),('${uid(2)}','student@example.test',now(),'{"display_name":"Synthetic participant"}');update public.profiles set status='approved';update public.profiles set role='owner' where user_id='${uid(1)}';
     insert into assess.versions(id,owner_id,assessment_id,version,name,track,available) values('${uid(10)}','${uid(1)}','${uid(10)}','1','Synthetic engineering','mixed',true);
     insert into assess.assignments(id,owner_id,version_id) values('${uid(11)}','${uid(1)}','${uid(10)}');insert into assess.targets values('${uid(11)}','${uid(2)}');`);

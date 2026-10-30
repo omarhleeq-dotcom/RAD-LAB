@@ -25,7 +25,9 @@ try{
  // Socket in a mode-0700 mkdtemp directory. No TCP listener, provider selector or inherited PG settings.
  ctl(['-l',join(dir,'postgres.log'),'-o',`-F -c listen_addresses='' -k ${dir} -p 55432`,'-w','-t','10','start']);started=true;
  const admin=await connect();await admin.query(`create role anon nologin;create role authenticated nologin;create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
- for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await admin.query(readFileSync(`supabase/migrations/${f}`,'utf8'));
+ // F witnesses consent_v1 before the separately witnessed retention-v2 upgrade.
+ const deferred=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
+ for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&!Object.hasOwn(deferred,f)&&f<'20261020001100').sort())await admin.query(readFileSync(`supabase/migrations/${f}`,'utf8'));
  for(const n of [1,2,3])await admin.query('insert into auth.users values($1,$2,now(),$3)',[uid(n),`synthetic${n}@example.test`,JSON.stringify({display_name:'Synthetic'})]);
  await admin.query(`update public.profiles set status='approved';update public.profiles set role='owner' where user_id='${uid(1)}';`);
  const student=port(await connect(),'authenticated',uid(2)),held=port(await connect(),'authenticated',uid(2),true),other=port(await connect(),'authenticated',uid(3)),owner=port(await connect(),'authenticated',uid(1)),worker=port(await connect(),'assess_worker'),worker2=port(await connect(),'assess_worker');
