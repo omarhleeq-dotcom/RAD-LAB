@@ -11,6 +11,25 @@ B false is an owner verification failure, not a runtime kill switch: the deploye
 
 Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sync, PostgreSQL client tools matching production, Supabase CLI login if needed, Node/npm, Docker and `gcloud` with its own login. Run from repository root on the reviewed commit. Never use shell tracing, command-line passwords, connection strings, terminal recording, `tee`, cloud artifacts, or participant exports. No provider dump is taken in CI or this workspace. Full logical backup is the sole exception for sensitive data files: it stays only on the owner's encrypted laptop, never in Git/chat/PR/cloud. Evidence shared outside the laptop contains counts, versions, checksums and yes/no only.
 
+## P10 window checklist — owner only; conditional STOP
+
+P10 is prepared as a Draft before DB day; only the owner may merge it inside the booked ≤60-minute window, after M01–M08 are applied and verified on live. No agent live SQL, Variable writes, ready/merge/auto-merge, gate opening, LOGIN or secret enablement. Existing P9 sections below describe the historical transition; P10's manifest replaces frozen B with `rad062-p1-b-ready.sql` and adds `rad062-ready.sql`. Before live M01, use the original frozen B; after all eight, run **every P10 manifest check**, inspect every readiness boolean and require all true except the explicit operational non-claims. The migration SHA pins now reside in `guardedFeatures.rad062.migrationSha256`, copied unchanged from P9b's deferred entries. The source rehearsal retains the old B transition witnesses and separately requires zero failures across the promoted checks.
+
+The owner's requested ordered checklist is:
+
+1. Owner applies M01–M08 on live in order, verifies ledger/hash/closed state, and passes all promoted checks, with all P9 prerequisites already proved.
+2. Owner merges P10 inside the same window.
+3. CI and Deploy Pages must be green for the merged commit.
+4. Owner sets the new production marker Variable from the P10 report/PR body; the agent never sets it.
+5. Owner checks on the phone: sign-up, login, Practice and the Assess name gate work; keep the launch gate closed, workers NOLOGIN and secret DISABLED.
+6. Owner performs the complete emergency stop v2 phone dry run and independent verification, including repeat/idempotence and the prescribed 60-second verification. Both packets stay byte-identical.
+
+**Scheduling STOP — ordering requires owner resolution:** the existing Deploy Pages workflow checks `PILOT_SCHEMA_VERIFIED` before building/uploading. It cannot become green with the old marker against P10, so steps 3–4 above cannot complete in that order. An owner clarification is pending: set the marker after live checks and before merge, or after merge and rerun the existing workflow if its gate has already failed. Do not schedule/merge P10 while this order is unresolved. No workflow bypass, skip-ci or additional/manual deployment is authorized by this note.
+
+**Rollback inside the window:** if anything fails after merge, keep the gate closed, workers NOLOGIN and secret DISABLED. Owner opens and reviews a normal revert PR for P10 and merges that revert in the window; no reset, force-push or migration-byte changes. Reverting P10 restores the old source marker contract. If the Variable has already changed, the owner must restore the old marker from the reviewed pre-P10 evidence before the revert's normal deployment can pass its gate. Recheck normal CI/Deploy Pages and phone containment. Installed M01–M08 remain installed: this source revert is containment, not a claim that old frozen B accepts the installed catalogue. Preserve data and use the P9 reviewed forward-fix/repair-window procedure for any database failure. Never reopen the gate from the revert alone.
+
+**Staleness:** if main advances before DB day, merge updated main into `rad062/p10-promotion` (no rebase/force-push), inspect the complete diff and unchanged migration/emergency bytes, rerun affected QA, recompute with `--print-marker`, and update the report and PR body only. The owner re-reviews before booking the window.
+
 ## 1. Preconditions — no mutation
 
 **Command:**

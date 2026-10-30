@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { options, verifyMigrations, checkRows, main } from '../assess/rad062-db-day.mjs';
+import { openLocalDatabase } from '../assess/local-database.mjs';
 import { rehearse } from '../assess/rad062-restore-rehearsal.mjs';
 const ref = 'a'.repeat(20);
 const remote = { PGHOST: `db.${ref}.supabase.co`, PGUSER: 'postgres', PGDATABASE: 'postgres', PGSSLMODE: 'verify-full', RAD062_EXPECTED_PROJECT_REF: ref };
@@ -32,13 +33,18 @@ test('boolean readiness failures stop; explicitly disclaimed operational claims 
   assert.throws(() => checkRows({ rows:[] }));
   assert.equal(checkRows([{rows:[]},{rows:[{ready:true,runtime_or_launch_verified:false,restore_verified:false}]}]),1);
 });
-test('both emergency packets and all dormant product/schema boundaries remain byte identical to main', () => {
-  for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md','scripts/pages/frontend-schema.json',
+test('promotion preserves both emergency packets and every original SQL/check byte', () => {
+  const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
+  const current = JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8'));
+  assert.deepEqual(current.requiredMigrations, [...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]);
+  assert.deepEqual(current.deferredMigrations, {});
+  assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : f), 'supabase/checks/rad062-ready.sql']);
+  for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md',
     'supabase/manual/assess-emergency-stop.sql','supabase/manual/assess-emergency-stop-v2.sql',
     'supabase/checks/assess-emergency-stopped.sql','supabase/checks/assess-emergency-stopped-v2.sql',
-    ...JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).checks,
-    ...JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
-    assert.deepEqual(readFileSync(path),execFileSync('git',['show',`origin/main:${path}`]));
+    ...base.checks,
+    ...current.requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
+    assert.deepEqual(readFileSync(path),execFileSync('git',['show',`023ec84c15bfd744f317ec079e2587d90e099414:${path}`]));
   }
 });
 test('actual local logical restore applies eight transactions, rolls failures back, finds anchors and emits only counts', {timeout:120000}, async () => {
@@ -50,7 +56,16 @@ test('actual local logical restore applies eight transactions, rolls failures ba
   assert.equal(r.tampered_b_diagnostic_failed,1); assert.equal(r.post_package_b_diagnostic_failures,7);
   assert.ok(Object.values(r).every(n=>typeof n==='number'||/^\d+$/.test(n)));
   assert.doesNotMatch(JSON.stringify(r),/SYNTHETIC_PRIVATE_CANARY|@|[0-9a-f]{8}-[0-9a-f]{4}-/);
-  // Frozen B catalogue checker intentionally cannot attest an additive package.
-  // Path (b) requires back-to-back P10; no required-check waiver.
-  assert.equal(r.required_check_failures,1);
+  // Frozen B still rejects additions; both complete-catalogue required checks now pass.
+  // Path (b) remains back-to-back P10 with no required-check waiver.
+  assert.equal(r.required_check_failures,0);
+});
+
+test('explicit latest applies the entire promoted required set', {timeout:30000}, async () => {
+  const db = await openLocalDatabase('postgres', { through:'latest' });
+  try {
+    assert.notEqual((await db.query("select to_regprocedure('assess.name_entry_v1()') v"))[0].v, null);
+    assert.notEqual((await db.query("select to_regprocedure('assess.freeze_v2()') v"))[0].v, null);
+    assert.notEqual((await db.query("select to_regclass('assess.manual_final_receipts_v1') v"))[0].v, null);
+  } finally { await db.close(); }
 });

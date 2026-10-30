@@ -250,15 +250,18 @@ it.each(['active', 'grading', 'grading-failed', 'awaiting-manual'])('freeze hold
   expect((await db.admin.query('select count(*)::int n from assess.manual_work_v1')).rows[0].n).toBe(1);
  } finally { await db.close(); }
 });
-it('M06 is deferred, flags and marker remain literal; required SQL/checks and v1 emergency-stop artifacts are byte-identical to main', () => {
- const base = JSON.parse(execFileSync('git', ['show', 'origin/main:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
- expect(manifest.requiredMigrations).toEqual(base.requiredMigrations); expect(manifest.checks).toEqual(base.checks);
- expect(manifest.deferredMigrations[file].sha256).toBe(createHash('sha256').update(sql()).digest('hex'));
+it('M06 is required, promoted guard and derived marker are exact; required SQL/checks and v1 emergency-stop artifacts are byte-identical to main', () => {
+ const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
+ expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]); expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-ready.sql']);
+ expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(sql()).digest('hex'));
  expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
  for (const p of [...base.requiredMigrations.map((f: string) => 'supabase/migrations/' + f), ...base.checks,
   'src/features/assess/rad062-availability.ts', 'src/features/supervisor/p1-availability.ts',
   'supabase/manual/assess-emergency-stop.sql', 'supabase/checks/assess-emergency-stopped.sql', 'scripts/assess/emergency-stop-packet.mjs',
-  'scripts/assess/emergency-stop-rehearsal.test.mjs', 'docs/RAD-059_PHONE_PACKET.md']) expect(readFileSync(p)).toEqual(execFileSync('git', ['show', 'origin/main:' + p]));
+  'scripts/assess/emergency-stop-rehearsal.test.mjs', 'docs/RAD-059_PHONE_PACKET.md']) expect(readFileSync(p)).toEqual(p === 'src/features/assess/rad062-availability.ts' ? Buffer.from(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + p], { encoding: 'utf8' }).replace('RAD062_AVAILABLE: boolean = false', 'RAD062_AVAILABLE: boolean = true')) : execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + p]));
+ const expectedMarker = createHash('sha256').update('https://vlacestfruxooznrcjqc.supabase.co\n');
+ for (const migration of [...manifest.requiredMigrations].sort()) expectedMarker.update(migration + '\0').update(readFileSync('supabase/migrations/' + migration)).update('\0');
+ for (const check of manifest.checks) expectedMarker.update(readFileSync(check));
  const marker = execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' } }).trim();
- expect(marker).toBe('pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be');
+ expect(marker).toBe('pilot-v1:' + expectedMarker.digest('hex'));
 });

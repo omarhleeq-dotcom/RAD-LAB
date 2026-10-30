@@ -6,10 +6,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-export async function openLocalDatabase(backend, {through='latest',lineEndings='lf',allMigrationLineEndings=false}={}) {
+export async function openLocalDatabase(backend, {through='historical-b',lineEndings='lf',allMigrationLineEndings=false}={}) {
   if(!['pglite','postgres'].includes(backend))throw new Error('invalid_backend');
   // A finite migration ceiling exists only for destructive synthetic upgrade QA.
-  if(!['latest','f','pre-rad085'].includes(through))throw new Error('invalid_migration_ceiling');
+  if(!['latest','historical-b','f','pre-rad085'].includes(through))throw new Error('invalid_migration_ceiling');
   if(!['lf','crlf'].includes(lineEndings))throw new Error('invalid_line_endings');
   if(typeof allMigrationLineEndings!=='boolean')throw new Error('invalid_all_migration_line_endings');
   // B7 opts into CRLF for ALL history; default preserves older mixed-line-ending witnesses.
@@ -50,9 +50,11 @@ export async function openLocalDatabase(backend, {through='latest',lineEndings='
       create schema auth;create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
       create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
       grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
-    // RAD085-D3-DEFERRED-20261027: the historical ceiling excludes all four deferred sources.
-    const deferred=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
-    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&!Object.hasOwn(deferred,f)&&(through==='latest'||(through==='pre-rad085'?f<'20261026000100':f<'20261020001100'))).sort()) {
+    // Existing no-option callers are historical B/explicit-upgrade witnesses.
+    // Only explicit latest models the full currently required production schema.
+    const required=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations;
+    const ceiling=through==='historical-b'?'20261030000100':through==='pre-rad085'?'20261026000100':'20261020001100';
+    for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'?required.includes(f):f<ceiling)).sort()) {
       const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
       await exec(lineEndings==='crlf'&&(allMigrationLineEndings||file>='20261020000600')?sql.replaceAll('\n','\r\n'):sql);
     }

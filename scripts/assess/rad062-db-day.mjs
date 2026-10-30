@@ -11,7 +11,7 @@ export function verifyMigrations(read = file => readFileSync('supabase/migration
   const m = manifest(), files = m.guardedFeatures.rad062.migrations;
   if (files.length !== 8) throw Error('package_count');
   files.forEach((file, n) => {
-    if (!file.startsWith(`20261030000${n + 1}00_`) || sha256(read(file)) !== m.deferredMigrations[file]?.sha256) throw Error('migration_digest');
+    if (!file.startsWith(`20261030000${n + 1}00_`) || sha256(read(file)) !== m.guardedFeatures.rad062.migrationSha256?.[file]) throw Error('migration_digest');
   });
   return files;
 }
@@ -68,7 +68,7 @@ export function checkRows(result) {
   if (rows.some(row => Object.entries(row).some(([key, v]) => typeof v === 'boolean' && !nonAssertions.has(key) && v !== true))) throw Error('check_failed');
   return rows.length;
 }
-export async function checks(db, files = [...manifest().checks, 'supabase/checks/rad062-ready.sql']) {
+export async function checks(db, files = manifest().checks) {
   let passed = 0;
   for (const file of files) {
     try { checkRows(await db.query(readFileSync(file, 'utf8'))); passed++; }

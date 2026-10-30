@@ -44,11 +44,11 @@ it('v2 preserves genuine pinned simulator review/source/licence without extendin
  expect(validatePublicationV2(p).publication.privateItems[1]!.provenance).toEqual({ kind: 'simulator-reviewed', review: v1.privateItems[1]!.review });
  const bad = structuredClone(p); bad.privateItems[1]!.provenance = { ...input, authorDisplayName: author }; expect(() => validatePublicationV2(bad)).toThrow();
 });
-it('M02 is deferred with unchanged required/check bytes; no operational v2 or UI capability', () => {
+it('M02 is required with unchanged required/check bytes; no operational v2 or UI capability', () => {
  const file = '20261030000200_rad062_provenance_v2.sql';
- expect(manifest.deferredMigrations[file].sha256).toBe(createHash('sha256').update(readFileSync('supabase/migrations/' + file)).digest('hex'));
- expect(manifest.requiredMigrations).not.toContain(file); expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
- expect(readFileSync('src/features/assess/rad062-availability.ts', 'utf8')).toContain('RAD062_AVAILABLE: boolean = false');
+ expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(readFileSync('supabase/migrations/' + file)).digest('hex'));
+ expect(manifest.requiredMigrations).toContain(file); expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
+ expect(readFileSync('src/features/assess/rad062-availability.ts', 'utf8')).toContain('RAD062_AVAILABLE: boolean = true');
 });
 it('isolated PostgreSQL current schema then explicit M01+M02: server name, forgery, v1 preservation, private stage and D3 erasure', async () => {
  const db = await openRad085Database();

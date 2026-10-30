@@ -46,6 +46,9 @@ export async function rehearse() {
     await original.query("set rad085.sharing_phase='pre-initializer'");
     const bCheck = 'supabase/checks/rad085-p1-b-ready.sql';
     const diagnostic = 'scripts/assess/sql/rad062-b-diagnostic.sql';
+    const successor = 'supabase/checks/rad062-p1-b-ready.sql';
+    // Preserve the historical B restore ceiling independently of current requirements.
+    const historicalChecks = manifest().checks.filter(f => f !== 'supabase/checks/rad062-ready.sql').map(f => f === successor ? bCheck : f);
     await checks(original, [bCheck, diagnostic]);
     const common = ['run','--rm','-i','--network=none','--user',`${process.getuid()}:${process.getgid()}`,
       '--mount',`type=bind,src=${cfg.host},dst=${cfg.host}`,'--entrypoint'];
@@ -68,7 +71,7 @@ export async function rehearse() {
     await target.query('rollback');
     let baselineFailures = 0;
     const baselineFailedFiles = [];
-    for (const file of manifest().checks) {
+    for (const file of historicalChecks) {
       try { await checks(target, [file]); } catch { baselineFailures++; baselineFailedFiles.push(file); }
     }
     assert.deepEqual(baselineFailedFiles, [bCheck]);
@@ -83,6 +86,7 @@ export async function rehearse() {
       await target.query('rollback');
       assert.deepEqual(await snapshot(target), before); rollbacks++;
       await apply(target, `M0${index + 1}`, { RAD062_SECRET_STATE: 'DISABLED' });
+      if (index < 7) await assert.rejects(checks(target, [successor]));
     }
     assert.deepEqual((await snapshot(target))[0].data, baseline[0].data);
     const readiness = await target.query(read('supabase/checks/rad062-ready.sql'));
@@ -102,6 +106,8 @@ export async function rehearse() {
       await target.query(drift);
       const changed = await target.query(read('supabase/checks/rad062-ready.sql'));
       assert.ok(changed.rows.some(r => r.ok === false)); tamperedGrantFailures++;
+      const changedB = await target.query(read(successor));
+      assert.ok(changedB.flatMap(r => r.rows ?? []).some(r => r.ready === false));
       await target.query('rollback');
     }
     await checks(target, ['supabase/checks/rad062-ready.sql']);
@@ -130,13 +136,13 @@ export async function rehearse() {
     for (const file of manifest().checks) {
       try { await checks(target, [file]); } catch { requiredFailures++; requiredFailedFiles.push(file); }
     }
-    assert.deepEqual(requiredFailedFiles, [bCheck]);
+    assert.deepEqual(requiredFailedFiles, []);
     return { original_b_ready: 1, restored_b_diagnostic_ready: 1, tampered_b_diagnostic_failed: 1, post_package_b_diagnostic_failures: diagnosticFailures.length, tampered_grant_failures: tamperedGrantFailures, restored_acl_representation_differences: aclRepresentationDifferences, restored_acl_effective_differences: aclEffectiveDifferences, server_version_num: Number(cfg.version), restored_archives: 1, migrations_committed: 8, rollback_witnesses: rollbacks,
       v1_anchors_found: guards + patches, readiness_passed: Number(readinessFailures === 0), readiness_failures: readinessFailures, baseline_check_failures: baselineFailures, required_check_failures: requiredFailures, ...counts };
   } finally { if (target) await target.end(); if (original) await original.end(); await source.close(); }
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   if (process.argv.length !== 2) { console.error('STOP synthetic_only'); process.exitCode = 1; }
-  else rehearse().then(r => { console.log(JSON.stringify(r)); if (r.readiness_failures || r.baseline_check_failures !== 1 || r.required_check_failures !== 1) { console.error('STOP required_checks'); process.exitCode = 1; } })
+  else rehearse().then(r => { console.log(JSON.stringify(r)); if (r.readiness_failures || r.baseline_check_failures !== 1 || r.required_check_failures !== 0) { console.error('STOP required_checks'); process.exitCode = 1; } })
     .catch(() => { console.error('STOP restore_rehearsal'); process.exitCode = 1; });
 }

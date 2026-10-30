@@ -206,8 +206,8 @@ try {
     create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
     grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
-  const deferred=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
-  const applied = readdirSync('supabase/migrations').filter(p => p.endsWith('.sql')&&!Object.hasOwn(deferred,p)).sort();
+  const required=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations;
+  const applied = readdirSync('supabase/migrations').filter(p => p.endsWith('.sql')&&required.includes(p)).sort();
   assert.deepEqual(Object.keys(manifest.migrations),applied);
   for (const file of applied) {
     const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]); await admin.query(sql.toString());
@@ -247,7 +247,7 @@ try {
   checks.push('actual-limited-login-no-publishing-review-accounts-or-bridge', 'verified-tls-hostname-rejection');
 
   phase = 'content';
-  for (const n of [1, 2]) await admin.query('insert into auth.users values($1,$2,now(),$3)', [id(n), `synthetic${n}@example.test`, { display_name: 'SYNTHETIC' }]);
+  for (const n of [1, 2]) await admin.query('insert into auth.users values($1,$2,now(),$3)', [id(n), `synthetic${n}@example.test`, { display_name: 'SYNTHETIC Worker Account' }]);
   await admin.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end", [id(1)]);
   await as('authenticated', id(2), 'consent_v2', ['assess-pilot-2026-10-20-v2']); // synthetic identity only
   for (const track of ['mixed', 'full-practical']) {
