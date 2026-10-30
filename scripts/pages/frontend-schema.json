@@ -37,7 +37,15 @@
     "supabase/checks/owner-dashboard-ready.sql",
     "supabase/checks/owner-deletion-surveys-ready.sql"
   ],
-  "deferredMigrations": {},
+  "deferredMigrations": {
+    "20261030000100_rad062_full_name.sql": {
+      "sha256": "239f04af587d7173193dfc14d4ac674bb413e95f0789bd69e6defc78779fb940",
+      "reason": "RAD-062 P1 dormant until the single reviewed 3+5a DB day and P10 promotion; SQL-only name enforcement and Assess entry. No live SQL.",
+      "serverModules": [
+        "src/features/assess/server-runtime.ts"
+      ]
+    }
+  },
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
@@ -72,7 +80,7 @@
     "src/features/assess/runner-data.ts": "39d1d5918ecda9e0541e2a333f4743f1659741f0585bda10d5bfabab5833f1ca",
     "src/features/assess/HistoryPanel.tsx": "2a98829cf8b922e238a735b13dcfc93f06c83dd444c9e641c341d2305f4b9424",
     "src/features/assess/history-data.ts": "057759a67ae86f91c497528aa5859b468a882f731edfbc10a1ee0c7bf2da671e",
-    "src/features/assess/AssessPanel.tsx": "4400f360fb53c0ad25b50dc42446d48f1f9506f7bce45913395d411e15330849",
+    "src/features/assess/AssessPanel.tsx": "2fde293b1785a86dbcf3966ccc66667d8f71d133e000de865137a9ad0971ef76",
     "src/features/assess/AssessConsent.tsx": "32f970a60dc71bcc9a8b79ced8e5b08644e6852c78152154c79bc908b7b65dbb",
     "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31",
     "src/features/assess/OwnerAssignments.tsx": "ebfff4c4967f64915ec7c06483e59007ac9d52da908d8d5f9ad11a3bee90ebee",
@@ -109,6 +117,23 @@
       "consumer": {
         "path": "src/features/supervisor/P1Session.tsx",
         "sha256": "226670907b7ca28fbc16c32688e93362149dc6762a5ada30a22a1b9a8fc92609"
+      }
+    },
+    "rad062": {
+      "migrations": [
+        "20261030000100_rad062_full_name.sql"
+      ],
+      "guard": {
+        "path": "src/features/assess/rad062-availability.ts",
+        "symbol": "RAD062_AVAILABLE",
+        "sha256": "85faebaabf227412a73d97fdf6b1d69eafc4e180ec4b9e96792c72debc4002b9"
+      },
+      "boundaries": {
+        "src/features/assess/Rad062NameGate.tsx": "81575fbfa484383d6e73a3f1db0060936cfd35c98d5a0ee336b1fe064cc65731"
+      },
+      "consumer": {
+        "path": "src/features/assess/Rad062Entry.tsx",
+        "sha256": "08d2f64bc1d3d6994ba0db3653f4c2278d6b054fef14ff88cfa49142222cc475"
       }
     }
   }

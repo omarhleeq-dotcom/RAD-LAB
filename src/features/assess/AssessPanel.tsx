@@ -9,6 +9,7 @@ import { MixedRunner } from "./runner-state";
 import { practicalAssignedPage,practicalPort } from "./practical-data";
 import { FullPracticalRunner } from "./FullPracticalRunner";
 import { PartControls } from "./PartControls";
+import {Rad062Entry} from "./Rad062Entry";
 import {HistoryPanel} from "./HistoryPanel";
 import {AssessConsent} from "./AssessConsent";
 import {AssessSetup,RunnerView,useRunnerController,runnerButton as button} from "./RunnerView";
@@ -71,6 +72,6 @@ function TrackSelection(){
   // Changing track remounts its isolated runner. Native navigation protects unacknowledged drafts.
   return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
 }
-export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><AssessView/></div>:<p className="mt-6">{t("approved")}</p>;}
+export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><Rad062Entry><AssessView/></Rad062Entry></div>:<p className="mt-6">{t("approved")}</p>;}
 
 function AssessView(){const history=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("history")==="1",()=>null);return history===null?null:history?<HistoryPanel/>:<TrackSelection/>;}

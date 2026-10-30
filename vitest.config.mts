@@ -3,5 +3,5 @@ import path from "node:path";
 
 export default defineConfig({
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } },
-  test: { environment: "node", include: ["src/**/*.test.ts"] },
+  test: { setupFiles: ["src/features/assess/historical-migrations-setup.ts"], environment: "node", include: ["src/**/*.test.ts"] },
 });
