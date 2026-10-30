@@ -68,6 +68,13 @@
         "src/features/assess/server-authoring-bridge-v2.ts",
         "src/features/assess/server-validation-v2.ts"
       ]
+    },
+    "20261030000500_rad062_manual_foundation_freeze.sql": {
+      "sha256": "7b9ebec89a44a7f4b253add5f958f24a9853cbd49a4d3bdc4317d1e7924b56ae",
+      "reason": "RAD-062 P5 M05 requires M01-M04. Private manual stores, emergency hold and owner-only freeze v2; dormant until the single reviewed DB day and complete M08/P10 promotion. No runtime grants. Current schema keeps the v1 stop packet.",
+      "serverModules": [
+        "src/features/assess/server-runtime.ts"
+      ]
     }
   },
   "explicitBoundaries": [
@@ -148,7 +155,8 @@
         "20261030000100_rad062_full_name.sql",
         "20261030000200_rad062_provenance_v2.sql",
         "20261030000300_rad062_authoring_limits.sql",
-        "20261030000400_rad062_random_pool.sql"
+        "20261030000400_rad062_random_pool.sql",
+        "20261030000500_rad062_manual_foundation_freeze.sql"
       ],
       "guard": {
         "path": "src/features/assess/rad062-availability.ts",
