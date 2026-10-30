@@ -6,9 +6,9 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-062 planned/waiting_on owner بأمر2026-10-30؛ [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) تخطيط فقط. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
+- **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. RAD-062 planned/waiting_on owner بأمر2026-10-30؛ [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) تخطيط فقط. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
 - **ينتظر المالك:** إذن مرحلة مسماة وفحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 blocked حتى عودة اللابتوب.
-- **ينتظر مراجِعًا:** عقود العشوائية والكتابي/التفويض والاحتفاظ والطوارئ والتنافس، وحزمة3+5أ والحقوق/D3 والأمن والخصوصية. لا مشرفين حقيقيين قبل O4.
+- **ينتظر مراجِعًا:** RAD-032 مراجع أشعة خارجي وRAD-056 عبر RAD-063؛ عقود العشوائية والكتابي/التفويض والاحتفاظ والطوارئ والتنافس، وحزمة3+5أ والحقوق/D3 والأمن والخصوصية. لا مشرفين حقيقيين قبل O4.
 - **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[تقرير القرارات](RANDOM_QUESTION_DECISIONS_REPORT_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
 - **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual حاجب. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 334,
-  "updated_at": "2026-10-30T02:51:39.131543+00:00",
+  "revision": 335,
+  "updated_at": "2026-10-30T03:09:20.919363+00:00",
   "timezone": "UTC",
   "next_id": "RAD-087",
   "tasks": [
@@ -182,7 +182,7 @@
       "title": "متابعة رخص الصور وحدود الدليل قبل الإصدار",
       "status": "review",
       "priority": "high",
-      "description": "O100 حسم قبول أدلة المالك ولا يطلب إعادة فحص Commons؛ لا تحويل owner-verified إلى تحقق مستقل. المتبقي الخارجي شروط NIH/A-008 المؤجلة في RAD-038؛ أوصاف المريض/ملاءمة الصورة لا يحسمها قرار الرخص. تبقى المهمة review دون إعادة فتح التحقق المقبول. يُغلق عند إغلاق RAD-038 أو قرار المالك بإخراج A-008 من الإصدار؛ لا حاجة لإعادة فحص Commons.",
+      "description": "قبول أدلة Commons في O100 ثابت؛ العائق الوحيد لإغلاق هذا النطاق شروط NIH/A-008 في RAD-038. يغلق مع RAD-038؛ لا إعادة تحقق Commons أو ادعاء اعتماد مستقل.",
       "source_ref": "DECISIONS.md O100/O101/O16/O65/O77؛ docs/ASSET_LICENCE_AUDIT_2026-10-15.md؛ docs/ASSET_PROVENANCE_AND_LICENSES.md",
       "waiting_on": "external"
     },
@@ -308,7 +308,7 @@
       "title": "مطابقة صورة الكتف وترخيصها وملاءمتها",
       "status": "review",
       "priority": "high",
-      "description": "الهوية والترخيص مطابقان (CC0، O87 مغلق)؛ A-037 وA-038 بلا تعديل بكسلات. قرار المالك 2026-10-24: تبقى A-038 مناسبة الآن حتى تتوفر صور أخرى، وملاحظة المرجع تحت النتيجة تذكر الخلع المتكرر وغياب شذوذ ظاهر. تبقى ملاءمتها للمراجِع (O91/O5): قوس رأس شبه دائري وخط سطوع أفقي مستقيم (ربما معالجة صورة).",
+      "description": "الترخيص والهوية مطابقان؛ قبول المالك الحالي لصورة A-038 ثابت. ينتظر مراجع أشعة خارجيًا لملاءمة الصورة وملحوظتي القوس شبه الدائري وخط السطوع المستقيم (O91/O5)، لا إعادة قرار الرخصة.",
       "source_ref": "DECISIONS.md S-SHOULDER-2-1/2-2، S-SHOULDER-3-4؛ O87/O91؛ ASSET_PROVENANCE A-037/A-038؛ مرجع Shoulder Grashey §8.8 و§12.1–12.2؛ docs/archive/sessions/session-shoulder-grashey-settlement-2026-10-15.md",
       "waiting_on": "reviewer"
     },
@@ -351,11 +351,11 @@
     {
       "id": "RAD-037",
       "title": "مراجعة جودة تنفيذ فحص الحوض (pelvis-ap-supine)",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "فحص المالك 2026-10-24: الصورة والرسم والتقييم جيدة جدًا، لكن R في النصف الأيسر للمريض قُبل خطأً؛ صُحح بقاعدة الصدر (S3 د) في RAD-072 الجزء 3 (رفع إصدار التقييم). ينتظر إعادة فحص المالك على الهاتف.",
-      "source_ref": "DECISIONS.md O98؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15؛ DECISIONS.md#rad072-3-owner-2026-10-24",
-      "waiting_on": "owner"
+      "description": "قبِل المالك الحوض؛ R في يسار المريض تُعد خطأ بعد الإصلاح.",
+      "source_ref": "DECISIONS.md O98؛ docs/archive/sessions/session-pelvis-ap-implementation.md؛ قول المالك في المحادثة 2026-10-15؛ DECISIONS.md#rad072-3-owner-2026-10-24؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #118/#119؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-038",
@@ -389,8 +389,8 @@
       "title": "الحسابات والدعوات والدخول مع RLS واختبارات العزل",
       "status": "review",
       "priority": "high",
-      "description": "الحسابات مدموجة (#50/#52/#53)، والدخول وحالات الحساب موثقة في #85. النسخة/الاستعادة مثبتة بحدود S-PILOT-38؛ لا تعاد كشرط ناقص. جدول العزل الحي على إنتاج setup§9 غير مثبت كاملًا؛ فحوص مشروع الاستعادة لا تعادل إنتاجًا. ينتظر المالك إتمام مطابقة الجدول أو تحديد استثناءاته.",
-      "source_ref": "docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md؛ docs/PILOT_SUPABASE_SETUP.md §8/§9؛ DECISIONS.md S-PILOT-6/38؛ PR #85",
+      "description": "الحسابات مدموجة (#50/#52/#53/#85). العائق جدول عزل الإنتاج في setup§9: يلزم إتمامه أو توثيق استثناءاته؛ تحقق الاستعادة لا يعادله. مراجعة RAD-085 للأمن/الخصوصية مرتبطة بالدليل؛ لا افتراض اكتمالها.",
+      "source_ref": "docs/archive/sessions/session-rad-041b-account-ui-2026-10-15.md؛ docs/PILOT_SUPABASE_SETUP.md §8/§9؛ DECISIONS.md S-PILOT-6/38؛ PR #85؛ docs/RAD-085_SECURITY_REVIEW_2026-10-27.md؛ docs/RAD-085_SEC_FIXES_REPORT_2026-10-27.md",
       "waiting_on": "owner"
     },
     {
@@ -443,7 +443,7 @@
       "title": "قابلية التوسع: تدقيق (047a) ثم تنفيذ (047b)",
       "status": "review",
       "priority": "high",
-      "description": "التدقيق و047b.1/.2/.3 مدموجة ومطبقة؛ أُغلق نطاق RAD-049 بدليله. S-PILOT-38 يثبت نسخة واستعادة محددتين، لا تشغيل الحزمة المجمعة من الصفر أو نسخة تتحدث تلقائيًا. تبقى بقية O105 وحدود المزوّد وسياسات الاحتفاظ/الحذف و.4 غير المعتمدة؛ لا تنفيذ ضمن الجرد.",
+      "description": "التدقيق و047b.1/.2/.3 مدموجة. ينتظر المالك حسم بقية O105 وحدود المزوّد وسياسات الاحتفاظ/الحذف و.4 غير المعتمدة. نسخة/استعادة S-PILOT-38 محددة ولا تثبت تشغيل الحزمة من الصفر أو النسخ التلقائي؛ متابعة اللابتوب في RAD-086.",
       "source_ref": "PR #61/#62/#63/#64؛ DECISIONS S-PILOT-38؛ docs/PILOT_SUPABASE_SETUP.md §8",
       "waiting_on": "owner"
     },
@@ -524,17 +524,17 @@
       "title": "نموذج بيانات الاختبارات وعزل مفاتيح الإجابة",
       "status": "review",
       "priority": "high",
-      "description": "نُفذت تجربة Assess حية هندسية بمحتوى اصطناعي: حماية ونطاق وصورتان وهويات مثبتة بإفادات المالك؛ visible نتيجته 5/10 وhidden محجوب، والبوابة وLOGIN والإسنادان أُغلقت. تبقى المراجعات المستقلة والمراقبة والإلغاء والنسخ والدمج؛ لا قبول سريري.",
-      "source_ref": "docs/DECISIONS.md#assess-owner-2026-10-19؛ docs/ASSESS_FOUNDATION.md؛ docs/ASSESS_A_REPORT_2026-10-19.md؛ docs/ASSESS_B_REPORT_2026-10-19.md؛ إذن الاستئناف بعد تسليم A بتاريخ2026-10-19؛ docs/PILOT_SUPABASE_SETUP.md#assess-b-setup؛ مخرجات المالك 2026-10-20؛ إذن C بعد دمج #90؛ docs/ASSESS_C_REPORT_2026-10-20.md؛ إذن إصلاح حارس النشر 2026-10-20؛ docs/DEPLOYMENT.md؛ إذن D الصريح بعد #91؛ docs/ASSESS_D_REPORT_2026-10-20.md؛ تحقق GitHub لنتائج #92 بتاريخ2026-10-20 في تقرير D؛ إذن التحضير المحلي 2026-10-20؛ docs/ASSESS_STAGING_PLAN.md؛ رابط staging من المالك 2026-10-20 موثق في خطة التجهيز؛ اختيار الأصلية من المالك 2026-10-20 ومسار C/D في خطة التجهيز؛ نتيجة فحص البداية وإفادة غياب نسخة حديثة من المالك 2026-10-20 موثقتان في خطة التجهيز؛ توجيه المالك للمتابعة المباشرة دون نسخة حديثة 2026-10-20 وحزمة التطبيق في خطة التجهيز؛ إفادة المالك Success. No rows returned لحزمة C/D بتاريخ2026-10-20 في خطة التجهيز؛ نتيجتا catalogue وD من المالك 2026-10-20 وأداة خدمة D المغلقة في دليل الإعداد وخطة التجهيز؛ زوج PASS لخدمة D المغلقة وإثبات المخطط المحسوب 2026-10-20 في خطة التجهيز؛ تحقق GitHub لنجاح Deploy وفشل مهلة CI وتشخيص الأداء 2026-10-20 في خطة التجهيز؛ إذن E المحلي الصريح 2026-10-20؛ docs/ASSESS_E_REPORT_2026-10-20.md؛ تحقق GitHub لدمج #92 ونجاح CI وDeploy على main المدموج في تقرير E؛ إذن SQL E ثم اختيار المالك الصريح المتابعة على الأصلية دون نسخة حديثة 2026-10-20، وتحقق CI/حارس النشر، وحزمة E في docs/ASSESS_E_REPORT_2026-10-20.md#متابعة-تطبيق-sql-e-على-الأصلية؛ نتيجة المالك assess-e-preinstall/1 مع cd_source_bodies_match=false بتاريخ2026-10-20 وتشخيص القراءة فقط في docs/ASSESS_E_REPORT_2026-10-20.md#توقف-عند-اختلاف-بصمات-cd؛ جدول المالك assess-e-source-diff/1 بتاريخ2026-10-20 والمقارنة المستقلة للبصمات والأطوال ومراجعة LF/CRLF في docs/ASSESS_E_REPORT_2026-10-20.md#reviewed-line-endings؛ نتائج المالك preinstall المراجع وجرد B/C/D/E وفحص E والبوابة المغلقة بتاريخ2026-10-20، وأداة خدمة E الجديدة في docs/ASSESS_E_REPORT_2026-10-20.md#e-sql-owner-results؛ زوج خدمة E المغلقة PASS للمالك والمشارك 2026-10-20 وإثبات المخطط المحسوب في docs/ASSESS_E_REPORT_2026-10-20.md#e-closed-pair-attestation؛ إذن F المحلي الصريح 2026-10-20؛ docs/ASSESS_F_REPORT_2026-10-20.md؛ توجيه المتابعة على الأصلية الآن 2026-10-20 بعد سؤال النسخة، وحزمة SQL F في docs/ASSESS_F_REPORT_2026-10-20.md#f-original-sql؛ نتيجة المالك assess-f-preinstall/1 بتاريخ2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-preinstall-owner-result؛ صف المالك assess-f-install/1 النهائي بعد COMMIT بتاريخ2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-install-owner-result؛ جرد وفحص SQL F المغلق من المالك 2026-10-20 وأداة خدمة F الجديدة في docs/ASSESS_F_REPORT_2026-10-20.md#f-sql-owner-results؛ زوج PASS لخدمة F المغلقة وإثبات المخطط المحسوب 2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-closed-pair-attestation؛ إذن حزمة التشغيل المحلية المستقلة 2026-10-20؛ docs/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md؛ docs/ASSESS_LOCAL_OPERATIONS.md؛ إفادة الهاتف في رأس مسودة #95 غير المدموجة b48854d كما يوثق تقرير الحزمة؛ متابعة الإيقاف الفعلي ونجاح نشر رأس #96 البرمجي في docs/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md#process-stop-followup؛ اعتماد المالك الخيارات الخمسة 2026-10-20 في docs/DECISIONS.md#assess-retention-owner-2026-10-20؛ docs/ASSESS_RETENTION_POLICY.md؛ docs/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md#o106-owner-policy؛ إذن إنفاذ S-ASSESS-15 المحلي 2026-10-20؛ docs/ASSESS_RETENTION_REPORT_2026-10-20.md؛ دمج #94 ونجاح CI وDeploy Pages على main المدموج8366cac بتاريخ2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-merged-main-verified؛ إفادة المالك بنجاح الهاتف 2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-phone-owner-confirmation؛ متابعة المالك والتوقف عند SQL اليدوي 2026-10-20؛ docs/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md؛ صف المالك assess-retention-preinstall/1 وإفادة عدم تحقق نسخة حديثة 2026-10-20 في docs/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md#retention-preinstall-owner-result؛ توجيه المالك الأصلية دون نسخة الآن ونسخة شاملة بعد العمل 2026-10-20 في docs/DECISIONS.md#assess-retention-original-no-backup-2026-10-20؛ docs/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md؛ صف المالك assess-retention-install/1 النهائي بعد COMMIT وتجهيز أداة الخدمة المغلقة الجديدة 2026-10-20 في docs/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result؛ زوج المالك والمشارك assess-retention-closed-service/1 المتطابق بتاريخ2026-10-21 عمّان في docs/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result؛ مراجعة الحزمة وقائمة البوابات وتحقق GitHub للرؤوس المقصودة في docs/ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md؛ معالجة حظر النشر وتجهيز إثبات retention بتاريخ2026-10-21 عمّان في docs/ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md#retention-deploy-block-followup؛ إذن ربط runtime محلي دون تشغيل حي 2026-10-20؛ docs/ASSESS_RUNTIME_LOCAL.md؛ docs/ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md؛ اختيار المالك Google Cloud Run بتاريخ2026-10-21 عمّان في docs/DECISIONS.md#assess-cloud-run-owner-2026-10-21؛ docs/ASSESS_CLOUD_RUN_PLAN_2026-10-21.md؛ إذن بدء حزمة الحاوية المحلية 2026-10-21 عمّان؛ docs/ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md؛ docs/ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md؛ docs/ASSESS_EXTERNAL_BINDING_REPORT_2026-10-21.md؛ إذن المالك إصلاح عائق session pooler المحلي وتأكيد المتابعة 2026-10-21؛ docs/ASSESS_SESSION_POOLER_REPORT_2026-10-21.md؛ إفادة المالك PASS TLS1.2 مع hostname/root CA المطابقة من Windows بلا login/SQL وإذن تجهيز حزمة login المحلية 2026-10-21؛ docs/ASSESS_WORKER_LOGIN.md؛ docs/ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md؛ صف المالك PostgreSQL17.11 وPUBLIC TEMP=true وCREATE0 وإذن تمام طبق لمرحلة NOLOGIN فقط 2026-10-21؛ docs/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md؛ صف المالك النهائي للتجهيز المغلق 2026-10-21 في docs/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md#worker-login-stage-owner-result؛ طلب المالك تمام ابدا بعد صف التجهيز المغلق 2026-10-21؛ docs/ASSESS_WORKER_ACTIVATION_DECISION_2026-10-21.md؛ docs/ASSESS_WORKER_ACTIVATION_REPORT_2026-10-21.md؛ إفادات Windows psql18.6 وCA المطابقة وفشل المصادقة/timeout وTCP المتاح وعدم تذكر كلمة الإدارة وطلب فحص الأثر 2026-10-21؛ docs/ASSESS_POSTGRES_PASSWORD_IMPACT_REPORT_2026-10-21.md؛ إفادات GitHub/Cloudflare/Docker وreset الإدارة وفشل SCRAM وطلب الربط من Google وشواهد Cloud Shell لإنشاء الهوية والسر/IAM وregistry بتاريخ2026-10-21؛ docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md؛ إفادة المالك PASS865ملفًا وبناء Cloud Shell Node24.21 وDocker push ببصمة index ونجاح Job create بحارس=0 بلا mount/execute بتاريخ2026-10-21 في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md؛ metadata المهمة/versions=[] وجرد TEMP/template1/statistics grants وإفادة إدارة Cloud Shell وصف postcondition العامل بعد password وأداة إدخال أول إصدار 2026-10-21 في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md؛ شواهد النسخة1/mount وجرد الدورين وإذن ساعة TEMP ونجاح اتصال العامل من Cloud Shell وإغلاقه، وأداة Cloud Run مستقلة 2026-10-22 عمّان في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#connection-owner-followup؛ docs/ASSESS_CONNECTION_PROBE.md؛ Cloud Build وIAM المحدد وJob التشخيص وتنفيذ assess-connection-check-mstxd وlog PASS وإغلاق login/expiry ضمن النافذة الأصلية 2026-10-22 عمّان في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass؛ صف المالك النهائي login_disabled/expired=true وbackend_sessions0 وgate_closed=true بعد فحص Cloud Run 2026-10-22 عمّان في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-closed-final؛ طلب المالك مراجعة الدورة كاملة وتحديد تجربة مضبوطة بعد نجاح الربط، ومراجعة source وفحوص48حالة محلية وعوائق التوصيل/العزل وخطة الاختبار 2026-10-22 عمّان في docs/ASSESS_CONTROLLED_TRIAL_READINESS_2026-10-22.md؛ طلب المالك تحضير جرد القراءة والأدوات دون تشغيل حي واختبار الحزمة محليًا 2026-10-22 عمّان في docs/ASSESS_TRIAL_PREPARATION_2026-10-22.md؛ صف counts من المالك 2026-10-22 عمّان في docs/ASSESS_TRIAL_PREPARATION_2026-10-22.md#trial-inventory-owner-result؛ إذن بدء تحضير حماية التجربة محليًا وشاهد التنافس والحدود 2026-10-22 عمّان في docs/ASSESS_TRIAL_ISOLATION_2026-10-22.md؛ docs/ASSESS_TRIAL_BATCH_ONE_2026-10-22.md؛ docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ فشل preinstall المرسل من المالك وتشخيصه في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-preinstall-catalog-mismatch؛ نتيجة catalogue من المالك والتحقق المحلي في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-catalog-owner-result؛ نتيجة الدالة الواحدة والاشتقاق الكامل وحزمة التوافق في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-catalog-reviewed-profile؛ صف PASS للـpreinstall المراجعة من المالك ومراجعة خطوة التركيب الخامل في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-reviewed-preinstall-owner-pass؛ إذن المالك الصريح لتطبيق install وصف PASS بعده في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-reviewed-install-owner-pass؛ إفادة المالك بتوفر مالك وطالبين في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-three-accounts-owner-report؛ صورة واجهة المالك ومطابقتها للمصدر القديم ونجاح نشر الفرع في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-main-ui-owner-screenshot؛ سطر v2 من المالك وتجهيز artifact محلية ذات نطاق مقترح ثابت في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-v2-visible-bound-local-artifact",
-      "waiting_on": "owner"
+      "description": "التجربة الهندسية الحية الاصطناعية موثقة والبوابة والعامل مغلقان. عائق الإغلاق المراجعات المستقلة (O108) عبر RAD-063؛ المراقبة والإلغاء RAD-059 والنسخ RAD-086 شروط تشغيل منفصلة، لا قبول طبي أو إعادة تجربة ضمن هذا الإغلاق.",
+      "source_ref": "docs/DECISIONS.md#assess-owner-2026-10-19؛ docs/ASSESS_FOUNDATION.md؛ docs/ASSESS_A_REPORT_2026-10-19.md؛ docs/ASSESS_B_REPORT_2026-10-19.md؛ إذن الاستئناف بعد تسليم A بتاريخ2026-10-19؛ docs/PILOT_SUPABASE_SETUP.md#assess-b-setup؛ مخرجات المالك 2026-10-20؛ إذن C بعد دمج #90؛ docs/ASSESS_C_REPORT_2026-10-20.md؛ إذن إصلاح حارس النشر 2026-10-20؛ docs/DEPLOYMENT.md؛ إذن D الصريح بعد #91؛ docs/ASSESS_D_REPORT_2026-10-20.md؛ تحقق GitHub لنتائج #92 بتاريخ2026-10-20 في تقرير D؛ إذن التحضير المحلي 2026-10-20؛ docs/ASSESS_STAGING_PLAN.md؛ رابط staging من المالك 2026-10-20 موثق في خطة التجهيز؛ اختيار الأصلية من المالك 2026-10-20 ومسار C/D في خطة التجهيز؛ نتيجة فحص البداية وإفادة غياب نسخة حديثة من المالك 2026-10-20 موثقتان في خطة التجهيز؛ توجيه المالك للمتابعة المباشرة دون نسخة حديثة 2026-10-20 وحزمة التطبيق في خطة التجهيز؛ إفادة المالك Success. No rows returned لحزمة C/D بتاريخ2026-10-20 في خطة التجهيز؛ نتيجتا catalogue وD من المالك 2026-10-20 وأداة خدمة D المغلقة في دليل الإعداد وخطة التجهيز؛ زوج PASS لخدمة D المغلقة وإثبات المخطط المحسوب 2026-10-20 في خطة التجهيز؛ تحقق GitHub لنجاح Deploy وفشل مهلة CI وتشخيص الأداء 2026-10-20 في خطة التجهيز؛ إذن E المحلي الصريح 2026-10-20؛ docs/ASSESS_E_REPORT_2026-10-20.md؛ تحقق GitHub لدمج #92 ونجاح CI وDeploy على main المدموج في تقرير E؛ إذن SQL E ثم اختيار المالك الصريح المتابعة على الأصلية دون نسخة حديثة 2026-10-20، وتحقق CI/حارس النشر، وحزمة E في docs/ASSESS_E_REPORT_2026-10-20.md#متابعة-تطبيق-sql-e-على-الأصلية؛ نتيجة المالك assess-e-preinstall/1 مع cd_source_bodies_match=false بتاريخ2026-10-20 وتشخيص القراءة فقط في docs/ASSESS_E_REPORT_2026-10-20.md#توقف-عند-اختلاف-بصمات-cd؛ جدول المالك assess-e-source-diff/1 بتاريخ2026-10-20 والمقارنة المستقلة للبصمات والأطوال ومراجعة LF/CRLF في docs/ASSESS_E_REPORT_2026-10-20.md#reviewed-line-endings؛ نتائج المالك preinstall المراجع وجرد B/C/D/E وفحص E والبوابة المغلقة بتاريخ2026-10-20، وأداة خدمة E الجديدة في docs/ASSESS_E_REPORT_2026-10-20.md#e-sql-owner-results؛ زوج خدمة E المغلقة PASS للمالك والمشارك 2026-10-20 وإثبات المخطط المحسوب في docs/ASSESS_E_REPORT_2026-10-20.md#e-closed-pair-attestation؛ إذن F المحلي الصريح 2026-10-20؛ docs/ASSESS_F_REPORT_2026-10-20.md؛ توجيه المتابعة على الأصلية الآن 2026-10-20 بعد سؤال النسخة، وحزمة SQL F في docs/ASSESS_F_REPORT_2026-10-20.md#f-original-sql؛ نتيجة المالك assess-f-preinstall/1 بتاريخ2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-preinstall-owner-result؛ صف المالك assess-f-install/1 النهائي بعد COMMIT بتاريخ2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-install-owner-result؛ جرد وفحص SQL F المغلق من المالك 2026-10-20 وأداة خدمة F الجديدة في docs/ASSESS_F_REPORT_2026-10-20.md#f-sql-owner-results؛ زوج PASS لخدمة F المغلقة وإثبات المخطط المحسوب 2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-closed-pair-attestation؛ إذن حزمة التشغيل المحلية المستقلة 2026-10-20؛ docs/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md؛ docs/ASSESS_LOCAL_OPERATIONS.md؛ إفادة الهاتف في رأس مسودة #95 غير المدموجة b48854d كما يوثق تقرير الحزمة؛ متابعة الإيقاف الفعلي ونجاح نشر رأس #96 البرمجي في docs/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md#process-stop-followup؛ اعتماد المالك الخيارات الخمسة 2026-10-20 في docs/DECISIONS.md#assess-retention-owner-2026-10-20؛ docs/ASSESS_RETENTION_POLICY.md؛ docs/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md#o106-owner-policy؛ إذن إنفاذ S-ASSESS-15 المحلي 2026-10-20؛ docs/ASSESS_RETENTION_REPORT_2026-10-20.md؛ دمج #94 ونجاح CI وDeploy Pages على main المدموج8366cac بتاريخ2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-merged-main-verified؛ إفادة المالك بنجاح الهاتف 2026-10-20 في docs/ASSESS_F_REPORT_2026-10-20.md#f-phone-owner-confirmation؛ متابعة المالك والتوقف عند SQL اليدوي 2026-10-20؛ docs/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md؛ صف المالك assess-retention-preinstall/1 وإفادة عدم تحقق نسخة حديثة 2026-10-20 في docs/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md#retention-preinstall-owner-result؛ توجيه المالك الأصلية دون نسخة الآن ونسخة شاملة بعد العمل 2026-10-20 في docs/DECISIONS.md#assess-retention-original-no-backup-2026-10-20؛ docs/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md؛ صف المالك assess-retention-install/1 النهائي بعد COMMIT وتجهيز أداة الخدمة المغلقة الجديدة 2026-10-20 في docs/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result؛ زوج المالك والمشارك assess-retention-closed-service/1 المتطابق بتاريخ2026-10-21 عمّان في docs/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result؛ مراجعة الحزمة وقائمة البوابات وتحقق GitHub للرؤوس المقصودة في docs/ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md؛ معالجة حظر النشر وتجهيز إثبات retention بتاريخ2026-10-21 عمّان في docs/ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md#retention-deploy-block-followup؛ إذن ربط runtime محلي دون تشغيل حي 2026-10-20؛ docs/ASSESS_RUNTIME_LOCAL.md؛ docs/ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md؛ اختيار المالك Google Cloud Run بتاريخ2026-10-21 عمّان في docs/DECISIONS.md#assess-cloud-run-owner-2026-10-21؛ docs/ASSESS_CLOUD_RUN_PLAN_2026-10-21.md؛ إذن بدء حزمة الحاوية المحلية 2026-10-21 عمّان؛ docs/ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md؛ docs/ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md؛ docs/ASSESS_EXTERNAL_BINDING_REPORT_2026-10-21.md؛ إذن المالك إصلاح عائق session pooler المحلي وتأكيد المتابعة 2026-10-21؛ docs/ASSESS_SESSION_POOLER_REPORT_2026-10-21.md؛ إفادة المالك PASS TLS1.2 مع hostname/root CA المطابقة من Windows بلا login/SQL وإذن تجهيز حزمة login المحلية 2026-10-21؛ docs/ASSESS_WORKER_LOGIN.md؛ docs/ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md؛ صف المالك PostgreSQL17.11 وPUBLIC TEMP=true وCREATE0 وإذن تمام طبق لمرحلة NOLOGIN فقط 2026-10-21؛ docs/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md؛ صف المالك النهائي للتجهيز المغلق 2026-10-21 في docs/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md#worker-login-stage-owner-result؛ طلب المالك تمام ابدا بعد صف التجهيز المغلق 2026-10-21؛ docs/ASSESS_WORKER_ACTIVATION_DECISION_2026-10-21.md؛ docs/ASSESS_WORKER_ACTIVATION_REPORT_2026-10-21.md؛ إفادات Windows psql18.6 وCA المطابقة وفشل المصادقة/timeout وTCP المتاح وعدم تذكر كلمة الإدارة وطلب فحص الأثر 2026-10-21؛ docs/ASSESS_POSTGRES_PASSWORD_IMPACT_REPORT_2026-10-21.md؛ إفادات GitHub/Cloudflare/Docker وreset الإدارة وفشل SCRAM وطلب الربط من Google وشواهد Cloud Shell لإنشاء الهوية والسر/IAM وregistry بتاريخ2026-10-21؛ docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md؛ إفادة المالك PASS865ملفًا وبناء Cloud Shell Node24.21 وDocker push ببصمة index ونجاح Job create بحارس=0 بلا mount/execute بتاريخ2026-10-21 في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md؛ metadata المهمة/versions=[] وجرد TEMP/template1/statistics grants وإفادة إدارة Cloud Shell وصف postcondition العامل بعد password وأداة إدخال أول إصدار 2026-10-21 في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md؛ شواهد النسخة1/mount وجرد الدورين وإذن ساعة TEMP ونجاح اتصال العامل من Cloud Shell وإغلاقه، وأداة Cloud Run مستقلة 2026-10-22 عمّان في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#connection-owner-followup؛ docs/ASSESS_CONNECTION_PROBE.md؛ Cloud Build وIAM المحدد وJob التشخيص وتنفيذ assess-connection-check-mstxd وlog PASS وإغلاق login/expiry ضمن النافذة الأصلية 2026-10-22 عمّان في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass؛ صف المالك النهائي login_disabled/expired=true وbackend_sessions0 وgate_closed=true بعد فحص Cloud Run 2026-10-22 عمّان في docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-closed-final؛ طلب المالك مراجعة الدورة كاملة وتحديد تجربة مضبوطة بعد نجاح الربط، ومراجعة source وفحوص48حالة محلية وعوائق التوصيل/العزل وخطة الاختبار 2026-10-22 عمّان في docs/ASSESS_CONTROLLED_TRIAL_READINESS_2026-10-22.md؛ طلب المالك تحضير جرد القراءة والأدوات دون تشغيل حي واختبار الحزمة محليًا 2026-10-22 عمّان في docs/ASSESS_TRIAL_PREPARATION_2026-10-22.md؛ صف counts من المالك 2026-10-22 عمّان في docs/ASSESS_TRIAL_PREPARATION_2026-10-22.md#trial-inventory-owner-result؛ إذن بدء تحضير حماية التجربة محليًا وشاهد التنافس والحدود 2026-10-22 عمّان في docs/ASSESS_TRIAL_ISOLATION_2026-10-22.md؛ docs/ASSESS_TRIAL_BATCH_ONE_2026-10-22.md؛ docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ فشل preinstall المرسل من المالك وتشخيصه في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-preinstall-catalog-mismatch؛ نتيجة catalogue من المالك والتحقق المحلي في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-catalog-owner-result؛ نتيجة الدالة الواحدة والاشتقاق الكامل وحزمة التوافق في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-catalog-reviewed-profile؛ صف PASS للـpreinstall المراجعة من المالك ومراجعة خطوة التركيب الخامل في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-reviewed-preinstall-owner-pass؛ إذن المالك الصريح لتطبيق install وصف PASS بعده في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-reviewed-install-owner-pass؛ إفادة المالك بتوفر مالك وطالبين في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-three-accounts-owner-report؛ صورة واجهة المالك ومطابقتها للمصدر القديم ونجاح نشر الفرع في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-main-ui-owner-screenshot؛ سطر v2 من المالك وتجهيز artifact محلية ذات نطاق مقترح ثابت في docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-v2-visible-bound-local-artifact؛ RAD-063؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md",
+      "waiting_on": "reviewer"
     },
     {
       "id": "RAD-057",
       "title": "تحسين الواجهة بصريًا: الرسوم والألوان والخطوط",
       "status": "deferred",
       "priority": "low",
-      "description": "المتبقي التلميع البصري الشامل فقط بعد RAD-062؛ المكتبة والتدريب والثيم والرسومات انتقلت إلى RAD-066 وRAD-069 بترتيب F9. CLN-028 قبل إعادة رسم أي مشهد (البند 7). لا يمس المشاهد والبصمات دون موافقة المالك.",
-      "source_ref": "محادثة المالك 2026-10-17؛ DECISIONS S-UI-054-1…13؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22",
+      "description": "التلميع مؤجل بعد RAD-062؛ يشمل بقايا RAD-074 §7 وRAD-077 والملاحظات البصرية لـRAD-069. قائمة UI/QA المفصلة وحالة phone-navigation في تقرير قبول2026-10-30 §3؛ CLN-028 قبل إعادة رسم مشهد. لا استثناء بصمات أو تغيير اختبارات مأذون بهذا النقل.",
+      "source_ref": "محادثة المالك 2026-10-17؛ DECISIONS S-UI-054-1…13؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md#residual-backlog",
       "defer_reason": "قرار المالك: التلميع المتبقي بعد RAD-062 وقبل RAD-063 (البند 8 معدّلًا بقرار جرد الواجهة F9)."
     },
     {
@@ -639,11 +639,11 @@
     {
       "id": "RAD-069",
       "title": "UI-4: A النتيجة؛ B1 الصفحات؛ B2a الثيم؛ B2b الرسومات؛ C لوحة المالك",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "C1/C2 مطبقتان وفق إفادة المالك؛ وصل DB day وتصحيح Terms على مسودة #131 للمراجعة، مع بقاء S-PILOT-15 وإصدار الموافقة2026-10-24. ينتظر إعادة staging المحدثة، ثم تعيين الشهادة وإعادة CI والدمج والهاتف. مراجعات A/B/C1 باقية؛ لا استئناف Assess.",
-      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow؛ docs/DECISIONS.md#rad069c2-owner-2026-10-24؛ docs/RAD-069C2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c2-phase2-deferred-ui-2026-10-24؛ docs/RAD-069C2_PHASE2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-db-day-owner-2026-10-24؛ docs/RAD-069_DB_DAY_REPORT_2026-10-24.md",
-      "waiting_on": "owner"
+      "description": "قبل المالك A/B/B2/C1/C2 كما هي؛ #131 مدموج وDB day مكتمل. الملاحظات البصرية في RAD-057.",
+      "source_ref": "docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md؛ docs/DECISIONS.md#rad069a-owner-2026-10-24؛ docs/RAD-069A_REPORT_2026-10-24.md؛ docs/RAD-069A_HASHES_2026-10-24.md؛ docs/DECISIONS.md#rad069b1-owner-2026-10-24؛ docs/RAD-069B1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2a-owner-2026-10-24؛ docs/RAD-069B2A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069b2b-owner-2026-10-24؛ docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-deferred-db-day-2026-10-24؛ docs/DECISIONS.md#rad069-export-flow-owner-2026-10-24؛ docs/RAD-069C1_REPORT_2026-10-24.md#export-flow؛ docs/DECISIONS.md#rad069c2-owner-2026-10-24؛ docs/RAD-069C2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069c2-phase2-deferred-ui-2026-10-24؛ docs/RAD-069C2_PHASE2_REPORT_2026-10-24.md؛ docs/DECISIONS.md#rad069-db-day-owner-2026-10-24؛ docs/RAD-069_DB_DAY_REPORT_2026-10-24.md؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #121/#122/#123/#125/#126/#127/#128/#131؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-070",
@@ -684,11 +684,11 @@
     {
       "id": "RAD-074",
       "title": "إصلاح أدوات فحص المتصفح على واجهة المحاكي الحالية",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "دُمج #120: مساعد workspace وأدوات التدقيق وأمر qa:exam-audit. المتبقي قرارات المالك بشأن نتائج التقرير §7 (تسميات إطار 390، clip-margin-only، phone-navigation).",
-      "source_ref": "docs/RAD-074_QA_TOOLING_REPORT_2026-10-24.md؛ docs/DOCS_CHECKS.md#browser-audits",
-      "waiting_on": "owner"
+      "description": "قُبلت أدوات QA؛ ظهور تسميات إطار390 في Whole detector وحده مقبول. نُقلت بقية §7 إلى RAD-057.",
+      "source_ref": "docs/RAD-074_QA_TOOLING_REPORT_2026-10-24.md؛ docs/DOCS_CHECKS.md#browser-audits؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #120؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-075",
@@ -702,65 +702,65 @@
     {
       "id": "RAD-076",
       "title": "Housekeeping A: ثبات الاختبار وحارس هندسة الحوض وصقل C2",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "تنظيف RAD-076 منفذ للمراجعة: ساعة F ثابتة، حارس الحوض وفروق B2b مثبتة، وC2 غير الموصولة بصقل البحث وradio groups؛ ينتظر مراجعة المالك للمسودة، بلا وصل حي أو DB day.",
-      "source_ref": "docs/RAD-076_REPORT_2026-10-24.md؛ طلب المالك وقراراته 2026-10-24",
-      "waiting_on": "owner"
+      "description": "قُبل housekeeping A الداخلي؛ لا عنصر ظاهر للمستخدم يحتاج فحصًا.",
+      "source_ref": "docs/RAD-076_REPORT_2026-10-24.md؛ طلب المالك وقراراته 2026-10-24؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #129؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md؛ RAD-076 قبول داخلي بلا فحص مستخدم ظاهر."
     },
     {
       "id": "RAD-077",
       "title": "Housekeeping B: تسميات الهاتف وتعبئة المكتبة وصياغة مؤجلة",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "دُمج C1/A1 للهاتف في #130؛ أُنجزت صياغة الحواف وتسميات أسفل1440 على مسودة #135 ضمن RAD-081 للمراجعة. ينتظر المالك الهاتف والصور؛ تجاوز الحوض الكامل وملاحظات المناظر الثانية وتسميات العظم خارج الصفوف الجديدة باقية.",
-      "source_ref": "docs/RAD-077_REPORT_2026-10-24.md؛ docs/RAD-077_PROPOSAL_2026-10-24.md؛ docs/DECISIONS.md#rad077-owner-2026-10-24؛ docs/DECISIONS.md#rad079-owner-2026-10-25؛ docs/RAD-081_OWNER_ITEMS_2026-10-25.md",
-      "waiting_on": "owner"
+      "description": "قُبل housekeeping B وتسميات الهاتف؛ الملاحظات البصرية المستقلة محفوظة في RAD-057.",
+      "source_ref": "docs/RAD-077_REPORT_2026-10-24.md؛ docs/RAD-077_PROPOSAL_2026-10-24.md؛ docs/DECISIONS.md#rad077-owner-2026-10-24؛ docs/DECISIONS.md#rad079-owner-2026-10-25؛ docs/RAD-081_OWNER_ITEMS_2026-10-25.md؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #130/#135؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-078",
       "title": "بوابة الموافقة بعد الدخول وتنبيه عدم الحفظ وحالتا feedback",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "دُمجت بوابة الموافقة وملاحظة عدم الحفظ وحالتا feedback في PR #132؛ ينتظر مراجعة المالك للصورة والهاتف والتحقق الخارجي. سياسة الزائر الحالية ثابتة بتصحيحه؛ لا SQL أو تغيير شهادة أو تقييم.",
-      "source_ref": "docs/DECISIONS.md#rad078-owner-2026-10-25 docs/RAD-078_REPORT_2026-10-25.md",
-      "waiting_on": "owner"
+      "description": "قُبلت بوابة الموافقة وملاحظة عدم الحفظ وحالتا feedback.",
+      "source_ref": "docs/DECISIONS.md#rad078-owner-2026-10-25 docs/RAD-078_REPORT_2026-10-25.md؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #132؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-079",
       "title": "توضيح الرسوب بسبب خطأ حرج رغم بلوغ درجة النجاح",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "نُفذت صياغة EN/AR للرسوب الحرج وتوضيح تحت الدرجة وتسمية علامة Chest PA؛ ينتظر مراجعة المالك للمسودة والصور والهاتف. التقييم ثابت؛ استثناء النصوص والبصمات محصور بقرار المالك.",
-      "source_ref": "docs/DECISIONS.md#rad079-owner-2026-10-25؛ docs/RAD-079_REPORT_2026-10-25.md؛ docs/RAD-079_HASHES_2026-10-25.md",
-      "waiting_on": "owner"
+      "description": "قُبل توضيح الرسوب بسبب الخطأ الحرج وصياغة EN/AR.",
+      "source_ref": "docs/DECISIONS.md#rad079-owner-2026-10-25؛ docs/RAD-079_REPORT_2026-10-25.md؛ docs/RAD-079_HASHES_2026-10-25.md؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #133؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-080",
       "title": "الرسغ: توضيح حواف التحديد وحفظ دقة عناصر السم",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "دُمج إصلاح حواف الرسغ ودقة عناصر السم في #134؛ تعميم الحواف خارج الرسغ نُفذ على مسودة #135 ضمن RAD-081. المتبقي مراجعة المالك للهاتف والصور؛ لا تغيير في التقييم.",
-      "source_ref": "docs/RAD-080_REPORT_2026-10-25.md; docs/DECISIONS.md#rad080-owner-2026-10-25",
-      "waiting_on": "owner"
+      "description": "قُبلت حواف الرسغ ودقة عناصر السم وتعميم صياغة الحواف.",
+      "source_ref": "docs/RAD-080_REPORT_2026-10-25.md; docs/DECISIONS.md#rad080-owner-2026-10-25؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #134/#135؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-084",
       "title": "الوصول إلى100 وحفظ اللغة وSID وقرارات الواجهة",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "هذا العمل مُتتبع باسم RAD-081 في التقارير وPR #135؛ روابط الأدلة محفوظة. صُحح حجبL/R ونصSID للأطراف؛ ينتظر فحص المالك للهاتف. الدرجات والمقارنة والإصدار/8 والشهادة والمعايرة ثابتة؛ ملاحظاتRAD-077 وRadius الاختياري محفوظة.",
-      "source_ref": "docs/RAD-081_OWNER_ITEMS_2026-10-25.md; docs/RAD-081_REPORT_2026-10-25.md",
-      "waiting_on": "owner"
+      "description": "قُبل نطاق RAD-081: الوصول إلى100 وحفظ اللغة وSID وإرشادات الواجهة.",
+      "source_ref": "docs/RAD-081_OWNER_ITEMS_2026-10-25.md; docs/RAD-081_REPORT_2026-10-25.md؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #135؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-083",
       "title": "عرض الاستبيانات بالعربية مع بقاء التخزين بالإنجليزية",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "دُمج عرض الاستبيانات وصياغةq8 المعتمدة في #136؛ ينتظر فحص المالك للهاتف. خيار «الموقع» غير مأذون دون موافقة إضافية. التعريفات بالإنجليزية؛ الحمولات والتقييم وCSV دون تغيير.",
-      "source_ref": "docs/DECISIONS.md#rad083-owner-2026-10-25؛ docs/RAD-083_REPORT_2026-10-25.md",
-      "waiting_on": "owner"
+      "description": "قُبل عرض الاستبيانات بالعربية؛ التخزين الإنجليزي ثابت.",
+      "source_ref": "docs/DECISIONS.md#rad083-owner-2026-10-25؛ docs/RAD-083_REPORT_2026-10-25.md؛ docs/DECISIONS.md#owner-signoff-2026-10-30",
+      "completion_evidence": "owner phone check on deployed main, 2026-10-30؛ merged PRs #136؛ docs/OWNER_SIGNOFF_REPORT_2026-10-30.md"
     },
     {
       "id": "RAD-085",
