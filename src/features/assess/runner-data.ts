@@ -11,8 +11,8 @@ export interface MixedSession {
 export class RunnerError extends Error {
   constructor(readonly code:"conflict"|"denied"|"unavailable"|"invalid"|"network"|"limit") {super(code);}
 }
-export const isObject=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==="object"&&!Array.isArray(v);
-export const isUuid=(v:unknown):v is string=>typeof v==="string"&&/^[\da-f]{8}(-[\da-f]{4}){3}-[\da-f]{12}$/i.test(v);
+import {isObject,isUuid} from "./data-guards";
+export {isObject,isUuid} from "./data-guards";
 const text=(v:unknown,max=10000):v is string=>typeof v==="string"&&v.length>0&&v.length<=max;
 function invalid():never {throw new RunnerError("invalid");}
 export function parseListing(raw:unknown):Listing {

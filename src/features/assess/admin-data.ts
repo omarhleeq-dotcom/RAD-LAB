@@ -1,3 +1,4 @@
+import {isObject as object,isUuid as uuid} from "./data-guards";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type AdminKind = "groups" | "people" | "members" | "versions" | "assignments" | "targets";
@@ -14,8 +15,6 @@ export interface AdminPage { version: 1; rows: AdminRow[]; next: string | null }
 export class AssessAdminError extends Error {
   constructor(readonly kind: "schema" | "denied" | "conflict" | "invalid" | "error") { super("Assess administration unavailable"); }
 }
-const object = (v: unknown): v is Record<string,unknown> => !!v && typeof v==="object" && !Array.isArray(v);
-const uuid = (v: unknown): v is string => typeof v==="string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 const text = (v:unknown) => typeof v==="string" && v.trim().length>0 && v.length<=200;
 export function parseAdminPage(value:unknown,kind:AdminKind):AdminPage {
   const fail=()=>{throw new AssessAdminError("error");};

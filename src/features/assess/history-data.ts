@@ -1,12 +1,11 @@
+import {isObject as object,isUuid as uuid} from "./data-guards";
 import type {SupabaseClient} from "@supabase/supabase-js";
 import type {AssessHistoryRow} from "./contracts";
 import {ASSESS_RETENTION_CONSENT_VERSION} from "./retention-consent";
 // Historical F contract; never change text under this version.
 export const ASSESS_CONSENT_VERSION="assess-pilot-2026-10-20-v1";
 export interface HistoryPage {rows:AssessHistoryRow[];next:string|null}
-const object=(v:unknown):v is Record<string,unknown>=>!!v&&typeof v==="object"&&!Array.isArray(v);
 const exact=(v:Record<string,unknown>,keys:string[])=>Object.keys(v).sort().join()===keys.sort().join();
-const uuid=(v:unknown):v is string=>typeof v==="string"&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
 const invalid=():never=>{throw new Error("Assess history unavailable");};
 export function parseHistoryPage(raw:unknown):HistoryPage {
   if(!object(raw)||!exact(raw,["rows","next"])||!Array.isArray(raw.rows)||raw.rows.length>100||!(raw.next===null||uuid(raw.next)))return invalid();
