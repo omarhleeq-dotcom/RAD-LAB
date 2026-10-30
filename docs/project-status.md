@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 338,
-  "updated_at": "2026-10-30T05:21:40.599548+00:00",
+  "revision": 339,
+  "updated_at": "2026-10-30T07:01:21.807578+00:00",
   "timezone": "UTC",
   "next_id": "RAD-088",
   "tasks": [
@@ -578,8 +578,8 @@
       "title": "متطلبات رفع أسئلة Assess: كتابي بتصحيح الأستاذ، دور مشرف، أداة جدول",
       "status": "in_progress",
       "priority": "high",
-      "description": "P1 الاسم/M01 والاستكمال داخل Assess جاهزة خاملة في المسودة؛ مراجعتها ثم P2–P9 وفق خطة3+5أ. required/checks والـmarker ثابتة؛ لا SQL حي. يوم CLI واحد بعد RAD-086 واللابتوب والنسخة المحلية الكاملة المتحقق منها، ثم P10. Manage targets للمغلق وفحص RPC وإعادة تقدير4ب باقية.",
-      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29؛ أمر المالك تنفيذ4أ فقط2026-10-30؛ docs/RAD-062_PHASE4A_REPORT_2026-10-30.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ أمر المالك خطة3+5أ المعتمدة وتعديل الجزء2 وتنفيذ P0 فقط2026-10-30؛ docs/DECISIONS.md#rad062-plan-3-5a-owner-2026-10-30؛ docs/RAD-062_3-5A_PLAN_2026-10-30.md؛ docs/RAD-062_P1_NAME_REPORT_2026-10-30.md",
+      "description": "P1 خاملة في المسودة؛ إصلاح CI لاستبعاد المؤجل من البروفات وmanifest العامل باستثناء مالك20ملفًا لمرة واحدة. مراجعتها ثم P2–P9 وفق الخطة. required/checks والـmarker ثابتة؛ لا SQL حي. يوم CLI بعد RAD-086 واللابتوب والنسخة المتحقق منها ثم P10؛ Manage targets للمغلق وفحص RPC وإعادة تقدير4ب باقية.",
+      "source_ref": "docs/DECISIONS.md#assess-authoring-owner-2026-10-22؛ docs/DECISIONS.md S-ASSESS-7 وS-ASSESS-11؛ docs/DECISIONS.md#cleanup-sequencing-owner-2026-10-22؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/RAD-060_RAD-062_RECONCILIATION_2026-10-29.md؛ أمر المالك استئناف التخطيط فقط2026-10-29؛ docs/DECISIONS.md#assess-phase1-owner-2026-10-29؛ docs/RAD-062_PHASE2_DESIGN_2026-10-29.md؛ docs/RAD-060_PHASE1_FOLLOWUP_2026-10-29.md#rad064-closed-targets؛ أمر المالك تصميم المرحلة2 فقط2026-10-29؛ docs/DECISIONS.md#rad062-phase2-owner-2026-10-29؛ docs/RAD-062_PHASE2_OWNER_DECISIONS_REPORT_2026-10-29.md؛ اختيارات المالك على #159 بتاريخ2026-10-29؛ أمر المالك تنفيذ4أ فقط2026-10-30؛ docs/RAD-062_PHASE4A_REPORT_2026-10-30.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ أمر المالك خطة3+5أ المعتمدة وتعديل الجزء2 وتنفيذ P0 فقط2026-10-30؛ docs/DECISIONS.md#rad062-plan-3-5a-owner-2026-10-30؛ docs/RAD-062_3-5A_PLAN_2026-10-30.md؛ docs/RAD-062_P1_NAME_REPORT_2026-10-30.md؛ أمر المالك استثناء20ملفًا لمرة واحدة لإصلاح CI في #166",
       "waiting_on": "code"
     },
     {

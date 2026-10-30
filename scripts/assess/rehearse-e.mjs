@@ -44,7 +44,8 @@ try {
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
     grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
   // Worker role is cluster-scoped in PostgreSQL; this disposable container must be fresh per real rehearsal.
-  for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await query(readFileSync(`supabase/migrations/${file}`,'utf8'));
+  const deferred=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
+  for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&!Object.hasOwn(deferred,f)).sort())await query(readFileSync(`supabase/migrations/${file}`,'utf8'));
   await query(`insert into auth.users values('${uid(1)}','owner@example.test',now(),'{"display_name":"Synthetic owner"}'),('${uid(2)}','student@example.test',now(),'{"display_name":"Synthetic participant"}');update public.profiles set status='approved';update public.profiles set role='owner' where user_id='${uid(1)}';update assess.launch_gate set enabled=true;`);
   const worker=client('assess_worker'),owner=client('authenticated',uid(1)),student=client('authenticated',uid(2)),held=client('authenticated',uid(2),true);
   const doc=practicalFixture(),version=await owner.call('content_submit_v1',{p_document:doc});

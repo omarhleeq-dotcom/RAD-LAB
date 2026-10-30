@@ -10,6 +10,18 @@ const built=await build({entryPoints:['src/features/pilot/full-name.ts'],bundle:
 const code=built.outputFiles[0].text;
 const {validFullName}=await import('data:text/javascript;base64,'+Buffer.from(code).toString('base64'));
 const legacy='11111111-1111-4111-8111-111111111111';
+// Fixed corpus shared by the native CI Node Letter comparison and SQL/client test.
+// Scripts predate Unicode16 (CI Node22); no regeneration from the pinned table.
+const FIXED_CORPUS=['A','é','Ж','Ω','א','ع','अ','中','あ','ก','ა','𐐀','𓀀','𑀅','ⴰ','한',
+ '', '123', '\u0301', '\u200d', '🙂', 'Ⅷ', 'One Two Three', 'أحمد محمد علي', 'Иван Иванов Петров',
+ '李 王 张', '山田 太郎 三郎', 'अमित कुमार शर्मा', '𐐀 𐐁 𐐂', 'Two Words', 'A B 🙂', 'A B '+ '𐐀'.repeat(97)];
+test('RAD062_LETTER agrees with native CI Node Unicode Letters on a fixed multi-script corpus',()=>{
+ const ranges=readFileSync('src/features/pilot/full-name.ts','utf8').match(/const RAD062_LETTER = \/\[([^]*?)\]\/u;/)[1];
+ const pinned=new RegExp('['+ranges+']','u');
+ for(const value of FIXED_CORPUS)assert.equal(pinned.test(value),/\p{L}/u.test(value),JSON.stringify(value));
+ console.log('Fixed multi-script corpus Node',process.versions.node);
+});
+
 test('RAD-062 current schema, explicit M01 upgrade, signup/edit and legacy isolation',async()=>{
  const db=await openLocalDatabase('postgres');
  try {
@@ -34,6 +46,8 @@ test('RAD-062 current schema, explicit M01 upgrade, signup/edit and legacy isola
   assert.equal((await db.query('select assess.name_entry_v1() v'))[0].v,false);
   await db.exec('reset role');
   assert.deepEqual((await db.query("select oid,proowner,proacl,proconfig from pg_proc where oid='assess.session_authorize_v1(uuid)'::regprocedure"))[0],before);
+  for(const row of await db.query('select n,public.rad062_valid_full_name(n) v from unnest($1::text[]) n',[FIXED_CORPUS]))
+   assert.equal(row.v,validFullName(row.n),JSON.stringify(row.n));
   const valid=[' '.repeat(102)+'One Two Three','One Two Three','أحمد محمد علي','李 王 张','𐐀 𐐁 𐐂','A-1 B2 C3','A\u00a0B\u2028C','\ufeffA B C\ufeff','A B '+ '𐐀'.repeat(96)];
   const invalid=['Two Words','',null,'   ','1 2 3','A B '+ '𐐀'.repeat(97),'A\u0085B C','A\u200bB C'];
   for(const name of [...valid,...invalid]){

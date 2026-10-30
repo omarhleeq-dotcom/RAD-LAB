@@ -3,7 +3,7 @@ import { createElement, act } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, rmSync } from 'node:fs';
 import { expect, it, vi } from 'vitest';
 import { Rad062NameGate } from './Rad062NameGate';
 import manifest from '../../../scripts/pages/frontend-schema.json';
@@ -79,4 +79,17 @@ it('bounds only historical fixture discovery; the real schema gate still sees M0
  expect(readdirSync('supabase/migrations')).not.toContain(migration);
  const raw=execFileSync(process.execPath,['--input-type=module','-e',"import{readdirSync}from'node:fs';process.stdout.write(JSON.stringify(readdirSync('supabase/migrations')));"],{encoding:'utf8'});
  expect(JSON.parse(raw)).toContain(migration);
+});
+
+
+it('worker manifest pins only applied migrations and the source classification',()=>{
+ const built=JSON.parse(execFileSync(process.execPath,['scripts/assess/build-worker.mjs'],{encoding:'utf8'}));
+ try{
+  const worker=JSON.parse(readFileSync(built.output+'/manifest.json','utf8'));
+  expect(Object.keys(worker.migrations)).toEqual([...manifest.requiredMigrations].sort());
+  for(const file of Object.keys(manifest.deferredMigrations))expect(worker.migrations).not.toHaveProperty(file);
+  const hash=(path:string)=>createHash('sha256').update(readFileSync(path)).digest('hex');
+  for(const file of Object.keys(worker.migrations))expect(worker.migrations[file]).toBe(hash('supabase/migrations/'+file));
+  expect(worker.sources['scripts/pages/frontend-schema.json']).toBe(hash('scripts/pages/frontend-schema.json'));
+ }finally{rmSync(built.output,{recursive:true,force:true});}
 });
