@@ -17,3 +17,12 @@ export type AssessmentVersionV2 = Omit<AssessmentVersion, 'schemaVersion' | 'ite
 );
 type DraftItemV2 = (DraftItem extends infer T ? T extends DraftItem ? Omit<T, 'authoring'> & (T extends { type: 'single-choice' } ? { shuffleOptions?: boolean } : object) : never : never) | { id: string; type: 'written-answer'; prompt: string; maximum: string };
 export type AuthoringDraftV2 = Omit<Draft, 'schemaVersion' | 'items' | 'track'> & { schemaVersion: 2; randomPool?: RandomPoolV1; track: 'mixed' | 'full-practical'; items: (DraftItemV2 & { provenance: AuthoringProvenanceInputV2 })[] };
+
+/** Literal text; limits are Unicode code points, enforced again by PostgreSQL. */
+export type WrittenAnswerV2 = { type: 'written-answer'; text: string };
+export type ItemAnswerV2 = import('./contracts').ItemAnswer | WrittenAnswerV2;
+export type AttemptStateV2 = import('./contracts').AttemptAcknowledgement['state'] | 'awaiting-manual';
+export type AttemptCommandV2 = {
+ schemaVersion: 2; attemptId: string; operationId: string; expectedRevision: number;
+ action: { type: 'submit' } | { type: 'save' | 'expose'; item: { id: string; version: string }; answer: ItemAnswerV2 };
+};
