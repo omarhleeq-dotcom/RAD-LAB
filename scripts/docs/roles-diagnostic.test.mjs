@@ -5,7 +5,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, exist
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { prepareRolesSql, restoreTest, reportRestoreStop } from '../ops/laptop-restore-test.mjs';
-import { rolesDiagnostic, formatRolesStop, safeRole } from '../ops/roles-diagnostic.mjs';
+import { rolesDiagnostic, formatRolesStop, safeRole, parseExtraSettings } from '../ops/roles-diagnostic.mjs';
 import { sha256Bytes, readEntries } from '../ops/laptop-backup-lib.mjs';
 
 const root = mkdtempSync(join(tmpdir(), 'rad086-diagnostic-'));
@@ -120,4 +120,88 @@ test('production failure path logs the same diagnostics in age encryption; raw s
     assert.equal(entry.kind, 'restore_test'); assert.equal(entry.stage, 'roles');
     for (const f of readdirSync(join(store, 'reconciliation'))) assert.doesNotMatch(readFileSync(join(store, 'reconciliation', f)).toString(), /rolconfig|statement_error/);
   }
+});
+
+const adminPair = 'CREATE ROLE supabase_admin;\nALTER ROLE supabase_admin WITH NOLOGIN;\n';
+const adminSet = `ALTER ROLE supabase_admin SET rad086.archive TO '${canary}';\n`;
+assert.equal(q(`CREATE ROLE supabase_admin; ALTER ROLE supabase_admin SET rad086.image_only TO '${canary}';`).status, 0);
+
+test('supabase_admin alone permits image extras, checks final byte-identical archive values and rolls back STOP', () => {
+  const pass = q(prepareRolesSql(adminPair + adminSet));
+  assert.equal(pass.status, 0, pass.stderr);
+  assert.match(pass.stdout, /RAD086_supabase_admin_extra_settings \["rad086.image_only"\]/);
+  assert.doesNotMatch(pass.stdout, new RegExp(canary));
+  for (const tail of [
+    'ALTER ROLE supabase_admin RESET rad086.archive;',
+    `DO $$BEGIN ALTER ROLE supabase_admin SET rad086.archive TO '${canary}_different'; END$$;`,
+  ]) {
+    const sql = prepareRolesSql('CREATE ROLE rad086_rollback_config;\n' + adminPair + adminSet + tail + '\n');
+    const r = q(sql), d = rolesDiagnostic(r.stderr, sql);
+    assert.notEqual(r.status, 0);
+    assert.deepEqual(d, [{ kind: 'rolconfig_mismatch', role: 'supabase_admin', keys: 'rad086.archive', sqlstate: 'P0001' }]);
+    assert.doesNotMatch(d.map(formatRolesStop).join('\n') + r.stdout, new RegExp(canary));
+    assert.equal(q("SELECT 1 / CASE WHEN EXISTS(SELECT FROM pg_roles WHERE rolname='rad086_rollback_config' OR rolname LIKE 'rad086_role_%probe_%') THEN 0 ELSE 1 END").status, 0);
+  }
+  const sql = prepareRolesSql(adminPair.replace('NOLOGIN', 'LOGIN') + adminSet), r = q(sql);
+  assert.deepEqual(rolesDiagnostic(r.stderr, sql), [{ kind: 'attribute_mismatch', role: 'supabase_admin', keys: 'rolcanlogin', sqlstate: 'P0001' }]);
+  // Database-local settings remain ordinary statements: success loads; absent DB stops.
+  assert.equal(q(prepareRolesSql(adminPair + adminSet + 'ALTER ROLE supabase_admin IN DATABASE postgres SET rad086.db TO true;\n')).status, 0);
+  const dbSql = prepareRolesSql(adminPair + adminSet + 'ALTER ROLE supabase_admin IN DATABASE absent SET rad086.db TO true;\n');
+  assert.notEqual(q(dbSql).status, 0);
+});
+
+test('production success and rolconfig STOP encrypt names only; stdout JSON has count only', async () => {
+  const store = join(root, 'config-backups'), at = '20261031T123100Z', dir = join(store, 'store', at), identity = join(root, 'config-identity');
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  writeFileSync(identity, execFileSync('age-keygen', [], { stdio: 'pipe' }), { mode: 0o600 });
+  const c = { backupRoot: store, ageRecipient: String(execFileSync('age-keygen', ['-y', identity])).trim() };
+  for (const tail of ['', 'ALTER ROLE supabase_admin RESET rad086.archive;\n', `DO $$BEGIN ALTER ROLE supabase_admin SET rad086.archive TO '${canary}_wrong'; END$$;\n`]) {
+    const source = adminPair + adminSet + tail, dump = Buffer.from('synthetic');
+    for (const [f, b] of [['roles.sql', source], ['project.dump', dump], ['checksums.json', JSON.stringify({ 'project.dump': sha256Bytes(dump), 'roles.sql': sha256Bytes(source) })],
+      ['db-meta.json', JSON.stringify({ server_version_num: 170011, datlocprovider: 'c', datlocale: null, datcollate: 'C', datctype: 'C', tables: [] })]]) writeFileSync(join(dir, f), b, { mode: 0o600 });
+    let cleaned = false;
+    const run = (p, a, o) => {
+      if (p === 'age') { assert.doesNotMatch(o.input, new RegExp(canary)); return execFileSync(p, a, o); }
+      if (p === 'pg_restore') return '';
+      if (a[0] === 'image') return 'sha256:' + 'a'.repeat(64);
+      if (a[0] === 'logs') return 'PostgreSQL init process complete; ready for start up.';
+      if (a[0] === 'rm') cleaned = true;
+      if (a.at(-1) === 'show server_version_num') return '170011';
+      if (String(a.at(-1)).includes('select datlocprovider')) return 'c||C|C';
+      return '';
+    };
+    const spawn = (p, a, o) => {
+      if (a.includes('pg_isready')) return { status: 0 };
+      if (a.includes('pg_restore')) return { status: 0 };
+      const r = q(o.input);
+      return { ...r, stdout: r.stdout + '\n' + canary, stderr: r.stderr + '\n' + canary };
+    };
+    if (!tail) {
+      const result = await restoreTest(c, { name: at, run, spawn });
+      assert.equal(result.supabase_admin_extra_settings_count, 1);
+      assert.doesNotMatch(JSON.stringify(result), /rad086.image_only|PRIVATE_VALUE/);
+    } else {
+      await assert.rejects(restoreTest(c, { name: at, run, spawn }), e => {
+        const output = []; reportRestoreStop(e, s => output.push(s));
+        assert.equal(e.diagnostics[0].kind, 'rolconfig_mismatch');
+        assert.doesNotMatch(output.join('\n'), new RegExp(canary)); return true;
+      });
+    }
+    assert.ok(cleaned);
+    const entry = readEntries(c, identity).at(-1);
+    assert.doesNotMatch(JSON.stringify(entry), new RegExp(canary));
+    if (!tail) assert.deepEqual(entry.supabase_admin_extra_settings, ['rad086.image_only']);
+    else assert.equal(entry.diagnostics[0].keys, 'rad086.archive');
+  }
+});
+
+
+test('extra setting metadata rejects unsafe names, values, overflow and missing/duplicate results', () => {
+  const prefix = 'RAD086_supabase_admin_extra_settings ';
+  for (const names of [['rad086.name=value'], ['bad\n'], ['a'.repeat(64)], Array(65).fill('valid'), ['duplicate', 'duplicate']])
+    assert.throws(() => parseExtraSettings(prefix + JSON.stringify(names)));
+  for (const raw of ['', prefix + '[]\n' + prefix + '[]', prefix + '"' + canary + '"']) assert.throws(() => parseExtraSettings(raw));
+  assert.deepEqual(parseExtraSettings(prefix + '["rad086.valid"]'), ['rad086.valid']);
+  const raw = 'psql:<stdin>:3: ERROR:  P0001: RAD086_rolconfig_mismatch ["secret=value"]\n';
+  assert.equal(rolesDiagnostic(raw, '')[0].keys, 'unparsed');
 });

@@ -51,12 +51,24 @@ test('pinned Supabase 17.11 restores supabase_vault, ICU en-US, exact roles, loc
     const runner = (p, args, opts) => p === 'pg_restore'
       ? execFileSync('docker', ['exec', '-i', name, 'pg_restore', '--list'], { input: readFileSync(args.at(-1)), timeout: 120000 })
       : execFileSync(p, args, opts);
-    const result = await restoreTest(c, { name: at, run: runner });
+    const extraCanary = 'PRIVATE_IMAGE_SETTING_CANARY_86';
+    // Inject one image-only setting on the target before its roles transaction.
+    const withImageExtra = (p, args, opts) => {
+      if (p === 'docker' && args.includes('show server_version_num'))
+        docker(['exec', `rad-restore-${at.toLowerCase()}`, 'psql', '-X', '-v', 'ON_ERROR_STOP=1', '-U', 'supabase_admin', '-d', 'postgres',
+          '-c', `ALTER ROLE supabase_admin SET rad086.image_only TO '${extraCanary}'`]);
+      return runner(p, args, opts);
+    };
+    const result = await restoreTest(c, { name: at, run: withImageExtra });
+    assert.equal(result.supabase_admin_extra_settings_count, 1);
+    assert.doesNotMatch(JSON.stringify(result), /PRIVATE_IMAGE_SETTING|rad086.image_only/);
     assert.equal(result.restore_test_pass, 1);
     assert.equal(result.rows_restored, 3);
     assert.equal(result.collation_match, 1);
     const log = readEntries(c, identity);
     assert.equal(log[0].result, 'pass');
+    assert.deepEqual(log[0].supabase_admin_extra_settings, ['rad086.image_only']);
+    assert.doesNotMatch(JSON.stringify(log), /PRIVATE_IMAGE_SETTING/);
     assert.equal(log[0].image_digest, IMAGE_DIGEST);
     assert.equal(log[0].image_id, String(docker(['image', 'inspect', IMAGE, '--format', '{{.Id}}'])).trim());
     assert.equal(String(docker(['ps', '-a', '--filter', `name=rad-restore-${at.toLowerCase()}`, '--format', '{{.Names}}'])).trim(), '');

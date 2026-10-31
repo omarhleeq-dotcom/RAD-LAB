@@ -2,6 +2,15 @@
 const ID = '[A-Za-z_][A-Za-z0-9_$]{0,62}';
 const KEYS = new Set('rolsuper rolinherit rolcreaterole rolcreatedb rolcanlogin rolreplication rolconnlimit rolvaliduntil rolbypassrls rolconfig'.split(' '));
 export const safeRole = name => typeof name === 'string' && new RegExp(`^${ID}$`).exec(name)?.[0] === name ? name : 'unparsed';
+const safeSettings = names => Array.isArray(names) && names.length <= 64 &&
+  names.every(n => typeof n === 'string' && /^[A-Za-z_][A-Za-z0-9_.]{0,62}$/.exec(n)?.[0] === n);
+export function parseExtraSettings(stdout) {
+  const lines = String(stdout ?? '').split('\n').map(s => s.trim()).filter(s => s.startsWith('RAD086_supabase_admin_extra_settings '));
+  if (lines.length !== 1 || lines[0].length > 8192) throw Error('roles_result');
+  const names = JSON.parse(lines[0].slice('RAD086_supabase_admin_extra_settings '.length));
+  if (!safeSettings(names) || new Set(names).size !== names.length) throw Error('roles_result');
+  return names;
+}
 const unknown = sqlstate => ({ kind: 'statement_error', role: 'unparsed', keys: 'unparsed', sqlstate, statement: 'other', setting: 'unparsed' });
 function statementInfo(sql) {
   // Identify grammar independently of whether a particular identifier is printable.
@@ -36,6 +45,14 @@ export function rolesDiagnostic(stderr, sql) {
   const error = /^psql:<stdin>:(\d+): ERROR:  ([0-9A-Z]{5}): ([^\r\n]*)$/m.exec(raw);
   if (!error) return [unknown('unparsed')];
   const [, line, sqlstate, message] = error;
+  if (sqlstate === 'P0001' && message.startsWith('RAD086_rolconfig_mismatch ')) {
+    let keys = 'unparsed';
+    try {
+      const names = JSON.parse(message.slice('RAD086_rolconfig_mismatch '.length));
+      if (safeSettings(names) && names.length) keys = [...new Set(names)].sort().join(',');
+    } catch { /* never emit raw error text */ }
+    return [{ kind: 'rolconfig_mismatch', role: 'supabase_admin', keys, sqlstate }];
+  }
   if (sqlstate === 'P0001' && message.startsWith('RAD086_roles_mismatch ')) {
     try {
       const rows = JSON.parse(message.slice('RAD086_roles_mismatch '.length));

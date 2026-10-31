@@ -182,7 +182,7 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
     const m = /count\(\*\) from "([^"]+)"\."(.*)"$/.exec(sql);
     return m ? String(counts[m[1] + '.' + m[2].replaceAll('""', '"')]) : '';
   };
-  const spawn = () => ({ status: 0, stdout: '' });
+  const spawn = () => ({ status: 0, stdout: 'RAD086_supabase_admin_extra_settings []\n' });
   const good = { 'app.items': 25, 'public.Odd "Name"': 2 };
   const ok = await restoreTest(c, { name: 'monthly', run: fake(good), spawn, wait: async () => {} });
   assert.equal(ok.restore_test_pass, 1); assert.equal(ok.tables_mismatched, 0); assert.equal(ok.rows_restored, 27);
