@@ -7,7 +7,7 @@
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
 - **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. قاعدة SID40in في RAD-087 منفذة للمراجعة وفق [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 in_progress/reviewer؛ P8 مدموجة خاملة في #172 بتحقق GitHub؛ P9 مدموجة في #173؛ P9b حل ACL وتشخيص B ونافذة متصلة مع P10 للمراجعة وفق [تقريرها](RAD-062_P09B_REPORT_2026-10-30.md) و[الخطة](RAD-062_3-5A_PLAN_2026-10-30.md)؛ يوم CLI ينتظر قبول البراهين ونجاح Docker وRAD-086 والنسخة والاستعادة و17.11 والهاتف، ثم P10 متصلة≤60دقيقة. [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) محفوظ. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
-- **ينتظر المالك:** RAD-087 مراجعة وفحص الحوض والكتف عند SID100؛ فحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 review: أول تشغيل توقف عند locale بسبب ICU؛ تصحيح إعادة إنتاج الهوية للمراجعة ثم نسخة واستعادة وجدولة واختبار Supavisor من المالك، وفق [التقرير](RAD-086_REPORT_2026-10-31.md).
+- **ينتظر المالك:** RAD-087 مراجعة وفحص الحوض والكتف عند SID100؛ فحص الهاتف الممكن لـ4أ؛ قبول RAD-060 وفجوة الإغلاق الحي؛ RAD-059 قنوات الإنذار واختبار الاستلام والبديل، وحذف CSV وإفراغ المهملات وفق P1. RAD-086 review: نجحت نسخة المالك وverify والصلاحيات وثلاث خانات؛ الاستعادة توقفت بسبب supabase_vault، وتصحيح الصورة المثبتة للمراجعة ثم استعادة وجدولة ومصالحة واختبار Supavisor من المالك، وفق [التقرير](RAD-086_REPORT_2026-10-31.md).
 - **ينتظر مراجِعًا:** RAD-032 مراجع أشعة خارجي وRAD-056 عبر RAD-063؛ عقود العشوائية والكتابي/التفويض والاحتفاظ والطوارئ والتنافس، وحزمة3+5أ والحقوق/D3 والأمن والخصوصية. لا مشرفين حقيقيين قبل O4.
 - **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[تقرير P9b](RAD-062_P09B_REPORT_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
 - **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual والتحقق وdry-run تبقى هاتفية وحاجبة؛ يوم القاعدة محجوب على RAD-086 واللابتوب. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 351,
-  "updated_at": "2026-10-31T09:32:14.521618+00:00",
+  "revision": 352,
+  "updated_at": "2026-10-31T10:00:48.935872+00:00",
   "timezone": "UTC",
   "next_id": "RAD-088",
   "tasks": [
@@ -776,8 +776,8 @@
       "title": "RAD-082 المرجعي: النسخ اليومية المحلية والاستعادة ورفض اعتماد Supavisor القديم",
       "status": "review",
       "priority": "high",
-      "description": "أول تشغيل للمالك نجح في TLS/roles/الاتصال واللقطة ثم STOP locale: الإنتاج ICU en-US بكلا lc=en_US.UTF-8. تصحيح النسخ والاستعادة ودليل P9 للمراجعة؛ تبقى review حتى نسخة كاملة واستعادة وجدولة وسجل مشفر ودليل رفض اعتماد Supavisor/cache من المالك. الجزء2 ينتظر دمج المالك للأول.",
-      "source_ref": "docs/DECISIONS.md#rad086-laptop-owner-2026-10-31؛ docs/DECISIONS.md#rad086-followup-owner-2026-10-31؛ docs/RAD-086_PROBE_SQL_PACKET.md؛ docs/RAD-086_LAPTOP_BACKUP_RUNBOOK.md؛ docs/RAD-086_REPORT_2026-10-31.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/status-format.md؛ docs/DECISIONS.md#rad086-icu-owner-2026-10-31",
+      "description": "نجحت أول نسخة للمالك وverify والصلاحيات700/600 وثلاث خانات؛ الاستعادة STOP extensions بسبب supabase_vault. صورة Supabase17.11 المثبتة وقاعدة تطابق الأدوار للمراجعة؛ ينتظر دليل استعادة المالك والجدولة والمصالحة المشفرة ورفض اعتماد Supavisor/cache. P10 خارج الدفعة.",
+      "source_ref": "docs/DECISIONS.md#rad086-laptop-owner-2026-10-31؛ docs/DECISIONS.md#rad086-followup-owner-2026-10-31؛ docs/RAD-086_PROBE_SQL_PACKET.md؛ docs/RAD-086_LAPTOP_BACKUP_RUNBOOK.md؛ docs/RAD-086_REPORT_2026-10-31.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/status-format.md؛ docs/DECISIONS.md#rad086-icu-owner-2026-10-31؛ docs/DECISIONS.md#rad086-supabase-image-owner-2026-10-31",
       "waiting_on": "owner"
     },
     {

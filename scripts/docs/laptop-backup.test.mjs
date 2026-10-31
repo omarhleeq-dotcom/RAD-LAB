@@ -8,7 +8,7 @@ import pg from 'pg';
 import { validateConfig, outsideCheckout, connectionEnv, passLine, writePassFile, assertPrivate, appendEntry, readEntries, listBackups, quoteIdent, stamp,
   slotStamp, slotsFor, collect, publish, SLOTS, validateLocale, localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { runBackup, status } from '../ops/laptop-backup.mjs';
-import { restoreTest, containerArgs, parseExtensions, IMAGE } from '../ops/laptop-restore-test.mjs';
+import { restoreTest, containerArgs, parseExtensions, IMAGE, prepareRolesSql } from '../ops/laptop-restore-test.mjs';
 
 const ref = 'abcdefghijklmnopqrst', pooler = 'aws-0-eu-central-1.pooler.supabase.com';
 const tmp = mkdtempSync(join(tmpdir(), 'rad086-'));
@@ -225,7 +225,7 @@ test('slot promotion rule and collection are exact and never delete without a re
 test('container arguments never publish ports, keep no network, and never carry a password', () => {
   const a = containerArgs('n', { datlocprovider: 'c', datlocale: null, datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' });
   assert.deepEqual(a.slice(a.indexOf('--network'), a.indexOf('--network') + 2), ['--network', 'none']);
-  assert.ok(!a.includes('-p') && !a.includes('-P') && !a.some(x => /PASSWORD=/.test(x)) && a.at(-1) === 'postgres:17.11');
+  assert.ok(!a.includes('-p') && !a.includes('-P') && !a.some(x => /PASSWORD=/.test(x)) && a.at(-1) === 'supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d');
   assert.deepEqual(parseExtensions('1; 0 0 EXTENSION - pgcrypto\n2; 0 0 COMMENT - EXTENSION pgcrypto\n3; 0 0 EXTENSION - "uuid-ossp"\n'), ['pgcrypto']);
   assert.equal(stamp(new Date('2026-10-31T03:15:00.123Z')), '20261031T031500Z');
 });
@@ -303,4 +303,23 @@ test('ICU backup records all four locale fields in metadata and encrypted log; u
     };
     await assert.rejects(runBackup(c, { ...deps, makeClient, now: new Date(`2026-10-31T04:0${i+1}:00Z`) }), e => e.stage === 'locale');
   }
+});
+
+// Exercise the role rule through PostgreSQL, including defaults omitted by pg_dumpall.
+test('role archive accepts matching existing attributes and loads new roles/settings cleanly', () => {
+  const q = sql => execFileSync('psql', ['-X', '-h', pgc.root, '-p', '55433', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'], { input: sql, stdio: 'pipe' });
+  q('CREATE ROLE "rad086 existing" NOLOGIN NOINHERIT CONNECTION LIMIT 2;');
+  const sql = 'CREATE ROLE "rad086 existing";\nALTER ROLE "rad086 existing" WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 2;\n';
+  assert.doesNotThrow(() => q(prepareRolesSql(sql + 'CREATE ROLE rad086_new;\nALTER ROLE rad086_new WITH LOGIN;\nALTER ROLE rad086_new SET search_path TO public;\n')));
+  q('ALTER ROLE \"rad086 existing\" SET search_path TO public;');
+  assert.doesNotThrow(() => q(prepareRolesSql(sql + 'ALTER ROLE \"rad086 existing\" SET search_path TO public;\n')));
+  assert.equal(String(q("SELECT rolcanlogin FROM pg_roles WHERE rolname='rad086_new'")).includes('t'), true);
+});
+test('role attribute differences STOP roles, including archive default connection limit; no earlier work persists', () => {
+  const q = sql => execFileSync('psql', ['-X', '-h', pgc.root, '-p', '55433', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'], { input: sql, stdio: 'pipe' });
+  for (const attrs of ['NOLOGIN NOINHERIT', 'LOGIN NOINHERIT CONNECTION LIMIT 2', 'NOLOGIN INHERIT CONNECTION LIMIT 2', 'NOLOGIN NOINHERIT CONNECTION LIMIT 2 BYPASSRLS', 'NOLOGIN NOINHERIT CONNECTION LIMIT 2']) {
+    assert.throws(() => q(prepareRolesSql('CREATE ROLE rad086_rolled_back;\nCREATE ROLE "rad086 existing";\nALTER ROLE "rad086 existing" WITH ' + attrs + ';\n')), e => String(e.stderr).includes('roles'));
+    assert.match(String(q("SELECT count(*) FROM pg_roles WHERE rolname='rad086_rolled_back' OR rolname LIKE 'rad086_role_attribute_probe_%'")), /0/);
+  }
+  assert.throws(() => q(prepareRolesSql('GRANT rad086_missing TO rad086_new;')), e => String(e.stderr).includes('does not exist'));
 });

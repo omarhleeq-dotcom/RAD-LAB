@@ -1073,3 +1073,13 @@ PRACTICE_EVALUATION_VERSION /8→/9 وفق العقد؛ comparisonVersion يتغ
 **الجزء2 محجوب حتى دمج المالك للأول:** عندئذ فقط يُدمج origin/main إلى rad062/p10-promotion بلا rebase/force-push، وتضاف ICU en-US بكلا lc=en_US.UTF-8 إلى full-apply M01–M08 والجاهزية بجانب C وen_US.UTF-8 libc. أي فشل ICU يوقف ويُبلّغ، ولا تعديل لبايتات ترحيل دون إذن المالك. يُعاد حساب marker ويُذكر هل تغير في تلك الدفعة؛ لا تغيير له في الجزء1.
 
 RAD-086 تبقى review وتنتظر بقية أدلة المالك؛ لا SQL حي أو Variables أو سر/LOGIN/gate أو ready/merge/auto-merge من الوكيل. [D2](#rad085-owner-tidy-2026-10-27) و[D-A/D-B](#rad086-laptop-owner-2026-10-31) و[D-C/D-D/D-E](#rad086-followup-owner-2026-10-31) باقية فيما عدا افتراض libc-only المحدد. لا تغيير لحزم الطوارئ أو supabase/manual أو required/checks/guards أو بايتات الترحيلات. سؤالا AGENTS: تغير الحكم التنفيذي لدعم ICU وفق أمر المالك؛ روابط الدليل الأصلي باقية أعلاه وفي التقرير.
+
+
+<a id="rad086-supabase-image-owner-2026-10-31"></a>
+### RAD-086 — الجزء3: صورة Supabase لإثبات الاستعادة، 2026-10-31
+
+**السلطة وإفادة المالك:** بعد [قرار ICU السابق](#rad086-icu-owner-2026-10-31)، نجحت أول نسخة فعلية على اللابتوب: verify OK وصلاحيات700/600 وثلاث خانات. توقفت الاستعادة عند `STOP laptop_restore_test:extensions missing_extensions=supabase_vault`؛ صورة Postgres العامة لا تحوي الامتداد. اختار المالك الخيار1: الصورة الرسمية المطابقة تمامًا للإنتاج، بلا SQL حي من الوكيل.
+
+**الحكم المحدد:** تثبيت `supabase/postgres:17.11.0.016` مع digest `sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`، وفحص الخادم `170011` دون تقريب. يسحب المالك الـdigest في A5؛ الاستعادة `--network none --pull never` بلا منافذ أو كلمة مرور في الوسائط، وتنظيف الحاوية وحجم البيانات. تبقى قاعدة template0 وهوية ICU وكلا lc والتحقق قبل/بعد وTOC والملكية وACL والعدّ بلا تخفيف؛ digest وimage id في السجل المشفر. الدور القائم يُقبل فقط إذا طابقت سمات CREATE/ALTER-WITH في الأرشيف سماته الحالية؛ اختلافه STOP roles دون تعديله ليتطابق، وبقية SQL تنجح تحت ON_ERROR_STOP. تفاصيل السمات وكلمات المرور والإعدادات وحدود البروفة في [التقرير](RAD-086_REPORT_2026-10-31.md) و[الدليل](RAD-086_LAPTOP_BACKUP_RUNBOOK.md#c-restore-proof-into-a-local-container).
+
+CI تسحب بالـdigest وتستعيد أرشيفًا اصطناعيًا يتضمن CREATE EXTENSION supabase_vault، والإخفاق فشل لا skip. RAD-086 تبقى review/owner حتى دليل المالك الكامل؛ لا تغيير لسلوك النسخ أو فرع P10 أو الترحيلات أو حزم الطوارئ أو supabase/manual أو marker، ولا Variables أو نشر يدوي أو بيانات مشاركين. هذا يبدّل اختيار صورة الاستعادة فقط من الحكم السابق؛ روابط [D2](#rad085-owner-tidy-2026-10-27) و[D-A/D-B](#rad086-laptop-owner-2026-10-31) و[D-C/D-D/D-E](#rad086-followup-owner-2026-10-31) محفوظة. Draft PR فقط.

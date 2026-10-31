@@ -2,7 +2,7 @@
 
 Reviewed procedure for the owner's later execution on the verified laptop (Windows 11 Pro, BitLocker on C:, WSL2 Ubuntu 24.04, Node 22, psql/pg_dump 17.11 = production 17.11, Docker Desktop with WSL integration). **Nothing here has been run against the live project.** The agent ran no live SQL, set no Variables, opened no gate, enabled no LOGIN or secret and revealed no secret. Authority: [owner decisions 2026-10-31](DECISIONS.md#rad086-laptop-owner-2026-10-31) and [the follow-up decisions D-C, D-D, D-E](DECISIONS.md#rad086-followup-owner-2026-10-31), [D2](DECISIONS.md#rad085-owner-tidy-2026-10-27) (backup before the first real exam, no cloud, encrypted local reconciliation log, weekly USB copy), [RAD-059 dry run](RAD-059_OWNER_DRY_RUN_2026-10-29.md), [session-pooler rules](ASSESS_RUNTIME_LOCAL.md#إعداد-session-pooler-المحلي). Report: [RAD-086 report](RAD-086_REPORT_2026-10-31.md).
 
-How it fits together: `scripts/ops/laptop-backup.mjs` (daily, read-only) builds a backup in `~/rad-lab-backups/.tmp/<stamp>` (`roles.sql`, `project.dump`, `checksums.json`, `db-meta.json`), re-verifies it from disk, moves it to `store/<stamp>` and then swaps three slot links (`daily`, `weekly`, `monthly`) atomically; every rotation is an age-encrypted entry in the reconciliation log (see F). `scripts/ops/laptop-restore-test.mjs` restores a chosen backup into a throwaway `postgres:17.11` container and compares table counts. Windows Task Scheduler starts the daily run through `wsl.exe`. The database connects over the **Supabase session pooler** (port 5432, IPv4) because this laptop has no global IPv6 and the direct host is IPv6-only. The pooler is an explicit setting in the config file, never detected, never a fallback.
+How it fits together: `scripts/ops/laptop-backup.mjs` (daily, read-only) builds a backup in `~/rad-lab-backups/.tmp/<stamp>` (`roles.sql`, `project.dump`, `checksums.json`, `db-meta.json`), re-verifies it from disk, moves it to `store/<stamp>` and then swaps three slot links (`daily`, `weekly`, `monthly`) atomically; every rotation is an age-encrypted entry in the reconciliation log (see F). `scripts/ops/laptop-restore-test.mjs` restores a chosen backup into a throwaway `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d` container and compares table counts. Windows Task Scheduler starts the daily run through `wsl.exe`. The database connects over the **Supabase session pooler** (port 5432, IPv4) because this laptop has no global IPv6 and the direct host is IPv6-only. The pooler is an explicit setting in the config file, never detected, never a fallback.
 
 Every step: one command, what you should see, when to STOP. At any STOP do nothing else: no retry loop, no weaker TLS, no workaround. Output is numbers or a fixed stage code, never data.
 
@@ -40,13 +40,13 @@ cd ~/RAD-LAB-backup && git switch --detach origin/main && git log -1 --format=%h
 
 Expect a short commit hash that contains the merged RAD-086 PR, then `added N packages`. STOP if `scripts/ops/laptop-backup.mjs` does not exist. Update later only by repeating this step after reviewing a merge.
 
-**A5 — Postgres image**
+**A5 — pinned official Supabase Postgres image**
 
 ```bash
-docker pull postgres:17.11 && docker image inspect postgres:17.11 --format '{{.Id}}'
+docker pull supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d && docker image inspect supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d --format '{{.Id}}'
 ```
 
-Expect an image id `sha256:…`. STOP if the pull fails or Docker Desktop is not running.
+Expect digest `sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d` and an image id `sha256:…`. This is the official multi-architecture index (linux/amd64 and linux/arm64), pinned with its tag; never substitute the tag alone. STOP if the pull fails or Docker Desktop is not running. The restore command never pulls. [Image decision](DECISIONS.md#rad086-supabase-image-owner-2026-10-31).
 
 **A6 — Supabase CA certificate (public file)**
 
@@ -160,7 +160,7 @@ Expect `700` for the root and `store`, and `600` for every file in the daily bac
 
 ## C. Restore proof into a local container
 
-The container runs `postgres:17.11` with `--network none` (no network at all, no published port), the **live** `datcollate`/`datctype` recorded in `db-meta.json`, `--pull never`, and is removed with its volume at the end.
+The container runs `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d` with `--network none` (no network at all, no published port), the recorded `datlocprovider`/`datlocale`/`datcollate`/`datctype` from `db-meta.json` (production: ICU `en-US`, both lc `en_US.UTF-8`), `--pull never`, and is removed with its explicitly allocated anonymous data volume at the end. It creates the target from `template0` and verifies all four locale fields before and after restore. Run A5 first: only the owner pulls the pinned digest. No password is passed in arguments; local image bootstrap uses `supabase_admin`. The encrypted result records both `image_digest` and the architecture-specific `image_id` (also on failure if inspect succeeded).
 
 Both tools accept `daily` (default, also `latest`), `weekly`, `monthly` or an exact stamp present in `store/`.
 
@@ -178,7 +178,9 @@ Expect `{"dry_run":1,"tables":N,"docker_started":0}`. STOP: Docker Desktop not r
 node scripts/ops/laptop-restore-test.mjs
 ```
 
-Expect `tables_mismatched` 0, `container_server_version_num` 170011, `collation_match` 1, `restore_test_pass` 1. Counts were taken in the same snapshot as the dump, so any mismatch is real. STOP codes: `counts`, `collation`, `version` (container is not the production version: update `IMAGE` only by a reviewed change), `roles` or `restore` (Supabase-managed roles/objects did not load), and `extensions`, printed as `missing_extensions=a,b`: the plain Postgres image lacks extensions the project uses. That is **not a pass**. Options for you to decide, none taken here: restore with a matching `supabase/postgres` image, or the separately reviewed local reproduction already named in the [P9 runbook](RAD-062_P09_LAPTOP_RUNBOOK.md#3-restore-apply-m01m08-verify-on-local-postgresql). Never use `--no-owner`, `--no-acl`, or drop extension entries to force a pass.
+Expect `tables_mismatched` 0, `container_server_version_num` 170011, `collation_match` 1, `restore_test_pass` 1. Counts were taken in the same snapshot as the dump, so any mismatch is real. STOP codes: `counts`, `collation`, `version` (server must exactly match the backup, production `170011`), `roles`, `restore`, or `extensions`, printed as `missing_extensions=a,b`. Every EXTENSION entry in the archive TOC must be available; missing one is a hard STOP, including `supabase_vault`. Never use `--no-owner`, `--no-acl`, or drop TOC entries to force a pass.
+
+Role rule: a pg_dumpall CREATE/ALTER-WITH pair for a new role executes normally. For an existing role, a temporary probe role receives the archive attributes, including PostgreSQL defaults for omitted options. All server-defined role attributes are compared, excluding OID/name, password (the backup uses `--no-role-passwords`); role settings (`rolconfig`) are included, using the archive ALTER ROLE SET statements on the probe as well. A match accepts only that duplicate pair; any difference STOP `roles`. The existing role is never altered to manufacture a match. Probe roles are dropped; the role archive runs in one transaction with `ON_ERROR_STOP=1`. Settings, memberships and every other statement must load without errors; unsupported dump syntax has no error suppression. A STOP rolls back the role transaction and cleans up the container/volume. Report a mismatch; do not edit the archive or weaken the rule.
 
 **C3 — nothing left behind**
 
@@ -287,7 +289,7 @@ Owner decision D-D chose a temporary throwaway LOGIN role **in production** over
 
 - **Availability:** runs only while the laptop is on and you are signed in; nothing alerts on a missed day. Lifting trigger: the first real exam or any missed week, then decide on alerting.
 - **Credential:** the file holds the `postgres` password because a complete dump needs it. Lifting trigger: a dedicated read-only backup role reviewed for the auth and managed schemas.
-- **Hard-coded:** PostgreSQL major in the config and `postgres:17.11` in the restore tool; a production upgrade makes the restore test STOP at `version` until a reviewed change.
+- **Hard-coded:** PostgreSQL major in the config and `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d` in the restore tool; a production upgrade makes the restore test STOP at `version` until a reviewed change.
 - **Single site:** laptop plus weekly BitLocker USB; no cloud copy by decision.
 - **Not exercised anywhere yet:** the live pooler, TLS `verify-full` against its certificate, Docker Desktop on this laptop, Task Scheduler. The first attended runs (B, C, D3) are those tests. DB day (`apply`) may use the pooler under the same exact selectors (owner decision D-C); `restore` stays local-only and `verify` offline: see the [P9 runbook](RAD-062_P09_LAPTOP_RUNBOOK.md#1-preconditions--no-mutation).
 - **Retention depth:** three copies only; no history beyond the weekly USB copies. Lifting trigger: the first real exam, when the owner may add slots.
