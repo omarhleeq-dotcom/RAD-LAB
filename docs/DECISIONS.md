@@ -1061,3 +1061,15 @@ PRACTICE_EVALUATION_VERSION /8→/9 وفق العقد؛ comparisonVersion يتغ
 **ما اختاره التنفيذ تفسيرًا:** حدود التدوير بتاريخ UTC للتشغيل؛ خانة أسبوعية أو شهرية فارغة تملؤها أول نسخة (لا نسخة قديمة تُحفظ)؛ التدوير بروابط رمزية تُستبدل ذريًا فوق store/؛ فشل تبديل خانة وسطيًا يترك بقية الخانات على نسخها القديمة ويسجل ما تم. الحزمة تحمي الإنتاج بالأنماط الدقيقة والمهلة وخطوة تنظيف بعد أي فشل، ويُجرى جزء SQL منها فعليًا في الاختبارات على عنقود محلي اصطناعي فقط. CI: خطوة تثبيت age وPostgreSQL16 في ci.yml لاختبارات النسخ (دون skip).
 
 **ما لم يتغير:** RAD-086 review غير مكتملة؛ لا تشغيل حي؛ gate مغلقة والعامل NOLOGIN والسر DISABLED؛ لا Variables؛ حزم الطوارئ وsupabase/manual ثابتة. [الدليل](RAD-086_LAPTOP_BACKUP_RUNBOOK.md)، [حزمة SQL](RAD-086_PROBE_SQL_PACKET.md)، [التقرير](RAD-086_REPORT_2026-10-31.md).
+
+
+<a id="rad086-icu-owner-2026-10-31"></a>
+### RAD-086 — هوية ICU المكتشفة في أول تشغيل حي، 2026-10-31
+
+**السلطة:** إفادة المالك وأمره الحالي، الجزء1 ثم الجزء2 المشروط بدمج المالك للأول. في القراءة الإنتاجية الأولى: provider=`i`، datlocale=`en-US`، collate/ctype=`en_US.UTF-8`، encoding=`UTF8`. نجحت TLS verify-full وpg_dumpall roles والاتصال واللقطة المصدرة على session pooler ثم STOP `laptop_backup:locale` لأن الأداة اشترطت `c`. هذا دليل قراءة من المالك، وليس نجاح نسخة/استعادة ولا SQL نفذه الوكيل.
+
+**الحكم الجديد المحدد:** تقبل أدوات النسخ libc=`c` أو ICU=`i` فقط؛ ICU يتطلب datlocale غير فارغ بصيغة صارمة. تُسجل provider+datlocale+collate+ctype في metadata والسجل المشفر، وتُعاد حرفيًا عند إنشاء target من template0 وتُتحقق داخل الحاوية؛ ICU عبر locale-provider=icu وicu-locale مع كلا lc، وlibc يبقى مدعومًا. أي مزود آخر أو metadata ناقصة/اختلاف أو غياب الدعم في17.11 STOP؛ لا fallback أو تخفيف لبقية الحراس. P9 والبروفة يعيدان الهوية الفعلية بدل الاعتماد على default أو collate/ctype وحدهما. الاختبارات تشمل رفض b وICU فارغ واستعادة ICU en-US فعلية في CI. التفاصيل والأدلة في [تقرير RAD-086 الحالي](RAD-086_REPORT_2026-10-31.md).
+
+**الجزء2 محجوب حتى دمج المالك للأول:** عندئذ فقط يُدمج origin/main إلى rad062/p10-promotion بلا rebase/force-push، وتضاف ICU en-US بكلا lc=en_US.UTF-8 إلى full-apply M01–M08 والجاهزية بجانب C وen_US.UTF-8 libc. أي فشل ICU يوقف ويُبلّغ، ولا تعديل لبايتات ترحيل دون إذن المالك. يُعاد حساب marker ويُذكر هل تغير في تلك الدفعة؛ لا تغيير له في الجزء1.
+
+RAD-086 تبقى review وتنتظر بقية أدلة المالك؛ لا SQL حي أو Variables أو سر/LOGIN/gate أو ready/merge/auto-merge من الوكيل. [D2](#rad085-owner-tidy-2026-10-27) و[D-A/D-B](#rad086-laptop-owner-2026-10-31) و[D-C/D-D/D-E](#rad086-followup-owner-2026-10-31) باقية فيما عدا افتراض libc-only المحدد. لا تغيير لحزم الطوارئ أو supabase/manual أو required/checks/guards أو بايتات الترحيلات. سؤالا AGENTS: تغير الحكم التنفيذي لدعم ICU وفق أمر المالك؛ روابط الدليل الأصلي باقية أعلاه وفي التقرير.

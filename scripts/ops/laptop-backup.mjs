@@ -9,11 +9,11 @@ import { pathToFileURL } from 'node:url';
 import pg from 'pg';
 import { Stop, guard, stamp, sha256File, sha256Bytes, quoteIdent, validateConfig, loadConfig, connectionEnv, assertPrivate, outsideCheckout,
   configDir, configPath, passFilePath, writePassFile, listBackups, clientMajor, appendEntry, readEntries, verifyBackup, resolveBackup,
-  LOCALE, SLOTS, tmpDir, storeDir, slotStamp, parseStamp, publish, collect } from './laptop-backup-lib.mjs';
+  LOCALE, validateLocale, SLOTS, tmpDir, storeDir, slotStamp, parseStamp, publish, collect } from './laptop-backup-lib.mjs';
 
 const execAsync = promisify(execFile);
 const META_SQL = `select current_setting('server_version_num')::int v, d.datcollate c, d.datctype t,
- pg_encoding_to_char(d.encoding) e, d.datlocprovider p from pg_database d where d.datname = current_database()`;
+ pg_encoding_to_char(d.encoding) e, d.datlocprovider p, coalesce(to_jsonb(d)->>'datlocale', to_jsonb(d)->>'daticulocale') l from pg_database d where d.datname = current_database()`;
 const TABLES_SQL = `select n.nspname s, c.relname t from pg_class c join pg_namespace n on n.oid = c.relnamespace
  where c.relkind = 'r' and n.nspname not in ('pg_catalog','information_schema') and n.nspname !~ '^pg_toast'
  and not exists (select 1 from pg_depend d where d.classid = 'pg_class'::regclass and d.objid = c.oid and d.deptype = 'e')
@@ -69,9 +69,10 @@ export async function runBackup(c, { dryRun = false, run = execFileSync, runAsyn
       const snap = (await db.query('select pg_export_snapshot() s')).rows[0].s;
       if (!/^[0-9A-F]{8}-[0-9A-F]{8}-\d+$/.test(snap) && !/^[0-9A-F-]{8,40}$/.test(snap)) throw new Stop('snapshot');
       const m = (await db.query(META_SQL)).rows[0];
-      if (m.p !== 'c' || !LOCALE.test(m.c ?? '') || !LOCALE.test(m.t ?? '') || !LOCALE.test(m.e ?? '')) throw new Stop('locale');
+      validateLocale({ datlocprovider: m.p, datcollate: m.c, datctype: m.t, datlocale: m.l });
+      if (!LOCALE.test(m.e ?? '')) throw new Stop('locale');
       if (Math.floor(m.v / 10000) !== c.pgMajor) throw new Stop('tools');
-      meta = { server_version_num: m.v, datcollate: m.c, datctype: m.t, encoding: m.e };
+      meta = { server_version_num: m.v, datlocprovider: m.p, datcollate: m.c, datctype: m.t, datlocale: m.l, encoding: m.e };
       stage = 'counts';
       // Same snapshot as the dump, so restored counts must equal these exactly. A table that cannot be counted is recorded
       // as null and counted in count_errors; it never aborts the backup and is never silently dropped.

@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { Client } from 'pg';
+import { localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { openLocalDatabase } from './local-database.mjs';
 import { apply, checks, manifest, readOnly, verifyMigrations } from './rad062-db-day.mjs';
 const image = 'postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382';
@@ -50,10 +51,13 @@ export async function rehearse() {
     const common = ['run','--rm','-i','--network=none','--user',`${process.getuid()}:${process.getgid()}`,
       '--mount',`type=bind,src=${cfg.host},dst=${cfg.host}`,'--entrypoint'];
     const archive = docker([...common,'pg_dump',image,'-h',cfg.host,'-p',cfg.port,'-U','postgres','-d','postgres','-Fc']);
-    await source.exec('create database rad062_restored');
+    const locale = (await source.query("select datlocprovider, datlocale, datcollate, datctype from pg_database where datname=current_database()"))[0];
+    docker([...common,'createdb',image,'-h',cfg.host,'-p',cfg.port,'-U','postgres','-T','template0',...localeArgs(locale),'rad062_restored']);
     docker([...common,'pg_restore',image,'--exit-on-error','-h',cfg.host,'-p',cfg.port,'-U','postgres','-d','rad062_restored'], archive);
     target = new Client({ host: cfg.host, port: Number(cfg.port), user: 'postgres', database: 'rad062_restored', password: '', ssl: false, query_timeout: 120000 });
     await target.connect();
+    const restoredLocale = (await target.query("select datlocprovider, datlocale, datcollate, datctype from pg_database where datname=current_database()")).rows[0];
+    assert.deepEqual(restoredLocale, locale, 'STOP collation');
     const restoredACL = (await target.query(aclSQL)).rows;
     assert.equal(sourceACL.length, restoredACL.length);
     const aclRepresentationDifferences = sourceACL.filter((r,n) => r.raw_acl !== restoredACL[n].raw_acl).length;

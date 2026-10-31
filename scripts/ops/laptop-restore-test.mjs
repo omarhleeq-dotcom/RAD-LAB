@@ -1,11 +1,11 @@
 // RAD-086 restore proof on the owner's laptop: restore the chosen backup into a throwaway local postgres:17.11 container
-// (no network at all, no published ports), with the live datcollate/datctype recorded at backup time, then compare table counts
+// (no network at all, no published ports), with the live provider/datlocale/datcollate/datctype recorded at backup time, then compare table counts
 // taken from the same snapshot as the dump. Records the result in the encrypted reconciliation log. Never touches the provider.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { Stop, guard, loadConfig, resolveBackup, verifyBackup, appendEntry, quoteIdent, LOCALE } from './laptop-backup-lib.mjs';
+import { Stop, guard, loadConfig, resolveBackup, verifyBackup, appendEntry, quoteIdent, validateLocale, localeArgs } from './laptop-backup-lib.mjs';
 
 export const IMAGE = 'postgres:17.11';
 const ADMIN = 'rad_restore_admin', DB = 'rad_restore';
@@ -20,14 +20,15 @@ export function containerArgs(name, meta) {
   // No -p/-P, --network none, image must already be present (--pull never). Trust auth is safe only because there is no network.
   return ['run', '-d', '--name', name, '--label', 'rad-lab-restore-test=1', '--network', 'none', '--pull', 'never',
     '-e', `POSTGRES_USER=${ADMIN}`, '-e', 'POSTGRES_HOST_AUTH_METHOD=trust',
-    '-e', `POSTGRES_INITDB_ARGS=--encoding=UTF8 --locale-provider=libc --lc-collate=${meta.datcollate} --lc-ctype=${meta.datctype}`, IMAGE];
+    '-e', `POSTGRES_INITDB_ARGS=--encoding=UTF8 ${localeArgs(meta).join(' ')}`, IMAGE];
 }
 export function parseExtensions(toc) {
   return [...String(toc).matchAll(/^\d+; \d+ \d+ EXTENSION - ([A-Za-z0-9_-]+)\s*$/gm)].map(m => m[1]);
 }
 export function readMeta(dir) {
   const m = JSON.parse(readFileSync(join(dir, 'db-meta.json'), 'utf8'));
-  if (!LOCALE.test(m.datcollate) || !LOCALE.test(m.datctype) || !Number.isInteger(m.server_version_num) || !Array.isArray(m.tables)) throw Error('meta');
+  validateLocale(m);
+  if (!Number.isInteger(m.server_version_num) || !Array.isArray(m.tables)) throw Error('meta');
   for (const [s, t, n] of m.tables) { quoteIdent(s); quoteIdent(t); if (n !== null && !Number.isSafeInteger(n)) throw Error('meta'); }
   return m;
 }
@@ -64,14 +65,18 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     const missing = parseExtensions(toc).filter(x => !available.has(x));
     if (missing.length) { const e = new Stop('extensions'); e.missing = missing; throw e; }
     stage = 'roles'; psql(['-d', 'postgres'], join(dir, 'roles.sql'));
-    stage = 'createdb';
-    exec(['createdb', '-U', ADMIN, '-T', 'template0', '--encoding=UTF8', '--locale-provider=libc', `--lc-collate=${meta.datcollate}`, `--lc-ctype=${meta.datctype}`, DB]);
+    stage = 'collation';
+    // Successful creation is also the capability probe: absent ICU or libc locale is a hard STOP.
+    exec(['createdb', '-U', ADMIN, '-T', 'template0', '--encoding=UTF8', ...localeArgs(meta), DB]);
+    const verifyLocale = () => {
+      const loc = exec(['psql', '-X', '-At', '-F', '|', '-U', ADMIN, '-d', 'postgres', '-c', `select datlocprovider, coalesce(datlocale,''), datcollate, datctype from pg_database where datname='${DB}'`]).trim();
+      const collation_match = loc === `${meta.datlocprovider}|${meta.datlocale ?? ''}|${meta.datcollate}|${meta.datctype}`;
+      if (!collation_match) throw new Stop('collation');
+    };
+    verifyLocale();
     stage = 'restore';
     dockerStdin(['exec', '-i', container, 'pg_restore', '--exit-on-error', '-U', ADMIN, '--dbname', DB], join(dir, 'project.dump'), spawn);
-    stage = 'collation';
-    const loc = exec(['psql', '-X', '-At', '-F', '|', '-U', ADMIN, '-d', 'postgres', '-c', `select datcollate, datctype from pg_database where datname='${DB}'`]).trim();
-    const collation_match = loc === `${meta.datcollate}|${meta.datctype}`;
-    if (!collation_match) throw new Stop('collation');
+    stage = 'collation'; verifyLocale();
     stage = 'counts';
     const counted = meta.tables.filter(([, , n]) => n !== null);
     let mismatched = 0, rows = 0;
@@ -83,7 +88,7 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     stage = 'log';
     const result = { tables_compared: counted.length, tables_mismatched: 0, rows_restored: rows, tables_uncounted: meta.tables.length - counted.length,
       container_server_version_num: server, collation_match: 1 };
-    appendEntry(c, { kind: 'restore_test', dir: backup, result: 'pass', image_id: imageId, ...result }, run);
+    appendEntry(c, { kind: 'restore_test', dir: backup, result: 'pass', image_id: imageId, datlocprovider: meta.datlocprovider, datlocale: meta.datlocale, datcollate: meta.datcollate, datctype: meta.datctype, ...result }, run);
     return { ...result, restore_test_pass: 1 };
   } catch (e) {
     const code = e instanceof Stop ? e.stage : stage;

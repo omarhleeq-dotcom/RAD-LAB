@@ -82,6 +82,19 @@ psql -X -v ON_ERROR_STOP=1 -f supabase/checks/rad085-p1-b-ready.sql
 
 **Expected:** every one of the 13 rows ready=true, initialized phase. **STOP:** any false/null/SQL error; do not use the restored-copy diagnostic to excuse drift on the original schema. This owner command is not executed by the agent.
 
+Record the locale identity with the verified live selectors (read only), before any dump. The owner's first RAD-086 run (2026-10-31) observed **ICU `i`, `datlocale=en-US`, `datcollate=datctype=en_US.UTF-8`, UTF8**; never infer libc from the two libc locale fields. Accept exactly `c` (libc, null datlocale) or `i` (ICU, non-empty strictly validated datlocale); STOP for every other provider or invalid locale. This records evidence, not permission to change production.
+
+```bash
+RAD062_LOCALE_META=$(psql -X -At -v ON_ERROR_STOP=1 -c "select row_to_json(m) from (select datlocprovider,datlocale,datcollate,datctype from pg_database where datname=current_database()) m")
+export RAD062_LOCALE_META
+node --input-type=module - <<'JS'
+import { validateLocale } from './scripts/ops/laptop-backup-lib.mjs';
+validateLocale(JSON.parse(process.env.RAD062_LOCALE_META));
+JS
+```
+
+**STOP:** missing/invalid metadata, unknown provider, empty ICU datlocale or any query/validation failure. Retain the four fields privately with the backup; no default provider or locale substitution. The reviewed ICU pattern is `^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8}){0,7}$` with absolute end-of-input (no trailing newline). Unsupported ICU forms require review.
+
 ## 2. RAD-086 full logical backup — live reads, local files only
 
 **Command:**
@@ -94,9 +107,11 @@ export RAD062_BACKUP_DIR
 mkdir -m 700 "$RAD062_BACKUP_DIR"
 live backup
 live backup --execute
+printf '%s\n' "$RAD062_LOCALE_META" > "$RAD062_BACKUP_DIR/db-meta.json"
+chmod 600 "$RAD062_BACKUP_DIR/db-meta.json"
 ```
 
-**Expected:** client major matches production (prefer same patch release); first call is dry run with zero connections. Second creates exactly `roles.sql` (all roles, no password verifiers), `project.dump` (full database schema AND data, no schema/table filters), and `checksums.json` outside checkout. It refuses existing output files. Permissions are 0700 directory/0600 files. Roles metadata without reusable passwords is intentional; Auth/schema/data remain in the complete database archive. No table-by-table phone backup or selected participant export substitutes for this backup.
+**Expected:** client major matches production (prefer same patch release); first call is dry run with zero connections. Second creates exactly `roles.sql` (all roles, no password verifiers), `project.dump` (full database schema AND data, no schema/table filters), and `checksums.json` outside checkout; the following command records the locale identity in `db-meta.json`. It refuses existing output files. Permissions are 0700 directory/0600 files. Roles metadata without reusable passwords is intentional; Auth/schema/data remain in the complete database archive. No table-by-table phone backup or selected participant export substitutes for this backup.
 
 **Command:**
 
@@ -131,16 +146,38 @@ export RAD062_LOCAL_DATA RAD062_LOCAL_SOCKET
 mkdir -m 700 "$RAD062_LOCAL_SOCKET"
 initdb -D "$RAD062_LOCAL_DATA" -U rad062_restore_admin --auth-local=trust --encoding=UTF8 --no-locale
 pg_ctl -D "$RAD062_LOCAL_DATA" -l "$RAD062_LOCAL_DATA/local.log" -o "-c listen_addresses='' -k $RAD062_LOCAL_SOCKET -p 55432 -c log_statement=none -c log_min_error_statement=panic -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0" -w start
-PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres createdb rad062_rehearsal
+PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres node --input-type=module - <<'JS'
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { localeArgs } from './scripts/ops/laptop-backup-lib.mjs';
+const meta = JSON.parse(readFileSync(join(process.env.RAD062_BACKUP_DIR,'db-meta.json'),'utf8'));
+execFileSync('createdb', ['-T','template0','--encoding=UTF8',...localeArgs(meta),'rad062_rehearsal'], { stdio:'pipe' });
+JS
+verify_restore_locale() {
+  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node --input-type=module - <<'JS'
+import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { validateLocale } from './scripts/ops/laptop-backup-lib.mjs';
+const meta = validateLocale(JSON.parse(readFileSync(join(process.env.RAD062_BACKUP_DIR,'db-meta.json'),'utf8')));
+const sql = "select row_to_json(m) from (select datlocprovider,datlocale,datcollate,datctype from pg_database where datname=current_database()) m";
+const actual = JSON.parse(execFileSync('psql',['-X','-At','-v','ON_ERROR_STOP=1','-c',sql],{encoding:'utf8'}));
+assert.deepEqual(actual, meta, 'STOP collation');
+JS
+}
+verify_restore_locale
 localdb() { PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node scripts/assess/rad062-db-day.mjs "$@"; }
 localdb restore
 localdb restore --execute
+verify_restore_locale
 localdb preflight --execute
 ```
 
-**Expected:** zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
+**Expected:** target created from template0 with the recorded provider and both libc locale fields: ICU uses `--locale-provider=icu --icu-locale=<datlocale>`, libc uses `--locale-provider=libc`. Provider, datlocale (including null for libc), collate and ctype must all match before and after restore. The bootstrap cluster C locale does not determine the target DB locale. Zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
 
-**STOP:** role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
+**STOP:** collation mismatch, missing ICU support or en_US.UTF-8 in the exact local version/image, role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
 
 **Command (eight separate calls, fail-fast):**
 
@@ -167,7 +204,7 @@ M06/M08 fail their own entire transaction if any reviewed v1 body anchor is abse
 node scripts/assess/rad062-restore-rehearsal.mjs
 ```
 
-**Expected:** exit 0; eight applied, eight rollback witnesses, eighteen anchors, zero effective ACL differences, readiness_passed=1/readiness_failures=0, four tampered-grant failures; original_b_ready=1, restored_b_diagnostic_ready=1, tampered_b_diagnostic_failed=1, post_package_b_diagnostic_failures=7, baseline_check_failures=1 and required_check_failures=1 (frozen B only). This command creates synthetic databases only, never consumes a provider backup or credential. **It is diagnostic QA, not permission to continue after the owner restore/checks fail.**
+**Expected:** exit 0; source provider/datlocale/collate/ctype reproduced exactly on template0 and independently verified; eight applied, eight rollback witnesses, eighteen anchors, zero effective ACL differences, readiness_passed=1/readiness_failures=0, four tampered-grant failures; original_b_ready=1, restored_b_diagnostic_ready=1, tampered_b_diagnostic_failed=1, post_package_b_diagnostic_failures=7, baseline_check_failures=1 and required_check_failures=1 (frozen B only). This command creates synthetic databases only, never consumes a provider backup or credential. **It is diagnostic QA, not permission to continue after the owner restore/checks fail.**
 
 **STOP:** any unexpected failure above, unavailable 17.11 compatibility proof, readiness false, other required check false or unexplained catalogue/data difference. Frozen B's exact documented catalogue failure is allowed only as a measured transition into immediate P10 under path (b), never as final acceptance. Do not change a required check or classification in P9b. Preserve v1 OIDs/signatures/owners/ACL/config and restored data, allowing only the reviewed M01/M06/M08 body changes. Existing legacy/P1/RAD-060 and P1–P8 semantic/race tests remain required; run `npm run check` and all CI commands recorded in the report before authorizing the day.
 
