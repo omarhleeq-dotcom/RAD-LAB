@@ -65,6 +65,7 @@ test('diagnostic has fixed types/strict identifiers/bounded input and suppresses
   const unsafe = restoreDiagnostic(error().replace('EVENT TRIGGER - owner_trigger postgres', 'UNKNOWN - unsafe! unsafe!'), { status: null, signal: 'SIGTERM' });
   assert.equal(unsafe.type, 'unparsed'); assert.equal(unsafe.name, 'unparsed'); assert.equal(unsafe.signal, 'SIGTERM');
   assert.equal(restoreDiagnostic('arbitrary error ' + canary, { status: 1 }).sqlstate, 'unparsed');
+  assert.equal(restoreDiagnostic(error(), { status: 1, signal: 'SIGTERM\n' }, toc).signal, 'none');
   const forged = 'pg_restore: error: ' + canary + '\npg_restore: from TOC entry 2; 0 0 EVENT TRIGGER - owner_trigger postgres\n';
   assert.equal(restoreDiagnostic(forged, { status: 1 }, toc).name, 'unparsed');
 });
@@ -123,7 +124,10 @@ test('production passes exact lists/owner flags, encrypts names/counts and stops
       assert.doesNotMatch(JSON.stringify(entry) + output.join('\n'), /PRIVATE_|CONTEXT|Command was/);
       if (mode === 'pass') assert.deepEqual(entry.event_triggers_second_pass, ['owner_trigger']);
       if (['copy', 'data'].includes(mode)) { assert.deepEqual(output, []); assert.equal(logs.length, logsBefore); }
-      if (['first', 'second', 'list', 'extract'].includes(mode)) assert.deepEqual(output, [formatRestoreDiagnostic(entry.restore_diagnostic)]);
+      if (['first', 'second', 'list', 'extract'].includes(mode)) {
+        assert.deepEqual(output, [formatRestoreDiagnostic(entry.restore_diagnostic)]);
+        assert.equal(entry.restore_stop, output[0]);
+      }
       if (mode === 'mismatch') assert.ok(output.every(s => s.includes('kind=event_trigger_mismatch') && s.includes('keys=presence')));
     }
   } finally { rmSync(root, { recursive: true, force: true }); }

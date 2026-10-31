@@ -229,7 +229,7 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     const code = e instanceof Stop ? e.stage : stage;
     if (dir && !e.restoreSilent) try { appendEntry(c, { kind: 'restore_test', dir: backup, result: 'fail', stage: code,
       ...(secondPass ? { event_triggers_second_pass: secondPass, toc_entries_restored: tocRestored } : {}),
-      ...(e.restoreDiagnostic ? { restore_diagnostic: e.restoreDiagnostic } : {}), ...(e.eventMismatches ? { event_trigger_mismatches: e.eventMismatches } : {}),
+      ...(e.restoreDiagnostic ? { restore_diagnostic: e.restoreDiagnostic, restore_stop: formatRestoreDiagnostic(e.restoreDiagnostic) } : {}), ...(e.eventMismatches ? { event_trigger_mismatches: e.eventMismatches } : {}),
       ...(extraSettings ? { supabase_admin_extra_settings: extraSettings } : {}), image_digest: IMAGE_DIGEST, ...(imageId ? { image_id: imageId } : {}), ...(e.diagnostics ? { diagnostics: e.diagnostics } : {}), ...(e.detail ?? {}), ...(e.missing ? { missing_extensions: e.missing.length } : {}) }, run); } catch { /* exit code is the signal */ }
     const s = new Stop(code); s.missing = e.missing; s.diagnostics = e.diagnostics;
     s.restoreDiagnostic = e.restoreDiagnostic; s.restoreSilent = e.restoreSilent; s.eventMismatches = e.eventMismatches; throw s;

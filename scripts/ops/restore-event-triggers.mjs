@@ -65,7 +65,7 @@ export function restoreDiagnostic(stderr, result, toc = '') {
   return { toc_id: m && /^\d{1,10}$/.test(m[1]) && Number(m[1]) <= 2147483647 ? m[1] : 'unparsed', type: m?.[2] ?? 'unparsed', schema: m?.[3] === '-' ? '-' : safe(m?.[3]),
     name: safe(unquote(m?.[4])), owner: safe(unquote(m?.[5])), sqlstate: state,
     exit: Number.isInteger(result.status) ? result.status : -1,
-    signal: /^SIG[A-Z0-9]{1,12}$/.test(result.signal ?? '') ? result.signal : 'none' };
+    signal: typeof result.signal === 'string' && /^SIG[A-Z0-9]{1,12}$/.exec(result.signal)?.[0] === result.signal ? result.signal : 'none' };
 }
 export const formatRestoreDiagnostic = d => `STOP laptop_restore_test:restore toc_id=${d.toc_id} type=${d.type} schema=${d.schema} name=${d.name} owner=${d.owner} sqlstate=${d.sqlstate} exit=${d.exit} signal=${d.signal}`;
 
