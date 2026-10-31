@@ -22,7 +22,7 @@ export function containerArgs(name, meta) {
   // No -p/-P, --network none, image must already be present (--pull never). Trust auth is safe only because there is no network.
   return ['run', '-d', '--name', name, '--label', 'rad-lab-restore-test=1', '--network', 'none', '--pull', 'never',
     '--mount', 'type=volume,destination=/var/lib/postgresql/data',
-    '-e', `POSTGRES_USER=${ADMIN}`, '-e', 'POSTGRES_HOST_AUTH_METHOD=trust',
+    '-e', `POSTGRES_USER=${ADMIN}`, '-e', 'PGHOST=/var/run/postgresql', '-e', 'POSTGRES_HOST_AUTH_METHOD=trust',
     '-e', `POSTGRES_INITDB_ARGS=--encoding=UTF8 ${localeArgs(meta).join(' ')}`, IMAGE];
 }
 export function parseExtensions(toc) {
