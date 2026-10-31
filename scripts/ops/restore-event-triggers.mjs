@@ -84,7 +84,8 @@ export function archiveEventMetadata(sql, events) {
     }
     const name = unquote(m[1]), entry = events.find(e => e.name === name);
     if (!entry) fail();
-    const alters = [...sql.matchAll(new RegExp(`^ALTER EVENT TRIGGER (?:"${name}"|${name}) (ENABLE(?: REPLICA| ALWAYS)?|DISABLE);$`, 'gm'))];
+    const pattern = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const alters = [...sql.matchAll(new RegExp(`^ALTER EVENT TRIGGER (?:"${pattern}"|${pattern}) (ENABLE(?: REPLICA| ALWAYS)?|DISABLE);$`, 'gm'))];
     if (alters.length > 1) fail();
     const enabled = { ENABLE: 'O', 'ENABLE REPLICA': 'R', 'ENABLE ALWAYS': 'A', DISABLE: 'D' }[alters[0]?.[1] ?? 'ENABLE'];
     result.push({ name, owner: entry.owner, function: `${unquote(m[4])}.${unquote(m[5])}`, event: m[2], enabled, tags });

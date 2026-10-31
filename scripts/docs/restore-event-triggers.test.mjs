@@ -41,6 +41,8 @@ test('archive event metadata and comparison cover name set and every required pr
   assert.deepEqual(expected[0], { name: 'owner_trigger', owner: 'postgres', function: 'public.witness', event: 'ddl_command_end', enabled: 'A', tags: ['ALTER TABLE', 'CREATE TABLE'] });
   assert.deepEqual(compareEventMetadata(expected, expected), []);
   assert.equal(archiveEventMetadata(sql.replace('ENABLE ALWAYS', 'ENABLE REPLICA'), plan.events)[0].enabled, 'R');
+  const quotedToc = toc.replaceAll('owner_trigger', '"owner$trigger"');
+  assert.equal(archiveEventMetadata(sql.replaceAll('owner_trigger', '"owner$trigger"'), restorePlan(quotedToc, roles).events)[0].enabled, 'A');
   const reordered = structuredClone(expected); reordered[0].tags.reverse();
   assert.deepEqual(compareEventMetadata(expected, reordered), []);
   for (const key of ['owner', 'function', 'event', 'enabled', 'tags']) {
