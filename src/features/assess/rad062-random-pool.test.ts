@@ -35,7 +35,7 @@ async function session(db: Db, n = 60) {
  await db.admin.query("insert into assess.sessions(id,assignment_id,user_id,ordinal,state,started_at) values($1,$2,$3,$4,'active',now())", [id(n), id(51), id(3), n]);
 }
 type Dto = { attemptId: string; assessment: AssessmentPublicationV2['assessment'] };
-it('M04 is deferred; current schema then M01-M04 leave v1 OIDs/bodies/ACL/config unchanged and no runtime grants', async () => {
+it('M04 is required; current schema then M01-M04 leave v1 OIDs/bodies/ACL/config unchanged and no runtime grants', async () => {
  const db = await rad062Fixture(0);
  try {
   expect((await db.admin.query("select to_regprocedure('assess.pool_start_v2(uuid)') v")).rows[0].v).toBeNull();
@@ -52,8 +52,8 @@ it('M04 is deferred; current schema then M01-M04 leave v1 OIDs/bodies/ACL/config
   await expect(db.rpc(2, 'draft_save_v1', [db.group, id(20), 0, legacy, '[]'])).resolves.toMatchObject({ revision: 1 });
  } finally { await db.close(); }
  const file = '20261030000400_rad062_random_pool.sql';
- expect(manifest.deferredMigrations[file].sha256).toBe(createHash('sha256').update(readFileSync('supabase/migrations/' + file)).digest('hex'));
- expect(manifest.requiredMigrations).not.toContain(file);
+ expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(readFileSync('supabase/migrations/' + file)).digest('hex'));
+ expect(manifest.requiredMigrations).toContain(file);
 });
 it('server draft, publication and TS validators reject invalid K, mixed points and written/options misuse; exact decimals agree', async () => {
  const db = await rad062Fixture(4);

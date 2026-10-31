@@ -348,17 +348,20 @@ it('an unassigned rights-held draft transfers its containing group, preserves ev
   expect((await db.admin.query('select * from assess.authoring_provenance_v2')).rowCount).toBe(0);
  } finally { await db.close(); }
 }, 20000);
-it('M08 deferred; required bytes/checks, flags, marker and BOTH emergency packets stay identical to main', () => {
- const base = JSON.parse(execFileSync('git', ['show', 'origin/main:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
- expect(manifest.requiredMigrations).toEqual(base.requiredMigrations); expect(manifest.checks).toEqual(base.checks);
- expect(manifest.checks).not.toContain('supabase/checks/rad062-ready.sql');
- expect(manifest.deferredMigrations[file].sha256).toBe(createHash('sha256').update(m08()).digest('hex'));
+it('M08 required; required bytes/checks, promoted guard/marker and BOTH unchanged emergency packets', () => {
+ const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
+ expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]); expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-ready.sql']);
+ expect(manifest.checks).toContain('supabase/checks/rad062-ready.sql');
+ expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(m08()).digest('hex'));
  expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
  for (const path of [...base.requiredMigrations.map((f: string) => 'supabase/migrations/' + f), ...base.checks,
   'src/features/assess/rad062-availability.ts', 'src/features/supervisor/p1-availability.ts',
   'supabase/manual/assess-emergency-stop.sql', 'supabase/checks/assess-emergency-stopped.sql', 'scripts/assess/emergency-stop-packet.mjs', 'docs/RAD-059_PHONE_PACKET.md',
   'supabase/manual/assess-emergency-stop-v2.sql', 'supabase/checks/assess-emergency-stopped-v2.sql', 'scripts/assess/emergency-stop-v2-packet.mjs', 'docs/RAD-062_P05_PHONE_PACKET.md'])
-  expect(readFileSync(path)).toEqual(execFileSync('git', ['show', 'origin/main:' + path]));
+  expect(readFileSync(path)).toEqual(path === 'src/features/assess/rad062-availability.ts' ? Buffer.from(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + path], { encoding: 'utf8' }).replace('RAD062_AVAILABLE: boolean = false', 'RAD062_AVAILABLE: boolean = true')) : execFileSync('git', ['show', (path === 'scripts/assess/emergency-stop-packet.mjs' ? '3f8a90810a58ebbc2603184f7f6bdd6eab5d5e31' : '023ec84c15bfd744f317ec079e2587d90e099414') + ':' + path]));
+ const expectedMarker = createHash('sha256').update('https://vlacestfruxooznrcjqc.supabase.co\n');
+ for (const migration of [...manifest.requiredMigrations].sort()) expectedMarker.update(migration + '\0').update(readFileSync('supabase/migrations/' + migration)).update('\0');
+ for (const check of manifest.checks) expectedMarker.update(readFileSync(check));
  expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' } }).trim())
-  .toBe('pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be');
+  .toBe('pilot-v1:' + expectedMarker.digest('hex'));
 }, 20000);

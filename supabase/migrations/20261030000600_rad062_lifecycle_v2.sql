@@ -30,6 +30,13 @@ language plpgsql security definer set search_path='' as $$ declare actual intege
  select lifecycle_version into actual from assess.sessions where id=p_session for update;
  if actual is distinct from p_version then raise exception 'attempt version denied' using errcode='42501'; end if;
 end $$;
+-- v1 entry guard denies only an existing v2 attempt (version is immutable).
+-- Missing/foreign/stale/v1 inputs reach the original v1 checks and SQLSTATEs.
+create function assess.require_lifecycle_v1(p_session uuid) returns void
+language plpgsql security definer set search_path='' as $$ begin
+ if exists(select 1 from assess.sessions where id=p_session and lifecycle_version<>1) then
+  raise exception 'attempt version denied' using errcode='42501'; end if;
+end $$;
 create function assess.not_held_v2(p_session uuid) returns void
 language plpgsql security definer set search_path='' as $$ begin
  perform assess.require_lifecycle_v2(p_session,2);
@@ -349,7 +356,7 @@ do $isolate$ declare name text; def text; patched text; begin
  foreach name in array array['read_session_v1(uuid)','command_v1(uuid,uuid,integer,jsonb)',
   'result_v1(uuid)','finish_v1(uuid,uuid,text,text)','fail_v1(uuid,uuid)','recover_v1(uuid)'] loop
   def:=pg_get_functiondef(('assess.'||name)::regprocedure);
-  patched:=replace(def,E'begin\n',E'begin\n  perform assess.require_lifecycle_v2(p_session,1);\n');
+  patched:=replace(def,E'begin\n',E'begin\n  perform assess.require_lifecycle_v1(p_session);\n');
   if patched=def then raise exception 'missing v1 entry anchor: %',name; end if;
   execute patched;
  end loop;
@@ -367,15 +374,16 @@ do $isolate$ declare name text; def text; patched text; begin
  if patched=def then raise exception 'missing v1 health anchor'; end if;
  execute patched;
  -- start already authorizes schema=1, but explicit protection also covers replay.
+ -- Only an existing non-v1 assignment is denied; a missing one keeps its v1 error.
  def:=pg_get_functiondef('assess.start_v1(uuid,uuid)'::regprocedure);
- patched:=replace(def,E'begin\n',E'begin\n  if not exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version=1) then raise exception ''assignment version denied'' using errcode=''42501''; end if;\n');
+ patched:=replace(def,E'begin\n',E'begin\n  if exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version<>1) then raise exception ''assignment version denied'' using errcode=''42501''; end if;\n');
  if patched=def then raise exception 'missing v1 start anchor'; end if;
  execute patched;
 end $isolate$;
 
 do $acl$ declare f record; role_name text; begin
  for f in select oid::regprocedure signature from pg_proc where pronamespace='assess'::regnamespace and proname=any(array[
- 'lifecycle_version_guard_v2','require_lifecycle_v2','not_held_v2','session_authorize_v2','written_snapshot_guard_v2','submitted_work_v2','validate_answer_v2',
+ 'lifecycle_version_guard_v2','require_lifecycle_v2','require_lifecycle_v1','not_held_v2','session_authorize_v2','written_snapshot_guard_v2','submitted_work_v2','validate_answer_v2',
  'start_v2','read_session_v2','read_mixed_session_v2','read_practical_session_v2','command_v2','claim_v2','finish_v2','fail_v2','result_v2']) loop
   execute format('revoke all on function %s from public',f.signature);
   for role_name in select rolname from pg_roles where rolname in ('anon','authenticated','assess_worker','assess_authoring_bridge','assess_grading_worker') loop

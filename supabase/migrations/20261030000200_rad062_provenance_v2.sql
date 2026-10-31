@@ -39,8 +39,9 @@ alter table assess.authoring_provenance_v2 enable row level security;
 alter table assess.content_candidates_v2 enable row level security;
 revoke all on assess.authoring_provenance_v2,assess.content_candidates_v2 from public,anon,authenticated,assess_worker,assess_authoring_bridge;
 -- Independently enumerate both new identity edges. Do not bless unrelated drift.
+-- d3_fk_inventory_v1 sorts name columns (always C); sort these text keys in C too.
 do $$ declare expected jsonb; begin
- select jsonb_agg(e order by e->>0,e->>1,e->>2) into expected from jsonb_array_elements(
+ select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") into expected from jsonb_array_elements(
   (select inventory from assess.erasure_fk_contract where singleton)||
   '[["assess","authoring_provenance_v2","authoring_provenance_v2_author_id_fkey","FOREIGN KEY (author_id) REFERENCES public.profiles(user_id) ON DELETE CASCADE"],["assess","authoring_provenance_v2","authoring_provenance_v2_reviewer_id_fkey","FOREIGN KEY (reviewer_id) REFERENCES public.profiles(user_id) ON DELETE SET NULL"]]'::jsonb) e;
  if assess.d3_fk_inventory_v1() is distinct from expected then raise exception 'unreviewed M02 identity edge' using errcode='55000'; end if;

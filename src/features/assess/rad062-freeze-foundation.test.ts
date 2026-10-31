@@ -42,7 +42,7 @@ async function snapshot(db: Db) {
   result[table] = (await db.admin.query(`select to_jsonb(t) row from assess.${table} t order by to_jsonb(t)::text`)).rows;
  return result;
 }
-it('M05 is dormant; current schema and v1 packet work first; explicit M01–M05 preserve every existing v1 function and deny runtime grants', async () => {
+it('promoted M05 retains historical current schema and v1 packet work first; explicit M01–M05 preserve every existing v1 function and deny runtime grants', async () => {
  const db = await rad062Fixture(0);
  try {
   expect((await db.admin.query("select to_regprocedure('assess.freeze_v2()') v")).rows[0].v).toBeNull();
@@ -63,19 +63,22 @@ it('M05 is dormant; current schema and v1 packet work first; explicit M01–M05 
   await seedBase(db); await seed(db, 60, 'grading-failed', new Date().toISOString());
   await expect(db.rpc('worker', 'recover_v1', [id(60)])).resolves.toBe('');
  } finally { await db.close(); }
- expect(manifest.requiredMigrations).not.toContain(file);
+ expect(manifest.requiredMigrations).toContain(file);
  expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
- expect(manifest.deferredMigrations[file].sha256).toBe(createHash('sha256').update(m05()).digest('hex'));
- expect(read('src/features/assess/rad062-availability.ts')).toContain('RAD062_AVAILABLE: boolean = false');
+ expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(m05()).digest('hex'));
+ expect(read('src/features/assess/rad062-availability.ts')).toContain('RAD062_AVAILABLE: boolean = true');
  expect(read('src/features/supervisor/p1-availability.ts')).toContain('P1_AVAILABLE: boolean = true');
- const base = JSON.parse(execFileSync('git', ['show', 'origin/main:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
- expect(manifest.requiredMigrations).toEqual(base.requiredMigrations); expect(manifest.checks).toEqual(base.checks);
- for (const path of [...manifest.requiredMigrations.map(f => 'supabase/migrations/' + f), ...manifest.checks,
+ const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
+ expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]); expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-ready.sql']);
+ for (const path of [...base.requiredMigrations.map((f: string) => 'supabase/migrations/' + f), ...base.checks,
   'supabase/manual/assess-emergency-stop.sql', 'supabase/checks/assess-emergency-stopped.sql',
   'scripts/assess/emergency-stop-packet.mjs', 'scripts/assess/emergency-stop-rehearsal.test.mjs', 'docs/RAD-059_PHONE_PACKET.md'])
-  expect(readFileSync(path)).toEqual(execFileSync('git', ['show', 'origin/main:' + path]));
+  expect(readFileSync(path)).toEqual(path === 'src/features/assess/rad062-availability.ts' ? Buffer.from(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + path], { encoding: 'utf8' }).replace('RAD062_AVAILABLE: boolean = false', 'RAD062_AVAILABLE: boolean = true')) : execFileSync('git', ['show', (path === 'scripts/assess/emergency-stop-packet.mjs' ? '3f8a90810a58ebbc2603184f7f6bdd6eab5d5e31' : path === 'scripts/assess/emergency-stop-rehearsal.test.mjs' ? 'c622d627c9f3c6e347ea75343af35c583d93c2c6' : '023ec84c15bfd744f317ec079e2587d90e099414') + ':' + path]));
+ const expectedMarker = createHash('sha256').update('https://vlacestfruxooznrcjqc.supabase.co\n');
+ for (const migration of [...manifest.requiredMigrations].sort()) expectedMarker.update(migration + '\0').update(readFileSync('supabase/migrations/' + migration)).update('\0');
+ for (const check of manifest.checks) expectedMarker.update(readFileSync(check));
  const marker = execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' } }).trim();
- expect(marker).toBe('pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be');
+ expect(marker).toBe('pilot-v1:' + expectedMarker.digest('hex'));
 }, 30000);
 it('freeze captures all four states, preserves timers/answers/scores/results, is idempotent and blocks held recovery', async () => {
  const db = await fixture();

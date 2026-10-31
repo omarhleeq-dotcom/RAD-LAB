@@ -9,6 +9,8 @@ import type { AssessmentPublicationV2, GradingClaimV2 } from './server-contracts
 import type { AuthoringDraftV2 } from './contracts-v2';
 import { gradePublicationV2 } from './server-grader-v2';
 import manifest from '../../../scripts/pages/frontend-schema.json';
+import { mixedFixture } from '../../../scripts/assess/d-fixture';
+import { validatePublication } from './server-validation';
 const file = '20261030000600_rad062_lifecycle_v2.sql';
 const sql = () => readFileSync('supabase/migrations/' + file, 'utf8');
 type Db = Awaited<ReturnType<typeof rad062Fixture>>;
@@ -250,15 +252,82 @@ it.each(['active', 'grading', 'grading-failed', 'awaiting-manual'])('freeze hold
   expect((await db.admin.query('select count(*)::int n from assess.manual_work_v1')).rows[0].n).toBe(1);
  } finally { await db.close(); }
 });
-it('M06 is deferred, flags and marker remain literal; required SQL/checks and v1 emergency-stop artifacts are byte-identical to main', () => {
- const base = JSON.parse(execFileSync('git', ['show', 'origin/main:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
- expect(manifest.requiredMigrations).toEqual(base.requiredMigrations); expect(manifest.checks).toEqual(base.checks);
- expect(manifest.deferredMigrations[file].sha256).toBe(createHash('sha256').update(sql()).digest('hex'));
+it('M06 is required, promoted guard and derived marker are exact; required SQL/checks and v1 emergency-stop artifacts are byte-identical to main', () => {
+ const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
+ expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]); expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-ready.sql']);
+ expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(sql()).digest('hex'));
  expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
  for (const p of [...base.requiredMigrations.map((f: string) => 'supabase/migrations/' + f), ...base.checks,
   'src/features/assess/rad062-availability.ts', 'src/features/supervisor/p1-availability.ts',
   'supabase/manual/assess-emergency-stop.sql', 'supabase/checks/assess-emergency-stopped.sql', 'scripts/assess/emergency-stop-packet.mjs',
-  'scripts/assess/emergency-stop-rehearsal.test.mjs', 'docs/RAD-059_PHONE_PACKET.md']) expect(readFileSync(p)).toEqual(execFileSync('git', ['show', 'origin/main:' + p]));
+  'scripts/assess/emergency-stop-rehearsal.test.mjs', 'docs/RAD-059_PHONE_PACKET.md']) expect(readFileSync(p)).toEqual(p === 'src/features/assess/rad062-availability.ts' ? Buffer.from(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:' + p], { encoding: 'utf8' }).replace('RAD062_AVAILABLE: boolean = false', 'RAD062_AVAILABLE: boolean = true')) : execFileSync('git', ['show', (p === 'scripts/assess/emergency-stop-packet.mjs' ? '3f8a90810a58ebbc2603184f7f6bdd6eab5d5e31' : p === 'scripts/assess/emergency-stop-rehearsal.test.mjs' ? 'c622d627c9f3c6e347ea75343af35c583d93c2c6' : '023ec84c15bfd744f317ec079e2587d90e099414') + ':' + p]));
+ const expectedMarker = createHash('sha256').update('https://vlacestfruxooznrcjqc.supabase.co\n');
+ for (const migration of [...manifest.requiredMigrations].sort()) expectedMarker.update(migration + '\0').update(readFileSync('supabase/migrations/' + migration)).update('\0');
+ for (const check of manifest.checks) expectedMarker.update(readFileSync(check));
  const marker = execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' } }).trim();
- expect(marker).toBe('pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be');
+ expect(marker).toBe('pilot-v1:' + expectedMarker.digest('hex'));
 });
+
+// Every M06-patched v1 entry point: missing, foreign and valid v1 inputs keep the
+// exact pre-package SQLSTATE/message/result after M01–M08; only v2 attempts are denied.
+it('M01–M08 keep v1 SQLSTATEs and results for missing, foreign and v1 sessions; v1 still rejects v2 and v2 stays strict', async () => {
+ const db = await rad062Fixture(0);
+ try {
+  const document = mixedFixture(), { specs } = validatePublication(document), lease = id(80), at = '2026-01-01T00:00:00Z', far = '2099-01-01T00:00:00Z';
+  await db.rpc(3, 'consent_v2', ['assess-pilot-2026-10-20-v2']);
+  await db.admin.query("insert into assess.versions(id,owner_id,assessment_id,version,name,track,available) values($1,$2,$3,'1','SYNTHETIC','mixed',true)", [id(60), id(2), document.assessment.ref.id]);
+  await db.admin.query('insert into assess.publications values($1,$2,$3,$4)', [id(60), document, specs, at]);
+  await db.admin.query('insert into assess.assignments(id,owner_id,version_id,published_at) values($1,$2,$3,$4)', [id(61), id(2), id(60), at]);
+  await db.admin.query('insert into assess.targets values($1,$2)', [id(61), id(3)]);
+  const rows: [number, string, string | null, string | null, string | null][] = [[70, 'active', null, null, null], [71, 'graded', at, null, null], [72, 'grading', 'now', lease, far], [73, 'grading-failed', 'now', null, null]];
+  for (const [n, state, submitted, l, until] of rows) {
+   await db.admin.query(`insert into assess.sessions(id,assignment_id,user_id,ordinal,state,started_at,deadline,submitted_at,lease,lease_until,failed_at,expires_at)
+     values($1,$2,$3,$4,$5,$6,$7,case $8::text when 'now' then clock_timestamp() else $8::timestamptz end,$9,$10,case when $5='grading-failed' then clock_timestamp() end,$11)`,
+    [id(n), id(61), id(3), n - 69, state, at, far, submitted, l, until, state === 'graded' ? far : null]);
+   if (state !== 'graded') await db.admin.query('insert into assess.session_details(session_id,publication,specs) values($1,$2,$3)', [id(n), document, specs]);
+  }
+  await db.admin.query("insert into assess.results values($1,1,1,1,'SYNTHETIC','mixed','after-submission')", [id(71)]);
+  const normalize = (v: unknown) => JSON.parse(JSON.stringify(v ?? null)
+   .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:\d{2})/g, '<time>')
+   .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-9a-f][0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}/g, '<random>'));
+  async function attempt(who: number | 'worker', name: string, args: unknown[]) {
+   const c = await db.connect();
+   try {
+    await c.query('begin'); await c.query(`set local role ${who === 'worker' ? 'assess_worker' : 'authenticated'}`);
+    await c.query("select set_config('request.jwt.claim.sub',$1,true)", [who === 'worker' ? '' : id(who)]);
+    return { value: normalize((await c.query(`select assess.${name}(${args.map((_, i) => '$' + (i + 1)).join(',')}) v`, args)).rows[0].v) };
+   } catch (e) { const { code, message } = e as { code?: string; message: string }; return { code, message }; }
+   finally { await c.query('rollback').catch(() => undefined); await c.end(); }
+  }
+  const missing = id(99), wrong = id(81), save = { type: 'save', item: { id: 'q', version: '1' }, answer: null };
+  const matrix: [number | 'worker', string, unknown[]][] = [
+   ...[missing, id(70), id(71)].flatMap(s => [3, 2].flatMap(u => [[u, 'read_session_v1', [s]], [u, 'command_v1', [s, id(90), 0, save]], [u, 'result_v1', [s]]] as [number, string, unknown[]][])),
+   ...[[missing, lease], [id(72), wrong], [id(72), lease], [id(73), lease]].flatMap(([s, t]) => [['worker', 'finish_v1', [s, t, '0', '1']], ['worker', 'fail_v1', [s, t]]] as ['worker', string, unknown[]][]),
+   ...[missing, id(70), id(73)].map(s => ['worker', 'recover_v1', [s]] as ['worker', string, unknown[]]),
+   [3, 'start_v1', [missing, id(91)]], [3, 'start_v1', [id(61), id(91)]], [2, 'start_v1', [id(61), id(92)]],
+   ['worker', 'claim_v1', []], ['worker', 'maintain_v1', [10]], ['worker', 'health_v1', []],
+  ];
+  const run = async () => { const out = []; for (const [who, name, args] of matrix) out.push(await attempt(who, name, args)); return out; };
+  const before = await run();
+  expect(before.some(r => 'value' in r)).toBe(true); expect(before.some(r => r.code === '40001')).toBe(true);
+  expect(before.filter(r => /^permission denied for function/.test(r.message ?? ''))).toEqual([]);
+  for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) await db.admin.query(readFileSync('supabase/migrations/' + manifest.guardedFeatures.rad062.migrations[n - 1], 'utf8'));
+  expect(await run()).toEqual(before);
+  // v1 rejects an existing v2 attempt/assignment; v2 entry points still deny a missing session.
+  await db.admin.query("insert into assess.versions(id,owner_id,assessment_id,version,name,track,schema_version,available) values($1,$2,$3,'2','SYNTHETIC','mixed',2,true)", [id(62), id(2), id(64)]);
+  await db.admin.query('insert into assess.assignments(id,owner_id,version_id) values($1,$2,$3)', [id(63), id(2), id(62)]);
+  await db.admin.query("insert into assess.sessions(id,assignment_id,user_id,ordinal,state,started_at,submitted_at,lease,lease_until) values($1,$2,$3,9,'grading',$4,clock_timestamp(),$5,$6)", [id(74), id(63), id(3), at, lease, far]);
+  expect((await db.admin.query('select lifecycle_version v from assess.sessions where id=$1', [id(74)])).rows[0].v).toBe(2);
+  const denied = { code: '42501', message: 'attempt version denied' };
+  for (const [who, name, args] of [[3, 'read_session_v1', [id(74)]], [3, 'command_v1', [id(74), id(90), 0, save]], [3, 'result_v1', [id(74)]],
+   ['worker', 'finish_v1', [id(74), lease, '0', '1']], ['worker', 'fail_v1', [id(74), lease]], ['worker', 'recover_v1', [id(74)]]] as [number | 'worker', string, unknown[]][])
+   expect(await attempt(who, name, args)).toEqual(denied);
+  expect(await attempt(3, 'start_v1', [id(63), id(93)])).toEqual({ code: '42501', message: 'assignment version denied' });
+  for (const s of [missing, id(70)]) {
+   expect(await attempt(3, 'read_session_v2', [s])).toMatchObject({ code: '42501' });
+   for (const strict of ['select assess.not_held_v2($1)', 'select assess.require_lifecycle_v2($1,2)']) {
+    await expect(db.admin.query(strict, [s])).rejects.toMatchObject(denied); await db.admin.query('rollback');
+   }
+  }
+ } finally { await db.close(); }
+}, 60000);

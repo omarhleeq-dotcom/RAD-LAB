@@ -11,6 +11,25 @@ B false is an owner verification failure, not a runtime kill switch: the deploye
 
 Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sync, PostgreSQL client tools matching production, Supabase CLI login if needed, Node/npm, Docker and `gcloud` with its own login. Run from repository root on the reviewed commit. Never use shell tracing, command-line passwords, connection strings, terminal recording, `tee`, cloud artifacts, or participant exports. No provider dump is taken in CI or this workspace. Full logical backup is the sole exception for sensitive data files: it stays only on the owner's encrypted laptop, never in Git/chat/PR/cloud. Evidence shared outside the laptop contains counts, versions, checksums and yes/no only.
 
+## P10 window checklist — owner only
+
+**M02 collation STOP — source fix under review.** The pinned PostgreSQL18.4 image with its original en_US.utf8 locale failed `20261030000200_rad062_provenance_v2.sql` with SQLSTATE55000, `unreviewed M02 identity edge`: the same 37 FK edges compared unequal only by order (name columns sort in C, the JSON text keys sorted in the database collation). With owner approval, because M01–M08 were never applied live, P10 now sorts those text keys with `collate "C"` in M02 and M05 and in the text sort keys of `rad062-ready.sql` and `rad062-p1-b-ready.sql`; expected digests are unchanged. Required checks pass on C and en_US.UTF-8 synthetic databases; see the P10 report. Do not book/start the DB-day window or merge P10 until that fix is reviewed and CI `check` is fully green. Restore evidence must preserve the real production encoding/collation/locale provider (precondition in §1), not silently inherit a different local default. The owner-approved order below remains the procedure.
+
+The owner's P10 continuation governs this order. Prepare/review Draft #175 before DB day; only the owner merges inside the booked ≤60-minute window after M01–M08 are applied and verified on live. No agent live SQL, Variable writes, ready/merge/auto-merge, gate opening, LOGIN or secret enablement. The historical P9 transition sections below retain the original B inspections. P10 requires `rad062-p1-b-ready.sql` and `rad062-ready.sql`: before M01 use frozen B; after all eight run **every P10 manifest check** and inspect every readiness boolean as true except explicit operational non-claims. Migration SHA pins in `guardedFeatures.rad062.migrationSha256` match the reviewed bytes (M02/M05 updated by the collation fix).
+
+1. Owner applies M01–M08 on live in order after all P9 prerequisites, and verifies ledger/hash/closed state and all promoted required checks.
+2. Owner sets the new marker Variable from the P10 report/PR body. The agent never sets it.
+3. Owner merges P10 in the same window.
+4. CI `check` and Deploy Pages must be green for that merged commit through normal automation.
+5. Owner checks sign-up, login, Practice and the Assess name gate on the phone; keep launch gate closed, workers NOLOGIN and secret DISABLED.
+6. Owner runs the full emergency stop v2 phone dry run and independent verification, including repeat/idempotence and the prescribed 60-second verification. Both packets remain byte-identical.
+
+Until the window, the PR deploy job is expected red **only for the old marker**; CI `check` must be fully green. Any other failure is unexpected and blocks the window. No workflow bypass, skip-ci, manual/extra deployment or hosted preview access.
+
+**Rollback inside the window:** if anything fails after merge, keep gate closed/NOLOGIN/secret DISABLED. Owner first restores the old marker Variable from reviewed pre-P10 evidence, then merges a normal reviewed revert PR for P10 within the window; no reset or force-push. Recheck normal CI/Deploy Pages and phone containment. The revert restores the old source marker contract but leaves M01–M08 installed: it does not claim frozen B accepts the installed catalogue. Preserve data and use the reviewed P9 forward-fix/repair-window procedure for any DB problem; never reopen the gate from the revert alone.
+
+**Staleness:** if main advances before DB day, merge updated main into `rad062/p10-promotion` without rebase/force-push, inspect the diff and unchanged SQL/emergency bytes, rerun affected QA, recompute with `--print-marker`, update the report and PR body only, and re-review before booking the window.
+
 ## 1. Preconditions — no mutation
 
 **Command:**
@@ -19,12 +38,12 @@ Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sy
 set -euo pipefail
 set +x
 unset PGSERVICE PGSERVICEFILE PGHOSTADDR PGOPTIONS PGPASSFILE
-npm run docs:context -- --pr 173
+npm run docs:context -- --pr 174
 npm run status:summary -- --id RAD-086
 node scripts/assess/rad062-db-day.mjs verify
 ```
 
-**Expected:** #173 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR; the laptop procedure and tools are in the [RAD-086 runbook](RAD-086_LAPTOP_BACKUP_RUNBOOK.md).
+**Expected:** #174 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR; the laptop procedure and tools are in the [RAD-086 runbook](RAD-086_LAPTOP_BACKUP_RUNBOOK.md).
 
 **STOP:** unreviewed changes, unverified prerequisite, missing emergency v1 packet, laptop absent, backup/recovery/old-credential rejection unproved. Read [v1 phone packet](RAD-059_PHONE_PACKET.md) and [containment runbook](RAD-059_PHONE_RUNBOOK.md); keep them available independently of this laptop. Do not execute containment SQL just to satisfy this preflight.
 
@@ -82,6 +101,17 @@ psql -X -v ON_ERROR_STOP=1 -f supabase/checks/rad085-p1-b-ready.sql
 
 **Expected:** every one of the 13 rows ready=true, initialized phase. **STOP:** any false/null/SQL error; do not use the restored-copy diagnostic to excuse drift on the original schema. This owner command is not executed by the agent.
 
+Record the live database collation (read only) for the restore in §3:
+
+```bash
+psql -X -v ON_ERROR_STOP=1 -At -F ' ' -c "select datlocprovider,datcollate,datctype from pg_database where datname=current_database()"
+read -r -p 'Recorded datcollate: ' RAD062_LIVE_COLLATE
+read -r -p 'Recorded datctype: ' RAD062_LIVE_CTYPE
+export RAD062_LIVE_COLLATE RAD062_LIVE_CTYPE
+```
+
+**Expected:** one row; record provider/collate/ctype privately. `c` (libc) is the reviewed provider; the laptop's `locale -a` must list that locale. **STOP:** any other provider, an unavailable locale, or a restore database whose `datcollate`/`datctype` differ from these values. Never substitute C or the laptop default.
+
 ## 2. RAD-086 full logical backup — live reads, local files only
 
 **Command:**
@@ -131,14 +161,16 @@ export RAD062_LOCAL_DATA RAD062_LOCAL_SOCKET
 mkdir -m 700 "$RAD062_LOCAL_SOCKET"
 initdb -D "$RAD062_LOCAL_DATA" -U rad062_restore_admin --auth-local=trust --encoding=UTF8 --no-locale
 pg_ctl -D "$RAD062_LOCAL_DATA" -l "$RAD062_LOCAL_DATA/local.log" -o "-c listen_addresses='' -k $RAD062_LOCAL_SOCKET -p 55432 -c log_statement=none -c log_min_error_statement=panic -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0" -w start
-PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres createdb rad062_rehearsal
+PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres createdb --template=template0 --encoding=UTF8 --locale-provider=libc --lc-collate="$RAD062_LIVE_COLLATE" --lc-ctype="$RAD062_LIVE_CTYPE" rad062_rehearsal
+echo "select datcollate=:'c' and datctype=:'t' from pg_database where datname=current_database();" |
+  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal psql -X -v ON_ERROR_STOP=1 -At -v c="$RAD062_LIVE_COLLATE" -v t="$RAD062_LIVE_CTYPE"
 localdb() { PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node scripts/assess/rad062-db-day.mjs "$@"; }
 localdb restore
 localdb restore --execute
 localdb preflight --execute
 ```
 
-**Expected:** zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
+**Expected:** zero remote listeners, fresh local DB whose collation check prints `t`, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
 
 **STOP:** role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
 
@@ -265,11 +297,11 @@ gcloud secrets versions list assess-worker-config --project "$RAD062_CLOUD_PROJE
 
 **Expected:** STOPPED twice; independent STOPPED verification, zero worker backends/unheld sessions, unchanged counts and original timers/answers/results, gate closed. Missing rotation role is visible in packet counts, not hidden as proof of provisioning. Cloud/cache/runtime verification fields remain false until separately proved.
 
-**Owner instruction precedence:** packet prose says after P10; the current P9 instruction explicitly requires this controlled post-install, pre-promotion dry run. This narrow exception applies only after all eight migrations, package readiness and every other gate pass, with only the exact frozen B transition failure measured, with product/worker/secret dormant. Both packet files remain byte-identical. It does not authorize v2 on the current schema or early promotion.
+**Owner instruction precedence:** the P10 continuation supersedes the earlier P9 timing exception. Run this phone dry run only after all eight migrations and promoted checks pass, the owner sets the marker and merges P10, normal CI/Deploy Pages are green, and the phone product checks above succeed, all inside the same window. This matches packet prose after P10; both packet files remain byte-identical. Never use v2 on an incomplete schema or open the gate for the rehearsal.
 
 **STOP:** PARTIAL/FAILED/unknown ACK, phone inability, missing awaiting-manual coverage, changed data/timer/counts or any verification/cloud failure. Keep closed and resolve; no written-exam promotion until successful phone evidence.
 
-## 8. Handoff to P10 — no promotion here
+## 8. Owner window completion — no agent promotion
 
 **Command:**
 
@@ -279,6 +311,6 @@ npm run status:summary -- --id RAD-062
 npm run status:summary -- --id RAD-086
 ```
 
-**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/history, exact transition inspection, package readiness, capacity, and the phone dry run, within the reserved window. No final acceptance until P10 whole-catalogue checks pass. P10 alone reviews required/check classification and guards, computes the real new marker, and the owner sets it after DB-day evidence. P9 leaves the current marker and deployed product unchanged.
+**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/history, exact transition inspection, package readiness and capacity before the owner sets the marker and merges P10. Complete the phone checks and v2 dry run after green normal CI/Deploy Pages, within the same reserved window. No final acceptance until all promoted whole-catalogue checks and phone evidence pass. The agent computes the source marker only; the owner alone sets the Variable after DB-day evidence and before merge.
 
 **STOP:** any missing evidence or unresolved check/version/rollback issue. Do not mark RAD-062/RAD-086 done from a merge, set a marker, flip availability, open gate, enable logins/secret or claim first-exam readiness. Channels/ACK receipt/alternate responder, privacy/rights/O4 and 4b/5b remain independent.

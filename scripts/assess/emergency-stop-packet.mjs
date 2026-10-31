@@ -9,6 +9,19 @@ const stopPath='supabase/manual/assess-emergency-stop.sql';
 const verifyPath='supabase/checks/assess-emergency-stopped.sql';
 const monitorPath='supabase/checks/assess-operations-monitor.sql';
 const read=p=>readFileSync(p,'utf8');
+// Frozen B-era readiness inputs, pinned to 05b548b41f4212d86c5b20813f204dd54b469f70.
+// Current production requirements are checked separately by the P10 gate/runbook.
+export const B_ERA_CHECKS = Object.freeze([
+ "supabase/checks/training-ready.sql",
+ "supabase/checks/comparison-ready.sql",
+ "supabase/checks/assess-mixed-ready.sql",
+ "supabase/checks/assess-practical-ready.sql",
+ "supabase/checks/rad085-p1-b-ready.sql",
+ "supabase/checks/assess-history-ready.sql",
+ "supabase/checks/assess-retention-ready.sql",
+ "supabase/checks/owner-dashboard-ready.sql",
+ "supabase/checks/owner-deletion-surveys-ready.sql"
+]);
 export const sha256=s=>createHash('sha256').update(s).digest('hex');
 export function stopTransport(sql=read(stopPath)) {
  // Each inner DO remains a separate top-level statement with its own timeout.
@@ -23,7 +36,7 @@ export function stopTransport(sql=read(stopPath)) {
 export function renderPacket() {
  const section=(title,sql,source)=>`\n## ${title}\n\nالمصدر: ${source}؛ SHA-256: ${sha256(sql)}.\n\n`
   +lineBoundedParts(sql).map((p,i)=>`الجزء${i+1} — ${p.length} حرفًا.\n\n\`\`\`sql\n${p}\n\`\`\`\n`).join('\n');
- const checks=JSON.parse(read('scripts/pages/frontend-schema.json')).checks;
+ const checks=B_ERA_CHECKS;
  if(!Array.isArray(checks)||checks.some(p=>!/^supabase\/checks\/[a-z0-9-]+\.sql$/.test(p)))throw Error('invalid_repository_checks');
  return '# RAD-059 — حزمة SQL للهاتف\n\nمولّدة من مصادر Git محليًا؛ لا إذن تشغيل حي. اقرأ [دليل الهاتف](RAD-059_PHONE_RUNBOOK.md). اجمع **كل أجزاء الإجراء المختار** في محرر واحد قبل Run مرة واحدة؛ لا تنفيذ جزء أو COMMIT مبكرًا. أقل من15000حرف لكل جزء بعد الغلاف. لا تضف سطرًا داخل base64. لا function DDL أو ترحيل أو بيانات أشخاص.\n\nالإيقاف ست مراحل، lock2s/statement5s لكل مرحلة. PARTIAL/FAILED يعني الإبقاء على الإغلاق ومراجعة errors؛ صف STOPPED قبل COMMIT لا يغني عن استعلام التحقق المستقل بعدها. انقطاع الشبكة/خطأ COMMIT لا يثبت نجاحًا: افتح استعلامًا جديدًا وتحقق.\n'
  +section('1 الإيقاف — معاملة واحدة',stopTransport().join(''),stopPath)

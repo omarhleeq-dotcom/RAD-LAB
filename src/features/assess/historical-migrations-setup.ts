@@ -9,11 +9,14 @@ import { mkdtempSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-// These four retained B contracts explicitly assert an empty deferred registry.
+// Retained B contracts assert their original classifications and marker values.
+// P1-schema and C2 are explicitly historical B witnesses too; current P10
+// requirements/marker are covered by the RAD-062 and current discovery tests.
 // Use a REAL B tree, not altered assertions or a falsified manifest projection.
 // New RAD-062 tests inspect the current tree and call the current gate separately.
 const testPath = (expect.getState().testPath ?? '').replaceAll('\\', '/');
-if (/\/features\/deployment\/(owner-dashboard-deferred-schema|assess-[def]-schema)\.test\.ts$/.test(testPath)) {
+if (/\/features\/deployment\/(owner-dashboard-deferred-schema|assess-[def]-schema|c2-deferred-schema)\.test\.ts$/.test(testPath)
+ || /\/features\/supervisor\/p1-schema\.test\.ts$/.test(testPath)) {
  const original = process.cwd(), fixture = mkdtempSync(join(tmpdir(), 'rad062-historical-b-'));
  try {
   const archive = execFileSync('git', ['archive', '05b548b41f4212d86c5b20813f204dd54b469f70', 'src', 'supabase', 'scripts/pages'], { cwd: original, maxBuffer: 64 * 1024 * 1024 });
