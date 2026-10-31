@@ -41,6 +41,9 @@ test('pinned Supabase 17.11: single pass fails supautils; two passes restore exa
     qs('CREATE EXTENSION supabase_vault; create table public.icu_witness(id integer primary key); insert into public.icu_witness values(1),(2),(3)');
     // Production's creation identity matters: postgres is not rolsuper in this image.
     assert.equal(q("select rolsuper from pg_roles where rolname='postgres'"), 'f');
+    // This fresh DB is owned by supabase_admin, so its public schema needs the
+    // source-only grant before postgres can create its own function there.
+    qs('GRANT USAGE, CREATE ON SCHEMA public TO postgres');
     docker(['exec', name, 'psql', '-X', '-v', 'ON_ERROR_STOP=1', '-U', 'postgres', '-d', 'synthetic', '-c',
       `CREATE FUNCTION public.rad086_event_fn() RETURNS event_trigger LANGUAGE plpgsql AS $$BEGIN END$$;
        CREATE EVENT TRIGGER rad086_owner_trigger ON ddl_command_end WHEN TAG IN ('CREATE TABLE', 'ALTER TABLE') EXECUTE FUNCTION public.rad086_event_fn();
