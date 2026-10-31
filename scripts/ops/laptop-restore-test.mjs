@@ -8,7 +8,7 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { Stop, guard, loadConfig, resolveBackup, verifyBackup, appendEntry, quoteIdent, validateLocale, localeArgs } from './laptop-backup-lib.mjs';
 
-import { rolesDiagnostic, formatRolesStop, safeRole } from './roles-diagnostic.mjs';
+import { rolesDiagnostic, formatRolesStop, safeRole, parseExtraSettings } from './roles-diagnostic.mjs';
 
 export const IMAGE_DIGEST = 'sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d';
 export const IMAGE = `supabase/postgres:17.11.0.016@${IMAGE_DIGEST}`;
@@ -37,14 +37,18 @@ export function parseExtensions(toc) {
 export function prepareRolesSql(sql) {
   const literal = value => "'" + value.replaceAll("'", "''") + "'";
   const settings = new Map();
+  const adminSettings = [];
   for (const m of String(sql).matchAll(/^ALTER ROLE ("(?:[^"\n]|"")*"|[a-z_][a-z0-9_$]*) SET ([^\r\n]+);\r?$/gm)) {
+    if (m[1] === 'supabase_admin' || m[1] === '"supabase_admin"') adminSettings.push(m[2]);
     settings.set(m[1], [...(settings.get(m[1]) ?? []), m[2]]);
   }
   const body = String(sql).replace(/^CREATE ROLE ("(?:[^"\n]|"")*"|[a-z_][a-z0-9_$]*);\r?\nALTER ROLE \1 WITH ([^\r\n]+);\r?$/gm, (pair, ident, attrs) => {
     const name = ident.startsWith('"') ? ident.slice(1, -1).replaceAll('""', '"') : ident;
-    // Compare all server-defined attributes, including role settings and defaults.
+    // Compare all server-defined attributes and defaults; only the hard-coded
+    // supabase_admin.rolconfig pair moves to the exact post-body check below.
     // Identity and passwords are excluded: the archive uses --no-role-passwords.
-    const projection = "to_jsonb(r) - ARRAY['oid','rolname','rolpassword']";
+    const projection = "to_jsonb(r) - ARRAY['oid','rolname','rolpassword']" +
+      (name === 'supabase_admin' ? " - 'rolconfig'" : '');
     const probe = 'rad086_role_attribute_probe_' + randomUUID().replaceAll('-', '');
     const code = `BEGIN
       IF EXISTS (SELECT FROM pg_authid WHERE rolname=${literal(name)}) THEN
@@ -67,7 +71,20 @@ export function prepareRolesSql(sql) {
     END`;
     return `DO ${literal(code)};`;
   });
+  // PostgreSQL itself canonicalises archive SET values on an isolated probe. Never
+  // copy/reset settings on the image role. Only global SET lines enter this check.
+  const configProbe = 'rad086_role_config_probe_' + randomUUID().replaceAll('-', '');
+  const expected = adminSettings.length ? `DO ${literal(`BEGIN
+    CREATE ROLE ${configProbe};
+    ${adminSettings.map(value => `EXECUTE ${literal(`ALTER ROLE ${configProbe} SET ${value}`)};`).join('\n')}
+    INSERT INTO pg_temp.rad086_admin_expected
+      SELECT split_part(entry, '=', 1), entry FROM pg_roles r,
+        unnest(r.rolconfig) entry WHERE r.rolname='${configProbe}';
+    DROP ROLE ${configProbe};
+  END`)};` : '';
   return `BEGIN;
+CREATE TEMP TABLE rad086_admin_expected(name text, entry text) ON COMMIT DROP;
+${expected}
 CREATE TEMP TABLE rad086_roles_mismatch(role text, keys text[]) ON COMMIT DROP;
 ${body}
 DO 'BEGIN
@@ -76,6 +93,27 @@ DO 'BEGIN
       (SELECT json_agg(row_to_json(m) ORDER BY role)::text FROM pg_temp.rad086_roles_mismatch m);
   END IF;
 END';
+CREATE TEMP TABLE rad086_admin_final ON COMMIT DROP AS
+  SELECT split_part(entry, '=', 1) AS name, entry FROM pg_roles r,
+    unnest(r.rolconfig) entry WHERE r.rolname='supabase_admin';
+DO 'DECLARE bad text[]; BEGIN
+  IF EXISTS (SELECT FROM pg_temp.rad086_admin_expected WHERE name !~ ''^[A-Za-z_][A-Za-z0-9_.]{0,62}$'')
+     OR EXISTS (SELECT FROM pg_temp.rad086_admin_final WHERE name !~ ''^[A-Za-z_][A-Za-z0-9_.]{0,62}$'')
+     OR (SELECT count(*) FROM pg_temp.rad086_admin_expected) > 64
+     OR (SELECT count(*) FROM pg_temp.rad086_admin_final) > 64 THEN
+    RAISE EXCEPTION ''RAD086_rolconfig_mismatch ["unparsed"]'';
+  END IF;
+  SELECT array_agg(e.name ORDER BY e.name) INTO bad
+    FROM pg_temp.rad086_admin_expected e
+    WHERE NOT EXISTS (SELECT FROM pg_temp.rad086_admin_final f
+      WHERE convert_to(f.entry, ''UTF8'') = convert_to(e.entry, ''UTF8''));
+  IF bad IS NOT NULL THEN
+    RAISE EXCEPTION USING MESSAGE = ''RAD086_rolconfig_mismatch '' || array_to_json(bad)::text;
+  END IF;
+END';
+SELECT 'RAD086_supabase_admin_extra_settings ' || coalesce(json_agg(f.name ORDER BY f.name)::text, '[]')
+  FROM pg_temp.rad086_admin_final f
+  WHERE NOT EXISTS (SELECT FROM pg_temp.rad086_admin_expected e WHERE e.name=f.name);
 COMMIT;
 `;
 }
@@ -88,7 +126,7 @@ export function readMeta(dir) {
 }
 
 export async function restoreTest(c, { name = 'latest', dryRun = false, run = execFileSync, spawn = spawnSync, wait = ms => new Promise(r => setTimeout(r, ms)) } = {}) {
-  let stage = 'select', container = null, dir, backup, imageId;
+  let stage = 'select', container = null, dir, backup, imageId, extraSettings;
   const sh = (args, o = {}) => String(run('docker', args, { encoding: 'utf8', timeout: 600000, ...o }));
   const exec = (cmd, o) => sh(['exec', ...(o?.stdin ? ['-i'] : []), container, ...cmd]);
   try {
@@ -122,6 +160,7 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     const roles = spawn('docker', ['exec', '-i', container, 'psql', '-X', '-q', '-v', 'ON_ERROR_STOP=1', '-v', 'VERBOSITY=verbose', '-U', ADMIN, '-d', 'postgres', '-f', '-'],
       { input: rolesSql, maxBuffer: 64 * 1024 * 1024, timeout: 600000 });
     if (roles.status !== 0) { const e = new Stop('roles'); e.diagnostics = rolesDiagnostic(roles.stderr, rolesSql); throw e; }
+    extraSettings = parseExtraSettings(roles.stdout);
     stage = 'collation';
     // Successful creation is also the capability probe: absent ICU or libc locale is a hard STOP.
     exec(['createdb', '-U', ADMIN, '-T', 'template0', '--encoding=UTF8', ...localeArgs(meta), DB]);
@@ -144,12 +183,12 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     if (mismatched) { const e = new Stop('counts'); e.detail = { tables_compared: counted.length, tables_mismatched: mismatched }; throw e; }
     stage = 'log';
     const result = { tables_compared: counted.length, tables_mismatched: 0, rows_restored: rows, tables_uncounted: meta.tables.length - counted.length,
-      container_server_version_num: server, collation_match: 1 };
-    appendEntry(c, { kind: 'restore_test', dir: backup, result: 'pass', image_digest: IMAGE_DIGEST, image_id: imageId, datlocprovider: meta.datlocprovider, datlocale: meta.datlocale, datcollate: meta.datcollate, datctype: meta.datctype, ...result }, run);
+      container_server_version_num: server, collation_match: 1, supabase_admin_extra_settings_count: extraSettings.length };
+    appendEntry(c, { kind: 'restore_test', dir: backup, result: 'pass', supabase_admin_extra_settings: extraSettings, image_digest: IMAGE_DIGEST, image_id: imageId, datlocprovider: meta.datlocprovider, datlocale: meta.datlocale, datcollate: meta.datcollate, datctype: meta.datctype, ...result }, run);
     return { ...result, restore_test_pass: 1 };
   } catch (e) {
     const code = e instanceof Stop ? e.stage : stage;
-    if (dir) try { appendEntry(c, { kind: 'restore_test', dir: backup, result: 'fail', stage: code, image_digest: IMAGE_DIGEST, ...(imageId ? { image_id: imageId } : {}), ...(e.diagnostics ? { diagnostics: e.diagnostics } : {}), ...(e.detail ?? {}), ...(e.missing ? { missing_extensions: e.missing.length } : {}) }, run); } catch { /* exit code is the signal */ }
+    if (dir) try { appendEntry(c, { kind: 'restore_test', dir: backup, result: 'fail', stage: code, ...(extraSettings ? { supabase_admin_extra_settings: extraSettings } : {}), image_digest: IMAGE_DIGEST, ...(imageId ? { image_id: imageId } : {}), ...(e.diagnostics ? { diagnostics: e.diagnostics } : {}), ...(e.detail ?? {}), ...(e.missing ? { missing_extensions: e.missing.length } : {}) }, run); } catch { /* exit code is the signal */ }
     const s = new Stop(code); s.missing = e.missing; s.diagnostics = e.diagnostics; throw s;
   } finally {
     if (container) try { sh(['rm', '-f', '-v', container], { stdio: ['ignore', 'pipe', 'pipe'] }); } catch { /* owner removes via the label shown in the runbook */ }
