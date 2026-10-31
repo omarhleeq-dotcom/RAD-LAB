@@ -35,6 +35,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends age postgresql-16 postgresql-client-16
           age-keygen --version && pg_dump --version
+      - name: Required RAD-086 ICU restore image (no skip)
+        run: docker pull postgres:17.11
       - run: npm run docs:check
       - run: npm run docs:test
       - name: Test first-version secret uploader (synthetic only)

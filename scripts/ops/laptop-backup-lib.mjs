@@ -13,6 +13,21 @@ export const guard = (stage, fn) => { try { return fn(); } catch (e) { throw e i
 export const BACKUP_NAME = /^\d{8}T\d{6}Z$/;
 export const AGE_RECIPIENT = /^age1[02-9ac-hj-np-z]{58}$/;
 export const LOCALE = /^[A-Za-z0-9_.@-]{1,64}$/;
+// Deliberately bounded ICU locale syntax; unsupported forms require review, never shell interpolation.
+export const ICU_LOCALE = /^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8}){0,7}(?![\s\S])/;
+export function validateLocale(m) {
+  if (!['c', 'i'].includes(m.datlocprovider) ||
+    typeof m.datcollate !== 'string' || !LOCALE.test(m.datcollate) ||
+    typeof m.datctype !== 'string' || !LOCALE.test(m.datctype) ||
+    (m.datlocprovider === 'i' ? typeof m.datlocale !== 'string' || !ICU_LOCALE.test(m.datlocale) : m.datlocale !== null)) throw new Stop('locale');
+  return m;
+}
+export function localeArgs(meta) {
+  validateLocale(meta);
+  return [`--locale-provider=${meta.datlocprovider === 'i' ? 'icu' : 'libc'}`,
+    ...(meta.datlocprovider === 'i' ? [`--icu-locale=${meta.datlocale}`] : []),
+    `--lc-collate=${meta.datcollate}`, `--lc-ctype=${meta.datctype}`];
+}
 export const stamp = (d = new Date()) => d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
 export const configDir = () => join(homedir(), '.config', 'rad-lab-backup');
 export const configPath = () => join(configDir(), 'config.json');

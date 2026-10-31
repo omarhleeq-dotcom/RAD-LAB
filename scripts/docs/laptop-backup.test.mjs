@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import pg from 'pg';
 import { validateConfig, outsideCheckout, connectionEnv, passLine, writePassFile, assertPrivate, appendEntry, readEntries, listBackups, quoteIdent, stamp,
-  slotStamp, slotsFor, collect, publish, SLOTS } from '../ops/laptop-backup-lib.mjs';
+  slotStamp, slotsFor, collect, publish, SLOTS, validateLocale, localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { runBackup, status } from '../ops/laptop-backup.mjs';
 import { restoreTest, containerArgs, parseExtensions, IMAGE } from '../ops/laptop-restore-test.mjs';
 
@@ -101,7 +101,7 @@ function cluster() {
 const pgc = cluster();
 after(() => { try { pgc?.stop(); } catch { /* already stopped */ } });
 const local = (root, env = {}) => ({ conn: { PGHOST: root, PGPORT: '55433', PGUSER: 'postgres', PGDATABASE: 'postgres', PGPASSFILE: '/dev/null', PATH: process.env.PATH, ...env },
-  makeClient: () => new pg.Client({ host: root, port: 55433, user: 'postgres', database: 'postgres' }) });
+  makeClient: () => new pg.Client({ host: root, port: 55433, user: 'postgres', database: env.PGDATABASE ?? 'postgres' }) });
 
 test('real local rehearsal (synthetic data, no provider): snapshot-consistent dump, counts, checksums, modes, encrypted log, no secrets', { timeout: 300000 }, async () => {
   const q = sql => execFileSync('psql', ['-X', '-h', pgc.root, '-p', '55433', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-c', sql]);
@@ -170,7 +170,7 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
   assert.ok(log.some(e => e.kind === 'prune' && e.removed.includes('20261031T031500Z')) && log.filter(e => e.kind === 'stop').length >= 4);
   // Restore test with a fake docker: exact container flags, count comparison, extension STOP, and logged results.
   const calls = [];
-  const fake = (counts, avail = 'plpgsql\npgcrypto') => (p, a, o) => {
+  const fake = (counts, avail = 'plpgsql\npgcrypto', locale = 'c||C|C') => (p, a, o) => {
     if (p !== 'docker') return execFileSync(p, a, o);
     calls.push(a);
     if (a[0] === 'image') return 'sha256:' + 'a'.repeat(64);
@@ -178,7 +178,7 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
     const sql = a.at(-1);
     if (sql === 'show server_version_num') return String(meta.server_version_num);
     if (sql.includes('pg_available_extensions')) return avail;
-    if (sql.includes('from pg_database')) return 'C|C';
+    if (sql.includes('from pg_database')) return locale;
     const m = /count\(\*\) from "([^"]+)"\."(.*)"$/.exec(sql);
     return m ? String(counts[m[1] + '.' + m[2].replaceAll('""', '"')]) : '';
   };
@@ -196,6 +196,8 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
   const results = readEntries(c, identity).filter(e => e.kind === 'restore_test');
   assert.deepEqual(results.map(e => e.result).slice(0, 3), ['pass', 'fail', 'fail']); assert.equal(results[1].stage, 'counts'); assert.equal(results[1].tables_mismatched, 1);
   assert.deepEqual([results[2].stage, results[2].missing_extensions], ['extensions', 1]);
+  for (const wrong of ['i||C|C', 'c|en-US|C|C', 'c||POSIX|C', 'c||C|POSIX'])
+    await assert.rejects(restoreTest(c, { name: 'monthly', run: fake(good, 'plpgsql\npgcrypto', wrong), spawn, wait: async () => {} }), e => e.stage === 'collation');
   // A tampered archive is refused before any container exists.
   const before = calls.length, monthly = join(c.backupRoot, 'store', slotStamp(c.backupRoot, 'monthly'));
   writeFileSync(join(monthly, 'project.dump'), Buffer.concat([readFileSync(join(monthly, 'project.dump')), Buffer.from('x')]));
@@ -221,7 +223,7 @@ test('slot promotion rule and collection are exact and never delete without a re
 });
 
 test('container arguments never publish ports, keep no network, and never carry a password', () => {
-  const a = containerArgs('n', { datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' });
+  const a = containerArgs('n', { datlocprovider: 'c', datlocale: null, datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' });
   assert.deepEqual(a.slice(a.indexOf('--network'), a.indexOf('--network') + 2), ['--network', 'none']);
   assert.ok(!a.includes('-p') && !a.includes('-P') && !a.some(x => /PASSWORD=/.test(x)) && a.at(-1) === 'postgres:17.11');
   assert.deepEqual(parseExtensions('1; 0 0 EXTENSION - pgcrypto\n2; 0 0 COMMENT - EXTENSION pgcrypto\n3; 0 0 EXTENSION - "uuid-ossp"\n'), ['pgcrypto']);
@@ -265,4 +267,40 @@ test('probe packet: every part under 15k, mutations name only probe roles, and t
   assert.equal(run('P8b'), protectedBefore); assert.equal(snap(), before);
   // Midway cleanup path: only role A was created, shell variables are gone, the exact-pattern teardown still removes it and nothing else.
   run('P1a'); assert.equal(run('P0a'), '1'); run('C2'); assert.equal(run('C3'), '0'); assert.equal(snap(), before);
+});
+
+test('locale provider is exact: ICU needs a bounded locale; unknown provider or missing ICU locale stops', () => {
+  const m = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
+  assert.doesNotThrow(() => validateLocale(m));
+  assert.deepEqual(localeArgs(m), ['--locale-provider=icu', '--icu-locale=en-US', '--lc-collate=en_US.UTF-8', '--lc-ctype=en_US.UTF-8']);
+  for (const bad of [{ datlocprovider: 'b' }, { datlocprovider: '' }, { datlocale: '' }, { datlocale: null }, { datlocale: undefined },
+    { datlocale: 'en-US;id' }, { datlocale: 'en US' }, { datlocale: 'en-US\n' }, { datlocale: 'a'.repeat(65) }])
+    assert.throws(() => validateLocale({ ...m, ...bad }), e => e.stage === 'locale');
+});
+
+test('ICU backup records all four locale fields in metadata and encrypted log; unsupported or empty locale stops', async () => {
+  execFileSync('psql', ['-X','-h',pgc.root,'-p','55433','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-c',
+    "create database rad086_icu template template0 encoding 'UTF8' locale_provider icu icu_locale 'en-US' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8'"]);
+  execFileSync('psql', ['-X','-h',pgc.root,'-p','55433','-U','postgres','-d','rad086_icu','-c','create table public.icu_witness(id integer)']);
+  const c = validateConfig({ ...base, pgMajor: pgc.major, backupRoot: join(tmp, 'icu-backup') });
+  mkdirSync(c.backupRoot, { mode: 0o700 });
+  const deps = local(pgc.root, { PGDATABASE: 'rad086_icu' });
+  await runBackup(c, { ...deps, now: new Date('2026-10-31T04:00:00Z') });
+  const meta = JSON.parse(readFileSync(join(c.backupRoot,'store','20261031T040000Z','db-meta.json')));
+  const entry = readEntries(c, identity).find(e => e.kind === 'backup');
+  for (const [k,v] of Object.entries({ datlocprovider:'i', datlocale:'en-US', datcollate:'en_US.UTF-8', datctype:'en_US.UTF-8' })) {
+    assert.equal(meta[k],v); assert.equal(entry[k],v);
+  }
+  for (const [i,bad] of [{ p:'b' },{ l:'' }].entries()) {
+    const makeClient = () => {
+      const client = deps.makeClient(), query = client.query.bind(client);
+      client.query = async (sql, ...args) => {
+        const r = await query(sql, ...args);
+        if (sql.includes('pg_encoding_to_char')) Object.assign(r.rows[0], bad);
+        return r;
+      };
+      return client;
+    };
+    await assert.rejects(runBackup(c, { ...deps, makeClient, now: new Date(`2026-10-31T04:0${i+1}:00Z`) }), e => e.stage === 'locale');
+  }
 });
