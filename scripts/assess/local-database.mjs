@@ -6,12 +6,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-export async function openLocalDatabase(backend, {through='historical-b',lineEndings='lf',allMigrationLineEndings=false}={}) {
+export async function openLocalDatabase(backend, {through='historical-b',lineEndings='lf',allMigrationLineEndings=false,locale='C'}={}) {
   if(!['pglite','postgres'].includes(backend))throw new Error('invalid_backend');
   // A finite migration ceiling exists only for destructive synthetic upgrade QA.
   if(!['latest','historical-b','f','pre-rad085'].includes(through))throw new Error('invalid_migration_ceiling');
   if(!['lf','crlf'].includes(lineEndings))throw new Error('invalid_line_endings');
   if(typeof allMigrationLineEndings!=='boolean')throw new Error('invalid_all_migration_line_endings');
+  // Non-C witnesses the glibc default of the Docker image; no other cluster locale.
+  if(!['C','en_US.UTF-8'].includes(locale)||(locale!=='C'&&backend!=='postgres'))throw new Error('invalid_locale');
   // B7 opts into CRLF for ALL history; default preserves older mixed-line-ending witnesses.
   let db,admin,dir,ctl,started=false;
   const clients=new Set();
@@ -34,7 +36,7 @@ export async function openLocalDatabase(backend, {through='historical-b',lineEnd
       dir=mkdtempSync(join(tmpdir(),'radlab-assess-ops-'));
       const data=join(dir,'data');
       ctl=args=>execFileSync(pg_ctl,['-D',data,...args],{stdio:'pipe',timeout:15000});
-      execFileSync(initdb,['-D',data,'-A','trust','-U','postgres','--no-locale','--encoding=UTF8'],{stdio:'pipe',timeout:15000});
+      execFileSync(initdb,['-D',data,'-A','trust','-U','postgres',locale==='C'?'--no-locale':'--locale='+locale,'--encoding=UTF8'],{stdio:'pipe',timeout:15000});
       // Mode-0700 directory, Unix socket only. All connection fields explicit; no inherited PG URL.
       started=true; // Cleanup also covers a partially acknowledged start.
       ctl(['-l',join(dir,'postgres.log'),'-o',`-F -c listen_addresses='' -k ${dir} -p 55432 -c log_min_messages=panic -c log_min_error_statement=panic -c log_statement=none -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0`,'-w','-t','10','start']);

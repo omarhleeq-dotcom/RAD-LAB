@@ -1,19 +1,19 @@
-# التسليم الحالي — RAD-062 P10، توقف M02/collation على Draft نفسها
+# التسليم الحالي — RAD-062 P10، إصلاح collation في M02 على Draft نفسها
 
 اقرأ [AGENTS](../AGENTS.md)، ثم docs:context لـ#175 وstatus:summary للمهام RAD-062 وRAD-086 وRAD-059؛ استمر في checkout نفسه. [الحالة](project-status.md) المصدر الوحيد للمهام.
 
 ## ملخص الحالة
 
-- **الاتجاه الحالي:** RAD-062 review/owner؛ P9b مدموجة في #174، وP10 في Draft #175. فصل مستهلكي B والجرد والبصمة في [التقرير المحدث](RAD-062_P10_REPORT_2026-10-30.md). حاجب CI هو M02/SQL55000 على en_US.utf8 بسبب ترتيب FK name مقابل text؛ بقية Part A في RAD-057 وRAD-087 محفوظة.
-- **ينتظر المالك:** تحديد initializer مراجع آخر إن كان المقصود غير الموجود، أو إصلاح مستقل؛ إعادة الموجود قبل M01 أبقت D3 مطابقًا وفشل M02؛ دون تبديل locale الشاهد لإخفاء الفشل؛ ثم RAD-086 واللابتوب والنسخة المحلية الكاملة والاستعادة ورفض Supavisor القديم/cache و17.11 وبقية STOP. ترتيب النافذة حُسم: live apply/checks ثم Variable ثم merge ثم CI/Deploy Pages ثم الهاتف والطوارئ. RAD-059 القنوات/ACK والبديل والخصوصية/O4 وفحص SID100 مستقلة.
-- **ينتظر مراجِعًا:** جرد successor المراجع دون تغيير SQL، فصل archive/check inputs التاريخية، source QA ناجحة؛ CI check حمراء بحاجب M02 الموثق، ثم براهين المالك والهاتف. assertions/timeouts وسقوف المراحل وبايتات packetين محفوظة؛ current tools تبقى بالحزمة كلها.
-- **مرجع Git:** docs:context لحالة الفرع وPR؛ [التقرير](RAD-062_P10_REPORT_2026-10-30.md) لجرد كل المستهلكين، الاستثناء والملفات الدقيقة وQA والبصمة. لا PR جديدة أو force-push؛ الأتمتة المعتادة فقط وDraft بلا ready/merge/auto-merge من الوكيل أو معاينة مستضافة.
-- **مخاطر معلنة:** gate مغلقة والعمال NOLOGIN والسر DISABLED؛ guard=true ليس attestation DB. deploy قبل النافذة متوقع أحمر بسبب marker فقط، وcheck يجب أن يكون أخضر بالكامل؛ لا يعفى Docker أو فشل آخر. لا Variable أو SQL حي من الوكيل.
+- **الاتجاه الحالي:** RAD-062 review/reviewer؛ P9b مدموجة في #174، وP10 في Draft #175. سبب M02/SQL55000 على en_US.utf8 ثبت (ترتيب text بـcollation القاعدة مقابل name بترتيب C)، وأُصلح بإذن المالك في M02/M05 ومفاتيح الترتيب النصية في rad062-ready وrad062-p1-b-ready بـ`collate "C"` دون تغيير البصمات المتوقعة، مع اختبار C وen_US.UTF-8. التفاصيل وجدول التدقيق في [التقرير](RAD-062_P10_REPORT_2026-10-30.md). بقية Part A في RAD-057 وRAD-087 محفوظة.
+- **ينتظر المالك:** بعد المراجعة وcheck خضراء: RAD-086 واللابتوب والنسخة المحلية الكاملة والاستعادة **بنفس datcollate/datctype الحية** ورفض Supavisor القديم/cache و17.11 وبقية STOP. ترتيب النافذة محسوم: live apply/checks ثم Variable ثم merge ثم CI/Deploy Pages ثم الهاتف والطوارئ. RAD-059 القنوات/ACK والبديل والخصوصية/O4 وفحص SID100 مستقلة.
+- **ينتظر مراجِعًا:** مراجعة إصلاح collation وجدول تدقيق M01–M08 والفحصين في التقرير؛ ثم تأكيد CI check خضراء بالكامل على PR، بما فيها Docker worker rehearsal الذي لم يكتمل محليًا لأسباب بيئية موثقة. assertions/timeouts وتشخيصات ordinal/sqlstate وبايتات packetين وsupabase/manual محفوظة.
+- **مرجع Git:** docs:context لحالة الفرع وPR؛ [التقرير](RAD-062_P10_REPORT_2026-10-30.md) للملفات الدقيقة وQA والبصمة الجديدة. لا PR جديدة أو force-push؛ الأتمتة المعتادة فقط وDraft بلا ready/merge/auto-merge من الوكيل أو معاينة مستضافة.
+- **مخاطر معلنة:** gate مغلقة والعمال NOLOGIN والسر DISABLED؛ guard=true ليس attestation DB. collation الإنتاج غير متحقق؛ provider غير libc STOP في الدليل. deploy قبل النافذة متوقع أحمر بسبب marker فقط، وcheck يجب أن يكون أخضر بالكامل؛ لا يعفى Docker أو فشل آخر. لا Variable أو SQL حي من الوكيل.
 
 ## المتابعة
 
-توقف التنفيذ عند تجميد SQL: التقرير يتضمن أول ملف وخطأ فعلي ودليل أن37edges نفسها اختلف ترتيبها فقط. لا تعديل migration/check أو assertion/timeout أو fixture locale لقبولها. أعيد initializer المراجع قبل M01 فعليًا: contract صف واحد مطابق قبل وبعد، ثم M02/55000؛ لا initializer FK إضافية في tests. يلزم مصدر مراجع يغيّر النتيجة أو إصلاح مستقل مأذون ثم check أخضر؛ CI/النشر لا يثبتان نسخ المالك أو الهاتف أو أهلية امتحان حقيقي. الطب/scoring/goldens والواجهات الأخرى و4ب/5ب خارج الدفعة.
+الخطوة التالية: قراءة نتيجة CI لآخر commit على #175. إن فشل check في أي خطوة فهو حاجب: يشخص أولًا دون تخفيف guard أو assertion أو timeout أو تبديل locale الشاهد. إن نجح، تراجع الإصلاح وجدول التدقيق، ثم يبقى ما سبق للمالك. CI/النشر لا يثبتان نسخ المالك أو الهاتف أو أهلية امتحان حقيقي. الطب/scoring/goldens والواجهات الأخرى و4ب/5ب خارج الدفعة.
 
-المالك وحده ينفذ [runbook](RAD-062_P09_LAPTOP_RUNBOOK.md) و[P9b](RAD-062_P09B_REPORT_2026-10-30.md) داخل نافذة متصلة≤60دقيقة. بعد فشل بعد merge: يعيد Variable القديمة أولًا ثم يدمج revert PR عادية داخل النافذة مع بقاء الإغلاق؛ لا تراجع DB أعمى.
+المالك وحده ينفذ [runbook](RAD-062_P09_LAPTOP_RUNBOOK.md) و[P9b](RAD-062_P09B_REPORT_2026-10-30.md) داخل نافذة متصلة≤60دقيقة، بعد سابقة تسجيل collation الحية. بعد فشل بعد merge: يعيد Variable القديمة أولًا ثم يدمج revert PR عادية داخل النافذة مع بقاء الإغلاق؛ لا تراجع DB أعمى.
 
 إذا تقدم main قبل اليوم، ادمجه دون force-push وتحقق البايتات وأعد QA المتأثرة وحساب marker والتقرير وPR قبل المراجعة. البصمة الجديدة في التقرير وPR فقط؛ لا تشغيل من دمج backend.

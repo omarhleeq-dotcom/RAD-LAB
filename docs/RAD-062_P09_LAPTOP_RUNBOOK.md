@@ -13,9 +13,9 @@ Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sy
 
 ## P10 window checklist — owner only
 
-**Current STOP: CI check is red on frozen M02.** The pinned PostgreSQL18.4 image with its original en_US.utf8 locale fails `20261030000200_rad062_provenance_v2.sql` with SQLSTATE55000, `unreviewed M02 identity edge`. The same 37 FK edges compare unequal only by order: name-column C order differs from JSON text's database collation. Local C fixtures passing do not qualify that environment. Do not book/start the DB-day window or merge P10 until a separately authorized SQL fix is reviewed and the unchanged rehearsal is fully green. This PR does not change M02/M05 bytes, inventories or the fixture locale to hide the failure. Restore evidence must preserve the real production encoding/collation/locale provider, not silently inherit a different local default. A fresh synthetic replay with the existing reviewed sharing-policy initializer before M01 still fails M02: the D3 FK contract has one exact row both before and after initialization. See the P10 report for the measured result; missing sharing initialization is not a demonstrated fix. The owner-approved order below remains the procedure after this blocker is resolved.
+**M02 collation STOP — source fix under review.** The pinned PostgreSQL18.4 image with its original en_US.utf8 locale failed `20261030000200_rad062_provenance_v2.sql` with SQLSTATE55000, `unreviewed M02 identity edge`: the same 37 FK edges compared unequal only by order (name columns sort in C, the JSON text keys sorted in the database collation). With owner approval, because M01–M08 were never applied live, P10 now sorts those text keys with `collate "C"` in M02 and M05 and in the text sort keys of `rad062-ready.sql` and `rad062-p1-b-ready.sql`; expected digests are unchanged. Required checks pass on C and en_US.UTF-8 synthetic databases; see the P10 report. Do not book/start the DB-day window or merge P10 until that fix is reviewed and CI `check` is fully green. Restore evidence must preserve the real production encoding/collation/locale provider (precondition in §1), not silently inherit a different local default. The owner-approved order below remains the procedure.
 
-The owner's P10 continuation governs this order. Prepare/review Draft #175 before DB day; only the owner merges inside the booked ≤60-minute window after M01–M08 are applied and verified on live. No agent live SQL, Variable writes, ready/merge/auto-merge, gate opening, LOGIN or secret enablement. The historical P9 transition sections below retain the original B inspections. P10 requires `rad062-p1-b-ready.sql` and `rad062-ready.sql`: before M01 use frozen B; after all eight run **every P10 manifest check** and inspect every readiness boolean as true except explicit operational non-claims. Migration SHA pins are unchanged in `guardedFeatures.rad062.migrationSha256`.
+The owner's P10 continuation governs this order. Prepare/review Draft #175 before DB day; only the owner merges inside the booked ≤60-minute window after M01–M08 are applied and verified on live. No agent live SQL, Variable writes, ready/merge/auto-merge, gate opening, LOGIN or secret enablement. The historical P9 transition sections below retain the original B inspections. P10 requires `rad062-p1-b-ready.sql` and `rad062-ready.sql`: before M01 use frozen B; after all eight run **every P10 manifest check** and inspect every readiness boolean as true except explicit operational non-claims. Migration SHA pins in `guardedFeatures.rad062.migrationSha256` match the reviewed bytes (M02/M05 updated by the collation fix).
 
 1. Owner applies M01–M08 on live in order after all P9 prerequisites, and verifies ledger/hash/closed state and all promoted required checks.
 2. Owner sets the new marker Variable from the P10 report/PR body. The agent never sets it.
@@ -91,6 +91,17 @@ psql -X -v ON_ERROR_STOP=1 -f supabase/checks/rad085-p1-b-ready.sql
 
 **Expected:** every one of the 13 rows ready=true, initialized phase. **STOP:** any false/null/SQL error; do not use the restored-copy diagnostic to excuse drift on the original schema. This owner command is not executed by the agent.
 
+Record the live database collation (read only) for the restore in §3:
+
+```bash
+psql -X -v ON_ERROR_STOP=1 -At -F ' ' -c "select datlocprovider,datcollate,datctype from pg_database where datname=current_database()"
+read -r -p 'Recorded datcollate: ' RAD062_LIVE_COLLATE
+read -r -p 'Recorded datctype: ' RAD062_LIVE_CTYPE
+export RAD062_LIVE_COLLATE RAD062_LIVE_CTYPE
+```
+
+**Expected:** one row; record provider/collate/ctype privately. `c` (libc) is the reviewed provider; the laptop's `locale -a` must list that locale. **STOP:** any other provider, an unavailable locale, or a restore database whose `datcollate`/`datctype` differ from these values. Never substitute C or the laptop default.
+
 ## 2. RAD-086 full logical backup — live reads, local files only
 
 **Command:**
@@ -140,14 +151,16 @@ export RAD062_LOCAL_DATA RAD062_LOCAL_SOCKET
 mkdir -m 700 "$RAD062_LOCAL_SOCKET"
 initdb -D "$RAD062_LOCAL_DATA" -U rad062_restore_admin --auth-local=trust --encoding=UTF8 --no-locale
 pg_ctl -D "$RAD062_LOCAL_DATA" -l "$RAD062_LOCAL_DATA/local.log" -o "-c listen_addresses='' -k $RAD062_LOCAL_SOCKET -p 55432 -c log_statement=none -c log_min_error_statement=panic -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0" -w start
-PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres createdb rad062_rehearsal
+PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres createdb --template=template0 --encoding=UTF8 --locale-provider=libc --lc-collate="$RAD062_LIVE_COLLATE" --lc-ctype="$RAD062_LIVE_CTYPE" rad062_rehearsal
+echo "select datcollate=:'c' and datctype=:'t' from pg_database where datname=current_database();" |
+  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal psql -X -v ON_ERROR_STOP=1 -At -v c="$RAD062_LIVE_COLLATE" -v t="$RAD062_LIVE_CTYPE"
 localdb() { PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node scripts/assess/rad062-db-day.mjs "$@"; }
 localdb restore
 localdb restore --execute
 localdb preflight --execute
 ```
 
-**Expected:** zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
+**Expected:** zero remote listeners, fresh local DB whose collation check prints `t`, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
 
 **STOP:** role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
 
