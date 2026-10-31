@@ -8,8 +8,11 @@ import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { Stop, guard, loadConfig, resolveBackup, verifyBackup, appendEntry, quoteIdent, validateLocale, localeArgs } from './laptop-backup-lib.mjs';
 
+import { rolesDiagnostic, formatRolesStop, safeRole } from './roles-diagnostic.mjs';
+
 export const IMAGE_DIGEST = 'sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d';
 export const IMAGE = `supabase/postgres:17.11.0.016@${IMAGE_DIGEST}`;
+
 const ADMIN = 'supabase_admin', DB = 'rad_restore';
 
 // Streams a file to `docker exec -i`. Using stdin avoids bind mounts and uid/permission differences with 0600 backup files.
@@ -50,7 +53,11 @@ export function prepareRolesSql(sql) {
         ${(settings.get(ident) ?? []).map(value => `EXECUTE ${literal(`ALTER ROLE ${probe} SET ${value}`)};`).join('\n')}
         IF (SELECT ${projection} FROM pg_roles r WHERE rolname=${literal(name)})
            IS DISTINCT FROM (SELECT ${projection} FROM pg_roles r WHERE rolname='${probe}') THEN
-          RAISE EXCEPTION 'roles';
+          INSERT INTO pg_temp.rad086_roles_mismatch
+          SELECT ${literal(safeRole(name))}, array_agg(a.key ORDER BY a.key)
+          FROM jsonb_each((SELECT ${projection} FROM pg_roles r WHERE rolname=${literal(name)})) a
+          FULL JOIN jsonb_each((SELECT ${projection} FROM pg_roles r WHERE rolname='${probe}')) b USING (key)
+          WHERE a.value IS DISTINCT FROM b.value;
         END IF;
         DROP ROLE ${probe};
       ELSE
@@ -60,7 +67,17 @@ export function prepareRolesSql(sql) {
     END`;
     return `DO ${literal(code)};`;
   });
-  return `BEGIN;\n${body}\nCOMMIT;\n`;
+  return `BEGIN;
+CREATE TEMP TABLE rad086_roles_mismatch(role text, keys text[]) ON COMMIT DROP;
+${body}
+DO 'BEGIN
+  IF EXISTS (SELECT FROM pg_temp.rad086_roles_mismatch) THEN
+    RAISE EXCEPTION USING MESSAGE = ''RAD086_roles_mismatch '' ||
+      (SELECT json_agg(row_to_json(m) ORDER BY role)::text FROM pg_temp.rad086_roles_mismatch m);
+  END IF;
+END';
+COMMIT;
+`;
 }
 export function readMeta(dir) {
   const m = JSON.parse(readFileSync(join(dir, 'db-meta.json'), 'utf8'));
@@ -101,9 +118,10 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     const missing = parseExtensions(toc).filter(x => !available.has(x));
     if (missing.length) { const e = new Stop('extensions'); e.missing = missing; throw e; }
     stage = 'roles';
-    const roles = spawn('docker', ['exec', '-i', container, 'psql', '-X', '-q', '-v', 'ON_ERROR_STOP=1', '-U', ADMIN, '-d', 'postgres'],
-      { input: prepareRolesSql(readFileSync(join(dir, 'roles.sql'), 'utf8')), maxBuffer: 64 * 1024 * 1024, timeout: 600000 });
-    if (roles.status !== 0) throw new Stop('roles');
+    const rolesSql = prepareRolesSql(readFileSync(join(dir, 'roles.sql'), 'utf8'));
+    const roles = spawn('docker', ['exec', '-i', container, 'psql', '-X', '-q', '-v', 'ON_ERROR_STOP=1', '-v', 'VERBOSITY=verbose', '-U', ADMIN, '-d', 'postgres', '-f', '-'],
+      { input: rolesSql, maxBuffer: 64 * 1024 * 1024, timeout: 600000 });
+    if (roles.status !== 0) { const e = new Stop('roles'); e.diagnostics = rolesDiagnostic(roles.stderr, rolesSql); throw e; }
     stage = 'collation';
     // Successful creation is also the capability probe: absent ICU or libc locale is a hard STOP.
     exec(['createdb', '-U', ADMIN, '-T', 'template0', '--encoding=UTF8', ...localeArgs(meta), DB]);
@@ -131,8 +149,8 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     return { ...result, restore_test_pass: 1 };
   } catch (e) {
     const code = e instanceof Stop ? e.stage : stage;
-    if (dir) try { appendEntry(c, { kind: 'restore_test', dir: backup, result: 'fail', stage: code, image_digest: IMAGE_DIGEST, ...(imageId ? { image_id: imageId } : {}), ...(e.detail ?? {}), ...(e.missing ? { missing_extensions: e.missing.length } : {}) }, run); } catch { /* exit code is the signal */ }
-    const s = new Stop(code); s.missing = e.missing; throw s;
+    if (dir) try { appendEntry(c, { kind: 'restore_test', dir: backup, result: 'fail', stage: code, image_digest: IMAGE_DIGEST, ...(imageId ? { image_id: imageId } : {}), ...(e.diagnostics ? { diagnostics: e.diagnostics } : {}), ...(e.detail ?? {}), ...(e.missing ? { missing_extensions: e.missing.length } : {}) }, run); } catch { /* exit code is the signal */ }
+    const s = new Stop(code); s.missing = e.missing; s.diagnostics = e.diagnostics; throw s;
   } finally {
     if (container) try { sh(['rm', '-f', '-v', container], { stdio: ['ignore', 'pipe', 'pipe'] }); } catch { /* owner removes via the label shown in the runbook */ }
   }
@@ -143,9 +161,13 @@ export async function main(argv = process.argv.slice(2)) {
   if (rest.length > 1) throw new Stop('argument');
   return restoreTest(guard('config', () => loadConfig()), { name: rest[0] ?? 'latest', dryRun });
 }
+export function reportRestoreStop(e, write = line => console.error(line)) {
+  if (e.diagnostics) for (const d of e.diagnostics) write(formatRolesStop(d));
+  else write('STOP laptop_restore_test:' + (e instanceof Stop ? e.stage : 'internal') + (e.missing ? ' missing_extensions=' + e.missing.join(',') : ''));
+}
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   main().then(r => console.log(JSON.stringify(r))).catch(e => {
-    console.error('STOP laptop_restore_test:' + (e instanceof Stop ? e.stage : 'internal') + (e.missing ? ' missing_extensions=' + e.missing.join(',') : ''));
+    reportRestoreStop(e);
     process.exitCode = 1;
   });
 }

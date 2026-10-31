@@ -182,6 +182,19 @@ Expect `tables_mismatched` 0, `container_server_version_num` 170011, `collation_
 
 Role rule: a pg_dumpall CREATE/ALTER-WITH pair for a new role executes normally. For an existing role, a temporary probe role receives the archive attributes, including PostgreSQL defaults for omitted options. All server-defined role attributes are compared, excluding OID/name, password (the backup uses `--no-role-passwords`); role settings (`rolconfig`) are included, using the archive ALTER ROLE SET statements on the probe as well. A match accepts only that duplicate pair; any difference STOP `roles`. The existing role is never altered to manufacture a match. Probe roles are dropped; the role archive runs in one transaction with `ON_ERROR_STOP=1`. Settings, memberships and every other statement must load without errors; unsupported dump syntax has no error suppression. A STOP rolls back the role transaction and cleans up the container/volume. Report a mismatch; do not edit the archive or weaken the rule.
 
+Roles diagnostics (roles-stage stderr stays in memory and is never printed or logged):
+
+```text
+STOP laptop_restore_test:roles kind=attribute_mismatch role=example_role keys=rolconfig,rolcreaterole sqlstate=P0001
+STOP laptop_restore_test:roles kind=statement_error role=example_role keys=unparsed sqlstate=42704 statement=ALTER_ROLE_SET setting=search_path
+```
+
+`attribute_mismatch` means the existing role differs from the archive probe. `keys` lists only differing **pg_roles key names**, never either value. Comparisons collect all mismatching roles in the same transaction and raise once before COMMIT, with the fixed message `RAD086_roles_mismatch <JSON array of {role,keys}>`. If a different statement fails first, `ON_ERROR_STOP=1` stops immediately and reports that statement instead; there is no claim of a complete mismatch inventory in that case.
+
+`statement_error` carries PostgreSQL SQLSTATE and `statement=CREATE_ROLE|ALTER_ROLE_WITH|ALTER_ROLE_SET|GRANT|other` (underscores encode spaces). `role` is one name, or the comma-separated granted roles and recipients for membership GRANT. Roles must match `[A-Za-z_][A-Za-z0-9_$]{0,62}` (surrounding SQL quotes are removed); anything else becomes `unparsed`. For ALTER ROLE SET, `setting` is the setting **name only**, up to63 ASCII identifier/dot characters. Values, error prose, SQL/archive lines and probe names are never emitted. Unsupported syntax, missing SQLSTATE or unexpected stderr becomes `unparsed`, with `statement=other` when its kind cannot be determined.
+
+The encrypted `restore_test` failure entry retains `kind=restore_test` and `stage=roles`; its `diagnostics` array contains exactly the fields printed on each STOP line (including diagnostic `kind`). Output is bounded: at most64 mismatch entries plus one `role=unparsed keys=unparsed` overflow sentinel; at most16 role names for GRANT; ten supported PostgreSQL17 attribute keys; each line <1500 characters. Stderr larger than1MiB is classified as unparsed. Unknown future keys need a reviewed parser extension, not raw output. The collection table contains only safe role names and key names, and disappears with rollback/container cleanup. These diagnostics explain failure; they do not authorize modifying roles or relaxing any guard. Send only these sanitized STOP lines; never send raw stderr, roles.sql or setting values.
+
 **C3 — nothing left behind**
 
 ```bash
