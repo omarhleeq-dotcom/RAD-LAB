@@ -168,6 +168,7 @@ test('production success and rolconfig STOP encrypt names only; stdout JSON has 
       if (a[0] === 'rm') cleaned = true;
       if (a.at(-1) === 'show server_version_num') return '170011';
       if (String(a.at(-1)).includes('select datlocprovider')) return 'c||C|C';
+      if (String(a.at(-1)).includes('from pg_event_trigger')) return '[]';
       return '';
     };
     const spawn = (p, a, o) => {

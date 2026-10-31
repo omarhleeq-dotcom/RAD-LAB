@@ -178,6 +178,7 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
     const sql = a.at(-1);
     if (sql === 'show server_version_num') return String(meta.server_version_num);
     if (sql.includes('pg_available_extensions')) return avail;
+    if (sql.includes('from pg_event_trigger')) return '[]';
     if (sql.includes('from pg_database')) return locale;
     const m = /count\(\*\) from "([^"]+)"\."(.*)"$/.exec(sql);
     return m ? String(counts[m[1] + '.' + m[2].replaceAll('""', '"')]) : '';
