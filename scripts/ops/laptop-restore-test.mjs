@@ -9,7 +9,7 @@ import { pathToFileURL } from 'node:url';
 import { Stop, guard, loadConfig, resolveBackup, verifyBackup, appendEntry, quoteIdent, validateLocale, localeArgs } from './laptop-backup-lib.mjs';
 
 import { rolesDiagnostic, formatRolesStop, safeRole, parseExtraSettings } from './roles-diagnostic.mjs';
-import { restorePlan, restoreDiagnostic, formatRestoreDiagnostic, archiveEventMetadata, EVENT_QUERY, compareEventMetadata, formatEventMismatch } from './restore-event-triggers.mjs';
+import { restorePlan, restoreDiagnostic, restoreExit, formatRestoreDiagnostic, formatRedactedRestoreStop, archiveEventMetadata, EVENT_QUERY, compareEventMetadata, formatEventMismatch } from './restore-event-triggers.mjs';
 
 export const IMAGE_DIGEST = 'sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d';
 export const IMAGE = `supabase/postgres:17.11.0.016@${IMAGE_DIGEST}`;
@@ -25,7 +25,7 @@ function dockerRestore(args, file, toc, run = spawnSync) {
 function throwRestoreFailure(r, toc) {
   const e = new Stop('restore');
   e.restoreDiagnostic = restoreDiagnostic(r.stderr, r, toc);
-  e.restoreSilent = e.restoreDiagnostic === null;
+  if (e.restoreDiagnostic === null) e.restoreRedacted = restoreExit(r);
   throw e;
 }
 export function containerArgs(name, meta) {
@@ -227,12 +227,13 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
     return { ...result, restore_test_pass: 1 };
   } catch (e) {
     const code = e instanceof Stop ? e.stage : stage;
-    if (dir && !e.restoreSilent) try { appendEntry(c, { kind: 'restore_test', dir: backup, result: 'fail', stage: code,
-      ...(secondPass ? { event_triggers_second_pass: secondPass, toc_entries_restored: tocRestored } : {}),
+    if (dir) try { appendEntry(c, { kind: 'restore_test', dir: backup, result: 'fail', stage: code,
+      ...(secondPass || e.restoreRedacted ? { event_triggers_second_pass: secondPass ?? [], toc_entries_restored: tocRestored } : {}),
+      ...(e.restoreRedacted ? { restore_detail: 'redacted', ...e.restoreRedacted } : {}),
       ...(e.restoreDiagnostic ? { restore_diagnostic: e.restoreDiagnostic, restore_stop: formatRestoreDiagnostic(e.restoreDiagnostic) } : {}), ...(e.eventMismatches ? { event_trigger_mismatches: e.eventMismatches } : {}),
       ...(extraSettings ? { supabase_admin_extra_settings: extraSettings } : {}), image_digest: IMAGE_DIGEST, ...(imageId ? { image_id: imageId } : {}), ...(e.diagnostics ? { diagnostics: e.diagnostics } : {}), ...(e.detail ?? {}), ...(e.missing ? { missing_extensions: e.missing.length } : {}) }, run); } catch { /* exit code is the signal */ }
     const s = new Stop(code); s.missing = e.missing; s.diagnostics = e.diagnostics;
-    s.restoreDiagnostic = e.restoreDiagnostic; s.restoreSilent = e.restoreSilent; s.eventMismatches = e.eventMismatches; throw s;
+    s.restoreDiagnostic = e.restoreDiagnostic; s.restoreRedacted = e.restoreRedacted; s.eventMismatches = e.eventMismatches; throw s;
   } finally {
     if (container) try { sh(['rm', '-f', '-v', container], { stdio: ['ignore', 'pipe', 'pipe'] }); } catch { /* owner removes via the label shown in the runbook */ }
   }
@@ -243,9 +244,9 @@ export async function main(argv = process.argv.slice(2)) {
   if (rest.length > 1) throw new Stop('argument');
   return restoreTest(guard('config', () => loadConfig()), { name: rest[0] ?? 'latest', dryRun });
 }
-export function reportRestoreStop(e, write = line => console.error(line)) {
-  if (e.restoreSilent) return;
-  if (e.restoreDiagnostic) write(formatRestoreDiagnostic(e.restoreDiagnostic));
+export function reportRestoreStop(e, write = line => e.restoreRedacted ? console.log(line) : console.error(line)) {
+  if (e.restoreRedacted) write(formatRedactedRestoreStop(e.restoreRedacted));
+  else if (e.restoreDiagnostic) write(formatRestoreDiagnostic(e.restoreDiagnostic));
   else if (e.eventMismatches) for (const d of e.eventMismatches) write(formatEventMismatch(d));
   else if (e.diagnostics) for (const d of e.diagnostics) write(formatRolesStop(d));
   else write('STOP laptop_restore_test:' + (e instanceof Stop ? e.stage : 'internal') + (e.missing ? ' missing_extensions=' + e.missing.join(',') : ''));

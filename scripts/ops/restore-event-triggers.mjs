@@ -51,9 +51,13 @@ export function restorePlan(toc, roles) {
   return { first, second, events, count };
 }
 
+export function restoreExit(result) {
+  return { exit: Number.isInteger(result.status) ? result.status : -1,
+    signal: typeof result.signal === 'string' && /^SIG[A-Z0-9]{1,12}$/.exec(result.signal)?.[0] === result.signal ? result.signal : 'none' };
+}
 export function restoreDiagnostic(stderr, result, toc = '') {
   const raw = String(stderr ?? '');
-  // Overflow is also silent: a truncated tail could contain COPY or TABLE DATA.
+  // Redact entry details on overflow too: a truncated tail could contain COPY or TABLE DATA.
   if (Buffer.byteLength(raw) > 1024 * 1024 || result.error?.code === 'ENOBUFS' || /COPY/i.test(raw) || /\bTABLE DATA\b/.test(raw)) return null;
   const prelude = raw.split(/^pg_restore: error:/m, 1)[0];
   const id = /^pg_restore: from TOC entry (\d+); /m.exec(prelude)?.[1];
@@ -63,11 +67,10 @@ export function restoreDiagnostic(stderr, result, toc = '') {
   if (m?.[2] === 'TABLE DATA') return null;
   const state = /^pg_restore: error: (?:could not execute query: )?ERROR:  ([0-9A-Z]{5}): /m.exec(raw)?.[1] ?? 'unparsed';
   return { toc_id: m && /^\d{1,10}$/.test(m[1]) && Number(m[1]) <= 2147483647 ? m[1] : 'unparsed', type: m?.[2] ?? 'unparsed', schema: m?.[3] === '-' ? '-' : safe(m?.[3]),
-    name: safe(unquote(m?.[4])), owner: safe(unquote(m?.[5])), sqlstate: state,
-    exit: Number.isInteger(result.status) ? result.status : -1,
-    signal: typeof result.signal === 'string' && /^SIG[A-Z0-9]{1,12}$/.exec(result.signal)?.[0] === result.signal ? result.signal : 'none' };
+    name: safe(unquote(m?.[4])), owner: safe(unquote(m?.[5])), sqlstate: state, ...restoreExit(result) };
 }
 export const formatRestoreDiagnostic = d => `STOP laptop_restore_test:restore toc_id=${d.toc_id} type=${d.type} schema=${d.schema} name=${d.name} owner=${d.owner} sqlstate=${d.sqlstate} exit=${d.exit} signal=${d.signal}`;
+export const formatRedactedRestoreStop = d => `STOP laptop_restore_test:restore detail=redacted exit=${d.exit} signal=${d.signal}`;
 
 // pg_restore's schema-only output for EVENT TRIGGER entries is metadata, never executed here.
 // Reject unsupported grammar rather than guessing. Names are bounded ASCII identifiers.

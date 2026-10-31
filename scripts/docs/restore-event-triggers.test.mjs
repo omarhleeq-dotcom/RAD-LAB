@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { restorePlan, proveCompleteness, restoreDiagnostic, formatRestoreDiagnostic, archiveEventMetadata, compareEventMetadata } from '../ops/restore-event-triggers.mjs';
+import { restorePlan, proveCompleteness, restoreDiagnostic, restoreExit, formatRestoreDiagnostic, archiveEventMetadata, compareEventMetadata } from '../ops/restore-event-triggers.mjs';
 import { restoreTest, reportRestoreStop } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, readEntries } from '../ops/laptop-backup-lib.mjs';
 
@@ -66,6 +66,7 @@ test('diagnostic has fixed types/strict identifiers/bounded input and suppresses
   assert.equal(unsafe.type, 'unparsed'); assert.equal(unsafe.name, 'unparsed'); assert.equal(unsafe.signal, 'SIGTERM');
   assert.equal(restoreDiagnostic('arbitrary error ' + canary, { status: 1 }).sqlstate, 'unparsed');
   assert.equal(restoreDiagnostic(error(), { status: 1, signal: 'SIGTERM\n' }, toc).signal, 'none');
+  assert.deepEqual(restoreExit({ status: '1', signal: 'SIGTERM\n' + canary }), { exit: -1, signal: 'none' });
   const forged = 'pg_restore: error: ' + canary + '\npg_restore: from TOC entry 2; 0 0 EVENT TRIGGER - owner_trigger postgres\n';
   assert.equal(restoreDiagnostic(forged, { status: 1 }, toc).name, 'unparsed');
 });
@@ -81,13 +82,15 @@ test('production passes exact lists/owner flags, encrypts names/counts and stops
     ['db-meta.json', JSON.stringify({ server_version_num: 170011, datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8', tables: [] })]])
     writeFileSync(join(dir, file), value, { mode: 0o600 });
   try {
-    for (const mode of ['pass', 'first', 'second', 'copy', 'data', 'mismatch', 'list', 'extract']) {
+    const redactedModes = ['copy', 'data', 'data_stderr', 'overflow', 'enobufs', 'list_redacted'];
+    for (const mode of ['pass', 'first', 'second', ...redactedModes, 'mismatch', 'list', 'extract']) {
       const lists = new Map(), restores = [], output = []; let cleaned = false;
       const logsBefore = readEntries(c, identity).length;
       const run = (p, a, o) => {
         if (p === 'age') { assert.doesNotMatch(o.input, new RegExp(canary)); return execFileSync(p, a, o); }
         if (p === 'pg_restore') {
           if (mode === 'list') throw { status: 1, stderr: error() };
+          if (mode === 'list_redacted') throw { status: 1, stderr: 'COPY ' + canary };
           return toc;
         }
         if (a[0] === 'image') return 'sha256:' + 'a'.repeat(64);
@@ -110,8 +113,11 @@ test('production passes exact lists/owner flags, encrypts names/counts and stops
         const second = a.includes('--role=postgres');
         assert.ok(!a.some(s => /--no-owner|--no-acl|--use-set-session-authorization/.test(s)));
         assert.equal(lists.get(a.at(-1)), second ? plan.second[0].line : plan.first);
-        const fails = second ? ['second', 'copy', 'data'].includes(mode) : mode === 'first';
-        return { status: fails ? 1 : 0, stdout: canary, stderr: fails ? error(mode === 'data' ? 5 : 2, mode === 'copy' ? 'COPY ' + canary : canary) : '' };
+        const fails = second ? ['second', ...redactedModes].includes(mode) : mode === 'first';
+        if (fails && mode === 'enobufs') return { status: null, signal: 'SIGTERM', error: { code: 'ENOBUFS' }, stderr: canary };
+        if (fails && mode === 'overflow') return { status: 1, stderr: canary + 'x'.repeat(1024 * 1024) };
+        const message = mode === 'copy' ? 'COPY ' + canary : mode === 'data_stderr' ? 'TABLE DATA ' + canary : canary;
+        return { status: fails ? 1 : 0, stdout: canary, stderr: fails ? error(mode === 'data' ? 5 : 2, message) : '' };
       };
       if (mode === 'pass') {
         const r = await restoreTest(c, { name: at, run, spawn });
@@ -123,7 +129,26 @@ test('production passes exact lists/owner flags, encrypts names/counts and stops
       const logs = readEntries(c, identity), entry = logs.at(-1);
       assert.doesNotMatch(JSON.stringify(entry) + output.join('\n'), /PRIVATE_|CONTEXT|Command was/);
       if (mode === 'pass') assert.deepEqual(entry.event_triggers_second_pass, ['owner_trigger']);
-      if (['copy', 'data'].includes(mode)) { assert.deepEqual(output, []); assert.equal(logs.length, logsBefore); }
+      if (redactedModes.includes(mode)) {
+        const exit = mode === 'enobufs' ? -1 : 1, signal = mode === 'enobufs' ? 'SIGTERM' : 'none';
+        const line = `STOP laptop_restore_test:restore detail=redacted exit=${exit} signal=${signal}`;
+        assert.deepEqual(output, [line]);
+        assert.equal(logs.length, logsBefore + 1);
+        assert.equal(entry.result, 'fail'); assert.equal(entry.stage, 'restore');
+        assert.equal(entry.restore_detail, 'redacted'); assert.equal(entry.exit, exit); assert.equal(entry.signal, signal);
+        assert.equal(entry.image_digest, 'sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d');
+        assert.equal(entry.image_id, 'sha256:' + 'a'.repeat(64));
+        assert.deepEqual(entry.event_triggers_second_pass, mode === 'list_redacted' ? [] : ['owner_trigger']);
+        assert.equal(entry.toc_entries_restored, mode === 'list_redacted' ? 0 : 4);
+        assert.equal(entry.restore_diagnostic, undefined); assert.equal(entry.restore_stop, undefined);
+        assert.doesNotMatch(JSON.stringify(entry), /witness|TABLE DATA|toc_id|sqlstate/);
+        // Exercise the default reporting channel in a real child process, with no raw stderr passed in.
+        const child = spawnSync(process.execPath, ['--input-type=module', '-e',
+          "import {reportRestoreStop} from './scripts/ops/laptop-restore-test.mjs'; reportRestoreStop({restoreRedacted: JSON.parse(process.argv[1])}); process.exitCode=1;",
+          JSON.stringify({ exit, signal })], { encoding: 'utf8' });
+        assert.equal(child.status, 1); assert.equal(child.stdout, line + '\n'); assert.equal(child.stderr, '');
+        assert.doesNotMatch(child.stdout + child.stderr + JSON.stringify(entry), new RegExp(canary));
+      }
       if (['first', 'second', 'list', 'extract'].includes(mode)) {
         assert.deepEqual(output, [formatRestoreDiagnostic(entry.restore_diagnostic)]);
         assert.equal(entry.restore_stop, output[0]);
