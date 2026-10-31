@@ -40,7 +40,7 @@ with objects(kind,key,value) as (
  ('columns',260,'2a4f62c65b0ef5f74e3b59ddb5f29ff4ca6dc9d2d5f7779d075c688573aeadeb'),
  ('constraints',221,'a7c1a48b2d68ec92fdbf2719940332283a76158c0fd2541f9b0606dd5c614261'),
  ('effective_privileges',84,'e7f712f682fc23bbba49a72220cbf1c45d8f4d1a5a1f0d57e79a4d998f2394be'),
- ('functions',130,'d48363baf8a4d35ed815b0fda282be325b8e3ed9bc920f2d48a0ed764bb469fd'),
+ ('functions',131,'a2ad4d3e206656830910ea18969d57711b58a8c7c725dcbca6efea6d8fce1ad7'),
  ('indexes',88,'4d7c2c8842e8c02f1e16556f4ba6748e5e7a971104452d363e0803c10a9a4509'),
  ('policies',3,'4c0eeccc70b84b81aa2070ede181507ad8c31f81b79e20f49fb7b49efa00fc78'),
  ('relations',50,'c74ea4a32105af8cd1c911bfff00fd4f32daa4665c64b60bfc345943a3c60c13'),

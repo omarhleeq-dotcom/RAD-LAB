@@ -119,7 +119,7 @@ export async function rehearse() {
     // M06/M08 themselves raise on every missing anchor. Readiness additionally
     // fingerprints all patched bodies/ACLs. Explicitly witness the ten v1 guards.
     const guards = (await target.query(`select count(*)::int n from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='assess' and (
-      (p.proname in ('read_session_v1','command_v1','result_v1','finish_v1','fail_v1','recover_v1') and position('require_lifecycle_v2(p_session,1)' in p.prosrc)>0)
+      (p.proname in ('read_session_v1','command_v1','result_v1','finish_v1','fail_v1','recover_v1') and position('require_lifecycle_v1(p_session)' in p.prosrc)>0)
       or (p.proname in ('claim_v1','maintain_v1','health_v1') and position('lifecycle_version=1' in p.prosrc)>0)
       or (p.proname='start_v1' and position('assignment version denied' in p.prosrc)>0))`)).rows[0].n;
     assert.equal(guards, 10);

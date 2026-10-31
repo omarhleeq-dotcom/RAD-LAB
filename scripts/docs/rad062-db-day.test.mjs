@@ -46,18 +46,34 @@ test('promotion preserves both emergency packets and every original SQL/check by
     ...base.checks,
     ...current.requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
     const original = execFileSync('git',['show',`023ec84c15bfd744f317ec079e2587d90e099414:${path}`]);
-    assert.deepEqual(readFileSync(path),collationFixed.includes(path) ? collationOrder(original) : original);
+    assert.deepEqual(readFileSync(path),reviewed[path] ? substitute(original, reviewed[path]) : original);
   }
 });
-// Owner-approved fix of never-applied M02/M05: the one exact byte change each.
-const collationFixed = ['supabase/migrations/20261030000200_rad062_provenance_v2.sql','supabase/migrations/20261030000500_rad062_manual_foundation_freeze.sql'];
-function collationOrder(original) {
-  const before = 'do $$ declare expected jsonb; begin\n select jsonb_agg(e order by e->>0,e->>1,e->>2) into expected';
-  const after = '-- d3_fk_inventory_v1 sorts name columns (always C); sort these text keys in C too.\n'
-    + 'do $$ declare expected jsonb; begin\n select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") into expected';
-  const text = original.toString('utf8');
-  assert.equal(text.split(before).length, 2);
-  return Buffer.from(text.replace(before, () => after), 'utf8');
+// Owner-approved fixes of never-applied M02/M05/M06: only these exact byte changes.
+const fkOrder = [['do $$ declare expected jsonb; begin\n select jsonb_agg(e order by e->>0,e->>1,e->>2) into expected',
+  '-- d3_fk_inventory_v1 sorts name columns (always C); sort these text keys in C too.\n'
+  + 'do $$ declare expected jsonb; begin\n select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") into expected']];
+const reviewed = {
+  'supabase/migrations/20261030000200_rad062_provenance_v2.sql': fkOrder,
+  'supabase/migrations/20261030000500_rad062_manual_foundation_freeze.sql': fkOrder,
+  'supabase/migrations/20261030000600_rad062_lifecycle_v2.sql': [
+    ['create function assess.not_held_v2(p_session uuid) returns void',
+      '-- v1 entry guard denies only an existing v2 attempt (version is immutable).\n'
+      + '-- Missing/foreign/stale/v1 inputs reach the original v1 checks and SQLSTATEs.\n'
+      + "create function assess.require_lifecycle_v1(p_session uuid) returns void\nlanguage plpgsql security definer set search_path='' as $$ begin\n"
+      + " if exists(select 1 from assess.sessions where id=p_session and lifecycle_version<>1) then\n  raise exception 'attempt version denied' using errcode='42501'; end if;\nend $$;\n"
+      + 'create function assess.not_held_v2(p_session uuid) returns void'],
+    ["perform assess.require_lifecycle_v2(p_session,1);", "perform assess.require_lifecycle_v1(p_session);"],
+    [" -- start already authorizes schema=1, but explicit protection also covers replay.\n",
+      " -- start already authorizes schema=1, but explicit protection also covers replay.\n -- Only an existing non-v1 assignment is denied; a missing one keeps its v1 error.\n"],
+    ["if not exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version=1) then",
+      "if exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version<>1) then"],
+    ["'lifecycle_version_guard_v2','require_lifecycle_v2','not_held_v2',", "'lifecycle_version_guard_v2','require_lifecycle_v2','require_lifecycle_v1','not_held_v2',"]],
+};
+function substitute(original, pairs) {
+  let text = original.toString('utf8');
+  for (const [before, after] of pairs) { assert.equal(text.split(before).length, 2); text = text.replace(before, () => after); }
+  return Buffer.from(text, 'utf8');
 }
 test('actual local logical restore applies eight transactions, rolls failures back, finds anchors and emits only counts', {timeout:120000}, async () => {
   const r = await rehearse();

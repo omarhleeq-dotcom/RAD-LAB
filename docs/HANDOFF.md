@@ -1,12 +1,12 @@
-# التسليم الحالي — RAD-062 P10، إصلاح collation في M02 على Draft نفسها
+# التسليم الحالي — RAD-062 P10، إصلاحا collation وتوافق v1 على Draft نفسها
 
 اقرأ [AGENTS](../AGENTS.md)، ثم docs:context لـ#175 وstatus:summary للمهام RAD-062 وRAD-086 وRAD-059؛ استمر في checkout نفسه. [الحالة](project-status.md) المصدر الوحيد للمهام.
 
 ## ملخص الحالة
 
-- **الاتجاه الحالي:** RAD-062 review/reviewer؛ P9b مدموجة في #174، وP10 في Draft #175. سبب M02/SQL55000 على en_US.utf8 ثبت (ترتيب text بـcollation القاعدة مقابل name بترتيب C)، وأُصلح بإذن المالك في M02/M05 ومفاتيح الترتيب النصية في rad062-ready وrad062-p1-b-ready بـ`collate "C"` دون تغيير البصمات المتوقعة، مع اختبار C وen_US.UTF-8. التفاصيل وجدول التدقيق في [التقرير](RAD-062_P10_REPORT_2026-10-30.md). بقية Part A في RAD-057 وRAD-087 محفوظة.
-- **ينتظر المالك:** بعد المراجعة وcheck خضراء: RAD-086 واللابتوب والنسخة المحلية الكاملة والاستعادة **بنفس datcollate/datctype الحية** ورفض Supavisor القديم/cache و17.11 وبقية STOP. ترتيب النافذة محسوم: live apply/checks ثم Variable ثم merge ثم CI/Deploy Pages ثم الهاتف والطوارئ. RAD-059 القنوات/ACK والبديل والخصوصية/O4 وفحص SID100 مستقلة.
-- **ينتظر مراجِعًا:** مراجعة إصلاح collation وجدول تدقيق M01–M08 والفحصين في التقرير؛ ثم تأكيد CI check خضراء بالكامل على PR، بما فيها Docker worker rehearsal الذي لم يكتمل محليًا لأسباب بيئية موثقة. assertions/timeouts وتشخيصات ordinal/sqlstate وبايتات packetين وsupabase/manual محفوظة.
+- **الاتجاه الحالي:** RAD-062 review/reviewer؛ P9b مدموجة في #174، وP10 في Draft #175. سبب M02/SQL55000 على en_US.utf8 ثبت (ترتيب text بـcollation القاعدة مقابل name بترتيب C)، وأُصلح بإذن المالك في M02/M05 ومفاتيح الترتيب النصية في rad062-ready وrad062-p1-b-ready بـ`collate "C"` دون تغيير البصمات المتوقعة، مع اختبار C وen_US.UTF-8. ثم أُصلح حارس v1 في M06: يرفض جلسة/assignment v2 موجودة فقط، فتبقى رموز v1 (مثل40001 للجلسة المفقودة في finish_v1) كما قبل الحزمة، مع اختبار مطابقة قبل/بعد M01–M08؛ مسار v2 صارم كما كان. التفاصيل وجدول التدقيق في [التقرير](RAD-062_P10_REPORT_2026-10-30.md). بقية Part A في RAD-057 وRAD-087 محفوظة.
+- **ينتظر المالك:** قبول تجاوز الميزانية إلى36 من34 (M06 وanchor بروفة الاستعادة)؛ بعد المراجعة وcheck خضراء: RAD-086 واللابتوب والنسخة المحلية الكاملة والاستعادة **بنفس datcollate/datctype الحية** ورفض Supavisor القديم/cache و17.11 وبقية STOP. ترتيب النافذة محسوم: live apply/checks ثم Variable ثم merge ثم CI/Deploy Pages ثم الهاتف والطوارئ. RAD-059 القنوات/ACK والبديل والخصوصية/O4 وفحص SID100 مستقلة.
+- **ينتظر مراجِعًا:** مراجعة إصلاحي collation وتوافق v1 وجدولي التدقيق في التقرير؛ ثم تأكيد CI check خضراء بالكامل على PR، بما فيها Docker worker rehearsal الذي لم يكتمل محليًا لأسباب بيئية موثقة. assertions/timeouts وتشخيصات ordinal/sqlstate وبايتات packetين وsupabase/manual محفوظة.
 - **مرجع Git:** docs:context لحالة الفرع وPR؛ [التقرير](RAD-062_P10_REPORT_2026-10-30.md) للملفات الدقيقة وQA والبصمة الجديدة. لا PR جديدة أو force-push؛ الأتمتة المعتادة فقط وDraft بلا ready/merge/auto-merge من الوكيل أو معاينة مستضافة.
 - **مخاطر معلنة:** gate مغلقة والعمال NOLOGIN والسر DISABLED؛ guard=true ليس attestation DB. collation الإنتاج غير متحقق؛ provider غير libc STOP في الدليل. deploy قبل النافذة متوقع أحمر بسبب marker فقط، وcheck يجب أن يكون أخضر بالكامل؛ لا يعفى Docker أو فشل آخر. لا Variable أو SQL حي من الوكيل.
 
