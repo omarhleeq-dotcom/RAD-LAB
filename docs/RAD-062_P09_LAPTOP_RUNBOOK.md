@@ -24,7 +24,7 @@ npm run status:summary -- --id RAD-086
 node scripts/assess/rad062-db-day.mjs verify
 ```
 
-**Expected:** #173 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR.
+**Expected:** #173 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR; the laptop procedure and tools are in the [RAD-086 runbook](RAD-086_LAPTOP_BACKUP_RUNBOOK.md).
 
 **STOP:** unreviewed changes, unverified prerequisite, missing emergency v1 packet, laptop absent, backup/recovery/old-credential rejection unproved. Read [v1 phone packet](RAD-059_PHONE_PACKET.md) and [containment runbook](RAD-059_PHONE_RUNBOOK.md); keep them available independently of this laptop. Do not execute containment SQL just to satisfy this preflight.
 
@@ -44,7 +44,17 @@ export RAD062_CLOUD_PROJECT
 live() { node scripts/assess/rad062-db-day.mjs "$@" --live --project-ref "$RAD062_EXPECTED_PROJECT_REF"; }
 ```
 
-**Expected:** no password output; host is the direct endpoint of exactly the independently confirmed project ref. Helpers reject other endpoints and remote requests missing either explicit selector. Pooler URLs/services/connection strings are unsupported. Do not weaken TLS to make a connection work.
+**Expected:** no password output; host is the direct endpoint of exactly the independently confirmed project ref. Helpers reject other endpoints and remote requests missing either explicit selector. Connection strings and service files are unsupported. Do not weaken TLS to make a connection work.
+
+**If the direct endpoint is unreachable** (the owner's laptop and hotspot have no global IPv6, so `db.<ref>.supabase.co` fails with "Network is unreachable"), use the explicit **session-pooler** variant instead of the `PGHOST`/`PGUSER` lines above ([RAD-086 decision D-A](DECISIONS.md#rad086-laptop-owner-2026-10-31)). The host is copied by the owner from the project's Connect panel (Session pooler tab, port 5432); it is never derived, detected or used as a fallback:
+
+```bash
+read -r -p 'Session pooler host from the Connect panel: ' RAD062_POOLER_HOST
+export RAD062_POOLER_HOST PGHOST="$RAD062_POOLER_HOST" PGPORT=5432 PGUSER="postgres.${RAD062_EXPECTED_PROJECT_REF}"
+live() { node scripts/assess/rad062-db-day.mjs "$@" --live --session-pooler --project-ref "$RAD062_EXPECTED_PROJECT_REF"; }
+```
+
+The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts` and `checks`; **`apply` and `restore` refuse `--session-pooler`**, so the live M01–M08 apply in step 5 still needs the direct endpoint until the owner decides otherwise (open item in the [RAD-086 report](RAD-086_REPORT_2026-10-31.md)). The direct path above is unchanged.
 
 **Command:**
 

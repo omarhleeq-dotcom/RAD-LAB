@@ -15,14 +15,18 @@ export function verifyMigrations(read = file => readFileSync('supabase/migration
   });
   return files;
 }
+// Explicit opt-in only (RAD-086 D-A): host is copied by the owner from the project's Connect panel,
+// never derived from a region, never detected, never a fallback for the direct endpoint.
+export const POOLER_HOST = /^aws-\d{1,2}-[a-z]{2}(?:-[a-z]+)+-\d{1,2}\.pooler\.supabase\.com$/;
 export function options(args, env = process.env) {
   const allowed = ['verify', 'preflight', 'backup', 'restore', 'counts', 'apply', 'checks'];
   const [action = 'verify', ...flags] = args;
   if (!allowed.includes(action)) throw Error('action');
-  const out = { action, execute: false, live: false, part: null, project: null };
+  const out = { action, execute: false, live: false, part: null, project: null, pooler: false };
   for (let n = 0; n < flags.length; n++) {
     if (flags[n] === '--execute') out.execute = true;
     else if (flags[n] === '--live') out.live = true;
+    else if (flags[n] === '--session-pooler') out.pooler = true;
     else if (flags[n] === '--project-ref') out.project = flags[++n];
     else if (flags[n] === '--migration') out.part = flags[++n];
     else throw Error('argument');
@@ -30,9 +34,16 @@ export function options(args, env = process.env) {
   // Even a dry-run remote request must carry both independent owner selectors.
   const local = /^\/[A-Za-z0-9_./-]+$/.test(env.PGHOST ?? '') && !env.PGHOST.includes('..');
   if (out.live || (out.action !== 'verify' && !local)) {
+    const direct = !out.pooler && env.PGHOST === `db.${out.project}.supabase.co` && env.PGUSER === 'postgres';
+    // Session pooler: shared-pooler host pattern, host equal to the owner's separate selector,
+    // user exactly postgres.<ref>, port exactly 5432 (6543 transaction pooler is never accepted), CA file present.
+    const pooled = out.pooler && POOLER_HOST.test(env.PGHOST ?? '') && env.PGHOST === env.RAD062_POOLER_HOST &&
+      env.PGUSER === `postgres.${out.project}` && env.PGPORT === '5432' && (env.PGSSLROOTCERT ?? '') !== '';
     if (!out.live || !/^[a-z]{20}$/.test(out.project ?? '') || out.project !== env.RAD062_EXPECTED_PROJECT_REF ||
-      env.PGHOST !== `db.${out.project}.supabase.co` || env.PGUSER !== 'postgres' || env.PGDATABASE !== 'postgres' || env.PGSSLMODE !== 'verify-full') throw Error('live_refused');
+      !(direct || pooled) || env.PGDATABASE !== 'postgres' || env.PGSSLMODE !== 'verify-full') throw Error('live_refused');
   }
+  // The pooler is for read-only and backup actions; DB-day apply/restore stay on reviewed paths (owner decision pending).
+  if (out.pooler && (!out.live || out.action === 'apply' || out.action === 'restore' || out.action === 'verify')) throw Error('pooler_refused');
   if (local && (!/^[a-z_][a-z0-9_]*$/.test(env.PGUSER ?? '') || !/^[a-z_][a-z0-9_]*$/.test(env.PGDATABASE ?? '') || !/^\d{1,5}$/.test(env.PGPORT ?? '5432'))) throw Error('local_selectors');
   if (out.action === 'restore' && !local) throw Error('local_restore_only');
   if (out.action === 'backup' && !out.live) throw Error('live_backup_only');
