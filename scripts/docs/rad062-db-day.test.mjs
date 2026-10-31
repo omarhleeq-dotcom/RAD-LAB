@@ -20,6 +20,12 @@ test('every remote operation requires explicit flag and matching independent pro
 const poolerHost = 'aws-0-eu-central-1.pooler.supabase.com';
 const pooled = { PGHOST: poolerHost, PGPORT: '5432', PGUSER: `postgres.${ref}`, PGDATABASE: 'postgres', PGSSLMODE: 'verify-full', PGSSLROOTCERT: '/home/u/ca.crt', RAD062_EXPECTED_PROJECT_REF: ref, RAD062_POOLER_HOST: poolerHost };
 const pooledArgs = (action, ...more) => [action, '--live', '--project-ref', ref, '--session-pooler', ...more];
+test('the confirmed owner pooler host shape is accepted and the pattern is otherwise unchanged', () => {
+  const host = 'aws-1-eu-central-1.pooler.supabase.com', env = { ...pooled, PGHOST: host, RAD062_POOLER_HOST: host };
+  for (const action of ['preflight', 'backup', 'counts', 'checks']) assert.equal(options(pooledArgs(action), env).pooler, true);
+  for (const bad of ['aws-1-eu-central.pooler.supabase.com', 'aws-1-eu-central-1.pooler.supabase.com:6543', 'aws-x-eu-central-1.pooler.supabase.com', 'aws-1-EU-central-1.pooler.supabase.com'])
+    assert.throws(() => options(pooledArgs('preflight'), { ...env, PGHOST: bad, RAD062_POOLER_HOST: bad }));
+});
 test('session pooler is an explicit opt-in that needs every exact selector', () => {
   for (const action of ['preflight', 'backup', 'counts', 'checks']) assert.equal(options(pooledArgs(action), pooled).pooler, true);
   // Never auto-detected and never a fallback: the pooler host without the flag, or the flag with the direct host, is refused.
@@ -37,7 +43,16 @@ test('session pooler is an explicit opt-in that needs every exact selector', () 
   assert.throws(() => options(['preflight', '--live', '--session-pooler'], pooled));
   assert.throws(() => options(['verify', '--session-pooler'], pooled));
   assert.throws(() => options(pooledArgs('restore'), pooled));
-  assert.throws(() => options(pooledArgs('apply', '--migration', 'M01'), pooled));              // DB-day apply is not widened to the pooler
+  assert.throws(() => options(pooledArgs('restore', '--execute'), pooled));
+  // D-C: apply is allowed over the pooler with exactly the same selectors; its live execute still needs restore evidence.
+  assert.equal(options(pooledArgs('apply', '--migration', 'M01'), pooled).pooler, true);
+  assert.throws(() => options(pooledArgs('apply', '--migration', 'M01', '--execute'), pooled), /restore_evidence/);
+  assert.equal(options(pooledArgs('apply', '--migration', 'M01', '--execute'), { ...pooled, RAD062_RESTORE_VERIFIED: 'yes' }).execute, true);
+  assert.throws(() => options(pooledArgs('apply', '--migration', 'M09'), pooled));
+  assert.throws(() => options(pooledArgs('apply', '--migration', 'M01', '--execute'), { ...pooled, RAD062_RESTORE_VERIFIED: 'yes', PGPORT: '6543' }));
+  assert.throws(() => options(pooledArgs('apply', '--migration', 'M01'), { ...pooled, PGUSER: 'postgres' }));
+  assert.throws(() => options(pooledArgs('apply', '--migration', 'M01'), { ...pooled, PGHOST: 'evil.example.com', RAD062_POOLER_HOST: 'evil.example.com' }));
+  assert.throws(() => options(pooledArgs('apply', '--migration', 'M01'), { ...pooled, PGSSLMODE: 'require' }));
   assert.throws(() => options(pooledArgs('preflight'), { ...pooled, PGHOST: '/tmp/local' }));
 });
 test('direct endpoint remains strict and unchanged when the pooler selector exists in the environment', () => {

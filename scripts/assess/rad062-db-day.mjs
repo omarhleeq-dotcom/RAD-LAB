@@ -42,8 +42,9 @@ export function options(args, env = process.env) {
     if (!out.live || !/^[a-z]{20}$/.test(out.project ?? '') || out.project !== env.RAD062_EXPECTED_PROJECT_REF ||
       !(direct || pooled) || env.PGDATABASE !== 'postgres' || env.PGSSLMODE !== 'verify-full') throw Error('live_refused');
   }
-  // The pooler is for read-only and backup actions; DB-day apply/restore stay on reviewed paths (owner decision pending).
-  if (out.pooler && (!out.live || out.action === 'apply' || out.action === 'restore' || out.action === 'verify')) throw Error('pooler_refused');
+  // Owner decision D-C (2026-10-31): apply may use the session pooler with the same exact selectors. restore stays local-only
+  // and verify stays offline, so neither accepts the selector.
+  if (out.pooler && (!out.live || out.action === 'restore' || out.action === 'verify')) throw Error('pooler_refused');
   if (local && (!/^[a-z_][a-z0-9_]*$/.test(env.PGUSER ?? '') || !/^[a-z_][a-z0-9_]*$/.test(env.PGDATABASE ?? '') || !/^\d{1,5}$/.test(env.PGPORT ?? '5432'))) throw Error('local_selectors');
   if (out.action === 'restore' && !local) throw Error('local_restore_only');
   if (out.action === 'backup' && !out.live) throw Error('live_backup_only');

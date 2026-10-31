@@ -46,7 +46,7 @@ live() { node scripts/assess/rad062-db-day.mjs "$@" --live --project-ref "$RAD06
 
 **Expected:** no password output; host is the direct endpoint of exactly the independently confirmed project ref. Helpers reject other endpoints and remote requests missing either explicit selector. Connection strings and service files are unsupported. Do not weaken TLS to make a connection work.
 
-**If the direct endpoint is unreachable** (the owner's laptop and hotspot have no global IPv6, so `db.<ref>.supabase.co` fails with "Network is unreachable"), use the explicit **session-pooler** variant instead of the `PGHOST`/`PGUSER` lines above ([RAD-086 decision D-A](DECISIONS.md#rad086-laptop-owner-2026-10-31)). The host is copied by the owner from the project's Connect panel (Session pooler tab, port 5432); it is never derived, detected or used as a fallback:
+**If the direct endpoint is unreachable** (the owner's laptop and hotspot have no global IPv6, so `db.<ref>.supabase.co` fails with "Network is unreachable"), use the explicit **session-pooler** variant instead of the `PGHOST`/`PGUSER` lines above ([RAD-086 decisions D-A and D-C](DECISIONS.md#rad086-followup-owner-2026-10-31)). The host is copied by the owner from the project's Connect panel (Session pooler tab, port 5432); it is never derived, detected or used as a fallback:
 
 ```bash
 read -r -p 'Session pooler host from the Connect panel: ' RAD062_POOLER_HOST
@@ -54,7 +54,7 @@ export RAD062_POOLER_HOST PGHOST="$RAD062_POOLER_HOST" PGPORT=5432 PGUSER="postg
 live() { node scripts/assess/rad062-db-day.mjs "$@" --live --session-pooler --project-ref "$RAD062_EXPECTED_PROJECT_REF"; }
 ```
 
-The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts` and `checks`; **`apply` and `restore` refuse `--session-pooler`**, so the live M01–M08 apply in step 5 still needs the direct endpoint until the owner decides otherwise (open item in the [RAD-086 report](RAD-086_REPORT_2026-10-31.md)). The direct path above is unchanged.
+The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts`, `checks` and, by owner decision D-C (2026-10-31), `apply` with exactly the same selectors; a 6543, host, user or TLS mismatch is refused for `apply` as for every other action. `restore` stays local-only and `verify` stays offline, so neither accepts `--session-pooler`. The direct path above is unchanged.
 
 **Command:**
 
@@ -221,6 +221,8 @@ live apply --migration M06 --execute
 live apply --migration M07 --execute
 live apply --migration M08 --execute
 ```
+
+**Pooler variant (D-C):** with the `live()` function defined in step 1 for the pooler, the commands above are unchanged: `live` already carries `--session-pooler`, so `preflight`, `apply` and the post-apply reads go through the session pooler (port 5432, `verify-full`). Each migration is still one transaction with its ledger insert; a drop of the pooled connection around COMMIT is UNKNOWN exactly as on the direct path, resolved only by an independent read through the same selectors. The raw `psql` transition reads use the same `PGHOST`/`PGUSER` exports.
 
 **Expected:** verify hashes **all eight actual files** against deferred SHA-256 entries in `frontend-schema.json` before connecting; each apply rechecks them and closed-state conditions. Dry run connects zero times. Apply advances exactly the contiguous eight-version ledger, one transaction per migration. No Supabase `db push`, historical M1–M4/B replay, initializer, generic SQL file flag or unattended all-migration loop. Record counts/exit status per step on the laptop. No password or migration rows are printed.
 

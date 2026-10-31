@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 349,
-  "updated_at": "2026-10-31T08:10:14.068972+00:00",
+  "revision": 350,
+  "updated_at": "2026-10-31T08:42:22.767877+00:00",
   "timezone": "UTC",
   "next_id": "RAD-088",
   "tasks": [
@@ -776,8 +776,8 @@
       "title": "RAD-082 المرجعي: النسخ اليومية المحلية والاستعادة ورفض اعتماد Supavisor القديم",
       "status": "review",
       "priority": "high",
-      "description": "إجراء اللابتوب وأدواته للمراجعة (Draft): محدد session pooler، نسخ يومي مجدول للقراءة فقط، سجل age مشفر، اختبار استعادة في Docker. لا شيء نُفذ على اللابتوب ولا SQL حي. اختبار Supavisor مصمم فقط؛ الجزء على السر DISABLED متوقف بخيارات للمالك. تبقى شرطًا قبل أول امتحان حقيقي ولا تكتمل قبل أدلة المالك.",
-      "source_ref": "docs/DECISIONS.md#rad086-laptop-owner-2026-10-31؛ docs/RAD-086_LAPTOP_BACKUP_RUNBOOK.md؛ docs/RAD-086_REPORT_2026-10-31.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/status-format.md",
+      "description": "إجراء اللابتوب وأدواته للمراجعة (Draft #176): pooler للقراءة والنسخ وapply، نسخ يومي مجدول بثلاث خانات تدوّر، سجل age مشفر، اختبار استعادة Docker، وحزمة SQL لاختبار Supavisor (خيار2 إنتاج). لا شيء نُفذ على اللابتوب ولا SQL حي. تبقى شرطًا قبل أول امتحان حقيقي ولا تكتمل قبل أدلة المالك.",
+      "source_ref": "docs/DECISIONS.md#rad086-laptop-owner-2026-10-31؛ docs/DECISIONS.md#rad086-followup-owner-2026-10-31؛ docs/RAD-086_PROBE_SQL_PACKET.md؛ docs/RAD-086_LAPTOP_BACKUP_RUNBOOK.md؛ docs/RAD-086_REPORT_2026-10-31.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/status-format.md",
       "waiting_on": "owner"
     },
     {

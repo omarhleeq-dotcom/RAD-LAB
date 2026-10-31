@@ -30,6 +30,11 @@ jobs:
         run: node --test scripts/assess/rad085-erasure-recovery.test.mjs
       - name: Required RAD-085 local worker image and PostgreSQL witnesses (no skip)
         run: node scripts/assess/rad085-worker-rehearsal.mjs
+      - name: Required RAD-086 tools for the laptop backup tests (age, PostgreSQL 16 server and client; no skip)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends age postgresql-16 postgresql-client-16
+          age-keygen --version && pg_dump --version
       - run: npm run docs:check
       - run: npm run docs:test
       - name: Test first-version secret uploader (synthetic only)

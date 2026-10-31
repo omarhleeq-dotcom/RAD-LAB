@@ -9,7 +9,7 @@ import { pathToFileURL } from 'node:url';
 import pg from 'pg';
 import { Stop, guard, stamp, sha256File, sha256Bytes, quoteIdent, validateConfig, loadConfig, connectionEnv, assertPrivate, outsideCheckout,
   configDir, configPath, passFilePath, writePassFile, listBackups, clientMajor, appendEntry, readEntries, verifyBackup, resolveBackup,
-  LOCALE } from './laptop-backup-lib.mjs';
+  LOCALE, SLOTS, tmpDir, storeDir, slotStamp, parseStamp, publish, collect } from './laptop-backup-lib.mjs';
 
 const execAsync = promisify(execFile);
 const META_SQL = `select current_setting('server_version_num')::int v, d.datcollate c, d.datctype t,
@@ -42,12 +42,14 @@ function prepare(c, run) {
 // TLS is built here, from the owner's CA file only: verification on, no fallback to an unencrypted connection.
 const defaultClient = ({ caFile, ...o }) => new pg.Client({ ...o, ssl: { rejectUnauthorized: true, ca: readFileSync(caFile, 'utf8') } });
 
-export async function runBackup(c, { dryRun = false, run = execFileSync, runAsync = execAsync, makeClient = defaultClient, conn: given, now = new Date() } = {}) {
+export async function runBackup(c, { dryRun = false, run = execFileSync, runAsync = execAsync, makeClient = defaultClient, conn: given, now = new Date(), publishDeps } = {}) {
   const { conn: derived, version } = prepare(c, run), conn = given ?? derived;
   if (dryRun) return { dry_run: 1, database_connections: 0, client_major: version[0], client_minor: version[1], backups_present: listBackups(c.backupRoot).length };
-  const name = stamp(now), dir = join(c.backupRoot, name), roles = join(dir, 'roles.sql'), dump = join(dir, 'project.dump');
+  const name = stamp(now), dir = join(tmpDir(c.backupRoot), name), roles = join(dir, 'roles.sql'), dump = join(dir, 'project.dump');
   let stage = 'mkdir', created = false;
   try {
+    mkdirSync(tmpDir(c.backupRoot), { recursive: true, mode: 0o700 });
+    if (existsSync(join(storeDir(c.backupRoot), name))) throw new Stop('mkdir');
     mkdirSync(dir, { mode: 0o700 });            // non-recursive: an existing directory is refused, never overwritten
     created = true; chmodSync(dir, 0o700);
     stage = 'dump_roles';
@@ -91,29 +93,41 @@ export async function runBackup(c, { dryRun = false, run = execFileSync, runAsyn
     writeFileSync(join(dir, 'checksums.json'), JSON.stringify(sums) + '\n', { mode: 0o600, flag: 'wx' });
     const metaBytes = JSON.stringify({ ...meta, tables, count_errors: errors }) + '\n';
     writeFileSync(join(dir, 'db-meta.json'), metaBytes, { mode: 0o600, flag: 'wx' });
+    // Complete means re-read from disk and equal to the recorded digests; only then may any slot change.
+    stage = 'verify'; await verifyBackup(dir);
+    const sizes = { roles_bytes: statSync(roles).size, dump_bytes: statSync(dump).size };
+    stage = 'rotate';
+    let moved;
+    try { moved = publish(c, name, publishDeps); }
+    catch (e) { for (const r of e.done ?? []) try { appendEntry(c, { kind: 'rotation', ...r }, run); } catch { /* exit code is the signal */ } throw e; }
     stage = 'log';
     const rows = tables.reduce((n, [, , k]) => n + (k ?? 0), 0);
-    const entries = appendEntry(c, { kind: 'backup', dir: name, roles_bytes: statSync(roles).size, dump_bytes: statSync(dump).size,
-      roles_sha256: sums['roles.sql'], dump_sha256: sums['project.dump'], meta_sha256: sha256Bytes(metaBytes), toc_entries: toc,
-      tables: tables.length, count_errors: errors, rows_total: rows, ...meta, client_version: version.join('.'), restore_test: 'not_run' }, run);
-    return { backup_archives: 2, roles_bytes: statSync(roles).size, dump_bytes: statSync(dump).size, toc_entries: toc, tables_counted: tables.length - errors,
-      count_errors: errors, rows_total: rows, server_version_num: meta.server_version_num, log_entries: entries };
+    let entries = appendEntry(c, { kind: 'backup', dir: name, ...sizes, roles_sha256: sums['roles.sql'], dump_sha256: sums['project.dump'],
+      meta_sha256: sha256Bytes(metaBytes), toc_entries: toc, tables: tables.length, count_errors: errors, rows_total: rows, ...meta,
+      client_version: version.join('.'), slots: moved.map(m => m.slot), restore_test: 'not_run' }, run);
+    for (const r of moved) entries = appendEntry(c, { kind: 'rotation', ...r }, run);
+    stage = 'collect';
+    const gc = collect(c.backupRoot);
+    if (gc.removed.length || gc.tmp_removed) entries = appendEntry(c, { kind: 'prune', removed: gc.removed, tmp_removed: gc.tmp_removed }, run);
+    return { backup_archives: 2, ...sizes, toc_entries: toc, tables_counted: tables.length - errors, count_errors: errors, rows_total: rows,
+      server_version_num: meta.server_version_num, slots_updated: moved.length, store_removed: gc.removed.length, log_entries: entries };
   } catch (e) {
     const code = e instanceof Stop ? e.stage : stage;
-    try { if (created && existsSync(dir)) renameSync(dir, dir + '.failed'); } catch { /* keep partial directory for the owner */ }
+    try { if (created && existsSync(dir)) renameSync(dir, dir + '.failed'); } catch { /* removed by the next successful run */ }
     try { appendEntry(c, { kind: 'stop', dir: name, stage: code }, run); } catch { /* the exit code remains the signal */ }
     throw new Stop(code);
   }
 }
 
 export function status(c, now = new Date(), maxAgeDays = 2) {
-  const names = listBackups(c.backupRoot), last = names.at(-1);
-  if (!last) throw new Stop('no_backup');
-  const t = Date.parse(`${last.slice(0, 4)}-${last.slice(4, 6)}-${last.slice(6, 8)}T${last.slice(9, 11)}:${last.slice(11, 13)}:${last.slice(13, 15)}Z`);
-  const days = Math.floor((now - t) / 864e5);
-  const bytes = ['roles.sql', 'project.dump'].reduce((n, f) => n + statSync(join(c.backupRoot, last, f)).size, 0);
-  if (days > maxAgeDays) throw new Stop('stale');
-  return { backups: names.length, newest_age_days: days, newest_bytes: bytes };
+  const root = c.backupRoot, age = slot => { const st = slotStamp(root, slot); return st ? Math.floor((now - parseStamp(st)) / 864e5) : -1; };
+  const daily = age('daily');
+  if (daily < 0) throw new Stop('no_backup');
+  if (daily > maxAgeDays) throw new Stop('stale');
+  const dir = join(storeDir(root), slotStamp(root, 'daily'));
+  const bytes = ['roles.sql', 'project.dump'].reduce((n, f) => n + statSync(join(dir, f)).size, 0);
+  return { slots_filled: SLOTS.filter(x => slotStamp(root, x)).length, daily_age_days: daily, weekly_age_days: age('weekly'), monthly_age_days: age('monthly'),
+    stored_backups: listBackups(root).length, newest_bytes: bytes };
 }
 
 function readHidden(prompt) {

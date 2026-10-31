@@ -1,11 +1,11 @@
 // RAD-086 owner-laptop backup helpers. Read-only against the provider; local files only.
 // Output is numeric or fixed stage codes. Passwords live only in a 0600 libpq password file outside the checkout.
 import { createHash } from 'node:crypto';
-import { createReadStream, lstatSync, mkdirSync, readFileSync, readdirSync, realpathSync, renameSync, writeFileSync, existsSync } from 'node:fs';
+import { createReadStream, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, realpathSync, renameSync, rmSync, symlinkSync, writeFileSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
-import { resolve, sep, join } from 'node:path';
+import { sep, join } from 'node:path';
 import { options } from '../assess/rad062-db-day.mjs';
 
 export class Stop extends Error { constructor(stage) { super(stage); this.stage = stage; } }
@@ -79,8 +79,55 @@ export const writePassFile = (c, password, replace, path = passFilePath()) => {
   else writeFileSync(path, line, { mode: 0o600, flag: 'wx' });
 };
 
+// Retention (owner decision D-E): exactly three rotating slots, daily / weekly (Sunday) / monthly (1st), as symlinks
+// root/<slot> -> store/<stamp>. A new backup is built in root/.tmp, verified, moved into store/, and only then does each
+// slot link swap atomically (rename of a new symlink over the old one). On any earlier failure the old links are untouched.
+export const SLOTS = ['daily', 'weekly', 'monthly'];
+export const storeDir = root => join(root, 'store');
+export const tmpDir = root => join(root, '.tmp');
 export function listBackups(root) {
-  return readdirSync(root).filter(n => BACKUP_NAME.test(n)).sort().filter(n => existsSync(join(root, n, 'checksums.json')));
+  const d = storeDir(root);
+  return existsSync(d) ? readdirSync(d).filter(n => BACKUP_NAME.test(n) && existsSync(join(d, n, 'checksums.json'))).sort() : [];
+}
+export function slotStamp(root, slot) {
+  try { return /^store\/(\d{8}T\d{6}Z)$/.exec(readlinkSync(join(root, slot)))?.[1] ?? null; } catch { return null; }
+}
+export const parseStamp = n => Date.parse(`${n.slice(0, 4)}-${n.slice(4, 6)}-${n.slice(6, 8)}T${n.slice(9, 11)}:${n.slice(11, 13)}:${n.slice(13, 15)}Z`);
+// UTC calendar day of the stamp decides promotion. An empty slot is filled by the first backup (there is no older copy to keep).
+export function slotsFor(stamp, filled) {
+  const d = new Date(parseStamp(stamp));
+  return ['daily', ...(d.getUTCDay() === 0 || !filled.weekly ? ['weekly'] : []), ...(d.getUTCDate() === 1 || !filled.monthly ? ['monthly'] : [])];
+}
+export function swapSlot(root, slot, stamp, rename = renameSync) {
+  const next = join(root, `.${slot}.new`);
+  rmSync(next, { force: true });
+  symlinkSync(`store/${stamp}`, next);
+  rename(next, join(root, slot));
+}
+// Caller has already verified .tmp/<name> against its checksums. Returns [{slot, from, to}]; on a mid-way failure the error
+// carries the swaps that did complete (e.done) and every slot not yet swapped still points at its previous backup.
+export function publish(c, name, { rename = renameSync } = {}) {
+  const root = c.backupRoot, dest = join(storeDir(root), name);
+  mkdirSync(storeDir(root), { recursive: true, mode: 0o700 });
+  if (existsSync(dest)) throw Error('exists');
+  renameSync(join(tmpDir(root), name), dest);
+  const done = [], filled = { weekly: slotStamp(root, 'weekly') !== null, monthly: slotStamp(root, 'monthly') !== null };
+  try {
+    for (const slot of slotsFor(name, filled)) { const from = slotStamp(root, slot); swapSlot(root, slot, name, rename); done.push({ slot, from, to: name }); }
+  } catch (e) { e.done = done; throw e; }
+  return done;
+}
+// Removes only unreferenced store/<stamp> directories and leftovers in .tmp. Refuses to delete anything if no slot resolves.
+export function collect(root, remove = rmSync) {
+  const keep = new Set(SLOTS.map(s => slotStamp(root, s)).filter(Boolean)), removed = [];
+  if (!keep.size || !existsSync(storeDir(root))) return { removed, tmp_removed: 0 };
+  for (const n of readdirSync(storeDir(root))) {
+    const p = join(storeDir(root), n);
+    if (BACKUP_NAME.test(n) && !keep.has(n) && lstatSync(p).isDirectory()) { remove(p, { recursive: true, force: true }); removed.push(n); }
+  }
+  let tmp_removed = 0;
+  if (existsSync(tmpDir(root))) for (const n of readdirSync(tmpDir(root))) { remove(join(tmpDir(root), n), { recursive: true, force: true }); tmp_removed++; }
+  return { removed, tmp_removed };
 }
 export function clientMajor(program, runner = execFileSync) {
   const m = /\) (\d+)\.(\d+)/.exec(String(runner(program, ['--version'], { encoding: 'utf8', timeout: 15000 })));
@@ -127,7 +174,9 @@ export async function verifyBackup(dir) {
 export const resolveBackup = (c, name) => {
   const root = realpathSync(c.backupRoot);
   assertPrivate(root, true); outsideCheckout(root);
-  const pick = name === 'latest' ? listBackups(root).at(-1) : name;
+  const pick = name === 'latest' ? slotStamp(root, 'daily') : SLOTS.includes(name) ? slotStamp(root, name) : name;
   if (!pick || !BACKUP_NAME.test(pick)) throw Error('no_backup');
-  return resolve(root, pick);
+  const dir = join(storeDir(root), pick);
+  if (!existsSync(join(dir, 'checksums.json'))) throw Error('no_backup');
+  return dir;
 };

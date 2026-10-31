@@ -1,11 +1,12 @@
 import { test, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
-import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, statSync, existsSync, chmodSync, symlinkSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, statSync, existsSync, chmodSync, symlinkSync, renameSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import pg from 'pg';
-import { validateConfig, outsideCheckout, connectionEnv, passLine, writePassFile, assertPrivate, appendEntry, readEntries, listBackups, quoteIdent, stamp } from '../ops/laptop-backup-lib.mjs';
+import { validateConfig, outsideCheckout, connectionEnv, passLine, writePassFile, assertPrivate, appendEntry, readEntries, listBackups, quoteIdent, stamp,
+  slotStamp, slotsFor, collect, publish, SLOTS } from '../ops/laptop-backup-lib.mjs';
 import { runBackup, status } from '../ops/laptop-backup.mjs';
 import { restoreTest, containerArgs, parseExtensions, IMAGE } from '../ops/laptop-restore-test.mjs';
 
@@ -15,10 +16,21 @@ process.env.HOME = tmp;                       // homedir() follows HOME: config 
 const cfgDir = join(tmp, '.config', 'rad-lab-backup');
 mkdirSync(cfgDir, { recursive: true, mode: 0o700 });
 writeFileSync(join(cfgDir, 'ca.crt'), 'public-ca');
-const key = spawnSync('age-keygen', [], { encoding: 'utf8' });
+// A missing external tool must fail with a readable message, never a TypeError (CI installs these; see .github/workflows/ci.yml).
+function need(cmd, args, hint) {
+  const r = spawnSync(cmd, args, { encoding: 'utf8' });
+  if (r.error || r.status !== 0) throw new Error(`Required tool unavailable: ${cmd} (${hint})`);
+  return r;
+}
+need('psql', ['--version'], 'install the PostgreSQL client packages');
+need('pg_dump', ['--version'], 'install the PostgreSQL client packages');
+need('pg_restore', ['--version'], 'install the PostgreSQL client packages');
+need('pg_dumpall', ['--version'], 'install the PostgreSQL client packages');
+const key = need('age-keygen', [], 'install the Ubuntu package "age"');
 const identity = join(tmp, 'identity.txt');
 writeFileSync(identity, key.stdout, { mode: 0o600 });
-const recipient = /age1[0-9a-z]{58}/.exec(key.stderr)[0];
+const recipient = /age1[0-9a-z]{58}/.exec(key.stderr)?.[0];
+if (!recipient) throw new Error('Required tool unavailable: age-keygen did not print a public key');
 const base = { projectRef: ref, endpoint: 'session-pooler', poolerHost: pooler, ageRecipient: recipient, caFile: join(cfgDir, 'ca.crt'), backupRoot: join(tmp, 'backups'), pgMajor: 16 };
 mkdirSync(base.backupRoot, { mode: 0o700 });
 writeFileSync(join(cfgDir, 'pgpass'), 'x', { mode: 0o600 });
@@ -73,8 +85,10 @@ test('encrypted reconciliation log: append-only chain, owner-only read, deletion
 });
 
 function cluster() {
-  const bin = readdirSync('/usr/lib/postgresql').sort().map(v => `/usr/lib/postgresql/${v}/bin`).find(b => existsSync(b + '/initdb'));
-  if (!bin || spawnSync('pg_dump', ['--version']).status !== 0) return null;
+  let versions = [];
+  try { versions = readdirSync('/usr/lib/postgresql'); } catch { /* reported below */ }
+  const bin = versions.sort().map(v => `/usr/lib/postgresql/${v}/bin`).find(b => existsSync(b + '/initdb'));
+  if (!bin) throw new Error('Required tool unavailable: PostgreSQL server binaries under /usr/lib/postgresql/*/bin (install postgresql-16)');
   const root = mkdtempSync(join(tmpdir(), 'rad086-pg-')), as = process.getuid() === 0 ? ['runuser', '-u', 'postgres', '--'] : [];
   if (as.length) execFileSync('chown', ['postgres', root]);
   chmodSync(root, 0o700);
@@ -89,17 +103,21 @@ after(() => { try { pgc?.stop(); } catch { /* already stopped */ } });
 const local = (root, env = {}) => ({ conn: { PGHOST: root, PGPORT: '55433', PGUSER: 'postgres', PGDATABASE: 'postgres', PGPASSFILE: '/dev/null', PATH: process.env.PATH, ...env },
   makeClient: () => new pg.Client({ host: root, port: 55433, user: 'postgres', database: 'postgres' }) });
 
-test('real local rehearsal (synthetic data, no provider): snapshot-consistent dump, counts, checksums, modes, encrypted log, no secrets', { skip: !pgc, timeout: 120000 }, async () => {
+test('real local rehearsal (synthetic data, no provider): snapshot-consistent dump, counts, checksums, modes, encrypted log, no secrets', { timeout: 300000 }, async () => {
   const q = sql => execFileSync('psql', ['-X', '-h', pgc.root, '-p', '55433', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-c', sql]);
   q(`create schema app; create table app.items(id int primary key, v text); insert into app.items select g, 'row'||g from generate_series(1,25) g;
      create extension pgcrypto; create table public."Odd ""Name"""(a int); insert into public."Odd ""Name""" values (1),(2);`);
   const c = validateConfig({ ...base, pgMajor: pgc.major, backupRoot: join(tmp, 'rehearsal') }); mkdirSync(c.backupRoot, { mode: 0o700 });
   const dry = await runBackup(c, { dryRun: true });
   assert.equal(dry.database_connections, 0); assert.equal(listBackups(c.backupRoot).length, 0);
-  const r = await runBackup(c, { ...local(pgc.root), now: new Date('2026-10-31T03:15:00Z') });
+  const at = d => ({ ...local(pgc.root), now: new Date(d) });
+  const slots = () => SLOTS.map(x => slotStamp(c.backupRoot, x));
+  const store = () => readdirSync(join(c.backupRoot, 'store')).sort();
+  const r = await runBackup(c, at('2026-10-31T03:15:00Z'));
   assert.equal(r.backup_archives, 2); assert.equal(r.tables_counted, 2); assert.equal(r.count_errors, 0); assert.equal(r.rows_total, 27);
+  assert.equal(r.slots_updated, 3);                                          // empty weekly/monthly slots are filled by the first backup
   assert.ok(Object.values(r).every(Number.isInteger));
-  const dir = join(c.backupRoot, '20261031T031500Z');
+  const dir = join(c.backupRoot, 'store', '20261031T031500Z');
   assert.deepEqual(readdirSync(dir).sort(), ['checksums.json', 'db-meta.json', 'project.dump', 'roles.sql']);
   assert.equal(statSync(dir).mode & 0o777, 0o700);
   for (const f of readdirSync(dir)) assert.equal(statSync(join(dir, f)).mode & 0o777, 0o600);
@@ -108,18 +126,48 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
   const meta = JSON.parse(readFileSync(join(dir, 'db-meta.json')));
   assert.deepEqual(meta.tables.map(t => t.join('.')).sort(), ['app.items.25', 'public.Odd "Name".2'].sort());
   assert.equal(meta.datcollate, 'C');
-  const [entry] = readEntries(c, identity);
-  assert.equal(entry.restore_test, 'not_run'); assert.equal(entry.rows_total, 27); assert.match(entry.dump_sha256, /^[0-9a-f]{64}$/);
-  assert.equal(status(c, new Date('2026-11-01T00:00:00Z')).newest_age_days, 0);
+  const first = readEntries(c, identity);
+  assert.deepEqual(first.map(e => e.kind), ['backup', 'rotation', 'rotation', 'rotation']);
+  assert.equal(first[0].restore_test, 'not_run'); assert.equal(first[0].rows_total, 27); assert.match(first[0].dump_sha256, /^[0-9a-f]{64}$/);
+  assert.deepEqual(first.slice(1).map(e => [e.slot, e.from, e.to]), SLOTS.map(x => [x, null, '20261031T031500Z']));
+  assert.equal(status(c, new Date('2026-11-01T00:00:00Z')).daily_age_days, 0);
   assert.throws(() => status(c, new Date('2026-11-05T00:00:00Z')), /stale/);
-  // Existing directory is refused and left untouched; a stop entry is logged.
-  await assert.rejects(runBackup(c, { ...local(pgc.root), now: new Date('2026-10-31T03:15:00Z') }), /mkdir/);
+  // Existing backup of the same stamp is refused and left untouched; a stop entry is logged.
+  await assert.rejects(runBackup(c, at('2026-10-31T03:15:00Z')), /mkdir/);
   assert.ok(existsSync(dir) && !existsSync(dir + '.failed'));
-  // A failing dump leaves no usable backup: directory renamed .failed, listing ignores it, stop entry logged.
-  await assert.rejects(runBackup(c, { ...local(pgc.root), now: new Date('2026-11-01T03:15:00Z'), runAsync: async () => { throw Error('SECRET_CANARY'); } }),
+  // A failing dump leaves the old copy in every slot; the partial work is quarantined in .tmp and logged as a stop.
+  await assert.rejects(runBackup(c, { ...at('2026-11-02T03:15:00Z'), runAsync: async () => { throw Error('SECRET_CANARY'); } }),
     e => e.stage === 'dump_data' && !String(e.message).includes('CANARY'));
-  assert.ok(existsSync(join(c.backupRoot, '20261101T031500Z.failed'))); assert.deepEqual(listBackups(c.backupRoot), ['20261031T031500Z']);
-  assert.deepEqual(readEntries(c, identity).map(e => e.kind), ['backup', 'stop', 'stop']);
+  assert.ok(existsSync(join(c.backupRoot, '.tmp', '20261102T031500Z.failed'))); assert.deepEqual(store(), ['20261031T031500Z']);
+  assert.deepEqual(slots(), Array(3).fill('20261031T031500Z'));
+  // Weekday (Tuesday, not the 1st): only daily moves; the old daily is removed only because no other slot references it.
+  assert.equal((await runBackup(c, at('2026-11-03T03:15:00Z'))).slots_updated, 1);
+  assert.deepEqual(slots(), ['20261103T031500Z', '20261031T031500Z', '20261031T031500Z']); assert.deepEqual(store(), ['20261031T031500Z', '20261103T031500Z']);
+  assert.ok(!existsSync(join(c.backupRoot, '.tmp', '20261102T031500Z.failed')));   // earlier failed work is cleared by the next success
+  // Sunday promotes to weekly (and daily); the previous daily copy becomes unreferenced and is removed.
+  assert.equal((await runBackup(c, at('2026-11-08T03:15:00Z'))).slots_updated, 2);
+  assert.deepEqual(slots(), ['20261108T031500Z', '20261108T031500Z', '20261031T031500Z']); assert.deepEqual(store(), ['20261031T031500Z', '20261108T031500Z']);
+  // The 1st of the month promotes to monthly (a Tuesday here, so weekly is untouched).
+  assert.equal((await runBackup(c, at('2026-12-01T03:15:00Z'))).slots_updated, 2);
+  assert.deepEqual(slots(), ['20261201T031500Z', '20261108T031500Z', '20261201T031500Z']); assert.deepEqual(store(), ['20261108T031500Z', '20261201T031500Z']);
+  // Failure keeps old: the weekly swap fails mid-way. Weekly still points at its previous verified copy, which still exists.
+  const failSlot = name => (from, to) => { if (to.endsWith(`.${name}`)) throw Error('SECRET_CANARY'); return renameSync(from, to); };
+  await assert.rejects(runBackup(c, { ...at('2026-12-06T03:15:00Z'), publishDeps: { rename: (f, t) => (t.endsWith('/weekly') ? failSlot('weekly')(f, t + '.weekly') : renameSync(f, t)) } }),
+    e => e.stage === 'rotate' && !String(e.message).includes('CANARY'));
+  assert.equal(slotStamp(c.backupRoot, 'weekly'), '20261108T031500Z'); assert.ok(existsSync(join(c.backupRoot, 'store', '20261108T031500Z', 'checksums.json')));
+  assert.equal(slotStamp(c.backupRoot, 'monthly'), '20261201T031500Z');
+  // Failure on the very first swap changes no slot at all.
+  await assert.rejects(runBackup(c, { ...at('2026-12-07T03:15:00Z'), publishDeps: { rename: (f, t) => { if (t.endsWith('/daily')) throw Error('SECRET_CANARY'); return renameSync(f, t); } } }),
+    e => e.stage === 'rotate');
+  assert.equal(slotStamp(c.backupRoot, 'daily'), '20261206T031500Z');   // daily already advanced on the previous (partly failed) Sunday run
+  assert.equal(slotStamp(c.backupRoot, 'weekly'), '20261108T031500Z'); assert.equal(slotStamp(c.backupRoot, 'monthly'), '20261201T031500Z');
+  assert.ok(existsSync(join(c.backupRoot, 'store', '20261108T031500Z')) && existsSync(join(c.backupRoot, 'store', '20261201T031500Z')));
+  // Every rotation, prune and stop is in the encrypted log with from/to.
+  const log = readEntries(c, identity), rotations = log.filter(e => e.kind === 'rotation').map(e => `${e.slot}:${e.from}>${e.to}`);
+  for (const expected of ['daily:20261031T031500Z>20261103T031500Z', 'daily:20261103T031500Z>20261108T031500Z', 'weekly:20261031T031500Z>20261108T031500Z',
+    'daily:20261108T031500Z>20261201T031500Z', 'monthly:20261031T031500Z>20261201T031500Z', 'daily:20261201T031500Z>20261206T031500Z']) assert.ok(rotations.includes(expected), expected);
+  assert.ok(!rotations.some(x => x.startsWith('weekly:20261108T031500Z>20261206')));
+  assert.ok(log.some(e => e.kind === 'prune' && e.removed.includes('20261031T031500Z')) && log.filter(e => e.kind === 'stop').length >= 4);
   // Restore test with a fake docker: exact container flags, count comparison, extension STOP, and logged results.
   const calls = [];
   const fake = (counts, avail = 'plpgsql\npgcrypto') => (p, a, o) => {
@@ -136,24 +184,42 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
   };
   const spawn = () => ({ status: 0, stdout: '' });
   const good = { 'app.items': 25, 'public.Odd "Name"': 2 };
-  const ok = await restoreTest(c, { run: fake(good), spawn, wait: async () => {} });
+  const ok = await restoreTest(c, { name: 'monthly', run: fake(good), spawn, wait: async () => {} });
   assert.equal(ok.restore_test_pass, 1); assert.equal(ok.tables_mismatched, 0); assert.equal(ok.rows_restored, 27);
   const start = calls.find(a => a[0] === 'run');
   assert.ok(start.includes('--network') && start[start.indexOf('--network') + 1] === 'none' && start.includes('--pull') && start.at(-1) === IMAGE);
   assert.ok(!start.some(x => /^(-p|-P|--publish|--publish-all|--privileged|--net=host)$/.test(x)) && !start.some(x => x.includes('PASSWORD')));
   assert.ok(start.some(x => x.includes('--lc-collate=C --lc-ctype=C')));
   assert.ok(calls.some(a => a[0] === 'rm' && a.includes('-v')));
-  await assert.rejects(restoreTest(c, { run: fake({ ...good, 'app.items': 24 }), spawn, wait: async () => {} }), e => e.stage === 'counts');
-  await assert.rejects(restoreTest(c, { run: fake(good, 'plpgsql'), spawn, wait: async () => {} }), e => e.stage === 'extensions' && e.missing.join() === 'pgcrypto');
-  const log = readEntries(c, identity).filter(e => e.kind === 'restore_test');
-  assert.deepEqual(log.map(e => e.result).slice(0, 2), ['pass', 'fail']); assert.equal(log[1].stage, 'counts'); assert.equal(log[1].tables_mismatched, 1);
-  assert.deepEqual([log[2].stage, log[2].missing_extensions], ['extensions', 1]);
+  await assert.rejects(restoreTest(c, { name: 'monthly', run: fake({ ...good, 'app.items': 24 }), spawn, wait: async () => {} }), e => e.stage === 'counts');
+  await assert.rejects(restoreTest(c, { name: 'monthly', run: fake(good, 'plpgsql'), spawn, wait: async () => {} }), e => e.stage === 'extensions' && e.missing.join() === 'pgcrypto');
+  const results = readEntries(c, identity).filter(e => e.kind === 'restore_test');
+  assert.deepEqual(results.map(e => e.result).slice(0, 3), ['pass', 'fail', 'fail']); assert.equal(results[1].stage, 'counts'); assert.equal(results[1].tables_mismatched, 1);
+  assert.deepEqual([results[2].stage, results[2].missing_extensions], ['extensions', 1]);
   // A tampered archive is refused before any container exists.
-  const before = calls.length;
-  writeFileSync(join(dir, 'project.dump'), Buffer.concat([readFileSync(join(dir, 'project.dump')), Buffer.from('x')]));
-  await assert.rejects(restoreTest(c, { run: fake(good), spawn, wait: async () => {} }), e => e.stage === 'verify');
+  const before = calls.length, monthly = join(c.backupRoot, 'store', slotStamp(c.backupRoot, 'monthly'));
+  writeFileSync(join(monthly, 'project.dump'), Buffer.concat([readFileSync(join(monthly, 'project.dump')), Buffer.from('x')]));
+  await assert.rejects(restoreTest(c, { name: 'monthly', run: fake(good), spawn, wait: async () => {} }), e => e.stage === 'verify');
   assert.equal(calls.length, before);
 });
+test('slot promotion rule and collection are exact and never delete without a resolving slot', () => {
+  const none = { weekly: true, monthly: true };
+  assert.deepEqual(slotsFor('20261103T031500Z', none), ['daily']);                       // Tuesday
+  assert.deepEqual(slotsFor('20261108T031500Z', none), ['daily', 'weekly']);             // Sunday
+  assert.deepEqual(slotsFor('20261201T031500Z', none), ['daily', 'monthly']);            // 1st, Tuesday
+  assert.deepEqual(slotsFor('20260301T031500Z', none), ['daily', 'weekly', 'monthly']);  // Sunday the 1st
+  assert.deepEqual(slotsFor('20261103T031500Z', { weekly: false, monthly: false }), ['daily', 'weekly', 'monthly']);
+  const root = mkdtempSync(join(tmpdir(), 'rad086-col-')); chmodSync(root, 0o700);
+  mkdirSync(join(root, 'store', '20261031T031500Z'), { recursive: true });
+  assert.deepEqual(collect(root), { removed: [], tmp_removed: 0 });                      // no slot resolves: nothing is deleted
+  assert.ok(existsSync(join(root, 'store', '20261031T031500Z')));
+  mkdirSync(join(root, '.tmp', 'x.failed'), { recursive: true }); mkdirSync(join(root, 'store', '20261101T031500Z'));
+  symlinkSync('store/20261101T031500Z', join(root, 'daily'));
+  assert.deepEqual(collect(root), { removed: ['20261031T031500Z'], tmp_removed: 1 });
+  assert.ok(existsSync(join(root, 'store', '20261101T031500Z')));
+  assert.throws(() => publish({ backupRoot: root }, '20261101T031500Z'));                // never replaces an existing store entry
+});
+
 test('container arguments never publish ports, keep no network, and never carry a password', () => {
   const a = containerArgs('n', { datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' });
   assert.deepEqual(a.slice(a.indexOf('--network'), a.indexOf('--network') + 2), ['--network', 'none']);
@@ -164,4 +230,39 @@ test('container arguments never publish ports, keep no network, and never carry 
 test('CLI never prints secrets or raw errors and init-password refuses a non-terminal', () => {
   const r = spawnSync(process.execPath, ['scripts/ops/laptop-backup.mjs', 'init-password'], { env: { ...process.env, HOME: tmp }, input: 'CANARY_PASSWORD\n', encoding: 'utf8' });
   assert.equal(r.status, 1); assert.match(r.stderr.trim(), /^STOP laptop_backup:[a-z_]+$/); assert.equal(r.stdout, ''); assert.doesNotMatch(r.stderr, /CANARY/);
+});
+// The owner-run probe packet is exercised for real against the local synthetic cluster (SQL parts only; the timed retries need a provider).
+const packet = readFileSync('docs/RAD-086_PROBE_SQL_PACKET.md', 'utf8');
+const steps = new Map([...packet.matchAll(/\*\*([A-Z]\d[a-z]?) — [^\n]*\*\*\n\n```bash\n([\s\S]*?)```/g)].map(m => [m[1], m[2]]));
+const sqlOf = id => /<<'SQL'\n([\s\S]*?)\nSQL\n/.exec(steps.get(id) + '\n')?.[1];
+test('probe packet: every part under 15k, mutations name only probe roles, and the SQL runs, tears down and leaves everything else untouched', () => {
+  for (const m of packet.matchAll(/```[a-z]*\n([\s\S]*?)```/g)) assert.ok(m[1].length < 15000);
+  for (const id of ['P0a', 'P0b', 'P1a', 'P1b', 'P2', 'P4a', 'P5b', 'P5e', 'C1', 'C2', 'C3', 'P8b']) assert.ok(sqlOf(id), id);
+  for (const [id, body] of steps) {
+    const sql = sqlOf(id) ?? '';
+    if (/\b(create|alter|drop|grant|revoke)\b/i.test(sql)) {
+      assert.doesNotMatch(sql, /assess_|launch_gate|secret|cascade|drop owned|\bgrant\b|\brevoke\b|if exists/i, id);
+      assert.match(sql, /:"(rname|a|b)"|\^rad086_probe_\[0-9a-f\]\{8\}_\[ab\]\$/, id);
+    }
+    assert.ok(!/\bsql\b.*password\s+'/i.test(body), id);                    // password only ever comes from a psql variable, never typed inline
+  }
+  assert.match(steps.get('P1a'), /noinherit nosuperuser nocreatedb nocreaterole noreplication nobypassrls connection limit 1 valid until/);
+  // Real run of the SQL steps.
+  const probe = join(tmp, 'probe'); mkdirSync(probe, { recursive: true });
+  writeFileSync(join(probe, 'name_a'), 'rad086_probe_deadbeef_a\n'); writeFileSync(join(probe, 'name_b'), 'rad086_probe_deadbeef_b\n');
+  for (const f of ['pa1', 'pb1', 'pb2']) writeFileSync(join(probe, f), 'a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718\n');
+  const env = { ...process.env, HOME: tmp, PGHOST: pgc.root, PGPORT: '55433', PGUSER: 'postgres', PGDATABASE: 'postgres' };
+  const run = id => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1'], { env, input: sqlOf(id), encoding: 'utf8' }).trim();
+  const admin = sql => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-c', sql], { env, encoding: 'utf8' }).trim();
+  admin('create role assess_worker nologin; create role bystander login');
+  const snap = () => admin("select string_agg(rolname||rolcanlogin||rolsuper, ',' order by rolname) from pg_roles where rolname in ('assess_worker','bystander','postgres')");
+  const before = snap(), protectedBefore = run('P0b');
+  assert.equal(run('P0a'), '0'); assert.equal(protectedBefore, '0|1');
+  run('P1a'); run('P1b'); assert.equal(run('P2'), '2|0');
+  run('P4a'); assert.equal(admin("select rolcanlogin from pg_roles where rolname='rad086_probe_deadbeef_a'"), 'f');
+  run('P5b'); assert.equal(run('P5e'), '2');
+  assert.match(run('C1'), /^\d+$/); run('C2'); assert.equal(run('C3'), '0');
+  assert.equal(run('P8b'), protectedBefore); assert.equal(snap(), before);
+  // Midway cleanup path: only role A was created, shell variables are gone, the exact-pattern teardown still removes it and nothing else.
+  run('P1a'); assert.equal(run('P0a'), '1'); run('C2'); assert.equal(run('C3'), '0'); assert.equal(snap(), before);
 });
