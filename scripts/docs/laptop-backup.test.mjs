@@ -84,7 +84,7 @@ test('encrypted reconciliation log: append-only chain, owner-only read, deletion
   assert.throws(() => readEntries(c, identity), /log_chain/);
 });
 
-function cluster() {
+function cluster(bootstrap = 'postgres') {
   let versions = [];
   try { versions = readdirSync('/usr/lib/postgresql'); } catch { /* reported below */ }
   const bin = versions.sort().map(v => `/usr/lib/postgresql/${v}/bin`).find(b => existsSync(b + '/initdb'));
@@ -93,7 +93,7 @@ function cluster() {
   if (as.length) execFileSync('chown', ['postgres', root]);
   chmodSync(root, 0o700);
   const sh = (p, a) => execFileSync(as[0] ?? p, [...as.slice(1), ...(as.length ? [p] : []), ...a], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  sh(`${bin}/initdb`, ['-D', root + '/data', '-A', 'trust', '-U', 'postgres', '--encoding=UTF8', '--locale=C']);
+  sh(`${bin}/initdb`, ['-D', root + '/data', '-A', 'trust', '-U', bootstrap, '--encoding=UTF8', '--locale=C']);
   sh(`${bin}/pg_ctl`, ['-D', root + '/data', '-o', `-c listen_addresses='' -k ${root} -p 55433`, '-w', '-l', root + '/log', 'start']);
   const major = Number(/ (\d+)\./.exec(execFileSync('pg_dump', ['--version'], { encoding: 'utf8' }))[1]);
   return { root, major, stop: () => sh(`${bin}/pg_ctl`, ['-D', root + '/data', '-m', 'immediate', 'stop']) };
@@ -238,9 +238,9 @@ test('CLI never prints secrets or raw errors and init-password refuses a non-ter
 const packet = readFileSync('docs/RAD-086_PROBE_SQL_PACKET.md', 'utf8');
 const steps = new Map([...packet.matchAll(/\*\*([A-Z]\d[a-z]?) — [^\n]*\*\*\n\n```bash\n([\s\S]*?)```/g)].map(m => [m[1], m[2]]));
 const sqlOf = id => /<<'SQL'\n([\s\S]*?)\nSQL\n/.exec(steps.get(id) + '\n')?.[1];
-test('probe packet: every part under 15k, mutations name only probe roles, and the SQL runs, tears down and leaves everything else untouched', () => {
+test('probe packet: every part under 15k, mutations name only probe roles, and the SQL runs, tears down and leaves everything else untouched', t => {
   for (const m of packet.matchAll(/```[a-z]*\n([\s\S]*?)```/g)) assert.ok(m[1].length < 15000);
-  for (const id of ['P0a', 'P0b', 'P1a', 'P1b', 'P2', 'P4a', 'P5b', 'P5e', 'C1', 'C2', 'C3', 'P8b']) assert.ok(sqlOf(id), id);
+  for (const id of ['P0a', 'P0b', 'P1a', 'P1b', 'P2', 'P2c', 'P4a', 'P5b', 'P5e', 'C1', 'C2', 'C3', 'P8b']) assert.ok(sqlOf(id), id);
   for (const [id, body] of steps) {
     const sql = sqlOf(id) ?? '';
     if (/\b(create|alter|drop|grant|revoke)\b/i.test(sql)) {
@@ -254,20 +254,41 @@ test('probe packet: every part under 15k, mutations name only probe roles, and t
   const probe = join(tmp, 'probe'); mkdirSync(probe, { recursive: true });
   writeFileSync(join(probe, 'name_a'), 'rad086_probe_deadbeef_a\n'); writeFileSync(join(probe, 'name_b'), 'rad086_probe_deadbeef_b\n');
   for (const f of ['pa1', 'pb1', 'pb2']) writeFileSync(join(probe, f), 'a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718\n');
-  const env = { ...process.env, HOME: tmp, PGHOST: pgc.root, PGPORT: '55433', PGUSER: 'postgres', PGDATABASE: 'postgres' };
+  const packetCluster = cluster('packet_test_admin');
+  t.after(() => packetCluster.stop());
+  const env = { ...process.env, HOME: tmp, PGHOST: packetCluster.root, PGPORT: '55433', PGUSER: 'packet_test_admin', PGDATABASE: 'postgres' };
   const run = id => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1'], { env, input: sqlOf(id), encoding: 'utf8' }).trim();
   const admin = sql => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-c', sql], { env, encoding: 'utf8' }).trim();
-  admin('create role assess_worker nologin; create role bystander login');
+  admin('create role postgres login createrole; create role assess_worker nologin; create role bystander login');
+  env.PGUSER = 'postgres';
   const snap = () => admin("select string_agg(rolname||rolcanlogin||rolsuper, ',' order by rolname) from pg_roles where rolname in ('assess_worker','bystander','postgres')");
   const before = snap(), protectedBefore = run('P0b');
   assert.equal(run('P0a'), '0'); assert.equal(protectedBefore, '0|1');
-  run('P1a'); run('P1b'); assert.equal(run('P2'), '2|0');
+  // Reproduce PostgreSQL 16+ automatic creator grants with the packet's real creator identity.
+  const elevated = sql => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-c', sql],
+    { env: { ...env, PGUSER: 'packet_test_admin' }, encoding: 'utf8' }).trim();
+  run('P1a'); run('P1b');
+  assert.equal(admin("select count(*) from pg_auth_members m join pg_roles r on r.oid=m.roleid where r.rolname ~ '^rad086_probe_[0-9a-f]{8}_[ab]$'"), '2');
+  assert.equal(run('P2'), '2|0'); assert.equal(run('P2c'), 't');
+  // A probe becoming a member must fail P2, independently of creator grants.
+  elevated('grant bystander to rad086_probe_deadbeef_a');
+  assert.equal(run('P2'), '2|1'); assert.equal(run('P2c'), 't');
+  elevated('revoke bystander from rad086_probe_deadbeef_a');
+  for (const option of ['admin', 'inherit', 'set']) {
+    elevated(`grant rad086_probe_deadbeef_a to postgres with ${option} ${option === 'admin' ? 'false' : 'true'}`);
+    assert.equal(run('P2c'), 'f', option);
+    elevated(`grant rad086_probe_deadbeef_a to postgres with ${option} ${option === 'admin' ? 'true' : 'false'}`);
+  }
+  elevated('grant rad086_probe_deadbeef_a to bystander with admin true, inherit false, set false');
+  assert.equal(run('P2c'), 'f');
+  elevated('revoke rad086_probe_deadbeef_a from bystander');
+  assert.equal(run('P2'), '2|0'); assert.equal(run('P2c'), 't');
   run('P4a'); assert.equal(admin("select rolcanlogin from pg_roles where rolname='rad086_probe_deadbeef_a'"), 'f');
   run('P5b'); assert.equal(run('P5e'), '2');
   assert.match(run('C1'), /^\d+$/); run('C2'); assert.equal(run('C3'), '0');
   assert.equal(run('P8b'), protectedBefore); assert.equal(snap(), before);
   // Midway cleanup path: only role A was created, shell variables are gone, the exact-pattern teardown still removes it and nothing else.
-  run('P1a'); assert.equal(run('P0a'), '1'); run('C2'); assert.equal(run('C3'), '0'); assert.equal(snap(), before);
+  run('P1a'); assert.equal(run('P2c'), 't'); assert.equal(run('P0a'), '1'); run('C2'); assert.equal(run('C3'), '0'); assert.equal(snap(), before);
 });
 
 test('locale provider is exact: ICU needs a bounded locale; unknown provider or missing ICU locale stops', () => {
