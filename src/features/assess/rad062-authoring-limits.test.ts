@@ -5,7 +5,7 @@ import { AUTHORING_LIMITS_V1, authoringCapacityHint } from './authoring-limits';
 import { rad062Fixture, syntheticDraft, migration, id } from './rad062-test-fixture';
 import manifest from '../../../scripts/pages/frontend-schema.json';
 
-it('M03 is deferred, UI remains dormant, server/client policy agrees at exact boundaries', async () => {
+it('M03 is required, UI remains dormant, server/client policy agrees at exact boundaries', async () => {
  const db = await rad062Fixture(2);
  try {
   expect((await db.admin.query("select to_regprocedure('assess.authoring_cleanup_v1(integer,boolean)') v")).rows[0].v).toBeNull();
@@ -26,8 +26,8 @@ it('M03 is deferred, UI remains dormant, server/client policy agrees at exact bo
   for (const role of ['anon', 'authenticated', 'assess_worker', 'assess_authoring_bridge']) expect((await db.admin.query("select has_function_privilege($1,'assess.authoring_cleanup_v1(integer,boolean)','execute') v", [role])).rows[0].v).toBe(false);
  } finally { await db.close(); }
  const name = '20261030000300_rad062_authoring_limits.sql';
- expect(manifest.deferredMigrations[name].sha256).toBe(createHash('sha256').update(readFileSync('supabase/migrations/' + name)).digest('hex'));
- expect(manifest.requiredMigrations).not.toContain(name);
+ expect(manifest.guardedFeatures.rad062.migrationSha256[name]).toBe(createHash('sha256').update(readFileSync('supabase/migrations/' + name)).digest('hex'));
+ expect(manifest.requiredMigrations).toContain(name);
 });
 it('three drafts across groups and ten revisions are atomic under competing saves; v1 remains callable', async () => {
  const db = await rad062Fixture();

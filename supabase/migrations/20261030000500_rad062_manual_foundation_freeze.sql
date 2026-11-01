@@ -72,8 +72,9 @@ alter table assess.manual_item_scores_v1 enable row level security;
 alter table assess.manual_events_v1 enable row level security;
 alter table assess.manual_final_receipts_v1 enable row level security;
 revoke all on assess.manual_work_v1,assess.manual_item_scores_v1,assess.manual_events_v1,assess.manual_final_receipts_v1 from public,anon,authenticated,assess_worker,assess_authoring_bridge;
+-- d3_fk_inventory_v1 sorts name columns (always C); sort these text keys in C too.
 do $$ declare expected jsonb; begin
- select jsonb_agg(e order by e->>0,e->>1,e->>2) into expected from jsonb_array_elements(
+ select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") into expected from jsonb_array_elements(
   (select inventory from assess.erasure_fk_contract where singleton)||
   '[["assess","manual_item_scores_v1","manual_item_scores_v1_grader_id_fkey","FOREIGN KEY (grader_id) REFERENCES public.profiles(user_id) ON DELETE SET NULL"],["assess","manual_events_v1","manual_events_v1_grader_id_fkey","FOREIGN KEY (grader_id) REFERENCES public.profiles(user_id) ON DELETE SET NULL"],["assess","manual_final_receipts_v1","manual_final_receipts_v1_final_grader_id_fkey","FOREIGN KEY (final_grader_id) REFERENCES public.profiles(user_id) ON DELETE SET NULL"]]'::jsonb) e;
  if assess.d3_fk_inventory_v1() is distinct from expected then raise exception 'unreviewed M05 identity edge' using errcode='55000'; end if;

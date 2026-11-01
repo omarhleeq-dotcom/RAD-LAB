@@ -2,7 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
-import { options, verifyMigrations, checkRows, main } from '../assess/rad062-db-day.mjs';
+import pg from 'pg';
+import { options, verifyMigrations, checkRows, main, checks, manifest, preflight, preflightSQL, sha256 } from '../assess/rad062-db-day.mjs';
+import { openLocalDatabase } from '../assess/local-database.mjs';
 import { rehearse } from '../assess/rad062-restore-rehearsal.mjs';
 const ref = 'a'.repeat(20);
 const remote = { PGHOST: `db.${ref}.supabase.co`, PGUSER: 'postgres', PGDATABASE: 'postgres', PGSSLMODE: 'verify-full', RAD062_EXPECTED_PROJECT_REF: ref };
@@ -67,6 +69,12 @@ test('dry run makes no connection, selectors cannot become connection strings, a
   const r = spawnSync(process.execPath, ['scripts/assess/rad062-db-day.mjs','checks','--execute'], { env: { ...process.env, ...remote, PGPASSWORD:'PRIVATE_CANARY' }, encoding:'utf8' });
   assert.equal(r.status,1); assert.equal(r.stderr.trim(),'STOP rad062_db_day'); assert.equal(r.stdout,'');
 });
+test('probe reads use the same live selectors, zero-connection dry-run, and no apply permission', async () => {
+  for (const flags of [[], ['--live'], ['--project-ref', ref]]) assert.throws(() => options(['probes', ...flags], remote));
+  assert.equal((await main(['probes', '--live', '--project-ref', ref], remote)).database_connections, 0);
+  assert.equal(options(pooledArgs('probes'), pooled).pooler, true);
+  assert.throws(() => options(pooledArgs('probes'), { ...pooled, PGPORT: '6543' }));
+});
 test('all eight SHA-256 pins pass and a tampered migration is refused before SQL', () => {
   assert.equal(verifyMigrations().length,8);
   for (const tampered of verifyMigrations()) assert.throws(() => verifyMigrations(file => Buffer.concat([readFileSync('supabase/migrations/'+file), Buffer.from(file===tampered?'--tampered':'')])));
@@ -76,15 +84,49 @@ test('boolean readiness failures stop; explicitly disclaimed operational claims 
   assert.throws(() => checkRows({ rows:[] }));
   assert.equal(checkRows([{rows:[]},{rows:[{ready:true,runtime_or_launch_verified:false,restore_verified:false}]}]),1);
 });
-test('both emergency packets and all dormant product/schema boundaries remain byte identical to main', () => {
-  for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md','scripts/pages/frontend-schema.json',
+test('promotion preserves both emergency packets and every original SQL/check byte', () => {
+  const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
+  const current = JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8'));
+  assert.deepEqual(current.requiredMigrations, [...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]);
+  assert.deepEqual(current.deferredMigrations, {});
+  assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : f), 'supabase/checks/rad062-ready.sql']);
+  for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md',
     'supabase/manual/assess-emergency-stop.sql','supabase/manual/assess-emergency-stop-v2.sql',
     'supabase/checks/assess-emergency-stopped.sql','supabase/checks/assess-emergency-stopped-v2.sql',
-    ...JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).checks,
-    ...JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
-    assert.deepEqual(readFileSync(path),execFileSync('git',['show',`origin/main:${path}`]));
+    ...base.checks,
+    ...current.requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
+    const original = execFileSync('git',['show',`023ec84c15bfd744f317ec079e2587d90e099414:${path}`]);
+    assert.deepEqual(undoCRLF(path, readFileSync(path)),reviewed[path] ? substitute(original, reviewed[path]) : original);
   }
 });
+// Owner-approved fixes of never-applied M02/M05/M06: only these exact byte changes.
+const fkOrder = [['do $$ declare expected jsonb; begin\n select jsonb_agg(e order by e->>0,e->>1,e->>2) into expected',
+  '-- d3_fk_inventory_v1 sorts name columns (always C); sort these text keys in C too.\n'
+  + 'do $$ declare expected jsonb; begin\n select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") into expected']];
+const reviewed = {
+  'supabase/migrations/20261030000100_rad062_full_name.sql': [
+    ['end $guard$;\n\n', 'end $guard$;\n\nrevoke references, trigger, truncate, maintain on table public.profiles from service_role;\n\n']],
+  'supabase/migrations/20261030000200_rad062_provenance_v2.sql': fkOrder,
+  'supabase/migrations/20261030000500_rad062_manual_foundation_freeze.sql': fkOrder,
+  'supabase/migrations/20261030000600_rad062_lifecycle_v2.sql': [
+    ['create function assess.not_held_v2(p_session uuid) returns void',
+      '-- v1 entry guard denies only an existing v2 attempt (version is immutable).\n'
+      + '-- Missing/foreign/stale/v1 inputs reach the original v1 checks and SQLSTATEs.\n'
+      + "create function assess.require_lifecycle_v1(p_session uuid) returns void\nlanguage plpgsql security definer set search_path='' as $$ begin\n"
+      + " if exists(select 1 from assess.sessions where id=p_session and lifecycle_version<>1) then\n  raise exception 'attempt version denied' using errcode='42501'; end if;\nend $$;\n"
+      + 'create function assess.not_held_v2(p_session uuid) returns void'],
+    ["perform assess.require_lifecycle_v2(p_session,1);", "perform assess.require_lifecycle_v1(p_session);"],
+    [" -- start already authorizes schema=1, but explicit protection also covers replay.\n",
+      " -- start already authorizes schema=1, but explicit protection also covers replay.\n -- Only an existing non-v1 assignment is denied; a missing one keeps its v1 error.\n"],
+    ["if not exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version=1) then",
+      "if exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version<>1) then"],
+    ["'lifecycle_version_guard_v2','require_lifecycle_v2','not_held_v2',", "'lifecycle_version_guard_v2','require_lifecycle_v2','require_lifecycle_v1','not_held_v2',"]],
+};
+function substitute(original, pairs) {
+  let text = original.toString('utf8');
+  for (const [before, after] of pairs) { assert.equal(text.split(before).length, 2); text = text.replace(before, () => after); }
+  return Buffer.from(text, 'utf8');
+}
 test('actual local logical restore applies eight transactions, rolls failures back, finds anchors and emits only counts', {timeout:120000}, async () => {
   const r = await rehearse();
   assert.equal(r.migrations_committed,8); assert.equal(r.rollback_witnesses,8);
@@ -94,7 +136,140 @@ test('actual local logical restore applies eight transactions, rolls failures ba
   assert.equal(r.tampered_b_diagnostic_failed,1); assert.equal(r.post_package_b_diagnostic_failures,7);
   assert.ok(Object.values(r).every(n=>typeof n==='number'||/^\d+$/.test(n)));
   assert.doesNotMatch(JSON.stringify(r),/SYNTHETIC_PRIVATE_CANARY|@|[0-9a-f]{8}-[0-9a-f]{4}-/);
-  // Frozen B catalogue checker intentionally cannot attest an additive package.
-  // Path (b) requires back-to-back P10; no required-check waiver.
-  assert.equal(r.required_check_failures,1);
+  // Frozen B still rejects additions; both complete-catalogue required checks now pass.
+  // Path (b) remains back-to-back P10 with no required-check waiver.
+  assert.equal(r.required_check_failures,0);
+});
+
+test('explicit latest applies the entire promoted required set', {timeout:30000}, async () => {
+  const db = await openLocalDatabase('postgres', { through:'latest' });
+  try {
+    assert.notEqual((await db.query("select to_regprocedure('assess.name_entry_v1()') v"))[0].v, null);
+    assert.notEqual((await db.query("select to_regprocedure('assess.freeze_v2()') v"))[0].v, null);
+    assert.notEqual((await db.query("select to_regclass('assess.manual_final_receipts_v1') v"))[0].v, null);
+  } finally { await db.close(); }
+});
+
+for (const { productionVersion, locale } of [
+  ...['C','en_US.UTF-8','icu-en-US'].map(locale=>({productionVersion:true,locale})),
+  ...['C','en_US.UTF-8'].map(locale=>({productionVersion:false,locale})),
+]) {
+test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and every required check: ${locale}`, {timeout:90000}, async () => {
+    const db = await openLocalDatabase('postgres', { through:'latest', locale, productionVersion });
+    let client, sqlstate='none (boolean assertion)';
+    try {
+      // Same synthetic Auth/role surface as the restore rehearsal; never a provider schema.
+      await db.exec(`create role assess_job_a nologin; create role assess_job_b nologin;
+        alter table auth.users add column banned_until timestamptz;
+        create table auth.sessions(user_id uuid); create table auth.refresh_tokens(user_id uuid);`);
+      const [cfg] = await db.query("select current_setting('unix_socket_directories') host,current_setting('port') port,current_database() database,datlocprovider,datlocale,datcollate,datctype from pg_database where datname=current_database()");
+      assert.deepEqual([cfg.datlocprovider,cfg.datlocale,cfg.datcollate,cfg.datctype],locale==='icu-en-US'?['i','en-US','en_US.UTF-8','en_US.UTF-8']:['c',null,locale,locale]);
+      // Owner D1: ICU en-US orders this synthetic inventory like C; libc en_US
+      // alone witnesses the pre-fix defect. Explicit C ordering remains required everywhere.
+      const [order] = await db.query(`select (select jsonb_agg(e order by e->>0,e->>1,e->>2) from jsonb_array_elements(assess.d3_fk_inventory_v1()) e)=assess.d3_fk_inventory_v1() default_order,
+        (select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") from jsonb_array_elements(assess.d3_fk_inventory_v1()) e)=assess.d3_fk_inventory_v1() c_order`);
+      assert.deepEqual(order, { default_order: locale === 'C' || locale === 'icu-en-US', c_order: true });
+      client = new pg.Client({ host: cfg.host, port: Number(cfg.port), user: 'postgres', database: cfg.database, password: '', ssl: false });
+      await client.connect();
+      const query=client.query.bind(client);
+      client.query=async(...args)=>{try{return await query(...args);}catch(e){sqlstate=e.code??'unavailable';throw e;}};
+      await client.query("set rad085.sharing_phase='pre-initializer'");
+      assert.deepEqual(await checks(client, manifest().checks), { checks_passed: manifest().checks.length });
+      for (const file of ['supabase/checks/rad062-ready.sql','supabase/checks/rad062-p1-b-ready.sql']) {
+        await client.query('begin');
+        await client.query('grant execute on function assess.freeze_v2() to authenticated');
+        await assert.rejects(checks(client, [file]), { message: 'required_check_failed:' + file });
+      }
+      const ready='supabase/checks/rad062-ready.sql';
+      const readyRows=async()=>(await client.query(readFileSync(ready,'utf8'))).rows;
+      // Owner D3: excluding pg_constraint NOT NULL entries must not hide a
+      // nullable column: attnotnull remains part of the relation fingerprint.
+      await client.query('begin');
+      await client.query('alter table assess.account_stops alter column disabled_at drop not null');
+      let rows=await readyRows();
+      assert.equal(rows.find(r=>r.check_name==='relations').ok,false);
+      assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,true);
+      await assert.rejects(checks(client,[ready]),{message:'required_check_failed:'+ready});
+      assert.deepEqual(await checks(client,manifest().checks),{checks_passed:manifest().checks.length});
+      if(!productionVersion){
+        // Owner 3b: a scratch column has no protected expected value. The new
+        // row must reject an unvalidated NOT NULL independently of its fingerprint.
+        await client.query('begin');
+        await client.query('alter table assess.scope_lock add column rad062_d3_scratch integer');
+        rows=await readyRows();
+        assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,true);
+        await client.query('alter table assess.scope_lock add constraint rad062_d3_scratch_not_null not null rad062_d3_scratch not valid');
+        rows=await readyRows();
+        assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,false);
+        await assert.rejects(checks(client,[ready]),{message:'required_check_failed:'+ready});
+        assert.deepEqual(await checks(client,manifest().checks),{checks_passed:manifest().checks.length});
+      }
+    } catch(e) { throw new Error(`${locale}:${e.message}:SQLSTATE=${sqlstate}`,{cause:e}); }
+    finally { if (client) await client.end(); await db.close(); }
+});
+}
+
+// Approved D-CRLF delta only; all other historical byte assertions stay intact.
+function undoCRLF(path, bytes) {
+  if (!/20261030000[68]00_/.test(path)) return bytes;
+  let sql = bytes.toString();
+  const helper = sql.slice(sql.indexOf('-- D-CRLF:'), sql.indexOf('do $', sql.indexOf('-- D-CRLF:')));
+  assert.equal(sha256(helper), 'd7e5372d72bce802485108ee3054d84d76deda47fd5e9a010eee9e17784626a0');
+  sql = sql.replace(helper, '').replace('drop function pg_temp.rad062_patch(text,text,text);\n', '')
+    .replaceAll(':=pg_temp.rad062_patch(', ':=replace(')
+    .replaceAll("if position(anchor in replace(original,E'\\r\\n',E'\\n'))=0 then", 'if position(anchor in original)=0 then');
+  return Buffer.from(sql);
+}
+
+test('job_b(a): required job_a, optional job_b; any LOGIN or worker connection stops', async () => {
+  const env = { RAD062_SECRET_STATE:'DISABLED', RAD062_RAD086_VERIFIED:'yes', RAD062_V1_PACKET_AT_HAND:'yes' };
+  const good = { gate_rows:1, required_job_a:1, open_gates:0, login_roles:0, worker_connections:0, open_assignments:0, unsettled_sessions:0 };
+  assert.match(preflightSQL, /where rolname='assess_job_a'/);
+  assert.match(preflightSQL, /where usename in \('assess_job_a','assess_job_b','assess_worker'\)/);
+  assert.match(preflightSQL, /rolname in \('assess_job_a','assess_job_b','assess_worker'\) and rolcanlogin/);
+  assert.deepEqual(await preflight({ query:async()=>({ rows:[good] }) },env), good);
+  for (const bad of [{ required_job_a:0 }, { login_roles:1 }, { worker_connections:1 }]) {
+    await assert.rejects(preflight({ query:async()=>({ rows:[{ ...good,...bad }] }) },env));
+  }
+});
+
+test('D-CRLF patch preserves every other byte, global occurrence count, anchor-local EOL and missing-anchor STOP', async () => {
+  const db = await openLocalDatabase('pglite');
+  try {
+    const sql = readFileSync('supabase/migrations/20261030000600_rad062_lifecycle_v2.sql','utf8');
+    await db.exec(sql.slice(sql.indexOf('create or replace function pg_temp.rad062_patch'),sql.indexOf('do $isolate$')));
+    for (const eol of ['\n','\r\n']) {
+      const body = 'KEEP\r\nBEGIN mixed\n' + 'begin'+eol+'original bytes '+eol+'begin'+eol+'END';
+      const [r] = await db.query('select pg_temp.rad062_patch($1,$2,$3) result',[body,'begin\n','begin\nadded;\n']);
+      assert.equal(r.result,body.replaceAll('begin'+eol,'begin'+eol+'added;'+eol));
+    }
+    const mixed = 'begin\r\none\r\nbegin\ntwo\n';
+    const [r] = await db.query('select pg_temp.rad062_patch($1,$2,$3) result',[mixed,'begin\n','begin\nadded;\n']);
+    assert.equal(r.result,'begin\r\nadded;\r\none\r\nbegin\nadded;\ntwo\n');
+    const [literal] = await db.query('select pg_temp.rad062_patch($1,$2,$3) result',['x(a.b)\r\nkeep','x(a.b)','x(a.b)\nadded']);
+    assert.equal(literal.result,'x(a.b)\r\nadded\r\nkeep');
+    await db.exec('begin; create table public.rad062_anchor_abort_witness(n integer)');
+    await assert.rejects(db.query('select pg_temp.rad062_patch($1,$2,$3)', ['unchanged','missing\n','add\n']));
+    await db.exec('rollback');
+    assert.equal((await db.query("select to_regclass('public.rad062_anchor_abort_witness') is null absent"))[0].absent,true);
+  } finally { await db.close(); }
+});
+
+test('job_b(a) on a catalogue: A alone passes, A+B passes, each present worker LOGIN stops', async () => {
+  const db=await openLocalDatabase('pglite');
+  const client={ query:async sql=>({ rows:await db.query(sql) }) };
+  const env={ RAD062_SECRET_STATE:'DISABLED',RAD062_RAD086_VERIFIED:'yes',RAD062_V1_PACKET_AT_HAND:'yes' };
+  try {
+    await db.exec('create role assess_job_a nologin');
+    await preflight(client,env);
+    await db.exec('create role assess_job_b nologin');
+    await preflight(client,env);
+    for(const role of ['assess_job_a','assess_job_b','assess_worker']) {
+      await db.exec(`alter role ${role} login`);
+      await assert.rejects(preflight(client,env),{ message:'preconditions' });
+      await db.exec(`alter role ${role} nologin`);
+    }
+    await db.exec('drop role assess_job_b; drop role assess_job_a');
+    await assert.rejects(preflight(client,env),{ message:'preconditions' });
+  } finally { await db.close(); }
 });

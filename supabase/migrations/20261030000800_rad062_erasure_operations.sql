@@ -17,6 +17,27 @@ end $$;
 -- D3 uses the same capacity -> scope -> profile -> assignment -> session order
 -- as v2 writers. Patch attributes in place, retaining OID, owner, ACL and config.
 -- Each reviewed anchor is mandatory: any mismatch aborts the ENTIRE transaction.
+-- D-CRLF: literal anchors, optional CR before each LF, global replacement.
+-- Only replacement bytes change; choose the local newline at each occurrence.
+create or replace function pg_temp.rad062_patch(body text, anchor text, replacement text)
+returns text language plpgsql as $crlf$
+declare pattern text; remaining text:=body; matched text; prefix text; ending text; result text:=''; hits integer:=0;
+begin
+ pattern:=replace(regexp_replace(anchor, '([\\.\^$|()\[\]{}*+?])', E'\\\\\\1', 'g'), E'\n', E'\r?\n');
+ loop
+  matched:=(regexp_match(remaining, '('||pattern||')'))[1];
+  exit when matched is null;
+  prefix:=left(remaining,position(matched in remaining)-1);
+  ending:=coalesce((regexp_match(matched,E'(\r?\n)'))[1],
+    (regexp_match(substr(remaining,length(prefix)+length(matched)+1),E'(\r?\n)'))[1],
+    (regexp_match(prefix,E'(\r?\n)[^\n]*$'))[1],E'\n');
+  result:=result||prefix||replace(replacement,E'\n',ending);
+  remaining:=substr(remaining,length(prefix)+length(matched)+1);
+  hits:=hits+1;
+ end loop;
+ if hits=0 then raise exception 'missing body patch anchor'; end if;
+ return result||remaining;
+end $crlf$;
 do $patch$ declare signature text; original text; patched text; anchor text; replacement text; begin
  foreach signature in array array['public.owner_account_deletion_v1(text,uuid,uuid,integer)',
   'assess.account_management_v1(text,uuid,text,uuid,integer)',
@@ -24,12 +45,12 @@ do $patch$ declare signature text; original text; patched text; anchor text; rep
   'assess.erase_account_d3_v1(uuid)'] loop
   original:=pg_get_functiondef(signature::regprocedure);
   anchor:=E'begin\n';
-  if position(anchor in original)=0 then raise exception 'missing M08 entry anchor: %',signature; end if;
-  patched:=replace(original,anchor,E'begin\n perform pg_advisory_xact_lock(hashtextextended(''rad062-capacity'',0));\n');
+  if position(anchor in replace(original,E'\r\n',E'\n'))=0 then raise exception 'missing M08 entry anchor: %',signature; end if;
+  patched:=pg_temp.rad062_patch(original,anchor,E'begin\n perform pg_advisory_xact_lock(hashtextextended(''rad062-capacity'',0));\n');
   if signature='assess.erase_account_d3_v1(uuid)' then
    anchor:='or exists(select 1 from assess.assignment_reviews r where r.draft_id=d.id and r.assignment_id is not null));';
    if position(anchor in patched)=0 then raise exception 'missing M08 protected draft anchor'; end if;
-   patched:=replace(patched,anchor,'or exists(select 1 from assess.assignment_reviews r where r.draft_id=d.id and r.assignment_id is not null)
+   patched:=pg_temp.rad062_patch(patched,anchor,'or exists(select 1 from assess.assignment_reviews r where r.draft_id=d.id and r.assignment_id is not null)
     or exists(select 1 from assess.authoring_holds_v1 h where h.draft_id=d.id));');
    anchor:=' delete from auth.users where id=p_user;';
    replacement:=$body$
@@ -46,30 +67,30 @@ do $patch$ declare signature text; original text; patched text; anchor text; rep
  update assess.manual_final_receipts_v1 set final_grader_id=null where final_grader_id=p_user;
  delete from auth.users where id=p_user;$body$;
    if position(anchor in patched)=0 then raise exception 'missing M08 erase anchor'; end if;
-   patched:=replace(patched,anchor,replacement);
+   patched:=pg_temp.rad062_patch(patched,anchor,replacement);
   end if;
   execute patched;
  end loop;
  original:=pg_get_functiondef('assess.d3_needs_transfer_v1(uuid)'::regprocedure);
  anchor:='select exists(select 1 from assess.groups g';
- if position(anchor in original)=0 then raise exception 'missing M08 transfer anchor'; end if;
- patched:=replace(original,anchor,'select exists(select 1 from assess.authoring_drafts d join assess.authoring_holds_v1 h on h.draft_id=d.id where d.writer_id=p_user)
+ if position(anchor in replace(original,E'\r\n',E'\n'))=0 then raise exception 'missing M08 transfer anchor'; end if;
+ patched:=pg_temp.rad062_patch(original,anchor,'select exists(select 1 from assess.authoring_drafts d join assess.authoring_holds_v1 h on h.draft_id=d.id where d.writer_id=p_user)
   or exists(select 1 from assess.groups g');
  execute patched;
  -- A held private draft also protects its containing group from profile CASCADE.
  -- Transfer the group before nulling provenance; never strand its rights evidence.
  original:=pg_get_functiondef('assess.d3_shared_group_v1(uuid,uuid)'::regprocedure);
  anchor:='or exists(select 1 from assess.authoring_drafts d where d.group_id=g.id and d.writer_id is distinct from p_user)';
- if position(anchor in original)=0 then raise exception 'missing M08 held group anchor'; end if;
- patched:=replace(original,anchor,anchor||'
+ if position(anchor in replace(original,E'\r\n',E'\n'))=0 then raise exception 'missing M08 held group anchor'; end if;
+ patched:=pg_temp.rad062_patch(original,anchor,anchor||'
    or exists(select 1 from assess.authoring_drafts d join assess.authoring_holds_v1 h on h.draft_id=d.id where d.group_id=g.id)');
  execute patched;
  -- Rights clearance covers every v2 retained revision/package, including private
  -- drafts protected by an explicit rights/retention hold. Bounded, never truncate.
  original:=pg_get_functiondef('assess.d3_inventory_v1(uuid)'::regprocedure);
  anchor:=$a$  union all select 'group',g.id::text,to_jsonb(g.name)$a$;
- if position(anchor in original)=0 then raise exception 'missing M08 content inventory anchor'; end if;
- patched:=replace(original,anchor,$a$  union all select 'v2-revision',r.draft_id::text||':'||r.revision,to_jsonb(r)
+ if position(anchor in replace(original,E'\r\n',E'\n'))=0 then raise exception 'missing M08 content inventory anchor'; end if;
+ patched:=pg_temp.rad062_patch(original,anchor,$a$  union all select 'v2-revision',r.draft_id::text||':'||r.revision,to_jsonb(r)
    from assess.authoring_revisions r join assess.authoring_drafts d on d.id=r.draft_id where d.writer_id=p_user and d.document->>'schemaVersion'='2'
   union all select 'v2-package',r.draft_id::text||':'||r.draft_revision,to_jsonb(r)
    from assess.authoring_reviewed_packages r join assess.authoring_drafts d on d.id=r.draft_id where d.writer_id=p_user and d.document->>'schemaVersion'='2'
@@ -82,8 +103,8 @@ do $patch$ declare signature text; original text; patched text; anchor text; rep
  -- All document bytes, revision metadata and ordinary writer checks stay exact.
  original:=pg_get_functiondef('assess.authoring_write_guard_v1()'::regprocedure);
  anchor:=$a$ if tg_table_name='authoring_drafts' then did:=new.id; else did:=new.draft_id; end if;$a$;
- if position(anchor in original)=0 then raise exception 'missing M08 authoring erasure anchor'; end if;
- patched:=replace(original,anchor,$a$ if tg_table_name='authoring_drafts' and tg_op='UPDATE' then
+ if position(anchor in replace(original,E'\r\n',E'\n'))=0 then raise exception 'missing M08 authoring erasure anchor'; end if;
+ patched:=pg_temp.rad062_patch(original,anchor,$a$ if tg_table_name='authoring_drafts' and tg_op='UPDATE' then
   if new.writer_id is null and assess.d3_erasing_v1(old.writer_id)
    and to_jsonb(new)-'writer_id'=to_jsonb(old)-'writer_id' then return new; end if;
  end if;
@@ -93,6 +114,7 @@ do $patch$ declare signature text; original text; patched text; anchor text; rep
  if (select inventory from assess.erasure_fk_contract where singleton) is distinct from assess.d3_fk_inventory_v1()
  then raise exception 'M08 identity inventory drift' using errcode='55000'; end if;
 end $patch$;
+drop function pg_temp.rad062_patch(text,text,text);
 
 create function assess.maintain_v2(p_limit integer default 50) returns jsonb
 language plpgsql security definer set search_path='' as $$

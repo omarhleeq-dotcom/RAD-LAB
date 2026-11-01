@@ -1,12 +1,19 @@
 // RAD085-DB-DAY-PROMOTION-20261027: test-only helper. The repository is now promoted, but the SEC-04 gate
 // witnesses are about the DORMANT state (a client module that mutates the shared manifest). This restores
 // the reviewed pre-promotion classification inside a disposable project copy only.
+import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { RAD085_BOUNDARY, RAD085_DEFER_REASON } from '../assess/server-rad085-contracts';
 
 export function demoteP1(root: string) {
+ // Restore a real immutable B tree before applying the original P1 demotion.
+ // Remove future files in the disposable copy; never project the current manifest.
+ const archive = execFileSync('git', ['archive', '05b548b41f4212d86c5b20813f204dd54b469f70', 'src', 'supabase', 'scripts/pages'],
+  { cwd: resolve(import.meta.dirname, '../../..'), maxBuffer: 64 * 1024 * 1024 });
+ for (const path of ['src', 'supabase', 'scripts/pages']) rmSync(join(root, path), { recursive: true, force: true });
+ execFileSync('tar', ['-x', '-C', root], { input: archive });
  const guardPath = join(root, 'src/features/supervisor/p1-availability.ts');
  const guard = readFileSync(guardPath, 'utf8').replace('P1_AVAILABLE: boolean = true;', 'P1_AVAILABLE: boolean = false;');
  writeFileSync(guardPath, guard);

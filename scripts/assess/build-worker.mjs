@@ -21,8 +21,8 @@ for (const file of ['worker.cjs', 'worker-main.mjs', 'Dockerfile']) files[file] 
 const sources = {};
 for (const path of [...inputs.filter(p => !p.startsWith('node_modules/')), 'package-lock.json', 'scripts/assess/build-worker.mjs', 'scripts/pages/frontend-schema.json']) sources[path] = sha(await readFile(path));
 const migrations = {};
-const deferred = JSON.parse(await readFile('scripts/pages/frontend-schema.json','utf8')).deferredMigrations;
-for (const file of (await readdir('supabase/migrations')).filter(p => p.endsWith('.sql')&&!Object.hasOwn(deferred,p)).sort()) migrations[file] = sha(await readFile(`supabase/migrations/${file}`));
+const required = JSON.parse(await readFile('scripts/pages/frontend-schema.json','utf8')).requiredMigrations;
+for (const file of (await readdir('supabase/migrations')).filter(p => p.endsWith('.sql')&&required.includes(p)).sort()) migrations[file] = sha(await readFile(`supabase/migrations/${file}`));
 const { workerVersions } = createRequire(import.meta.url)(join(output, 'worker.cjs'));
 const manifest = { contract: 'rad085-worker-build/1', versions: workerVersions(), files, sources, migrations,
   limits: { tick: 1, pool: 1, taskCount: 1, parallelism: 1, platformRetries: 0, shutdownMilliseconds: 8000 },

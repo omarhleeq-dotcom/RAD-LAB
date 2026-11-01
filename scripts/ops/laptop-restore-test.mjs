@@ -132,7 +132,7 @@ export function readMeta(dir) {
   return m;
 }
 
-export async function restoreTest(c, { name = 'latest', dryRun = false, run = execFileSync, spawn = spawnSync, wait = ms => new Promise(r => setTimeout(r, ms)) } = {}) {
+export async function restoreTest(c, { name = 'latest', dryRun = false, run = execFileSync, spawn = spawnSync, wait = ms => new Promise(r => setTimeout(r, ms)), beforeTeardown } = {}) {
   let stage = 'select', container = null, dir, backup, imageId, extraSettings, secondPass, tocRestored = 0;
   const sh = (args, o = {}) => String(run('docker', args, { encoding: 'utf8', stdio: 'pipe', timeout: 600000, ...o }));
   const exec = (cmd, o) => sh(['exec', ...(o?.stdin ? ['-i'] : []), container, ...cmd]);
@@ -219,6 +219,7 @@ export async function restoreTest(c, { name = 'latest', dryRun = false, run = ex
       rows += got; if (got !== n) mismatched++;
     }
     if (mismatched) { const e = new Stop('counts'); e.detail = { tables_compared: counted.length, tables_mismatched: mismatched }; throw e; }
+    if (beforeTeardown) { stage = 'rehearsal'; await beforeTeardown({ container, database: DB }); }
     stage = 'log';
     const result = { tables_compared: counted.length, tables_mismatched: 0, rows_restored: rows, tables_uncounted: meta.tables.length - counted.length,
       container_server_version_num: server, collation_match: 1, supabase_admin_extra_settings_count: extraSettings.length,

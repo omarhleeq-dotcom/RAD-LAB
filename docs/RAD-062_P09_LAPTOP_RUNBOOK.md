@@ -11,7 +11,37 @@ B false is an owner verification failure, not a runtime kill switch: the deploye
 
 Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sync, PostgreSQL client tools matching production, Supabase CLI login if needed, Node/npm, Docker and `gcloud` with its own login. Run from repository root on the reviewed commit. Never use shell tracing, command-line passwords, connection strings, terminal recording, `tee`, cloud artifacts, or participant exports. No provider dump is taken in CI or this workspace. Full logical backup is the sole exception for sensitive data files: it stays only on the owner's encrypted laptop, never in Git/chat/PR/cloud. Evidence shared outside the laptop contains counts, versions, checksums and yes/no only.
 
+## P10 window checklist — owner only
+
+**M02 collation STOP — source fix under review.** The pinned PostgreSQL18.4 image with its original en_US.utf8 locale failed `20261030000200_rad062_provenance_v2.sql` with SQLSTATE55000, `unreviewed M02 identity edge`: the same 37 FK edges compared unequal only by order (name columns sort in C, the JSON text keys sorted in the database collation). With owner approval, because M01–M08 were never applied live, P10 now sorts those text keys with `collate "C"` in M02 and M05 and in the text sort keys of `rad062-ready.sql` and `rad062-p1-b-ready.sql`; expected digests are unchanged. Required checks pass on C and en_US.UTF-8 synthetic databases; see the P10 report. Do not book/start the DB-day window or merge P10 until that fix is reviewed and CI `check` is fully green. Restore evidence must preserve the real production encoding/collation/locale provider (precondition in §1), not silently inherit a different local default. The owner-approved order below remains the procedure.
+
+The owner's P10 continuation governs this order. Prepare/review Draft #175 before DB day; only the owner merges inside the booked ≤60-minute window after M01–M08 are applied and verified on live. No agent live SQL, Variable writes, ready/merge/auto-merge, gate opening, LOGIN or secret enablement. The historical P9 transition sections below retain the original B inspections. P10 requires `rad062-p1-b-ready.sql` and `rad062-ready.sql`: before M01 use frozen B; after all eight run **every P10 manifest check** and inspect every readiness boolean as true except explicit operational non-claims. Migration SHA pins in `guardedFeatures.rad062.migrationSha256` match the reviewed bytes (M02/M05 updated by the collation fix).
+
+1. Owner applies M01–M08 on live in order after all P9 prerequisites, and verifies catalogue-probe prefix/hash/closed state and all promoted required checks.
+2. Owner sets the new marker Variable from the P10 report/PR body. The agent never sets it.
+3. Owner merges P10 in the same window.
+4. CI `check` and Deploy Pages must be green for that merged commit through normal automation.
+5. Owner checks sign-up, login, Practice and the Assess name gate on the phone; keep launch gate closed, workers NOLOGIN and secret DISABLED.
+6. Owner runs the full emergency stop v2 phone dry run and independent verification, including repeat/idempotence and the prescribed 60-second verification. Both packets remain byte-identical.
+
+Until the window, the PR deploy job is expected red **only for the old marker**; CI `check` must be fully green. Any other failure is unexpected and blocks the window. No workflow bypass, skip-ci, manual/extra deployment or hosted preview access.
+
+**Rollback inside the window:** if anything fails after merge, keep gate closed/NOLOGIN/secret DISABLED. Owner first restores the old marker Variable from reviewed pre-P10 evidence, then merges a normal reviewed revert PR for P10 within the window; no reset or force-push. Recheck normal CI/Deploy Pages and phone containment. The revert restores the old source marker contract but leaves M01–M08 installed: it does not claim frozen B accepts the installed catalogue. Preserve data and use the reviewed P9 forward-fix/repair-window procedure for any DB problem; never reopen the gate from the revert alone.
+
+**Staleness:** if main advances before DB day, merge updated main into `rad062/p10-promotion` without rebase/force-push, inspect the diff and unchanged SQL/emergency bytes, rerun affected QA, recompute with `--print-marker`, update the report and PR body only, and re-review before booking the window.
+
+## Current campaign — D-CRLF and real catalogue
+
+[Owner decisions D-CRLF / job_b(a)](DECISIONS.md#rad062-final-campaign-2026-11-01) authorize anchor-local LF/CRLF matching in M06/M08 and optional job_b only. No other migration bytes, readiness expected digests, guards, privileges, timeouts, phone packets or manual SQL are changed. The source marker is recomputed in the [P10 report](RAD-062_P10_REPORT_2026-10-30.md#final-campaign-2026-11-01); the owner alone sets a Variable.
+
+The primary CI test loads the byte-exact [no-data production schema snapshot](../supabase/fixtures/production-schema-2026-11-01/README.md) into the pinned Supabase17.11 ICU en-US image as supabase_admin, emits a custom-format RAD-086 backup with checksums and zero table counts, and calls the same rehearse(). Empty configuration rows are not silently invented: a failed diagnostic remains STOP. A synthetic pass does not prove this primary path. The prior CI stop at pre_diagnostic is addressed by [approved D-CONFIG and D-PROFILES-ACL](DECISIONS.md#rad062-config-acl-approved-2026-11-01): only the real-catalogue CI test seeds the four reviewed singleton rows after restoring the zero-data archive, using the same reviewed initializers/values as synthetic. D-CONFIG itself does not change the owner rehearsal or STOP rules; the later D-NAMES exception below changes only how the existing-name counter is handled. The owner reports the real-backup rehearsal passed pre_diagnostic and live already contains these rows. M01 alone adds the exact approved revoke of REFERENCES/TRIGGER/TRUNCATE/MAINTAIN on public.profiles from service_role, after its guard and inside its transaction; it is a no-op on the repo-built path. No other privilege difference may be normalized: STOP and owner decision. Expected readiness digests/checks/timeouts/guards remain unchanged. Discovery and acceptance evidence must use the pinned Supabase17.11 image; PG18-only findings are not evidence. See the [current proof and old/new marker](RAD-062_P10_REPORT_2026-10-30.md#config-acl-approved-2026-11-01). The DB-day window remains blocked until the proof passes and all existing prerequisites are met.
+
+Before M01, the rehearsal's read-only data precheck emits one complete batch of condition/source-line/count records. It uses the exact M01 validator expression without installing it and counts existing-row constraint/backfill and quota violations. Every nonzero condition except existing invalid names stops after the batch, under [D-NAMES](DECISIONS.md#rad062-d-names-2026-11-01); names are printed as accepted_invalid_name_profiles=<n>. The [report](RAD-062_P10_REPORT_2026-10-30.md#final-campaign-2026-11-01) inventories every condition and explains empty new tables. No automatic cleanup/backfill, identifiers or row values are printed. Owner CLI errors remain redacted; full PostgreSQL errors are enabled only by the no-data CI test callback.
+
 ## 1. Preconditions — no mutation
+
+**D-NAMES — existing names are accepted, report only.** M01 does not validate/backfill existing profile rows. The display_name trigger checks only INSERT or a changed display_name; login, Practice and updates to other profile fields are unaffected by a legacy invalid name. Assess entry/authorization still requires a valid full name, collected by the existing P10 name UI for that account. Invalid new/changed names remain rejected. The rehearsal reports `accepted_invalid_name_profiles=<n>` without STOP for that count alone; every other prerequisite/quota/constraint remains blocking. Do not bulk-edit names or run SQL cleanup to make this counter zero. [Owner decision/evidence](DECISIONS.md#rad062-d-names-2026-11-01).
+
 
 **Command:**
 
@@ -19,12 +49,12 @@ Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sy
 set -euo pipefail
 set +x
 unset PGSERVICE PGSERVICEFILE PGHOSTADDR PGOPTIONS PGPASSFILE
-npm run docs:context -- --pr 173
+npm run docs:context -- --pr 174
 npm run status:summary -- --id RAD-086
 node scripts/assess/rad062-db-day.mjs verify
 ```
 
-**Expected:** #173 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR; the laptop procedure and tools are in the [RAD-086 runbook](RAD-086_LAPTOP_BACKUP_RUNBOOK.md).
+**Expected:** #174 merged; reviewed main/commit; RAD-086 actually completed on the laptop, including daily local Docker backups, encrypted reconciliation, tested restore and rejection of the old Supavisor credential/cache. Eight verified migration digests, zero database connections. Do not infer RAD-086 completion from a merged backend PR; the laptop procedure and tools are in the [RAD-086 runbook](RAD-086_LAPTOP_BACKUP_RUNBOOK.md).
 
 **STOP:** unreviewed changes, unverified prerequisite, missing emergency v1 packet, laptop absent, backup/recovery/old-credential rejection unproved. Read [v1 phone packet](RAD-059_PHONE_PACKET.md) and [containment runbook](RAD-059_PHONE_RUNBOOK.md); keep them available independently of this laptop. Do not execute containment SQL just to satisfy this preflight.
 
@@ -54,7 +84,7 @@ export RAD062_POOLER_HOST PGHOST="$RAD062_POOLER_HOST" PGPORT=5432 PGUSER="postg
 live() { node scripts/assess/rad062-db-day.mjs "$@" --live --session-pooler --project-ref "$RAD062_EXPECTED_PROJECT_REF"; }
 ```
 
-The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts`, `checks` and, by owner decision D-C (2026-10-31), `apply` with exactly the same selectors; a 6543, host, user or TLS mismatch is refused for `apply` as for every other action. `restore` stays local-only and `verify` stays offline, so neither accepts `--session-pooler`. The direct path above is unchanged.
+The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts`, `checks`, read-only `probes` and, by owner decision D-C (2026-10-31), `apply` with exactly the same selectors; a 6543, host, user or TLS mismatch is refused for `apply` as for every other action. `restore` stays local-only and `verify` stays offline, so neither accepts `--session-pooler`. The direct path above is unchanged.
 
 **Command:**
 
@@ -70,9 +100,22 @@ export RAD062_SECRET_STATE=DISABLED RAD062_RAD086_VERIFIED=yes RAD062_V1_PACKET_
 live preflight --execute
 ```
 
-**Expected:** gate_rows=1, open_gates=0, worker_roles=2, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Both assess_job_a/b must exist and be NOLOGIN; assess_worker also must not LOGIN. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
+**Expected:** gate_rows=1, open_gates=0, required_job_a=1, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Owner decision job_b(a): assess_job_a is required; assess_job_b is optional. Every present job role and assess_worker must be NOLOGIN; worker_connections includes all three roles. The unchanged phone packets report missing_roles as information; absence of optional job_b does not require creating it. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
 
-**STOP:** any nonzero prohibited count, missing role, open assignment, unknown/ENABLED secret, failed CLI/permissions/query, or active/grading/awaiting-manual session. Do not start workers, create roles or close assignments to bypass this stop.
+**STOP:** any nonzero prohibited count, missing required assess_job_a, open assignment, unknown/ENABLED secret, failed CLI/permissions/query, or active/grading/awaiting-manual session. Do not start workers, create roles or close assignments to bypass this stop.
+
+Before accepting the rehearsal, the owner checks live database ownership using the verified live selectors above. This command is read-only and prints **yes/no only**; the agent never runs it:
+
+```bash
+if ! RAD062_LIVE_OWNER_POSTGRES=$(psql -X -qAt -v ON_ERROR_STOP=1 -c "begin read only; select case when exists (select from pg_database d join pg_roles r on r.oid=d.datdba where d.datname=current_database() and r.rolname='postgres') then 'yes' else 'no' end; rollback;" 2>/dev/null); then
+  printf '%s\n' no
+  exit 1
+fi
+printf '%s\n' "$RAD062_LIVE_OWNER_POSTGRES"
+test "$RAD062_LIVE_OWNER_POSTGRES" = yes
+```
+
+**Expected:** exactly `yes` and exit zero. **STOP:** `no`, error or unknown ownership. A rehearsal result is valid only after this owner check says yes; synthetic success or the image's default roles never proves live parity. Retain the yes/no privately with the reviewed backup evidence before clearing live selectors for §3. This is the [owner-approved temporary ownership condition](DECISIONS.md#rad062-restore-owner-parity-2026-11-01), not permission to change live ownership.
 
 Before taking the backup, inspect frozen B on the **unrestored current live schema**, using the already verified direct PG selectors (read only):
 
@@ -131,74 +174,42 @@ PY
 
 **STOP:** version incompatibility, permission error, incomplete dump, changed checksum, unclear managed-schema/extension coverage, cloud-synced location or any secret exposure. Partial files are unusable; preserve or remove locally under the owner's policy, then use a new directory for a fresh full backup. No retries that silently omit protected schemas, roles or data.
 
-## 3. Restore, apply M01–M08, verify on local PostgreSQL
+## 3. Owner-only RAD-086 Docker restore and full P10 rehearsal
 
-Install the same production major/patch as closely as available, with required extensions. Record actual version and every gap. Production compatibility rehearsal also targets PostgreSQL 17.11 per the plan; pinned CI PostgreSQL 18.4 alone does not prove that compatibility. An unavailable matching version/extension or an unexplained catalogue difference stops the day.
+**D-NAMES during this rehearsal:** before M01 the complete14-condition batch is still printed, with legacy invalid names labelled `accepted_invalid_name_profiles=<n>`; after M08 verifyCounts prints the same accepted label. A nonzero name count alone passes both phases, while any other nonzero prohibited count or quota/capacity limit still stops. This accepts existing rows only: login, Practice and unrelated profile updates remain available, and Assess asks the account for a valid full name through the P10 UI. No name backfill, weaker INSERT/name-change validation or automatic row edits are introduced. See [§1](#1-preconditions--no-mutation) and [D-NAMES](DECISIONS.md#rad062-d-names-2026-11-01).
 
-Use fresh local paths outside checkout. `initdb` bootstrap role is deliberately different from the roles in the production dump; verify it does not already occur in the production role inventory without printing that inventory. Never restore over an existing local database. Keep PostgreSQL logs on the encrypted volume; no remote listening or payload logging.
 
-**Command:**
+**Ownership parity is conditional on §1:** the owner must obtain `yes` from the live read-only ownership command. The rehearsal alone changes its throwaway restored database owner to postgres before any pre-M01 check, as [approved by the owner](DECISIONS.md#rad062-restore-owner-parity-2026-11-01). This addresses the measured CREATE FUNCTION/42501 STOP caused by the RAD-086 target's administrative ownership; [the P10 report](RAD-062_P10_REPORT_2026-10-30.md) records current CI evidence. Do not book the window or export restore verified before the full command passes and all owner conditions hold.
 
-```bash
-read -r -p 'New encrypted local PostgreSQL data directory: ' RAD062_LOCAL_DATA
-read -r -p 'New local Unix socket directory (simple absolute path): ' RAD062_LOCAL_SOCKET
-export RAD062_LOCAL_DATA RAD062_LOCAL_SOCKET
-mkdir -m 700 "$RAD062_LOCAL_SOCKET"
-initdb -D "$RAD062_LOCAL_DATA" -U rad062_restore_admin --auth-local=trust --encoding=UTF8 --no-locale
-pg_ctl -D "$RAD062_LOCAL_DATA" -l "$RAD062_LOCAL_DATA/local.log" -o "-c listen_addresses='' -k $RAD062_LOCAL_SOCKET -p 55432 -c log_statement=none -c log_min_error_statement=panic -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0" -w start
-PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres node --input-type=module - <<'JS'
-import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { localeArgs } from './scripts/ops/laptop-backup-lib.mjs';
-const meta = JSON.parse(readFileSync(join(process.env.RAD062_BACKUP_DIR,'db-meta.json'),'utf8'));
-execFileSync('createdb', ['-T','template0','--encoding=UTF8',...localeArgs(meta),'rad062_rehearsal'], { stdio:'pipe' });
-JS
-verify_restore_locale() {
-  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node --input-type=module - <<'JS'
-import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { validateLocale } from './scripts/ops/laptop-backup-lib.mjs';
-const meta = validateLocale(JSON.parse(readFileSync(join(process.env.RAD062_BACKUP_DIR,'db-meta.json'),'utf8')));
-const sql = "select row_to_json(m) from (select datlocprovider,datlocale,datcollate,datctype from pg_database where datname=current_database()) m";
-const actual = JSON.parse(execFileSync('psql',['-X','-At','-v','ON_ERROR_STOP=1','-c',sql],{encoding:'utf8'}));
-assert.deepEqual(actual, meta, 'STOP collation');
-JS
-}
-verify_restore_locale
-localdb() { PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node scripts/assess/rad062-db-day.mjs "$@"; }
-localdb restore
-localdb restore --execute
-verify_restore_locale
-localdb preflight --execute
-```
+The owner runs one command from the checkout, using the existing private RAD-086 configuration and its `daily`/latest completed backup. No local PostgreSQL server/client installation is needed. Docker must use the local Unix daemon socket `/var/run/docker.sock`; have the exact image below present (the RAD-086 runbook documents its pull). A missing image/tool is STOP, never a fallback.
 
-**Expected:** target created from template0 with the recorded provider and both libc locale fields: ICU uses `--locale-provider=icu --icu-locale=<datlocale>`, libc uses `--locale-provider=libc`. Provider, datlocale (including null for libc), collate and ctype must all match before and after restore. The bootstrap cluster C locale does not determine the target DB locale. Zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
-
-**STOP:** collation mismatch, missing ICU support or en_US.UTF-8 in the exact local version/image, role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
-
-**Command (eight separate calls, fail-fast):**
+**Command (one invocation, fail-fast):**
 
 ```bash
-# Before any additions, on the restored copy only:
-PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal \
-  psql -X -v ON_ERROR_STOP=1 -f scripts/assess/sql/rad062-b-diagnostic.sql
-localdb apply --migration M01 --execute
-localdb apply --migration M02 --execute
-localdb apply --migration M03 --execute
-localdb apply --migration M04 --execute
-localdb apply --migration M05 --execute
-localdb apply --migration M06 --execute
-localdb apply --migration M07 --execute
-localdb apply --migration M08 --execute
-# Frozen B is deliberately inspected separately during the bounded window below.
+node scripts/assess/rad062-laptop-rehearsal.mjs
 ```
 
-**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT; migration history insertion shares that transaction. `checks` still runs **every manifest required check, unchanged**, then `rad062-ready.sql`, and still fails on false/null/error. It is expected to fail at frozen B after M01–M08; do not call that full acceptance. Use the transition inspection below to measure the exact expected failure and verify the remaining checks independently. Intentional false `restore_verified`/`runtime_or_launch_verified` claims remain false and never attest operations.
+Clear live PG selectors in this shell first. No arguments, live selector, connection URL or non-loopback `PGHOST` is accepted; even a local socket forward supplied through `PGHOST` is refused. The command never reads live. The RAD-086 configuration locates local backup files and the encrypted reconciliation log only; it does not select a provider connection.
 
-M06/M08 fail their own entire transaction if any reviewed v1 body anchor is absent. The final readiness check fingerprints bodies, attributes, ACLs, relations and FK inventory; successful COMMIT alone is insufficient. The synthetic command below explicitly witnesses all ten M06 guards and eight M08 patches, forces failure before each COMMIT and compares catalogue/data/ledger rollback in memory:
+The command reuses `laptop-restore-test.mjs` exports and the actual `restoreTest` implementation: `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`, checksum verification, `prepareRolesSql` including the exact supabase_admin rolconfig post-load check, the two-pass `restorePlan`, event metadata checks and snapshot counts. It uses a fresh throwaway volume and a private Unix socket, `--network none`, no published ports, and teardown in `finally` on success or STOP. It restores neither over an existing DB nor over a provider/socket forward. The default RAD-086 command, outputs and tests retain their accepted behaviour; an optional callback runs this rehearsal before teardown.
+
+**Expected:** target created from template0 with the recorded provider and both libc locale fields: ICU uses `--locale-provider=icu --icu-locale=<datlocale>`, libc uses `--locale-provider=libc`. Provider, datlocale (including null for libc), collate and ctype must all match before and after restore. The bootstrap cluster locale does not determine the target DB locale. Zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The server must match the backup's recorded version, exactly 17.11 for the RAD-086 production backup. Record any version gap; unavailable matching version/extension or unexplained catalogue difference stops the day. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extension/role reproduction uses the pinned reviewed RAD-086 path; failure means STOP, not selective restore.
+
+After restoreTest finishes, the rehearsal uses docker exec/psql as supabase_admin to run `ALTER DATABASE rad_restore OWNER TO postgres` in the throwaway target only. PostgreSQL 15+ public schema ownership follows pg_database_owner; this restores the database-owner privilege relationship expected from live **only if §1 returned yes**. Before and after the change it compares postgres attributes/config and membership snapshots, verifies postgres remains non-superuser, and verifies the target owner afterwards. No GRANT, role/attribute/config/membership changes, SET ROLE, schema owner changes or migration/check changes. Any mismatch is `database_owner` STOP; the shared RAD-086 restore behaviour and tests are unchanged.
+
+Before M01, the command separately runs the diagnostic and **frozen B**, in the default initialized phase. The diagnostic must pass completely. On this **restored** copy, frozen B must fail **exactly `relations`**, with the other 12 rows ready=true: all 13 original kinds must be present exactly once, and every ready value must be boolean (no nulls). Zero failures, another/additional false kind, missing/unknown/duplicate kinds or SQL error means `pre_frozen_b` STOP. This restores the accepted [P9b ruling and original evidence](RAD-062_P09B_REPORT_2026-10-30.md), superseding the earlier contradictory instruction to require all frozen B rows ready after restore. It is a measured expectation, not a waiver: pinned Supabase17.11 synthetic CI first printed only `["relations"]` before this set was encoded, matching P9b18.4. Frozen B must still be completely ready on the **unrestored live schema** in the owner-only read above. No pre-initializer override or initializer replay is allowed on the restored production copy.
+
+The pinned image uses peer authentication with an ident map for its local socket. Before connecting, the command verifies the first matching rule, assigns a fresh random credential to postgres through local supabase_admin, and prepends only `local rad_restore postgres scram-sha-256` to this throwaway container's HBA. It verifies reload and the rule, and compares postgres role attributes/config and memberships before/after in memory. This socket-authentication step preserves the ownership established by the approved database-owner step above, and leaves object catalogues, grants, role attributes/config, memberships and supautils behaviour intact. The credential travels through stdin after session statement/error-payload logging is disabled, never through argv/env, host files or output. There are still no published ports or network access; the credential and HBA disappear with teardown. Any setup mismatch is `socket_auth` STOP.
+
+It then connects directly as `postgres`, verifying session_user=current_user=postgres and rolsuper=false, and invokes the existing `apply` helper separately for M01 through M08 in order. It never applies as supabase_admin or via SET ROLE from a superuser. If this identity cannot apply the unchanged package under supautils/privileges, **STOP and report**; no elevation or role/catalogue repair.
+
+**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT. The helper submits the source verbatim and reads the fixed catalogue probes before and after it; no ledger row or other live object is added. After M08 every P10 manifest check runs separately, including `rad062-ready.sql` and `rad062-p1-b-ready.sql`, with every assertion true except the explicit false operational non-claims `restore_verified`/`runtime_or_launch_verified`. False/null/error is STOP. Frozen B is inspected separately as a transition witness and is never part of successful P10 acceptance. The command then performs both transition inspections and the §4 counts **before teardown**.
+
+The synthetic CI test alone supplies an explicit diagnostic callback for full PostgreSQL errors; owner main() has no flag or environment switch to enable it. Only numeric counts/yes-no fields or fixed STOP codes reach stdout/stderr; failures identify `restore:<stage>` or the rehearsal stage (including `connect`, malformed `counts` and `capacity`; existing invalid-name counts are accepted under D-NAMES), with SQLSTATE/errno class only; no names, data, hosts, passwords or raw driver/restore errors. Successful output includes database_owner_postgres=1, postgres_role_unchanged=1, pre_m01_diagnostic_ready=1, pre_m01_frozen_b_ready=0, pre_m01_frozen_b_failures=1, postgres_non_superuser=1, migrations_committed=8, checks_passed equal to the manifest length, transition_inspections_passed=2, rehearsal_pass=1 and teardown_pass=1. Exit 0 is required. **`RAD062_RESTORE_VERIFIED=yes` may be exported only after this command passes and §1 live ownership is yes**; a standalone RAD-086 restore proof or synthetic pass does not authorize that export.
+
+**STOP:** collation mismatch, missing ICU support or en_US.UTF-8 in the exact local version/image, role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions; unavailable matching 17.11/extensions; any unexpected pre-M01 result, including a frozen B failure set other than exactly relations or any missing/duplicate kind or null; wrong/elevated apply identity; failed migration, required check, transition, counts or teardown. Nothing in this step touches live. Do not create roles or a Supabase migration ledger locally or live to bypass a STOP.
+
+M06/M08 fail their own entire transaction if any reviewed v1 body anchor is absent. The final readiness check fingerprints bodies, attributes, ACLs, relations and FK inventory; successful COMMIT alone is insufficient. The synthetic command below explicitly witnesses all ten M06 guards and eight M08 patches, forces failure before each COMMIT and compares catalogue/data/probe rollback in memory:
 
 ```bash
 node scripts/assess/rad062-restore-rehearsal.mjs
@@ -210,30 +221,27 @@ node scripts/assess/rad062-restore-rehearsal.mjs
 
 ### Transition inspection — local restore first, then identical live post-apply reads
 
-Before M01, run the non-required diagnostic above: all 13 rows must be ready=true (default initialized phase). Synthetic QA explicitly selects pre-initializer; never select that phase on production to conceal missing initialization. Frozen B may fail **relations only** on the restored pre-M01 copy due to ACL order; the original unrestored schema must still pass all rows. Any other failure stops.
+The single §3 command performs these inspections on the restored copy before teardown. Before M01, the non-required diagnostic must have all 13 rows ready=true; frozen B must have exactly the false-kind set `{relations}`, all other rows true, all 13 original kinds exactly once, and no nulls. Both use the default initialized phase. Any deviation, including zero failures, is `pre_frozen_b` STOP. Synthetic QA initializes its own empty fixture; it does not weaken the owner's phase requirement. The **unrestored live schema** must pass every frozen B row in the owner-only read above; a restored-copy result never substitutes for that evidence.
 
-After M08, inspect the unchanged B and the diagnostic separately on the local copy:
+After M08, unchanged frozen B and the diagnostic must each report false **exactly** for columns, constraints, effective_privileges, functions, indexes, relations, triggers; all other rows true. The diagnostic is a B-only baseline, not an M08 successor; these seven false rows are required transition evidence. Its ACL normalization must not normalize bodies, ignore additions or edit catalogues. SQL exit zero alone does not prove boolean readiness.
+
+Every path in `frontend-schema.json.checks` runs separately and must pass, including RAD-062 whole-package readiness. No filtering rows, suppressing errors or claiming frozen B passes after M08. Record counts/yes-no only. The frozen B transition witness is outside the P10 manifest. The earlier P9 synthetic baseline failure count of one belongs to its historical B manifest; the current P10 manifest must have zero failures.
+
+The owner repeats the independent transition reads on live after M08 using the already verified live PG selectors (no local PG overrides):
 
 ```bash
 for RAD062_CHECK in supabase/checks/rad085-p1-b-ready.sql scripts/assess/sql/rad062-b-diagnostic.sql; do
-  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal \
-    psql -X -v ON_ERROR_STOP=1 -f "$RAD062_CHECK"
+  psql -X -v ON_ERROR_STOP=1 -f "$RAD062_CHECK"
 done
 ```
 
-Both must report false **exactly** for columns, constraints, effective_privileges, functions, indexes, relations, triggers; all other rows true. The diagnostic is a B-only baseline, **not** an M08 successor; false after additions is required. Its ACL normalization must not normalize bodies, ignore additions or edit catalogues. SQL exit zero alone does not prove boolean readiness.
-
-For **each other** path in `frontend-schema.json.checks`, and `supabase/checks/rad062-ready.sql`, run the same local `psql -X -v ON_ERROR_STOP=1 -f PATH` command separately; inspect every assertion as true, excluding only the explicitly disclaimed operational claims. No filtering rows, suppressing errors or claiming an overall `checks` pass. The source rehearsal verifies every required file and asserts only B fails. Record counts/yes-no only. Repeat these independent reads on live after M08 using the already verified direct PG selectors (omit the local PG overrides), with the same exact failure set. Any other result means STOP. P10 must replace/promote reviewed checks for the **whole installed catalogue**, run them all successfully, then compute/attest the new marker; do not reuse B or this diagnostic as acceptance.
+Repeat each P10 manifest check separately on live and inspect every assertion, excluding only the explicit operational non-claims, with the same exact transition failure set. Any other result means STOP. P10 must promote the reviewed checks for the whole installed catalogue and run them all successfully before computing/attesting the marker; never use frozen B or this diagnostic as acceptance. Live reads remain owner-only, never this rehearsal command.
 
 ## 4. Counts only on restored copy
 
-**Command:**
+**Command:** included in the single §3 invocation, after all checks/transition inspections and before teardown. Do not reconnect to a removed container or run counts through a live selector.
 
-```bash
-localdb counts --execute
-```
-
-**Expected:** only numeric fields: profiles failing the exact M01 name validator; distinct authors above three drafts, above ten revisions in any one draft, above 4 MiB and 8 MiB logical usage; database bytes and flags for decimal 300/350/400 MB; reserved peak bytes. No names, email, IDs, documents or answers are selected for output. Author usage uses the quota function including drafts/refs/revisions/review packages/provenance/candidates. Actual DB size after restore may differ from live due to bloat; reserve peak headroom, do not infer production capacity solely from restored size.
+**Expected:** only numeric fields: profiles failing the exact M01 name validator, reported as accepted_invalid_name_profiles and informational under D-NAMES; distinct authors above three drafts, above ten revisions in any one draft, above 4 MiB and 8 MiB logical usage; database bytes and flags for decimal 300/350/400 MB; reserved peak bytes. No names, email, IDs, documents or answers are selected for output. Author usage uses the quota function including drafts/refs/revisions/review packages/provenance/candidates. Actual DB size after restore may differ from live due to bloat; reserve peak headroom, do not infer production capacity solely from restored size.
 
 **STOP:** query failure, non-count output or any unexplained quota violation. Never truncate/delete protected rows to satisfy a limit. At ≥300 MB warn owner and reassess peak; ≥350 MB requires reviewed smaller batches/capacity plan; ≥400 MB stops growth/new starts. For this one fixed migration batch, any ≥300 MB flag or inadequate reserved peak headroom stops until the owner reviews capacity. Preserve existing attempt settlement. Read-only counts authorize no cleanup.
 
@@ -241,11 +249,29 @@ localdb counts --execute
 
 Reaching this step requires the proofs above, reviewed successful owner restore evidence and the booked back-to-back P10 window; no SQL is authorized to the agent by this document.
 
+**Decision C — catalogue evidence, no ledger:** the owner measured the real latest backup TOC as supabase_migrations schema=0, schema_migrations table=0, assess schema=1 after M01/42P01. All previous installs were SQL Editor/phone packets; a standard Supabase CLI ledger is not a prerequisite. Do not create an eight-row ledger: a later `supabase db push` could otherwise reapply every earlier unrecorded migration. [Decision C and evidence](DECISIONS.md#rad062-catalogue-probes-2026-11-01) supersede historical ledger instructions.
+
+Each fixed probe is `pg_catalog.to_regprocedure(signature) IS NOT NULL`, read without executing the function. Each listed function is new in its own migration's original transaction, false beforehand, and not dropped by later M01–M08. No body digest is needed for these eight new artefacts. These witnesses establish the committed prefix; full catalogue readiness remains independently required and detects body/ACL/catalogue drift.
+
+| Migration | Fixed signature | Reviewed source |
+|---|---|---|
+| M01 | `public.rad062_valid_full_name(text)` | [own CREATE FUNCTION](../supabase/migrations/20261030000100_rad062_full_name.sql) |
+| M02 | `assess.validate_provenance_v2(jsonb,text,boolean)` | [own CREATE FUNCTION](../supabase/migrations/20261030000200_rad062_provenance_v2.sql) |
+| M03 | `assess.authoring_limits_v1()` | [own CREATE FUNCTION](../supabase/migrations/20261030000300_rad062_authoring_limits.sql) |
+| M04 | `assess.random_pool_maximum_v1(jsonb,jsonb,jsonb)` | [own CREATE FUNCTION](../supabase/migrations/20261030000400_rad062_random_pool.sql) |
+| M05 | `assess.freeze_v2()` | [own CREATE FUNCTION](../supabase/migrations/20261030000500_rad062_manual_foundation_freeze.sql) |
+| M06 | `assess.require_lifecycle_v2(uuid,integer)` | [own CREATE FUNCTION](../supabase/migrations/20261030000600_rad062_lifecycle_v2.sql) |
+| M07 | `assess.manual_authorize_v1(uuid)` | [own CREATE FUNCTION](../supabase/migrations/20261030000700_rad062_manual_grading.sql) |
+| M08 | `assess.health_v2()` | [own CREATE FUNCTION](../supabase/migrations/20261030000800_rad062_erasure_operations.sql) |
+
+`live probes --execute` is a read-only, fresh connection using the same selector/TLS/port guards as other reads. It prints only m01..m08 as 0/1, migrations_observed and prefix_contiguous. Before M01 expect all eight=0, migrations_observed=0 and prefix_contiguous=1; after M_n expect precisely m01..m0n=1 and later probes=0. Any hole/null/error is STOP. After an uncertain ACK, a fresh read is mandatory before any recovery decision; the helper never retries automatically.
+
 **Command:**
 
 ```bash
 node scripts/assess/rad062-db-day.mjs verify
 live preflight --execute
+live probes --execute
 # Only after reviewed complete restore, exact transition inspection, all other gates and booked P10 window:
 export RAD062_RESTORE_VERIFIED=yes
 live apply --migration M01
@@ -259,11 +285,11 @@ live apply --migration M07 --execute
 live apply --migration M08 --execute
 ```
 
-**Pooler variant (D-C):** with the `live()` function defined in step 1 for the pooler, the commands above are unchanged: `live` already carries `--session-pooler`, so `preflight`, `apply` and the post-apply reads go through the session pooler (port 5432, `verify-full`). Each migration is still one transaction with its ledger insert; a drop of the pooled connection around COMMIT is UNKNOWN exactly as on the direct path, resolved only by an independent read through the same selectors. The raw `psql` transition reads use the same `PGHOST`/`PGUSER` exports.
+**Pooler variant (D-C):** with the `live()` function defined in step 1 for the pooler, the commands above are unchanged: `live` already carries `--session-pooler`, so `preflight`, `apply` and the post-apply reads go through the session pooler (port 5432, `verify-full`). Each migration is still its unchanged source transaction, with catalogue probes before and after; a drop of the pooled connection around COMMIT is UNKNOWN exactly as on the direct path, resolved only by an independent read through the same selectors. The raw `psql` transition reads use the same `PGHOST`/`PGUSER` exports.
 
-**Expected:** verify hashes **all eight actual files** against deferred SHA-256 entries in `frontend-schema.json` before connecting; each apply rechecks them and closed-state conditions. Dry run connects zero times. Apply advances exactly the contiguous eight-version ledger, one transaction per migration. No Supabase `db push`, historical M1–M4/B replay, initializer, generic SQL file flag or unattended all-migration loop. Record counts/exit status per step on the laptop. No password or migration rows are printed.
+**Expected:** verify hashes **all eight actual files** against deferred SHA-256 entries in `frontend-schema.json` before connecting; each apply rechecks them and closed-state conditions. Dry run connects zero times. Apply requires exactly the contiguous prefix of eight reviewed catalogue probes: previous probes true, the selected and later probes false; after COMMIT exactly the prefix including the selected migration must be true. No Supabase `db push`, historical M1–M4/B replay, initializer, generic SQL file flag or unattended all-migration loop. Record counts/exit status per step on the laptop. Only counts/0–1 probe flags are printed, never passwords, catalogue identities or rows.
 
-**STOP at first error, timeout, hash/order mismatch or ambiguous ACK.** Earlier committed migrations stay committed; failed migration and ledger insertion roll back together. Network failure around COMMIT is UNKNOWN until an independent read confirms history and readiness. Never rerun blindly: the helper refuses an already recorded migration. Do not continue the next line after a failed command, or hand-edit the ledger to make it contiguous.
+**STOP at first error, timeout, hash/order mismatch or ambiguous ACK.** Earlier committed migrations stay committed; a failed transaction rolls back its own artefact, so its probe remains false. Network failure around COMMIT is UNKNOWN: stop the apply session, then run `live probes --execute` in a fresh command invocation/connection with the same verified selectors. This read alone resolves which prefix committed; it does not authorize retry or waive readiness. Never rerun blindly: a true selected probe is refused. Do not continue the next line after a failed command, create a ledger, or create/drop/patch probe artefacts to force a prefix. Holes, nulls/errors, unexpected true/false or uncertain fresh reads remain STOP.
 
 ### Failure, forward fix and rollback notes
 
@@ -286,13 +312,14 @@ There is **no generic destructive rollback command**: stop and prepare/review an
 ```bash
 # Perform the transition inspection above against live PG selectors first.
 # live checks --execute still fails frozen B; it cannot attest final acceptance.
+live probes --execute
 live preflight --execute
 live counts --execute
 gcloud secrets versions list assess-worker-config --project "$RAD062_CLOUD_PROJECT" --format=json |
   jq '{disabled:([.[]|select(.state=="DISABLED")]|length),other:([.[]|select(.state!="DISABLED" and .state!="DESTROYED")]|length)}'
 ```
 
-**Expected:** transition inspection matches exactly; every other required check and RAD-062 readiness passes; gate still closed, both logins NOLOGIN, no worker connections/open assignments/unsettled sessions; secret disabled and zero executions. Record actual live database bytes, reserved peak and threshold flags, with counts only. No marker change.
+**Expected:** m01..m08=1, migrations_observed=8 and prefix_contiguous=1 from the new connection; transition inspection matches exactly; every other required check and RAD-062 readiness passes; gate still closed, both logins NOLOGIN, no worker connections/open assignments/unsettled sessions; secret disabled and zero executions. Record actual live database bytes, reserved peak and threshold flags, with counts only. No marker change.
 
 **STOP:** any false/unknown result outside the exact B transition set, changed secret/runtime state, capacity issue or expired/unavailable P10 window. Do not promote or begin a real exam.
 
@@ -302,11 +329,11 @@ gcloud secrets versions list assess-worker-config --project "$RAD062_CLOUD_PROJE
 
 **Expected:** STOPPED twice; independent STOPPED verification, zero worker backends/unheld sessions, unchanged counts and original timers/answers/results, gate closed. Missing rotation role is visible in packet counts, not hidden as proof of provisioning. Cloud/cache/runtime verification fields remain false until separately proved.
 
-**Owner instruction precedence:** packet prose says after P10; the current P9 instruction explicitly requires this controlled post-install, pre-promotion dry run. This narrow exception applies only after all eight migrations, package readiness and every other gate pass, with only the exact frozen B transition failure measured, with product/worker/secret dormant. Both packet files remain byte-identical. It does not authorize v2 on the current schema or early promotion.
+**Owner instruction precedence:** the P10 continuation supersedes the earlier P9 timing exception. Run this phone dry run only after all eight migrations and promoted checks pass, the owner sets the marker and merges P10, normal CI/Deploy Pages are green, and the phone product checks above succeed, all inside the same window. This matches packet prose after P10; both packet files remain byte-identical. Never use v2 on an incomplete schema or open the gate for the rehearsal.
 
 **STOP:** PARTIAL/FAILED/unknown ACK, phone inability, missing awaiting-manual coverage, changed data/timer/counts or any verification/cloud failure. Keep closed and resolve; no written-exam promotion until successful phone evidence.
 
-## 8. Handoff to P10 — no promotion here
+## 8. Owner window completion — no agent promotion
 
 **Command:**
 
@@ -316,6 +343,6 @@ npm run status:summary -- --id RAD-062
 npm run status:summary -- --id RAD-086
 ```
 
-**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/history, exact transition inspection, package readiness, capacity, and the phone dry run, within the reserved window. No final acceptance until P10 whole-catalogue checks pass. P10 alone reviews required/check classification and guards, computes the real new marker, and the owner sets it after DB-day evidence. P9 leaves the current marker and deployed product unchanged.
+**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/catalogue-probe prefix, exact transition inspection, package readiness and capacity before the owner sets the marker and merges P10. Complete the phone checks and v2 dry run after green normal CI/Deploy Pages, within the same reserved window. No final acceptance until all promoted whole-catalogue checks and phone evidence pass. The agent computes the source marker only; the owner alone sets the Variable after DB-day evidence and before merge.
 
 **STOP:** any missing evidence or unresolved check/version/rollback issue. Do not mark RAD-062/RAD-086 done from a merge, set a marker, flip availability, open gate, enable logins/secret or claim first-exam readiness. Channels/ACK receipt/alternate responder, privacy/rights/O4 and 4b/5b remain independent.

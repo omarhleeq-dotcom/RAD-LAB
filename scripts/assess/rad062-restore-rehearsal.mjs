@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 import { Client } from 'pg';
 import { localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { openLocalDatabase } from './local-database.mjs';
-import { apply, checks, manifest, readOnly, verifyMigrations } from './rad062-db-day.mjs';
+import { apply, checks, manifest, readOnly, verifyMigrations, migrationState } from './rad062-db-day.mjs';
 const image = 'postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382';
 function docker(args, input) {
   const env = { ...process.env };
@@ -18,10 +18,11 @@ function docker(args, input) {
 const read = file => readFileSync(file, 'utf8');
 async function snapshot(db) {
   // Never print bodies, identifiers or data; compare only in memory.
-  return (await db.query(`select (select jsonb_agg(to_jsonb(p) order by oid) from pg_proc p where pronamespace in ('assess'::regnamespace,'public'::regnamespace)) functions,
+  const rows = (await db.query(`select (select jsonb_agg(to_jsonb(p) order by oid) from pg_proc p where pronamespace in ('assess'::regnamespace,'public'::regnamespace)) functions,
     (select jsonb_agg(to_jsonb(c) order by oid) from pg_class c where relnamespace in ('assess'::regnamespace,'public'::regnamespace)) relations,
-    (select jsonb_agg(to_jsonb(s) order by version) from supabase_migrations.schema_migrations s) ledger,
     (select jsonb_agg(to_jsonb(w) order by counter) from rad062_witness w) data`)).rows;
+  rows[0].probes = await migrationState(db);
+  return rows;
 }
 export async function rehearse() {
   const source = await openLocalDatabase('postgres');
@@ -30,8 +31,6 @@ export async function rehearse() {
     await source.exec(`create role assess_job_a nologin; create role assess_job_b nologin;
       alter table auth.users add column banned_until timestamptz;
       create table auth.sessions(user_id uuid); create table auth.refresh_tokens(user_id uuid);
-      create schema supabase_migrations;
-      create table supabase_migrations.schema_migrations(version text primary key,name text,statements text[]);
       create table public.rad062_witness(counter integer primary key,payload text);
       insert into public.rad062_witness values(1,'SYNTHETIC_PRIVATE_CANARY');`);
     const aclSQL = `select relname,relacl::text raw_acl,
@@ -47,6 +46,9 @@ export async function rehearse() {
     await original.query("set rad085.sharing_phase='pre-initializer'");
     const bCheck = 'supabase/checks/rad085-p1-b-ready.sql';
     const diagnostic = 'scripts/assess/sql/rad062-b-diagnostic.sql';
+    const successor = 'supabase/checks/rad062-p1-b-ready.sql';
+    // Preserve the historical B restore ceiling independently of current requirements.
+    const historicalChecks = manifest().checks.filter(f => f !== 'supabase/checks/rad062-ready.sql').map(f => f === successor ? bCheck : f);
     await checks(original, [bCheck, diagnostic]);
     const common = ['run','--rm','-i','--network=none','--user',`${process.getuid()}:${process.getgid()}`,
       '--mount',`type=bind,src=${cfg.host},dst=${cfg.host}`,'--entrypoint'];
@@ -72,7 +74,7 @@ export async function rehearse() {
     await target.query('rollback');
     let baselineFailures = 0;
     const baselineFailedFiles = [];
-    for (const file of manifest().checks) {
+    for (const file of historicalChecks) {
       try { await checks(target, [file]); } catch { baselineFailures++; baselineFailedFiles.push(file); }
     }
     assert.deepEqual(baselineFailedFiles, [bCheck]);
@@ -82,11 +84,12 @@ export async function rehearse() {
     let rollbacks = 0;
     for (const [index, file] of verifyMigrations().entries()) {
       const before = await snapshot(target), sql = read('supabase/migrations/' + file);
-      // Real failure after all DDL but before COMMIT; exact catalogue/data/ledger proof.
+      // Real failure after all DDL but before COMMIT; exact catalogue/data/probe proof.
       await assert.rejects(target.query(sql.replace(/commit;\s*$/i, "select 1/0; commit;")));
       await target.query('rollback');
       assert.deepEqual(await snapshot(target), before); rollbacks++;
       await apply(target, `M0${index + 1}`, { RAD062_SECRET_STATE: 'DISABLED' });
+      if (index < 7) await assert.rejects(checks(target, [successor]));
     }
     assert.deepEqual((await snapshot(target))[0].data, baseline[0].data);
     const readiness = await target.query(read('supabase/checks/rad062-ready.sql'));
@@ -106,6 +109,8 @@ export async function rehearse() {
       await target.query(drift);
       const changed = await target.query(read('supabase/checks/rad062-ready.sql'));
       assert.ok(changed.rows.some(r => r.ok === false)); tamperedGrantFailures++;
+      const changedB = await target.query(read(successor));
+      assert.ok(changedB.flatMap(r => r.rows ?? []).some(r => r.ready === false));
       await target.query('rollback');
     }
     await checks(target, ['supabase/checks/rad062-ready.sql']);
@@ -117,7 +122,7 @@ export async function rehearse() {
     // M06/M08 themselves raise on every missing anchor. Readiness additionally
     // fingerprints all patched bodies/ACLs. Explicitly witness the ten v1 guards.
     const guards = (await target.query(`select count(*)::int n from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='assess' and (
-      (p.proname in ('read_session_v1','command_v1','result_v1','finish_v1','fail_v1','recover_v1') and position('require_lifecycle_v2(p_session,1)' in p.prosrc)>0)
+      (p.proname in ('read_session_v1','command_v1','result_v1','finish_v1','fail_v1','recover_v1') and position('require_lifecycle_v1(p_session)' in p.prosrc)>0)
       or (p.proname in ('claim_v1','maintain_v1','health_v1') and position('lifecycle_version=1' in p.prosrc)>0)
       or (p.proname='start_v1' and position('assignment version denied' in p.prosrc)>0))`)).rows[0].n;
     assert.equal(guards, 10);
@@ -134,13 +139,13 @@ export async function rehearse() {
     for (const file of manifest().checks) {
       try { await checks(target, [file]); } catch { requiredFailures++; requiredFailedFiles.push(file); }
     }
-    assert.deepEqual(requiredFailedFiles, [bCheck]);
+    assert.deepEqual(requiredFailedFiles, []);
     return { original_b_ready: 1, restored_b_diagnostic_ready: 1, tampered_b_diagnostic_failed: 1, post_package_b_diagnostic_failures: diagnosticFailures.length, tampered_grant_failures: tamperedGrantFailures, restored_acl_representation_differences: aclRepresentationDifferences, restored_acl_effective_differences: aclEffectiveDifferences, server_version_num: Number(cfg.version), restored_archives: 1, migrations_committed: 8, rollback_witnesses: rollbacks,
       v1_anchors_found: guards + patches, readiness_passed: Number(readinessFailures === 0), readiness_failures: readinessFailures, baseline_check_failures: baselineFailures, required_check_failures: requiredFailures, ...counts };
   } finally { if (target) await target.end(); if (original) await original.end(); await source.close(); }
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   if (process.argv.length !== 2) { console.error('STOP synthetic_only'); process.exitCode = 1; }
-  else rehearse().then(r => { console.log(JSON.stringify(r)); if (r.readiness_failures || r.baseline_check_failures !== 1 || r.required_check_failures !== 1) { console.error('STOP required_checks'); process.exitCode = 1; } })
+  else rehearse().then(r => { console.log(JSON.stringify(r)); if (r.readiness_failures || r.baseline_check_failures !== 1 || r.required_check_failures !== 0) { console.error('STOP required_checks'); process.exitCode = 1; } })
     .catch(() => { console.error('STOP restore_rehearsal'); process.exitCode = 1; });
 }

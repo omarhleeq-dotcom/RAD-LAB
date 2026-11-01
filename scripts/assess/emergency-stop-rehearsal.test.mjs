@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { openLocalDatabase } from './local-database.mjs';
-import { renderPacket, stopTransport } from './emergency-stop-packet.mjs';
+import { B_ERA_CHECKS, renderPacket, stopTransport } from './emergency-stop-packet.mjs';
 
 const read=p=>readFileSync(p,'utf8');
 const stop=()=>stopTransport().join('');
@@ -76,7 +76,7 @@ async function fixture(history='lf') {
    from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','assess') order by p.oid`);
   const ready=async()=>{
    const c=await connect();try{
-    const paths=JSON.parse(read('scripts/pages/frontend-schema.json')).checks;
+    const paths=B_ERA_CHECKS;
     for(const path of paths){
      const out=await c.query(read(path));const rows=out.flatMap(r=>r.rows);assert(rows.length>0,path);
      if(path.endsWith('rad085-p1-b-ready.sql'))assert.equal(rows.length,13);

@@ -9,11 +9,13 @@ import { Rad062NameGate } from './Rad062NameGate';
 import manifest from '../../../scripts/pages/frontend-schema.json';
 import { validFullName } from '../pilot/full-name';
 
-it('real bundled consumer stays dormant with a tampered browser manifest: zero adapter loads or RPCs', async () => {
+it('real bundled consumer loads only the reviewed name gate despite a tampered browser manifest', async () => {
  const feature=manifest.guardedFeatures.rad062;
  const tamper=`import m from './scripts/pages/frontend-schema.json';
  for(const file of Object.keys(m.deferredMigrations)){m.requiredMigrations.push(file);delete m.deferredMigrations[file];}
- export const tampered=m.requiredMigrations.includes('20261030000100_rad062_full_name.sql');
+ m.requiredMigrations.push('20990101000100_unreviewed.sql');
+ m.guardedFeatures.rad062.boundaries['src/features/assess/UnreviewedGate.tsx']='forged';
+ export const tampered=m.requiredMigrations.includes('20990101000100_unreviewed.sql');
  export async function getEntry(){return (await import('./src/features/assess/Rad062Entry')).Rad062Entry;}`;
  const calls: string[]=[];
  const bundle=execFileSync(process.execPath,['--input-type=module','-e',`import {build} from 'esbuild';
@@ -27,19 +29,30 @@ it('real bundled consumer stays dormant with a tampered browser manifest: zero a
  expect(api.tampered).toBe(true);
  const Entry=await api.getEntry();
  const container=document.createElement('div'),root=createRoot(container);
- try{await act(async()=>{root.render(createElement(Entry,null,'Assess remains available'));});expect(container.textContent).toBe('Assess remains available');expect(calls).toEqual([]);}
+ try{await act(async()=>{root.render(createElement(Entry,null,'Assess remains available'));});expect(container.textContent).toBe('');expect(calls).toEqual(['adapter', 'name_entry_v1']);}
  finally{await act(async()=>root.unmount());delete globals.__rad062probe;delete globals.IS_REACT_ACT_ENVIRONMENT;}
- expect(readFileSync(feature.guard.path,'utf8')).toContain('export const RAD062_AVAILABLE: boolean = false;');
+ expect(readFileSync(feature.guard.path,'utf8')).toContain('export const RAD062_AVAILABLE: boolean = true;');
  expect(readFileSync('src/features/supervisor/p1-availability.ts','utf8')).toContain('export const P1_AVAILABLE: boolean = true;');
+ expect(manifest.deferredMigrations).toEqual({});
+ expect(manifest.checks).toContain('supabase/checks/rad062-p1-b-ready.sql');
+ expect(manifest.checks).toContain('supabase/checks/rad062-ready.sql');
+ expect(manifest.checks).not.toContain('supabase/checks/rad085-p1-b-ready.sql');
+ for (const file of feature.migrations) {
+  expect(manifest.requiredMigrations).toContain(file);
+  expect(createHash('sha256').update(readFileSync('supabase/migrations/' + file)).digest('hex')).toBe(feature.migrationSha256[file as keyof typeof feature.migrationSha256]);
+ }
 });
 
-it('pins dormant boundaries and preserves required/check bytes and production marker',()=>{
- const base=JSON.parse(execFileSync('git',['show','origin/main:scripts/pages/frontend-schema.json'],{encoding:'utf8'}));
- expect(manifest.requiredMigrations).toEqual(base.requiredMigrations);expect(manifest.checks).toEqual(base.checks);
+it('pins the exact promotion, unchanged migration/check bytes and independently derived marker',()=>{
+ const base=JSON.parse(execFileSync('git',['show','023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'],{encoding:'utf8'}));
+ expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]);expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-ready.sql']);
  const hash=(data:Buffer|string)=>createHash('sha256').update(data).digest('hex');
- for(const file of [...base.requiredMigrations.map((f:string)=>'supabase/migrations/'+f),...base.checks])expect(hash(readFileSync(file))).toBe(hash(execFileSync('git',['show','origin/main:'+file])));
+ for(const file of [...base.requiredMigrations.map((f:string)=>'supabase/migrations/'+f),...base.checks])expect(hash(readFileSync(file))).toBe(hash(execFileSync('git',['show','023ec84c15bfd744f317ec079e2587d90e099414:'+file])));
+ const expectedMarker = createHash('sha256').update('https://vlacestfruxooznrcjqc.supabase.co\n');
+ for (const migration of [...manifest.requiredMigrations].sort()) expectedMarker.update(migration + '\0').update(readFileSync('supabase/migrations/' + migration)).update('\0');
+ for (const check of manifest.checks) expectedMarker.update(readFileSync(check));
  const marker=execFileSync(process.execPath,['scripts/pages/pilot-schema-gate.mjs','--print-marker'],{encoding:'utf8',env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:'https://vlacestfruxooznrcjqc.supabase.co'}}).trim();
- expect(marker).toBe('pilot-v1:6d690343c1ce5e95221d9e67eda65b62dc552ac0e95e78cf41074bc069bfc1be');
+ expect(marker).toBe('pilot-v1:' + expectedMarker.digest('hex'));
 });
 
 it('keeps the current client name semantics including code points and letter-containing words',()=>{

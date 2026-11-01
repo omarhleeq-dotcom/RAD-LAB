@@ -1125,3 +1125,120 @@ CI تسحب بالـdigest وتستعيد أرشيفًا اصطناعيًا يت
 **الحكم:** بعد تعطيل اعتماد العامل أو تدويره، يجب إنهاء جلساته، وانتظار120ثانية على الأقل، والتحقق من رفض الاعتماد القديم قبل اعتباره ملغًى؛ الانتظار وحده ليس إثباتًا. [دليل RAD-059 غير المقفل](RAD-059_PHONE_RUNBOOK.md) هو موضع الإجراء. حزمتا الهاتف المقفلتان بايتاتهما ثابتة. P2 يحسب العضويات حيث probe هو member فقط، ويفحص منح creator منفصلة؛ على أي ACCEPTED أكمل الحلقة الجارية للقراءة فقط قبل teardown. تشغيل variant2 بعد نتيجة variant1 في الجولة2 كان بقرار المالك، لا إذن عام لتجاوز STOP.
 
 RAD-086 منجزة كتحقق خارجي بتاريخ إفادة المالك، مع النسخ والاستعادة والسجل والجدولة المنجزة2026-10-31؛ مراجعة status الأسبوعية عادة مالك مستمرة وليست حاجب إنجاز. RAD-059 تبقى review/owner للقنوات/الاستلام والبديل ودليل إلغاء اعتماد العامل. التالي RAD-062 Part2: ICU en-US لـP10 وفق [قرار ICU](#rad086-icu-owner-2026-10-31). لا تفعيل عامل أو سر أو بوابة أو Variables أو SQL حي من الوكيل. **سؤالا AGENTS:** نعم تغير حكم الإلغاء بإضافة حد120ثانية والتحقق، وتصححت تعليمات الحلقة؛ نعم بقيت روابط D-D وتمرين RAD-059 وأدلة النسخ الأصلية محفوظة.
+
+
+<a id="rad062-p10-icu-d3-owner-2026-11-01"></a>
+### RAD-062 P10 Part2 — D1 شاهد ترتيب ICU وD2 تشخيص الجاهزية فقط، 2026-11-01
+
+**السلطة:** قرارا المالك D1/D2 بعد STOP في Draft #175؛ يستكملان [قرار RAD-086 ICU](#rad086-icu-owner-2026-10-31)، لا إذن تشغيل حي.
+
+**D1 — الاستثناء المعتمد:** للحالة `icu-en-US` فقط يصبح توقع شاهد D3 `{default_order:true,c_order:true}`. ICU en-US يرتب هذا الجرد الاصطناعي مثل C، لذلك لا يشهد عيب الترتيب قبل الإصلاح؛ يبقى ضمان الإصلاح `c_order=true` مطلوبًا لكل locale. توقعا C وen_US.UTF-8 libc كما هما؛ لا تغيير لأي توقع آخر أو SQL أو fingerprints.
+
+**D2 — تشخيص دون إصلاح:** تُشغّل ملفات manifest checks كلها على PostgreSQL17.11 المثبت (C وen_US.UTF-8 وICU en-US)، وتقارن بمسار18.4 القائم (C وen_US.UTF-8). التقرير يذكر أسماء صفوف/أعمدة false/null فقط، ويفسر الكتالوج/الامتياز/السمة المعنية بدليل يميز اختلاف إصدار، أو fixture ناقصة (تسرد ولا تضاف)، أو عيب حقيقي. نجاح جمع التشخيص لا يساوي نجاح الجاهزية. SQL والترحيلات وchecks والتصنيف والحراس والمهلات وبقية التوقعات ثابتة؛ marker تبقى القيمة السابقة بعد إعادة الحساب.
+
+الفرع نفسه وmerge commits دون rebase/force-push؛ #175 تبقى Draft وRAD-062 in_progress/reviewer. لا live SQL أو Variables أو skip ci أو manual deploy أو preview أو participant data. [تقرير P10](RAD-062_P10_REPORT_2026-10-30.md) يحفظ النتائج والدليل السابق.
+
+<a id="rad062-p10-not-null-owner-2026-11-01"></a>
+### RAD-062 P10 Part2 — D3 و3b: جاهزية NOT NULL عبر PostgreSQL17/18، 2026-11-01
+
+**السلطة:** قرار المالك D3 وإضافته3b على Draft #175؛ يستكملان [D1/D2](#rad062-p10-icu-d3-owner-2026-11-01) و[قرار RAD-086 ICU](#rad086-icu-owner-2026-10-31). الإنتاج PostgreSQL17.11؛ التشخيص السابق مثبت في [تقرير P10](RAD-062_P10_REPORT_2026-10-30.md).
+
+**D3 — الإصلاح المحدد:** في `rad062-ready.sql` فقط تستبعد قائمة `relations.constraints` صفوف `pg_constraint.contype='n'`، مثل `rad062-p1-b-ready.sql` القائمة. PostgreSQL18 يسجل NOT NULL كقيود كتالوج مستقلة و17 لا يسجلها؛ إثبات إلزام الأعمدة باقٍ كاملًا في `pg_attribute.attnotnull` داخل بصمة العلاقات نفسها، فلا يفقد دليل nullability. تعاد مشتقة بصمة العلاقات من الحالة المرقاة المراجعة ويجب أن تتطابق على17.11 (C/en_US.UTF-8/ICU en-US) و18.4 القائمة (C/en_US.UTF-8). أي اختلاف يوقف ويسرد أسماء الحقول فقط؛ لا تحديث لتوقع لإخفائه.
+
+**3b — سد فجوة كتالوج18:** يضاف صف `not_null_constraints_plain` في الملف نفسه: لا قيد NOT NULL على العلاقات المفحوصة له `convalidated=false` أو `connoinherit=true`. يكون صحيحًا تلقائيًا على17.11 لغياب هذه الصفوف. شاهد18.4 يضيف NOT VALID NOT NULL على عمود assess اصطناعي مؤقت، فيجب أن يفشل الصف. استبعاد صفوف NOT NULL من البصمة لا يستبعد هاتين السمتين من الإثبات.
+
+كل حالات الإصدار/locale الخمس يجب أن تنجح في كل manifest checks وتبقى شواهد العبث القديمة رافضة. شاهد إضافي يسقط NOT NULL من عمود assess اصطناعي على17.11 و18.4، فيجب أن تفشل `relations` لإثبات استمرار حماية attnotnull. التعريفات والتصنيفات والحراس والمهلات وبقية التوقعات والترحيلات ثابتة؛ لا fixture جديدة سوى العبث داخل معاملات الشواهد المرتجعة. marker تتغير لأن required check تغيرت؛ تحسب وتذكر القديمة والجديدة في التقرير وPR فقط. إن احتوت packet هاتف نص هذا الفحص أو بصمته STOP دون تعديل packet. كلا packetين وsupabase/manual ثابتة بايتيًا.
+
+الفرع القائم وmerge commits فقط، دون rebase/force-push؛ #175 Draft وRAD-062 in_progress/reviewer. لا live SQL أو Variables أو skip ci أو manual deploy أو preview أو participant data أو golden/characterisation regeneration. لا إذن تشغيل أو merge من الوكيل.
+
+
+**D3-c — تحديث شاهد أسماء الجاهزية، 2026-11-01:** قرار المالك بعد فشل CI على eb61bff عند `src/features/assess/rad062-erasure-operations.test.ts:82`: يستبدل فقط توقع عدد الصفوف بخريطة أسماء check_name المرتبة حرفيًا `['closed_gate','functions','identity_inventory','not_null_constraints_plain','relations','worker_nologin']` مع بقاء شرط كل صف ok===true. إضافة3b تجعل الصفوف ستة؛ الفشل AssertionError حقيقي في توقع الاختبار القديم، وليس تجهيزًا. لا تغيير لأي drift case أو مهلة أو توقع آخر أو SQL أو migration أو check أو fingerprint. marker تبقى قيمة D3/3b المعاد حسابها في التقرير. هذه الدفعة normal commit فوق eb61bff بأمر المالك الأحدث، دون rebase/force-push؛ #175 Draft وRAD-062 in_progress/reviewer. مراجعة الإخفاقات المحلية الأربعة وأدلة CI لكل منها في [تقرير P10](RAD-062_P10_REPORT_2026-10-30.md)؛ ما لا يثبت أنه setup-only STOP بلا إصلاح.
+
+
+<a id="rad062-owner-rehearsal-2026-11-01"></a>
+### RAD-062 — أمر بروفة المالك من أحدث RAD-086، 2026-11-01
+
+أمر المالك في متابعة Draft #175: استبدال initdb والاستعادة المجردة في §3 بمسار Docker المطابق لـlaptop-restore-test، مع إعادة استخدام exports وعدم تغيير سلوكها الافتراضي أو مخرجاتها أو اختباراتها. الصورة المثبتة17.11.0.016 وlocale وprepareRolesSql وفحص supabase_admin rolconfig وrestorePlan ذات المرورين والفحوص وحجب الأخطاء وfinally teardown شروط ثابتة. قبل M01 يجب أن ينجح التشخيص **وB المجمدة**؛ هذا يحل محل إعفاء relations في بروفة P9b لهذه الخطوة. التطبيق بالدور postgres غير superuser نفسه المستخدم حيًا، عبر apply القائمة وبالترتيب؛ تعذر ذلك STOP وتقرير دون elevation. كل P10 manifest check منفردة والانتقال والعدادات قبل teardown، ومخرجات عددية/نعم-لا/STOP فقط. يرفض أي host غير loopback أو live selector ولا يقرأ حيًا؛ لا RAD062_RESTORE_VERIFIED=yes إلا بعد النجاح الكامل.
+
+الميزانية: أمر واحد واختباره، callback صغيرة لازمة لإعادة استخدام الاستعادة قبل teardown، ci.yml لربط الاختبار، دليل P9 وتقرير P10 وهذا القرار والحالة/HANDOFF. لا SQL/migrations/required/expectations/timeouts/guards أو packets/manual أو marker؛ لا بيانات مشاركين أو SQL حي أو Variables أو نشر إضافي أو preview/golden. اختبار CI على dump اصطناعية في الصورة نفسها يطلب pass وشاهد فشل migration/check مع STOP وteardown. RAD-062 تبقى in_progress/reviewer و#175 Draft، commits عادية بلا rebase/force-push/skip-ci. [التنفيذ وحدود QA](RAD-062_P10_REPORT_2026-10-30.md)، [الإجراء](RAD-062_P09_LAPTOP_RUNBOOK.md)، [دليل RAD-086 الأصلي](RAD-086_REPORT_2026-10-31.md) محفوظة؛ لا حجز نافذة من تعديل الوثائق وحده.
+
+متابعة المالك لتشخيص فشل CI على405e6e4: يجب إظهار restore:<stage> وconnect وفصل invalid_names عن capacity، مع SQLSTATE/errno class فقط بلا messages/hosts/data. يُثبت السبب من CI قبل إصلاحه؛ فرضية peer/ident ليست حكمًا مسبقًا. إذا ثبتت، يُسمح بأصغر إصلاح auth/transport في الحاوية المؤقتة يحفظ اتصال postgres غير superuser وصلاحياته وكتالوجه مثل live (ومن أمثلته password عشوائية لكل تشغيل وsocket-only SCRAM)، وإلا STOP وتقرير. لا تغيير للسلوك/اختبارات RAD-086 المقبولة أو SQL/checks/expectations/timeouts/guards. تنظيف caches الخاصة والصور/build cache غير المستخدمة مأذون لاستعادة مساحة الاختبار؛ CI تبقى الدليل المطلوب. [التشخيص والدليل](RAD-062_P10_REPORT_2026-10-30.md).
+
+دليل CI التشخيصية علىdfbec09 أثبت connect/SQLSTATE28000. التنفيذ المختار ضمن الإذن: يتحقق من أول قاعدة peer/ident مطابقة، يولّد credential عشوائية لكل تشغيل لـpostgres عبر supabase_admin محليًا وبـstdin مع تعطيل تسجيل نصوص الجلسة، ويضيف قاعدة SCRAM محددة لـlocal/rad_restore/postgres في الحاوية المؤقتة مع reload متحقق. يقارن pg_roles وعضويات postgres قبل/بعد؛ لا تغيير صفات/rolconfig أو صلاحيات/ملكية/كتالوج الكائنات، ولا تطبيق كـsuperuser أو SET ROLE. الحراسة الحالية session_user=current_user=postgres وrolsuper=false باقية. فشل setup أو أي فحص تالٍ STOP؛ نجاح auth وحده لا يرفع STOP النافذة. [الدليل والحدود](RAD-062_P10_REPORT_2026-10-30.md).
+
+نتيجة CI للإصلاح علىa7f1275: تجاوز connect/28000 مع تحقق peer/ident وSCRAM وثبات صفات/عضويات الدور واتصال postgres غير superuser والتشخيص، ثم STOP عند pre_frozen_b قبل M01. لا يُستنتج صف الفشل أو تمثيل ACL من الرمز وحده، ولا يسمح نجاح auth بتجاوز B أو تعديل SQL/expectations. تبقى البروفة والنافذة محجوبتين؛ [الدليل الحالي](RAD-062_P10_REPORT_2026-10-30.md) يحفظ الفشلين بدل ادعاء نجاح الصورة الكامل.
+
+تصحيح المالك2026-11-01 يعيد حكم [P9b سطر48/§6](RAD-062_P09B_REPORT_2026-10-30.md): B المجمدة جاهزة بالكامل على live غير المستعادة بقراءة المالك فقط؛ على المستعادة قبل M01 diagnostic ينجح كاملًا، وB يجب أن تفشل exactly relations فقط مع اكتمال كل الأنواع وغياب null/التكرار. هذا يلغي تعليمة البروفة السابقة التي اشترطت جاهزية B بعد restore، ولا يغير SQL/check/classification. قبل ترميز المجموعة يجب طباعة قائمة kinds الفاشلة مرتبة فقط في CI الاصطناعية: ['relations'] يجيز الترميز، وأي اختلاف/صفر STOP وتقرير دون تبني الاختلاف. [الدليل الحالي](RAD-062_P10_REPORT_2026-10-30.md) يحفظ القياس وحدوده.
+
+قرأت الدفعة قائمة CI علىb72788f قبل الترميز: `["relations"]` فقط على مستعادة الصورة المثبتة17.11 ([الدليل](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41278099009/job/124764293484)). لذلك نُفذ تصحيح المالك بإعادة حكم [P9b، سطر48/§6](RAD-062_P09B_REPORT_2026-10-30.md): diagnostic كامل، B المستعادة exactly relations false وبقية الأنواع true، كل13نوعًا مرة واحدة وboolean غير null؛ أي اختلاف/صفر/خطأ STOP pre_frozen_b. تبقى B على live غير المستعادة ready بالكامل بقراءة المالك فقط؛ لا تغيير SQL أو required/classification أو إعفاء. هذه هي القاعدة الحالية بدل تعليمات الجاهزية بعد restore المتناقضة المحفوظة تاريخيًا أعلاه.
+
+تحقق CI بعد الترميز على3781d89 من عقد B المصحح، ثم توقف أول apply عند M01 ([الدليل](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41278391732/job/124765128692)). لا يغيّر هذا حكم P9b أو يجيز تعديل SQL/صلاحيات/expectations؛ نجاح M01 وبقية البروفة والنافذة غير مثبت، والسبب الأدنى لا يُستنتج من رمز M01 وحده.
+
+
+متابعة المالك2026-11-01 على Draft #175: مأذون callback تشخيص كامل لأخطاء PostgreSQL داخل اختبار CI الاصطناعي فقط، بلا flag/env من main؛ apply تضيف label الثابتة وSQLSTATE فقط دون تغيير الرسائل/السلوك/الاختبارات. الإصلاحات في البروفة/اختبارها وفجوات synthetic fixture فقط، CI لكل إصلاح حتى check خضراء أو STOP يحتاج قرار المالك. عجز live postgres أو الحاجة لتغيير migration/check/expectation/timeout/guard/role/privilege يوجب STOP؛ لا تغيير حكم [P9b](RAD-062_P09B_REPORT_2026-10-30.md). [التقرير](RAD-062_P10_REPORT_2026-10-30.md) يسجل الأدلة وإضافات fixture وأسبابها.
+
+نتيجة متابعة التشخيص نفسها: [CI الاصطناعية](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41279184441/job/124767400349) قبلت B ثم توقفت M01 عند CREATE FUNCTION/SQLSTATE42501؛ لا إعادة نشر لرسالة driver أو أسماء الكتالوج هنا. لا إضافات fixture أو تغيير ملكية/امتيازات. اختلاف مالك القاعدة بين إنشاء fixture وإنشاء هدف restore ظاهر في الكود، لكنه يحتاج قياس كتالوج CI قبل الجزم بالسبب؛ لا دليل عجز live مثبت. [التقرير الحالي](RAD-062_P10_REPORT_2026-10-30.md) يطلب قرار المالك لاستثناء ضيق: فحص الملكية والامتياز في CI، ثم تصحيح ملكية قاعدة الهدف المؤقتة إلى مالك المصدر فقط إن أثبت الفحص أن الفرق هو السبب؛ لم ينفذ هذا الاستثناء. الحظر والتوقف مصدرهما بند4 من أمر المالك الحالي. يبقى postgres غير superuser، وRAD-062 in_progress/reviewer و#175 Draft.
+
+اكتمال القياس المأذون للكتالوج الاصطناعي: [CI على1c31abc](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41279569933/job/124768531915) انتهت8pass/1fail/0skip؛ CREATE FUNCTION/42501. مؤشرات yes/no تثبت ملكية المصدر لدور التطبيق وإتاحة CREATE، مقابل ملكية إدارية للهدف وفقد CREATE بعد الاستعادة، مع ثبات وراثة ملكية schema من مالك قاعدة البيانات. ليست فجوة في backup الاصطناعية ولا دليل فشل live؛ تصحيح الهدف يتطلب تغيير ملكية يؤثر في الامتياز. **قرار مطلوب ولم يُنفذ:** إقرار postgres مالكًا مقصودًا لهدف بروفة latest أيضًا، وإجازة ALTER DATABASE محلية للهدف المؤقت فقط إلى ذلك المالك، دون GRANT أو تعديل أدوار أو accepted restoreTest أو SQL/check/guard/timeout. بعد الإذن تستأنف الحلقة حتى check خضراء أو STOP جديد. [التقرير](RAD-062_P10_REPORT_2026-10-30.md) يحفظ القياس السابق قبل الجزم بالسبب.
+
+
+<a id="rad062-restore-owner-parity-2026-11-01"></a>
+### RAD-062: موافقة المالك المشروطة على ملكية قاعدة البروفة المؤقتة، 2026-11-01
+
+المالك وافق على تجاوز STOP الملكية المقاسة في [CI](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41279569933/job/124768531915) بتغيير مالك **قاعدة الاستعادة المؤقتة فقط** إلى postgres عبر ALTER DATABASE باتصال supabase_admin من docker exec، قبل diagnostic وfrozen B وقبل M01. لا GRANT أو تغيير role/attributes/config/memberships، ويجب إثبات postgres غير superuser وثبات صفاته وعضوياته بعدها. shared laptop-restore-test وسلوكه واختباراته لا تتغير.
+
+التكافؤ الحي ليس افتراضًا: يضيف [دليل P9 §1](RAD-062_P09_LAPTOP_RUNBOOK.md) أمر مالك read-only يطبع yes/no فقط عن مالك القاعدة الحية؛ النتيجة صالحة فقط إذا كانت yes، وإلا STOP. الوكيل لا يشغّل هذا الأمر. بعد تصحيح الملكية تعاد قراءة B على المستعادة قبل M01 في CI؛ يجب أن تبقى exactly ["relations"]، وإلا STOP مع kinds دون اعتماد فرق جديد. حكم [P9b الأصلي](RAD-062_P09B_REPORT_2026-10-30.md) محفوظ.
+
+تستمر الحلقة المأذونة push ثم انتظار CI وقراءة logs والإصلاح المحدود حتى check خضراء أو STOP يحتاج قرارًا آخر؛ لا تقرير بعد كل push. أي عجز ينطبق على live أو حاجة لتغيير migration/check/expectation/timeout/guard أو دور/امتياز خارج هذا الاستثناء يوجب STOP. [تقرير P10](RAD-062_P10_REPORT_2026-10-30.md) يحفظ الأدلة وإضافات fixture وأسبابها. #175 Draft وRAD-062 in_progress/reviewer؛ marker والpackets وmanual ثابتة، ولا SQL حي/Variables/نشر إضافي/preview/goldens/بيانات مشاركين.
+
+
+دليل التنفيذ بعد الموافقة: [CI check على18d574c](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41280184253/job/124770349771) انتهت success؛ البروفة10pass/0fail/0skip، وfrozen B بعد الملكية بقيت ["relations"] بالضبط. M01–M08 وmanifest10 منفردة والانتقالان والcounts نجحت، ثم شاهدا فشل check وmigration نجحا مع teardown لكل حالة؛ postgres غير superuser وصفاته/عضوياته ثابتة. لا إضافات fixture أو GRANT أو تعديل توقع/SQL. بقية full CI ناجحة كذلك؛ [التقرير](RAD-062_P10_REPORT_2026-10-30.md) للتفاصيل والحدود. هذا دليل synthetic17.11 فقط؛ شرط yes من قراءة المالك الحية ونجاح latest الحقيقية والهاتف والنافذة باقٍ، ولا RAD062_RESTORE_VERIFIED=yes من CI وحدها. رأس التوثيق اللاحق يعيد CI آليًا ويعرض دليله في PR دون نسبة سجل18d574c إلى commit أخرى.
+
+
+<a id="rad062-catalogue-probes-2026-11-01"></a>
+### RAD-062 Decision C: الشواهد الكتالوجية بدل Supabase ledger، 2026-11-01
+
+دليل المالك من اللابتوب على latest الحقيقية: STOP rad062_laptop_rehearsal:M01 sqlstate=42P01؛ ثم قياس TOC بعدادات فقط: supabase_migrations schema=0، schema_migrations table=0، assess schema=1. التثبيت السابق كله عبر SQL Editor/phone packets، لا Supabase CLI. fixture كانت تنشئ ledger وتخفي افتراضًا يفشل على live؛ لا تُسجل بروفة CI السابقة كدليل نجاح النسخة الحقيقية.
+
+المالك اختار C: إزالة SELECT/INSERT واعتماد ledger من apply، بلا إنشاء كائن حي جديد أو ledger اصطناعية من8صفوف قد تجعل db push تعيد الترحيلات القديمة غير المسجلة. لكل M01–M08 شاهد ثابت فريد جديد في معاملتها، false قبلها ودائم بعدها؛ [جدول P9 §5](RAD-062_P09_LAPTOP_RUNBOOK.md) يسرد signatures الثمانية ومصدر كل CREATE FUNCTION. لا ترحيل يفتقد شاهدًا دائمًا. apply لا تقبل إلا prefix السابق بالضبط وselected=false، وبعد COMMIT تشترط prefix التالي. SQL ترسل حرفيًا بما فيها COMMIT؛ لا تعديل bytes/SHA/checks/expectations/timeouts/guards. لا استبدال لجاهزية الكتالوج الكاملة بهذه الشواهد.
+
+UNKNOWN ACK = STOP، ولا حل إلا probes من اتصال جديد عبر أمر live probes --execute ذي selectors/TLS/port نفسها؛ لا retry آلي أو blind rerun أو تزوير artefact/ledger لتجاوز الترتيب. أمر القراءة يطبع flags0/1/counts فقط. تنزع ledger من كلا fixture البروفة، وتضاف شواهد rerun/out-of-order/rollback-probe-false/no-ledger، وفقد ACK بعد COMMIT مع إعادة قراءة اتصال جديد ورفض الإعادة. [التقرير](RAD-062_P10_REPORT_2026-10-30.md) يحفظ QA الفعلية. الحكم السابق للـledger تاريخي ومتجاوز بهذا القرار، مع بقاء أدلته الأصلية؛ [P9b](RAD-062_P09B_REPORT_2026-10-30.md) وشرط [ملكية live](DECISIONS.md#rad062-restore-owner-parity-2026-11-01) وباقي STOPs ثابتة. #175 Draft، RAD-062 in_progress/reviewer؛ لا SQL حي/Variables/نشر إضافي/preview/goldens/بيانات مشاركين.
+
+
+دليل C بعد التنفيذ: [CI check على7aedcbf](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41283141668/job/124778979056) success، والبروفة12pass/0fail/0skip. fixture بلا ledger قبل/بعد، probes الثمانية false قبل M01، ثم prefix التالي بعد كل COMMIT حتى M08، مع manifest/transition/counts وكل STOP witnesses وteardown. ثبت رفض خارج الترتيب والإعادة، وfalse بعد rollback، وtrue من اتصال جديد في محاكاة فقد ACK بعد COMMIT دون retry؛ مراجعة مصدر كل CREATE FUNCTION في جدول P9. B بقيت ["relations"] بعد تصحيح الملكية؛ docs:test117 وVitest3198 وبقية full CI ناجحة. أصلح أثناء الحلقة خلل credential غير enumerable في اتصال شاهد الاختبار الجديد؛ لم يُعدّل main أو auth/privilege/guard/timeout لإخفائه. [التقرير](RAD-062_P10_REPORT_2026-10-30.md) يحفظ فشل CI الأول وسبب الإصلاح والدليل الأخير. شرط بروفة latest الفعلية بعد C وبقية شروط المالك ما زالت حاجبة؛ الوكيل لم يقرأ live. رأس التوثيق اللاحق لا يغير كود7aedcbf وتعرض نتيجته في PR.
+
+
+<a id="rad062-final-campaign-2026-11-01"></a>
+## RAD-062 final campaign — 2026-11-01
+
+Authority: the owner's final-campaign instruction on Draft #175, recorded in [P10 report](RAD-062_P10_REPORT_2026-10-30.md#final-campaign-2026-11-01). **D-CRLF** permits only line-ending-agnostic body anchors in M01–M08: optional CR before each LF, added lines use the local anchor ending, identical LF replacement/count semantics, no other body-byte rewrite, and missing anchors abort the transaction. Only M06/M08 contain such patches. Expected function/relation readiness digests remain unchanged; a need to alter either is STOP. Update only changed migration SHA pins and recompute/report the marker.
+
+**job_b(a):** assess_job_a is required; assess_job_b is optional. Every present job role and assess_worker must be NOLOGIN, with zero connections for all three. No role/attribute/membership mutation is authorized; the later D-PROFILES-ACL exception below permits only its exact M01 revoke.
+
+**Primary proof:** use main's byte-exact, no-data production schema snapshot with the pinned Supabase17.11 image and ICU en-US to build the RAD-086 backup, then call the real rehearse() path. Frozen B must first be measured and remain exactly ["relations"]; every P10 manifest check, ownership parity, non-superuser postgres apply, transition/count/teardown proof remains required. Synthetic STOP witnesses stay. The later D-CONFIG exception below permits only the four reviewed singleton configuration rows in the CI test after restore; the archive remains empty. The pre-M01 data precheck must print all count-only conditions with migration source lines in one batch, then STOP for any nonzero condition except existing invalid names accepted under [D-NAMES](#rad062-d-names-2026-11-01). CLI main() stays redacted; no-data CI test diagnostics may include full PostgreSQL errors.
+
+Normal commits/merges and autonomous push/CI/log/fix cycles are authorized; no rebase, force push, skip-ci, ready/merge, live SQL, Variables, extra deployment, hosted preview, golden regeneration or participant data. Both phone packets and supabase/manual stay byte-identical. RAD-062 stays in_progress/reviewer. Unapproved workarounds are local scratch discovery only, never pushed; outstanding owner decisions are consolidated after discovering downstream failures.
+
+
+<a id="rad062-config-acl-approved-2026-11-01"></a>
+## RAD-062 D-CONFIG and D-PROFILES-ACL — approved 2026-11-01
+
+Authority: the owner's follow-up on Draft #175; [implementation/proof report](RAD-062_P10_REPORT_2026-10-30.md#config-acl-approved-2026-11-01). The two proposals in the [earlier list](RAD-062_P10_REPORT_2026-10-30.md#final-campaign-owner-decisions) are now resolved as follows, not open permission requests.
+
+**D-CONFIG, CI seeding:** only the real-catalogue CI test may insert the four singleton rows after restoring the empty snapshot and before the unchanged owner inspection. Use the exact reviewed INSERT initializers for launch_gate (closed), scope_lock, erasure_fk_contract and sharing_policy, then the same reviewed sharing-policy initializer/values as the synthetic path. Owner rehearsal code, its zero-count data precheck and all STOPs stay unchanged. The owner reports live already has these rows and the real-backup rehearsal passed pre_diagnostic; this is owner evidence, not an agent live read.
+
+**D-PROFILES-ACL, narrow revoke:** add exactly `revoke references, trigger, truncate, maintain on table public.profiles from service_role;` after M01's guard, inside its existing transaction. The snapshot's grant at schema.sql:13752 comes from Supabase default privileges, not the repo. No other grant/revoke is authorized. The repo-built path must prove the statement is a no-op; the real snapshot must prove removal of exactly these four privileges. Expected readiness digests, SQL checks, timeouts and guards stay unchanged. Update M01's SHA pin only and recompute/report old and new markers. Any other in-scope live-vs-repo privilege difference is STOP, never another inferred revoke.
+
+All discovery must use the pinned supabase/postgres:17.11.0.016 image. Earlier PG18-only scratch findings are not accepted evidence. All unapproved discovery workarounds stay local and unpushed. Normal commits, Draft only, no skip-ci, live SQL, Variables, extra deployment, hosted preview, goldens or participant data; phone packets and supabase/manual remain byte-identical. RAD-062 remains in_progress/reviewer.
+
+
+<a id="rad062-d-names-2026-11-01"></a>
+## RAD-062 D-NAMES — existing names are report-only, 2026-11-01
+
+Authority: the owner's D-NAMES instruction on Draft #175; [P10 report](RAD-062_P10_REPORT_2026-10-30.md#d-names-2026-11-01). The owner reports the real-backup rehearsal at13c6744 printed all14conditions: invalid_name_profiles=10, the other13=0, then STOP data_precheck. This is counts-only owner evidence; no participant rows were supplied or read by the agent.
+
+**Decision:** in the pre-M01 data precheck and post-M08 verifyCounts, a valid nonnegative invalid-name count is accepted and printed as `accepted_invalid_name_profiles=<n>`. Every other condition remains STOP, including quota/capacity and malformed counts. Print the whole precheck batch before its STOP. No automatic cleanup/backfill or waiver for new invalid writes; no SQL, migrations, checks, readiness expectations, timeouts or SQL guards change. This narrow exception supersedes the earlier requirement that every precheck count, including legacy names, be zero. The marker must remain `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`.
+
+**User-visible impact:** M01 does not validate existing profile rows. Its trigger checks display_name only on INSERT or when the value changes. Login, Practice and updates to other profile fields are unaffected. Assess entry/authorization still requires a valid full name; the existing P10 name UI collects it from that account. An invalid new/changed display_name remains rejected. No product or SQL behaviour is changed by accepting the rehearsal counter.
+
+Both phone packets, supabase/manual and supabase/fixtures remain byte-identical. No live SQL, Variables, extra deployment, hosted preview, goldens or participant data. RAD-062 remains in_progress/reviewer and #175 Draft; normal commits only, no skip-ci.

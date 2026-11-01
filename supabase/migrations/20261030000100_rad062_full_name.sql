@@ -13,6 +13,8 @@ do $guard$ begin
  end if;
 end $guard$;
 
+revoke references, trigger, truncate, maintain on table public.profiles from service_role;
+
 -- ECMAScript WhiteSpace + LineTerminator and Unicode 17.0 Letter ranges.
 -- Generated from the current client's /\p{L}/u, not locale-dependent POSIX alpha.
 -- Bounded input: trim first, at most 100 code points, then count letter-containing words.
