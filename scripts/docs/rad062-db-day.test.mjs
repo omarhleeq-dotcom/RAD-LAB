@@ -153,10 +153,11 @@ test(`PostgreSQL 17.11 promoted full-apply and every required check: ${locale}`,
         create table auth.sessions(user_id uuid); create table auth.refresh_tokens(user_id uuid);`);
       const [cfg] = await db.query("select current_setting('unix_socket_directories') host,current_setting('port') port,current_database() database,datlocprovider,datlocale,datcollate,datctype from pg_database where datname=current_database()");
       assert.deepEqual([cfg.datlocprovider,cfg.datlocale,cfg.datcollate,cfg.datctype],locale==='icu-en-US'?['i','en-US','en_US.UTF-8','en_US.UTF-8']:['c',null,locale,locale]);
-      // The pre-fix text order must differ from name order under en_US, so this run witnesses the defect.
+      // Owner D1: ICU en-US orders this synthetic inventory like C; libc en_US
+      // alone witnesses the pre-fix defect. Explicit C ordering remains required everywhere.
       const [order] = await db.query(`select (select jsonb_agg(e order by e->>0,e->>1,e->>2) from jsonb_array_elements(assess.d3_fk_inventory_v1()) e)=assess.d3_fk_inventory_v1() default_order,
         (select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") from jsonb_array_elements(assess.d3_fk_inventory_v1()) e)=assess.d3_fk_inventory_v1() c_order`);
-      assert.deepEqual(order, { default_order: locale === 'C', c_order: true });
+      assert.deepEqual(order, { default_order: locale === 'C' || locale === 'icu-en-US', c_order: true });
       client = new pg.Client({ host: cfg.host, port: Number(cfg.port), user: 'postgres', database: cfg.database, password: '', ssl: false });
       await client.connect();
       const query=client.query.bind(client);
