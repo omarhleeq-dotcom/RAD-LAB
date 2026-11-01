@@ -79,7 +79,7 @@ it('whole M01–M08 readiness passes with a closed gate; source, ACL, relation a
  try {
   const sql = read('supabase/checks/rad062-ready.sql');
   const rows = (await db.admin.query(sql)).rows;
-  expect(rows).toHaveLength(5); expect(rows.every(r => r.ok === true)).toBe(true);
+  expect(rows.map(r => r.check_name).sort()).toEqual(['closed_gate','functions','identity_inventory','not_null_constraints_plain','relations','worker_nologin']); expect(rows.every(r => r.ok === true)).toBe(true);
   for (const drift of [
    "create or replace function assess.health_v2() returns jsonb language sql security definer set search_path='' as $$ select '{}'::jsonb $$",
    'grant execute on function assess.freeze_v2() to authenticated',
