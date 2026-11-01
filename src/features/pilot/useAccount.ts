@@ -1,6 +1,7 @@
 "use client";
 
 // Account state for the account page (RAD-041b): session + own profile + the four actions. All network goes through getPilotClient().
+import { clearAuthoringBatchMemory } from "../assess/import-preferences";
 import type { Session } from "@supabase/supabase-js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type AuthErrorKey, authErrorKey, type Profile } from "./account-state";
@@ -62,7 +63,7 @@ export function useAccount(redirectTo: string) {
       if (cancelled) return;
       const sub = client.auth.onAuthStateChange((event, session) => {
         // INITIAL_SESSION / TOKEN_REFRESHED fire on their own; only a real sign-in or sign-out changes what the page shows.
-        if (event === "SIGNED_OUT") void load(null, false);
+        if (event === "SIGNED_OUT") { clearAuthoringBatchMemory(); void load(null, false); }
         else if (event === "SIGNED_IN") void load(session, true);
       });
       off = () => sub.data.subscription.unsubscribe();
@@ -147,7 +148,8 @@ export function useAccount(redirectTo: string) {
     const client = await getPilotClient();
     if (!client) return;
     if (state.kind === "signedIn") await recordActivity(client, state.profile.status, "logout");
-    await client.auth.signOut();
+    const { error } = await client.auth.signOut();
+    if (!error) clearAuthoringBatchMemory();
   }, [state]);
 
   const retry = useCallback(async () => {

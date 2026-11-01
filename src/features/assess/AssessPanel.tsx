@@ -1,4 +1,6 @@
 "use client";
+import { AuthoringEntry } from "./AuthoringEntry";
+import { useSupervisorAppointment } from "../supervisor/P1Session";
 import { useEffect,useRef,useState,useSyncExternalStore } from "react";
 import { useLocale,useTranslations } from "next-intl";
 import { useSessionAccount } from "@/features/pilot/SessionGate";
@@ -72,6 +74,6 @@ function TrackSelection(){
   // Changing track remounts its isolated runner. Native navigation protects unacknowledged drafts.
   return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
 }
-export function AssessPanel(){const {state}=useSessionAccount();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><Rad062Entry><AssessView/></Rad062Entry></div>:<p className="mt-6">{t("approved")}</p>;}
+export function AssessPanel(){const {state}=useSessionAccount();const supervisor=useSupervisorAppointment();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><Rad062Entry><AssessView/>{supervisor&&<AuthoringEntry/>}</Rad062Entry></div>:<p className="mt-6">{t("approved")}</p>;}
 
 function AssessView(){const history=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("history")==="1",()=>null);return history===null?null:history?<HistoryPanel/>:<TrackSelection/>;}

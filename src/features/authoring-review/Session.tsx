@@ -2,6 +2,7 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { AssignmentReview, AuthoringAdapter, Draft, DraftSummary, Group, Page, ReviewFixture, Scope, StudentPreviewData } from './contracts';
 import { ReviewError } from '../supervisor-review/contracts';
 import { draftIssues, newDraft, studentPreview, type Issue } from './draft';
+import { authoringPreviewV2, draftToV2 } from '../assess/import-validator';
 import { AuthoringView } from './AuthoringView';
 import { StudentPreview } from './StudentPreview';
 import { IssuedAssignments } from './IssuedAssignments';
@@ -9,9 +10,9 @@ import { copy, sqlCopy, assignmentSqlCopy, type Copy } from './copy';
 const control = 'min-h-11 max-w-full rounded-lg border border-line bg-panel px-4 py-2 text-sm';
 const failure = (e: unknown, t: Copy) => e instanceof ReviewError ? t[e.reason === 'offline' ? 'error' : e.reason] : t.error;
 /** Every await is guarded even if a future adapter ignores AbortSignal. */
-function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; scope: Scope; locale: 'en' | 'ar' }) {
+function ScopedSession({ adapter, scope, locale, text }: { adapter: AuthoringAdapter; scope: Scope; locale: 'en' | 'ar'; text?: Partial<Copy> }) {
  const recoveryId = useId();
- const t = useMemo(() => adapter.service === 'sql' ? { ...copy[locale], ...sqlCopy[locale], ...(adapter.assignmentsEnabled ? assignmentSqlCopy[locale] : {}) } : copy[locale], [adapter, locale]);
+ const t = useMemo(() => adapter.service === 'sql' ? { ...copy[locale], ...sqlCopy[locale], ...(adapter.assignmentsEnabled ? assignmentSqlCopy[locale] : {}), ...text } : copy[locale], [adapter, locale, text]);
  const [context, setContext] = useState<{ group: Group; now: number; receivedAt: number }>();
  const [draft, setDraft] = useState<Draft>(), [baseline, setBaseline] = useState<Draft>();
  const [preview, setPreview] = useState<StudentPreviewData>(), [plan, setPlan] = useState<AssignmentReview>();
@@ -48,7 +49,7 @@ function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; 
  }
  function cancel() { active.current?.abort(); if (adapter.service === 'sql' && draft) { setRecovery({ local: structuredClone(draft), checked: false, resolved: false }); setPreview(undefined); setPlan(undefined); } else { clear(); setContext(undefined); } setBusy(false); setError(t.cancelled); }
  function change(d: Draft) { setDraft(d); setPreview(undefined); setPlan(undefined); setIssues([]); setReceipt(false); setDiscarding(false); }
- function validate() { const found = draftIssues(draft!, adapter.parts, adapter.practicals); setIssues(found); return !found.length; }
+ function validate() { if (adapter.authoringVersion === 2) { try { draftToV2(draft!); return true; } catch { setIssues([{ path: 'draft', code: 'limit' }]); return false; } } const found = draftIssues(draft!, adapter.parts, adapter.practicals); setIssues(found); return !found.length; }
  async function verify() {
   const started = performance.now();
   active.current?.abort(); const c = new AbortController(); active.current = c; setBusy(true);
@@ -75,14 +76,14 @@ function ScopedSession({ adapter, scope, locale }: { adapter: AuthoringAdapter; 
   {adapter.drafts && draft && <button className={control} disabled={busy || JSON.stringify(draft) !== JSON.stringify(baseline) || !!recovery} onClick={() => void operation(s => adapter.drafts!(scope, cursor, s), list => { setDrafts(list); setDraft(undefined); setBaseline(undefined); setRecovery(undefined); })}>{t.draftList}</button>}
   {busy && <div><p role="status">{t.busy}</p><button className={control} onClick={cancel}>{t.cancel}</button></div>}
   {preview ? <div ref={region}><StudentPreview data={preview} t={t} locale={locale} close={() => { setPreview(undefined); requestAnimationFrame(() => [...(container.current?.querySelectorAll('button') ?? [])].find(b => b.textContent === t.preview)?.focus()); }}/></div> :
-   draft ? <AuthoringView draft={draft} parts={adapter.parts} practicals={adapter.practicals} t={t} busy={busy || !!recovery && !recovery.resolved} assignments={adapter.service !== 'sql' || adapter.assignmentsEnabled === true} saveBlocked={!!recovery} dirty={JSON.stringify(draft) !== JSON.stringify(baseline)} issues={issues} plan={plan} receipt={receipt} discarding={discarding} change={change}
-    save={() => void operation(s => adapter.save(scope, draft, s), d => { setDraft(d); setBaseline(d); setPlan(undefined); })}
-    preview={() => { if (validate()) { setPlan(undefined); setPreview(studentPreview(draft, adapter.parts, adapter.practicals)); } }}
+   draft ? <AuthoringView authoringActor={adapter.authoringVersion === 2 ? scope.actorId : undefined} draft={draft} parts={adapter.parts} practicals={adapter.practicals} t={t} busy={busy || !!recovery && !recovery.resolved} assignments={adapter.service !== 'sql' || adapter.assignmentsEnabled === true} saveBlocked={!!recovery} dirty={JSON.stringify(draft) !== JSON.stringify(baseline)} issues={issues} plan={plan} receipt={receipt} discarding={discarding} change={change}
+    save={() => { if (adapter.authoringVersion !== 2 || validate()) void operation(s => adapter.save(scope, draft, s), d => { setDraft(d); setBaseline(d); setPlan(undefined); }); }}
+    preview={() => { if (validate()) { setPlan(undefined); setPreview(adapter.authoringVersion === 2 ? authoringPreviewV2(draft) : studentPreview(draft, adapter.parts, adapter.practicals)); } }}
     prepare={() => { if (validate()) void operation(s => adapter.prepare(scope, draft, s), setPlan, true); }}
     confirm={() => plan && void operation(s => adapter.confirm(scope, plan.token, s), () => { setPlan(undefined); setReceipt(true); }, true)}
     cancelReview={() => setPlan(undefined)} paging={cursor => plan && void operation(s => adapter.targets(scope, plan.token, cursor, s), targets => setPlan({ ...plan, targets }), true)}
     discard={() => setDiscarding(true)} keep={() => setDiscarding(false)} confirmDiscard={() => { change(baseline ? structuredClone(baseline) : newDraft(draft.track)); }}/>
-   : <div className="flex flex-wrap gap-2"><button className={control} disabled={busy} onClick={() => { setDraft(newDraft()); setBaseline(undefined); }}>{t.create}</button><button className={control} disabled={busy || !adapter.practicals?.length} onClick={() => { setDraft(newDraft('full-practical')); setBaseline(undefined); }}>{t.createPractical}</button></div>}
+   : <div className="flex flex-wrap gap-2"><button className={control} disabled={busy} onClick={() => { setDraft(adapter.authoringVersion === 2 ? { ...newDraft(), randomPool: { version: 1, size: 1 } } : newDraft()); setBaseline(undefined); }}>{t.create}</button>{adapter.authoringVersion !== 2 && <button className={control} disabled={busy || !adapter.practicals?.length} onClick={() => { setDraft(newDraft('full-practical')); setBaseline(undefined); }}>{t.createPractical}</button>}</div>}
  </div>;
 }
 /** A replacement authenticated adapter remounts before any old private state is displayed. */
@@ -91,7 +92,7 @@ function useAdapterIdentity(adapter: AuthoringAdapter) {
  if (identity.adapter !== adapter) setIdentity({ adapter, generation: identity.generation + 1 });
  return identity.generation;
 }
-export function AuthoringSession(props: { adapter: AuthoringAdapter; scope: Scope; locale: 'en' | 'ar' }) {
+export function AuthoringSession(props: { adapter: AuthoringAdapter; scope: Scope; locale: 'en' | 'ar'; text?: Partial<Copy> }) {
  const generation = useAdapterIdentity(props.adapter);
  return <ScopedSession key={`${props.scope.actorId}:${props.scope.groupId}:${generation}`} {...props}/>;
 }
