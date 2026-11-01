@@ -19,3 +19,13 @@ test('pre-M01 precheck uses only existing schema, reports the complete batch bef
     assert.equal((await db.query("select to_regprocedure('public.rad062_valid_full_name(text)') is null absent"))[0].absent,true);
   } finally { await db.close(); }
 });
+
+test('multiple violations report every count together before the single STOP', async () => {
+  const counts=Object.fromEntries(conditions().map(([key])=>[key,'0']));
+  counts.invalid_name_profiles='2'; counts.drafts_above_64kib='3'; counts.sessions_invalid_lifecycle='4';
+  let reported;
+  const db={ query:async sql=>({ rows:sql.startsWith('with usage')?[counts]:[] }) };
+  await assert.rejects(dataPrecheck(db,rows=>{ reported=rows; }),{ message:'data_precheck' });
+  assert.equal(reported.length,conditions().length);
+  assert.deepEqual(reported.filter(r=>Number(r.count)>0).map(r=>r.count),['2','3','4']);
+});

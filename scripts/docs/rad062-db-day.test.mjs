@@ -246,6 +246,28 @@ test('D-CRLF patch preserves every other byte, global occurrence count, anchor-l
     assert.equal(r.result,'begin\r\nadded;\r\none\r\nbegin\nadded;\ntwo\n');
     const [literal] = await db.query('select pg_temp.rad062_patch($1,$2,$3) result',['x(a.b)\r\nkeep','x(a.b)','x(a.b)\nadded']);
     assert.equal(literal.result,'x(a.b)\r\nadded\r\nkeep');
+    await db.exec('begin; create table public.rad062_anchor_abort_witness(n integer)');
     await assert.rejects(db.query('select pg_temp.rad062_patch($1,$2,$3)', ['unchanged','missing\n','add\n']));
+    await db.exec('rollback');
+    assert.equal((await db.query("select to_regclass('public.rad062_anchor_abort_witness') is null absent"))[0].absent,true);
+  } finally { await db.close(); }
+});
+
+test('job_b(a) on a catalogue: A alone passes, A+B passes, each present worker LOGIN stops', async () => {
+  const db=await openLocalDatabase('pglite');
+  const client={ query:async sql=>({ rows:await db.query(sql) }) };
+  const env={ RAD062_SECRET_STATE:'DISABLED',RAD062_RAD086_VERIFIED:'yes',RAD062_V1_PACKET_AT_HAND:'yes' };
+  try {
+    await db.exec('create role assess_job_a nologin');
+    await preflight(client,env);
+    await db.exec('create role assess_job_b nologin');
+    await preflight(client,env);
+    for(const role of ['assess_job_a','assess_job_b','assess_worker']) {
+      await db.exec(`alter role ${role} login`);
+      await assert.rejects(preflight(client,env),{ message:'preconditions' });
+      await db.exec(`alter role ${role} nologin`);
+    }
+    await db.exec('drop role assess_job_b; drop role assess_job_a');
+    await assert.rejects(preflight(client,env),{ message:'preconditions' });
   } finally { await db.close(); }
 });

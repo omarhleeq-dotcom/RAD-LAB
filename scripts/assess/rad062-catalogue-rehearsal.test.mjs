@@ -32,6 +32,8 @@ test('real CRLF catalogue -> RAD-086 empty backup -> unchanged rehearse path, ev
       }
       await new Promise(r => setTimeout(r, 1000));
     }
+    const serverVersion = Number(q('show server_version_num', 'postgres'));
+    assert.equal(serverVersion, 170011);
     q(prepareRolesSql(roles.toString()), 'postgres');
     docker(['exec', name, 'createdb', '-U', 'supabase_admin', '-O', 'postgres', '-T', 'template0', '--encoding=UTF8', '--locale-provider=icu', '--icu-locale=en-US', '--lc-collate=en_US.UTF-8', '--lc-ctype=en_US.UTF-8', 'catalogue']);
     // Same owner execution rule as the accepted RAD-086 event-trigger restore.
@@ -61,7 +63,7 @@ test('real CRLF catalogue -> RAD-086 empty backup -> unchanged rehearse path, ev
     mkdirSync(dir, { recursive: true, mode: 0o700 });
     for (const [file, bytes] of [['roles.sql', roles], ['project.dump', dump]]) writeFileSync(join(dir, file), bytes, { mode: 0o600 });
     writeFileSync(join(dir, 'checksums.json'), JSON.stringify({ 'roles.sql': sha256Bytes(roles), 'project.dump': sha256Bytes(dump) }), { mode: 0o600 });
-    writeFileSync(join(dir, 'db-meta.json'), JSON.stringify({ ...locale, encoding: 'UTF8', server_version_num: 170011, tables }), { mode: 0o600 });
+    writeFileSync(join(dir, 'db-meta.json'), JSON.stringify({ ...locale, encoding: 'UTF8', server_version_num: serverVersion, tables }), { mode: 0o600 });
     symlinkSync('store/' + stamp, join(root, 'daily'));
     const identity = join(root, 'identity');
     writeFileSync(identity, execFileSync('age-keygen', [], { stdio: 'pipe' }), { mode: 0o600 });
