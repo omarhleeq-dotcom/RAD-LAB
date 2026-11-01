@@ -9,7 +9,7 @@ import { clearAuthoringBatchMemory, readImportNotes, writeImportNotes } from './
 import { createSqlAuthoringV2 } from '../authoring-review/sql-adapter';
 import { newDraft } from '../authoring-review/draft';
 import { draftToV2, rowToQuestion } from './import-validator';
-import { useAccount } from '../pilot/useAccount';
+import { SessionProvider, useSessionAccount } from '../pilot/SessionGate';
 const mocked = vi.hoisted(() => ({ event: undefined as undefined | ((event: string, session: null) => void), signOut: vi.fn(async () => ({ error: null as unknown })) }));
 vi.mock('../pilot/client', () => ({ getPilotClient: () => Promise.resolve({ auth: { getSession: async () => ({ data: { session: null } }), onAuthStateChange: (callback: typeof mocked.event) => { mocked.event = callback; return { data: { subscription: { unsubscribe: vi.fn() } } }; }, signOut: mocked.signOut } }) }));
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
@@ -40,9 +40,9 @@ it('isolates storage failures for reads, writes and clears', () => {
  }
 });
 it('clears at successful sign-out and at SIGNED_OUT from another tab or session expiry, despite throwing storage', async () => {
- let account: ReturnType<typeof useAccount> | undefined;
- function Hook() { account = useAccount('https://example.invalid/en/account'); return null; }
- await render(createElement(Hook));
+ let account: ReturnType<typeof useSessionAccount> | undefined;
+ function Hook() { account = useSessionAccount(); return null; }
+ await render(createElement(IntlProvider, { locale: 'en', messages: en }, createElement(SessionProvider, null, createElement(Hook))));
  writeImportNotes('owner-a', batch); await act(async () => account!.signOut()); expect(localStorage.length).toBe(0);
  writeImportNotes('owner-a', batch); await act(async () => mocked.event!('SIGNED_OUT', null)); expect(localStorage.length).toBe(0);
  writeImportNotes('owner-a', batch); const denied = vi.spyOn(Storage.prototype, 'key').mockImplementation(() => { throw Error('Storage denied'); });
