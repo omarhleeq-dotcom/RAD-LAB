@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 383,
-  "updated_at": "2026-11-01T11:25:57+00:00",
+  "revision": 384,
+  "updated_at": "2026-11-01T11:59:59+00:00",
   "timezone": "UTC",
   "next_id": "RAD-089",
   "tasks": [
@@ -792,11 +792,11 @@
     {
       "id": "RAD-088",
       "title": "ترقية next إلى16.4.3 وإغلاق npm audit critical/high",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "Draft PR يرقّي next وeslint-config-next إلى16.4.3 وzod4.6.7 وvite8.3.5؛ audit صفر critical/high والعلامة ثابتة. ينتظر دمج المالك وفحص الهاتف المختصر بعد Deploy Pages. 16 moderate في سلسلة eslint بند مفتوح بحد وtrigger في التقرير.",
+      "description": "ترقية next وeslint-config-next إلى16.4.3 وإغلاق audit critical/high؛ فحص المالك للهاتف4/4 ناجح بعد النشر. 16 moderate في سلسلة eslint بند مستقل وفق التقرير §7.",
       "source_ref": "docs/DEPS_SECURITY_REPORT_2026-11-01.md؛ docs/DECISIONS.md#db-followups-owner-2026-11-01",
-      "waiting_on": "owner"
+      "completion_evidence": "#186 مدموج؛ CI check وdeploy أخضران وDeploy Pages ناجح على main. marker ثابت. فحص المالك للهاتف2026-11-01 بعد النشر4/4: فتح الموقع، فحص تدريبي كامل، EN/AR، صفحة الدخول. docs/DEPS_SECURITY_REPORT_2026-11-01.md §8؛ moderate16 وفق §7."
     }
   ]
 }
