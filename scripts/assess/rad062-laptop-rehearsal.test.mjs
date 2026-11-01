@@ -100,7 +100,7 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     q(`create function public.synthetic_event_fn() returns event_trigger language plpgsql as $$begin end$$;
       create event trigger synthetic_owner_event on ddl_command_end when tag in ('ALTER TABLE') execute function public.synthetic_event_fn();`);
     save(); symlinkSync('store/' + stamp, join(root, 'daily')); sourceVolumes = volumes();
-    const result = await rehearse(c, { env }).finally(absent);
+    const result = await rehearse(c, { env, observeFrozenB: kinds => console.log(JSON.stringify(kinds)) }).finally(absent);
     assert.equal(result.rehearsal_pass, 1); assert.equal(result.teardown_pass, 1);
     assert.equal(result.event_triggers_second_pass_count, 1);
     assert.equal(result.postgres_non_superuser, 1); assert.equal(result.migrations_committed, 8);

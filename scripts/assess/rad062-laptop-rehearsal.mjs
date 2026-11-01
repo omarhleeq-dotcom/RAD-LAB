@@ -38,11 +38,18 @@ const frozen = 'supabase/checks/rad085-p1-b-ready.sql';
 const transitionKinds = ['columns', 'constraints', 'effective_privileges', 'functions', 'indexes', 'relations', 'triggers'];
 
 // Exported for synthetic witnesses. No alternate SQL, role, phase or check selectors.
-export async function inspectRestored(db) {
+export async function inspectRestored(db, observeFrozenB) {
   const identity = (await db.query("select current_user, session_user, rolsuper, current_setting('rad085.sharing_phase',true) phase from pg_roles where rolname=current_user")).rows[0];
   if (identity.current_user !== 'postgres' || identity.session_user !== 'postgres' || identity.rolsuper !== false || ![null, '', 'initialized'].includes(identity.phase)) throw new Stop('apply_role');
   try { await checks(db, [diagnostic]); } catch (e) { throw stageStop('pre_diagnostic', e); }
-  try { await checks(db, [frozen]); } catch (e) { throw stageStop('pre_frozen_b', e); }
+  try {
+    const result = await db.query(readFileSync(frozen, 'utf8'));
+    const rows = (Array.isArray(result) ? result : [result]).flatMap(r => r.rows ?? []);
+    // Synthetic CI observer only: fixed check kinds, never catalogue identities or data.
+    observeFrozenB?.(rows.filter(row => row.ready === false).map(row => row.kind).sort());
+    checkRows(result);
+    throw new Stop('pre_frozen_b'); // Evidence-only run: even zero failures must STOP before encoding.
+  } catch (e) { await db.query('rollback'); throw stageStop('pre_frozen_b', e); }
   let migrations = 0;
   for (let n = 1; n <= 8; n++) {
     try { await apply(db, `M0${n}`, { RAD062_SECRET_STATE: 'DISABLED' }); migrations++; }
@@ -115,7 +122,7 @@ mv "$1.rad062" "$1"
   }
 }
 
-export async function rehearse(c, { env = process.env } = {}) {
+export async function rehearse(c, { env = process.env, observeFrozenB } = {}) {
   localOnly([], env); verifyMigrations();
   const root = mkdtempSync(join(tmpdir(), 'rad062-laptop-')), socket = join(root, 'socket');
   mkdirSync(socket); chmodSync(root, 0o700); chmodSync(socket, 0o777); // private parent; image UID can write only the bind-mounted child
@@ -148,7 +155,7 @@ export async function rehearse(c, { env = process.env } = {}) {
       db.on('error', () => {}); // Query/connect rejection carries STOP through finally; never emit raw idle errors.
       try {
         try { await db.connect(); } catch (e) { throw stageStop('connect', e); }
-        result = await inspectRestored(db);
+        result = await inspectRestored(db, observeFrozenB);
       } catch (e) { callbackFailure = e instanceof Stop ? e : stageStop('inspect', e); throw callbackFailure; }
       finally {
         try { await db.end(); } catch (e) { if (!callbackFailure) { callbackFailure = stageStop('connect', e); throw callbackFailure; } }
