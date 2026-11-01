@@ -13,7 +13,8 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[2]
 REPORT_DIR = ROOT / "docs/archive/reports/2026-11"
 WORKFLOW = {'AGENTS.md', 'CLAUDE.md', 'docs/README.md', 'docs/DECISIONS.md',
-            'docs/HANDOFF.md', 'docs/project-status.md', 'docs/status-format.md'}
+            'docs/HANDOFF.md', 'docs/project-status.md', 'docs/status-format.md',
+            'docs/DOCS_CHECKS.md'}
 
 
 def git(*args):

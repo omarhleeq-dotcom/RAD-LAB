@@ -13,7 +13,7 @@ export function loadBudgets(root = ROOT) {
 export const BUDGETS = loadBudgets();
 export const lines = (text) => text.trimEnd().split(/\r?\n/).length;
 export function decisionSections(text) {
-  const starts = [...text.matchAll(/^#{2,3} .+$/gm)];
+  const starts = [...text.matchAll(/^#{2,6} .+$/gm)];
   return starts.map((match, i) => ({ name: match[0], text: text.slice(match.index, starts[i + 1]?.index ?? text.length).trimEnd() }));
 }
 export function checkBudgets(documents, { caps = BUDGETS, previousDecisions = "", newFiles = new Set() } = {}) {
@@ -33,7 +33,7 @@ export function checkBudgets(documents, { caps = BUDGETS, previousDecisions = ""
     if (name.endsWith(".md") && date && (date >= caps.dated_report.from || newFiles.has(name))) measure(`${name} report lines`, lines(text), caps.dated_report.lines);
     if (name === "docs/DECISIONS.md" && previousDecisions) {
       const existing = new Set(decisionSections(previousDecisions).map((section) => section.name));
-      for (const section of decisionSections(text)) if (!existing.has(section.name) && section.name !== "## Current rules") measure(`${name} ${section.name}`, lines(section.text), caps.decision_section.lines);
+      for (const section of decisionSections(text)) if (!existing.has(section.name)) measure(`${name} ${section.name}`, lines(section.text), caps.decision_section.lines);
     }
     if (name === "docs/project-status.md") {
       const block = /```json\n([\s\S]*?)\n```/.exec(text);

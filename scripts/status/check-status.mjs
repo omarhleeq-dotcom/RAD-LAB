@@ -199,6 +199,7 @@ export function compareStatus(previousMarkdown, nextMarkdown) {
   if (errors.length > 0) return errors;
   const p = prev.data;
   const n = next.data;
+  if (p.format_version === "1.2" && n.format_version !== "1.2") errors.push("format_version cannot downgrade from1.2; new-task closure conditions must remain enforced");
 
   const prevById = new Map(p.tasks.map((t) => [t.id, t]));
   const nextById = new Map(n.tasks.map((t) => [t.id, t]));
@@ -265,7 +266,7 @@ export function openConflicts(markdown) {
 export function handoffProblem(statusFile) {
   const handoff = path.join(path.dirname(path.resolve(statusFile)), "HANDOFF.md");
   if (!existsSync(handoff)) return null;
-  const lines = readFileSync(handoff, "utf8").split(/\r?\n/).length;
+  const lines = readFileSync(handoff, "utf8").trimEnd().split(/\r?\n/).length;
   return lines > HANDOFF_MAX_LINES ? `HANDOFF.md has ${lines} lines (max ${HANDOFF_MAX_LINES}); keep it a summary and move history to docs/archive/` : null;
 }
 

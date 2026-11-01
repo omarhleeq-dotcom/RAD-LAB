@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { planSync } from "./sync.mjs";
 import { checkBudgets, loadBudgets, decisionSections } from "./budgets.mjs";
 import { extractStatusJson, validateStatus } from "../status/check-status.mjs";
 
@@ -228,8 +229,8 @@ export function runCli(args = process.argv.slice(2), root = DEFAULT_ROOT) {
   const previousDecisionIds = new Set();
   let previousDecisions = "";
   const newFiles = new Set();
-  if (base) {
-    const fork = git(root, ["merge-base", base, head]).trim();
+  {
+    const fork = git(root, ["merge-base", base ?? "origin/main", head]).trim();
     previousDecisions = git(root, ["show", `${fork}:docs/DECISIONS.md`]);
     const oldFiles = new Set(git(root, ["ls-tree", "-r", "--name-only", fork]).trim().split("\n"));
     for (const name of files) if (!oldFiles.has(name)) newFiles.add(name);
@@ -240,18 +241,20 @@ export function runCli(args = process.argv.slice(2), root = DEFAULT_ROOT) {
     }
     const prior = git(root, ["ls-tree", "-r", "--name-only", fork, "--", "docs/DECISIONS.md", "docs/archive/decisions/"]).trim().split("\n").filter((name) => name.endsWith(".md"));
     if (!prior.includes("docs/DECISIONS.md")) throw new Error("comparison base has no docs/DECISIONS.md");
-    for (const name of prior) for (const id of decisionIds(git(root, ["show", `${fork}:${name}`]))) previousDecisionIds.add(id);
+    if (base) for (const name of prior) for (const id of decisionIds(git(root, ["show", `${fork}:${name}`]))) previousDecisionIds.add(id);
   }
   const result = checkDocs({ root, files, previousDecisionIds, previousDecisions, newFiles });
-  if (base) {
-    const fork = git(root, ["merge-base", base, head]).trim();
+  {
+    const fork = git(root, ["merge-base", base ?? "origin/main", head]).trim();
     const hasBudget = git(root, ["ls-tree", "--name-only", fork, "--", "docs/budgets.json"]).trim();
-    if (hasBudget && git(root, ["show", `${fork}:docs/budgets.json`]) !== readFileSync(path.join(root, "docs/budgets.json"), "utf8")) {
+    if (hasBudget && JSON.stringify(JSON.parse(git(root, ["show", `${fork}:docs/budgets.json`]))) !== JSON.stringify(loadBudgets(root))) {
       const oldSections = new Set(decisionSections(previousDecisions).map((s) => s.name));
       const decisions = readFileSync(path.join(root, "docs/DECISIONS.md"), "utf8");
       if (!decisionSections(decisions).some((s) => !oldSections.has(s.name) && /owner/i.test(s.text) && /budget|cap/i.test(s.text))) result.errors.push("budget changes require a new owner decision in DECISIONS");
     }
   }
+  const stale = planSync({ root, base: base ?? "origin/main", head });
+  if (stale.size) result.errors.push(`run npm run docs:sync: stale mechanical fields in ${[...stale.keys()].join(", ")}`);
   for (const error of result.errors) console.error(error);
   for (const warning of result.warnings) console.warn(`docs:check WARNING: ${warning}`);
   console.log(`docs:check: ${result.markdownFiles} Markdown, ${result.localLinks} local references (${result.sourceRefs} source_ref paths), ${result.decisionIds} decision IDs; ${result.errors.length} errors, ${result.warnings.length} review warnings; ${base ? "decision continuity checked" : "no history comparison (use --base)"}`);

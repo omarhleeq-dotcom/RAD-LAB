@@ -24,3 +24,21 @@ test("pending selects only review/owner and retains exact closure text", () => {
   const tasks = selectTasks({ tasks: [task, { ...task, id: "RAD-002", waiting_on: "reviewer" }, { ...task, id: "RAD-003", status: "planned" }] }, { pending: true });
   assert.deepEqual(tasks, [task]);
 });
+
+test("format1.2 cannot downgrade and bypass closure conditions", () => {
+  const next = { ...data, format_version: "1.1" };
+  assert.match(compareStatus(md(data), md(next)).join(), /cannot downgrade/);
+});
+
+test("the exact HANDOFF line cap accepts a final newline", async () => {
+  const { mkdtempSync, writeFileSync, rmSync } = await import("node:fs");
+  const { tmpdir } = await import("node:os"); const { join } = await import("node:path");
+  const { handoffProblem, HANDOFF_MAX_LINES } = await import("./check-status.mjs");
+  const root = mkdtempSync(join(tmpdir(), "rad090-lines-"));
+  try {
+    writeFileSync(join(root, "HANDOFF.md"), "line\n".repeat(HANDOFF_MAX_LINES));
+    assert.equal(handoffProblem(join(root, "project-status.md")), null);
+    writeFileSync(join(root, "HANDOFF.md"), "line\n".repeat(HANDOFF_MAX_LINES + 1));
+    assert.match(handoffProblem(join(root, "project-status.md")), /HANDOFF.md has/);
+  } finally { rmSync(root, { recursive: true, force: true }); }
+});

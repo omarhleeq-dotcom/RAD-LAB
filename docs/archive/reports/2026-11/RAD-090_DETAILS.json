@@ -1,0 +1,320 @@
+{
+  "before": {
+    "docs_md": 161,
+    "handoff_lines": 30,
+    "handoff_max": 421,
+    "agents_lines": 52,
+    "status_bytes": 138371,
+    "decisions_bytes": 317940
+  },
+  "after": {
+    "docs_md": 80,
+    "handoff_lines": 20,
+    "handoff_max": 182,
+    "agents_lines": 38,
+    "status_bytes": 134176,
+    "decisions_bytes": 322327
+  },
+  "inventory_archive_root_skips": {
+    "docs/archive/RAD-085_ERASURE_SQL_PROPOSAL_2026-10-26.patch": [
+      "src/features/assess/rad085-erasure-db.test.ts"
+    ],
+    "docs/archive/RAD-085_SHARING_SQL_PROPOSAL_2026-10-26.patch": [
+      "src/features/supervisor-review/sharing-policy.test.ts"
+    ],
+    "docs/archive/RAD-085_SQL_AUDIT_PROPOSAL_2026-10-26.patch": [
+      "scripts/assess/rad085-security-rehearsal.mjs"
+    ]
+  },
+  "D1_after_M2": {
+    "moves": {
+      "docs/ASSESS_B_REPORT_2026-10-19.md": "docs/archive/reports/2026-10/ASSESS_B_REPORT_2026-10-19.md",
+      "docs/ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md",
+      "docs/ASSESS_CLOUD_RUN_PLAN_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_CLOUD_RUN_PLAN_2026-10-21.md",
+      "docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md": "docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md",
+      "docs/ASSESS_CONTROLLED_TRIAL_READINESS_2026-10-22.md": "docs/archive/reports/2026-10/ASSESS_CONTROLLED_TRIAL_READINESS_2026-10-22.md",
+      "docs/ASSESS_C_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_C_REPORT_2026-10-20.md",
+      "docs/ASSESS_D_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_D_REPORT_2026-10-20.md",
+      "docs/ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md",
+      "docs/ASSESS_EXTERNAL_BINDING_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_EXTERNAL_BINDING_REPORT_2026-10-21.md",
+      "docs/ASSESS_E_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_E_REPORT_2026-10-20.md",
+      "docs/ASSESS_F_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_F_REPORT_2026-10-20.md",
+      "docs/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md",
+      "docs/ASSESS_POSTGRES_PASSWORD_IMPACT_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_POSTGRES_PASSWORD_IMPACT_REPORT_2026-10-21.md",
+      "docs/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md",
+      "docs/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md",
+      "docs/ASSESS_RETENTION_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_RETENTION_REPORT_2026-10-20.md",
+      "docs/ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md",
+      "docs/ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md": "docs/archive/reports/2026-10/ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md",
+      "docs/ASSESS_SESSION_POOLER_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_SESSION_POOLER_REPORT_2026-10-21.md",
+      "docs/ASSESS_TRIAL_BATCH_ONE_2026-10-22.md": "docs/archive/reports/2026-10/ASSESS_TRIAL_BATCH_ONE_2026-10-22.md",
+      "docs/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md": "docs/archive/reports/2026-10/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md",
+      "docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md": "docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md",
+      "docs/ASSESS_TRIAL_ISOLATION_2026-10-22.md": "docs/archive/reports/2026-10/ASSESS_TRIAL_ISOLATION_2026-10-22.md",
+      "docs/ASSESS_TRIAL_PREPARATION_2026-10-22.md": "docs/archive/reports/2026-10/ASSESS_TRIAL_PREPARATION_2026-10-22.md",
+      "docs/ASSESS_WORKER_ACTIVATION_DECISION_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_WORKER_ACTIVATION_DECISION_2026-10-21.md",
+      "docs/ASSESS_WORKER_ACTIVATION_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_WORKER_ACTIVATION_REPORT_2026-10-21.md",
+      "docs/ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md",
+      "docs/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md": "docs/archive/reports/2026-10/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md",
+      "docs/FORTY_INCH_SID_CHANGES_2026-10-30.md": "docs/archive/reports/2026-10/FORTY_INCH_SID_CHANGES_2026-10-30.md",
+      "docs/FORTY_INCH_SID_REPORT_2026-10-30.md": "docs/archive/reports/2026-10/FORTY_INCH_SID_REPORT_2026-10-30.md",
+      "docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md": "docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md",
+      "docs/RAD-059_REPORT_2026-10-29.md": "docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md",
+      "docs/RAD-068_FINAL_TEXT_CHANGES_2026-10-22.md": "docs/archive/reports/2026-10/RAD-068_FINAL_TEXT_CHANGES_2026-10-22.md",
+      "docs/RAD-068_PART2_TEXT_CHANGES_2026-10-22.md": "docs/archive/reports/2026-10/RAD-068_PART2_TEXT_CHANGES_2026-10-22.md",
+      "docs/RAD-069B2A_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-069B2A_REPORT_2026-10-24.md",
+      "docs/RAD-069C2_PHASE2_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-069C2_PHASE2_REPORT_2026-10-24.md",
+      "docs/RAD-069C2_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-069C2_REPORT_2026-10-24.md",
+      "docs/RAD-069_DB_DAY_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-069_DB_DAY_REPORT_2026-10-24.md",
+      "docs/RAD-072_PART1B_HASHES_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART1B_HASHES_2026-10-23.md",
+      "docs/RAD-072_PART1B_REPORT_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART1B_REPORT_2026-10-23.md",
+      "docs/RAD-072_PART1_HASHES_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART1_HASHES_2026-10-23.md",
+      "docs/RAD-072_PART1_REPORT_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART1_REPORT_2026-10-23.md",
+      "docs/RAD-072_PART2A_HASHES_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART2A_HASHES_2026-10-23.md",
+      "docs/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART2A_PHASE_A_REPORT_2026-10-23.md",
+      "docs/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART2A_PHASE_B_REPORT_2026-10-23.md",
+      "docs/RAD-072_PART2B_HASHES_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART2B_HASHES_2026-10-23.md",
+      "docs/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART2B_PHASE_A_REPORT_2026-10-23.md",
+      "docs/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md": "docs/archive/reports/2026-10/RAD-072_PART2B_PHASE_B_REPORT_2026-10-23.md",
+      "docs/RAD-072_PART2C_HASHES_2026-10-24.md": "docs/archive/reports/2026-10/RAD-072_PART2C_HASHES_2026-10-24.md",
+      "docs/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-072_PART2C_PHASE_A_REPORT_2026-10-24.md",
+      "docs/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-072_PART2C_PHASE_B_REPORT_2026-10-24.md",
+      "docs/RAD-074_QA_TOOLING_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-074_QA_TOOLING_REPORT_2026-10-24.md",
+      "docs/RAD-075_HOUSEKEEPING_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-075_HOUSEKEEPING_REPORT_2026-10-24.md",
+      "docs/RAD-077_PROPOSAL_2026-10-24.md": "docs/archive/reports/2026-10/RAD-077_PROPOSAL_2026-10-24.md",
+      "docs/RAD-077_REPORT_2026-10-24.md": "docs/archive/reports/2026-10/RAD-077_REPORT_2026-10-24.md",
+      "docs/RAD-080_PROPOSAL_2026-10-25.md": "docs/archive/reports/2026-10/RAD-080_PROPOSAL_2026-10-25.md",
+      "docs/RAD-081_CHANGES_2026-10-25.md": "docs/archive/reports/2026-10/RAD-081_CHANGES_2026-10-25.md",
+      "docs/RAD-081_OWNER_ITEMS_2026-10-25.md": "docs/archive/reports/2026-10/RAD-081_OWNER_ITEMS_2026-10-25.md",
+      "docs/RAD-081_OWNER_ITEMS_CHANGES_2026-10-25.md": "docs/archive/reports/2026-10/RAD-081_OWNER_ITEMS_CHANGES_2026-10-25.md",
+      "docs/RAD-081_REPORT_2026-10-25.md": "docs/archive/reports/2026-10/RAD-081_REPORT_2026-10-25.md",
+      "docs/RAD-085_AUTH_FK_REPORT_2026-10-28.md": "docs/archive/reports/2026-10/RAD-085_AUTH_FK_REPORT_2026-10-28.md",
+      "docs/RAD-085_CRLF_READINESS_REPORT_2026-10-28.md": "docs/archive/reports/2026-10/RAD-085_CRLF_READINESS_REPORT_2026-10-28.md",
+      "docs/RAD-085_D3_REPORT_2026-10-27.md": "docs/archive/reports/2026-10/RAD-085_D3_REPORT_2026-10-27.md",
+      "docs/RAD-085_DB_DAY_COMPLETED_2026-10-28.md": "docs/archive/reports/2026-10/RAD-085_DB_DAY_COMPLETED_2026-10-28.md",
+      "docs/RAD-085_ERASURE_MATRIX_2026-10-26.md": "docs/archive/reports/2026-10/RAD-085_ERASURE_MATRIX_2026-10-26.md",
+      "docs/RAD-085_P1_B_COMPLETED_2026-10-29.md": "docs/archive/reports/2026-10/RAD-085_P1_B_COMPLETED_2026-10-29.md",
+      "docs/RAD-085_P1_USABILITY_A_2026-10-28.md": "docs/archive/reports/2026-10/RAD-085_P1_USABILITY_A_2026-10-28.md",
+      "docs/RAD-085_P1_USABILITY_B_2026-10-28.md": "docs/archive/reports/2026-10/RAD-085_P1_USABILITY_B_2026-10-28.md",
+      "docs/RAD-085_PLAN_2026-10-25.md": "docs/archive/reports/2026-10/RAD-085_PLAN_2026-10-25.md",
+      "docs/RAD-085_PROMOTION_REPORT_2026-10-27.md": "docs/archive/reports/2026-10/RAD-085_PROMOTION_REPORT_2026-10-27.md",
+      "docs/RAD-085_REMAINING_OPERATIONS_2026-10-26.md": "docs/archive/reports/2026-10/RAD-085_REMAINING_OPERATIONS_2026-10-26.md",
+      "docs/RAD-085_REPORT_2026-10-27.md": "docs/archive/reports/2026-10/RAD-085_REPORT_2026-10-27.md",
+      "docs/RAD-085_SECURITY_REVIEW_2026-10-27.md": "docs/archive/reports/2026-10/RAD-085_SECURITY_REVIEW_2026-10-27.md",
+      "docs/RAD-085_SEC_FIXES_REPORT_2026-10-27.md": "docs/archive/reports/2026-10/RAD-085_SEC_FIXES_REPORT_2026-10-27.md",
+      "docs/RAD-085_SQL_CONTRACTS_2026-10-26.md": "docs/archive/reports/2026-10/RAD-085_SQL_CONTRACTS_2026-10-26.md",
+      "docs/TERMS_REVIEW_2026-10-16.md": "docs/archive/reports/2026-10/TERMS_REVIEW_2026-10-16.md"
+    },
+    "skips": {
+      "docs/ASSET_LICENCE_AUDIT_2026-10-15.md": [
+        "non-Markdown: src/data/credits.test.ts"
+      ],
+      "docs/OWNER_SIGNOFF_REPORT_2026-10-30.md": [
+        "completion_evidence: RAD-037",
+        "completion_evidence: RAD-069",
+        "completion_evidence: RAD-074",
+        "completion_evidence: RAD-076",
+        "completion_evidence: RAD-077",
+        "completion_evidence: RAD-078",
+        "completion_evidence: RAD-079",
+        "completion_evidence: RAD-080",
+        "completion_evidence: RAD-084",
+        "completion_evidence: RAD-083"
+      ],
+      "docs/PILOT_PROVIDER_COMPARISON_2026-10-15.md": [
+        "completion_evidence: RAD-040"
+      ],
+      "docs/RAD-019_AI_ASSISTED_REVIEW_2026-10-22.md": [
+        "completion_evidence: RAD-065"
+      ],
+      "docs/RAD-061_BATCH1_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-061"
+      ],
+      "docs/RAD-061_BATCH4_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-061"
+      ],
+      "docs/RAD-061_BATCHES_2_3_5_6_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-061"
+      ],
+      "docs/RAD-061_CODE_AUDIT_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-061"
+      ],
+      "docs/RAD-061_TIMEOUT_DIAGNOSIS_2026-10-22.md": [
+        "non-Markdown: src/features/assess/server-runtime.test.ts"
+      ],
+      "docs/RAD-064_UI_INVENTORY_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-064"
+      ],
+      "docs/RAD-065_REVIEW_TRIAGE_2026-10-22.md": [
+        "completion_evidence: RAD-065"
+      ],
+      "docs/RAD-066_UI1_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-066"
+      ],
+      "docs/RAD-067_UI3_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-067"
+      ],
+      "docs/RAD-068_FINAL_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-068"
+      ],
+      "docs/RAD-068_PART1_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-066",
+        "completion_evidence: RAD-068"
+      ],
+      "docs/RAD-068_PART2_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-068"
+      ],
+      "docs/RAD-068_PART3_REPORT_2026-10-22.md": [
+        "completion_evidence: RAD-068"
+      ],
+      "docs/RAD-069B2B_PHASE_A_REPORT_2026-10-24.md": [
+        "non-Markdown: src/features/platform/pelvis-geometry-drift.test.ts"
+      ],
+      "docs/RAD-069C1_REPORT_2026-10-24.md": [
+        "completion_evidence: RAD-044"
+      ],
+      "docs/RAD-081_100_SETTINGS_2026-10-25.md": [
+        "non-Markdown: src/features/evaluation/forty-inch-sid.test.ts"
+      ],
+      "docs/RAD-086_REPORT_2026-10-31.md": [
+        "completion_evidence: RAD-086"
+      ],
+      "docs/TERMS_OWNER_DRAFT_2026-10-16.md": [
+        "non-Markdown: scripts/qa/pilot-consent-audit.mjs"
+      ],
+      "docs/DEPS_SECURITY_REPORT_2026-11-01.md": [
+        "non-Markdown: docs/archive/reports/2026-11/verify_restructure.py",
+        "completion_evidence: RAD-088"
+      ]
+    }
+  },
+  "done_tasks_archived": 64,
+  "shortened_rules": [
+    {
+      "rule": "start/read/context/status/budget",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "AGENTS.md#start-with-the-task؛ docs/README.md#read-by-task"
+    },
+    {
+      "rule": "frozen work and Assess scope",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/DECISIONS.md#exam-freeze-current؛ docs/DECISIONS.md#assess-owner-2026-10-19"
+    },
+    {
+      "rule": "PR automation vs deployment/phone/medicine",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/DECISIONS.md#pr-automation-owner-2026-10-29"
+    },
+    {
+      "rule": "medical/source/engine boundaries",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/ENGINE_GUIDE.md؛ docs/DECISIONS.md#reference-and-source"
+    },
+    {
+      "rule": "history and current policy",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/DECISIONS.md#current-rules؛ docs/archive/decisions/DECISIONS-until-2026-10-16.md"
+    },
+    {
+      "rule": "pure evaluation/optional mechanisms",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/ENGINE_GUIDE.md؛ docs/DECISIONS.md#data-and-engine"
+    },
+    {
+      "rule": "STOP conditions/secrets/retry",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "AGENTS.md#implement-and-verify؛ docs/DECISIONS.md#workflow-standard"
+    },
+    {
+      "rule": "tests/hashes and Scale",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/DECISIONS.md#workflow-standard"
+    },
+    {
+      "rule": "required checks/no repeated QA",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/DOCS_CHECKS.md؛ docs/DOCS_CHECKS.md#browser-audits؛ docs/DOCS_CHECKS.md#screenshot-policy"
+    },
+    {
+      "rule": "first-commit closure/task state/conflicts",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/DECISIONS.md#workflow-owner-2026-11-01؛ docs/status-format.md"
+    },
+    {
+      "rule": "HANDOFF/direction/detail and five-item summary",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "docs/DECISIONS.md#workflow-hardening-owner-2026-11-01؛ docs/README.md#current-direction"
+    },
+    {
+      "rule": "ruling/evidence questions and Arabic report",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "AGENTS.md#state-and-delivery؛ docs/DECISIONS.md#workflow-standard"
+    },
+    {
+      "rule": "isolated checkout/no previews/no polling/usage stop",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "AGENTS.md#state-and-delivery؛ docs/DECISIONS.md#pr-automation-owner-2026-10-29"
+    },
+    {
+      "rule": "Draft only/automation/no dev block",
+      "ruling_changed": false,
+      "evidence_link_remains": true,
+      "authority": "AGENTS.md#state-and-delivery؛ docs/DECISIONS.md#pr-automation-owner-2026-10-29"
+    }
+  ],
+  "superseded_clauses": [
+    {
+      "entry": "assess-phase1-owner-2026-10-29: topic/difficulty blueprint proposal only",
+      "superseded_by": "random-question-pool-owner-2026-10-30",
+      "proof": "Later Random question pool v1 explicitly replaces the topic/difficulty blueprint; the existing standalone paragraph already states مستبدل."
+    },
+    {
+      "entry": "rad086-laptop-owner-2026-10-31: (1) apply restriction and (4) design-only Supavisor choice only",
+      "superseded_by": "rad086-followup-owner-2026-10-31",
+      "proof": "The original paragraph explicitly labels the two clauses نُسخ جزئيًا بـD-C and نُسخ بـD-D; other parts remain binding."
+    },
+    {
+      "entry": "workflow-owner-2026-11-01: D2 per-task HANDOFF list clause only",
+      "superseded_by": "workflow-hardening-owner-2026-11-01",
+      "proof": "RAD-090 M1 explicitly replaces this list with the pending summary pointer; D2 first-commit closure remains binding."
+    }
+  ],
+  "changed_existing_test_expectations": [],
+  "new_tests": [
+    "scripts/docs/restructure.test.mjs",
+    "scripts/status/format12.test.mjs",
+    "scripts/docs/budgets.test.mjs",
+    "scripts/docs/sync.test.mjs",
+    "scripts/status/pull-state.test.mjs"
+  ],
+  "owner_to_define": [
+    "RAD-023",
+    "RAD-073"
+  ],
+  "git_diff_M_status_counts": {
+    "M": 58,
+    "R": 106,
+    "A": 17,
+    "D": 1
+  },
+  "logical_move_counts": {
+    "reports": 101,
+    "images": 4,
+    "status_archive": 1,
+    "proof_script": 1,
+    "total": 107
+  }
+}

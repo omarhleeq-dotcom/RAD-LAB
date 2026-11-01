@@ -22,7 +22,8 @@
     "docs:check": "node scripts/docs/check-docs.mjs",
     "docs:test": "node --test scripts/docs/*.test.mjs scripts/status/*.test.mjs",
     "status:summary": "node scripts/status/summary.mjs",
-    "docs:context": "node scripts/docs/context.mjs"
+    "docs:context": "node scripts/docs/context.mjs",
+    "docs:sync": "node scripts/docs/sync.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",

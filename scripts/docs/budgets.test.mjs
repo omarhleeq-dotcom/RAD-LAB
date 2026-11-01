@@ -16,10 +16,10 @@ test("dated report cutoff and new report exception preserve old reports", () => 
   assert.equal(checkBudgets([["docs/new_2026-11-02.md", text]]).errors.length, 1);
   assert.equal(checkBudgets([["docs/new_2026-11-01.md", text]], { newFiles: new Set(["docs/new_2026-11-01.md"]) }).errors.length, 1);
 });
-test("only newly added decision sections are capped; index is navigation", () => {
+test("all newly added DECISIONS sections are capped, including the rules index", () => {
   const previousDecisions = "## Old\n" + "old\n".repeat(30), long = "line\n".repeat(BUDGETS.decision_section.lines + 1);
   const text = previousDecisions + "## Current rules\n" + long + "## New\n" + long;
-  assert.equal(checkBudgets([["docs/DECISIONS.md", text]], { previousDecisions }).errors.length, 1);
+  assert.equal(checkBudgets([["docs/DECISIONS.md", text]], { previousDecisions }).errors.length, 2);
   assert.equal(decisionSections(text).length, 3);
 });
 test("M2 keeps original descriptions verbatim, evidence/status/ids unchanged, and is idempotent", () => {
@@ -33,4 +33,10 @@ test("M2 keeps original descriptions verbatim, evidence/status/ids unchanged, an
   assert.deepEqual(result.tasks[1], open);
   assert.deepEqual(archiveDone(result.tasks, result.archive), result);
   assert.equal(original.description.length > 160, true);
+});
+
+test("a new nested decision section cannot bypass the line cap inside an old section", () => {
+  const previousDecisions = "## Old\nOld rule.\n";
+  const text = previousDecisions + "#### New subrule\n" + "line\n".repeat(BUDGETS.decision_section.lines);
+  assert.equal(checkBudgets([["docs/DECISIONS.md", text]], { previousDecisions }).errors.length, 1);
 });
