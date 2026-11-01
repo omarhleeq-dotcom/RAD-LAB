@@ -2284,7 +2284,7 @@
     "excluded": "مستبعد",
     "summary": "{ready} جاهز · {errors} به أخطاء",
     "questionCount": "{n} سؤالًا",
-    "questionsPerStudent": "عدد الأسئلة لكل طالب: من {n}",
+    "questionsPerStudent": "عدد الأسئلة لكل طالب (من أصل {n})",
     "edit": "تعديل",
     "detailsRow": "تفاصيل الصف {n}",
     "questionColumn": "السؤال",
@@ -2293,6 +2293,9 @@
     "previousPage": "الصفحة السابقة",
     "nextPage": "الصفحة التالية",
     "page": "الصفحة {page} من {pages}",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "shuffleOn": "تُخلط الأسئلة والخيارات لكل طالب.",
+    "shuffleMixed": "تُخلط الأسئلة؛ خلط الخيارات معطّل لبعض الأسئلة.",
+    "shuffleOff": "تُخلط الأسئلة؛ خلط الخيارات معطّل."
   }
 }

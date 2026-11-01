@@ -19,7 +19,6 @@ export function AuthoringEntry() {
  const { state } = useSessionAccount(), t = useTranslations('assessImport');
  if (state.kind !== 'signedIn' || state.profile.status !== 'approved') return null;
  return <section className="mt-8 min-w-0 space-y-4 border-t border-line pt-5" data-testid="assess-authoring">
-  <h2 className="text-xl font-semibold">{t('title')}</h2>
   {state.profile.role === 'owner' ? <p>{t('ownerOnly')}</p> : <Rad062Entry><BoundAuthoring key={state.userId} actor={state.userId} role="supervisor" name={state.displayName ?? ''}/></Rad062Entry>}
  </section>;
 }
@@ -48,7 +47,7 @@ function BoundAuthoring({ actor, role, name }: { actor: string; role: 'owner' | 
  const select = useCallback((groupId: string) => setScope({ actorId: actor, groupId }), [actor]);
  const text = useMemo(() => ({ ...copy[locale], ...sqlCopy[locale], ...Object.fromEntries(['create', 'save', 'saved', 'loading', 'busy', 'reviewHint', 'limit'].map(key => [key, t(`authoringCopy.${key}`)])) }), [locale, t]);
  return <div className="min-w-0 space-y-4" lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-  {!scope && <h3 className="text-lg font-semibold">{t('step', { n: 1 })} · {t('chooseGroup')}</h3>}
+  {!scope && <h2 className="text-lg font-semibold">{t('step', { n: 1 })} · {t('chooseGroup')}</h2>}
   {error && <p role="alert">{t('unavailable')}</p>}
   {adapter && <><div hidden={!!scope}><GroupPicker adapter={adapter} actorId={actor} select={select} t={text} autoSelect/></div>{scope && <AuthoringSession adapter={adapter} scope={scope} locale={locale} text={text}/>}</>}
  </div>;

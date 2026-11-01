@@ -67,6 +67,7 @@ export function AuthoringFlow({ draft: d, t, busy, dirty, saveBlocked, actorId, 
     <p role="status">{a('questionCount', { n: count })} · {dirty || d.revision === 0 ? t.dirty : t.saved}</p>
     <label className="block">{t.name}<input className={field} lang="en" dir="ltr" maxLength={200} value={d.name} onChange={e => change({ ...d, name: e.target.value })}/></label>
     <label className="block">{a('questionsPerStudent', { n: count })}<input aria-label={a('poolSize')} className={field} dir="ltr" type="number" min={1} step={1} value={k} onChange={e => { setAutoPool(false); change({ ...d, randomPool: { version: 1, size: Number(e.target.value) } }); }}/></label>
+    <p className="text-sm text-muted">{a(d.items.every(i => i.type === 'single-choice' && i.shuffleOptions === false) ? 'shuffleOff' : d.items.some(i => i.type === 'single-choice' && i.shuffleOptions === false) ? 'shuffleMixed' : 'shuffleOn')}</p>
     {kInvalid && <p role="alert">{a('draftErrors.pool_size_exceeds_questions')}</p>}
     <details><summary className={`${control} cursor-pointer`}>{a('sourceDetails')}</summary><div className="space-y-3">
      <p>{a('memoryHelp')}</p>
@@ -76,7 +77,7 @@ export function AuthoringFlow({ draft: d, t, busy, dirty, saveBlocked, actorId, 
     </div></details>
     <details><summary className={`${control} cursor-pointer`}>{a('rulesHelp')}</summary><p>{a('shuffleQuestions')}</p><p>{a('replacement')}</p><p>{t.reviewHint}</p><p>{a('closedGate')}</p><p>{a('draftErrors.limit')}</p><p>{a('rowErrors.points')}</p></details>
     {attempted && (issues.length > 0 || sizeError) && <ul role="alert">{issues.map((issue, n) => <li key={n}>{issue.path}: {a(`draftErrors.${issue.message}`)}</li>)}{sizeError && <li>{a('errors.documentLimit')}</li>}</ul>}
-    <button type="button" className={`${control} w-full font-semibold sm:w-auto`} disabled={saveBlocked || pending || kInvalid} onClick={() => { setAttempted(true); if (!issues.length && !sizeError) save(); }}>{t.save}</button>
+
     <details><summary className={`${control} cursor-pointer text-sm`}>{a('more')}</summary><div className="space-y-3">
      <label className="block">{t.duration}<input className={field} dir="ltr" type="number" min={1} max={604800} step={1} value={d.policy.durationSeconds ?? ''} onChange={e => change({ ...d, policy: { ...d.policy, durationSeconds: e.target.value === '' ? null : Number(e.target.value) } })}/></label>
      <label className="block">{t.attempts}<input className={field} dir="ltr" type="number" min={1} max={1000} step={1} value={d.policy.maxAttempts} onChange={e => change({ ...d, policy: { ...d.policy, maxAttempts: Number(e.target.value) } })}/></label>
@@ -86,7 +87,7 @@ export function AuthoringFlow({ draft: d, t, busy, dirty, saveBlocked, actorId, 
      {discarding && <div role="group" aria-label={t.confirmDiscard}><button type="button" className={control} onClick={confirmDiscard}>{t.confirmDiscard}</button><button type="button" className={control} onClick={keep}>{t.keep}</button></div>}
     </div></details>
    </div>
-   {step !== 2 && <button type="button" className={control} onClick={() => { setAttempted(false); setStep(step === 4 ? 3 : 2); }}>{a('back')}</button>}
+   {step !== 2 && <div className="flex items-center justify-between gap-3"><button type="button" className={control} onClick={() => { setAttempted(false); setStep(step === 4 ? 3 : 2); }}>{a('back')}</button>{step === 4 && <button type="button" className={"min-h-11 rounded-lg border border-brand bg-brand px-4 py-2 font-semibold text-on-brand hover:bg-brand-strong disabled:opacity-50"} disabled={saveBlocked || pending || kInvalid} onClick={() => { setAttempted(true); if (!issues.length && !sizeError) save(); }}>{t.save}</button>}</div>}
   </fieldset>
  </section>;
 }

@@ -2284,7 +2284,7 @@
     "excluded": "Excluded",
     "summary": "{ready} ready · {errors} with errors",
     "questionCount": "{n} questions",
-    "questionsPerStudent": "Questions per student: of {n}",
+    "questionsPerStudent": "Questions per student (out of {n})",
     "edit": "Edit",
     "detailsRow": "Details for row {n}",
     "questionColumn": "Question",
@@ -2293,6 +2293,9 @@
     "previousPage": "Previous page",
     "nextPage": "Next page",
     "page": "Page {page} of {pages}",
-    "close": "Close"
+    "close": "Close",
+    "shuffleOn": "Questions and options are shuffled for each student.",
+    "shuffleMixed": "Questions are shuffled; option shuffling is off for some questions.",
+    "shuffleOff": "Questions are shuffled; option shuffling is off."
   }
 }

@@ -86,7 +86,7 @@
     "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31",
     "src/features/assess/OwnerAssignments.tsx": "ebfff4c4967f64915ec7c06483e59007ac9d52da908d8d5f9ad11a3bee90ebee",
     "src/features/assess/owner-assignments.ts": "d48d42288bb2b1d628b5e36103ebad383c08e98e4c61506f2049811ccf7caf3c",
-    "src/features/assess/AuthoringEntry.tsx": "fc774e2ca76500d81235597b4867265c70d41bbebc57da0daef84853c245d9a7",
+    "src/features/assess/AuthoringEntry.tsx": "cf6c209427841c80266dae8275557ea6df9a87a45bf93dbb9b55277f8ea5e9e0",
     "src/features/authoring-review/sql-adapter.ts": "d4fd25d7896a6888a37a018bd1317fa1e12cf7e6c44ffcfe775d3c319d8356ea"
   },
   "serverModules": [

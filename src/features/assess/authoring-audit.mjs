@@ -125,6 +125,12 @@ try {
   await page.getByLabel(c.name,{exact:true}).fill('SYNTHETIC phone draft');
   ok(await page.getByLabel(t.poolSize,{exact:true}).inputValue()==='20','K defaults to N');
   await audit('4-save');
+  ok(await page.getByText(t.questionsPerStudent.replace('{n}','20'),{exact:true}).isVisible(),'Dynamic K label');
+  ok(await page.getByText(t.shuffleOn,{exact:true}).isVisible(),'Default shuffle description');
+  const saveRect=await button(c.save).boundingBox(),backRect=await button(t.back).boundingBox();
+  ok(Math.abs(saveRect.y-backRect.y)<2&&(locale==='ar'?saveRect.x<backRect.x:saveRect.x>backRect.x),'Save and Back share a row with mirrored logical end');
+  ok(await button(c.save).evaluate(e=>getComputedStyle(e).backgroundColor!==getComputedStyle(e.parentElement).backgroundColor),'Save is filled');
+  ok(await page.getByRole('heading',{name:t.title,exact:true}).count()===1,'One authoring heading');
   await button(t.back).click();ok(await page.getByText('XLSX cached question 20?',{exact:true}).isVisible(),'Back retains all imported rows');await button(t.next).click();
   ok(await page.getByLabel(c.name,{exact:true}).inputValue()==='SYNTHETIC phone draft','Unsaved draft survives back/next');
   await page.getByLabel(t.poolSize,{exact:true}).fill('21');ok(await button(c.save).isDisabled(),'K>N blocks Save');
@@ -136,7 +142,7 @@ try {
   const table='Question\tA\tB\tAnswer\tReference\nPasted 1?\tYes\tNo\tA\tRow source\nPasted 2?\tYes\tNo\tB\t\nPasted 3?\tYes\tNo\tC\t';
   await page.getByLabel(t.paste,{exact:true}).fill(table);await button(t.previewPaste).click();
   ok(await button(t.next).isDisabled(),'Bad row blocks the complete batch');
-  ok(await page.getByRole('button',{name:c.save,exact:true,includeHidden:true}).last().isDisabled(),'Pending import blocks partial draft saving');
+  ok(await page.getByRole('button',{name:c.save,exact:true}).count()===0,'Pending import has no reachable Save');
   const rows=page.getByRole('region',{name:t.preview,exact:true}).locator('fieldset');
   ok((await rows.first().locator('legend').textContent()).includes('4'),'Error row comes first with its source row number');
   await rows.first().getByRole('button',{name:t.fix,exact:true}).click();await rows.first().getByLabel('Answer',{exact:true}).fill('A');
@@ -156,6 +162,7 @@ try {
   await page.getByLabel(c.prompt,{exact:true}).fill('Form question?');await page.getByLabel(c.option+' 1',{exact:true}).fill('True');await page.getByLabel(c.option+' 2',{exact:true}).fill('False');await page.getByLabel(c.correct,{exact:false}).selectOption({index:1});await page.getByLabel(t.shuffleOptions,{exact:true}).uncheck();
   await button(t.next).click();await button(c.save).click();await page.waitForFunction(()=>window.saved.length===3);
   ok(await page.evaluate(()=>window.saved[2].items[23].shuffleOptions===false),'Existing single-question form and shuffle exception save via v2');
+  ok(await page.getByText(t.shuffleMixed,{exact:true}).isVisible(),'Shuffle exception is explained truthfully');
   ok(await page.getByLabel(c.author,{exact:true}).count()===0,'Author has no manual field');
   await page.getByText(t.more,{exact:true}).click();await button(c.preview).click();await button(c.closePreview).click();
   ok(await page.getByLabel(c.name,{exact:true}).inputValue()==='SYNTHETIC phone draft','Student preview preserves the authoring flow');
