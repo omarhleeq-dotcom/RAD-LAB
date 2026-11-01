@@ -4,9 +4,13 @@ import { createRoot, type Root } from 'react-dom/client';
 import { NextIntlClientProvider } from 'next-intl';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import en from '../../../messages/en.json';
+import { QuestionPreview } from './QuestionPreview';
 import { QuestionImport } from './QuestionImport';
 import { clearAuthoringBatchMemory, readImportNotes, writeImportNotes } from './import-preferences';
 import { createSqlAuthoringV2 } from '../authoring-review/sql-adapter';
+import { GroupPicker } from '../authoring-review/Session';
+import { copy } from '../authoring-review/copy';
+import type { AuthoringAdapter, Draft } from '../authoring-review/contracts';
 import { newDraft } from '../authoring-review/draft';
 import { draftToV2, rowToQuestion } from './import-validator';
 import { SessionProvider, useSessionAccount } from '../pilot/SessionGate';
@@ -19,7 +23,7 @@ const batch = { reference: 'Private synthetic source', licenceNotes: 'Own engine
 const row = { Question: 'Synthetic question?', A: 'True', B: 'False', Answer: 'A' };
 const id = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 let host: HTMLDivElement, root: Root;
-beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); localStorage.clear(); mocked.signOut.mockReset().mockResolvedValue({ error: null }); });
+beforeEach(() => { host = document.createElement('div'); document.body.append(host); root = createRoot(host); localStorage.clear(); Object.defineProperty(window, 'matchMedia', { configurable: true, value: () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) }); mocked.signOut.mockReset().mockResolvedValue({ error: null }); });
 afterEach(async () => { await act(async () => root.unmount()); host.remove(); vi.restoreAllMocks(); });
 async function render(node: React.ReactNode) { await act(async () => root.render(node)); }
 async function fill(element: HTMLInputElement | HTMLTextAreaElement, value: string) {
@@ -78,7 +82,48 @@ it('shows every source row and error, blocks partial append, and permits an expl
  await fill(paste, 'Question\tA\tB\tAnswer\nGood?\tYes\tNo\tA\nBad?\tYes\tNo\tC');
  const button = (label: string) => [...host.querySelectorAll('button')].find(b => b.textContent === label)!;
  await act(async () => button(en.assessImport.previewPaste).click());
- expect(host.querySelectorAll('fieldset')).toHaveLength(2); expect(host.textContent).toContain('Answer must be'); expect(button(en.assessImport.addValidated).disabled).toBe(true); expect(accepted).toBe(0);
- await act(async () => (host.querySelectorAll('input[type=checkbox]')[1] as HTMLInputElement).click());
+ expect(host.querySelectorAll('tbody > tr')).toHaveLength(3); expect(host.textContent).toContain('Answer must be'); expect(button(en.assessImport.addValidated).disabled).toBe(true); expect(accepted).toBe(0);
+ await act(async () => (host.querySelectorAll('fieldset')[0]!.querySelector('input[type=checkbox]') as HTMLInputElement).click());
  expect(button(en.assessImport.addValidated).disabled).toBe(false); await act(async () => button(en.assessImport.addValidated).click()); expect(accepted).toBe(1); expect(host.querySelectorAll('fieldset')).toHaveLength(0);
+});
+
+it('auto-selects only a complete single-group page, preserving a list for multiple or paginated groups', async () => {
+ const group = { id: id(2), name: 'SYNTHETIC active group' };
+ for (const page of [{ rows: [group], next: null }, { rows: [group, { ...group, id: id(3) }], next: null }, { rows: [group], next: id(4) }]) {
+  const select = vi.fn(), adapter = { groups: vi.fn(async () => page) } as unknown as AuthoringAdapter;
+  await render(createElement(GroupPicker, { adapter, actorId: id(1), select, t: copy.en, autoSelect: true }));
+  if (page.rows.length === 1 && !page.next) expect(select).toHaveBeenCalledExactlyOnceWith(id(2));
+  else { expect(select).not.toHaveBeenCalled(); expect(host.textContent).toContain(group.name); }
+ }
+});
+it('keeps staged preview data after Save-step source edits and never duplicates a batch on back/next', async () => {
+ let current: Draft, editSource: () => void;
+ function Harness() {
+  const [draft, setDraft] = useState({ ...newDraft(), name: 'SYNTHETIC draft' }), [notes, setNotes] = useState(batch);
+  current = draft; editSource = () => setDraft(d => ({ ...d, items: d.items.map(i => ({ ...i, authoring: { ...i.authoring, reference: 'Edited at Save' } })) }));
+  return createElement(IntlProvider, { locale: 'en', messages: en }, createElement(QuestionImport, { draft, actorId: 'a', batch: notes, setBatch: setNotes, onPending: () => {}, change: setDraft, method: 'paste', onPrepared: () => {} }));
+ }
+ await render(createElement(Harness));
+ await fill(host.querySelector('textarea.font-mono')!, 'Question\tA\tB\tAnswer\nPreserved?\tYes\tNo\tA');
+ const button = (label: string) => [...host.querySelectorAll('button')].find(b => b.textContent === label)!;
+ await act(async () => button(en.assessImport.previewPaste).click());
+ await act(async () => button(en.assessImport.next).click()); expect(current!.items).toHaveLength(1); expect(current!.randomPool!.size).toBe(1);
+ await act(async () => editSource!());
+ await act(async () => (host.querySelector('button[aria-label="Details for row 2"]') as HTMLButtonElement).click());
+ expect((host.querySelector('textarea[aria-label="Reference"]') as HTMLTextAreaElement).value).toBe('Edited at Save');
+ await act(async () => button(en.assessImport.next).click()); expect(current!.items).toHaveLength(1);
+ // A row edit must re-stage the entire batch while retaining the later source edit.
+ await fill(host.querySelector('textarea[aria-label="Question"]')!, 'Edited preview?');
+ await act(async () => button(en.assessImport.next).click());
+ expect(current!.items).toHaveLength(1); expect(current!.items[0]!.authoring.reference).toBe('Edited at Save'); expect(current!.items[0]!.prompt).toBe('Edited preview?');
+});
+
+it('pages 200 rows ten at a time and keeps the page through visibility changes', async () => {
+ const rows = Array.from({ length: 200 }, (_, n) => ({ row: n + 2, values: { Question: `Question ${n + 1}`, A: 'First', B: 'Second', Answer: 'B', Points: '1', Reference: 'Source' }, excluded: false }));
+ await render(createElement(IntlProvider, { locale: 'en', messages: en }, createElement(QuestionPreview, { rows, issues: rows.map(() => []), edit: () => null, exclude: () => {}, next: () => {}, blocked: false, nextLabel: 'Next' })));
+ expect(host.querySelectorAll('tbody > tr')).toHaveLength(10);
+ expect(host.textContent).toContain('✓ B · Second'); expect(host.textContent).not.toContain('Fix');
+ await act(async () => (host.querySelector('button[aria-label="Next page"]') as HTMLButtonElement).click());
+ await act(async () => { for (const value of ['hidden', 'visible']) { Object.defineProperty(document, 'visibilityState', { configurable: true, value }); document.dispatchEvent(new Event('visibilitychange')); } });
+ expect(host.textContent).toContain('Page 2 of 20'); expect(host.querySelector('tbody')!.textContent).toContain('Question 11'); expect(host.querySelectorAll('tbody > tr')).toHaveLength(10);
 });

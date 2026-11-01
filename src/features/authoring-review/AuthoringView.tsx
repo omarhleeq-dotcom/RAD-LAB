@@ -1,3 +1,4 @@
+import { AuthoringFlow } from '../assess/AuthoringFlow';
 import { randomPoolMaximum } from '../assess/random-pool';
 import { useState } from 'react';
 import { QuestionImport, QuestionShuffle } from '../assess/QuestionImport';
@@ -7,7 +8,7 @@ import type { Copy } from './copy';
 import { newMCQ, newPart, newPractical, totalPoints, type Issue } from './draft';
 const control = 'min-h-11 max-w-full rounded-lg border border-line bg-panel px-3 py-2 text-sm';
 const field = `${control} mt-1 block w-full`;
-export function AuthoringView({ draft: d, parts, practicals = [], t, busy, dirty, issues, plan, receipt, discarding, change, save, preview, prepare, confirm, cancelReview, paging, discard, keep, confirmDiscard, assignments = true, saveBlocked = false, authoringActor }: {
+function LegacyAuthoringView({ draft: d, parts, practicals = [], t, busy, dirty, issues, plan, receipt, discarding, change, save, preview, prepare, confirm, cancelReview, paging, discard, keep, confirmDiscard, assignments = true, saveBlocked = false, authoringActor }: {
  authoringActor?: string; saveBlocked?: boolean; assignments?: boolean; draft: Draft; parts: readonly PartReference[]; practicals?: readonly PracticalReference[]; t: Copy; busy: boolean; dirty: boolean; issues: Issue[]; plan?: AssignmentReview; receipt: boolean; discarding: boolean;
  change(d: Draft): void; save(): void; preview(): void; prepare(): void; confirm(): void; cancelReview(): void; paging(cursor?: string): void; discard(): void; keep(): void; confirmDiscard(): void;
 }) {
@@ -48,4 +49,9 @@ export function AuthoringView({ draft: d, parts, practicals = [], t, busy, dirty
   {plan && <section aria-label={t.assignment} className="space-y-3 rounded-xl border border-line bg-panel p-4"><h2 className="text-xl font-semibold">{t.assignment}</h2><p>{t.scope}</p><p className="break-words">{plan.groupName} · {plan.draftName}</p><p>{t.revision}: {plan.draftRevision} · {t.group}: {plan.groupRevision}</p><p>{t.count}: {plan.targetCount}</p><p>{t.expires}: <bdi>{new Date(plan.expiresAt).toISOString()}</bdi></p><h3 className="font-semibold">{t.targets}</h3><ul>{plan.targets.rows.map(m => <li key={m.id}>{m.name}</li>)}</ul><div className="flex flex-wrap gap-2"><button className={control} disabled={busy} onClick={() => paging()}>{t.first}</button><button className={control} disabled={busy || !plan.targets.next} onClick={() => paging(plan.targets.next!)}>{t.next}</button><button className={control} disabled={busy} onClick={confirm}>{t.confirm}</button><button className={control} disabled={busy} onClick={cancelReview}>{t.cancelReview}</button></div></section>}
   {receipt && <p role="status">{t.receipt}</p>}
  </section>;
+}
+
+export type AuthoringViewProps = React.ComponentProps<typeof LegacyAuthoringView>;
+export function AuthoringView(props: AuthoringViewProps) {
+ return props.authoringActor ? <AuthoringFlow {...props} actorId={props.authoringActor}/> : <LegacyAuthoringView {...props}/>;
 }
