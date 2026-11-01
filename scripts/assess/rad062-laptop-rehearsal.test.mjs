@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
-import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth } from './rad062-laptop-rehearsal.mjs';
+import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, verifyRestoredFrozenB } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 
@@ -50,6 +50,24 @@ test('socket-auth command failure retains SQLSTATE and discards the generated cr
     assert.doesNotMatch(JSON.stringify(e) + e.message, new RegExp(credential + '|PRIVATE_MESSAGE|PRIVATE_HOST'));
     return true;
   });
+});
+
+test('restored frozen B row contract rejects zero/additional/wrong failures, nulls, missing/duplicate/unknown kinds', () => {
+  const kinds = ['columns', 'constraints', 'effective_privileges', 'functions', 'indexes', 'relations', 'triggers',
+    'schema', 'fk_inventory', 'role_attributes', 'role_memberships', 'scope_lock', 'sharing_policy:initialized'];
+  const rows = kinds.map(kind => ({ kind, ready: kind !== 'relations' }));
+  assert.equal(verifyRestoredFrozenB({ rows }), 1);
+  assert.equal(verifyRestoredFrozenB([{ rows: [] }, { rows: [...rows].reverse() }, { rows: [] }]), 1);
+  const stop = e => stopLine(e) === 'STOP rad062_laptop_rehearsal:pre_frozen_b';
+  for (const bad of [
+    rows.map(row => ({ ...row, ready: true })), // Zero failures is drift too.
+    rows.map(row => row.kind === 'functions' ? { ...row, ready: false } : row),
+    rows.map(row => ({ ...row, ready: row.kind !== 'functions' })),
+    ...kinds.map(kind => rows.map(row => row.kind === kind ? { ...row, ready: null } : row)),
+    rows.map(row => row.kind === 'relations' ? { ...row, ready: 'false' } : row),
+    rows.slice(1), [...rows, rows[0]], [rows[0], ...rows.slice(0, -1)],
+    [...rows.slice(1), { kind: 'unknown', ready: true }], [], [null],
+  ]) assert.throws(() => verifyRestoredFrozenB({ rows: bad }), stop);
 });
 
 test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/counts; check and migration STOP both tear down', { timeout: 300000 }, async () => {
@@ -104,7 +122,7 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     assert.equal(result.rehearsal_pass, 1); assert.equal(result.teardown_pass, 1);
     assert.equal(result.event_triggers_second_pass_count, 1);
     assert.equal(result.postgres_non_superuser, 1); assert.equal(result.migrations_committed, 8);
-    assert.equal(result.pre_m01_frozen_b_ready, 1); assert.equal(result.pre_m01_diagnostic_ready, 1);
+    assert.equal(result.pre_m01_frozen_b_ready, 0); assert.equal(result.pre_m01_frozen_b_failures, 1); assert.equal(result.pre_m01_diagnostic_ready, 1);
     assert.equal(result.transition_inspections_passed, 2); assert.ok(result.checks_passed > 0);
     assert.ok(Object.values(result).every(v => /^\d+$/.test(String(v)))); absent();
     q('update assess.sharing_policy set required_version=null,text_digest=null'); save();

@@ -37,18 +37,28 @@ const diagnostic = 'scripts/assess/sql/rad062-b-diagnostic.sql';
 const frozen = 'supabase/checks/rad085-p1-b-ready.sql';
 const transitionKinds = ['columns', 'constraints', 'effective_privileges', 'functions', 'indexes', 'relations', 'triggers'];
 
+// P9b restored-copy contract, measured on the pinned image in CI before encoding.
+export function verifyRestoredFrozenB(result) {
+  const rows = (Array.isArray(result) ? result : [result]).flatMap(r => r?.rows ?? []);
+  const kinds = [...transitionKinds, 'schema', 'fk_inventory', 'role_attributes', 'role_memberships', 'scope_lock', 'sharing_policy:initialized'].sort();
+  if (rows.length !== kinds.length || rows.some(row => !row || typeof row.kind !== 'string' || typeof row.ready !== 'boolean') ||
+      JSON.stringify(rows.map(row => row.kind).sort()) !== JSON.stringify(kinds) ||
+      JSON.stringify(rows.filter(row => row.ready === false).map(row => row.kind).sort()) !== JSON.stringify(['relations'])) throw new Stop('pre_frozen_b');
+  return 1;
+}
+
 // Exported for synthetic witnesses. No alternate SQL, role, phase or check selectors.
 export async function inspectRestored(db, observeFrozenB) {
   const identity = (await db.query("select current_user, session_user, rolsuper, current_setting('rad085.sharing_phase',true) phase from pg_roles where rolname=current_user")).rows[0];
   if (identity.current_user !== 'postgres' || identity.session_user !== 'postgres' || identity.rolsuper !== false || ![null, '', 'initialized'].includes(identity.phase)) throw new Stop('apply_role');
   try { await checks(db, [diagnostic]); } catch (e) { throw stageStop('pre_diagnostic', e); }
+  let frozenFailures;
   try {
     const result = await db.query(readFileSync(frozen, 'utf8'));
     const rows = (Array.isArray(result) ? result : [result]).flatMap(r => r.rows ?? []);
     // Synthetic CI observer only: fixed check kinds, never catalogue identities or data.
     observeFrozenB?.(rows.filter(row => row.ready === false).map(row => row.kind).sort());
-    checkRows(result);
-    throw new Stop('pre_frozen_b'); // Evidence-only run: even zero failures must STOP before encoding.
+    frozenFailures = verifyRestoredFrozenB(result);
   } catch (e) { await db.query('rollback'); throw stageStop('pre_frozen_b', e); }
   let migrations = 0;
   for (let n = 1; n <= 8; n++) {
@@ -69,7 +79,7 @@ export async function inspectRestored(db, observeFrozenB) {
   }
   const counts = (await readOnly(db, readFileSync('scripts/assess/sql/rad062-precounts.sql', 'utf8'))).rows[0];
   verifyCounts(counts);
-  return { pre_m01_diagnostic_ready: 1, pre_m01_frozen_b_ready: 1, postgres_non_superuser: 1,
+  return { pre_m01_diagnostic_ready: 1, pre_m01_frozen_b_ready: 0, pre_m01_frozen_b_failures: frozenFailures, postgres_non_superuser: 1,
     migrations_committed: migrations, checks_passed: passed, transition_inspections_passed: 2, ...counts };
 }
 
