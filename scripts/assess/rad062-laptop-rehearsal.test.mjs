@@ -266,7 +266,16 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
       catch (e) { syntheticDiagnostics?.({ source: 'fresh_connection', ...syntheticError(e) }); throw e; }
       finally { await fresh.end(); }
     };
+    let profileACLBefore;
     const syntheticWitnesses = async (phase, db) => {
+      const acl=(await db.query(`select coalesce(jsonb_agg(jsonb_build_array(x.grantee,x.privilege_type,x.is_grantable)
+        order by x.grantee,x.privilege_type,x.is_grantable),'[]'::jsonb) acl
+        from pg_class c cross join lateral aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) x
+        where c.oid='public.profiles'::regclass`)).rows[0].acl;
+      if(phase==='before') {
+        profileACLBefore=acl;
+        assert.equal((await db.query("select exists(select from pg_class c cross join lateral aclexplode(c.relacl) x where c.oid='public.profiles'::regclass and x.grantee='service_role'::regrole) granted")).rows[0].granted,false);
+      } else assert.deepEqual(acl,profileACLBefore); // Approved M01 revoke is a no-op here.
       assert.equal((await db.query("select to_regnamespace('supabase_migrations') is null absent")).rows[0].absent, true);
       const zero = Array(8).fill(false), all = Array(8).fill(true);
       if (phase === 'before') {

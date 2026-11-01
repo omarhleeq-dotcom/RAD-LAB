@@ -1,5 +1,6 @@
 // Primary proof: byte-exact owner schema only, never provider rows or credentials.
 import { test } from 'node:test';
+import { Client } from 'pg';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, symlinkSync, rmSync } from 'node:fs';
@@ -11,6 +12,31 @@ import { sha256Bytes } from '../ops/laptop-backup-lib.mjs';
 import { rehearse } from './rad062-laptop-rehearsal.mjs';
 const fixture = 'supabase/fixtures/production-schema-2026-11-01/';
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
+const profileACL = `select coalesce(jsonb_agg(jsonb_build_array(pg_get_userbyid(x.grantee),x.privilege_type,x.is_grantable)
+  order by pg_get_userbyid(x.grantee),x.privilege_type,x.is_grantable),'[]'::jsonb) acl
+  from pg_class c cross join lateral aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) x
+  where c.oid='public.profiles'::regclass`;
+// CI-only setup: use the exact reviewed INSERT statements, never replay migrations.
+const configuration = [
+  ['20261020000700_assess_lifecycle.sql','launch_gate'],
+  ['20261026000100_assess_supervisor_scope.sql','scope_lock'],
+  ['20261027000100_assess_management_erasure.sql','erasure_fk_contract'],
+  ['20261026000100_assess_supervisor_scope.sql','sharing_policy'],
+];
+async function seedRestoredConfiguration(db) {
+  assert.equal(process.env.CI, 'true', 'configuration seeding is confined to the CI catalogue test');
+  const identity=(await db.query("select current_user,session_user,rolsuper from pg_roles where rolname=current_user")).rows[0];
+  assert.deepEqual(identity,{current_user:'postgres',session_user:'postgres',rolsuper:false});
+  for(const [file,table] of configuration) {
+    assert.equal((await db.query(`select count(*)::int n from assess.${table}`)).rows[0].n,0);
+    const statements=[...readFileSync('supabase/migrations/'+file,'utf8').matchAll(new RegExp(`^insert into assess\\.${table} [^;]+;`,'gm'))];
+    assert.equal(statements.length,1);
+    await db.query(statements[0][0]);
+  }
+  // Same reviewed values and initializer used by the synthetic Supabase path.
+  await db.query(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql','utf8'));
+  for(const [,table] of configuration) assert.equal((await db.query(`select count(*)::int n from assess.${table}`)).rows[0].n,1);
+}
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args],
   { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
 
@@ -22,7 +48,8 @@ test('real CRLF catalogue -> RAD-086 empty backup -> unchanged rehearse path, ev
   assert.equal(sha256Bytes(schema), '4fc018a257d80b18916bae6ade40c625449a11cbf5fe52e2f47110db6f1e58b1');
   const q = (sql, database = 'catalogue') => String(docker(['exec', '-i', name, 'psql', '-X', '-At', '-v', 'ON_ERROR_STOP=1', '-U', 'supabase_admin', '-d', database, '-f', '-'], sql)).trim();
   const volumes = () => String(docker(['volume', 'ls', '--format', '{{.Name}}'])).trim().split('\n').sort();
-  let sourceVolumes;
+  let sourceVolumes, seeded=0, beforeACL;
+  const originalConnect=Client.prototype.connect;
   try {
     docker(containerArgs(name, locale));
     for (let n = 0; ; n++) {
@@ -72,8 +99,31 @@ test('real CRLF catalogue -> RAD-086 empty backup -> unchanged rehearse path, ev
     for (const key of Object.keys(env)) if (key.startsWith('PG') || ['DATABASE_URL','SUPABASE_DB_URL','RAD062_EXPECTED_PROJECT_REF','RAD062_POOLER_HOST'].includes(key)) delete env[key];
     sourceVolumes = volumes();
     const measured = [];
-    const result = await rehearse(c, { env, observeFrozenB: kinds => { measured.push(kinds); console.log(JSON.stringify({ restored_frozen_b_measurement: kinds })); },
+    // Test-scoped interception after restoreTest verified all archive counts, before
+    // the unmodified owner rehearsal inspects/applies. No owner hook/flag/env added.
+    Client.prototype.connect=async function(...args) {
+      const result=await originalConnect.apply(this,args);
+      if(this.connectionParameters.application_name==='rad062-rehearsal') {
+        assert.equal(this.connectionParameters.database,'rad_restore');
+        assert.equal(seeded,0);
+        await seedRestoredConfiguration(this); seeded++;
+        console.log(JSON.stringify({ci_configuration_rows_seeded:configuration.length}));
+      }
+      return result;
+    };
+    const syntheticWitnesses=async(phase,db)=>{
+      const acl=(await db.query(profileACL)).rows[0].acl;
+      if(phase==='before') {
+        beforeACL=acl;
+        assert.deepEqual(acl.filter(([role])=>role==='service_role').map(([,priv])=>priv),['MAINTAIN','REFERENCES','TRIGGER','TRUNCATE']);
+      } else {
+        assert.deepEqual(acl,beforeACL.filter(([role])=>role!=='service_role'));
+        console.log(JSON.stringify({profile_privileges_removed:4,other_profile_acl_changes:0}));
+      }
+    };
+    const result = await rehearse(c, { env, syntheticWitnesses, observeFrozenB: kinds => { measured.push(kinds); console.log(JSON.stringify({ restored_frozen_b_measurement: kinds })); },
       syntheticDiagnostics: process.env.CI === 'true' ? error => console.log(JSON.stringify(error)) : undefined });
+    assert.equal(seeded,1);
     assert.deepEqual(measured, [['relations']]);
     assert.equal(result.migrations_committed, 8);
     assert.equal(result.checks_passed, 10);
@@ -83,6 +133,7 @@ test('real CRLF catalogue -> RAD-086 empty backup -> unchanged rehearse path, ev
     assert.equal(result.teardown_pass, 1);
     console.log(JSON.stringify({ real_catalogue: result }));
   } finally {
+    Client.prototype.connect=originalConnect;
     try {
       assert.equal(String(docker(['ps','-a','--filter',`name=^/${target}$`,'--format','{{.Names}}'])).trim(), '');
       if (sourceVolumes) assert.deepEqual(volumes(), sourceVolumes);

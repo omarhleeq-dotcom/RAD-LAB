@@ -104,6 +104,8 @@ const fkOrder = [['do $$ declare expected jsonb; begin\n select jsonb_agg(e orde
   '-- d3_fk_inventory_v1 sorts name columns (always C); sort these text keys in C too.\n'
   + 'do $$ declare expected jsonb; begin\n select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") into expected']];
 const reviewed = {
+  'supabase/migrations/20261030000100_rad062_full_name.sql': [
+    ['end $guard$;\n\n', 'end $guard$;\n\nrevoke references, trigger, truncate, maintain on table public.profiles from service_role;\n\n']],
   'supabase/migrations/20261030000200_rad062_provenance_v2.sql': fkOrder,
   'supabase/migrations/20261030000500_rad062_manual_foundation_freeze.sql': fkOrder,
   'supabase/migrations/20261030000600_rad062_lifecycle_v2.sql': [
