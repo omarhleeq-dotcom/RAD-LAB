@@ -1,5 +1,6 @@
 // Owner-only, latest RAD-086 backup -> isolated Supabase image -> postgres apply.
 // No provider connection. Never print driver/restore errors or row payloads.
+import { randomBytes } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, chmodSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir, constants } from 'node:os';
@@ -16,7 +17,7 @@ export function localOnly(args, env) {
 }
 const errnoClasses = new Set(Object.keys(constants.errno));
 const sqlstatePattern = /^(?:[0-9]{2}|0[A-Z]|[A-Z][0-9]|HV|XX)[0-9A-Z]{3}$/;
-const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|invalid_names|capacity|teardown)$/;
+const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|socket_auth|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|invalid_names|capacity|teardown)$/;
 const restoreStage = /^restore:(select|verify|meta|image|container|ready|version|extensions|roles|collation|restore|counts|log|locale)$/;
 export function stageStop(stage, error) {
   const stop = new Stop(rehearsalStage.test(stage) || restoreStage.test(stage) ? stage : 'internal');
@@ -73,6 +74,47 @@ export function verifyCounts(counts) {
       Number(counts.database_bytes) + Number(counts.reserved_peak_bytes) >= 300000000) throw new Stop('capacity');
 }
 
+// Only the throwaway restored target changes: credential + one database/role-specific local HBA rule.
+// No grants, SET ROLE, role attributes/config, memberships, object owners, or migration SQL change.
+export function prepareSocketAuth(run, container, database) {
+  const admin = input => String(run('docker', ['exec', '-i', container, 'psql', '-X', '-At', '-v', 'ON_ERROR_STOP=1', '-v', 'VERBOSITY=verbose', '-U', 'supabase_admin', '-d', database, '-f', '-'],
+    { input, encoding: 'utf8', stdio: 'pipe', timeout: 600000, maxBuffer: 1024 * 1024 })).trim();
+  try {
+    // database is the fixed restoreTest target, never an external selector.
+    if (database !== 'rad_restore') throw new Stop('socket_auth');
+    const localRule = `select auth_method='peer' and exists(select from unnest(options) o where o like 'map=%')
+      from pg_hba_file_rules where type='local' and ('all'=any(database) or 'rad_restore'=any(database))
+      and ('all'=any(user_name) or 'postgres'=any(user_name)) order by rule_number limit 1;`;
+    if (admin(localRule) !== 't') throw new Stop('socket_auth');
+    const roleSnapshot = `select jsonb_build_object('role',(select to_jsonb(r) from pg_roles r where rolname='postgres'),
+      'memberships',(select coalesce(jsonb_agg(to_jsonb(m) order by roleid,member,grantor),'[]'::jsonb)
+        from pg_auth_members m where (select oid from pg_roles where rolname='postgres') in (m.member,m.roleid)));`;
+    const before = admin(roleSnapshot), loaded = admin('select pg_conf_load_time();');
+    const password = randomBytes(32).toString('hex');
+    // psql -f sends each statement separately: turn statement/error-payload logging off before the credential.
+    // Nothing sensitive is put in argv, environment, files, output, or returned errors.
+    admin(`set log_statement='none';
+set log_min_error_statement='panic';
+set password_encryption='scram-sha-256';
+alter role postgres password '${password}';`);
+    const hba = admin('show hba_file;');
+    if (!/^\/[A-Za-z0-9_./-]+$/.test(hba) || hba.includes('..')) throw new Stop('socket_auth');
+    run('docker', ['exec', '-i', '--user', '0', container, 'sh', '-s', '--', hba], { input: `set -eu
+cp -p "$1" "$1.rad062"
+{ printf '%s\n' 'local rad_restore postgres scram-sha-256'; cat "$1"; } > "$1.rad062"
+mv "$1.rad062" "$1"
+`, stdio: 'pipe', timeout: 600000 });
+    if (admin('select pg_reload_conf();') !== 't' || admin('select pg_conf_load_time();') === loaded) throw new Stop('socket_auth');
+    if (admin(`select count(*)=1 from pg_hba_file_rules where rule_number=1 and type='local'
+      and database=array['rad_restore'] and user_name=array['postgres'] and auth_method='scram-sha-256' and error is null;`) !== 't' ||
+        admin('select count(*)=0 from pg_hba_file_rules where error is not null;') !== 't' || admin(roleSnapshot) !== before) throw new Stop('socket_auth');
+    return password;
+  } catch (e) {
+    const sqlstate = String(e.stderr ?? '').match(/\b(?:ERROR|FATAL):\s+([0-9A-Z]{5}):/)?.[1];
+    throw stageStop('socket_auth', { code: sqlstate ?? e.code, errno: e.errno });
+  }
+}
+
 export async function rehearse(c, { env = process.env } = {}) {
   localOnly([], env); verifyMigrations();
   const root = mkdtempSync(join(tmpdir(), 'rad062-laptop-')), socket = join(root, 'socket');
@@ -99,7 +141,9 @@ export async function rehearse(c, { env = process.env } = {}) {
   const spawn = (program, args, opts) => spawnSync(program, ['--host=unix:///var/run/docker.sock', ...args], { ...opts, env: dockerEnv });
   try {
     const restored = await restoreTest(c, { name: 'latest', run, spawn, beforeTeardown: async ({ database }) => {
-      const db = new Client({ host: socket, port: 5432, user: 'postgres', database, password: '', ssl: false,
+      let password;
+      try { password = prepareSocketAuth(run, container, database); } catch (e) { callbackFailure = e; throw e; }
+      const db = new Client({ host: socket, port: 5432, user: 'postgres', database, password, ssl: false,
         options: '', application_name: 'rad062-rehearsal', connectionTimeoutMillis: 10000, query_timeout: 120000 });
       db.on('error', () => {}); // Query/connect rejection carries STOP through finally; never emit raw idle errors.
       try {

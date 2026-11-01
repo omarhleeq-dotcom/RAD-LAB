@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
-import { localOnly, rehearse, stopLine, stageStop, verifyCounts } from './rad062-laptop-rehearsal.mjs';
+import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 
@@ -34,6 +34,22 @@ test('invalid restored names stop separately from quota/capacity, without printi
   verifyCounts(counts);
   assert.throws(() => verifyCounts({ ...counts, invalid_name_profiles: 1 }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:invalid_names');
   assert.throws(() => verifyCounts({ ...counts, database_bytes: 300000000 }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:capacity');
+});
+
+test('socket-auth command failure retains SQLSTATE and discards the generated credential and stderr', () => {
+  let credential;
+  const run = (_program, _args, opts) => {
+    if (opts.input.includes('alter role postgres password')) {
+      credential = /password '([0-9a-f]+)'/.exec(opts.input)[1];
+      throw Object.assign(new Error('PRIVATE_MESSAGE ' + credential), { stderr: 'ERROR:  42501: PRIVATE_HOST ' + credential });
+    }
+    return opts.input.includes('auth_method') ? 't' : '{}';
+  };
+  assert.throws(() => prepareSocketAuth(run, 'synthetic', 'rad_restore'), e => {
+    assert.equal(stopLine(e), 'STOP rad062_laptop_rehearsal:socket_auth sqlstate=42501');
+    assert.doesNotMatch(JSON.stringify(e) + e.message, new RegExp(credential + '|PRIVATE_MESSAGE|PRIVATE_HOST'));
+    return true;
+  });
 });
 
 test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/counts; check and migration STOP both tear down', { timeout: 300000 }, async () => {
