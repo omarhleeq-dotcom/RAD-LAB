@@ -75,19 +75,6 @@ live() { node scripts/assess/rad062-db-day.mjs "$@" --live --session-pooler --pr
 
 The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts`, `checks` and, by owner decision D-C (2026-10-31), `apply` with exactly the same selectors; a 6543, host, user or TLS mismatch is refused for `apply` as for every other action. `restore` stays local-only and `verify` stays offline, so neither accepts `--session-pooler`. The direct path above is unchanged.
 
-Before accepting the rehearsal, the owner checks live database ownership using the verified live selectors above. This command is read-only and prints **yes/no only**; the agent never runs it:
-
-```bash
-if ! RAD062_LIVE_OWNER_POSTGRES=$(psql -X -qAt -v ON_ERROR_STOP=1 -c "begin read only; select case when exists (select from pg_database d join pg_roles r on r.oid=d.datdba where d.datname=current_database() and r.rolname='postgres') then 'yes' else 'no' end; rollback;" 2>/dev/null); then
-  printf '%s\n' no
-  exit 1
-fi
-printf '%s\n' "$RAD062_LIVE_OWNER_POSTGRES"
-test "$RAD062_LIVE_OWNER_POSTGRES" = yes
-```
-
-**Expected:** exactly `yes` and exit zero. **STOP:** `no`, error or unknown ownership. A rehearsal result is valid only after this owner check says yes; synthetic success or the image's default roles never proves live parity. Retain the yes/no privately with the reviewed backup evidence before clearing live selectors for §3. This is the [owner-approved temporary ownership condition](DECISIONS.md#rad062-restore-owner-parity-2026-11-01), not permission to change live ownership.
-
 **Command:**
 
 ```bash
@@ -105,6 +92,19 @@ live preflight --execute
 **Expected:** gate_rows=1, open_gates=0, worker_roles=2, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Both assess_job_a/b must exist and be NOLOGIN; assess_worker also must not LOGIN. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
 
 **STOP:** any nonzero prohibited count, missing role, open assignment, unknown/ENABLED secret, failed CLI/permissions/query, or active/grading/awaiting-manual session. Do not start workers, create roles or close assignments to bypass this stop.
+
+Before accepting the rehearsal, the owner checks live database ownership using the verified live selectors above. This command is read-only and prints **yes/no only**; the agent never runs it:
+
+```bash
+if ! RAD062_LIVE_OWNER_POSTGRES=$(psql -X -qAt -v ON_ERROR_STOP=1 -c "begin read only; select case when exists (select from pg_database d join pg_roles r on r.oid=d.datdba where d.datname=current_database() and r.rolname='postgres') then 'yes' else 'no' end; rollback;" 2>/dev/null); then
+  printf '%s\n' no
+  exit 1
+fi
+printf '%s\n' "$RAD062_LIVE_OWNER_POSTGRES"
+test "$RAD062_LIVE_OWNER_POSTGRES" = yes
+```
+
+**Expected:** exactly `yes` and exit zero. **STOP:** `no`, error or unknown ownership. A rehearsal result is valid only after this owner check says yes; synthetic success or the image's default roles never proves live parity. Retain the yes/no privately with the reviewed backup evidence before clearing live selectors for §3. This is the [owner-approved temporary ownership condition](DECISIONS.md#rad062-restore-owner-parity-2026-11-01), not permission to change live ownership.
 
 Before taking the backup, inspect frozen B on the **unrestored current live schema**, using the already verified direct PG selectors (read only):
 
@@ -185,7 +185,7 @@ After restoreTest finishes, the rehearsal uses docker exec/psql as supabase_admi
 
 Before M01, the command separately runs the diagnostic and **frozen B**, in the default initialized phase. The diagnostic must pass completely. On this **restored** copy, frozen B must fail **exactly `relations`**, with the other 12 rows ready=true: all 13 original kinds must be present exactly once, and every ready value must be boolean (no nulls). Zero failures, another/additional false kind, missing/unknown/duplicate kinds or SQL error means `pre_frozen_b` STOP. This restores the accepted [P9b ruling and original evidence](RAD-062_P09B_REPORT_2026-10-30.md), superseding the earlier contradictory instruction to require all frozen B rows ready after restore. It is a measured expectation, not a waiver: pinned Supabase17.11 synthetic CI first printed only `["relations"]` before this set was encoded, matching P9b18.4. Frozen B must still be completely ready on the **unrestored live schema** in the owner-only read above. No pre-initializer override or initializer replay is allowed on the restored production copy.
 
-The pinned image uses peer authentication with an ident map for its local socket. Before connecting, the command verifies the first matching rule, assigns a fresh random credential to postgres through local supabase_admin, and prepends only `local rad_restore postgres scram-sha-256` to this throwaway container's HBA. It verifies reload and the rule, and compares postgres role attributes/config and memberships before/after in memory. Only authentication changes; object catalogues, ownership, privileges and supautils behaviour remain intact. The credential travels through stdin after session statement/error-payload logging is disabled, never through argv/env, host files or output. There are still no published ports or network access; the credential and HBA disappear with teardown. Any setup mismatch is `socket_auth` STOP.
+The pinned image uses peer authentication with an ident map for its local socket. Before connecting, the command verifies the first matching rule, assigns a fresh random credential to postgres through local supabase_admin, and prepends only `local rad_restore postgres scram-sha-256` to this throwaway container's HBA. It verifies reload and the rule, and compares postgres role attributes/config and memberships before/after in memory. This socket-authentication step preserves the ownership established by the approved database-owner step above, and leaves object catalogues, grants, role attributes/config, memberships and supautils behaviour intact. The credential travels through stdin after session statement/error-payload logging is disabled, never through argv/env, host files or output. There are still no published ports or network access; the credential and HBA disappear with teardown. Any setup mismatch is `socket_auth` STOP.
 
 It then connects directly as `postgres`, verifying session_user=current_user=postgres and rolsuper=false, and invokes the existing `apply` helper separately for M01 through M08 in order. It never applies as supabase_admin or via SET ROLE from a superuser. If this identity cannot apply the unchanged package under supautils/privileges, **STOP and report**; no elevation or role/catalogue repair.
 
