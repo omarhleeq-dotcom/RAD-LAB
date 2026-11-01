@@ -1,3 +1,4 @@
+import { QuestionPreview } from './QuestionPreview';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Draft } from '../authoring-review/contracts';
@@ -8,7 +9,7 @@ const field = 'mt-1 block min-h-11 w-full max-w-full rounded border border-line 
 const button = 'min-h-11 max-w-full rounded border border-line px-3 py-2 disabled:opacity-50';
 type PreviewRow = { row: number; values: ImportRow; licenceNotes: string; excluded: boolean };
 export function QuestionImport({ draft, change, actorId, batch, setBatch, onPending, method, onPrepared, defaultPool }: { draft: Draft; change(value: Draft): void; actorId: string; batch: BatchNotes; setBatch(value: BatchNotes): void; onPending(value: boolean): void; method?: 'upload' | 'paste'; onPrepared?(): void; defaultPool?: boolean }) {
- const t = useTranslations('assessImport'), [paste, setPaste] = useState(''), [rows, setRows] = useState<PreviewRow[]>([]), [error, setError] = useState(''), [loading, setLoading] = useState(false), [editing, setEditing] = useState<number>(), [prepared, setPrepared] = useState(false);
+ const t = useTranslations('assessImport'), [paste, setPaste] = useState(''), [rows, setRows] = useState<PreviewRow[]>([]), [error, setError] = useState(''), [loading, setLoading] = useState(false), [prepared, setPrepared] = useState(false);
  const previousBatch = useRef(batch);
  const generation = useRef(0), input = useRef<HTMLInputElement>(null), stagedIds = useRef<string[]>([]);
  useEffect(() => () => { generation.current++; }, []);
@@ -33,7 +34,7 @@ export function QuestionImport({ draft, change, actorId, batch, setBatch, onPend
  function updateBatch(value: BatchNotes) { setBatch(value); writeImportNotes(actorId, value); setPrepared(false); }
  function preview(table: string[][]) {
   const values = importTableRows(table); if (!values.length) throw new ImportError('malformed');
-  stagedIds.current = []; setPrepared(false); setEditing(undefined);
+  stagedIds.current = []; setPrepared(false);
   setRows(values.map(r => ({ ...r, values: { ...r.values, Reference: r.values.Reference?.trim() ? r.values.Reference : batch.reference }, licenceNotes: batch.licenceNotes, excluded: false })));
  }
  async function file(value?: File) {
@@ -44,8 +45,6 @@ export function QuestionImport({ draft, change, actorId, batch, setBatch, onPend
  }
  const validation = rows.map(r => validateAssessImportRowV1(r.values, { reference: batch.reference, licenceNotes: r.licenceNotes }));
  const included = rows.filter(r => !r.excluded), valid = included.length > 0 && rows.every((r, n) => r.excluded || !validation[n]!.issues.length);
- const ready = rows.filter((r, n) => !r.excluded && !validation[n]!.issues.length).length, errors = rows.filter((r, n) => !r.excluded && validation[n]!.issues.length).length;
- const ordered = rows.map((row, n) => ({ row, n })).sort((a, b) => Number(!b.row.excluded && !!validation[b.n]!.issues.length) - Number(!a.row.excluded && !!validation[a.n]!.issues.length) || a.row.row - b.row.row);
  function update(index: number, value: PreviewRow) { setRows(rows.map((r, n) => n === index ? value : r)); setError(''); setPrepared(false); }
  function append() {
   if (!valid || error) return;
@@ -65,7 +64,11 @@ export function QuestionImport({ draft, change, actorId, batch, setBatch, onPend
  function cancel() { generation.current++; setLoading(false); setRows([]); setPaste(''); setError(''); setPrepared(false); stagedIds.current = []; }
  return <section className="min-w-0 space-y-4 rounded border border-line p-3" aria-label={t('importTitle')}>
   {!method && <h3 className="text-lg font-semibold">{t('importTitle')}</h3>}
-  {rows.length > 0 && <h4 className="font-semibold">{t('summary', { ready, errors })}</h4>}
+  {rows.length > 0 && <section aria-label={t('preview')}><QuestionPreview rows={rows} issues={validation.map(v=>v.issues)} exclude={n=>update(n,{...rows[n]!,excluded:!rows[n]!.excluded})} next={append} blocked={!valid||loading||!!error} nextLabel={onPrepared?t('next'):t('addValidated')} edit={n=>(
+    <div  className="grid min-w-0 gap-3 sm:grid-cols-2">{Object.entries(rows[n]!.values).map(([key, value]) => <label className={key === 'Question' ? 'sm:col-span-2' : ''} key={key}><span lang="en">{key}</span><textarea aria-label={key} className={field} lang="en" dir="ltr" value={value.replaceAll(MISSING_CACHED_VALUE, '')} onChange={e => update(n, { ...rows[n]!, values: { ...rows[n]!.values, [key]: e.target.value } })}/></label>)}
+     <label>{t('licence')}<textarea aria-label={t('licence')} className={field} lang="en" dir="ltr" value={rows[n]!.licenceNotes} maxLength={2000} onChange={e => update(n, { ...rows[n]!, licenceNotes: e.target.value })}/></label>
+    </div>
+)}/></section>}
   <details><summary className={`${button} cursor-pointer`}>{t('importHelp')}</summary><p>{t('localOnly')}</p><p lang="en" dir="ltr" className="break-words">Question, A, B, C…AX, Answer, Points, Reference</p><p>{t('columnsHelp')}</p><p>{t('previewHelp')}</p></details>
   <div hidden={method === 'upload' || rows.length > 0}>
    <label className="block">{t('paste')}<textarea aria-label={t('paste')} className={`${field} min-h-32 font-mono`} lang="en" dir="ltr" maxLength={IMPORT_LIMITS.bytes} value={paste} onChange={e => { setPaste(e.target.value); setPrepared(false); }}/></label>
@@ -82,17 +85,6 @@ export function QuestionImport({ draft, change, actorId, batch, setBatch, onPend
     <label>{t('batchLicence')}<textarea aria-label={t('batchLicence')} lang="en" dir="ltr" className={field} maxLength={2000} value={batch.licenceNotes} onChange={e => updateBatch({ ...batch, licenceNotes: e.target.value })}/></label>
    </div><p>{t('memoryHelp')}</p>
   </details>}
-  {rows.length > 0 && <section className="space-y-4" aria-label={t('preview')}>
-   {ordered.map(({ row, n }) => <fieldset key={row.row} className="min-w-0 space-y-3 rounded border border-line p-3"><legend>{t('row')} {row.row}{row.excluded ? ` · ${t('excluded')}` : ''}</legend>
-    <p className="break-words" lang="en" dir="ltr">{row.values.Question?.replaceAll(MISSING_CACHED_VALUE, '')}</p>
-    {validation[n]!.issues.length > 0 && !row.excluded && <ul role="alert" className="space-y-1">{validation[n]!.issues.map((issue, i) => <li key={i}><bdi>{issue.column}</bdi>: {t(`rowErrors.${issue.code}`)}</li>)}</ul>}
-    <div className="flex flex-wrap gap-2"><button type="button" className={button} aria-expanded={editing === row.row} onClick={() => setEditing(editing === row.row ? undefined : row.row)}>{t('fix')}</button><label className="flex min-h-11 items-center gap-2"><input type="checkbox" checked={row.excluded} onChange={e => update(n, { ...row, excluded: e.target.checked })}/>{t('exclude')}</label></div>
-    <div hidden={editing !== row.row} className="grid min-w-0 gap-3 sm:grid-cols-2">{Object.entries(row.values).map(([key, value]) => <label className={key === 'Question' ? 'sm:col-span-2' : ''} key={key}><span lang="en">{key}</span><textarea aria-label={key} className={field} lang="en" dir="ltr" value={value.replaceAll(MISSING_CACHED_VALUE, '')} onChange={e => update(n, { ...row, values: { ...row.values, [key]: e.target.value } })}/></label>)}
-     <label>{t('licence')}<textarea aria-label={t('licence')} className={field} lang="en" dir="ltr" value={row.licenceNotes} maxLength={2000} onChange={e => update(n, { ...row, licenceNotes: e.target.value })}/></label>
-    </div>
-   </fieldset>)}
-   <button type="button" className={button} disabled={!valid || loading || !!error} onClick={append}>{onPrepared ? t('next') : t('addValidated')}</button>
-  </section>}
   {(error || rows.length > 0 || paste) && <button type="button" className={button} onClick={cancel}>{t('cancel')}</button>}
  </section>;
 }

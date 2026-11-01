@@ -75,7 +75,7 @@ try {
   const page = await context.newPage(), errors = [];
   page.setDefaultTimeout(8000);page.on('pageerror', error => { errors.push(error.message); console.error(error.message); });
   await context.route('**/*', route => { assert.equal(new URL(route.request().url()).origin, base, 'No external API or file upload'); return route.continue(); });
-  const button=(name)=>page.getByRole('button',{name,exact:true});
+  const button=(name)=>{const found=page.getByRole('button',{name,exact:true});return name===t.next?found.first():found;};
   async function audit(label) {
    ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${locale}/${width}/${label}: no overflow`);
    await page.addScriptTag({ path: resolve('node_modules/axe-core/axe.min.js') });
@@ -109,13 +109,23 @@ try {
   if(width===390)await input.setInputFiles({name:'questions.xlsx',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',buffer:Buffer.from(xlsx,'base64')});
   else await page.locator('div.border-dashed').evaluate((element,encoded)=>{const transfer=new DataTransfer();transfer.items.add(new File([Uint8Array.from(atob(encoded),c=>c.charCodeAt(0))],'questions.xlsx'));element.dispatchEvent(new DragEvent('drop',{bubbles:true,cancelable:true,dataTransfer:transfer}));},xlsx);
   await page.getByRole('heading',{name:t.summary.replace('{ready}','20').replace('{errors}','0'),exact:true}).waitFor();await audit('3-preview');
+  const previewRegion=page.getByRole('region',{name:t.preview,exact:true});
+  ok(await previewRegion.locator(width>=768?'tbody > tr':'ul.divide-y > li').count()===10,'Ten compact rows per page');
+  ok(await previewRegion.getByRole('button',{name:t.fix,exact:true}).count()===0,'Ready rows have no Fix');
+  ok(await previewRegion.getByText('✓ A · True',{exact:true}).count()===10,'Correct option is marked in every compact row');
+  const nextBox=await button(t.next).boundingBox();ok(nextBox.y+nextBox.height<=900,'Next is reachable without scrolling');
+  await page.getByRole('button',{name:t.detailsRow.replace('{n}','2'),exact:true}).click();
+  const expanded=width>=768?previewRegion.locator('fieldset'):page.getByRole('dialog');
+  ok(await expanded.getByText('✓ A · True',{exact:true}).isVisible()&&await expanded.getByText('B · False',{exact:true}).isVisible(),'Expanded view includes all options and correct marker');await audit('3-expanded');
+  if(width<768)await button(t.close).click();else await page.getByRole('button',{name:t.detailsRow.replace('{n}','2'),exact:true}).click();
+  await button(t.nextPage).click();
   await page.evaluate(()=>{for(const value of ['hidden','visible']){Object.defineProperty(document,'visibilityState',{configurable:true,value});document.dispatchEvent(new Event('visibilitychange'));}});
-  ok(await page.locator('p').filter({hasText:/^XLSX cached question 20\?$/}).count()===1,'Pending preview survives app switching');
+  ok(await page.getByText('XLSX cached question 20?',{exact:true}).count()===1,'Pending preview survives app switching');
   await button(t.next).click();
   await page.getByLabel(c.name,{exact:true}).fill('SYNTHETIC phone draft');
   ok(await page.getByLabel(t.poolSize,{exact:true}).inputValue()==='20','K defaults to N');
   await audit('4-save');
-  await button(t.back).click();ok(await page.locator('p').filter({hasText:/^XLSX cached question 20\?$/}).isVisible(),'Back retains all imported rows');await button(t.next).click();
+  await button(t.back).click();ok(await page.getByText('XLSX cached question 20?',{exact:true}).isVisible(),'Back retains all imported rows');await button(t.next).click();
   ok(await page.getByLabel(c.name,{exact:true}).inputValue()==='SYNTHETIC phone draft','Unsaved draft survives back/next');
   await page.getByLabel(t.poolSize,{exact:true}).fill('21');ok(await button(c.save).isDisabled(),'K>N blocks Save');
   ok(await page.getByText(t.draftErrors.pool_size_exceeds_questions,{exact:true}).isVisible(),'K>N block is explained only when violated');
@@ -131,14 +141,16 @@ try {
   ok((await rows.first().locator('legend').textContent()).includes('4'),'Error row comes first with its source row number');
   await rows.first().getByRole('button',{name:t.fix,exact:true}).click();await rows.first().getByLabel('Answer',{exact:true}).fill('A');
   // Fixing a row can reorder it. Select by row number rather than visual position.
-  const row3=page.getByRole('region',{name:t.preview,exact:true}).locator('fieldset').filter({has:page.locator('legend').filter({hasText:new RegExp('^'+t.row+' 3$')})});
-  await row3.getByRole('button',{name:t.fix,exact:true}).click();await row3.getByLabel(t.licence,{exact:true}).fill('Per-question licence');
+  await page.getByRole('button',{name:t.detailsRow.replace('{n}','3'),exact:true}).click();
+  const readyDetail=width>=768?page.getByRole('region',{name:t.preview,exact:true}).locator('fieldset'):page.getByRole('dialog');
+  await readyDetail.getByRole('button',{name:t.edit,exact:true}).click();await readyDetail.getByLabel(t.licence,{exact:true}).fill('Per-question licence');
+  if(width<768)await button(t.close).click();
   await button(t.next).click();await button(c.save).click();await page.waitForFunction(()=>window.saved.length===2);
   ok(await page.evaluate(()=>window.saved[1].items.length===23&&window.saved[1].items[20].provenance.sources[0].reference==='Row source'&&window.saved[1].items[21].provenance.licenceNotes==='Per-question licence'),'Three pasted rows save atomically with row metadata');
   await button(t.back).click();await button(t.cancel).click();await button(t.back).click();await button(t.method.upload).click();
   await input.setInputFiles({name:'errors.csv',mimeType:'text/csv',buffer:Buffer.from('Question,A,B,Answer\nCSV error?,True,False,C')});
-  await page.getByText(t.rowErrors.answer,{exact:false}).waitFor();ok(await button(t.next).isDisabled()&&await page.evaluate(()=>window.saved.length===2),'Errors CSV shows row errors and saves nothing');
-  await page.getByLabel(t.exclude,{exact:true}).check();ok(await button(t.next).isDisabled(),'Excluding all rows cannot save an empty batch');await button(t.cancel).click();
+  await page.getByRole('alert').getByText(t.rowErrors.answer,{exact:false}).waitFor();ok(await button(t.next).isDisabled()&&await page.evaluate(()=>window.saved.length===2),'Errors CSV shows row errors and saves nothing');
+  await page.getByLabel(t.exclude,{exact:true}).click();ok(await button(t.next).isDisabled(),'Excluding all rows cannot save an empty batch');await button(t.cancel).click();
   for(const name of ['a.xlsm','a.xls']){await input.setInputFiles({name,mimeType:'application/octet-stream',buffer:Buffer.from('bad')});await page.getByText(t.errors[name.endsWith('xlsm')?'macros':'fileType'],{exact:true}).waitFor();await button(t.cancel).click();}
   await button(t.back).click();await button(t.method.write).click();
   await page.getByLabel(c.prompt,{exact:true}).fill('Form question?');await page.getByLabel(c.option+' 1',{exact:true}).fill('True');await page.getByLabel(c.option+' 2',{exact:true}).fill('False');await page.getByLabel(c.correct,{exact:false}).selectOption({index:1});await page.getByLabel(t.shuffleOptions,{exact:true}).uncheck();

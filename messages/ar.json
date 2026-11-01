@@ -2284,6 +2284,15 @@
     "excluded": "مستبعد",
     "summary": "{ready} جاهز · {errors} به أخطاء",
     "questionCount": "{n} سؤالًا",
-    "questionsPerStudent": "عدد الأسئلة لكل طالب: من {n}"
+    "questionsPerStudent": "عدد الأسئلة لكل طالب: من {n}",
+    "edit": "تعديل",
+    "detailsRow": "تفاصيل الصف {n}",
+    "questionColumn": "السؤال",
+    "answerColumn": "الإجابة الصحيحة",
+    "pagination": "صفحات المعاينة",
+    "previousPage": "الصفحة السابقة",
+    "nextPage": "الصفحة التالية",
+    "page": "الصفحة {page} من {pages}",
+    "close": "إغلاق"
   }
 }

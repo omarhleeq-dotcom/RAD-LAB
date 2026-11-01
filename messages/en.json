@@ -2284,6 +2284,15 @@
     "excluded": "Excluded",
     "summary": "{ready} ready · {errors} with errors",
     "questionCount": "{n} questions",
-    "questionsPerStudent": "Questions per student: of {n}"
+    "questionsPerStudent": "Questions per student: of {n}",
+    "edit": "Edit",
+    "detailsRow": "Details for row {n}",
+    "questionColumn": "Question",
+    "answerColumn": "Correct answer",
+    "pagination": "Preview pages",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "page": "Page {page} of {pages}",
+    "close": "Close"
   }
 }
