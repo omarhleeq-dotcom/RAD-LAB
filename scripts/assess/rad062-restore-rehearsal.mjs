@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 import { Client } from 'pg';
 import { localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { openLocalDatabase } from './local-database.mjs';
-import { apply, checks, manifest, readOnly, verifyMigrations } from './rad062-db-day.mjs';
+import { apply, checks, manifest, readOnly, verifyMigrations, migrationState } from './rad062-db-day.mjs';
 const image = 'postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382';
 function docker(args, input) {
   const env = { ...process.env };
@@ -18,10 +18,11 @@ function docker(args, input) {
 const read = file => readFileSync(file, 'utf8');
 async function snapshot(db) {
   // Never print bodies, identifiers or data; compare only in memory.
-  return (await db.query(`select (select jsonb_agg(to_jsonb(p) order by oid) from pg_proc p where pronamespace in ('assess'::regnamespace,'public'::regnamespace)) functions,
+  const rows = (await db.query(`select (select jsonb_agg(to_jsonb(p) order by oid) from pg_proc p where pronamespace in ('assess'::regnamespace,'public'::regnamespace)) functions,
     (select jsonb_agg(to_jsonb(c) order by oid) from pg_class c where relnamespace in ('assess'::regnamespace,'public'::regnamespace)) relations,
-    (select jsonb_agg(to_jsonb(s) order by version) from supabase_migrations.schema_migrations s) ledger,
     (select jsonb_agg(to_jsonb(w) order by counter) from rad062_witness w) data`)).rows;
+  rows[0].probes = await migrationState(db);
+  return rows;
 }
 export async function rehearse() {
   const source = await openLocalDatabase('postgres');
@@ -30,8 +31,6 @@ export async function rehearse() {
     await source.exec(`create role assess_job_a nologin; create role assess_job_b nologin;
       alter table auth.users add column banned_until timestamptz;
       create table auth.sessions(user_id uuid); create table auth.refresh_tokens(user_id uuid);
-      create schema supabase_migrations;
-      create table supabase_migrations.schema_migrations(version text primary key,name text,statements text[]);
       create table public.rad062_witness(counter integer primary key,payload text);
       insert into public.rad062_witness values(1,'SYNTHETIC_PRIVATE_CANARY');`);
     const aclSQL = `select relname,relacl::text raw_acl,
@@ -85,7 +84,7 @@ export async function rehearse() {
     let rollbacks = 0;
     for (const [index, file] of verifyMigrations().entries()) {
       const before = await snapshot(target), sql = read('supabase/migrations/' + file);
-      // Real failure after all DDL but before COMMIT; exact catalogue/data/ledger proof.
+      // Real failure after all DDL but before COMMIT; exact catalogue/data/probe proof.
       await assert.rejects(target.query(sql.replace(/commit;\s*$/i, "select 1/0; commit;")));
       await target.query('rollback');
       assert.deepEqual(await snapshot(target), before); rollbacks++;

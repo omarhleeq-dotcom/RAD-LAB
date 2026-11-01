@@ -69,6 +69,12 @@ test('dry run makes no connection, selectors cannot become connection strings, a
   const r = spawnSync(process.execPath, ['scripts/assess/rad062-db-day.mjs','checks','--execute'], { env: { ...process.env, ...remote, PGPASSWORD:'PRIVATE_CANARY' }, encoding:'utf8' });
   assert.equal(r.status,1); assert.equal(r.stderr.trim(),'STOP rad062_db_day'); assert.equal(r.stdout,'');
 });
+test('probe reads use the same live selectors, zero-connection dry-run, and no apply permission', async () => {
+  for (const flags of [[], ['--live'], ['--project-ref', ref]]) assert.throws(() => options(['probes', ...flags], remote));
+  assert.equal((await main(['probes', '--live', '--project-ref', ref], remote)).database_connections, 0);
+  assert.equal(options(pooledArgs('probes'), pooled).pooler, true);
+  assert.throws(() => options(pooledArgs('probes'), { ...pooled, PGPORT: '6543' }));
+});
 test('all eight SHA-256 pins pass and a tampered migration is refused before SQL', () => {
   assert.equal(verifyMigrations().length,8);
   for (const tampered of verifyMigrations()) assert.throws(() => verifyMigrations(file => Buffer.concat([readFileSync('supabase/migrations/'+file), Buffer.from(file===tampered?'--tampered':'')])));

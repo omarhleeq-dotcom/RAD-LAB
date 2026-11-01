@@ -1193,3 +1193,13 @@ RAD-086 منجزة كتحقق خارجي بتاريخ إفادة المالك، 
 
 
 دليل التنفيذ بعد الموافقة: [CI check على18d574c](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41280184253/job/124770349771) انتهت success؛ البروفة10pass/0fail/0skip، وfrozen B بعد الملكية بقيت ["relations"] بالضبط. M01–M08 وmanifest10 منفردة والانتقالان والcounts نجحت، ثم شاهدا فشل check وmigration نجحا مع teardown لكل حالة؛ postgres غير superuser وصفاته/عضوياته ثابتة. لا إضافات fixture أو GRANT أو تعديل توقع/SQL. بقية full CI ناجحة كذلك؛ [التقرير](RAD-062_P10_REPORT_2026-10-30.md) للتفاصيل والحدود. هذا دليل synthetic17.11 فقط؛ شرط yes من قراءة المالك الحية ونجاح latest الحقيقية والهاتف والنافذة باقٍ، ولا RAD062_RESTORE_VERIFIED=yes من CI وحدها. رأس التوثيق اللاحق يعيد CI آليًا ويعرض دليله في PR دون نسبة سجل18d574c إلى commit أخرى.
+
+
+<a id="rad062-catalogue-probes-2026-11-01"></a>
+### RAD-062 Decision C: الشواهد الكتالوجية بدل Supabase ledger، 2026-11-01
+
+دليل المالك من اللابتوب على latest الحقيقية: STOP rad062_laptop_rehearsal:M01 sqlstate=42P01؛ ثم قياس TOC بعدادات فقط: supabase_migrations schema=0، schema_migrations table=0، assess schema=1. التثبيت السابق كله عبر SQL Editor/phone packets، لا Supabase CLI. fixture كانت تنشئ ledger وتخفي افتراضًا يفشل على live؛ لا تُسجل بروفة CI السابقة كدليل نجاح النسخة الحقيقية.
+
+المالك اختار C: إزالة SELECT/INSERT واعتماد ledger من apply، بلا إنشاء كائن حي جديد أو ledger اصطناعية من8صفوف قد تجعل db push تعيد الترحيلات القديمة غير المسجلة. لكل M01–M08 شاهد ثابت فريد جديد في معاملتها، false قبلها ودائم بعدها؛ [جدول P9 §5](RAD-062_P09_LAPTOP_RUNBOOK.md) يسرد signatures الثمانية ومصدر كل CREATE FUNCTION. لا ترحيل يفتقد شاهدًا دائمًا. apply لا تقبل إلا prefix السابق بالضبط وselected=false، وبعد COMMIT تشترط prefix التالي. SQL ترسل حرفيًا بما فيها COMMIT؛ لا تعديل bytes/SHA/checks/expectations/timeouts/guards. لا استبدال لجاهزية الكتالوج الكاملة بهذه الشواهد.
+
+UNKNOWN ACK = STOP، ولا حل إلا probes من اتصال جديد عبر أمر live probes --execute ذي selectors/TLS/port نفسها؛ لا retry آلي أو blind rerun أو تزوير artefact/ledger لتجاوز الترتيب. أمر القراءة يطبع flags0/1/counts فقط. تنزع ledger من كلا fixture البروفة، وتضاف شواهد rerun/out-of-order/rollback-probe-false/no-ledger، وفقد ACK بعد COMMIT مع إعادة قراءة اتصال جديد ورفض الإعادة. [التقرير](RAD-062_P10_REPORT_2026-10-30.md) يحفظ QA الفعلية. الحكم السابق للـledger تاريخي ومتجاوز بهذا القرار، مع بقاء أدلته الأصلية؛ [P9b](RAD-062_P09B_REPORT_2026-10-30.md) وشرط [ملكية live](DECISIONS.md#rad062-restore-owner-parity-2026-11-01) وباقي STOPs ثابتة. #175 Draft، RAD-062 in_progress/reviewer؛ لا SQL حي/Variables/نشر إضافي/preview/goldens/بيانات مشاركين.

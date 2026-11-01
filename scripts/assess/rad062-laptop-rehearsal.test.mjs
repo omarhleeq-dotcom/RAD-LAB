@@ -5,7 +5,8 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, symlinkSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { apply } from './rad062-db-day.mjs';
+import { Client } from 'pg';
+import { apply, migrationState, migrationProbes, migrationProbeSQL, verifyMigrations } from './rad062-db-day.mjs';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
 import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, prepareDatabaseOwner, verifyRestoredFrozenB, inspectRestored, main, observeSyntheticQueries } from './rad062-laptop-rehearsal.mjs';
@@ -145,7 +146,7 @@ test('apply keeps its fixed message and only safe label/SQLSTATE properties on d
     if (sql === 'rollback') { rollback++; return { rows: [] }; }
     if (sql.includes('gate_rows')) return { rows: [{ gate_rows: 1, open_gates: 0, login_roles: 0, open_assignments: 0, worker_connections: 0, unsettled_sessions: 0 }] };
     if (sql.startsWith('begin read only')) return { rows: [] };
-    if (sql.startsWith('select version')) return { rows: [] };
+    if (sql === migrationProbeSQL) return { rows: [Object.fromEntries(migrationProbes.map((_, n) => [`m0${n + 1}`, false]))] };
     throw driverError;
   } };
   await assert.rejects(apply(db, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), e => {
@@ -156,6 +157,30 @@ test('apply keeps its fixed message and only safe label/SQLSTATE properties on d
     return true;
   });
   assert.equal(rollback, 2); // read-only preflight, then failed migration.
+});
+
+test('catalogue apply refuses holes, nulls, reruns and missing post-COMMIT evidence without retries', async () => {
+  const zero = Array(8).fill(false), row = values => ({ rows: [Object.fromEntries(values.map((value, n) => [`m0${n + 1}`, value]))] });
+  for (const initial of [[true, ...zero.slice(1)], [false, true, ...zero.slice(2)], [null, ...zero.slice(1)]]) {
+    let writes = 0;
+    const db = { query: async sql => {
+      if (sql.includes('gate_rows')) return { rows: [{ gate_rows: 1 }] };
+      if (sql === migrationProbeSQL) return row(initial);
+      if (sql.startsWith('begin read only') || sql === 'rollback') return { rows: [] };
+      writes++; throw Error('unexpected write');
+    } };
+    await assert.rejects(apply(db, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }));
+    assert.equal(writes, 0);
+  }
+  let writes = 0;
+  const db = { query: async sql => {
+    if (sql.includes('gate_rows')) return { rows: [{ gate_rows: 1 }] };
+    if (sql === migrationProbeSQL) return row(zero);
+    if (sql.startsWith('begin read only') || sql === 'rollback') return { rows: [] };
+    writes++; return { rows: [] }; // COMMIT ACK received but probe still absent: STOP, no retry.
+  } };
+  await assert.rejects(apply(db, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), { message: 'migration_probe_ack_uncertain' });
+  assert.equal(writes, 1);
 });
 
 test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/counts; check and migration STOP both tear down', { timeout: 300000 }, async () => {
@@ -216,14 +241,34 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     // Synthetic initialization only; the rehearsal never sets pre-initializer or replays initialization.
     q(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql', 'utf8'));
     q(`create role assess_job_a nologin; create role assess_job_b nologin;
-      create schema supabase_migrations; create table supabase_migrations.schema_migrations(version text primary key,name text,statements text[]);
       create table public.backup_witness(n integer); insert into public.backup_witness values(1);`);
     q('create extension supabase_vault', 'supabase_admin');
     q(`create function public.synthetic_event_fn() returns event_trigger language plpgsql as $$begin end$$;
       create event trigger synthetic_owner_event on ddl_command_end when tag in ('ALTER TABLE') execute function public.synthetic_event_fn();`);
     if (process.env.CI === 'true') console.log(JSON.stringify({ source_privileges: JSON.parse(q(privilegeSQL)) }));
     save(); symlinkSync('store/' + stamp, join(root, 'daily')); sourceVolumes = volumes();
-    const result = await rehearse(c, { env, syntheticDiagnostics, observeFrozenB: kinds => console.log(JSON.stringify(kinds)) }).finally(absent);
+    const freshState = async db => {
+      const fresh = new Client({ ...db.connectionParameters, ssl: false, options: '', application_name: 'rad062-probe-witness' });
+      try { await fresh.connect(); return await migrationState(fresh); } finally { await fresh.end(); }
+    };
+    const syntheticWitnesses = async (phase, db) => {
+      assert.equal((await db.query("select to_regnamespace('supabase_migrations') is null absent")).rows[0].absent, true);
+      const zero = Array(8).fill(false), all = Array(8).fill(true);
+      if (phase === 'before') {
+        assert.deepEqual(await migrationState(db), zero);
+        await assert.rejects(apply(db, 'M02', { RAD062_SECRET_STATE: 'DISABLED' }), { message: 'migration_order_or_uncertain_ack' });
+        const m01 = readFileSync('supabase/migrations/' + verifyMigrations()[0], 'utf8');
+        // Fault injection only: all M01 DDL runs, then an error before its COMMIT.
+        const failing = { query: (sql, ...args) => db.query(sql === m01 ? sql.replace(/commit;\s*$/i, 'select 1/0; commit;') : sql, ...args) };
+        await assert.rejects(apply(failing, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), e => e.label === 'apply_failed_or_ack_uncertain' && e.sqlstate === '22012');
+        assert.deepEqual(await freshState(db), zero);
+      } else {
+        assert.deepEqual(await freshState(db), all);
+        for (let n = 1; n <= 8; n++) await assert.rejects(apply(db, `M0${n}`, { RAD062_SECRET_STATE: 'DISABLED' }), { message: 'migration_order_or_uncertain_ack' });
+        assert.deepEqual(await freshState(db), all);
+      }
+    };
+    const result = await rehearse(c, { env, syntheticDiagnostics, syntheticWitnesses, observeFrozenB: kinds => console.log(JSON.stringify(kinds)) }).finally(absent);
     assert.equal(result.rehearsal_pass, 1); assert.equal(result.teardown_pass, 1);
     assert.equal(result.event_triggers_second_pass_count, 1);
     assert.equal(result.database_owner_postgres, 1); assert.equal(result.postgres_role_unchanged, 1);
@@ -231,6 +276,27 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     assert.equal(result.pre_m01_frozen_b_ready, 0); assert.equal(result.pre_m01_frozen_b_failures, 1); assert.equal(result.pre_m01_diagnostic_ready, 1);
     assert.equal(result.transition_inspections_passed, 2); assert.ok(result.checks_passed > 0);
     assert.ok(Object.values(result).every(v => /^\d+$/.test(String(v)))); absent();
+    // Model transport loss after the server COMMIT. Only a new postgres connection resolves it.
+    const lostAckWitness = async (phase, db) => {
+      assert.equal(phase, 'before');
+      const m01 = readFileSync('supabase/migrations/' + verifyMigrations()[0], 'utf8');
+      let writes = 0;
+      const lost = { query: async (sql, ...args) => {
+        if (sql !== m01) return db.query(sql, ...args);
+        writes++; await db.query(sql); await db.end();
+        throw Object.assign(new Error('SYNTHETIC_LOST_ACK'), { code: '08006' });
+      } };
+      await assert.rejects(apply(lost, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), e => e.label === 'apply_failed_or_ack_uncertain' && e.sqlstate === '08006');
+      assert.equal(writes, 1);
+      assert.deepEqual(await freshState(db), [true, ...Array(7).fill(false)]);
+      const fresh = new Client({ ...db.connectionParameters, ssl: false, options: '', application_name: 'rad062-ack-witness' });
+      try {
+        await fresh.connect();
+        await assert.rejects(apply(fresh, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), { message: 'migration_order_or_uncertain_ack' });
+      } finally { await fresh.end(); }
+      throw stageStop('M01', { code: '08006' }); // synthetic callback stops the normal loop; finally must tear down.
+    };
+    await assert.rejects(rehearse(c, { env, syntheticDiagnostics, syntheticWitnesses: lostAckWitness }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:M01 sqlstate=08006'); absent();
     q('update assess.sharing_policy set required_version=null,text_digest=null'); save();
     await assert.rejects(rehearse(c, { env, syntheticDiagnostics }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:pre_diagnostic'); absent();
     q(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql', 'utf8'));

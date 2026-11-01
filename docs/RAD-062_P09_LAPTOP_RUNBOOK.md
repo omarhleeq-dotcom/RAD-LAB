@@ -73,7 +73,7 @@ export RAD062_POOLER_HOST PGHOST="$RAD062_POOLER_HOST" PGPORT=5432 PGUSER="postg
 live() { node scripts/assess/rad062-db-day.mjs "$@" --live --session-pooler --project-ref "$RAD062_EXPECTED_PROJECT_REF"; }
 ```
 
-The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts`, `checks` and, by owner decision D-C (2026-10-31), `apply` with exactly the same selectors; a 6543, host, user or TLS mismatch is refused for `apply` as for every other action. `restore` stays local-only and `verify` stays offline, so neither accepts `--session-pooler`. The direct path above is unchanged.
+The helper then accepts only a host matching `aws-N-<region>-N.pooler.supabase.com` equal to `RAD062_POOLER_HOST`, user exactly `postgres.<ref>`, port exactly 5432 (the 6543 transaction pooler is refused), `PGSSLMODE=verify-full` and a CA file. It serves `preflight`, `backup`, `counts`, `checks`, read-only `probes` and, by owner decision D-C (2026-10-31), `apply` with exactly the same selectors; a 6543, host, user or TLS mismatch is refused for `apply` as for every other action. `restore` stays local-only and `verify` stays offline, so neither accepts `--session-pooler`. The direct path above is unchanged.
 
 **Command:**
 
@@ -189,13 +189,13 @@ The pinned image uses peer authentication with an ident map for its local socket
 
 It then connects directly as `postgres`, verifying session_user=current_user=postgres and rolsuper=false, and invokes the existing `apply` helper separately for M01 through M08 in order. It never applies as supabase_admin or via SET ROLE from a superuser. If this identity cannot apply the unchanged package under supautils/privileges, **STOP and report**; no elevation or role/catalogue repair.
 
-**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT; migration history insertion shares that transaction. After M08 every P10 manifest check runs separately, including `rad062-ready.sql` and `rad062-p1-b-ready.sql`, with every assertion true except the explicit false operational non-claims `restore_verified`/`runtime_or_launch_verified`. False/null/error is STOP. Frozen B is inspected separately as a transition witness and is never part of successful P10 acceptance. The command then performs both transition inspections and the §4 counts **before teardown**.
+**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT. The helper submits the source verbatim and reads the fixed catalogue probes before and after it; no ledger row or other live object is added. After M08 every P10 manifest check runs separately, including `rad062-ready.sql` and `rad062-p1-b-ready.sql`, with every assertion true except the explicit false operational non-claims `restore_verified`/`runtime_or_launch_verified`. False/null/error is STOP. Frozen B is inspected separately as a transition witness and is never part of successful P10 acceptance. The command then performs both transition inspections and the §4 counts **before teardown**.
 
 The synthetic CI test alone supplies an explicit diagnostic callback for full PostgreSQL errors; owner main() has no flag or environment switch to enable it. Only numeric counts/yes-no fields or fixed STOP codes reach stdout/stderr; failures identify `restore:<stage>` or the rehearsal stage (including `connect` and `invalid_names` separately from `capacity`), with SQLSTATE/errno class only; no names, data, hosts, passwords or raw driver/restore errors. Successful output includes database_owner_postgres=1, postgres_role_unchanged=1, pre_m01_diagnostic_ready=1, pre_m01_frozen_b_ready=0, pre_m01_frozen_b_failures=1, postgres_non_superuser=1, migrations_committed=8, checks_passed equal to the manifest length, transition_inspections_passed=2, rehearsal_pass=1 and teardown_pass=1. Exit 0 is required. **`RAD062_RESTORE_VERIFIED=yes` may be exported only after this command passes and §1 live ownership is yes**; a standalone RAD-086 restore proof or synthetic pass does not authorize that export.
 
-**STOP:** collation mismatch, missing ICU support or en_US.UTF-8 in the exact local version/image, role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions; unavailable matching 17.11/extensions; any unexpected pre-M01 result, including a frozen B failure set other than exactly relations or any missing/duplicate kind or null; wrong/elevated apply identity; failed migration, required check, transition, counts or teardown. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
+**STOP:** collation mismatch, missing ICU support or en_US.UTF-8 in the exact local version/image, role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions; unavailable matching 17.11/extensions; any unexpected pre-M01 result, including a frozen B failure set other than exactly relations or any missing/duplicate kind or null; wrong/elevated apply identity; failed migration, required check, transition, counts or teardown. Nothing in this step touches live. Do not create roles or a Supabase migration ledger locally or live to bypass a STOP.
 
-M06/M08 fail their own entire transaction if any reviewed v1 body anchor is absent. The final readiness check fingerprints bodies, attributes, ACLs, relations and FK inventory; successful COMMIT alone is insufficient. The synthetic command below explicitly witnesses all ten M06 guards and eight M08 patches, forces failure before each COMMIT and compares catalogue/data/ledger rollback in memory:
+M06/M08 fail their own entire transaction if any reviewed v1 body anchor is absent. The final readiness check fingerprints bodies, attributes, ACLs, relations and FK inventory; successful COMMIT alone is insufficient. The synthetic command below explicitly witnesses all ten M06 guards and eight M08 patches, forces failure before each COMMIT and compares catalogue/data/probe rollback in memory:
 
 ```bash
 node scripts/assess/rad062-restore-rehearsal.mjs
@@ -235,11 +235,29 @@ Repeat each P10 manifest check separately on live and inspect every assertion, e
 
 Reaching this step requires the proofs above, reviewed successful owner restore evidence and the booked back-to-back P10 window; no SQL is authorized to the agent by this document.
 
+**Decision C — catalogue evidence, no ledger:** the owner measured the real latest backup TOC as supabase_migrations schema=0, schema_migrations table=0, assess schema=1 after M01/42P01. All previous installs were SQL Editor/phone packets; a standard Supabase CLI ledger is not a prerequisite. Do not create an eight-row ledger: a later `supabase db push` could otherwise reapply every earlier unrecorded migration. [Decision C and evidence](DECISIONS.md#rad062-catalogue-probes-2026-11-01) supersede historical ledger instructions.
+
+Each fixed probe is `pg_catalog.to_regprocedure(signature) IS NOT NULL`, read without executing the function. Each listed function is new in its own migration's original transaction, false beforehand, and not dropped by later M01–M08. No body digest is needed for these eight new artefacts. These witnesses establish the committed prefix; full catalogue readiness remains independently required and detects body/ACL/catalogue drift.
+
+| Migration | Fixed signature | Reviewed source |
+|---|---|---|
+| M01 | `public.rad062_valid_full_name(text)` | [own CREATE FUNCTION](../supabase/migrations/20261030000100_rad062_full_name.sql) |
+| M02 | `assess.validate_provenance_v2(jsonb,text,boolean)` | [own CREATE FUNCTION](../supabase/migrations/20261030000200_rad062_provenance_v2.sql) |
+| M03 | `assess.authoring_limits_v1()` | [own CREATE FUNCTION](../supabase/migrations/20261030000300_rad062_authoring_limits.sql) |
+| M04 | `assess.random_pool_maximum_v1(jsonb,jsonb,jsonb)` | [own CREATE FUNCTION](../supabase/migrations/20261030000400_rad062_random_pool.sql) |
+| M05 | `assess.freeze_v2()` | [own CREATE FUNCTION](../supabase/migrations/20261030000500_rad062_manual_foundation_freeze.sql) |
+| M06 | `assess.require_lifecycle_v2(uuid,integer)` | [own CREATE FUNCTION](../supabase/migrations/20261030000600_rad062_lifecycle_v2.sql) |
+| M07 | `assess.manual_authorize_v1(uuid)` | [own CREATE FUNCTION](../supabase/migrations/20261030000700_rad062_manual_grading.sql) |
+| M08 | `assess.health_v2()` | [own CREATE FUNCTION](../supabase/migrations/20261030000800_rad062_erasure_operations.sql) |
+
+`live probes --execute` is a read-only, fresh connection using the same selector/TLS/port guards as other reads. It prints only m01..m08 as 0/1, migrations_observed and prefix_contiguous. Before M01 expect all eight=0, migrations_observed=0 and prefix_contiguous=1; after M_n expect precisely m01..m0n=1 and later probes=0. Any hole/null/error is STOP. After an uncertain ACK, a fresh read is mandatory before any recovery decision; the helper never retries automatically.
+
 **Command:**
 
 ```bash
 node scripts/assess/rad062-db-day.mjs verify
 live preflight --execute
+live probes --execute
 # Only after reviewed complete restore, exact transition inspection, all other gates and booked P10 window:
 export RAD062_RESTORE_VERIFIED=yes
 live apply --migration M01
@@ -253,11 +271,11 @@ live apply --migration M07 --execute
 live apply --migration M08 --execute
 ```
 
-**Pooler variant (D-C):** with the `live()` function defined in step 1 for the pooler, the commands above are unchanged: `live` already carries `--session-pooler`, so `preflight`, `apply` and the post-apply reads go through the session pooler (port 5432, `verify-full`). Each migration is still one transaction with its ledger insert; a drop of the pooled connection around COMMIT is UNKNOWN exactly as on the direct path, resolved only by an independent read through the same selectors. The raw `psql` transition reads use the same `PGHOST`/`PGUSER` exports.
+**Pooler variant (D-C):** with the `live()` function defined in step 1 for the pooler, the commands above are unchanged: `live` already carries `--session-pooler`, so `preflight`, `apply` and the post-apply reads go through the session pooler (port 5432, `verify-full`). Each migration is still its unchanged source transaction, with catalogue probes before and after; a drop of the pooled connection around COMMIT is UNKNOWN exactly as on the direct path, resolved only by an independent read through the same selectors. The raw `psql` transition reads use the same `PGHOST`/`PGUSER` exports.
 
-**Expected:** verify hashes **all eight actual files** against deferred SHA-256 entries in `frontend-schema.json` before connecting; each apply rechecks them and closed-state conditions. Dry run connects zero times. Apply advances exactly the contiguous eight-version ledger, one transaction per migration. No Supabase `db push`, historical M1–M4/B replay, initializer, generic SQL file flag or unattended all-migration loop. Record counts/exit status per step on the laptop. No password or migration rows are printed.
+**Expected:** verify hashes **all eight actual files** against deferred SHA-256 entries in `frontend-schema.json` before connecting; each apply rechecks them and closed-state conditions. Dry run connects zero times. Apply requires exactly the contiguous prefix of eight reviewed catalogue probes: previous probes true, the selected and later probes false; after COMMIT exactly the prefix including the selected migration must be true. No Supabase `db push`, historical M1–M4/B replay, initializer, generic SQL file flag or unattended all-migration loop. Record counts/exit status per step on the laptop. Only counts/0–1 probe flags are printed, never passwords, catalogue identities or rows.
 
-**STOP at first error, timeout, hash/order mismatch or ambiguous ACK.** Earlier committed migrations stay committed; failed migration and ledger insertion roll back together. Network failure around COMMIT is UNKNOWN until an independent read confirms history and readiness. Never rerun blindly: the helper refuses an already recorded migration. Do not continue the next line after a failed command, or hand-edit the ledger to make it contiguous.
+**STOP at first error, timeout, hash/order mismatch or ambiguous ACK.** Earlier committed migrations stay committed; a failed transaction rolls back its own artefact, so its probe remains false. Network failure around COMMIT is UNKNOWN: stop the apply session, then run `live probes --execute` in a fresh command invocation/connection with the same verified selectors. This read alone resolves which prefix committed; it does not authorize retry or waive readiness. Never rerun blindly: a true selected probe is refused. Do not continue the next line after a failed command, create a ledger, or create/drop/patch probe artefacts to force a prefix. Holes, nulls/errors, unexpected true/false or uncertain fresh reads remain STOP.
 
 ### Failure, forward fix and rollback notes
 
@@ -280,13 +298,14 @@ There is **no generic destructive rollback command**: stop and prepare/review an
 ```bash
 # Perform the transition inspection above against live PG selectors first.
 # live checks --execute still fails frozen B; it cannot attest final acceptance.
+live probes --execute
 live preflight --execute
 live counts --execute
 gcloud secrets versions list assess-worker-config --project "$RAD062_CLOUD_PROJECT" --format=json |
   jq '{disabled:([.[]|select(.state=="DISABLED")]|length),other:([.[]|select(.state!="DISABLED" and .state!="DESTROYED")]|length)}'
 ```
 
-**Expected:** transition inspection matches exactly; every other required check and RAD-062 readiness passes; gate still closed, both logins NOLOGIN, no worker connections/open assignments/unsettled sessions; secret disabled and zero executions. Record actual live database bytes, reserved peak and threshold flags, with counts only. No marker change.
+**Expected:** m01..m08=1, migrations_observed=8 and prefix_contiguous=1 from the new connection; transition inspection matches exactly; every other required check and RAD-062 readiness passes; gate still closed, both logins NOLOGIN, no worker connections/open assignments/unsettled sessions; secret disabled and zero executions. Record actual live database bytes, reserved peak and threshold flags, with counts only. No marker change.
 
 **STOP:** any false/unknown result outside the exact B transition set, changed secret/runtime state, capacity issue or expired/unavailable P10 window. Do not promote or begin a real exam.
 
@@ -310,6 +329,6 @@ npm run status:summary -- --id RAD-062
 npm run status:summary -- --id RAD-086
 ```
 
-**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/history, exact transition inspection, package readiness and capacity before the owner sets the marker and merges P10. Complete the phone checks and v2 dry run after green normal CI/Deploy Pages, within the same reserved window. No final acceptance until all promoted whole-catalogue checks and phone evidence pass. The agent computes the source marker only; the owner alone sets the Variable after DB-day evidence and before merge.
+**Expected:** owner supplies redacted yes/no/count/version/checksum evidence of RAD-086, complete backup and restore, exact reviewed migration bytes/catalogue-probe prefix, exact transition inspection, package readiness and capacity before the owner sets the marker and merges P10. Complete the phone checks and v2 dry run after green normal CI/Deploy Pages, within the same reserved window. No final acceptance until all promoted whole-catalogue checks and phone evidence pass. The agent computes the source marker only; the owner alone sets the Variable after DB-day evidence and before merge.
 
 **STOP:** any missing evidence or unresolved check/version/rollback issue. Do not mark RAD-062/RAD-086 done from a merge, set a marker, flip availability, open gate, enable logins/secret or claim first-exam readiness. Channels/ACK receipt/alternate responder, privacy/rights/O4 and 4b/5b remain independent.

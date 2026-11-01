@@ -19,7 +19,7 @@ export function verifyMigrations(read = file => readFileSync('supabase/migration
 // never derived from a region, never detected, never a fallback for the direct endpoint.
 export const POOLER_HOST = /^aws-\d{1,2}-[a-z]{2}(?:-[a-z]+)+-\d{1,2}\.pooler\.supabase\.com$/;
 export function options(args, env = process.env) {
-  const allowed = ['verify', 'preflight', 'backup', 'restore', 'counts', 'apply', 'checks'];
+  const allowed = ['verify', 'preflight', 'backup', 'restore', 'counts', 'apply', 'checks', 'probes'];
   const [action = 'verify', ...flags] = args;
   if (!allowed.includes(action)) throw Error('action');
   const out = { action, execute: false, live: false, part: null, project: null, pooler: false };
@@ -88,6 +88,40 @@ export async function checks(db, files = manifest().checks) {
   }
   return { checks_passed: passed };
 }
+// Decision C: one new, durable CREATE FUNCTION artefact in each unchanged transaction.
+// These signatures are fixed, unique to their migration, and persist through M08.
+export const migrationProbes = Object.freeze([
+  'public.rad062_valid_full_name(text)',
+  'assess.validate_provenance_v2(jsonb,text,boolean)',
+  'assess.authoring_limits_v1()',
+  'assess.random_pool_maximum_v1(jsonb,jsonb,jsonb)',
+  'assess.freeze_v2()',
+  'assess.require_lifecycle_v2(uuid,integer)',
+  'assess.manual_authorize_v1(uuid)',
+  'assess.health_v2()',
+]);
+export const migrationProbeSQL = 'select ' + migrationProbes.map((signature, n) =>
+  `pg_catalog.to_regprocedure('${signature}') is not null as m0${n + 1}`).join(', ');
+function probeRows(result) {
+  const rows = result?.rows;
+  if (!Array.isArray(rows) || rows.length !== 1 || Object.keys(rows[0]).length !== 8 ||
+      migrationProbes.some((_, n) => typeof rows[0][`m0${n + 1}`] !== 'boolean')) throw Error('migration_probe_unknown');
+  return migrationProbes.map((_, n) => rows[0][`m0${n + 1}`]);
+}
+export async function migrationState(db) { return probeRows(await db.query(migrationProbeSQL)); }
+function probeCounts(result) {
+  const state = probeRows(result), firstFalse = state.indexOf(false);
+  return { ...Object.fromEntries(state.map((value, n) => [`m0${n + 1}`, Number(value)])),
+    migrations_observed: state.filter(Boolean).length,
+    prefix_contiguous: Number(firstFalse === -1 || state.slice(firstFalse).every(value => value === false)) };
+}
+const isPrefix = (state, count) => state.every((value, n) => value === (n < count));
+function applyFailure(driverError) {
+  const error = Error('apply_failed_or_ack_uncertain');
+  error.label = 'apply_failed_or_ack_uncertain';
+  if (typeof driverError?.code === 'string' && /^[0-9A-Z]{5}$/.test(driverError.code)) error.sqlstate = driverError.code;
+  return error;
+}
 export async function apply(db, part, env = process.env) {
   const files = verifyMigrations(), n = Number(part.slice(1)) - 1, file = files[n];
   if (!file) throw Error('migration_selector');
@@ -96,24 +130,17 @@ export async function apply(db, part, env = process.env) {
     if (f.gate_rows !== 1 || f.open_gates || f.login_roles || f.open_assignments || f.worker_connections || f.unsettled_sessions) throw Error('preconditions');
   });
   if (env.RAD062_SECRET_STATE !== 'DISABLED') throw Error('secret_state');
-  // The live project must already have the standard Supabase migration ledger.
-  const ledger = await db.query('select version from supabase_migrations.schema_migrations where version=any($1::text[]) order by version', [files.map(f => f.slice(0, 14))]);
-  if (JSON.stringify(ledger.rows.map(r => r.version)) !== JSON.stringify(files.slice(0, n).map(f => f.slice(0, 14)))) throw Error('migration_order_or_uncertain_ack');
+  if (!isPrefix(await migrationState(db), n)) throw Error('migration_order_or_uncertain_ack');
   const sql = readFileSync('supabase/migrations/' + file, 'utf8');
   if (!/\bcommit;\s*$/i.test(sql)) throw Error('transaction_boundary');
-  const version = file.slice(0, 14), name = file.slice(15, -4);
-  // Ledger and migration COMMIT together; source bytes remain unchanged on disk.
-  // Reviewed identifier strings derive only from the fixed manifest, never CLI text.
-  const statement = sql.replace(/\bcommit;\s*$/i, `insert into supabase_migrations.schema_migrations(version,name,statements) values('${version}','${name}',ARRAY[]::text[]);\ncommit;`);
-  try { await db.query(statement); } catch (driverError) {
-    await db.query('rollback');
-    const error = Error('apply_failed_or_ack_uncertain');
-    error.label = 'apply_failed_or_ack_uncertain';
-    if (typeof driverError.code === 'string' && /^[0-9A-Z]{5}$/.test(driverError.code)) error.sqlstate = driverError.code;
-    throw error;
+  // Submit the reviewed source verbatim, including its original COMMIT; no live objects added.
+  try { await db.query(sql); } catch (driverError) {
+    try { await db.query('rollback'); } catch { /* retain the primary failure / uncertain COMMIT ACK */ }
+    throw applyFailure(driverError);
   }
-  const recorded = await db.query('select count(*)::int n from supabase_migrations.schema_migrations where version=$1', [version]);
-  if (recorded.rows[0].n !== 1) throw Error('ledger_ack');
+  let state;
+  try { state = await migrationState(db); } catch (driverError) { throw applyFailure(driverError); }
+  if (!isPrefix(state, n + 1)) throw Error('migration_probe_ack_uncertain');
   return { migrations_committed: n + 1 };
 }
 function backupDirectory(env) {
@@ -165,6 +192,7 @@ export async function main(args = process.argv.slice(2), env = process.env) {
       return { backup_archives: 2 };
     }
     if (o.action === 'preflight') return await readOnly(db, preflightSQL).then(async () => ({ ...await preflight(db, env), server_version_num: Number((await db.query('show server_version_num')).rows[0].server_version_num) }));
+    if (o.action === 'probes') return probeCounts(await readOnly(db, migrationProbeSQL));
     if (o.action === 'counts') return (await readOnly(db, readFileSync('scripts/assess/sql/rad062-precounts.sql', 'utf8'))).rows[0];
     if (o.action === 'checks') { await preflight(db, env); return await checks(db); }
     if (o.action === 'apply') { await preflight(db, env); return await apply(db, o.part, env); }

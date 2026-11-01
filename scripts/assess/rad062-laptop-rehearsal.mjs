@@ -48,7 +48,7 @@ export function verifyRestoredFrozenB(result) {
 }
 
 // Exported for synthetic witnesses. No alternate SQL, role, phase or check selectors.
-export async function inspectRestored(db, observeFrozenB) {
+export async function inspectRestored(db, observeFrozenB, syntheticWitnesses) {
   const identity = (await db.query("select current_user, session_user, rolsuper, current_setting('rad085.sharing_phase',true) phase from pg_roles where rolname=current_user")).rows[0];
   if (identity.current_user !== 'postgres' || identity.session_user !== 'postgres' || identity.rolsuper !== false || ![null, '', 'initialized'].includes(identity.phase)) throw new Stop('apply_role');
   try { await checks(db, [diagnostic]); } catch (e) { throw stageStop('pre_diagnostic', e); }
@@ -63,11 +63,13 @@ export async function inspectRestored(db, observeFrozenB) {
     try { await db.query('rollback'); } catch { /* preserve the frozen-check stage and primary SQLSTATE */ }
     throw stageStop('pre_frozen_b', e);
   }
+  await syntheticWitnesses?.('before', db);
   let migrations = 0;
   for (let n = 1; n <= 8; n++) {
     try { await apply(db, `M0${n}`, { RAD062_SECRET_STATE: 'DISABLED' }); migrations++; }
     catch (e) { throw stageStop(`M0${n}`, e); }
   }
+  await syntheticWitnesses?.('after', db);
   let passed = 0;
   for (const file of manifest().checks) {
     try { await checks(db, [file]); passed++; } catch (e) { throw stageStop('check_' + String(passed + 1).padStart(2, '0'), e); }
@@ -170,7 +172,7 @@ export function observeSyntheticQueries(db, syntheticDiagnostics) {
     catch (e) { syntheticDiagnostics({ source: 'query', ...syntheticError(e) }); throw e; }
   };
 }
-export async function rehearse(c, { env = process.env, observeFrozenB, syntheticDiagnostics } = {}) {
+export async function rehearse(c, { env = process.env, observeFrozenB, syntheticDiagnostics, syntheticWitnesses } = {}) {
   localOnly([], env); verifyMigrations();
   const root = mkdtempSync(join(tmpdir(), 'rad062-laptop-')), socket = join(root, 'socket');
   mkdirSync(socket); chmodSync(root, 0o700); chmodSync(socket, 0o777); // private parent; image UID can write only the bind-mounted child
@@ -212,7 +214,7 @@ export async function rehearse(c, { env = process.env, observeFrozenB, synthetic
       try {
         try { await db.connect(); } catch (e) { syntheticDiagnostics?.({ source: 'connect', ...syntheticError(e) }); throw stageStop('connect', e); }
         observeSyntheticQueries(db, syntheticDiagnostics);
-        result = await inspectRestored(db, observeFrozenB);
+        result = await inspectRestored(db, observeFrozenB, syntheticWitnesses);
       } catch (e) { callbackFailure = e instanceof Stop ? e : stageStop('inspect', e); throw callbackFailure; }
       finally {
         try { await db.end(); } catch (e) { if (!callbackFailure) { callbackFailure = stageStop('connect', e); throw callbackFailure; } }
