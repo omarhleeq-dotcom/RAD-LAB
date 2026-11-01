@@ -1,6 +1,6 @@
 # RAD-086 — owner laptop: daily backup, restore proof, credential-cache test (WSL2)
 
-Reviewed procedure for the owner's later execution on the verified laptop (Windows 11 Pro, BitLocker on C:, WSL2 Ubuntu 24.04, Node 22, psql/pg_dump 17.11 = production 17.11, Docker Desktop with WSL integration). **The agent has run no step against the live project.** Owner evidence (2026-10-31): the first complete laptop backup passed verify, 700/600 permissions and three slots; its restore then stopped at missing `supabase_vault`. The pinned-image correction below still needs the owner’s restore proof; see the report. The agent ran no live SQL, set no Variables, opened no gate, enabled no LOGIN or secret and revealed no secret. Authority: [owner decisions 2026-10-31](DECISIONS.md#rad086-laptop-owner-2026-10-31) and [the follow-up decisions D-C, D-D, D-E](DECISIONS.md#rad086-followup-owner-2026-10-31), [D2](DECISIONS.md#rad085-owner-tidy-2026-10-27) (backup before the first real exam, no cloud, encrypted local reconciliation log, weekly USB copy), [RAD-059 dry run](RAD-059_OWNER_DRY_RUN_2026-10-29.md), [session-pooler rules](ASSESS_RUNTIME_LOCAL.md#إعداد-session-pooler-المحلي). Report: [RAD-086 report](RAD-086_REPORT_2026-10-31.md).
+Reviewed procedure for the owner's later execution on the verified laptop (Windows 11 Pro, BitLocker on C:, WSL2 Ubuntu 24.04, Node 22, psql/pg_dump 17.11 = production 17.11, Docker Desktop with WSL integration). **The agent has run no step against the live project.** Owner evidence (2026-10-31): B2–B4 backup, C2 restore proof, C3 cleanup, C4 encrypted log and D1–D3 scheduler passed on the laptop; see the [dated report](RAD-086_REPORT_2026-10-31.md#owner-evidence-2026-10-31). D-D Supavisor probe and the owner's weekly status check remain open. The agent ran no live SQL, set no Variables, opened no gate, enabled no LOGIN or secret and revealed no secret. Authority: [owner decisions 2026-10-31](DECISIONS.md#rad086-laptop-owner-2026-10-31) and [the follow-up decisions D-C, D-D, D-E](DECISIONS.md#rad086-followup-owner-2026-10-31), [D2](DECISIONS.md#rad085-owner-tidy-2026-10-27) (backup before the first real exam, no cloud, encrypted local reconciliation log; its USB recommendation is superseded only by the [laptop-only decision](DECISIONS.md#rad086-laptop-only-owner-2026-10-31)), [RAD-059 dry run](RAD-059_OWNER_DRY_RUN_2026-10-29.md), [session-pooler rules](ASSESS_RUNTIME_LOCAL.md#إعداد-session-pooler-المحلي). Report: [RAD-086 report](RAD-086_REPORT_2026-10-31.md).
 
 How it fits together: `scripts/ops/laptop-backup.mjs` (daily, read-only) builds a backup in `~/rad-lab-backups/.tmp/<stamp>` (`roles.sql`, `project.dump`, `checksums.json`, `db-meta.json`), re-verifies it from disk, moves it to `store/<stamp>` and then swaps three slot links (`daily`, `weekly`, `monthly`) atomically; every rotation is an age-encrypted entry in the reconciliation log (see F). `scripts/ops/laptop-restore-test.mjs` restores a chosen backup into a throwaway `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d` container and compares table counts. Windows Task Scheduler starts the daily run through `wsl.exe`. The database connects over the **Supabase session pooler** (port 5432, IPv4) because this laptop has no global IPv6 and the direct host is IPv6-only. The pooler is an explicit setting in the config file, never detected, never a fallback.
 
@@ -226,6 +226,8 @@ Expect empty output. If a name appears, run `docker rm -f -v <name>`.
 
 **C4 — read the reconciliation log (owner only)**
 
+Check that the stored armored text starts with `-----BEGIN AGE ENCRYPTED FILE-----` and ends with `-----END AGE ENCRYPTED FILE-----`.
+
 ```bash
 install -m 600 /dev/null /dev/shm/rad-log-id && age -d /PATH/TO/rad-lab-log-identity.age > /dev/shm/rad-log-id
 ```
@@ -277,7 +279,9 @@ node scripts/ops/laptop-backup.mjs status
 
 Expect `{"slots_filled":3,"daily_age_days":0,"weekly_age_days":N,"monthly_age_days":N,"stored_backups":1..3,"newest_bytes":N}` (`daily_age_days` 0 or 1). `STOP laptop_backup:stale` (older than 2 days) or `no_backup`: investigate before relying on any backup. Nothing alerts you on its own: this check is the control.
 
-## E. Weekly USB copy (D2 recommendation)
+## E. Weekly USB copy — historical, not applicable
+
+**Not used by owner decision 2026-10-31:** backups stay only on the laptop, with no USB, second device or cloud. The [new decision](DECISIONS.md#rad086-laptop-only-owner-2026-10-31) supersedes only D2’s weekly USB recommendation. E1–E3 below are historical instructions, not current owner actions. Laptop loss, theft or disk failure loses every backup at once; BitLocker protects confidentiality, not availability. Re-decide at the first real exam or any laptop hardware problem.
 
 **E1 —** In Windows, turn on BitLocker To Go for the USB drive (right-click the drive, Turn on BitLocker). Backups hold participant data; never copy to an unencrypted drive. Expect a lock icon on the drive. STOP if BitLocker is unavailable.
 
@@ -307,7 +311,7 @@ Exactly three copies at most, each in its own slot: **daily** (every run), **wee
 4. After the swaps, `store/` directories that no slot references, and leftovers in `.tmp/`, are removed. If no slot resolves, nothing is removed.
 5. Every rotation (`slot`, `from`, `to`), every prune and every stop is an entry in the encrypted reconciliation log (C4 reads it).
 
-Disk need is at most three backups plus one in progress. The USB copy (E) is the only extra history and stays manual. Tests prove success, failure-keeps-old and the Sunday and 1st promotions. Weakness to know: a dump that is complete and verified but wrong for some reason replaces the daily copy the next day, so a restore test (C) after the first backup and periodically afterwards matters. Retention of participant data in backups still belongs to the privacy gate.
+Disk need is at most three backups plus one in progress. There is no extra USB history under the current laptop-only owner decision (E). Tests prove success, failure-keeps-old and the Sunday and 1st promotions. Weakness to know: a dump that is complete and verified but wrong for some reason replaces the daily copy the next day, so a restore test (C) after the first backup and periodically afterwards matters. Retention of participant data in backups still belongs to the privacy gate.
 
 ## G. Password file: create, rotate, delete
 
@@ -324,7 +328,7 @@ Owner decision D-D chose a temporary throwaway LOGIN role **in production** over
 - **Availability:** runs only while the laptop is on and you are signed in; nothing alerts on a missed day. Lifting trigger: the first real exam or any missed week, then decide on alerting.
 - **Credential:** the file holds the `postgres` password because a complete dump needs it. Lifting trigger: a dedicated read-only backup role reviewed for the auth and managed schemas.
 - **Hard-coded:** PostgreSQL major in the config and `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d` in the restore tool; a production upgrade makes the restore test STOP at `version` until a reviewed change.
-- **Single site:** laptop plus weekly BitLocker USB; no cloud copy by decision.
-- **Not exercised anywhere yet:** the live pooler, TLS `verify-full` against its certificate, Docker Desktop on this laptop, Task Scheduler. The first attended runs (B, C, D3) are those tests. DB day (`apply`) may use the pooler under the same exact selectors (owner decision D-C); `restore` stays local-only and `verify` offline: see the [P9 runbook](RAD-062_P09_LAPTOP_RUNBOOK.md#1-preconditions--no-mutation).
-- **Retention depth:** three copies only; no history beyond the weekly USB copies. Lifting trigger: the first real exam, when the owner may add slots.
+- **Single site:** laptop ONLY; no USB, second device or cloud by [owner decision](DECISIONS.md#rad086-laptop-only-owner-2026-10-31). Laptop loss, theft or disk failure loses every backup at once; BitLocker protects confidentiality, not availability. Lifting trigger: the first real exam or any laptop hardware problem, then the owner re-decides.
+- **Owner-exercised 2026-10-31:** backup over the live session pooler, pinned-image restore on Docker Desktop, encrypted log and Task Scheduler are recorded in the [report](RAD-086_REPORT_2026-10-31.md#owner-evidence-2026-10-31); the agent ran no live SQL. The D-D Supavisor credential-cache probe and the owner's weekly status check remain open. DB day (`apply`) may use the pooler under the same exact selectors (D-C); `restore` stays local-only and `verify` offline: see the [P9 runbook](RAD-062_P09_LAPTOP_RUNBOOK.md#1-preconditions--no-mutation).
+- **Retention depth:** three copies only; no external history or USB copies under the current owner decision. Lifting trigger: the first real exam, when the owner may add slots.
 - **Probe packet:** creates a LOGIN role in production for about 25 minutes by owner decision; the backstop is `VALID UNTIL` plus the teardown.
