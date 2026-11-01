@@ -34,7 +34,7 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
     started = true;
     ctl(['-l', join(dir, 'postgres.log'), '-o', `-F -c listen_addresses='' -k ${dir} -p 55432 -c log_min_messages=panic -c log_min_error_statement=panic -c log_statement=none -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0`, '-w', '-t', '10', 'start']);
     const admin = await connect('rad085-admin');
-    await admin.query(`create role anon nologin; create role authenticated nologin; create schema auth;
+    await admin.query(`create role anon nologin; create role authenticated nologin; create role service_role nologin; create schema auth;
       create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
       create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
       grant usage on schema auth to authenticated,anon; grant execute on function auth.uid() to authenticated,anon;`);

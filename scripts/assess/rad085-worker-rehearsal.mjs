@@ -202,7 +202,7 @@ try {
   await waitFor(async () => { try { admin = await connect(); return true; } catch { return false; } }, 15000);
   phase = 'postgres-migrations';
   assert.equal(await scalar('show server_version_num'), '180004');
-  await admin.query(`create role anon nologin;create role authenticated nologin;create schema auth;
+  await admin.query(`create role anon nologin;create role authenticated nologin;create role service_role nologin;create schema auth;
     create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
     create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
     grant usage on schema auth to authenticated,anon;grant execute on function auth.uid() to authenticated,anon;`);
