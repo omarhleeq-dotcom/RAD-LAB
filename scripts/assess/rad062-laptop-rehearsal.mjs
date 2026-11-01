@@ -2,7 +2,7 @@
 // No provider connection. Never print driver/restore errors or row payloads.
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, chmodSync, rmSync, readFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { tmpdir, constants } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { Client } from 'pg';
@@ -14,6 +14,24 @@ export function localOnly(args, env) {
   if (args.length || (env.PGHOST && !['localhost', '127.0.0.1', '::1'].includes(env.PGHOST)) ||
     ['PGHOSTADDR', 'PGSERVICE', 'PGSERVICEFILE', 'DATABASE_URL', 'SUPABASE_DB_URL', 'RAD062_EXPECTED_PROJECT_REF', 'RAD062_POOLER_HOST'].some(k => env[k])) throw new Stop('selectors');
 }
+const errnoClasses = new Set(Object.keys(constants.errno));
+const sqlstatePattern = /^(?:[0-9]{2}|0[A-Z]|[A-Z][0-9]|HV|XX)[0-9A-Z]{3}$/;
+const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|invalid_names|capacity|teardown)$/;
+const restoreStage = /^restore:(select|verify|meta|image|container|ready|version|extensions|roles|collation|restore|counts|log|locale)$/;
+export function stageStop(stage, error) {
+  const stop = new Stop(rehearsalStage.test(stage) || restoreStage.test(stage) ? stage : 'internal');
+  const state = error?.sqlstate ?? error?.code;
+  if (typeof state === 'string' && sqlstatePattern.test(state)) stop.sqlstate = state;
+  const errno = [error?.errno, error?.code].find(value => errnoClasses.has(value));
+  if (errno) stop.errno = errno;
+  stop.message = 'STOP rad062_laptop_rehearsal:' + stop.stage + (stop.sqlstate ? ' sqlstate=' + stop.sqlstate : '') + (stop.errno ? ' errno=' + stop.errno : '');
+  return stop;
+}
+export const stopLine = e => {
+  const safe = e instanceof Stop && (rehearsalStage.test(e.stage) || restoreStage.test(e.stage));
+  const code = stageStop(safe ? e.stage : 'internal', e);
+  return code.message;
+};
 const diagnostic = 'scripts/assess/sql/rad062-b-diagnostic.sql';
 const frozen = 'supabase/checks/rad085-p1-b-ready.sql';
 const transitionKinds = ['columns', 'constraints', 'effective_privileges', 'functions', 'indexes', 'relations', 'triggers'];
@@ -22,16 +40,16 @@ const transitionKinds = ['columns', 'constraints', 'effective_privileges', 'func
 export async function inspectRestored(db) {
   const identity = (await db.query("select current_user, session_user, rolsuper, current_setting('rad085.sharing_phase',true) phase from pg_roles where rolname=current_user")).rows[0];
   if (identity.current_user !== 'postgres' || identity.session_user !== 'postgres' || identity.rolsuper !== false || ![null, '', 'initialized'].includes(identity.phase)) throw new Stop('apply_role');
-  try { await checks(db, [diagnostic]); } catch { throw new Stop('pre_diagnostic'); }
-  try { await checks(db, [frozen]); } catch { throw new Stop('pre_frozen_b'); }
+  try { await checks(db, [diagnostic]); } catch (e) { throw stageStop('pre_diagnostic', e); }
+  try { await checks(db, [frozen]); } catch (e) { throw stageStop('pre_frozen_b', e); }
   let migrations = 0;
   for (let n = 1; n <= 8; n++) {
     try { await apply(db, `M0${n}`, { RAD062_SECRET_STATE: 'DISABLED' }); migrations++; }
-    catch { throw new Stop(`M0${n}`); }
+    catch (e) { throw stageStop(`M0${n}`, e); }
   }
   let passed = 0;
   for (const file of manifest().checks) {
-    try { await checks(db, [file]); passed++; } catch { throw new Stop('check_' + String(passed + 1).padStart(2, '0')); }
+    try { await checks(db, [file]); passed++; } catch (e) { throw stageStop('check_' + String(passed + 1).padStart(2, '0'), e); }
   }
   for (const file of [frozen, diagnostic]) {
     const result = await db.query(readFileSync(file, 'utf8'));
@@ -42,12 +60,17 @@ export async function inspectRestored(db) {
     checkRows((Array.isArray(result) ? result : [result]).map(r => ({ ...r, rows: r.rows?.map(row => transitionKinds.includes(row.kind) ? { ...row, ready: row.ready === false } : row) })));
   }
   const counts = (await readOnly(db, readFileSync('scripts/assess/sql/rad062-precounts.sql', 'utf8'))).rows[0];
-  if (!counts || !Object.values(counts).every(v => /^\d+$/.test(String(v)))) throw new Stop('counts');
-  // Existing capacity/quota STOPs: no automatic cleanup or acceptance of violations.
-  if (Object.entries(counts).some(([k, v]) => !['database_bytes', 'reserved_peak_bytes'].includes(k) && Number(v) !== 0) ||
-      Number(counts.database_bytes) + Number(counts.reserved_peak_bytes) >= 300000000) throw new Stop('capacity');
+  verifyCounts(counts);
   return { pre_m01_diagnostic_ready: 1, pre_m01_frozen_b_ready: 1, postgres_non_superuser: 1,
     migrations_committed: migrations, checks_passed: passed, transition_inspections_passed: 2, ...counts };
+}
+
+export function verifyCounts(counts) {
+  if (!counts || !Object.values(counts).every(v => /^\d+$/.test(String(v)))) throw new Stop('counts');
+  if (Number(counts.invalid_name_profiles) !== 0) throw new Stop('invalid_names');
+  // Existing capacity/quota STOPs: no automatic cleanup or acceptance of violations.
+  if (Object.entries(counts).some(([k, v]) => !['database_bytes', 'reserved_peak_bytes', 'invalid_name_profiles'].includes(k) && Number(v) !== 0) ||
+      Number(counts.database_bytes) + Number(counts.reserved_peak_bytes) >= 300000000) throw new Stop('capacity');
 }
 
 export async function rehearse(c, { env = process.env } = {}) {
@@ -56,7 +79,7 @@ export async function rehearse(c, { env = process.env } = {}) {
   mkdirSync(socket); chmodSync(root, 0o700); chmodSync(socket, 0o777); // private parent; image UID can write only the bind-mounted child
   const dockerEnv = { ...env };
   for (const key of ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH']) delete dockerEnv[key];
-  let container, result, cleanupFailed = false;
+  let container, result, callbackFailure, commandFailure, cleanupFailed = false;
   const run = (program, args, opts = {}) => {
     if (program === 'pg_restore') return execFileSync('docker', ['--host=unix:///var/run/docker.sock', 'run', '--rm', '-i', '--network=none', '--pull=never', '--entrypoint', 'pg_restore', IMAGE, '--list'],
       { ...opts, env: dockerEnv, input: readFileSync(args.at(-1)) });
@@ -71,7 +94,7 @@ export async function rehearse(c, { env = process.env } = {}) {
       try { execFileSync('docker', ['--host=unix:///var/run/docker.sock', 'exec', '--user', '0', container, 'chown', '-R', `${process.getuid()}:${process.getgid()}`, '/var/run/postgresql'], { env: dockerEnv, stdio: 'pipe', timeout: 15000 }); } catch { /* always attempt container/volume removal */ }
     }
     try { return execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { ...opts, env: dockerEnv }); }
-    catch (e) { if (args[0] === 'rm') cleanupFailed = true; throw e; }
+    catch (e) { if (args[0] === 'rm') cleanupFailed = true; else commandFailure = stageStop('internal', e); throw e; }
   };
   const spawn = (program, args, opts) => spawnSync(program, ['--host=unix:///var/run/docker.sock', ...args], { ...opts, env: dockerEnv });
   try {
@@ -79,12 +102,21 @@ export async function rehearse(c, { env = process.env } = {}) {
       const db = new Client({ host: socket, port: 5432, user: 'postgres', database, password: '', ssl: false,
         options: '', application_name: 'rad062-rehearsal', connectionTimeoutMillis: 10000, query_timeout: 120000 });
       db.on('error', () => {}); // Query/connect rejection carries STOP through finally; never emit raw idle errors.
-      try { await db.connect(); result = await inspectRestored(db); } finally { await db.end(); }
+      try {
+        try { await db.connect(); } catch (e) { throw stageStop('connect', e); }
+        result = await inspectRestored(db);
+      } catch (e) { callbackFailure = e instanceof Stop ? e : stageStop('inspect', e); throw callbackFailure; }
+      finally {
+        try { await db.end(); } catch (e) { if (!callbackFailure) { callbackFailure = stageStop('connect', e); throw callbackFailure; } }
+      }
     } });
     if (cleanupFailed) throw new Stop('teardown');
     return { ...restored, ...result, rehearsal_pass: 1, teardown_pass: 1 };
   } catch (e) {
-    throw new Stop(e instanceof Stop && /^(M0[1-8]|check_[0-9]{2}|selectors|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|capacity|teardown)$/.test(e.stage) ? e.stage : 'restore_or_check');
+    if (callbackFailure) throw callbackFailure;
+    if (e instanceof Stop && rehearsalStage.test(e.stage)) throw e;
+    const stage = e instanceof Stop && restoreStage.test('restore:' + e.stage) ? 'restore:' + e.stage : 'internal';
+    throw stageStop(stage, e.restoreDiagnostic ?? e.diagnostics?.[0] ?? commandFailure ?? e);
   } finally {
     // restoreTest owns normal cleanup; retry a failed removal, and never report pass.
     if (cleanupFailed && container) try { run('docker', ['rm', '-f', '-v', container]); } catch { /* STOP already retained */ }
@@ -95,7 +127,6 @@ export async function main(args = process.argv.slice(2), env = process.env) {
   process.umask(0o077); localOnly(args, env);
   return rehearse(loadConfig(), { env });
 }
-export const stopLine = e => 'STOP rad062_laptop_rehearsal:' + (e instanceof Stop && /^(M0[1-8]|check_[0-9]{2}|selectors|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|capacity|teardown|restore_or_check)$/.test(e.stage) ? e.stage : 'internal');
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   main().then(r => console.log(JSON.stringify(r))).catch(e => { console.error(stopLine(e)); process.exitCode = 1; });
 }

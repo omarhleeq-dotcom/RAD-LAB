@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
-import { localOnly, rehearse, stopLine } from './rad062-laptop-rehearsal.mjs';
+import { localOnly, rehearse, stopLine, stageStop, verifyCounts } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 
@@ -17,6 +17,23 @@ test('refuses all CLI selectors and non-loopback hosts before config, with redac
   for (const arg of ['--live', 'latest', '--host', '--session-pooler']) assert.throws(() => localOnly([arg], {}), Stop);
   const r = spawnSync(process.execPath, ['scripts/assess/rad062-laptop-rehearsal.mjs', '--live'], { encoding: 'utf8', env: { ...process.env, PGHOST: 'PRIVATE_HOST_CANARY', PGPASSWORD: 'PRIVATE_PASSWORD_CANARY' } });
   assert.equal(r.status, 1); assert.equal(r.stdout, ''); assert.equal(r.stderr.trim(), 'STOP rad062_laptop_rehearsal:selectors');
+});
+
+test('STOP preserves only known stages and SQLSTATE/errno classes, never messages or data', () => {
+  for (const stage of ['restore:roles', 'restore:restore', 'restore:counts', 'connect', 'invalid_names', 'capacity']) {
+    const error = stageStop(stage, { code: '28000', message: 'PRIVATE_CANARY host/password/data' });
+    assert.equal(stopLine(error), 'STOP rad062_laptop_rehearsal:' + stage + ' sqlstate=28000');
+  }
+  assert.equal(stopLine(stageStop('connect', { code: 'ECONNREFUSED' })), 'STOP rad062_laptop_rehearsal:connect errno=ECONNREFUSED');
+  assert.equal(stopLine(stageStop('connect', { code: 'PRIVATE_CANARY' })), 'STOP rad062_laptop_rehearsal:connect');
+  assert.equal(stopLine(stageStop('PRIVATE_CANARY', { code: 'PRIVATE_CANARY' })), 'STOP rad062_laptop_rehearsal:internal');
+});
+
+test('invalid restored names stop separately from quota/capacity, without printing counts or values', () => {
+  const counts = { invalid_name_profiles: 0, authors_above_three_drafts: 0, database_bytes: 10000000, reserved_peak_bytes: 0 };
+  verifyCounts(counts);
+  assert.throws(() => verifyCounts({ ...counts, invalid_name_profiles: 1 }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:invalid_names');
+  assert.throws(() => verifyCounts({ ...counts, database_bytes: 300000000 }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:capacity');
 });
 
 test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/counts; check and migration STOP both tear down', { timeout: 300000 }, async () => {
