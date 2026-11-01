@@ -1242,3 +1242,22 @@ Authority: the owner's D-NAMES instruction on Draft #175; [P10 report](RAD-062_P
 **User-visible impact:** M01 does not validate existing profile rows. Its trigger checks display_name only on INSERT or when the value changes. Login, Practice and updates to other profile fields are unaffected. Assess entry/authorization still requires a valid full name; the existing P10 name UI collects it from that account. An invalid new/changed display_name remains rejected. No product or SQL behaviour is changed by accepting the rehearsal counter.
 
 Both phone packets, supabase/manual and supabase/fixtures remain byte-identical. No live SQL, Variables, extra deployment, hosted preview, goldens or participant data. RAD-062 remains in_progress/reviewer and #175 Draft; normal commits only, no skip-ci.
+
+
+<a id="db-day-outcome-owner-2026-11-01"></a>
+## RAD-062 P10 — نتيجة يوم القاعدة، 2026-11-01
+
+بإفادة المالك في طلب توثيق يوم القاعدة: اكتملت بروفة latest على81a1487 وM01–M08 وP10 باللابتوب والهاتف داخل النافذة المحددة، دون STOP أو uncertain ACK أو rollback. غيّر المالك marker ثم دمج #175 (e17ee49)؛ نجح check وDeploy Pages. [تقرير الدليل الكامل](RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01) يحفظ القراءات المجمعة ونتائج الهاتف وdry run v2، و[P9](RAD-062_P09_LAPTOP_RUNBOOK.md) منفذ. هذا يحل محل حالة انتظار البروفة/الهاتف/النافذة في سجلات P10 السابقة، مع بقاء أصلها التاريخي. gate مغلقة، workers NOLOGIN، secret DISABLED. لا اعتماد لأول امتحان أو طب أو قنوات/ACK أو بديل أو إلغاء credential/cache أو privacy/rights/O4 أو4ب/5ب. RAD-059 ومتطلبات التشغيل المستقلة لا تُغلق بنجاح هذا اليوم.
+
+<a id="db-followups-owner-2026-11-01"></a>
+## قرارات المالك المستقبلية بعد يوم القاعدة — S-STD-3، 2026-11-01
+
+السلطة: موافقة المالك الصريحة في طلب هذه الدفعة؛ [السياق والدليل](RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01). القرارات التالية معتمدة، ولا تنفيذ تقني لأي منها في هذه الدفعة:
+
+1. **Migration ledger مملوك للمشروع:** خارج Supabase CLI `supabase_migrations`، ينشأ مرة واحدة ويسجل كل migration مستقبلية، ليحل محل catalogue probes الخاصة بكل دفعة. الحد الحالي probes ثابتة لـM01–M08؛ **trigger: قبل دفعة الترحيلات التالية**. [Decision C](#rad062-catalogue-probes-2026-11-01) يبقى دليل الدفعة المنفذة ولا يُعاد تسجيلها تلقائيًا أو تعديل ledger الآن.
+2. **سياسة live schema:** التغييرات فقط عبر ملفات migration مراجعة وأداة apply؛ SQL Editor للقراءة فقط وحزم الطوارئ. حد التغييرات اليدوية يُرفع بمسار migration المراجع، **نافذة السياسة تبدأ الآن** وتُفرض قبل أي تغيير live لاحق؛ لا استثناء لتعديلات ارتجالية ولا تنفيذ الآن. تنفيذ الطوارئ المراجعة يبقى مأذونًا وفق حزمته.
+3. **next وnpm audit:** الترقية التالية إلى patched16.4.x وإغلاق critical/high findings. الإنتاج static export، وهذه الثغرات غير قابلة للاستغلال على الموقع المستضاف وفق تقييم المالك؛ هذا لا يغلق audit. الحد إصدار الاعتماد الحالي؛ **trigger: الجلسة التالية بعد DB day**، مع تحقق مناسب للإصلاح دون تغيير اعتماد في هذه الدفعة.
+4. **اختبار DB من اليوم الأول:** كل عمل قاعدة على صورة `supabase/postgres:17.11.0.016` المثبتة واللقطة الحقيقية بلا بيانات، مع diagnostics كاملة في CI فقط وحلقة إصلاح ذاتية. الحد أن synthetic وحدها لا تثبت الكتالوج الحقيقي، وأن [لقطة2026-11-01](../supabase/fixtures/production-schema-2026-11-01/schema.sql) أصبحت قديمة بعدM01–M08. **trigger: من بداية أي عمل DB تالٍ، وأخذ snapshot جديدة مؤرخة قبل أي تغيير DB تالٍ**؛ لا تحديث snapshot الآن ولا diagnostics كاملة على بيانات حقيقية.
+5. **مراجعة Supabase default privileges في public:** [schema.sql الأسطر14048–14050](../supabase/fixtures/production-schema-2026-11-01/schema.sql) تمنح الجداول الجديدة REFERENCES/TRIGGER/TRUNCATE/MAINTAIN لـanon/authenticated/service_role. الحد امتيازات تلقائية لجداول مستقبلية؛ **trigger: قبل أي جدول public جديد**، بمراجعة أمنية وقرار محدد قبل تغييرات الصلاحيات. هذا لا يوسع revoke profiles المعتمدة ولا ينفذ revoke/grant الآن.
+
+**بند مفتوح للأسماء:**10حسابات موجودة لا تحقق قاعدة الاسم الكامل؛ يطلب الاسم الكامل عند Assess entry وفق [D-NAMES](#rad062-d-names-2026-11-01). تواصل المالك اختياري؛ لا بيانات تعريفية أو تعديل بيانات أو backfill.
