@@ -157,8 +157,11 @@ export async function rehearse(c, { env = process.env, observeFrozenB, synthetic
   for (const key of ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH']) delete dockerEnv[key];
   let container, result, callbackFailure, commandFailure, cleanupFailed = false, authInProgress = false;
   const run = (program, args, opts = {}) => {
-    if (program === 'pg_restore') return execFileSync('docker', ['--host=unix:///var/run/docker.sock', 'run', '--rm', '-i', '--network=none', '--pull=never', '--entrypoint', 'pg_restore', IMAGE, '--list'],
-      { ...opts, env: dockerEnv, input: readFileSync(args.at(-1)) });
+    if (program === 'pg_restore') {
+      try { return execFileSync('docker', ['--host=unix:///var/run/docker.sock', 'run', '--rm', '-i', '--network=none', '--pull=never', '--entrypoint', 'pg_restore', IMAGE, '--list'],
+        { ...opts, env: dockerEnv, input: readFileSync(args.at(-1)) }); }
+      catch (e) { syntheticDiagnostics?.({ source: 'restore', stderr: String(e.stderr ?? ''), ...syntheticError(e) }); throw e; }
+    }
     if (program !== 'docker') return execFileSync(program, args, opts);
     if (args[0] === 'run') {
       container = args[args.indexOf('--name') + 1];

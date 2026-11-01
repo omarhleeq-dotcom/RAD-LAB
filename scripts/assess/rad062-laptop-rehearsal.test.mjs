@@ -5,11 +5,11 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, readdirSync, symlinkSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { apply } from './rad062-db-day.mjs';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
 import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, verifyRestoredFrozenB, inspectRestored, main, observeSyntheticQueries } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
-const syntheticDiagnostics = process.env.CI === 'true' ? error => console.log(JSON.stringify(error)) : undefined;
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 
 test('refuses all CLI selectors and non-loopback hosts before config, with redacted STOP', () => {
@@ -93,6 +93,21 @@ test('synthetic diagnostics capture driver fields before helpers redact; main ha
   assert.equal(stopLine(stageStop('M01', error)), 'STOP rad062_laptop_rehearsal:M01 sqlstate=42501');
   // main's only options object contains env; no callback, flag, or env lookup can select diagnostics.
   assert.match(main.toString(), /return rehearse\(loadConfig\(\), \{ env \}\)/);
+  const bootstrap = `
+    import fs from 'node:fs';
+    import { syncBuiltinESMExports } from 'node:module';
+    import { resolve } from 'node:path';
+    import { pathToFileURL } from 'node:url';
+    fs.lstatSync = () => { throw Object.assign(new Error('PRIVATE_MESSAGE'), { code: '42501', detail: 'PRIVATE_DETAIL' }); };
+    syncBuiltinESMExports();
+    process.argv[1] = resolve('scripts/assess/rad062-laptop-rehearsal.mjs');
+    await import(pathToFileURL(process.argv[1]).href);
+  `;
+  const configFailure = spawnSync(process.execPath, ['--input-type=module', '-e', bootstrap], {
+    encoding: 'utf8', env: { ...process.env, PGHOST: 'localhost', CI: 'true', SYNTHETIC_DIAGNOSTICS: 'true', RAD062_VERBOSE: 'true' },
+  });
+  assert.equal(configFailure.status, 1); assert.equal(configFailure.stdout, '');
+  assert.equal(configFailure.stderr.trim(), 'STOP rad062_laptop_rehearsal:internal sqlstate=42501');
   for (const args of [[], ['--synthetic-diagnostics']]) {
     const r = spawnSync(process.execPath, ['scripts/assess/rad062-laptop-rehearsal.mjs', ...args], {
       encoding: 'utf8', env: { ...process.env, CI: 'true', SYNTHETIC_DIAGNOSTICS: 'true', RAD062_VERBOSE: 'true', PGHOST: 'PRIVATE_MESSAGE', PGPASSWORD: 'PRIVATE_DETAIL' },
@@ -102,9 +117,45 @@ test('synthetic diagnostics capture driver fields before helpers redact; main ha
   }
 });
 
+test('apply keeps its fixed message and only safe label/SQLSTATE properties on driver failure', async () => {
+  const driverError = Object.assign(new Error('PRIVATE_MESSAGE'), { code: '42501', detail: 'PRIVATE_DETAIL' });
+  let rollback = 0;
+  const db = { query: async sql => {
+    if (sql === 'rollback') { rollback++; return { rows: [] }; }
+    if (sql.includes('gate_rows')) return { rows: [{ gate_rows: 1, open_gates: 0, login_roles: 0, open_assignments: 0, worker_connections: 0, unsettled_sessions: 0 }] };
+    if (sql.startsWith('begin read only')) return { rows: [] };
+    if (sql.startsWith('select version')) return { rows: [] };
+    throw driverError;
+  } };
+  await assert.rejects(apply(db, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), e => {
+    assert.equal(e.message, 'apply_failed_or_ack_uncertain');
+    assert.deepEqual({ ...e }, { label: 'apply_failed_or_ack_uncertain', sqlstate: '42501' });
+    assert.equal(e.cause, undefined);
+    assert.doesNotMatch(JSON.stringify(e) + e.message, /PRIVATE_/);
+    return true;
+  });
+  assert.equal(rollback, 2); // read-only preflight, then failed migration.
+});
+
 test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/counts; check and migration STOP both tear down', { timeout: 300000 }, async () => {
   const root = mkdtempSync(join(tmpdir(), 'rad062-backup-')), name = `rad062-source-${process.pid}`;
   const stamp = '20261101T050000Z', dir = join(root, 'store', stamp), target = `rad-restore-${stamp.toLowerCase()}`;
+  // Read-only synthetic evidence: no object identities, grants, owner repairs, or provider access.
+  const privilegeSQL = `select json_build_object(
+    'database_owned_by_postgres', d.datdba=(select oid from pg_roles where rolname='postgres'),
+    'public_owned_by_database_owner', n.nspowner=(select oid from pg_roles where rolname='pg_database_owner'),
+    'public_owned_by_postgres', n.nspowner=(select oid from pg_roles where rolname='postgres'),
+    'postgres_can_create_public', has_schema_privilege('postgres','public','CREATE'))
+    from pg_database d cross join pg_namespace n where d.datname=current_database() and n.nspname='public';`;
+  const syntheticDiagnostics = process.env.CI === 'true' ? error => {
+    console.log(JSON.stringify(error));
+    if (error.source === 'query' && error.sqlstate === '42501') {
+      try {
+        const json = String(docker(['exec', '-i', target, 'psql', '-X', '-At', '-v', 'ON_ERROR_STOP=1', '-U', 'supabase_admin', '-d', 'rad_restore', '-f', '-'], privilegeSQL));
+        console.log(JSON.stringify({ restored_privileges: JSON.parse(json) }));
+      } catch { console.log(JSON.stringify({ restored_privilege_probe_pass: 0 })); }
+    }
+  } : undefined;
   mkdirSync(dir, { recursive: true, mode: 0o700 });
   const identity = join(root, 'identity');
   writeFileSync(identity, execFileSync('age-keygen', [], { stdio: 'pipe' }), { mode: 0o600 });
@@ -149,6 +200,7 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     q('create extension supabase_vault', 'supabase_admin');
     q(`create function public.synthetic_event_fn() returns event_trigger language plpgsql as $$begin end$$;
       create event trigger synthetic_owner_event on ddl_command_end when tag in ('ALTER TABLE') execute function public.synthetic_event_fn();`);
+    if (process.env.CI === 'true') console.log(JSON.stringify({ source_privileges: JSON.parse(q(privilegeSQL)) }));
     save(); symlinkSync('store/' + stamp, join(root, 'daily')); sourceVolumes = volumes();
     const result = await rehearse(c, { env, syntheticDiagnostics, observeFrozenB: kinds => console.log(JSON.stringify(kinds)) }).finally(absent);
     assert.equal(result.rehearsal_pass, 1); assert.equal(result.teardown_pass, 1);
