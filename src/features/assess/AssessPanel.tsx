@@ -74,6 +74,16 @@ function TrackSelection(){
   // Changing track remounts its isolated runner. Native navigation protects unacknowledged drafts.
   return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
 }
-export function AssessPanel(){const {state}=useSessionAccount();const supervisor=useSupervisorAppointment();const t=useTranslations("assess");return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}><a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a></nav><Rad062Entry><AssessView/>{supervisor&&<AuthoringEntry/>}</Rad062Entry></div>:<p className="mt-6">{t("approved")}</p>;}
+export function AssessPanel(){
+ const {state}=useSessionAccount(),supervisor=useSupervisorAppointment(),t=useTranslations("assess"),a=useTranslations("assessImport");
+ const author=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("author")==="1",()=>false);
+ return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}>
+  <nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}>
+   {(supervisor||state.profile.role==="owner")&&<a className={button} href="?author=1" aria-current={author?"page":undefined}>{a("entry")}</a>}
+   <a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a>
+  </nav>
+  <Rad062Entry>{author?(supervisor||state.profile.role==="owner")&&<AuthoringEntry/>:<AssessView/>}</Rad062Entry>
+ </div>:<p className="mt-6">{t("approved")}</p>;
+}
 
 function AssessView(){const history=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("history")==="1",()=>null);return history===null?null:history?<HistoryPanel/>:<TrackSelection/>;}

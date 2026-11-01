@@ -34,18 +34,25 @@ function BoundSupervisorScope({ identity, children }: { identity: string; childr
      });
      const snapshot = await adapter.read({ actorId: identity }, controller.signal);
      if (!controller.signal.aborted) setScope({ status: snapshot.appointed === true ? 'appointed' : 'not-supervisor', adapter });
-    } catch { if (!controller.signal.aborted) setScope({ status: 'offline' }); }
+    } catch (error) {
+     if (!controller.signal.aborted) setScope(current => {
+      const reason = error && typeof error === 'object' && 'reason' in error ? error.reason : undefined;
+      if (reason === 'denied' || reason === 'expired') return { status: 'not-supervisor' };
+      return current.status === 'loading' ? { status: 'offline' } : current;
+     });
+    }
    }
   }
   void load();
   const visibility = () => {
-   controller.abort(); setScope({ status: 'loading' });
+   // File pickers and app switching must not unmount confirmed authoring state.
+   // The review view below still hides itself on every visibility change.
    if (document.visibilityState === 'visible') setRevision(value => value + 1);
   };
   document.addEventListener('visibilitychange', visibility);
   return () => { controller.abort(); document.removeEventListener('visibilitychange', visibility); };
  }, [identity, revision]);
- return <ScopeContext.Provider value={{ ...scope, refresh: () => { setScope({ status: 'loading' }); setRevision(value => value + 1); } }}>{children}</ScopeContext.Provider>;
+ return <ScopeContext.Provider value={{ ...scope, refresh: () => setRevision(value => value + 1) }}>{children}</ScopeContext.Provider>;
 }
 
 export function P1Session({ role }: { role: Person['role'] }) {

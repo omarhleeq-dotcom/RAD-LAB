@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useSessionAccount } from '../pilot/SessionGate';
 import { getPilotClient } from '../pilot/client';
@@ -19,8 +19,8 @@ export function AuthoringEntry() {
  const { state } = useSessionAccount(), t = useTranslations('assessImport');
  if (state.kind !== 'signedIn' || state.profile.status !== 'approved') return null;
  return <section className="mt-8 min-w-0 space-y-4 border-t border-line pt-5" data-testid="assess-authoring">
-  <h2 className="text-xl font-semibold">{t('title')}</h2><p>{t('closedGate')}</p>
-  <Rad062Entry><BoundAuthoring key={state.userId} actor={state.userId} role={state.profile.role === 'owner' ? 'owner' : 'supervisor'} name={state.displayName ?? ''}/></Rad062Entry>
+  <h2 className="text-xl font-semibold">{t('title')}</h2>
+  {state.profile.role === 'owner' ? <p>{t('ownerOnly')}</p> : <Rad062Entry><BoundAuthoring key={state.userId} actor={state.userId} role="supervisor" name={state.displayName ?? ''}/></Rad062Entry>}
  </section>;
 }
 function BoundAuthoring({ actor, role, name }: { actor: string; role: 'owner' | 'supervisor'; name: string }) {
@@ -45,10 +45,11 @@ function BoundAuthoring({ actor, role, name }: { actor: string; role: 'owner' | 
   }).catch(() => { if (active) setError(true); });
   return () => { active = false; };
  }, [actor, role, name]);
+ const select = useCallback((groupId: string) => setScope({ actorId: actor, groupId }), [actor]);
  const text = useMemo(() => ({ ...copy[locale], ...sqlCopy[locale], ...Object.fromEntries(['create', 'save', 'saved', 'loading', 'busy', 'reviewHint', 'limit'].map(key => [key, t(`authoringCopy.${key}`)])) }), [locale, t]);
  return <div className="min-w-0 space-y-4" lang={locale} dir={locale === 'ar' ? 'rtl' : 'ltr'}>
-  <p>{t('author')}: <bdi>{name}</bdi> · {t('serverAuthor')}</p><p>{t('groupsHelp')}</p>
+  {!scope && <h3 className="text-lg font-semibold">{t('step', { n: 1 })} · {t('chooseGroup')}</h3>}
   {error && <p role="alert">{t('unavailable')}</p>}
-  {adapter && <><GroupPicker adapter={adapter} actorId={actor} select={groupId => setScope({ actorId: actor, groupId })} t={text}/>{scope && <AuthoringSession adapter={adapter} scope={scope} locale={locale} text={text}/>}</>}
+  {adapter && <><div hidden={!!scope}><GroupPicker adapter={adapter} actorId={actor} select={select} t={text} autoSelect/></div>{scope && <AuthoringSession adapter={adapter} scope={scope} locale={locale} text={text}/>}</>}
  </div>;
 }

@@ -81,12 +81,12 @@
     "src/features/assess/runner-data.ts": "39d1d5918ecda9e0541e2a333f4743f1659741f0585bda10d5bfabab5833f1ca",
     "src/features/assess/HistoryPanel.tsx": "2a98829cf8b922e238a735b13dcfc93f06c83dd444c9e641c341d2305f4b9424",
     "src/features/assess/history-data.ts": "057759a67ae86f91c497528aa5859b468a882f731edfbc10a1ee0c7bf2da671e",
-    "src/features/assess/AssessPanel.tsx": "9ba01eadb41b33adecdfa725ab32f60e74b8efdd342b1792b5e0b064e6ae2e7e",
+    "src/features/assess/AssessPanel.tsx": "40a67e1871cfa1a5cedd604e1e218a92aea47ab23f72220866ee950b501023a8",
     "src/features/assess/AssessConsent.tsx": "32f970a60dc71bcc9a8b79ced8e5b08644e6852c78152154c79bc908b7b65dbb",
     "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31",
     "src/features/assess/OwnerAssignments.tsx": "ebfff4c4967f64915ec7c06483e59007ac9d52da908d8d5f9ad11a3bee90ebee",
     "src/features/assess/owner-assignments.ts": "d48d42288bb2b1d628b5e36103ebad383c08e98e4c61506f2049811ccf7caf3c",
-    "src/features/assess/AuthoringEntry.tsx": "991f8b2600f19a100d71ed0ed6ae0d93161bed9285394a0e7d982fa0c41e6d24",
+    "src/features/assess/AuthoringEntry.tsx": "fc774e2ca76500d81235597b4867265c70d41bbebc57da0daef84853c245d9a7",
     "src/features/authoring-review/sql-adapter.ts": "d4fd25d7896a6888a37a018bd1317fa1e12cf7e6c44ffcfe775d3c319d8356ea"
   },
   "serverModules": [
@@ -128,7 +128,7 @@
       },
       "consumer": {
         "path": "src/features/supervisor/P1Session.tsx",
-        "sha256": "226670907b7ca28fbc16c32688e93362149dc6762a5ada30a22a1b9a8fc92609"
+        "sha256": "fb376c4793df7615da9bda5ee608b09c6509d301dbdf8f864f649b25ef2d53ae"
       }
     },
     "rad062": {
