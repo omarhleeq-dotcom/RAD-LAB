@@ -7,8 +7,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
-import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, verifyRestoredFrozenB, inspectRestored } from './rad062-laptop-rehearsal.mjs';
+import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, verifyRestoredFrozenB, inspectRestored, main, observeSyntheticQueries } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
+const syntheticDiagnostics = process.env.CI === 'true' ? error => console.log(JSON.stringify(error)) : undefined;
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 
 test('refuses all CLI selectors and non-loopback hosts before config, with redacted STOP', () => {
@@ -82,6 +83,25 @@ test('restored frozen B SQL error remains pre_frozen_b even if rollback also fai
   await assert.rejects(inspectRestored(db), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:pre_frozen_b sqlstate=42501');
 });
 
+test('synthetic diagnostics capture driver fields before helpers redact; main has no opt-in path', async () => {
+  const error = Object.assign(new Error('PRIVATE_MESSAGE'), { code: '42501', detail: 'PRIVATE_DETAIL', hint: 'PRIVATE_HINT', where: 'PRIVATE_WHERE', position: '42' });
+  const records = [];
+  const db = { query: async () => { throw error; } };
+  observeSyntheticQueries(db, value => records.push(value));
+  await assert.rejects(db.query('synthetic statement'), e => e === error);
+  assert.deepEqual(records, [{ source: 'query', sqlstate: '42501', message: 'PRIVATE_MESSAGE', detail: 'PRIVATE_DETAIL', hint: 'PRIVATE_HINT', where: 'PRIVATE_WHERE', position: '42', internalPosition: null, internalQuery: null }]);
+  assert.equal(stopLine(stageStop('M01', error)), 'STOP rad062_laptop_rehearsal:M01 sqlstate=42501');
+  // main's only options object contains env; no callback, flag, or env lookup can select diagnostics.
+  assert.match(main.toString(), /return rehearse\(loadConfig\(\), \{ env \}\)/);
+  for (const args of [[], ['--synthetic-diagnostics']]) {
+    const r = spawnSync(process.execPath, ['scripts/assess/rad062-laptop-rehearsal.mjs', ...args], {
+      encoding: 'utf8', env: { ...process.env, CI: 'true', SYNTHETIC_DIAGNOSTICS: 'true', RAD062_VERBOSE: 'true', PGHOST: 'PRIVATE_MESSAGE', PGPASSWORD: 'PRIVATE_DETAIL' },
+    });
+    assert.equal(r.status, 1); assert.equal(r.stdout, '');
+    assert.equal(r.stderr.trim(), 'STOP rad062_laptop_rehearsal:selectors');
+  }
+});
+
 test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/counts; check and migration STOP both tear down', { timeout: 300000 }, async () => {
   const root = mkdtempSync(join(tmpdir(), 'rad062-backup-')), name = `rad062-source-${process.pid}`;
   const stamp = '20261101T050000Z', dir = join(root, 'store', stamp), target = `rad-restore-${stamp.toLowerCase()}`;
@@ -130,7 +150,7 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     q(`create function public.synthetic_event_fn() returns event_trigger language plpgsql as $$begin end$$;
       create event trigger synthetic_owner_event on ddl_command_end when tag in ('ALTER TABLE') execute function public.synthetic_event_fn();`);
     save(); symlinkSync('store/' + stamp, join(root, 'daily')); sourceVolumes = volumes();
-    const result = await rehearse(c, { env, observeFrozenB: kinds => console.log(JSON.stringify(kinds)) }).finally(absent);
+    const result = await rehearse(c, { env, syntheticDiagnostics, observeFrozenB: kinds => console.log(JSON.stringify(kinds)) }).finally(absent);
     assert.equal(result.rehearsal_pass, 1); assert.equal(result.teardown_pass, 1);
     assert.equal(result.event_triggers_second_pass_count, 1);
     assert.equal(result.postgres_non_superuser, 1); assert.equal(result.migrations_committed, 8);
@@ -138,13 +158,13 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     assert.equal(result.transition_inspections_passed, 2); assert.ok(result.checks_passed > 0);
     assert.ok(Object.values(result).every(v => /^\d+$/.test(String(v)))); absent();
     q('update assess.sharing_policy set required_version=null,text_digest=null'); save();
-    await assert.rejects(rehearse(c, { env }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:pre_diagnostic'); absent();
+    await assert.rejects(rehearse(c, { env, syntheticDiagnostics }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:pre_diagnostic'); absent();
     q(readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql', 'utf8'));
     // Outside the checked Assess catalogue; fails the actual M01 DDL as postgres.
     q(`create function public.synthetic_deny_m01() returns event_trigger language plpgsql as $$begin
       if current_query() like '%rad062_valid_full_name%' then raise exception 'PRIVATE_FAILURE_CANARY'; end if; end$$;
       create event trigger synthetic_m01_stop on ddl_command_start execute function public.synthetic_deny_m01();`);
     save();
-    await assert.rejects(rehearse(c, { env }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:M01'); absent();
+    await assert.rejects(rehearse(c, { env, syntheticDiagnostics }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:M01 sqlstate=P0001'); absent();
   } finally { try { docker(['rm', '-f', '-v', name]); } finally { rmSync(root, { recursive: true, force: true }); } }
 });

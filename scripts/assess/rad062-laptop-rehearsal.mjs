@@ -1,5 +1,5 @@
 // Owner-only, latest RAD-086 backup -> isolated Supabase image -> postgres apply.
-// No provider connection. Never print driver/restore errors or row payloads.
+// No provider connection. Owner CLI never prints driver/restore errors or row payloads.
 import { randomBytes } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { mkdtempSync, mkdirSync, chmodSync, rmSync, readFileSync } from 'node:fs';
@@ -135,13 +135,27 @@ mv "$1.rad062" "$1"
   }
 }
 
-export async function rehearse(c, { env = process.env, observeFrozenB } = {}) {
+// Explicit test-only callback, never selected by main(), arguments, or environment.
+// The synthetic CI test supplies the sink; normal callers cannot opt in via selectors.
+export function syntheticError(error) {
+  return Object.fromEntries(['code', 'message', 'detail', 'hint', 'where', 'position', 'internalPosition', 'internalQuery']
+    .map(key => [key === 'code' ? 'sqlstate' : key, error?.[key] ?? null]));
+}
+export function observeSyntheticQueries(db, syntheticDiagnostics) {
+  if (!syntheticDiagnostics) return;
+  const query = db.query.bind(db);
+  db.query = async (...args) => {
+    try { return await query(...args); }
+    catch (e) { syntheticDiagnostics({ source: 'query', ...syntheticError(e) }); throw e; }
+  };
+}
+export async function rehearse(c, { env = process.env, observeFrozenB, syntheticDiagnostics } = {}) {
   localOnly([], env); verifyMigrations();
   const root = mkdtempSync(join(tmpdir(), 'rad062-laptop-')), socket = join(root, 'socket');
   mkdirSync(socket); chmodSync(root, 0o700); chmodSync(socket, 0o777); // private parent; image UID can write only the bind-mounted child
   const dockerEnv = { ...env };
   for (const key of ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH']) delete dockerEnv[key];
-  let container, result, callbackFailure, commandFailure, cleanupFailed = false;
+  let container, result, callbackFailure, commandFailure, cleanupFailed = false, authInProgress = false;
   const run = (program, args, opts = {}) => {
     if (program === 'pg_restore') return execFileSync('docker', ['--host=unix:///var/run/docker.sock', 'run', '--rm', '-i', '--network=none', '--pull=never', '--entrypoint', 'pg_restore', IMAGE, '--list'],
       { ...opts, env: dockerEnv, input: readFileSync(args.at(-1)) });
@@ -156,18 +170,23 @@ export async function rehearse(c, { env = process.env, observeFrozenB } = {}) {
       try { execFileSync('docker', ['--host=unix:///var/run/docker.sock', 'exec', '--user', '0', container, 'chown', '-R', `${process.getuid()}:${process.getgid()}`, '/var/run/postgresql'], { env: dockerEnv, stdio: 'pipe', timeout: 15000 }); } catch { /* always attempt container/volume removal */ }
     }
     try { return execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { ...opts, env: dockerEnv }); }
-    catch (e) { if (args[0] === 'rm') cleanupFailed = true; else commandFailure = stageStop('internal', e); throw e; }
+    catch (e) { if (args[0] === 'rm') cleanupFailed = true; else { commandFailure = stageStop('internal', e); if (!authInProgress) syntheticDiagnostics?.({ source: 'restore', stderr: String(e.stderr ?? ''), ...syntheticError(e) }); } throw e; }
   };
-  const spawn = (program, args, opts) => spawnSync(program, ['--host=unix:///var/run/docker.sock', ...args], { ...opts, env: dockerEnv });
+  const spawn = (program, args, opts) => {
+    const r = spawnSync(program, ['--host=unix:///var/run/docker.sock', ...args], { ...opts, env: dockerEnv });
+    if (r.status !== 0) syntheticDiagnostics?.({ source: 'restore', stderr: String(r.stderr ?? ''), ...syntheticError(r.error) });
+    return r;
+  };
   try {
     const restored = await restoreTest(c, { name: 'latest', run, spawn, beforeTeardown: async ({ database }) => {
       let password;
-      try { password = prepareSocketAuth(run, container, database); } catch (e) { callbackFailure = e; throw e; }
+      try { authInProgress = true; password = prepareSocketAuth(run, container, database); } catch (e) { callbackFailure = e; throw e; } finally { authInProgress = false; }
       const db = new Client({ host: socket, port: 5432, user: 'postgres', database, password, ssl: false,
         options: '', application_name: 'rad062-rehearsal', connectionTimeoutMillis: 10000, query_timeout: 120000 });
       db.on('error', () => {}); // Query/connect rejection carries STOP through finally; never emit raw idle errors.
       try {
-        try { await db.connect(); } catch (e) { throw stageStop('connect', e); }
+        try { await db.connect(); } catch (e) { syntheticDiagnostics?.({ source: 'connect', ...syntheticError(e) }); throw stageStop('connect', e); }
+        observeSyntheticQueries(db, syntheticDiagnostics);
         result = await inspectRestored(db, observeFrozenB);
       } catch (e) { callbackFailure = e instanceof Stop ? e : stageStop('inspect', e); throw callbackFailure; }
       finally {

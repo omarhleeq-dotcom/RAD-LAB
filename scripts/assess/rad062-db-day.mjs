@@ -105,7 +105,13 @@ export async function apply(db, part, env = process.env) {
   // Ledger and migration COMMIT together; source bytes remain unchanged on disk.
   // Reviewed identifier strings derive only from the fixed manifest, never CLI text.
   const statement = sql.replace(/\bcommit;\s*$/i, `insert into supabase_migrations.schema_migrations(version,name,statements) values('${version}','${name}',ARRAY[]::text[]);\ncommit;`);
-  try { await db.query(statement); } catch { await db.query('rollback'); throw Error('apply_failed_or_ack_uncertain'); }
+  try { await db.query(statement); } catch (driverError) {
+    await db.query('rollback');
+    const error = Error('apply_failed_or_ack_uncertain');
+    error.label = 'apply_failed_or_ack_uncertain';
+    if (typeof driverError.code === 'string' && /^[0-9A-Z]{5}$/.test(driverError.code)) error.sqlstate = driverError.code;
+    throw error;
+  }
   const recorded = await db.query('select count(*)::int n from supabase_migrations.schema_migrations where version=$1', [version]);
   if (recorded.rows[0].n !== 1) throw Error('ledger_ack');
   return { migrations_committed: n + 1 };
