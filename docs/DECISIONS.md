@@ -1274,3 +1274,17 @@ Authority: the owner's RAD-089 restructure and inventory prompt, 2026-11-01. Imp
 - **D4 One summary:** the five-item status summary lives only in HANDOFF.md. project-status.md keeps its JSON block and history table, with a one-line pointer to HANDOFF for the summary.
 
 This batch deletes no files. Only dated-report moves and image groups referenced exclusively by those moved reports are executable; other archive/merge/delete recommendations await owner approval and ride the next batch under D2. Licence/provenance evidence and anything referenced by src/, scripts/, tests, .github or JSON stay in place. Evidence bytes and existing archive layout are preserved; no history rewrite, LFS migration, image re-encoding or resizing.
+
+<a id="workflow-hardening-owner-2026-11-01"></a>
+## Workflow hardening — owner approved 2026-11-01
+Authority: RAD-090 owner prompt; [implementation and evidence](archive/reports/2026-11/RAD-090_REPORT_2026-11-01.md).
+- K1: format1.2 adds done_when (≤200 characters), required for new tasks and existing review/owner; unclear existing closure is "owner to define". Pending summary includes it.
+- K2: shared English TASK_PROMPT template, ≤60 lines, linked from AGENTS.
+- K3: new reports ≤150 lines; QA items labelled Verified / Inferred / Not run (reason); linked detail, no rewriting old reports.
+- M1: HANDOFF is the five-item summary, ≤25 lines and200 characters/line; expand/link abbreviations. Pending closures are merged tasks awaiting owner check; one status:summary --pending pointer replaces the list (supersedes D2's per-task HANDOFF lines only).
+- M2: done descriptions ≤160 characters with result/evidence link; archive previous full text verbatim under task id; preserve ids/status/completion_evidence. Re-run D1 exclusions under rule B.
+- M3–M5: Current rules index in DECISIONS; explicitly superseded entries get a pointer without rewriting text or changing anchors; AGENTS≤40 lines, one filler definition, preserved rulings/evidence.
+- M6–M7: docs/budgets.json is the single cap source; warning at≥80%, error above cap. HANDOFF25/200, AGENTS40, done/open descriptions160/350; dated reports≥2026-11-02:150 lines; new DECISIONS sections15 lines. Cap changes require an owner decision recorded here.
+- L1: pending summary reads linked PR merge state/head CI via gh; unavailable means unverified, exit0; no file writes/posts.
+- L2: idempotent docs:sync updates revision/time against --base, archive reports index, moved link targets, HANDOFF pointer and M2 archive only; never prose/evidence/decisions/status values. Stale mechanics fail docs:check with the sync command; every batch ends with sync before checks.
+- L3: no bot/Action writes to main and no new workflow permissions. RAD-090 stays review/owner until PR merged + CI green; no phone check needed (docs/tooling only).
