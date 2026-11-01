@@ -9,7 +9,7 @@
 | Implemented X-ray and platform | See the current [README](../../../README.md), [architecture](../../PLATFORM_ARCHITECTURE.md) and #80 [UI report](../sessions/session-rad-054-phone-fixes-2026-10-16.md); detailed session results below are historical |
 | New exams and images | Frozen by S-SHOULDER-Y-6; Shoulder Y and forearm remain deferred. S12-12 places CT/MRI/US in v2; the freeze takes precedence over the earlier schedule |
 | Next programming phase | Owner postponed it for docs cleanup: no automatic start of “my attempts” or RAD-056. S-ASSESS-1's eventual order is retained, not executed |
-| Current DOCS-ALIGN-1 | Align live summaries, tables, links and the docs index; no archive moves in this batch. [Report and proposed second-batch manifest](../../DOCS_ALIGN_1_REPORT_2026-10-16.md) |
+| Current DOCS-ALIGN-1 | Align live summaries, tables, links and the docs index; no archive moves in this batch. [Report and proposed second-batch manifest](../reports/2026-10/DOCS_ALIGN_1_REPORT_2026-10-16.md) |
 | Remaining validation | Owner phone/live checks and the educator/provider/licence items stay open; no closure inferred from merge |
 
 <details>
