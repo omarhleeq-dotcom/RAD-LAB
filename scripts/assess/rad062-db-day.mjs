@@ -55,14 +55,14 @@ export function options(args, env = process.env) {
 export const preflightSQL = `select
  (select count(*) from assess.launch_gate where enabled)::int open_gates,
  (select count(*) from assess.launch_gate)::int gate_rows,
- (select count(*) from pg_roles where rolname in ('assess_job_a','assess_job_b'))::int worker_roles,
+ (select count(*) from pg_roles where rolname='assess_job_a')::int required_job_a,
  (select count(*) from pg_roles where rolname in ('assess_job_a','assess_job_b','assess_worker') and rolcanlogin)::int login_roles,
- (select count(*) from pg_stat_activity where usename in ('assess_job_a','assess_job_b'))::int worker_connections,
+ (select count(*) from pg_stat_activity where usename in ('assess_job_a','assess_job_b','assess_worker'))::int worker_connections,
  (select count(*) from assess.assignments where closed_at is null)::int open_assignments,
  (select count(*) from assess.sessions where state in ('active','grading','awaiting-manual'))::int unsettled_sessions`;
 export async function preflight(db, env) {
   const r = (await db.query(preflightSQL)).rows[0];
-  if (r.gate_rows !== 1 || r.worker_roles !== 2 || Object.entries(r).some(([k, v]) => !['gate_rows', 'worker_roles'].includes(k) && v !== 0) ||
+  if (r.gate_rows !== 1 || r.required_job_a !== 1 || Object.entries(r).some(([k, v]) => !['gate_rows', 'required_job_a'].includes(k) && v !== 0) ||
     env.RAD062_SECRET_STATE !== 'DISABLED' || env.RAD062_RAD086_VERIFIED !== 'yes' || env.RAD062_V1_PACKET_AT_HAND !== 'yes') throw Error('preconditions');
   return r;
 }

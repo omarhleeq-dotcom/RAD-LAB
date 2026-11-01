@@ -352,34 +352,56 @@ end $$;
 -- Forward-only version guards preserve v1 signatures, OIDs, ownership, ACL and
 -- configuration. pg_get_functiondef keeps all attributes; only reviewed body
 -- anchors are changed. A missing anchor aborts the complete M06 transaction.
+-- D-CRLF: literal anchors, optional CR before each LF, global replacement.
+-- Only replacement bytes change; choose the local newline at each occurrence.
+create or replace function pg_temp.rad062_patch(body text, anchor text, replacement text)
+returns text language plpgsql as $crlf$
+declare pattern text; remaining text:=body; matched text; prefix text; ending text; result text:=''; hits integer:=0;
+begin
+ pattern:=replace(regexp_replace(anchor, '([\\.\^$|()\[\]{}*+?])', E'\\\\\\1', 'g'), E'\n', E'\r?\n');
+ loop
+  matched:=(regexp_match(remaining, '('||pattern||')'))[1];
+  exit when matched is null;
+  prefix:=left(remaining,position(matched in remaining)-1);
+  ending:=coalesce((regexp_match(matched,E'(\r?\n)'))[1],
+    (regexp_match(substr(remaining,length(prefix)+length(matched)+1),E'(\r?\n)'))[1],
+    (regexp_match(prefix,E'(\r?\n)[^\n]*$'))[1],E'\n');
+  result:=result||prefix||replace(replacement,E'\n',ending);
+  remaining:=substr(remaining,length(prefix)+length(matched)+1);
+  hits:=hits+1;
+ end loop;
+ if hits=0 then raise exception 'missing body patch anchor'; end if;
+ return result||remaining;
+end $crlf$;
 do $isolate$ declare name text; def text; patched text; begin
  foreach name in array array['read_session_v1(uuid)','command_v1(uuid,uuid,integer,jsonb)',
   'result_v1(uuid)','finish_v1(uuid,uuid,text,text)','fail_v1(uuid,uuid)','recover_v1(uuid)'] loop
   def:=pg_get_functiondef(('assess.'||name)::regprocedure);
-  patched:=replace(def,E'begin\n',E'begin\n  perform assess.require_lifecycle_v1(p_session);\n');
+  patched:=pg_temp.rad062_patch(def,E'begin\n',E'begin\n  perform assess.require_lifecycle_v1(p_session);\n');
   if patched=def then raise exception 'missing v1 entry anchor: %',name; end if;
   execute patched;
  end loop;
  foreach name in array array['claim_v1()','maintain_v1(integer)'] loop
   def:=pg_get_functiondef(('assess.'||name)::regprocedure);
-  patched:=replace(def,'from assess.sessions where','from assess.sessions where lifecycle_version=1 and');
+  patched:=pg_temp.rad062_patch(def,'from assess.sessions where','from assess.sessions where lifecycle_version=1 and');
   if patched=def then raise exception 'missing v1 scan anchor: %',name; end if;
   if name='maintain_v1(integer)' then
-   patched:=replace(patched,'where a.closed_at is not null', 'where exists(select 1 from assess.versions v where v.id=a.version_id and v.schema_version=1) and a.closed_at is not null');
+   patched:=pg_temp.rad062_patch(patched,'where a.closed_at is not null', 'where exists(select 1 from assess.versions v where v.id=a.version_id and v.schema_version=1) and a.closed_at is not null');
   end if;
   execute patched;
  end loop;
  def:=pg_get_functiondef('assess.health_v1()'::regprocedure);
- patched:=replace(def,'from assess.sessions','from assess.sessions where lifecycle_version=1');
+ patched:=pg_temp.rad062_patch(def,'from assess.sessions','from assess.sessions where lifecycle_version=1');
  if patched=def then raise exception 'missing v1 health anchor'; end if;
  execute patched;
  -- start already authorizes schema=1, but explicit protection also covers replay.
  -- Only an existing non-v1 assignment is denied; a missing one keeps its v1 error.
  def:=pg_get_functiondef('assess.start_v1(uuid,uuid)'::regprocedure);
- patched:=replace(def,E'begin\n',E'begin\n  if exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version<>1) then raise exception ''assignment version denied'' using errcode=''42501''; end if;\n');
+ patched:=pg_temp.rad062_patch(def,E'begin\n',E'begin\n  if exists(select 1 from assess.assignments a join assess.versions v on v.id=a.version_id where a.id=p_assignment and v.schema_version<>1) then raise exception ''assignment version denied'' using errcode=''42501''; end if;\n');
  if patched=def then raise exception 'missing v1 start anchor'; end if;
  execute patched;
 end $isolate$;
+drop function pg_temp.rad062_patch(text,text,text);
 
 do $acl$ declare f record; role_name text; begin
  for f in select oid::regprocedure signature from pg_proc where pronamespace='assess'::regnamespace and proname=any(array[

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import pg from 'pg';
-import { options, verifyMigrations, checkRows, main, checks, manifest } from '../assess/rad062-db-day.mjs';
+import { options, verifyMigrations, checkRows, main, checks, manifest, preflight, preflightSQL, sha256 } from '../assess/rad062-db-day.mjs';
 import { openLocalDatabase } from '../assess/local-database.mjs';
 import { rehearse } from '../assess/rad062-restore-rehearsal.mjs';
 const ref = 'a'.repeat(20);
@@ -96,7 +96,7 @@ test('promotion preserves both emergency packets and every original SQL/check by
     ...base.checks,
     ...current.requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
     const original = execFileSync('git',['show',`023ec84c15bfd744f317ec079e2587d90e099414:${path}`]);
-    assert.deepEqual(readFileSync(path),reviewed[path] ? substitute(original, reviewed[path]) : original);
+    assert.deepEqual(undoCRLF(path, readFileSync(path)),reviewed[path] ? substitute(original, reviewed[path]) : original);
   }
 });
 // Owner-approved fixes of never-applied M02/M05/M06: only these exact byte changes.
@@ -206,3 +206,46 @@ test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and eve
     finally { if (client) await client.end(); await db.close(); }
 });
 }
+
+// Approved D-CRLF delta only; all other historical byte assertions stay intact.
+function undoCRLF(path, bytes) {
+  if (!/20261030000[68]00_/.test(path)) return bytes;
+  let sql = bytes.toString();
+  const helper = sql.slice(sql.indexOf('-- D-CRLF:'), sql.indexOf('do $', sql.indexOf('-- D-CRLF:')));
+  assert.equal(sha256(helper), 'd7e5372d72bce802485108ee3054d84d76deda47fd5e9a010eee9e17784626a0');
+  sql = sql.replace(helper, '').replace('drop function pg_temp.rad062_patch(text,text,text);\n', '')
+    .replaceAll(':=pg_temp.rad062_patch(', ':=replace(')
+    .replaceAll("if position(anchor in replace(original,E'\\r\\n',E'\\n'))=0 then", 'if position(anchor in original)=0 then');
+  return Buffer.from(sql);
+}
+
+test('job_b(a): required job_a, optional job_b; any LOGIN or worker connection stops', async () => {
+  const env = { RAD062_SECRET_STATE:'DISABLED', RAD062_RAD086_VERIFIED:'yes', RAD062_V1_PACKET_AT_HAND:'yes' };
+  const good = { gate_rows:1, required_job_a:1, open_gates:0, login_roles:0, worker_connections:0, open_assignments:0, unsettled_sessions:0 };
+  assert.match(preflightSQL, /where rolname='assess_job_a'/);
+  assert.match(preflightSQL, /where usename in \('assess_job_a','assess_job_b','assess_worker'\)/);
+  assert.match(preflightSQL, /rolname in \('assess_job_a','assess_job_b','assess_worker'\) and rolcanlogin/);
+  assert.deepEqual(await preflight({ query:async()=>({ rows:[good] }) },env), good);
+  for (const bad of [{ required_job_a:0 }, { login_roles:1 }, { worker_connections:1 }]) {
+    await assert.rejects(preflight({ query:async()=>({ rows:[{ ...good,...bad }] }) },env));
+  }
+});
+
+test('D-CRLF patch preserves every other byte, global occurrence count, anchor-local EOL and missing-anchor STOP', async () => {
+  const db = await openLocalDatabase('pglite');
+  try {
+    const sql = readFileSync('supabase/migrations/20261030000600_rad062_lifecycle_v2.sql','utf8');
+    await db.exec(sql.slice(sql.indexOf('create or replace function pg_temp.rad062_patch'),sql.indexOf('do $isolate$')));
+    for (const eol of ['\n','\r\n']) {
+      const body = 'KEEP\r\nBEGIN mixed\n' + 'begin'+eol+'original bytes '+eol+'begin'+eol+'END';
+      const [r] = await db.query('select pg_temp.rad062_patch($1,$2,$3) result',[body,'begin\n','begin\nadded;\n']);
+      assert.equal(r.result,body.replaceAll('begin'+eol,'begin'+eol+'added;'+eol));
+    }
+    const mixed = 'begin\r\none\r\nbegin\ntwo\n';
+    const [r] = await db.query('select pg_temp.rad062_patch($1,$2,$3) result',[mixed,'begin\n','begin\nadded;\n']);
+    assert.equal(r.result,'begin\r\nadded;\r\none\r\nbegin\nadded;\ntwo\n');
+    const [literal] = await db.query('select pg_temp.rad062_patch($1,$2,$3) result',['x(a.b)\r\nkeep','x(a.b)','x(a.b)\nadded']);
+    assert.equal(literal.result,'x(a.b)\r\nadded\r\nkeep');
+    await assert.rejects(db.query('select pg_temp.rad062_patch($1,$2,$3)', ['unchanged','missing\n','add\n']));
+  } finally { await db.close(); }
+});

@@ -1206,3 +1206,15 @@ UNKNOWN ACK = STOP، ولا حل إلا probes من اتصال جديد عبر �
 
 
 دليل C بعد التنفيذ: [CI check على7aedcbf](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41283141668/job/124778979056) success، والبروفة12pass/0fail/0skip. fixture بلا ledger قبل/بعد، probes الثمانية false قبل M01، ثم prefix التالي بعد كل COMMIT حتى M08، مع manifest/transition/counts وكل STOP witnesses وteardown. ثبت رفض خارج الترتيب والإعادة، وfalse بعد rollback، وtrue من اتصال جديد في محاكاة فقد ACK بعد COMMIT دون retry؛ مراجعة مصدر كل CREATE FUNCTION في جدول P9. B بقيت ["relations"] بعد تصحيح الملكية؛ docs:test117 وVitest3198 وبقية full CI ناجحة. أصلح أثناء الحلقة خلل credential غير enumerable في اتصال شاهد الاختبار الجديد؛ لم يُعدّل main أو auth/privilege/guard/timeout لإخفائه. [التقرير](RAD-062_P10_REPORT_2026-10-30.md) يحفظ فشل CI الأول وسبب الإصلاح والدليل الأخير. شرط بروفة latest الفعلية بعد C وبقية شروط المالك ما زالت حاجبة؛ الوكيل لم يقرأ live. رأس التوثيق اللاحق لا يغير كود7aedcbf وتعرض نتيجته في PR.
+
+
+<a id="rad062-final-campaign-2026-11-01"></a>
+## RAD-062 final campaign — 2026-11-01
+
+Authority: the owner's final-campaign instruction on Draft #175, recorded in [P10 report](RAD-062_P10_REPORT_2026-10-30.md#final-campaign-2026-11-01). **D-CRLF** permits only line-ending-agnostic body anchors in M01–M08: optional CR before each LF, added lines use the local anchor ending, identical LF replacement/count semantics, no other body-byte rewrite, and missing anchors abort the transaction. Only M06/M08 contain such patches. Expected function/relation readiness digests remain unchanged; a need to alter either is STOP. Update only changed migration SHA pins and recompute/report the marker.
+
+**job_b(a):** assess_job_a is required; assess_job_b is optional. Every present job role and assess_worker must be NOLOGIN, with zero connections for all three. No role/grant/attribute/membership mutation is authorized.
+
+**Primary proof:** use main's byte-exact, no-data production schema snapshot with the pinned Supabase17.11 image and ICU en-US to build the RAD-086 backup, then call the real rehearse() path. Frozen B must first be measured and remain exactly ["relations"]; every P10 manifest check, ownership parity, non-superuser postgres apply, transition/count/teardown proof remains required. Synthetic STOP witnesses stay. No production config rows may be fabricated as proof. The pre-M01 data precheck must print all count-only conditions with migration source lines in one batch, then STOP if any count is nonzero. CLI main() stays redacted; no-data CI test diagnostics may include full PostgreSQL errors.
+
+Normal commits/merges and autonomous push/CI/log/fix cycles are authorized; no rebase, force push, skip-ci, ready/merge, live SQL, Variables, extra deployment, hosted preview, golden regeneration or participant data. Both phone packets and supabase/manual stay byte-identical. RAD-062 stays in_progress/reviewer. Unapproved workarounds are local scratch discovery only, never pushed; outstanding owner decisions are consolidated after discovering downstream failures.

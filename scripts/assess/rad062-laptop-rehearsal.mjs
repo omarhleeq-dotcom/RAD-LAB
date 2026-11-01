@@ -9,6 +9,7 @@ import { pathToFileURL } from 'node:url';
 import { Client } from 'pg';
 import { IMAGE, restoreTest } from '../ops/laptop-restore-test.mjs';
 import { loadConfig, Stop } from '../ops/laptop-backup-lib.mjs';
+import { dataPrecheck } from './rad062-data-precheck.mjs';
 import { apply, checks, checkRows, manifest, readOnly, verifyMigrations } from './rad062-db-day.mjs';
 
 export function localOnly(args, env) {
@@ -17,7 +18,7 @@ export function localOnly(args, env) {
 }
 const errnoClasses = new Set(Object.keys(constants.errno));
 const sqlstatePattern = /^(?:[0-9]{2}|0[A-Z]|[A-Z][0-9]|HV|XX)[0-9A-Z]{3}$/;
-const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|database_owner|socket_auth|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|invalid_names|capacity|teardown)$/;
+const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|database_owner|socket_auth|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|data_precheck|invalid_names|capacity|teardown)$/;
 const restoreStage = /^restore:(select|verify|meta|image|container|ready|version|extensions|roles|collation|restore|counts|rehearsal|log|locale)$/;
 export function stageStop(stage, error) {
   const stop = new Stop(rehearsalStage.test(stage) || restoreStage.test(stage) ? stage : 'internal');
@@ -63,6 +64,8 @@ export async function inspectRestored(db, observeFrozenB, syntheticWitnesses) {
     try { await db.query('rollback'); } catch { /* preserve the frozen-check stage and primary SQLSTATE */ }
     throw stageStop('pre_frozen_b', e);
   }
+  let precheck;
+  try { precheck = await dataPrecheck(db); } catch (e) { throw stageStop('data_precheck', e); }
   await syntheticWitnesses?.('before', db);
   let migrations = 0;
   for (let n = 1; n <= 8; n++) {
@@ -85,7 +88,7 @@ export async function inspectRestored(db, observeFrozenB, syntheticWitnesses) {
   const counts = (await readOnly(db, readFileSync('scripts/assess/sql/rad062-precounts.sql', 'utf8'))).rows[0];
   verifyCounts(counts);
   return { pre_m01_diagnostic_ready: 1, pre_m01_frozen_b_ready: 0, pre_m01_frozen_b_failures: frozenFailures, postgres_non_superuser: 1,
-    migrations_committed: migrations, checks_passed: passed, transition_inspections_passed: 2, ...counts };
+    ...precheck, migrations_committed: migrations, checks_passed: passed, transition_inspections_passed: 2, ...counts };
 }
 
 export function verifyCounts(counts) {

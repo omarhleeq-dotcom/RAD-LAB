@@ -30,6 +30,14 @@ Until the window, the PR deploy job is expected red **only for the old marker**;
 
 **Staleness:** if main advances before DB day, merge updated main into `rad062/p10-promotion` without rebase/force-push, inspect the diff and unchanged SQL/emergency bytes, rerun affected QA, recompute with `--print-marker`, update the report and PR body only, and re-review before booking the window.
 
+## Current campaign — D-CRLF and real catalogue
+
+[Owner decisions D-CRLF / job_b(a)](DECISIONS.md#rad062-final-campaign-2026-11-01) authorize anchor-local LF/CRLF matching in M06/M08 and optional job_b only. No other migration bytes, readiness expected digests, guards, privileges, timeouts, phone packets or manual SQL are changed. The source marker is recomputed in the [P10 report](RAD-062_P10_REPORT_2026-10-30.md#final-campaign-2026-11-01); the owner alone sets a Variable.
+
+The primary CI test loads the byte-exact [no-data production schema snapshot](../supabase/fixtures/production-schema-2026-11-01/README.md) into the pinned Supabase17.11 ICU en-US image as supabase_admin, emits a custom-format RAD-086 backup with checksums and zero table counts, and calls the same rehearse(). Empty configuration rows are not silently invented: a failed diagnostic remains STOP. A synthetic pass does not prove this primary path.
+
+Before M01, the rehearsal's read-only data precheck emits one complete batch of condition/source-line/count records. It uses the exact M01 validator expression without installing it and counts existing-row constraint/backfill and quota violations. Any nonzero count stops after the batch. The [report](RAD-062_P10_REPORT_2026-10-30.md#final-campaign-2026-11-01) inventories every condition and explains empty new tables. No automatic cleanup/backfill, identifiers or row values are printed. Owner CLI errors remain redacted; full PostgreSQL errors are enabled only by the no-data CI test callback.
+
 ## 1. Preconditions — no mutation
 
 **Command:**
@@ -89,7 +97,7 @@ export RAD062_SECRET_STATE=DISABLED RAD062_RAD086_VERIFIED=yes RAD062_V1_PACKET_
 live preflight --execute
 ```
 
-**Expected:** gate_rows=1, open_gates=0, worker_roles=2, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Both assess_job_a/b must exist and be NOLOGIN; assess_worker also must not LOGIN. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
+**Expected:** gate_rows=1, open_gates=0, required_job_a=1, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Owner decision job_b(a): assess_job_a is required; assess_job_b is optional. Every present job role and assess_worker must be NOLOGIN; worker_connections includes all three roles. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
 
 **STOP:** any nonzero prohibited count, missing role, open assignment, unknown/ENABLED secret, failed CLI/permissions/query, or active/grading/awaiting-manual session. Do not start workers, create roles or close assignments to bypass this stop.
 
