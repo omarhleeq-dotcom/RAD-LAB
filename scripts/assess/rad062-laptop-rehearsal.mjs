@@ -85,18 +85,20 @@ export async function inspectRestored(db, observeFrozenB, syntheticWitnesses) {
     if (JSON.stringify(rows.map(r => r.kind).sort()) !== JSON.stringify(kinds) || JSON.stringify(rows.filter(r => r.ready === false).map(r => r.kind).sort()) !== JSON.stringify(transitionKinds)) throw new Stop('transition');
     checkRows((Array.isArray(result) ? result : [result]).map(r => ({ ...r, rows: r.rows?.map(row => transitionKinds.includes(row.kind) ? { ...row, ready: row.ready === false } : row) })));
   }
-  const counts = (await readOnly(db, readFileSync('scripts/assess/sql/rad062-precounts.sql', 'utf8'))).rows[0];
-  verifyCounts(counts);
+  const counts = verifyCounts((await readOnly(db, readFileSync('scripts/assess/sql/rad062-precounts.sql', 'utf8'))).rows[0]);
   return { pre_m01_diagnostic_ready: 1, pre_m01_frozen_b_ready: 0, pre_m01_frozen_b_failures: frozenFailures, postgres_non_superuser: 1,
     ...precheck, migrations_committed: migrations, checks_passed: passed, transition_inspections_passed: 2, ...counts };
 }
 
-export function verifyCounts(counts) {
-  if (!counts || !Object.values(counts).every(v => /^\d+$/.test(String(v)))) throw new Stop('counts');
-  if (Number(counts.invalid_name_profiles) !== 0) throw new Stop('invalid_names');
+export function verifyCounts(counts, report = value => console.log('accepted_invalid_name_profiles=' + value)) {
+  if (!counts || !/^\d+$/.test(String(counts.invalid_name_profiles)) || !Object.values(counts).every(v => /^\d+$/.test(String(v)))) throw new Stop('counts');
+  // D-NAMES: existing names are reported; no SQL backfill/validation is implied.
+  const { invalid_name_profiles: accepted_invalid_name_profiles, ...remaining } = counts;
+  report(accepted_invalid_name_profiles);
   // Existing capacity/quota STOPs: no automatic cleanup or acceptance of violations.
   if (Object.entries(counts).some(([k, v]) => !['database_bytes', 'reserved_peak_bytes', 'invalid_name_profiles'].includes(k) && Number(v) !== 0) ||
       Number(counts.database_bytes) + Number(counts.reserved_peak_bytes) >= 300000000) throw new Stop('capacity');
+  return { ...remaining, accepted_invalid_name_profiles };
 }
 
 const roleSnapshot = `select jsonb_build_object('role',(select to_jsonb(r) from pg_roles r where rolname='postgres'),

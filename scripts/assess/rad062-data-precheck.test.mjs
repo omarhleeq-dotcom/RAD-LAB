@@ -13,8 +13,10 @@ test('pre-M01 precheck uses only existing schema, reports the complete batch bef
     assert.ok(reported.every(r=>Number(r.count)===0 && /\.sql:[1-9][0-9]*$/.test(r.source)));
     await db.exec(`insert into auth.users(id) values('00000000-0000-0000-0000-000000000001');
       update public.profiles set display_name='bad' where user_id='00000000-0000-0000-0000-000000000001';`);
-    await assert.rejects(dataPrecheck(client, rows => { reported=rows; }),{ message:'data_precheck' });
-    assert.equal(Number(reported.find(r=>r.condition==='invalid_name_profiles').count),1);
+    const accepted=await dataPrecheck(client, rows => { reported=rows; });
+    assert.equal(Number(accepted.accepted_invalid_name_profiles),1);
+    assert.equal(accepted.data_precheck_failures,0);
+    assert.equal(Number(reported.find(r=>r.condition==='accepted_invalid_name_profiles').count),1);
     assert.equal(reported.length,conditions().length);
     assert.equal((await db.query("select to_regprocedure('public.rad062_valid_full_name(text)') is null absent"))[0].absent,true);
   } finally { await db.close(); }
@@ -28,4 +30,22 @@ test('multiple violations report every count together before the single STOP', a
   await assert.rejects(dataPrecheck(db,rows=>{ reported=rows; }),{ message:'data_precheck' });
   assert.equal(reported.length,conditions().length);
   assert.deepEqual(reported.filter(r=>Number(r.count)>0).map(r=>r.count),['2','3','4']);
+});
+
+
+test('D-NAMES: nonzero legacy names pass; each other nonzero precheck condition still stops after the complete report', async () => {
+  const base=Object.fromEntries(conditions().map(([key])=>[key,'0']));
+  base.invalid_name_profiles='10';
+  let reported;
+  const client=counts=>({ query:async sql=>({ rows:sql.startsWith('with usage')?[counts]:[] }) });
+  const accepted=await dataPrecheck(client(base),rows=>{reported=rows;});
+  assert.equal(accepted.accepted_invalid_name_profiles,'10');
+  assert.equal(accepted.data_precheck_failures,0);
+  assert.equal(reported.find(r=>r.condition==='accepted_invalid_name_profiles').count,'10');
+  for(const [key] of conditions().filter(([key])=>key!=='invalid_name_profiles')) {
+    await assert.rejects(dataPrecheck(client({...base,[key]:'1'}),rows=>{reported=rows;}),{message:'data_precheck'});
+    assert.equal(reported.length,conditions().length);
+    assert.equal(reported.find(r=>r.condition===key).count,'1');
+  }
+  await assert.rejects(dataPrecheck(client({...base,invalid_name_profiles:'invalid'}),()=>{}),{message:'data_precheck'});
 });

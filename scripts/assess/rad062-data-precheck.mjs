@@ -34,7 +34,10 @@ export const conditions = () => [
   ['sessions_invalid_state', source(5, 'add constraint sessions_state_check'), 'existing sessions outside the added state CHECK (NULL follows CHECK semantics)'],
   ['sessions_invalid_lifecycle', source(6, 'update assess.sessions s'), 'M06 backfill would set lifecycle_version NULL or outside (1,2)'],
 ];
-export async function dataPrecheck(db, report = value => console.log(JSON.stringify({ data_precheck: value }))) {
+export async function dataPrecheck(db, report = value => {
+  console.log('accepted_invalid_name_profiles=' + value.find(row => row.condition === 'accepted_invalid_name_profiles').count);
+  console.log(JSON.stringify({ data_precheck: value }));
+}) {
   const result = await readOnly(db, `with usage as (
     select d.writer_id, sum(n) bytes from (
       select id draft_id, octet_length(to_jsonb(d)::text)::bigint n from assess.authoring_drafts d
@@ -58,8 +61,8 @@ export async function dataPrecheck(db, report = value => console.log(JSON.string
     (select count(*) from assess.sessions s join assess.assignments a on a.id=s.assignment_id join assess.versions v on v.id=a.version_id where v.schema_version is null or v.schema_version not in (1,2)) sessions_invalid_lifecycle`);
   const counts = result.rows[0];
   // Validate and emit the complete batch before any STOP; no row values/identities.
-  const rows = conditions().map(([condition, source, description]) => ({ condition, source, description, count: counts[condition] }));
+  const rows = conditions().map(([condition, source, description]) => ({ condition: condition === 'invalid_name_profiles' ? 'accepted_invalid_name_profiles' : condition, source, description, count: counts[condition] }));
   report(rows);
-  if (rows.some(r => !/^\d+$/.test(String(r.count)) || Number(r.count) !== 0)) throw Error('data_precheck');
-  return { data_precheck_conditions: rows.length, data_precheck_failures: 0 };
+  if (rows.some(r => !/^\d+$/.test(String(r.count)) || (r.condition !== 'accepted_invalid_name_profiles' && Number(r.count) !== 0))) throw Error('data_precheck');
+  return { data_precheck_conditions: rows.length, data_precheck_failures: 0, accepted_invalid_name_profiles: counts.invalid_name_profiles };
 }

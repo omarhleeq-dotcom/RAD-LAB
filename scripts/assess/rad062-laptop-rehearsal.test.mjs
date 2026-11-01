@@ -44,10 +44,14 @@ test('STOP preserves only known stages and SQLSTATE/errno classes, never message
   assert.equal(stopLine(stageStop('PRIVATE_CANARY', { code: 'PRIVATE_CANARY' })), 'STOP rad062_laptop_rehearsal:internal');
 });
 
-test('invalid restored names stop separately from quota/capacity, without printing counts or values', () => {
+test('D-NAMES: existing names are accepted while quota/capacity still stop', () => {
   const counts = { invalid_name_profiles: 0, authors_above_three_drafts: 0, database_bytes: 10000000, reserved_peak_bytes: 0 };
   verifyCounts(counts);
-  assert.throws(() => verifyCounts({ ...counts, invalid_name_profiles: 1 }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:invalid_names');
+  const reported=[];
+  const accepted=verifyCounts({ ...counts, invalid_name_profiles: 10 },value=>reported.push(value));
+  assert.deepEqual(reported,[10]);
+  assert.equal(accepted.accepted_invalid_name_profiles,10);
+  assert.equal('invalid_name_profiles' in accepted,false);
   assert.throws(() => verifyCounts({ ...counts, database_bytes: 300000000 }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:capacity');
 });
 
@@ -332,4 +336,28 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     save();
     await assert.rejects(rehearse(c, { env, syntheticDiagnostics }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:M01 sqlstate=P0001'); absent();
   } finally { try { docker(['rm', '-f', '-v', name]); } finally { rmSync(root, { recursive: true, force: true }); } }
+});
+
+
+test('D-NAMES: every other post-M08 prohibited count remains STOP, with accepted names printed', () => {
+  const base={invalid_name_profiles:'10',authors_above_three_drafts:'0',authors_above_ten_revisions:'0',authors_above_four_mib:'0',authors_above_eight_mib:'0',database_bytes:'10000000',database_at_300mb:0,database_at_350mb:0,database_at_400mb:0,reserved_peak_bytes:'0'};
+  for(const key of Object.keys(base).filter(k=>!['invalid_name_profiles','database_bytes','reserved_peak_bytes'].includes(k))) {
+    const reported=[];
+    assert.throws(()=>verifyCounts({...base,[key]:1},value=>reported.push(value)),e=>stopLine(e)==='STOP rad062_laptop_rehearsal:capacity');
+    assert.deepEqual(reported,['10']);
+  }
+  assert.throws(()=>verifyCounts({...base,reserved_peak_bytes:'290000000'},()=>{}),e=>stopLine(e)==='STOP rad062_laptop_rehearsal:capacity');
+  assert.throws(()=>verifyCounts({...base,invalid_name_profiles:-1},()=>{}),e=>stopLine(e)==='STOP rad062_laptop_rehearsal:counts');
+  const output=execFileSync(process.execPath,['--input-type=module','-e',`
+    import {verifyCounts} from './scripts/assess/rad062-laptop-rehearsal.mjs';
+    import {dataPrecheck,conditions} from './scripts/assess/rad062-data-precheck.mjs';
+    const counts=Object.fromEntries(conditions().map(([key])=>[key,'0'])); counts.invalid_name_profiles='10';
+    await dataPrecheck({query:async sql=>({rows:sql.startsWith('with usage')?[counts]:[]})});
+    console.log(JSON.stringify(verifyCounts(${JSON.stringify(base)})));
+  `],{encoding:'utf8'}).trim().split('\n');
+  assert.equal(output[0],'accepted_invalid_name_profiles=10');
+  assert.equal(output.filter(line=>line==='accepted_invalid_name_profiles=10').length,2);
+  assert.equal(JSON.parse(output[1]).data_precheck[0].condition,'accepted_invalid_name_profiles');
+  assert.equal(JSON.parse(output.at(-1)).accepted_invalid_name_profiles,'10');
+  assert.equal('invalid_name_profiles' in JSON.parse(output.at(-1)),false);
 });
