@@ -4,7 +4,7 @@
 
 أذن المالك في 2026-10-22 عمّان باختبار دخول مدته ساعة مع استثناء TEMP لهذه النافذة فقط. وصل نجاح psql من Cloud Shell: database=postgres وsession_user=assess_job_a وcurrent_user=assess_worker وread_only=on ثم ROLLBACK. أُغلق الحساب صراحةً بعده ووصل login_disabled=true وexpired=true. لا تمديد تلقائي للنافذة ولا دليل على قراءة كلمة السر المحفوظة من ذلك؛ أدخل المالك كلمة الاختبار يدويًا.
 
-نسخة السر1 ENABLED ومركّبة في Job العامل على /run/secrets/assess-worker.json، مع ASSESS_JOB_ENABLED=0 وصورة العامل المثبتة السابقة. [تقرير Google](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#connection-owner-followup) يحفظ الشواهد وحدودها. الأداة الجديدة [connection-probe](../scripts/assess/connection-probe.mjs) مستقلة؛ لا تستورد العامل أو تستدعي health/claim/maintain/publish/recover أو جداول مستخدمين.
+نسخة السر1 ENABLED ومركّبة في Job العامل على /run/secrets/assess-worker.json، مع ASSESS_JOB_ENABLED=0 وصورة العامل المثبتة السابقة. [تقرير Google](archive/reports/2026-10/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#connection-owner-followup) يحفظ الشواهد وحدودها. الأداة الجديدة [connection-probe](../scripts/assess/connection-probe.mjs) مستقلة؛ لا تستورد العامل أو تستدعي health/claim/maintain/publish/recover أو جداول مستخدمين.
 
 ## ما يثبته الفحص وحدوده
 
@@ -14,7 +14,7 @@
 
 ## شاهد Google المنجز
 
-وصل [شاهد المالك النهائي](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass): Cloud Build SUCCESS ثم Job تشخيص بالصورة المثبتة ونسخة السر، execution مكتملة وlog PASS، ثم login_disabled=true/expired=true. أُعيد الفتح داخل النافذة الأصلية نفسها دون تمديد الموعد، وأُغلق بعد الفحص. الاتصال من Cloud Run مثبت لهذه الصورة والنسخة والتنفيذ؛ عامل Assess الفعلي لم يُشغَّل. وصل بعدها [شاهد الإغلاق النهائي](ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-closed-final): login_disabled=true وexpired=true وbackend_sessions=0 وlaunch_gate_closed=true. لا إعادة هذه الخطوات الناجحة أو فتح login تلقائيًا؛ المتبقي إلغاء cache/رفض اتصال جديد وبوابات التشغيل المستقلة، وليس إعادة عدّ الجلسات للحصول على الدليل نفسه.
+وصل [شاهد المالك النهائي](archive/reports/2026-10/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-owner-pass): Cloud Build SUCCESS ثم Job تشخيص بالصورة المثبتة ونسخة السر، execution مكتملة وlog PASS، ثم login_disabled=true/expired=true. أُعيد الفتح داخل النافذة الأصلية نفسها دون تمديد الموعد، وأُغلق بعد الفحص. الاتصال من Cloud Run مثبت لهذه الصورة والنسخة والتنفيذ؛ عامل Assess الفعلي لم يُشغَّل. وصل بعدها [شاهد الإغلاق النهائي](archive/reports/2026-10/ASSESS_GOOGLE_PROVISIONING_REPORT_2026-10-21.md#cloud-run-probe-closed-final): login_disabled=true وexpired=true وbackend_sessions=0 وlaunch_gate_closed=true. لا إعادة هذه الخطوات الناجحة أو فتح login تلقائيًا؛ المتبقي إلغاء cache/رفض اتصال جديد وبوابات التشغيل المستقلة، وليس إعادة عدّ الجلسات للحصول على الدليل نفسه.
 
 ## مرجع التجهيز دون إعادة نقل المشروع
 

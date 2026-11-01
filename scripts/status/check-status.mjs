@@ -10,6 +10,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { BUDGETS } from "../docs/budgets.mjs";
 
 export const STATUSES = ["planned", "in_progress", "review", "blocked", "deferred", "done"];
 export const PRIORITIES = ["high", "medium", "low"];
@@ -17,12 +18,12 @@ const REQUIRED_TASK_FIELDS = ["id", "title", "status", "priority", "description"
 const OPTIONAL_TASK_FIELDS = ["completion_evidence", "blocker", "defer_reason", "conflict"];
 // Format 1.1 (S-STD-4, docs/status-format.md §3.1): who the task waits for, and size caps so the live file stays short. Format 1.0 files are
 // still accepted unchanged (no waiting_on, no caps); the new rules apply only when format_version is "1.1".
-export const FORMAT_VERSIONS = ["1.0", "1.1"];
+export const FORMAT_VERSIONS = ["1.0", "1.1", "1.2"];
 export const WAITING_ON = ["owner", "reviewer", "code", "external"];
 export const NEEDS_WAITING_ON = ["planned", "in_progress", "review", "blocked"];
-export const DESCRIPTION_MAX = 350;
-export const EVIDENCE_MAX = 400;
-export const HANDOFF_MAX_LINES = 80;
+export const DESCRIPTION_MAX = BUDGETS.task_description.open;
+export const EVIDENCE_MAX = BUDGETS.completion_evidence.chars;
+export const HANDOFF_MAX_LINES = BUDGETS.handoff.lines;
 const META_FIELDS = ["project", "format_version", "revision", "updated_at", "timezone", "next_id", "tasks"];
 const BEGIN = "<!-- STATUS-DATA:BEGIN -->";
 const END = "<!-- STATUS-DATA:END -->";
@@ -86,7 +87,8 @@ export function validateStatus(markdown) {
   if (isText(data.format_version) && !FORMAT_VERSIONS.includes(data.format_version)) {
     errors.push(`"format_version" "${data.format_version}" not in ${FORMAT_VERSIONS.join(", ")}`);
   }
-  const v11 = data.format_version === "1.1";
+  const v12 = data.format_version === "1.2";
+  const v11 = v12 || data.format_version === "1.1";
   if (!Number.isInteger(data.revision) || data.revision < 1) errors.push('"revision" must be an integer >= 1');
   if (!isText(data.updated_at) || !TIME_RE.test(data.updated_at) || Number.isNaN(Date.parse(data.updated_at))) {
     errors.push('"updated_at" must be an ISO 8601 date-time with an offset (e.g. 2026-10-13T02:40:00Z)');
@@ -106,7 +108,7 @@ export function validateStatus(markdown) {
       errors.push(`${where}: not an object`);
       return;
     }
-    const allowed = [...REQUIRED_TASK_FIELDS, ...OPTIONAL_TASK_FIELDS, ...(v11 ? ["waiting_on"] : [])];
+    const allowed = [...REQUIRED_TASK_FIELDS, ...OPTIONAL_TASK_FIELDS, ...(v11 ? ["waiting_on"] : []), ...(v12 ? ["done_when"] : [])];
     for (const key of Object.keys(task)) {
       if (!allowed.includes(key)) errors.push(`${where}: unknown field "${key}"`);
     }
@@ -129,6 +131,10 @@ export function validateStatus(markdown) {
     if (task.status !== "done" && isText(task.completion_evidence)) {
       errors.push(`${where}: completion_evidence only belongs to done tasks`);
     }
+    if (v12) {
+      if ("done_when" in task && (!isText(task.done_when) || charLength(task.done_when) > BUDGETS.done_when.chars)) errors.push(`${where}: done_when must be non-empty text <=${BUDGETS.done_when.chars} characters`);
+      if (task.status === "review" && task.waiting_on === "owner" && !isText(task.done_when)) errors.push(`${where}: review/owner needs done_when`);
+    }
     if (v11) {
       if (NEEDS_WAITING_ON.includes(task.status) && !WAITING_ON.includes(task.waiting_on)) {
         errors.push(`${where}: ${task.status} needs waiting_on (${WAITING_ON.join(" | ")})`);
@@ -137,8 +143,9 @@ export function validateStatus(markdown) {
       if ("waiting_on" in task && !WAITING_ON.includes(task.waiting_on) && !NEEDS_WAITING_ON.includes(task.status)) {
         errors.push(`${where}: waiting_on "${task.waiting_on}" not in ${WAITING_ON.join(", ")}`);
       }
-      if (isText(task.description) && charLength(task.description) > DESCRIPTION_MAX) {
-        errors.push(`${where}: description is ${charLength(task.description)} characters (max ${DESCRIPTION_MAX}); keep the remaining work here and the story in the session record`);
+      const descriptionMax = v12 && task.status === "done" ? BUDGETS.task_description.done : DESCRIPTION_MAX;
+      if (isText(task.description) && charLength(task.description) > descriptionMax) {
+        errors.push(`${where}: description is ${charLength(task.description)} characters (max ${descriptionMax}); keep the remaining work here and the story in the session record`);
       }
       if (isText(task.completion_evidence) && charLength(task.completion_evidence) > EVIDENCE_MAX) {
         errors.push(`${where}: completion_evidence is ${charLength(task.completion_evidence)} characters (max ${EVIDENCE_MAX}); link the evidence instead of retelling it`);
@@ -192,6 +199,7 @@ export function compareStatus(previousMarkdown, nextMarkdown) {
   if (errors.length > 0) return errors;
   const p = prev.data;
   const n = next.data;
+  if (p.format_version === "1.2" && n.format_version !== "1.2") errors.push("format_version cannot downgrade from1.2; new-task closure conditions must remain enforced");
 
   const prevById = new Map(p.tasks.map((t) => [t.id, t]));
   const nextById = new Map(n.tasks.map((t) => [t.id, t]));
@@ -204,6 +212,7 @@ export function compareStatus(previousMarkdown, nextMarkdown) {
   if (nextTime < prevTime) errors.push(`updated_at went back (${p.updated_at} -> ${n.updated_at})`);
 
   for (const id of nextById.keys()) {
+    if (!prevById.has(id) && n.format_version === "1.2" && !isText(nextById.get(id).done_when)) errors.push(`${id}: new task needs done_when`);
     if (!prevById.has(id) && numberOf(id) < numberOf(p.next_id)) {
       errors.push(`${id}: new task uses a number below the previous next_id (${p.next_id}); a new task must take next_id or later`);
     }
@@ -257,7 +266,7 @@ export function openConflicts(markdown) {
 export function handoffProblem(statusFile) {
   const handoff = path.join(path.dirname(path.resolve(statusFile)), "HANDOFF.md");
   if (!existsSync(handoff)) return null;
-  const lines = readFileSync(handoff, "utf8").split(/\r?\n/).length;
+  const lines = readFileSync(handoff, "utf8").trimEnd().split(/\r?\n/).length;
   return lines > HANDOFF_MAX_LINES ? `HANDOFF.md has ${lines} lines (max ${HANDOFF_MAX_LINES}); keep it a summary and move history to docs/archive/` : null;
 }
 

@@ -201,6 +201,6 @@ Exam-specific stop gates: no merged reference/approved image; a mechanism outsid
 <a id="10-known-gaps-in-this-recipe"></a>
 ## 10. Gap navigation (compatibility)
 
-The former chronological gap list is distributed into §2 mechanisms/Needs, §4/§4a scene/axis limits, §5 sourcing, §6 conventions, §7 guards and §8 readiness. This anchor remains for old references; it does not add mechanisms or close open items. The [initial archive-stage report](DOCS_ARCHIVE_2_REPORT.md#قاعدة-وفجوة-إلى-موضعها-الجديد) maps every former bullet to its new home or explicit closed evidence.
+The former chronological gap list is distributed into §2 mechanisms/Needs, §4/§4a scene/axis limits, §5 sourcing, §6 conventions, §7 guards and §8 readiness. This anchor remains for old references; it does not add mechanisms or close open items. The [initial archive-stage report](archive/reports/2026-10/DOCS_ARCHIVE_2_REPORT.md#قاعدة-وفجوة-إلى-موضعها-الجديد) maps every former bullet to its new home or explicit closed evidence.
 
 Remaining cross-exam concerns: O19 plan-view sign (§6), O20 AP Arabic label collision (§4a), O29 case-level side (§6), baseline coverage/one-image limits (§4/§5), and incomplete label-state axes (§4a). **O18 is mixed:** credits exist after RAD-045, but the original SID/position-label, landscape/build and manual-enforcement requests cannot all be declared done by that delivery; see [DECISIONS](DECISIONS.md) and the current status before acting. Registry optionality, fixed-side, generic limb steps and render resolution are implemented, not new open gaps (§2).

@@ -121,12 +121,12 @@
 - [docs/README.md](../../../README.md)
 - [docs/REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md](../../../REVIEW_CHECKLIST_EDUCATOR_PHYSICIST.md)
 - [docs/ROADMAP_SESSIONS.md](../../../ROADMAP_SESSIONS.md)
-- [docs/archive/HANDOFF-rad-045-2026-10-16.md](../../HANDOFF-rad-045-2026-10-16.md)
-- [docs/archive/HANDOFF-until-2026-10-16.md](../../HANDOFF-until-2026-10-16.md)
+- [docs/archive/HANDOFF-rad-045-2026-10-16.md](HANDOFF-rad-045-2026-10-16.md)
+- [docs/archive/HANDOFF-until-2026-10-16.md](HANDOFF-until-2026-10-16.md)
 - [docs/exam-recipe.md](../../../exam-recipe.md)
 - [docs/project-status.md](../../../project-status.md)
 - [docs/prompts/rad-047b-core-foundation.md](../../../prompts/rad-047b-core-foundation.md)
-- [docs/status-archive.md](../../../status-archive.md)
+- [docs/status-archive.md](../../status-archive.md)
 - [docs/status-format.md](../../../status-format.md)
 
 ملفان جديدان مقترحان: `docs/archive/README.md` لفهرسة الأرشيف و`docs/DOCS_ARCHIVE_2_REPORT.md` للتقرير والتسليم. CLAUDE.md والوصفة ضمن العشرين، لا ملفان إضافيان. لا تغيير لآلية فحص الحالة أو CI أو src أو الاختبارات/التوصيف.

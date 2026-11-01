@@ -1,6 +1,6 @@
 # Next session — verify and apply the owner's selected Terms
 
-The owner has supplied answers and a bilingual revision, reviewed with another person, and approved the three explicit amendments **for final technical review before application**. Read [the answer record](../TERMS_REVIEW_2026-10-16.md) and [selected text/gates](../TERMS_OWNER_DRAFT_2026-10-16.md), DECISIONS S-PILOT-32/33/34/35/36 and the verification continuation. Application was explicitly deferred to another session. Historical S-PILOT-31 proposals are not blanket approvals; S-PILOT-14/15 have only the specified superseding answers.
+The owner has supplied answers and a bilingual revision, reviewed with another person, and approved the three explicit amendments **for final technical review before application**. Read [the answer record](../archive/reports/2026-10/TERMS_REVIEW_2026-10-16.md) and [selected text/gates](../TERMS_OWNER_DRAFT_2026-10-16.md), DECISIONS S-PILOT-32/33/34/35/36 and the verification continuation. Application was explicitly deferred to another session. Historical S-PILOT-31 proposals are not blanket approvals; S-PILOT-14/15 have only the specified superseding answers.
 
 ```text
 SESSION: RAD-050 follow-up — technical clearance, then one coordinated Terms/consent release.

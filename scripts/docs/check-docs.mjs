@@ -3,6 +3,8 @@ import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { planSync } from "./sync.mjs";
+import { checkBudgets, loadBudgets, decisionSections } from "./budgets.mjs";
 import { extractStatusJson, validateStatus } from "../status/check-status.mjs";
 
 const DEFAULT_ROOT = fileURLToPath(new URL("../../", import.meta.url));
@@ -138,7 +140,7 @@ export function handoffErrors(text) {
   if (/`[a-f\d]{7,40}`|\brevision\s*\d+|main عند|فرع العمل\s|(?:Draft PR|PR #\d+).{0,45}(?:ينتظر الدمج|دمجه يدوي)|بانتظار الدمج|pending merge/iu.test(text)) errors.push("docs/HANDOFF.md: do not duplicate branch/SHA/status revision or pending-merge instructions; use docs:context and status:summary");
   return errors;
 }
-export function checkDocs({ root, files, enforceContracts = true, previousDecisionIds = new Set() }) {
+export function checkDocs({ root, files, enforceContracts = true, previousDecisionIds = new Set(), previousDecisions = "", newFiles = new Set() }) {
   const errors = [], warnings = [], documents = new Map();
   let localLinks = 0, sourceRefs = 0;
   for (const name of files) {
@@ -206,7 +208,10 @@ export function checkDocs({ root, files, enforceContracts = true, previousDecisi
     if (claude && (!claude.links.some(({ target }) => target === "AGENTS.md") || claude.text.split(/\r?\n/).length > 16)) errors.push("CLAUDE.md: keep a short pointer to AGENTS.md (max16 lines); no copied workflow/dev block");
     const handoff = documents.get(path.resolve(root, "docs/HANDOFF.md"));
     if (handoff) errors.push(...handoffErrors(handoff.text));
-    if (handoff && handoff.text.trimEnd().split(/\r?\n/).length > 80) errors.push("docs/HANDOFF.md: exceeds80 lines");
+    if (existsSync(path.join(root, "docs/budgets.json"))) {
+      const budgets = checkBudgets([...documents.values()].map((doc) => [doc.name, doc.text]), { caps: loadBudgets(root), previousDecisions, newFiles });
+      errors.push(...budgets.errors); warnings.push(...budgets.warnings);
+    }
   }
   return { errors, warnings, markdownFiles: documents.size, localLinks, sourceRefs, decisionIds: allIds.size };
 }
@@ -222,13 +227,34 @@ export function runCli(args = process.argv.slice(2), root = DEFAULT_ROOT) {
   if (head !== "HEAD" && !base) throw new Error("--head requires --base");
   const files = [...new Set(git(root, ["ls-files", "-z", "--cached", "--others", "--exclude-standard"]).split("\0").filter((name) => /\.md$/i.test(name)))];
   const previousDecisionIds = new Set();
-  if (base) {
-    const fork = git(root, ["merge-base", base, head]).trim();
+  let previousDecisions = "";
+  const newFiles = new Set();
+  {
+    const fork = git(root, ["merge-base", base ?? "origin/main", head]).trim();
+    previousDecisions = git(root, ["show", `${fork}:docs/DECISIONS.md`]);
+    const oldFiles = new Set(git(root, ["ls-tree", "-r", "--name-only", fork]).trim().split("\n"));
+    for (const name of files) if (!oldFiles.has(name)) newFiles.add(name);
+    const changes = git(root, ["diff", "--name-status", "-z", "-M", fork]).split("\0");
+    for (let i = 0; i < changes.length && changes[i];) {
+      const status = changes[i++]; i++;
+      if (status.startsWith("R")) newFiles.delete(changes[i++]);
+    }
     const prior = git(root, ["ls-tree", "-r", "--name-only", fork, "--", "docs/DECISIONS.md", "docs/archive/decisions/"]).trim().split("\n").filter((name) => name.endsWith(".md"));
     if (!prior.includes("docs/DECISIONS.md")) throw new Error("comparison base has no docs/DECISIONS.md");
-    for (const name of prior) for (const id of decisionIds(git(root, ["show", `${fork}:${name}`]))) previousDecisionIds.add(id);
+    if (base) for (const name of prior) for (const id of decisionIds(git(root, ["show", `${fork}:${name}`]))) previousDecisionIds.add(id);
   }
-  const result = checkDocs({ root, files, previousDecisionIds });
+  const result = checkDocs({ root, files, previousDecisionIds, previousDecisions, newFiles });
+  {
+    const fork = git(root, ["merge-base", base ?? "origin/main", head]).trim();
+    const hasBudget = git(root, ["ls-tree", "--name-only", fork, "--", "docs/budgets.json"]).trim();
+    if (hasBudget && JSON.stringify(JSON.parse(git(root, ["show", `${fork}:docs/budgets.json`]))) !== JSON.stringify(loadBudgets(root))) {
+      const oldSections = new Set(decisionSections(previousDecisions).map((s) => s.name));
+      const decisions = readFileSync(path.join(root, "docs/DECISIONS.md"), "utf8");
+      if (!decisionSections(decisions).some((s) => !oldSections.has(s.name) && /owner/i.test(s.text) && /budget|cap/i.test(s.text))) result.errors.push("budget changes require a new owner decision in DECISIONS");
+    }
+  }
+  const stale = planSync({ root, base: base ?? "origin/main", head });
+  if (stale.size) result.errors.push(`run npm run docs:sync: stale mechanical fields in ${[...stale.keys()].join(", ")}`);
   for (const error of result.errors) console.error(error);
   for (const warning of result.warnings) console.warn(`docs:check WARNING: ${warning}`);
   console.log(`docs:check: ${result.markdownFiles} Markdown, ${result.localLinks} local references (${result.sourceRefs} source_ref paths), ${result.decisionIds} decision IDs; ${result.errors.length} errors, ${result.warnings.length} review warnings; ${base ? "decision continuity checked" : "no history comparison (use --base)"}`);

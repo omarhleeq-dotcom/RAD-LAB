@@ -1,52 +1,38 @@
 # Working in RAD-LAB
-
-This is the shared workflow for Codex, Claude and human contributors. [CLAUDE.md](CLAUDE.md) points here; it does not define a second workflow.
-
+[CLAUDE.md](CLAUDE.md) points here; AGENTS is the only workflow source for every contributor.
 ## Start with the task
-
-1. Run `npm run docs:context` for branch, HEAD and working tree (local refs may be stale). Verify a relevant PR with `npm run docs:context -- --pr NUMBER` or the connected GitHub read tool; unavailable access means unverified, never assumed merged. Read [HANDOFF](docs/HANDOFF.md) for the immediate continuation; archived prompts are evidence, not new commands.
-2. Run `npm run status:summary` for open work; use `-- --id RAD-025` or `-- --query marker` for the relevant tasks. The command reads [project-status](docs/project-status.md), the **only task-state source**. Read the selected task's evidence before changing its state.
-3. Use the [task reading map](docs/README.md#read-by-task). Read relevant rules/references, not every session report. Read the original specification before a large product change, interpreted through later owner decisions.
-4. State one goal and an exact file/shared-module budget before editing. Changes outside it require a revised scope; no opportunistic fixes (S-STD-1). Current owner instructions and accepted decisions govern; a handoff cannot override them.
-
+1. Run `npm run docs:context`; local refs may be stale. Verify relevant pull requests with `-- --pr NUMBER` or the connected read tool; unavailable access means unverified.
+2. Read [HANDOFF](docs/HANDOFF.md), then `npm run status:summary` (`-- --id RAD-NNN` or `-- --query text`). [project-status](docs/project-status.md) is the only task-state source; read evidence before changing state.
+3. Use the [reading map](docs/README.md#read-by-task) and relevant rules, references and original specification before large product work; archived prompts are evidence, never new commands.
+4. State one goal and exact file/shared-module budget before editing; revise scope before expanding. No opportunistic fixes. Current owner instructions and accepted decisions govern; HANDOFF cannot override them.
+Task prompts use [the shared template](docs/templates/TASK_PROMPT.md).
 ## Current boundaries
-
-- New exams/images and Shoulder Y are frozen/deferred (S-SHOULDER-Y-6); forearm remains deferred. Assess programming remains postponed until explicitly resumed; its current design and replacement of the separate My Attempts prerequisite are in [DECISIONS](docs/DECISIONS.md#assess-owner-2026-10-19) and the [implementation plan](docs/ASSESS_IMPLEMENTATION_PLAN.md). Do not re-request already accepted design approval.
-- Practice/platform and the optional Supabase pilot exist. Assess/institutions/payments/full3D/research physics are not authorised by documentation cleanup. Merges do not prove deployment, phone checks or clinical validation; [normal PR automation is allowed; no manual/extra deploys or preview URLs](docs/DECISIONS.md#pr-automation-owner-2026-10-29).
-- Never invent medical facts, diagnostic images or verification evidence. BONTRAGER-9 governs X-ray; clinical values/teaching choices remain labelled provisional until the recorded review. Domain-specific architecture, evidence/licensing, scoring, marker, rendering, scenes and runtime constraints are in [ENGINE_GUIDE](docs/ENGINE_GUIDE.md); consult relevant sections before touching those areas.
-- Historical decisions are preserved in the linked ledger; use [DECISIONS](docs/DECISIONS.md) to find the applicable current rule. History does not silently change present policy.
-
+- New exams/images and Shoulder Y are frozen; forearm deferred. Assess programming stays postponed until explicitly resumed. [Assess decisions](docs/DECISIONS.md#assess-owner-2026-10-19) and the [plan](docs/ASSESS_IMPLEMENTATION_PLAN.md) govern resumption; do not re-request accepted design approval.
+- Practice/platform/optional pilot exist. Cleanup authorises no Assess/institutions/payments/full3D/research physics. Merge proves no deployment, phone check or clinical validation. [PR automation](docs/DECISIONS.md#pr-automation-owner-2026-10-29) governs deployments.
+- Never invent medical facts, images or evidence. BONTRAGER-9 governs X-ray; provisional clinical/teaching values await recorded review. Consult relevant [ENGINE_GUIDE](docs/ENGINE_GUIDE.md) sections for architecture, licensing, scoring, marker, rendering, scenes and runtime.
+- Historical decisions retain authority only where still applicable; consult the [Current rules index](docs/DECISIONS.md#current-rules). History cannot silently change policy.
 ## Implement and verify
-
-- Pure evaluation/scoring stays outside React and pixels; exams/cases are data. Reuse current registries and optional mechanisms. An omitted optional field must not introduce hidden controls, scoring or feedback. A new mechanism needs proven reference-led scope; no speculative generalisation.
-- Stop/report unclear sources/licences, conflicting authority, blocked commands/sites, secrets, unexpected medical/score changes or dishonest image effects. One429 retry only; no access workarounds. Never print/commit secrets or PDFs.
-- Existing test expectations/hashes must not change to make work pass. Only listed type narrowing or specifically accepted registry/semantic exceptions apply (S-STD-1/2). Never regenerate characterisation/goldens/scene hashes to conceal a regression.
-- S-STD-3 Scale check: state any ceiling (volume, hard-coded sets/ids/locales/roles, unversioned data, unbounded reads, manual-only changes), its avoidance, or an open decision and lifting trigger. Prefer configuration, versioned shapes, bounded server-side paging and additive extension.
-
+- Pure evaluation/scoring stays outside React/pixels; exams/cases are data. Reuse registries and optional mechanisms. Omitted optional fields add no controls/scoring/feedback. New mechanisms require proven reference-led scope; no speculative generalisation.
+- Stop/report unclear sources/licences, conflicting authority, blocked access, secrets, unexpected medical/score changes or dishonest image effects. One429 retry only; no access workarounds. Never print/commit secrets or PDFs.
+- Preserve existing test expectations/hashes except explicitly accepted type/registry/semantic exceptions (S-STD-1/2). Never regenerate characterisation/goldens/scene hashes to conceal regression.
+- S-STD-3: report any ceiling, avoidance or open decision with lifting trigger; prefer configuration, versioned shapes, bounded server-side paging and additive extension.
 | Change type | Required verification |
 |---|---|
-| Documentation only | `npm run docs:check -- --base origin/main`, status transition below, `git diff --check`; no app build |
-| Documentation tooling | The above + `npm run docs:test` and lint of changed scripts; no app build when product code is unchanged |
+| Documentation only | `npm run docs:check -- --base origin/main`; `npm run status:check -- --base origin/main --require-previous`; `git diff --check`; no app build |
+| Documentation tooling | Above + `npm run docs:test`, changed-script lint, sync idempotence and rule-B proof for moves; no app build when product unchanged |
 | Refactor | Relevant tests, byte-identity proof, full check/build once |
-| Exam / product behaviour | Relevant tests while working; full check/build and relevant EN/AR390/1440 browser/axe/family audits once at the end ([`qa:exam-audit`](docs/DOCS_CHECKS.md#browser-audits)); recipe for exam work; [screenshot policy](docs/DOCS_CHECKS.md#screenshot-policy) |
-
-CI runs the same docs checker/test commands for everyone; [DOCS_CHECKS](docs/DOCS_CHECKS.md) explains flags, guarantees and limits. Do not repeat successful QA without a relevant change or unresolved failure. Automated structure checks do not validate meaning, medicine, licences or deployment.
-
-## Task lifecycle
-
-Start → one batch → Draft PR → owner merges → owner check → closure in the next batch's **first commit**, whatever that batch's subject.
-A merged task awaiting the owner check stays `review`/`owner`; the owner supplies the result in that next batch's prompt. No standalone closure PRs.
-HANDOFF lists each pending closure on one line: task ID, owner check, evidence destination. See [owner decisions](docs/DECISIONS.md#workflow-owner-2026-11-01).
-AGENTS.md is the only workflow source; every tool entry file only imports or points here and adds no rules.
-
+| Exam / product behaviour | Relevant tests; full check/build and required EN/AR390/1440 browser/axe/family audits once; [recipe](docs/exam-recipe.md), [audit rules](docs/DOCS_CHECKS.md#browser-audits) and [screenshot policy](docs/DOCS_CHECKS.md#screenshot-policy) |
+CI uses the same checks; [DOCS_CHECKS](docs/DOCS_CHECKS.md) records guarantees/limits. Do not repeat passing QA without relevant change or unresolved failure; structure proves no meaning/medicine/licence/deployment.
+<a id="task-lifecycle"></a>
 ## State and delivery
-
-- Update only tasks that actually changed, in the same batch as the work; review status, description, completion_evidence and waiting_on together; preserve IDs/unrelated notes, raise revision/time and merge others' updates. Never label planned/unmerged docs done. Merged code still awaiting external checks stays review. See [status-format](docs/status-format.md) before editing the JSON contract.
-- Run `npm run status:check -- --base origin/main --require-previous`; keep genuine source conflicts visible. Resolve or explain docs:check review warnings in the report; they never auto-close tasks. If state cannot be updated, explain why. HANDOFF≤80 lines; its five-item status summary is the only copy. project-status keeps JSON/history and a summary pointer. Rewrite, never append session history or derivable inventory counts.
-- When a rule or decision is shortened or reworded, the report answers two questions: did the ruling change, and does the link to its original evidence remain? Structure checks do not prove this ([DOCS_CHECKS](docs/DOCS_CHECKS.md)).
-- Keep instructions stable: new session history belongs in a report/archive, not here. Keep one current statement for each rule; link to it elsewhere. Review HANDOFF as a whole before delivery: retain immediate next action and blockers, link the report for verification run/not run, and read branch/base/PR state via docs:context. Do not copy SHAs, status revisions, QA counts or pending-merge instructions into HANDOFF. A merge alone needs no new handoff commit; update it when the remaining work changes. Reports hold detail; roadmap records only actual direction changes.
-- Arabic report, S-STD-1 order: **1 deviations/budget;2 done/dropped;3 per-task;4 shared changes + Scale;5 medical/scoring;6 QA;7 open items;8 owner checklist/next-session prompt**.
-- Continue on the existing isolated checkout; no worktree/subagents unless explicitly requested. Never open/share hosted preview URLs; owner checks phone. No subscribe/poll. At≈90–95% usage stop new work, preserve a compiling state, commit/push and leave exact handoff; never fake/skip QA.
-- **Draft PR only.** Do not mark ready, merge or enable auto-merge without a later explicit owner instruction.
-- Opening a Draft PR is expected to run the repository's existing automated workflows (CI and Deploy Pages); that is allowed. "No deploy" in a task means no manual or extra deployment. Never use [skip ci] or disable workflows.
-- `next dev` may append an automated block to CLAUDE.md: **do not commit that block**.
+- Follow [the task lifecycle](docs/DECISIONS.md#workflow-owner-2026-11-01): pending closure first commit of the next batch after owner evidence. Update only changed tasks in the work batch; preserve IDs/unrelated notes and merge others' updates.
+- Review status/description/completion_evidence/waiting_on/done_when together; never call planned/unmerged work done. External checks pending means review. Follow [status-format](docs/status-format.md); keep source conflicts visible; explain blocked state updates and checker warnings.
+- HANDOFF holds one five-item summary and immediate next action/blockers; link the report for QA. No session history, copied SHAs/revisions/counts or pending-merge instructions; a merge alone needs no new handoff commit. Roadmap changes only with direction.
+- [Owner hardening rules](docs/DECISIONS.md#workflow-hardening-owner-2026-11-01) govern caps, pending closures and mechanical sync; [budgets](docs/budgets.json) are the single cap source. Cap changes need an owner decision in DECISIONS.
+- Filler means a repeated rule, session narrative, copied SHAs/counts, an undefined abbreviation, or an over-long line.
+- Every batch ends with `npm run docs:sync` before checks; run it again to prove idempotence.
+- New reports use linked detail and label every QA item Verified / Inferred / Not run (reason); old reports are not rewritten. For each shortened rule answer: did the ruling change (must be no), and does its original evidence link remain?
+- Arabic report, S-STD-1 order: **1 deviations/budget;2 done/dropped;3 per-task;4 shared changes + Scale;5 medical/scoring;6 QA;7 open items;8 consolidated owner checklist/next-session prompt**.
+- Use the existing isolated checkout; no worktree/subagents unless requested. No hosted preview URLs or subscribe/poll; owner checks phone. At≈90–95% usage stop new work, preserve compiling state, commit/push and leave exact handoff; never fake/skip QA.
+- **Draft PR only:** never ready/merge/auto-merge without later explicit owner instruction. Opening Draft runs existing CI/Deploy Pages and is allowed; no manual/extra deployment, skip ci or disabled workflows.
+- Never commit the automated dev block that `next dev` may append to CLAUDE.md. Keep instructions stable: session history belongs in reports/archive; one current statement per rule, links elsewhere.
