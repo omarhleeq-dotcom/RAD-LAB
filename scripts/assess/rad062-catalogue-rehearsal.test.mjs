@@ -6,6 +6,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, symlinkSync, rmSyn
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { containerArgs, prepareRolesSql } from '../ops/laptop-restore-test.mjs';
+import { archiveEventMetadata, EVENT_QUERY, compareEventMetadata } from '../ops/restore-event-triggers.mjs';
 import { sha256Bytes } from '../ops/laptop-backup-lib.mjs';
 import { rehearse } from './rad062-laptop-rehearsal.mjs';
 const fixture = 'supabase/fixtures/production-schema-2026-11-01/';
@@ -33,7 +34,24 @@ test('real CRLF catalogue -> RAD-086 empty backup -> unchanged rehearse path, ev
     }
     q(prepareRolesSql(roles.toString()), 'postgres');
     docker(['exec', name, 'createdb', '-U', 'supabase_admin', '-O', 'postgres', '-T', 'template0', '--encoding=UTF8', '--locale-provider=icu', '--icu-locale=en-US', '--lc-collate=en_US.UTF-8', '--lc-ctype=en_US.UTF-8', 'catalogue']);
-    q(schema);
+    // Same owner execution rule as the accepted RAD-086 event-trigger restore.
+    // The session remains supabase_admin; original statements/metadata stay exact.
+    const events = [...schema.toString().matchAll(/^ALTER EVENT TRIGGER ([a-z_][a-z0-9_]*) OWNER TO ([a-z_][a-z0-9_]*);$/gm)]
+      .map(([, name, owner]) => ({ name, owner }));
+    assert.ok(events.length > 0);
+    const expectedEvents = archiveEventMetadata(schema.toString(), events);
+    let load = schema.toString();
+    const roleSnapshot = q("select jsonb_agg(to_jsonb(r) order by rolname) from pg_roles r");
+    for (const { name, owner } of events) {
+      if (q(`select rolsuper from pg_roles where rolname='${owner}'`, 'postgres') !== 'f') continue;
+      const pattern = new RegExp(`^CREATE EVENT TRIGGER ${name} ON [\\s\\S]*?^ALTER EVENT TRIGGER ${name} OWNER TO ${owner};$`, 'gm');
+      const blocks = [...load.matchAll(pattern)];
+      assert.equal(blocks.length, 1);
+      load = load.replace(pattern, block => `SET ROLE ${owner};\n${block}\nRESET ROLE;`);
+    }
+    q(load);
+    assert.deepEqual(compareEventMetadata(expectedEvents, JSON.parse(q(EVENT_QUERY))), []);
+    assert.equal(q("select jsonb_agg(to_jsonb(r) order by rolname) from pg_roles r"), roleSnapshot);
     assert.equal(q("select count(*) from pg_proc where position(chr(13)||chr(10) in prosrc)>0"), '44');
     assert.equal(q("select count(*) from pg_namespace where nspname='supabase_migrations'"), '0');
     const tables = JSON.parse(q(`select json_agg(json_build_array(n.nspname,c.relname,0) order by n.nspname collate "C",c.relname collate "C") from pg_class c join pg_namespace n on n.oid=c.relnamespace where c.relkind in ('r','p') and n.nspname not in ('pg_catalog','information_schema') and n.nspname !~ '^pg_toast'`));
