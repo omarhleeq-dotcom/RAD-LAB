@@ -142,23 +142,25 @@ test('explicit latest applies the entire promoted required set', {timeout:30000}
   } finally { await db.close(); }
 });
 
-test('promoted package applies and every required check passes under C and en_US.UTF-8 database collations', {timeout:90000}, async () => {
-  for (const locale of ['C','en_US.UTF-8']) {
-    const db = await openLocalDatabase('postgres', { through:'latest', locale });
-    let client;
+for (const locale of ['C','en_US.UTF-8','icu-en-US']) {
+test(`PostgreSQL 17.11 promoted full-apply and every required check: ${locale}`, {timeout:90000}, async () => {
+    const db = await openLocalDatabase('postgres', { through:'latest', locale, productionVersion:true });
+    let client, sqlstate='none (boolean assertion)';
     try {
       // Same synthetic Auth/role surface as the restore rehearsal; never a provider schema.
       await db.exec(`create role assess_job_a nologin; create role assess_job_b nologin;
         alter table auth.users add column banned_until timestamptz;
         create table auth.sessions(user_id uuid); create table auth.refresh_tokens(user_id uuid);`);
-      const [cfg] = await db.query("select current_setting('unix_socket_directories') host,current_setting('port') port,datcollate,datctype from pg_database where datname=current_database()");
-      assert.deepEqual([cfg.datcollate,cfg.datctype],[locale,locale]);
+      const [cfg] = await db.query("select current_setting('unix_socket_directories') host,current_setting('port') port,current_database() database,datlocprovider,datlocale,datcollate,datctype from pg_database where datname=current_database()");
+      assert.deepEqual([cfg.datlocprovider,cfg.datlocale,cfg.datcollate,cfg.datctype],locale==='icu-en-US'?['i','en-US','en_US.UTF-8','en_US.UTF-8']:['c',null,locale,locale]);
       // The pre-fix text order must differ from name order under en_US, so this run witnesses the defect.
       const [order] = await db.query(`select (select jsonb_agg(e order by e->>0,e->>1,e->>2) from jsonb_array_elements(assess.d3_fk_inventory_v1()) e)=assess.d3_fk_inventory_v1() default_order,
         (select jsonb_agg(e order by (e->>0) collate "C",(e->>1) collate "C",(e->>2) collate "C") from jsonb_array_elements(assess.d3_fk_inventory_v1()) e)=assess.d3_fk_inventory_v1() c_order`);
       assert.deepEqual(order, { default_order: locale === 'C', c_order: true });
-      client = new pg.Client({ host: cfg.host, port: Number(cfg.port), user: 'postgres', database: 'postgres', password: '', ssl: false });
+      client = new pg.Client({ host: cfg.host, port: Number(cfg.port), user: 'postgres', database: cfg.database, password: '', ssl: false });
       await client.connect();
+      const query=client.query.bind(client);
+      client.query=async(...args)=>{try{return await query(...args);}catch(e){sqlstate=e.code??'unavailable';throw e;}};
       await client.query("set rad085.sharing_phase='pre-initializer'");
       assert.deepEqual(await checks(client, manifest().checks), { checks_passed: manifest().checks.length });
       for (const file of ['supabase/checks/rad062-ready.sql','supabase/checks/rad062-p1-b-ready.sql']) {
@@ -166,6 +168,7 @@ test('promoted package applies and every required check passes under C and en_US
         await client.query('grant execute on function assess.freeze_v2() to authenticated');
         await assert.rejects(checks(client, [file]), { message: 'required_check_failed:' + file });
       }
-    } finally { if (client) await client.end(); await db.close(); }
-  }
+    } catch(e) { throw new Error(`${locale}:${e.message}:SQLSTATE=${sqlstate}`,{cause:e}); }
+    finally { if (client) await client.end(); await db.close(); }
 });
+}
