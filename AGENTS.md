@@ -32,10 +32,17 @@ This is the shared workflow for Codex, Claude and human contributors. [CLAUDE.md
 
 CI runs the same docs checker/test commands for everyone; [DOCS_CHECKS](docs/DOCS_CHECKS.md) explains flags, guarantees and limits. Do not repeat successful QA without a relevant change or unresolved failure. Automated structure checks do not validate meaning, medicine, licences or deployment.
 
+## Task lifecycle
+
+Start → one batch → Draft PR → owner merges → owner check → closure in the next batch's **first commit**, whatever that batch's subject.
+A merged task awaiting the owner check stays `review`/`owner`; the owner supplies the result in that next batch's prompt. No standalone closure PRs.
+HANDOFF lists each pending closure on one line: task ID, owner check, evidence destination. See [owner decisions](docs/DECISIONS.md#workflow-owner-2026-11-01).
+AGENTS.md is the only workflow source; every tool entry file only imports or points here and adds no rules.
+
 ## State and delivery
 
 - Update only tasks that actually changed, in the same batch as the work; review status, description, completion_evidence and waiting_on together; preserve IDs/unrelated notes, raise revision/time and merge others' updates. Never label planned/unmerged docs done. Merged code still awaiting external checks stays review. See [status-format](docs/status-format.md) before editing the JSON contract.
-- Run `npm run status:check -- --base origin/main --require-previous`; keep genuine source conflicts visible. Resolve or explain docs:check review warnings in the report; they never auto-close tasks. If state cannot be updated, explain why. HANDOFF≤80 lines; rewrite the five-item status summary, never append session history or derivable inventory counts.
+- Run `npm run status:check -- --base origin/main --require-previous`; keep genuine source conflicts visible. Resolve or explain docs:check review warnings in the report; they never auto-close tasks. If state cannot be updated, explain why. HANDOFF≤80 lines; its five-item status summary is the only copy. project-status keeps JSON/history and a summary pointer. Rewrite, never append session history or derivable inventory counts.
 - When a rule or decision is shortened or reworded, the report answers two questions: did the ruling change, and does the link to its original evidence remain? Structure checks do not prove this ([DOCS_CHECKS](docs/DOCS_CHECKS.md)).
 - Keep instructions stable: new session history belongs in a report/archive, not here. Keep one current statement for each rule; link to it elsewhere. Review HANDOFF as a whole before delivery: retain immediate next action and blockers, link the report for verification run/not run, and read branch/base/PR state via docs:context. Do not copy SHAs, status revisions, QA counts or pending-merge instructions into HANDOFF. A merge alone needs no new handoff commit; update it when the remaining work changes. Reports hold detail; roadmap records only actual direction changes.
 - Arabic report, S-STD-1 order: **1 deviations/budget;2 done/dropped;3 per-task;4 shared changes + Scale;5 medical/scoring;6 QA;7 open items;8 owner checklist/next-session prompt**.

@@ -1,6 +1,6 @@
 # تشغيل Assess الاصطناعي المحلي المحدود
 
-أداة تجهيز ومراجعة، لا runtime منشور أو adapter لمزوّد أو مجدول. تعيد استخدام [خدمة C](../src/features/assess/server-service.ts) و`runAssessJobs` و`installMixedContent` وRPCs الحالية. لا endpoint أو عامل أو حذفًا ثانيًا. إضافة إنفاذ S-ASSESS-15 المحلية تستخدم ترحيلًا إضافيًا وتمدد الصيانة نفسها؛ شاهدها المحدود موضح أدناه. الأدلة في [التقرير](ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md)، والسلطة في [قرارات المالك](DECISIONS.md#assess-owner-2026-10-19).
+أداة تجهيز ومراجعة، لا runtime منشور أو adapter لمزوّد أو مجدول. تعيد استخدام [خدمة C](../src/features/assess/server-service.ts) و`runAssessJobs` و`installMixedContent` وRPCs الحالية. لا endpoint أو عامل أو حذفًا ثانيًا. إضافة إنفاذ S-ASSESS-15 المحلية تستخدم ترحيلًا إضافيًا وتمدد الصيانة نفسها؛ شاهدها المحدود موضح أدناه. الأدلة في [التقرير](archive/reports/2026-10/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md)، والسلطة في [قرارات المالك](DECISIONS.md#assess-owner-2026-10-19).
 
 ## الإعداد والتشغيل
 
@@ -47,7 +47,7 @@ PASS يشترط إتمام المراحل وcleanup، ويخرج0. STOP يخرج
 
 ## دليل إيقاف العملية الفعلي
 
-متابعة محلية على رأس الحزمة البرمجي اختبرت SIGINT وSIGTERM من عملية أب: لكل حالة TMPDIR خاص وcluster جديد، وانتظار socket PostgreSQL الخاص ثم إرسال الإشارة إلى PID الأداة وحدها. كلاهما أعاد STOP/stopped بخروج130 وcleanup=true وticks=0، وبقي مجلد الأب فارغًا. اختبر أيضًا manifest لحزم QA غير موجود: STOP/setup وخروج1 وcleanup=true، بلا مسار الاعتماد المفقود أو رسالة require الخام في stdout. تفاصيل الدليل في [تقرير المتابعة](ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md#process-stop-followup).
+متابعة محلية على رأس الحزمة البرمجي اختبرت SIGINT وSIGTERM من عملية أب: لكل حالة TMPDIR خاص وcluster جديد، وانتظار socket PostgreSQL الخاص ثم إرسال الإشارة إلى PID الأداة وحدها. كلاهما أعاد STOP/stopped بخروج130 وcleanup=true وticks=0، وبقي مجلد الأب فارغًا. اختبر أيضًا manifest لحزم QA غير موجود: STOP/setup وخروج1 وcleanup=true، بلا مسار الاعتماد المفقود أو رسالة require الخام في stdout. تفاصيل الدليل في [تقرير المتابعة](archive/reports/2026-10/ASSESS_LOCAL_OPERATIONS_REPORT_2026-10-20.md#process-stop-followup).
 
 هذا دليل إيقاف أثناء التهيئة قبل أول tick، وليس SIGKILL أو إشارة أثناء lease جارٍ أو استرداد مضيف بعد انهيار. إتمام claim/finish/fail عند signal مثبت باختبارات الخدمة؛ lease المنتهية والاسترداد مثبتان بالتجربة الاصطناعية السابقة. فشل shutdown نفسه ووجود cluster متروك لا يُعلن اختبارهما من نجاح cleanup هنا.
 
