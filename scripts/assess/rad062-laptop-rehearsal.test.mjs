@@ -9,9 +9,22 @@ import { Client } from 'pg';
 import { apply, migrationState, migrationProbes, migrationProbeSQL, verifyMigrations } from './rad062-db-day.mjs';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
-import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, prepareDatabaseOwner, verifyRestoredFrozenB, inspectRestored, main, observeSyntheticQueries } from './rad062-laptop-rehearsal.mjs';
+import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, prepareDatabaseOwner, verifyRestoredFrozenB, inspectRestored, main, observeSyntheticQueries, syntheticError } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
+// pg deliberately hides password from object spread. Copy it explicitly in memory only.
+const freshProbeClient = db => new Client({ ...db.connectionParameters, password: db.connectionParameters.password,
+  ssl: false, options: '', application_name: 'rad062-probe-witness' });
+
+test('fresh probe connections preserve the non-enumerable credential without exposing it', () => {
+  const original = new Client({ host: '/synthetic', database: 'rad_restore', user: 'postgres', password: 'SYNTHETIC_CREDENTIAL' });
+  assert.equal(Object.prototype.propertyIsEnumerable.call(original.connectionParameters, 'password'), false);
+  const fresh = freshProbeClient(original);
+  assert.equal(fresh.connectionParameters.password === original.connectionParameters.password, true);
+  assert.equal(fresh.connectionParameters.host, '/synthetic');
+  assert.equal(fresh.connectionParameters.user, 'postgres');
+  assert.equal(JSON.stringify(fresh.connectionParameters).includes('SYNTHETIC_CREDENTIAL'), false);
+});
 
 test('refuses all CLI selectors and non-loopback hosts before config, with redacted STOP', () => {
   for (const host of ['db.invalid', '/tmp/provider-forward', '127.0.0.1.evil', 'service=live']) assert.throws(() => localOnly([], { PGHOST: host }), Stop);
@@ -248,8 +261,10 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     if (process.env.CI === 'true') console.log(JSON.stringify({ source_privileges: JSON.parse(q(privilegeSQL)) }));
     save(); symlinkSync('store/' + stamp, join(root, 'daily')); sourceVolumes = volumes();
     const freshState = async db => {
-      const fresh = new Client({ ...db.connectionParameters, ssl: false, options: '', application_name: 'rad062-probe-witness' });
-      try { await fresh.connect(); return await migrationState(fresh); } finally { await fresh.end(); }
+      const fresh = freshProbeClient(db);
+      try { await fresh.connect(); return await migrationState(fresh); }
+      catch (e) { syntheticDiagnostics?.({ source: 'fresh_connection', ...syntheticError(e) }); throw e; }
+      finally { await fresh.end(); }
     };
     const syntheticWitnesses = async (phase, db) => {
       assert.equal((await db.query("select to_regnamespace('supabase_migrations') is null absent")).rows[0].absent, true);
@@ -289,11 +304,12 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
       await assert.rejects(apply(lost, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), e => e.label === 'apply_failed_or_ack_uncertain' && e.sqlstate === '08006');
       assert.equal(writes, 1);
       assert.deepEqual(await freshState(db), [true, ...Array(7).fill(false)]);
-      const fresh = new Client({ ...db.connectionParameters, ssl: false, options: '', application_name: 'rad062-ack-witness' });
+      const fresh = freshProbeClient(db);
       try {
         await fresh.connect();
         await assert.rejects(apply(fresh, 'M01', { RAD062_SECRET_STATE: 'DISABLED' }), { message: 'migration_order_or_uncertain_ack' });
-      } finally { await fresh.end(); }
+      } catch (e) { syntheticDiagnostics?.({ source: 'fresh_connection', ...syntheticError(e) }); throw e; }
+      finally { await fresh.end(); }
       throw stageStop('M01', { code: '08006' }); // synthetic callback stops the normal loop; finally must tear down.
     };
     await assert.rejects(rehearse(c, { env, syntheticDiagnostics, syntheticWitnesses: lostAckWitness }), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:M01 sqlstate=08006'); absent();
