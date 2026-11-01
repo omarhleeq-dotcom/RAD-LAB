@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { apply } from './rad062-db-day.mjs';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
-import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, verifyRestoredFrozenB, inspectRestored, main, observeSyntheticQueries } from './rad062-laptop-rehearsal.mjs';
+import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, prepareDatabaseOwner, verifyRestoredFrozenB, inspectRestored, main, observeSyntheticQueries } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 
@@ -51,6 +51,27 @@ test('socket-auth command failure retains SQLSTATE and discards the generated cr
     assert.doesNotMatch(JSON.stringify(e) + e.message, new RegExp(credential + '|PRIVATE_MESSAGE|PRIVATE_HOST'));
     return true;
   });
+});
+
+test('temporary database owner correction preserves non-superuser postgres attributes and memberships', () => {
+  for (const drift of [null, 'superuser', 'attributes_or_memberships', 'target_owner']) {
+    let snapshots = 0, altered = false;
+    const run = (_program, args, opts) => {
+      assert.equal(args[0], 'exec'); assert.equal(args[args.indexOf('-U') + 1], 'supabase_admin');
+      assert.equal(args[args.indexOf('-d') + 1], 'rad_restore');
+      const sql = opts.input;
+      assert.doesNotMatch(sql, /grant |alter role|create role|set role/i);
+      if (sql.startsWith('select jsonb_build_object')) return ++snapshots > 1 && drift === 'attributes_or_memberships' ? 'CHANGED' : 'SNAPSHOT';
+      if (sql.includes('not rolsuper')) return altered && drift === 'superuser' ? 'f' : 't';
+      if (sql.startsWith('alter database')) { assert.equal(sql, 'alter database rad_restore owner to postgres;'); altered = true; return ''; }
+      if (sql.includes("='postgres'")) return drift === 'target_owner' ? 'f' : 't';
+      return 't';
+    };
+    if (drift) assert.throws(() => prepareDatabaseOwner(run, 'synthetic', 'rad_restore'), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:database_owner');
+    else assert.deepEqual(prepareDatabaseOwner(run, 'synthetic', 'rad_restore'), { database_owner_postgres: 1, postgres_role_unchanged: 1 });
+    assert.equal(altered, true);
+  }
+  assert.throws(() => prepareDatabaseOwner(() => { throw Error('must not execute'); }, 'synthetic', 'postgres'), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:database_owner');
 });
 
 test('restored frozen B row contract rejects zero/additional/wrong failures, nulls, missing/duplicate/unknown kinds', () => {
@@ -205,6 +226,7 @@ test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/cou
     const result = await rehearse(c, { env, syntheticDiagnostics, observeFrozenB: kinds => console.log(JSON.stringify(kinds)) }).finally(absent);
     assert.equal(result.rehearsal_pass, 1); assert.equal(result.teardown_pass, 1);
     assert.equal(result.event_triggers_second_pass_count, 1);
+    assert.equal(result.database_owner_postgres, 1); assert.equal(result.postgres_role_unchanged, 1);
     assert.equal(result.postgres_non_superuser, 1); assert.equal(result.migrations_committed, 8);
     assert.equal(result.pre_m01_frozen_b_ready, 0); assert.equal(result.pre_m01_frozen_b_failures, 1); assert.equal(result.pre_m01_diagnostic_ready, 1);
     assert.equal(result.transition_inspections_passed, 2); assert.ok(result.checks_passed > 0);

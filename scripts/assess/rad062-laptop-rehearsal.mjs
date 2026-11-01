@@ -17,7 +17,7 @@ export function localOnly(args, env) {
 }
 const errnoClasses = new Set(Object.keys(constants.errno));
 const sqlstatePattern = /^(?:[0-9]{2}|0[A-Z]|[A-Z][0-9]|HV|XX)[0-9A-Z]{3}$/;
-const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|socket_auth|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|invalid_names|capacity|teardown)$/;
+const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|database_owner|socket_auth|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|invalid_names|capacity|teardown)$/;
 const restoreStage = /^restore:(select|verify|meta|image|container|ready|version|extensions|roles|collation|restore|counts|rehearsal|log|locale)$/;
 export function stageStop(stage, error) {
   const stop = new Stop(rehearsalStage.test(stage) || restoreStage.test(stage) ? stage : 'internal');
@@ -94,6 +94,30 @@ export function verifyCounts(counts) {
       Number(counts.database_bytes) + Number(counts.reserved_peak_bytes) >= 300000000) throw new Stop('capacity');
 }
 
+const roleSnapshot = `select jsonb_build_object('role',(select to_jsonb(r) from pg_roles r where rolname='postgres'),
+      'memberships',(select coalesce(jsonb_agg(to_jsonb(m) order by roleid,member,grantor),'[]'::jsonb)
+        from pg_auth_members m where (select oid from pg_roles where rolname='postgres') in (m.member,m.roleid)));`;
+
+// Owner-approved live parity correction, only after restoreTest in its throwaway target.
+// PostgreSQL 15+ public ownership follows pg_database_owner; no GRANT or role mutation.
+export function prepareDatabaseOwner(run, container, database) {
+  const admin = input => String(run('docker', ['exec', '-i', container, 'psql', '-X', '-At', '-v', 'ON_ERROR_STOP=1', '-v', 'VERBOSITY=verbose', '-U', 'supabase_admin', '-d', database, '-f', '-'],
+    { input, encoding: 'utf8', stdio: 'pipe', timeout: 600000, maxBuffer: 1024 * 1024 })).trim();
+  try {
+    if (database !== 'rad_restore') throw new Stop('database_owner');
+    const before = admin(roleSnapshot);
+    if (admin("select not rolsuper from pg_roles where rolname='postgres';") !== 't' ||
+        admin("select pg_get_userbyid(datdba)='supabase_admin' from pg_database where datname=current_database();") !== 't') throw new Stop('database_owner');
+    admin('alter database rad_restore owner to postgres;');
+    if (admin("select pg_get_userbyid(datdba)='postgres' from pg_database where datname=current_database();") !== 't' ||
+        admin("select not rolsuper from pg_roles where rolname='postgres';") !== 't' || admin(roleSnapshot) !== before) throw new Stop('database_owner');
+    return { database_owner_postgres: 1, postgres_role_unchanged: 1 };
+  } catch (e) {
+    const sqlstate = String(e.stderr ?? '').match(/\b(?:ERROR|FATAL):\s+([0-9A-Z]{5}):/)?.[1];
+    throw stageStop('database_owner', { code: sqlstate ?? e.code, errno: e.errno });
+  }
+}
+
 // Only the throwaway restored target changes: credential + one database/role-specific local HBA rule.
 // No grants, SET ROLE, role attributes/config, memberships, object owners, or migration SQL change.
 export function prepareSocketAuth(run, container, database) {
@@ -106,9 +130,6 @@ export function prepareSocketAuth(run, container, database) {
       from pg_hba_file_rules where type='local' and ('all'=any(database) or 'rad_restore'=any(database))
       and ('all'=any(user_name) or 'postgres'=any(user_name)) order by rule_number limit 1;`;
     if (admin(localRule) !== 't') throw new Stop('socket_auth');
-    const roleSnapshot = `select jsonb_build_object('role',(select to_jsonb(r) from pg_roles r where rolname='postgres'),
-      'memberships',(select coalesce(jsonb_agg(to_jsonb(m) order by roleid,member,grantor),'[]'::jsonb)
-        from pg_auth_members m where (select oid from pg_roles where rolname='postgres') in (m.member,m.roleid)));`;
     const before = admin(roleSnapshot), loaded = admin('select pg_conf_load_time();');
     const password = randomBytes(32).toString('hex');
     // psql -f sends each statement separately: turn statement/error-payload logging off before the credential.
@@ -155,7 +176,7 @@ export async function rehearse(c, { env = process.env, observeFrozenB, synthetic
   mkdirSync(socket); chmodSync(root, 0o700); chmodSync(socket, 0o777); // private parent; image UID can write only the bind-mounted child
   const dockerEnv = { ...env };
   for (const key of ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH']) delete dockerEnv[key];
-  let container, result, callbackFailure, commandFailure, cleanupFailed = false, authInProgress = false;
+  let container, result, ownerResult, callbackFailure, commandFailure, cleanupFailed = false, authInProgress = false;
   const run = (program, args, opts = {}) => {
     if (program === 'pg_restore') {
       try { return execFileSync('docker', ['--host=unix:///var/run/docker.sock', 'run', '--rm', '-i', '--network=none', '--pull=never', '--entrypoint', 'pg_restore', IMAGE, '--list'],
@@ -182,6 +203,7 @@ export async function rehearse(c, { env = process.env, observeFrozenB, synthetic
   };
   try {
     const restored = await restoreTest(c, { name: 'latest', run, spawn, beforeTeardown: async ({ database }) => {
+      try { ownerResult = prepareDatabaseOwner(run, container, database); } catch (e) { callbackFailure = e; throw e; }
       let password;
       try { authInProgress = true; password = prepareSocketAuth(run, container, database); } catch (e) { callbackFailure = e; throw e; } finally { authInProgress = false; }
       const db = new Client({ host: socket, port: 5432, user: 'postgres', database, password, ssl: false,
@@ -197,7 +219,7 @@ export async function rehearse(c, { env = process.env, observeFrozenB, synthetic
       }
     } });
     if (cleanupFailed) throw new Stop('teardown');
-    return { ...restored, ...result, rehearsal_pass: 1, teardown_pass: 1 };
+    return { ...restored, ...ownerResult, ...result, rehearsal_pass: 1, teardown_pass: 1 };
   } catch (e) {
     if (callbackFailure) throw callbackFailure;
     if (e instanceof Stop && rehearsalStage.test(e.stage)) throw e;

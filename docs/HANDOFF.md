@@ -1,17 +1,17 @@
-# التسليم الحالي — RAD-062: STOP لقرار المالك في بروفة M01
+# التسليم الحالي — RAD-062: ملكية قاعدة البروفة مأذونة بشروط
 
-اقرأ [AGENTS](../AGENTS.md)، ثم docs:context لـ#175 وstatus:summary لـRAD-062؛ استمر في checkout نفسه. [الحالة](project-status.md) مصدر المهام الوحيد.
+اقرأ [AGENTS](../AGENTS.md)، ثم docs:context لـ#175 وstatus:summary لـRAD-062؛ checkout نفسه. [الحالة](project-status.md) مصدر المهام الوحيد.
 
 ## ملخص الحالة
 
-- **الاتجاه الحالي:** RAD-062 in_progress/reviewer وP10 Draft #175. حكم [P9b](RAD-062_P09B_REPORT_2026-10-30.md) مثبت على المستعادة: diagnostic كامل وB exactly relations false، وكل الأنواع الأصلية وبلا null/تكرار. [التقرير الحالي](RAD-062_P10_REPORT_2026-10-30.md) يحفظ القياس قبل الترميز، ثم تشخيص CI الجديد: M01 توقف عند CREATE FUNCTION/42501؛ لا نجاح البروفة الكاملة.
-- **ينتظر المالك:** قرار محدد في التقرير لإقرار postgres مالكًا مقصودًا لهدف بروفة latest أيضًا والسماح بتصحيح ملكية القاعدة المؤقتة محليًا فقط؛ قياس CI أثبت اختلاف مالك المصدر/الهدف وفقد CREATE بعد restore بسبب وراثة ملكية schema من قاعدة البيانات. لم يُنفذ ALTER DATABASE أو GRANT أو تعديل دور/امتياز. المصدر الاصطناعي يملك الامتياز بالفعل، فليست فجوة fixture؛ لا نجزم بعجز live. الحظر مصدره بند4 من أمر المالك الحالي.
-- **ينتظر مراجِعًا:** main بلا flag/env لتفعيل التشخيص؛ callback الكامل للاختبار الاصطناعي في CI وحده. apply تضيف label وSQLSTATE فقط دون تغيير رسالتها/سلوكها. فحص غياب container/volume مرّ بعد الفشل، لكن الشاهدين المقصودين وبقية البروفة لم يبلغا. لا إضافات fixture من افتراض إنتاجي.
-- **مرجع Git:** docs:context لحالة الفرع وPR؛ commits عادية بلا rebase/force-push؛ #175 Draft فقط. متابعة CI الحالية مأذونة صراحة؛ لا ready/merge/auto-merge. SQL وpackets الهاتف وsupabase/manual وaccepted behaviour/tests لـRAD-086 ثابتة؛ marker أعيد حسابها وثبتت. لا live SQL/Variables أو نشر إضافي أو preview أو goldens أو بيانات مشاركين.
-- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED. B الحية غير المستعادة مطلوبة ready بالكامل بقراءة المالك فقط؛ الوكيل لا يقرأ live. لا RAD062_RESTORE_VERIFIED=yes أو حجز نافذة قبل نجاح أمر المالك كاملًا. الهاتف والحقوق/الخصوصية/O4 وACK والبديل و4ب/5ب ونافذة≤60دقيقة باقية؛ RAD-086 done بإفادة المالك السابقة وRAD-059 review/owner بلا تغيير.
+- **الاتجاه الحالي:** RAD-062 in_progress/reviewer وP10 Draft #175. [المالك أذن](DECISIONS.md#rad062-restore-owner-parity-2026-11-01) بملكية postgres لقاعدة الاستعادة المؤقتة فقط قبل pre-M01 checks، مع ثبات الصفات/العضويات والتحقق غير superuser. [تقرير P10](RAD-062_P10_REPORT_2026-10-30.md) يحفظ تنفيذ الاستثناء وقياس CI؛ لا تستنتج النجاح قبل الدليل.
+- **ينتظر المالك:** أمر read-only في [P9 §1](RAD-062_P09_LAPTOP_RUNBOOK.md) يطبع yes/no فقط عن مالك قاعدة live؛ لا تصح نتيجة البروفة إلا بعد yes، وإلا STOP. الوكيل لا ينفذه. بروفة latest الحقيقية والهاتف والنافذة ≤60دقيقة تبقى حاجبة، ولا restore verified أو حجز من synthetic وحدها.
+- **ينتظر مراجِعًا:** إعادة قياس frozen B بعد الملكية يجب أن تكون relations وحدها؛ diagnostic كامل وكل الأنواع الأصلية وبلا null/تكرار وفق [P9b](RAD-062_P09B_REPORT_2026-10-30.md). ثم كل migrations/manifest/transition/counts والشاهدين المقصودين. التشخيص الكامل للاختبار الاصطناعي في CI فقط؛ main بلا flag/env له. لا إضافات fixture مفترضة.
+- **مرجع Git:** docs:context لحالة الفرع وPR؛ commits عادية بلا rebase/force-push/skip-ci؛ #175 Draft فقط. متابعة push/انتظار CI/قراءة السجل مأذونة صراحة إلى check خضراء أو STOP يحتاج قرارًا آخر. shared restore/tests وSQL وpackets وmanual ثابتة؛ لا ready/merge/auto-merge أو SQL حي/Variables/نشر إضافي/preview/goldens/بيانات مشاركين.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED. لا GRANT أو role/attribute/config/membership changes؛ الاستثناء ملكية قاعدة الهدف المحلي وحدها. B الحية غير المستعادة مطلوبة ready بالكامل بقراءة المالك فقط؛ نجاح B المستعادة لا يعفيها. الحقوق/الخصوصية/O4 وACK والبديل و4ب/5ب باقية؛ RAD-086 done وRAD-059 review/owner بلا تغيير.
 
 ## المتابعة
 
-انتظر قرار المالك المحدد في التقرير؛ لا ترفع امتيازًا أو تغيّر ownership أو SQL/expectation/guard/timeout لإخفاء STOP. بعد الإذن استأنف الاختبارات الاصطناعية ودورات push/انتظار CI/قراءة السجل حتى check خضراء أو STOP يحتاج قرارًا آخر. مخرجات CLI للمالك counts/yes-no/STOP ومراحل وSQLSTATE/errno فقط؛ full driver diagnostics للاختبار الاصطناعي وحده، بلا opt-in من main. لا pre-initializer أو replay على نسخة الإنتاج.
+استمر ذاتيًا في CI ثم اقرأ logs وأصلح البروفة/fixture المأذونة فقط، بلا تقارير بعد كل push. أي عجز ينطبق على live أو يحتاج migration/check/expectation/timeout/guard أو دور/امتياز خارج استثناء الملكية = STOP وقرار المالك. إذا اختلفت kinds عن relations بعد الملكية فلا تعتمد الفرق. المخرجات للمالك counts/yes-no/STOP ومراحل وSQLSTATE/errno فقط؛ credential لا تدخل التشخيص الخام. لا pre-initializer أو replay على نسخة الإنتاج.
 
-بروفة [دليل P9](RAD-062_P09_LAPTOP_RUNBOOK.md) تستدعي restoreTest نفسها، مع الصورة/locale/prepareRolesSql وrolconfig والمرورين والفحوص وfinally. socket SCRAM المؤقت لا يغيّر الكتالوج/الامتيازات؛ لا تعدّ auth سبب STOP الجديد. عائق مساحة الصورة المحلي موثق؛ لا صورة بديلة أو driver change أو skip، وCI هي الدليل الفعلي. التقرير يميز الاختبارات المحلية من CI وما لم يُبلَغ.
+تستدعي البروفة restoreTest نفسها بالصورة/locale/prepareRolesSql وrolconfig والمرورين والفحوص وfinally. لا تبديل للصورة أو driver أو skip عند عائق المساحة المحلي؛ CI الدليل الفعلي. التقرير يميز QA المحلية وCI وما لم يُبلَغ، ويحفظ الأصل التاريخي.
