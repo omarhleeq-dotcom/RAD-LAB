@@ -142,9 +142,12 @@ test('explicit latest applies the entire promoted required set', {timeout:30000}
   } finally { await db.close(); }
 });
 
-for (const locale of ['C','en_US.UTF-8','icu-en-US']) {
-test(`PostgreSQL 17.11 promoted full-apply and every required check: ${locale}`, {timeout:90000}, async () => {
-    const db = await openLocalDatabase('postgres', { through:'latest', locale, productionVersion:true });
+for (const { productionVersion, locale } of [
+  ...['C','en_US.UTF-8','icu-en-US'].map(locale=>({productionVersion:true,locale})),
+  ...['C','en_US.UTF-8'].map(locale=>({productionVersion:false,locale})),
+]) {
+test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and every required check: ${locale}`, {timeout:90000}, async () => {
+    const db = await openLocalDatabase('postgres', { through:'latest', locale, productionVersion });
     let client, sqlstate='none (boolean assertion)';
     try {
       // Same synthetic Auth/role surface as the restore rehearsal; never a provider schema.
@@ -168,6 +171,30 @@ test(`PostgreSQL 17.11 promoted full-apply and every required check: ${locale}`,
         await client.query('begin');
         await client.query('grant execute on function assess.freeze_v2() to authenticated');
         await assert.rejects(checks(client, [file]), { message: 'required_check_failed:' + file });
+      }
+      const ready='supabase/checks/rad062-ready.sql';
+      const readyRows=async()=>(await client.query(readFileSync(ready,'utf8'))).rows;
+      // Owner D3: excluding pg_constraint NOT NULL entries must not hide a
+      // nullable column: attnotnull remains part of the relation fingerprint.
+      await client.query('begin');
+      await client.query('alter table assess.account_stops alter column disabled_at drop not null');
+      let rows=await readyRows();
+      assert.equal(rows.find(r=>r.check_name==='relations').ok,false);
+      assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,true);
+      await assert.rejects(checks(client,[ready]),{message:'required_check_failed:'+ready});
+      assert.deepEqual(await checks(client,manifest().checks),{checks_passed:manifest().checks.length});
+      if(!productionVersion){
+        // Owner 3b: a scratch column has no protected expected value. The new
+        // row must reject an unvalidated NOT NULL independently of its fingerprint.
+        await client.query('begin');
+        await client.query('alter table assess.scope_lock add column rad062_d3_scratch integer');
+        rows=await readyRows();
+        assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,true);
+        await client.query('alter table assess.scope_lock add constraint rad062_d3_scratch_not_null not null rad062_d3_scratch not valid');
+        rows=await readyRows();
+        assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,false);
+        await assert.rejects(checks(client,[ready]),{message:'required_check_failed:'+ready});
+        assert.deepEqual(await checks(client,manifest().checks),{checks_passed:manifest().checks.length});
       }
     } catch(e) { throw new Error(`${locale}:${e.message}:SQLSTATE=${sqlstate}`,{cause:e}); }
     finally { if (client) await client.end(); await db.close(); }

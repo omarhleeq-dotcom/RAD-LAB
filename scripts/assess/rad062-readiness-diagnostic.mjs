@@ -1,4 +1,4 @@
-// Owner D2: synthetic-only, names-only evidence. Does not fix or waive any check.
+// Owners D2/D3: synthetic-only catalogue evidence; never waives a failed check.
 // Reuses both existing helper paths and their exact fixture; never accepts a connection selector.
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
@@ -14,6 +14,7 @@ const catalogueCTE = readySQL.slice(readySQL.indexOf('with functions as ('), rea
 const catalogueSQL = catalogueCTE + ` select jsonb_build_object(
  'functions',(select jsonb_agg(to_jsonb(f) order by signature collate "C") from functions f),
  'relations',(select jsonb_agg(to_jsonb(r) order by nspname,relname) from relations r)) catalogue`;
+const fingerprintSQL = catalogueCTE + ` select md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)) relations`;
 const scope = "(n.nspname='assess' or (n.nspname='public' and c.relname='profiles'))";
 const constraintsSQL = `select n.nspname||'.'||c.relname relation,k.conname,k.contype
  from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace
@@ -61,9 +62,10 @@ async function runCase(productionVersion, locale) {
       finally { await client.query('rollback'); }
     }
     const catalogue = (await client.query(catalogueSQL)).rows[0].catalogue;
+    const fingerprints = (await client.query(fingerprintSQL)).rows[0];
     const constraints = (await client.query(constraintsSQL)).rows;
     const fixture = (await client.query(fixtureSQL)).rows[0].fixture;
-    return { label: `${productionVersion ? '17.11' : '18.4'}/${locale}`, files, catalogue, constraints, fixture };
+    return { label: `${productionVersion ? '17.11' : '18.4'}/${locale}`, files, catalogue, fingerprints, constraints, fixture };
   } finally { if (client) await client.end(); await db.close(); }
 }
 
@@ -79,8 +81,10 @@ function compare(left, right) {
       if (attributes.length) differences.push({ kind, name, attributes });
     }
   }
-  // Diagnostic comparison only: prove whether PG18 NOT NULL catalogue entries
-  // explain the entire relation fingerprint difference; never alter SQL/expected digests.
+  if (differences.length) throw Object.assign(new Error('catalogue differs'), {
+    differingFields: differences.flatMap(d => d.attributes.map(a => `${d.kind}.${d.name}.${a}`)) });
+  // D3: filtered catalogue shapes must match exactly; raw NOT NULL entries still
+  // differ by major version, independently of the attnotnull proof in columns.
   const notNull = new Set(right.constraints.filter(c => c.contype === 'n').map(c => `${c.relation}.${c.conname}`));
   const withoutNotNull = right.catalogue.relations.map(r => ({ ...r,
     constraints: r.constraints?.filter(c => !notNull.has(`${r.nspname}.${r.relname}.${c[0]}`)) ?? null }));
@@ -91,8 +95,8 @@ function compare(left, right) {
   assert.deepEqual(left.constraints, right.constraints.filter(c => c.contype !== 'n'));
   return { cases: [left.label, right.label], differences,
     evidence: ['same_fixture_roles_schemas_auth_columns_extensions', 'same_function_catalogue',
-      'same_relation_attributes_except_constraints', 'same_non_not_null_constraints',
-      'pg18_not_null_constraint_entries_explain_entire_relation_difference'],
+      'same_relation_catalogue_after_reviewed_not_null_filter', 'same_non_not_null_constraints',
+      'pg18_not_null_entries_checked_separately_by_not_null_constraints_plain'],
     pg18_not_null_constraint_names: [...notNull].sort() };
 }
 
@@ -105,9 +109,12 @@ export async function diagnose() {
     assert.deepEqual(cases[a].catalogue, cases[b].catalogue);
     assert.deepEqual(cases[a].fixture, cases[b].fixture);
   }
-  return { cases: cases.map(({ label, files }) => ({ label, files })), comparisons: [compare(cases[0], cases[3]), compare(cases[1], cases[4])] };
+  const comparisons = [compare(cases[0], cases[3]), compare(cases[1], cases[4])];
+  if (cases.some(c => c.fingerprints.relations !== cases[0].fingerprints.relations))
+    throw Object.assign(new Error('fingerprint differs'), { differingFields: ['relations'] });
+  return { cases: cases.map(({ label, files, fingerprints }) => ({ label, files, fingerprints })), comparisons };
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   if (process.argv.length !== 2) throw Error('no selectors accepted');
-  diagnose().then(r => console.log(JSON.stringify(r, null, 2))).catch(e => { console.error(`diagnostic_failed:${e.code ?? e.name}`); process.exitCode = 1; });
+  diagnose().then(r => console.log(JSON.stringify(r, null, 2))).catch(e => { console.error(JSON.stringify({ diagnostic_failed: e.code ?? e.name, differing_fields: e.differingFields ?? [] })); process.exitCode = 1; });
 }

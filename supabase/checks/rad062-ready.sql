@@ -20,7 +20,7 @@ with functions as (
    from pg_attribute a left join pg_attrdef d on d.adrelid=a.attrelid and d.adnum=a.attnum
    where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped) columns,
   (select jsonb_agg(jsonb_build_array(k.conname,replace(pg_get_constraintdef(k.oid),E'\r','')) order by k.conname)
-   from pg_constraint k where k.conrelid=c.oid) constraints,
+   from pg_constraint k where k.conrelid=c.oid and k.contype<>'n') constraints,
   (select jsonb_agg(jsonb_build_array(replace(pg_get_triggerdef(t.oid),E'\r',''),t.tgenabled) order by t.tgname)
    from pg_trigger t where t.tgrelid=c.oid and not t.tgisinternal) triggers,
   (select jsonb_agg(jsonb_build_array(pg_get_indexdef(i.indexrelid),i.indisvalid,i.indisready) order by i.indexrelid::regclass::text collate "C")
@@ -33,10 +33,14 @@ with functions as (
  where (n.nspname='assess' or (n.nspname='public' and c.relname='profiles')) and c.relkind in ('r','p')
 ), fingerprints as (
  select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'7db617b89096c40877cac3fc4f60db03' expected
- union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),'3826484082a441389c82d4631c99af87'
+ union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),'7b07bc6f0dcf72d6175518f97bb0f044'
 )
 select check_name,actual=expected ok from fingerprints
 union all select 'identity_inventory',(select inventory from assess.erasure_fk_contract where singleton)=assess.d3_fk_inventory_v1()
+union all select 'not_null_constraints_plain',not exists(
+ select 1 from pg_constraint k join pg_class c on c.oid=k.conrelid join pg_namespace n on n.oid=c.relnamespace
+ where (n.nspname='assess' or (n.nspname='public' and c.relname='profiles')) and c.relkind in ('r','p')
+ and k.contype='n' and (not k.convalidated or k.connoinherit))
 union all select 'closed_gate',(select count(*)=1 and bool_and(not enabled) from assess.launch_gate)
 union all select 'worker_nologin',exists(select 1 from pg_roles where rolname='assess_worker' and not rolcanlogin)
 order by check_name;

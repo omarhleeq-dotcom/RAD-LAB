@@ -1137,3 +1137,16 @@ RAD-086 منجزة كتحقق خارجي بتاريخ إفادة المالك، 
 **D2 — تشخيص دون إصلاح:** تُشغّل ملفات manifest checks كلها على PostgreSQL17.11 المثبت (C وen_US.UTF-8 وICU en-US)، وتقارن بمسار18.4 القائم (C وen_US.UTF-8). التقرير يذكر أسماء صفوف/أعمدة false/null فقط، ويفسر الكتالوج/الامتياز/السمة المعنية بدليل يميز اختلاف إصدار، أو fixture ناقصة (تسرد ولا تضاف)، أو عيب حقيقي. نجاح جمع التشخيص لا يساوي نجاح الجاهزية. SQL والترحيلات وchecks والتصنيف والحراس والمهلات وبقية التوقعات ثابتة؛ marker تبقى القيمة السابقة بعد إعادة الحساب.
 
 الفرع نفسه وmerge commits دون rebase/force-push؛ #175 تبقى Draft وRAD-062 in_progress/reviewer. لا live SQL أو Variables أو skip ci أو manual deploy أو preview أو participant data. [تقرير P10](RAD-062_P10_REPORT_2026-10-30.md) يحفظ النتائج والدليل السابق.
+
+<a id="rad062-p10-not-null-owner-2026-11-01"></a>
+### RAD-062 P10 Part2 — D3 و3b: جاهزية NOT NULL عبر PostgreSQL17/18، 2026-11-01
+
+**السلطة:** قرار المالك D3 وإضافته3b على Draft #175؛ يستكملان [D1/D2](#rad062-p10-icu-d3-owner-2026-11-01) و[قرار RAD-086 ICU](#rad086-icu-owner-2026-10-31). الإنتاج PostgreSQL17.11؛ التشخيص السابق مثبت في [تقرير P10](RAD-062_P10_REPORT_2026-10-30.md).
+
+**D3 — الإصلاح المحدد:** في `rad062-ready.sql` فقط تستبعد قائمة `relations.constraints` صفوف `pg_constraint.contype='n'`، مثل `rad062-p1-b-ready.sql` القائمة. PostgreSQL18 يسجل NOT NULL كقيود كتالوج مستقلة و17 لا يسجلها؛ إثبات إلزام الأعمدة باقٍ كاملًا في `pg_attribute.attnotnull` داخل بصمة العلاقات نفسها، فلا يفقد دليل nullability. تعاد مشتقة بصمة العلاقات من الحالة المرقاة المراجعة ويجب أن تتطابق على17.11 (C/en_US.UTF-8/ICU en-US) و18.4 القائمة (C/en_US.UTF-8). أي اختلاف يوقف ويسرد أسماء الحقول فقط؛ لا تحديث لتوقع لإخفائه.
+
+**3b — سد فجوة كتالوج18:** يضاف صف `not_null_constraints_plain` في الملف نفسه: لا قيد NOT NULL على العلاقات المفحوصة له `convalidated=false` أو `connoinherit=true`. يكون صحيحًا تلقائيًا على17.11 لغياب هذه الصفوف. شاهد18.4 يضيف NOT VALID NOT NULL على عمود assess اصطناعي مؤقت، فيجب أن يفشل الصف. استبعاد صفوف NOT NULL من البصمة لا يستبعد هاتين السمتين من الإثبات.
+
+كل حالات الإصدار/locale الخمس يجب أن تنجح في كل manifest checks وتبقى شواهد العبث القديمة رافضة. شاهد إضافي يسقط NOT NULL من عمود assess اصطناعي على17.11 و18.4، فيجب أن تفشل `relations` لإثبات استمرار حماية attnotnull. التعريفات والتصنيفات والحراس والمهلات وبقية التوقعات والترحيلات ثابتة؛ لا fixture جديدة سوى العبث داخل معاملات الشواهد المرتجعة. marker تتغير لأن required check تغيرت؛ تحسب وتذكر القديمة والجديدة في التقرير وPR فقط. إن احتوت packet هاتف نص هذا الفحص أو بصمته STOP دون تعديل packet. كلا packetين وsupabase/manual ثابتة بايتيًا.
+
+الفرع القائم وmerge commits فقط، دون rebase/force-push؛ #175 Draft وRAD-062 in_progress/reviewer. لا live SQL أو Variables أو skip ci أو manual deploy أو preview أو participant data أو golden/characterisation regeneration. لا إذن تشغيل أو merge من الوكيل.
