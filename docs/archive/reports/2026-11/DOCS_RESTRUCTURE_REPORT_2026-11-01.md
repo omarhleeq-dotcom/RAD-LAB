@@ -1,6 +1,6 @@
 # RAD-089 — تنظيم الوثائق ومسار العمل والجرد، 2026-11-01
 
-السلطة: [قرارات المالك D1–D4](../../../DECISIONS.md#workflow-owner-2026-11-01). [الجرد الكامل](DOCS_INVENTORY_2026-11-01.md) و[سكربت الإثبات](verify_restructure.py). هذه الدفعة Draft فقط؛ لا ready أو merge أو auto-merge أو نشر يدوي أو preview أو subscribe/poll. إفادة الهاتف والنشر الخاصة بـRAD-088 من المالك؛ لا قراءة live من الوكيل.
+السلطة: [قرارات المالك D1–D4](../../../DECISIONS.md#workflow-owner-2026-11-01). [الجرد الكامل](DOCS_INVENTORY_2026-11-01.md) و[سكربت الإثبات](../../../../scripts/docs/verify_restructure.py). هذه الدفعة Draft فقط؛ لا ready أو merge أو auto-merge أو نشر يدوي أو preview أو subscribe/poll. إفادة الهاتف والنشر الخاصة بـRAD-088 من المالك؛ لا قراءة live من الوكيل.
 
 ## 1. الانحرافات والميزانية
 

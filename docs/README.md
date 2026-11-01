@@ -28,11 +28,18 @@
 - المراجع الطبية: [الصدر PA](RAD-LAB_Medical_Reference_Chest_PA.md)، [تقنيته](RAD-LAB_Medical_Reference_Chest_PA_Technique.md)، [جودته](RAD-LAB_Medical_Reference_Chest_PA_Image_Quality.md)، [AP](RAD-LAB_Medical_Reference_Chest_AP.md)، [Lateral](RAD-LAB_Medical_Reference_Chest_Lateral.md).
 - الأطراف: [الرسغ](RAD-LAB_Medical_Reference_Wrist.md)، [اليد](RAD-LAB_Medical_Reference_Hand.md)، [الكوع](RAD-LAB_Medical_Reference_Elbow.md)، [الركبة/القدم](RAD-LAB_Medical_Reference_Knee_Foot.md)، [الكاحل](RAD-LAB_Medical_Reference_Ankle.md).
 - [الحوض](RAD-LAB_Medical_Reference_Pelvis_AP.md)، [Grashey](RAD-LAB_Medical_Reference_Shoulder_Grashey.md)، [Shoulder Y](RAD-LAB_Medical_Reference_Shoulder_Y.md). وجود المرجع لا يثبت اعتمادًا طبيًا أو إذن تنفيذ.
-- [خارطة الطريق الحالية](ROADMAP_SESSIONS.md)، [خطة قابلية التوسع](RAD_047B_IMPLEMENTATION_PLAN.md)، [المواصفات الأصلية](RAD-LAB_Project_Specification.md) للرؤية مع تعديلات المالك اللاحقة.
-- [تقرير تنظيم القراءة والفحص](DOCS_WORKFLOW_REPORT.md)، [تقرير الأرشفة الأول داخل #82](DOCS_ARCHIVE_2_REPORT.md)، [الأرشيف](archive/README.md). لا تُقرأ التقارير الثلاثة لبدء كل مهمة.
+- [الاتجاه الحالي](#current-direction)، [خطة قابلية التوسع](RAD_047B_IMPLEMENTATION_PLAN.md)، [المواصفات الأصلية](RAD-LAB_Project_Specification.md) للرؤية مع تعديلات المالك اللاحقة.
+- [تقرير تنظيم القراءة والفحص](archive/reports/2026-10/DOCS_WORKFLOW_REPORT.md)، [تقرير الأرشفة الأول داخل #82](archive/reports/2026-10/DOCS_ARCHIVE_2_REPORT.md)، [الأرشيف](archive/README.md). لا تُقرأ التقارير الثلاثة لبدء كل مهمة.
 
 ## صيانة الوثائق
 
 لكل معلومة موضع واحد: workflow في AGENTS، المهام في الحالة، الحكم الحالي في DECISIONS، التفاصيل المتخصصة في دليلها، والدليل التاريخي في الأرشيف. حدّث العبارة الحالية بدل إضافة «ملخص أحدث» فوقها؛ اربط القواعد ولا تنسخها. سجل الجلسة يحوي الأدلة/التحقق، وHANDOFF نقطة الاستئناف فقط. فحص [docs:check](DOCS_CHECKS.md) مشترك محليًا وفي CI، والمراجعة البشرية تحسم المعنى والدليل.
 
 `docs/archive/reports/YYYY-MM/` يحفظ التقارير المؤرخة وروابط أدلتها؛ [جرد المحتوى](archive/reports/2026-11/DOCS_INVENTORY_2026-11-01.md).
+
+<a id="current-direction"></a>
+## الاتجاه الحالي
+
+Practice/platform/pilot ومكتبة التصنيفات منفذة؛ القبول الخارجي وحدوده في الحالة. تبقى الفحوص والصور الجديدة وShoulder Y وforearm مؤجلة وفق [التجميد](DECISIONS.md#exam-freeze-current).
+Assess يتبع [قرارات المالك](DECISIONS.md#assess-owner-2026-10-19) و[خطة المراحل](ASSESS_IMPLEMENTATION_PLAN.md)، والسجل المختصر داخل Assess يحل محل شرط صفحة My Attempts المنفصلة. نتيجة يوم القاعدة ومتابعاته الحالية في [قرارات ما بعد اليوم](DECISIONS.md#db-followups-owner-2026-11-01)؛ الاستئناف يقرأ الحالة ولا يعيد مرحلة منفذة.
+يبقى ترتيب X-ray v1 قبل CT/MRI/US v2 وفق [S12-12](DECISIONS.md#xray-roadmap-current)، ضمن التجميد والنطاق المأذون. [خارطة الجلسات التاريخية](archive/planning/ROADMAP-until-2026-10-16.md) أدلة واتجاهات قديمة؛ [ADR](adr/README.md) يحفظ مبررات المعمارية.

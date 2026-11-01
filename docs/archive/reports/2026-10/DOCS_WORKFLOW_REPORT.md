@@ -10,37 +10,37 @@
 
 | مسار المتابعة المسموح | غرضه |
 |---|---|
-| [.github/workflows/ci.yml](../.github/workflows/ci.yml) | أوامر مشتركة وربط CI؛ لا تغيير اعتماد/سلوك منتج |
-| [AGENTS.md](../AGENTS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [CLAUDE.md](../CLAUDE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [README.md](../README.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/DECISIONS.md](DECISIONS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [.github/workflows/ci.yml](../../../../.github/workflows/ci.yml) | أوامر مشتركة وربط CI؛ لا تغيير اعتماد/سلوك منتج |
+| [AGENTS.md](../../../../AGENTS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [CLAUDE.md](../../../../CLAUDE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [README.md](../../../../README.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/DECISIONS.md](../../../DECISIONS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
 | [docs/DOCS_ARCHIVE_2_REPORT.md](DOCS_ARCHIVE_2_REPORT.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/DOCS_CHECKS.md](DOCS_CHECKS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/DOCS_CHECKS.md](../../../DOCS_CHECKS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
 | [docs/DOCS_WORKFLOW_REPORT.md](DOCS_WORKFLOW_REPORT.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/ENGINE_GUIDE.md](ENGINE_GUIDE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/HANDOFF.md](HANDOFF.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/PILOT_PLATFORM_PLAN.md](PILOT_PLATFORM_PLAN.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/PLATFORM_ARCHITECTURE.md](PLATFORM_ARCHITECTURE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/RAD-LAB_Project_Specification.md](RAD-LAB_Project_Specification.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/README.md](README.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/ROADMAP_SESSIONS.md](ROADMAP_SESSIONS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/adr/README.md](adr/README.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/archive/README.md](archive/README.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
-| [docs/archive/decisions/DECISIONS-until-2026-10-16.md](archive/decisions/DECISIONS-until-2026-10-16.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
-| [docs/archive/planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md](archive/planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
-| [docs/archive/planning/ROADMAP-until-2026-10-16.md](archive/planning/ROADMAP-until-2026-10-16.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
-| [docs/exam-recipe.md](exam-recipe.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/project-status.md](project-status.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/status-format.md](status-format.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [docs/templates/EXAM_REFERENCE_TEMPLATE.md](templates/EXAM_REFERENCE_TEMPLATE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
-| [package.json](../package.json) | أوامر مشتركة وربط CI؛ لا تغيير اعتماد/سلوك منتج |
-| [scripts/docs/check-docs.mjs](../scripts/docs/check-docs.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
-| [scripts/docs/check-docs.test.mjs](../scripts/docs/check-docs.test.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
-| [scripts/status/summary.mjs](../scripts/status/summary.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
-| [scripts/status/summary.test.mjs](../scripts/status/summary.test.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
+| [docs/ENGINE_GUIDE.md](../../../ENGINE_GUIDE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/HANDOFF.md](../../../HANDOFF.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/PILOT_PLATFORM_PLAN.md](../../../PILOT_PLATFORM_PLAN.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/PLATFORM_ARCHITECTURE.md](../../../PLATFORM_ARCHITECTURE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/RAD-LAB_Project_Specification.md](../../../RAD-LAB_Project_Specification.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/README.md](../../../README.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/ROADMAP_SESSIONS.md](../../../ROADMAP_SESSIONS.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/adr/README.md](../../../adr/README.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/archive/README.md](../../README.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
+| [docs/archive/decisions/DECISIONS-until-2026-10-16.md](../../decisions/DECISIONS-until-2026-10-16.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
+| [docs/archive/planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md](../../planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
+| [docs/archive/planning/ROADMAP-until-2026-10-16.md](../../planning/ROADMAP-until-2026-10-16.md) | حفظ النص السابق كاملًا مع تصحيح روابط موقعه أو فهرسته |
+| [docs/exam-recipe.md](../../../exam-recipe.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/project-status.md](../../../project-status.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/status-format.md](../../../status-format.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [docs/templates/EXAM_REFERENCE_TEMPLATE.md](../../../templates/EXAM_REFERENCE_TEMPLATE.md) | تعليمات/فهرس/حالة/تقرير أو إحالة حالية |
+| [package.json](../../../../package.json) | أوامر مشتركة وربط CI؛ لا تغيير اعتماد/سلوك منتج |
+| [scripts/docs/check-docs.mjs](../../../../scripts/docs/check-docs.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
+| [scripts/docs/check-docs.test.mjs](../../../../scripts/docs/check-docs.test.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
+| [scripts/status/summary.mjs](../../../../scripts/status/summary.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
+| [scripts/status/summary.test.mjs](../../../../scripts/status/summary.test.mjs) | أداة توثيق/عرض مشتق أو اختبارها الجديد فقط |
 
-إضافة تحريرية ضمن الميزانية: [MODALITY_SOURCES_CANDIDATES المؤرشف](archive/analysis/MODALITY_SOURCES_CANDIDATES.md)، مسافة نهاية سطر فقط.
+إضافة تحريرية ضمن الميزانية: [MODALITY_SOURCES_CANDIDATES المؤرشف](../../analysis/MODALITY_SOURCES_CANDIDATES.md)، مسافة نهاية سطر فقط.
 
 ## 2. المنجز والمؤجل
 
@@ -54,11 +54,11 @@
 
 | المشكلة السابقة | النتيجة / موضعها |
 |---|---|
-| قراءة CLAUDE وAGENTS ثم تقارير كثيرة | [AGENTS](../AGENTS.md) → [HANDOFF](HANDOFF.md) → ملخص المهمة → [مسارها فقط](README.md#read-by-task) |
+| قراءة CLAUDE وAGENTS ثم تقارير كثيرة | [AGENTS](../../../../AGENTS.md) → [HANDOFF](../../../HANDOFF.md) → ملخص المهمة → [مسارها فقط](../../../README.md#read-by-task) |
 | تكرار قواعد العمل في الأدلة والوصفة | AGENTS المصدر الوحيد؛ ENGINE_GUIDE للقيود المتخصصة؛ recipe للإجراء الخاص بالفحص |
-| سجل DECISIONS طويل ومختلط | [الملخص الحالي](DECISIONS.md) وأصل مرتبط لكل حكم/بند؛ [النص الكامل](archive/decisions/DECISIONS-until-2026-10-16.md) يحتفظ بالحفاظ السابق على403 صفوف/443 ظهور معرّف |
-| ROADMAP يقول «الأرشفة لاحقًا» بعد تنفيذها | استبدل بجدول اتجاه حالي؛ [الخريطة المؤرخة](archive/planning/ROADMAP-until-2026-10-16.md) تحفظ تفاصيل الجلسات |
-| المعمارية تخلط schema مستقبليًا بالكود | [حدود منفذة واضحة](PLATFORM_ARCHITECTURE.md)، و[التصميم السابق](archive/planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md) للأسباب/المقترحات |
+| سجل DECISIONS طويل ومختلط | [الملخص الحالي](../../../DECISIONS.md) وأصل مرتبط لكل حكم/بند؛ [النص الكامل](../../decisions/DECISIONS-until-2026-10-16.md) يحتفظ بالحفاظ السابق على403 صفوف/443 ظهور معرّف |
+| ROADMAP يقول «الأرشفة لاحقًا» بعد تنفيذها | استبدل بجدول اتجاه حالي؛ [الخريطة المؤرخة](../../planning/ROADMAP-until-2026-10-16.md) تحفظ تفاصيل الجلسات |
+| المعمارية تخلط schema مستقبليًا بالكود | [حدود منفذة واضحة](../../../PLATFORM_ARCHITECTURE.md)، و[التصميم السابق](../../planning/PLATFORM_ARCHITECTURE-until-2026-10-16.md) للأسباب/المقترحات |
 | قالب Needs محصور بـPA وحقول قديمة | مقارنة merged registries مع المرجع، وreuse/new/unknown، لا إعادة تعميم آليات الأطراف المنفذة |
 | O102 يقول «لم يدمج» | يذكر دمج #73، وبقاء result captions مؤجلة باختيار المالك؛ لا إعادة طلب دمج صفحة الاعتمادات |
 | O18 خليط نواقص قديمة وحديثة | credits منفذة، projection labels حسمت S13-7، وبقية نطاق AP لا يغلق استنتاجًا |
@@ -124,7 +124,7 @@ Deploy Pages237 نجح في build:pages ثم فشل رفع Cloudflare بخطأ `
 
 هذه قياسات قراءة الملفات النشطة، لا نسبة ثابتة لتكلفة كل مهمة أو تقليلًا مفترضًا لحجم المستودع. اختيار القسم/المهمة عبر الفهرس والملخص هو الذي يقلل القراءة المطلوبة.
 
-حدود الأداة موثقة في [DOCS_CHECKS](DOCS_CHECKS.md#حدود-الفحص-والمراجعة): تدعم أنماط Markdown المذكورة، لا محرك CommonMark كامل ولا روابط خارجية أو توليد ديناميكي؛ لا تثبت صحة الطب/الرخص أو النشر أو إنجاز المهمة. أعيدت اختبارات المنتج كاملة محليًا لتتبع فشل CI؛ لم يُعد typecheck/build/browser محليًا لعدم تغيير الكود. CI يشغّل فحوصه القائمة تلقائيًا، ونتائجها لا تُفترض.
+حدود الأداة موثقة في [DOCS_CHECKS](../../../DOCS_CHECKS.md#حدود-الفحص-والمراجعة): تدعم أنماط Markdown المذكورة، لا محرك CommonMark كامل ولا روابط خارجية أو توليد ديناميكي؛ لا تثبت صحة الطب/الرخص أو النشر أو إنجاز المهمة. أعيدت اختبارات المنتج كاملة محليًا لتتبع فشل CI؛ لم يُعد typecheck/build/browser محليًا لعدم تغيير الكود. CI يشغّل فحوصه القائمة تلقائيًا، ونتائجها لا تُفترض.
 
 ## 7. المفتوح
 

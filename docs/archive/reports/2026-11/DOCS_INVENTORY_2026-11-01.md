@@ -50,11 +50,11 @@
 | [DECISIONS.md](../../../DECISIONS.md) | Current decisions and residual questions | 2026-11-01 | 191 + 27 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
 | [DEPLOYMENT.md](../../../DEPLOYMENT.md) | RAD-LAB — pilot preview deployment (Cloudflare Pages) | 2026-10-22 | 17 + 2 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
 | [DEPS_SECURITY_REPORT_2026-11-01.md](../../../DEPS_SECURITY_REPORT_2026-11-01.md) | تقرير ترقية next وإغلاق npm audit critical/high — RAD-088، 2026-11-01 | 2026-11-01 | 2 + 0 | KEEP — done completion_evidence: RAD-088 |
-| [DOCS_ARCHIVE_2_REPORT.md](../../../DOCS_ARCHIVE_2_REPORT.md) | DOCS-ARCHIVE-2 — الأرشفة والأدلة المختصرة | 2026-10-17 | 6 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
+| [DOCS_ARCHIVE_2_REPORT.md](../2026-10/DOCS_ARCHIVE_2_REPORT.md) | DOCS-ARCHIVE-2 — الأرشفة والأدلة المختصرة | 2026-10-17 | 6 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
 | [DOCS_CHECKS.md](../../../DOCS_CHECKS.md) | فحص الوثائق والحالة | 2026-10-24 | 11 + 0 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
-| [DOCS_CONSISTENCY_REPORT.md](../../../DOCS_CONSISTENCY_REPORT.md) | تقرير اتساق التسليم والحالة | 2026-10-17 | 0 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
-| [DOCS_MAINT_1_REPORT.md](../../../DOCS_MAINT_1_REPORT.md) | تقرير DOCS-MAINT-1 — صيانة موجّهة للدوكس (2026-10-17) | 2026-10-17 | 0 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
-| [DOCS_WORKFLOW_REPORT.md](../../../DOCS_WORKFLOW_REPORT.md) | DOCS-WORKFLOW — القراءة الموجّهة والفحص المشترك | 2026-10-17 | 4 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
+| [DOCS_CONSISTENCY_REPORT.md](../2026-10/DOCS_CONSISTENCY_REPORT.md) | تقرير اتساق التسليم والحالة | 2026-10-17 | 0 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
+| [DOCS_MAINT_1_REPORT.md](../2026-10/DOCS_MAINT_1_REPORT.md) | تقرير DOCS-MAINT-1 — صيانة موجّهة للدوكس (2026-10-17) | 2026-10-17 | 0 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
+| [DOCS_WORKFLOW_REPORT.md](../2026-10/DOCS_WORKFLOW_REPORT.md) | DOCS-WORKFLOW — القراءة الموجّهة والفحص المشترك | 2026-10-17 | 4 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
 | [ENGINE_GUIDE.md](../../../ENGINE_GUIDE.md) | Engine and content constraints | 2026-10-25 | 15 + 0 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
 | [FORTY_INCH_SID_CHANGES_2026-10-30.md](../../../FORTY_INCH_SID_CHANGES_2026-10-30.md) | استثناء SID40in المسمى — 2026-10-30 | 2026-10-30 | 3 + 0 | KEEP — byte-identical protected Markdown: docs/FORTY_INCH_SID_REPORT_2026-10-30.md |
 | [FORTY_INCH_SID_REPORT_2026-10-30.md](../../../FORTY_INCH_SID_REPORT_2026-10-30.md) | قاعدة40بوصة — Part B، 2026-10-30 | 2026-10-30 | 5 + 0 | KEEP — byte-identical protected Markdown: docs/RAD-081_100_SETTINGS_2026-10-25.md |
@@ -167,7 +167,7 @@
 | [session-3-technique.md](../../../session-3-technique.md) | Historical session — compatibility pointer | 2026-10-17 | 1 + 1 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
 | [session-5-qa.md](../../../session-5-qa.md) | Historical session — compatibility pointer | 2026-10-17 | 1 + 1 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
 | [session-7-demographics-impact.md](../../../session-7-demographics-impact.md) | Historical session — compatibility pointer | 2026-10-17 | 1 + 1 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
-| [status-archive.md](../../../status-archive.md) | أرشيف ملف الحالة (للقراءة فقط، لا يُحدَّث) | 2026-10-17 | 4 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
+| [status-archive.md](../../status-archive.md) | أرشيف ملف الحالة (للقراءة فقط، لا يُحدَّث) | 2026-10-17 | 4 + 0 | ARCHIVE — تقرير تاريخي غير مؤرخ الاسم؛ حفظ الدليل ونقله لاحقًا بعد موافقة المالك |
 | [status-format.md](../../../status-format.md) | تنسيق ملف الحالة وقواعد تحديثه | 2026-10-17 | 12 + 3 | KEEP — مرجع حي أو عقد أو دليل تشغيل/مراجعة قائم |
 
 ### مواضع التعارض والتقادم
