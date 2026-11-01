@@ -150,72 +150,31 @@ PY
 
 **STOP:** version incompatibility, permission error, incomplete dump, changed checksum, unclear managed-schema/extension coverage, cloud-synced location or any secret exposure. Partial files are unusable; preserve or remove locally under the owner's policy, then use a new directory for a fresh full backup. No retries that silently omit protected schemas, roles or data.
 
-## 3. Restore, apply M01–M08, verify on local PostgreSQL
+## 3. Owner-only RAD-086 Docker restore and full P10 rehearsal
 
-Install the same production major/patch as closely as available, with required extensions. Record actual version and every gap. Production compatibility rehearsal also targets PostgreSQL 17.11 per the plan; pinned CI PostgreSQL 18.4 alone does not prove that compatibility. An unavailable matching version/extension or an unexplained catalogue difference stops the day.
+The owner runs one command from the checkout, using the existing private RAD-086 configuration and its `daily`/latest completed backup. No local PostgreSQL server/client installation is needed. Docker must use the local Unix daemon socket `/var/run/docker.sock`; have the exact image below present (the RAD-086 runbook documents its pull). A missing image/tool is STOP, never a fallback.
 
-Use fresh local paths outside checkout. `initdb` bootstrap role is deliberately different from the roles in the production dump; verify it does not already occur in the production role inventory without printing that inventory. Never restore over an existing local database. Keep PostgreSQL logs on the encrypted volume; no remote listening or payload logging.
-
-**Command:**
+**Command (one invocation, fail-fast):**
 
 ```bash
-read -r -p 'New encrypted local PostgreSQL data directory: ' RAD062_LOCAL_DATA
-read -r -p 'New local Unix socket directory (simple absolute path): ' RAD062_LOCAL_SOCKET
-export RAD062_LOCAL_DATA RAD062_LOCAL_SOCKET
-mkdir -m 700 "$RAD062_LOCAL_SOCKET"
-initdb -D "$RAD062_LOCAL_DATA" -U rad062_restore_admin --auth-local=trust --encoding=UTF8 --no-locale
-pg_ctl -D "$RAD062_LOCAL_DATA" -l "$RAD062_LOCAL_DATA/local.log" -o "-c listen_addresses='' -k $RAD062_LOCAL_SOCKET -p 55432 -c log_statement=none -c log_min_error_statement=panic -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0" -w start
-PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=postgres node --input-type=module - <<'JS'
-import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { localeArgs } from './scripts/ops/laptop-backup-lib.mjs';
-const meta = JSON.parse(readFileSync(join(process.env.RAD062_BACKUP_DIR,'db-meta.json'),'utf8'));
-execFileSync('createdb', ['-T','template0','--encoding=UTF8',...localeArgs(meta),'rad062_rehearsal'], { stdio:'pipe' });
-JS
-verify_restore_locale() {
-  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node --input-type=module - <<'JS'
-import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { validateLocale } from './scripts/ops/laptop-backup-lib.mjs';
-const meta = validateLocale(JSON.parse(readFileSync(join(process.env.RAD062_BACKUP_DIR,'db-meta.json'),'utf8')));
-const sql = "select row_to_json(m) from (select datlocprovider,datlocale,datcollate,datctype from pg_database where datname=current_database()) m";
-const actual = JSON.parse(execFileSync('psql',['-X','-At','-v','ON_ERROR_STOP=1','-c',sql],{encoding:'utf8'}));
-assert.deepEqual(actual, meta, 'STOP collation');
-JS
-}
-verify_restore_locale
-localdb() { PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal node scripts/assess/rad062-db-day.mjs "$@"; }
-localdb restore
-localdb restore --execute
-verify_restore_locale
-localdb preflight --execute
+node scripts/assess/rad062-laptop-rehearsal.mjs
 ```
 
-**Expected:** target created from template0 with the recorded provider and both libc locale fields: ICU uses `--locale-provider=icu --icu-locale=<datlocale>`, libc uses `--locale-provider=libc`. Provider, datlocale (including null for libc), collate and ctype must all match before and after restore. The bootstrap cluster C locale does not determine the target DB locale. Zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The live environment is never changed by `localdb`. Verify local and production version numbers match as closely as available and document every difference; do not reuse a production socket forward. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extensions/roles may require a separately reviewed local reproduction; failure means STOP, not selective restore.
+Clear live PG selectors in this shell first. No arguments, live selector, connection URL or non-loopback `PGHOST` is accepted; even a local socket forward supplied through `PGHOST` is refused. The command never reads live. The RAD-086 configuration locates local backup files and the encrypted reconciliation log only; it does not select a provider connection.
 
-**STOP:** collation mismatch, missing ICU support or en_US.UTF-8 in the exact local version/image, role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
+The command reuses `laptop-restore-test.mjs` exports and the actual `restoreTest` implementation: `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`, checksum verification, `prepareRolesSql` including the exact supabase_admin rolconfig post-load check, the two-pass `restorePlan`, event metadata checks and snapshot counts. It uses a fresh throwaway volume and a private Unix socket, `--network none`, no published ports, and teardown in `finally` on success or STOP. It restores neither over an existing DB nor over a provider/socket forward. The default RAD-086 command, outputs and tests retain their accepted behaviour; an optional callback runs this rehearsal before teardown.
 
-**Command (eight separate calls, fail-fast):**
+**Expected:** target created from template0 with the recorded provider and both libc locale fields: ICU uses `--locale-provider=icu --icu-locale=<datlocale>`, libc uses `--locale-provider=libc`. Provider, datlocale (including null for libc), collate and ctype must all match before and after restore. The bootstrap cluster locale does not determine the target DB locale. Zero remote listeners, fresh local DB, checksum-verified roles/schema/data restored with original ownership/ACLs, two restored archives, version recorded. The server must match the backup's recorded version, exactly 17.11 for the RAD-086 production backup. Record any version gap; unavailable matching version/extension or unexplained catalogue difference stops the day. Never use `--no-owner`, `--no-acl`, ignore restore errors or normalize catalogues to make readiness pass. Managed extension/role reproduction uses the pinned reviewed RAD-086 path; failure means STOP, not selective restore.
 
-```bash
-# Before any additions, on the restored copy only:
-PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal \
-  psql -X -v ON_ERROR_STOP=1 -f scripts/assess/sql/rad062-b-diagnostic.sql
-localdb apply --migration M01 --execute
-localdb apply --migration M02 --execute
-localdb apply --migration M03 --execute
-localdb apply --migration M04 --execute
-localdb apply --migration M05 --execute
-localdb apply --migration M06 --execute
-localdb apply --migration M07 --execute
-localdb apply --migration M08 --execute
-# Frozen B is deliberately inspected separately during the bounded window below.
-```
+Before M01, the command separately runs the diagnostic and **frozen B**, in the default initialized phase: all 13 rows in each must be ready=true. The former restored-copy relations-only allowance is superseded by this owner instruction: any frozen B failure now stops this rehearsal. No pre-initializer override or initializer replay is allowed on the restored production copy.
 
-**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT; migration history insertion shares that transaction. `checks` still runs **every manifest required check, unchanged**, then `rad062-ready.sql`, and still fails on false/null/error. It is expected to fail at frozen B after M01–M08; do not call that full acceptance. Use the transition inspection below to measure the exact expected failure and verify the remaining checks independently. Intentional false `restore_verified`/`runtime_or_launch_verified` claims remain false and never attest operations.
+It then connects directly as `postgres`, verifying session_user=current_user=postgres and rolsuper=false, and invokes the existing `apply` helper separately for M01 through M08 in order. It never applies as supabase_admin or via SET ROLE from a superuser. If this identity cannot apply the unchanged package under supautils/privileges, **STOP and report**; no elevation or role/catalogue repair.
+
+**Expected:** cumulative committed migration counts 1 through 8. Each original file retains its own BEGIN, lock timeout 5s, statement timeout 30s and COMMIT; migration history insertion shares that transaction. After M08 every P10 manifest check runs separately, including `rad062-ready.sql` and `rad062-p1-b-ready.sql`, with every assertion true except the explicit false operational non-claims `restore_verified`/`runtime_or_launch_verified`. False/null/error is STOP. Frozen B is inspected separately as a transition witness and is never part of successful P10 acceptance. The command then performs both transition inspections and the §4 counts **before teardown**.
+
+Only numeric counts/yes-no fields or fixed STOP codes reach stdout/stderr; no names, data, hosts, passwords or raw driver/restore errors. Successful output includes pre_m01_diagnostic_ready=1, pre_m01_frozen_b_ready=1, postgres_non_superuser=1, migrations_committed=8, checks_passed equal to the manifest length, transition_inspections_passed=2, rehearsal_pass=1 and teardown_pass=1. Exit 0 is required. **`RAD062_RESTORE_VERIFIED=yes` may be exported only after this command passes**; a standalone RAD-086 restore proof or synthetic pass does not authorize that export.
+
+**STOP:** collation mismatch, missing ICU support or en_US.UTF-8 in the exact local version/image, role collision, restore error, mismatch, unknown local data, nonlocal socket or failed preconditions; unavailable matching 17.11/extensions; any failing pre-M01 assertion; wrong/elevated apply identity; failed migration, required check, transition, counts or teardown. Nothing in this step touches live. Do not run local role creation or migration history initialization against production.
 
 M06/M08 fail their own entire transaction if any reviewed v1 body anchor is absent. The final readiness check fingerprints bodies, attributes, ACLs, relations and FK inventory; successful COMMIT alone is insufficient. The synthetic command below explicitly witnesses all ten M06 guards and eight M08 patches, forces failure before each COMMIT and compares catalogue/data/ledger rollback in memory:
 
@@ -229,28 +188,25 @@ node scripts/assess/rad062-restore-rehearsal.mjs
 
 ### Transition inspection — local restore first, then identical live post-apply reads
 
-Before M01, run the non-required diagnostic above: all 13 rows must be ready=true (default initialized phase). Synthetic QA explicitly selects pre-initializer; never select that phase on production to conceal missing initialization. Frozen B may fail **relations only** on the restored pre-M01 copy due to ACL order; the original unrestored schema must still pass all rows. Any other failure stops.
+The single §3 command performs these inspections on the restored copy before teardown. Before M01, **both** the non-required diagnostic and frozen B must have all 13 rows ready=true in the default initialized phase. Synthetic QA initializes its own empty fixture; it does not weaken the owner's phase requirement. The unrestored current schema must also pass frozen B as specified in §2.
 
-After M08, inspect the unchanged B and the diagnostic separately on the local copy:
+After M08, unchanged frozen B and the diagnostic must each report false **exactly** for columns, constraints, effective_privileges, functions, indexes, relations, triggers; all other rows true. The diagnostic is a B-only baseline, not an M08 successor; these seven false rows are required transition evidence. Its ACL normalization must not normalize bodies, ignore additions or edit catalogues. SQL exit zero alone does not prove boolean readiness.
+
+Every path in `frontend-schema.json.checks` runs separately and must pass, including RAD-062 whole-package readiness. No filtering rows, suppressing errors or claiming frozen B passes after M08. Record counts/yes-no only. The frozen B transition witness is outside the P10 manifest. The earlier P9 synthetic baseline failure count of one belongs to its historical B manifest; the current P10 manifest must have zero failures.
+
+The owner repeats the independent transition reads on live after M08 using the already verified live PG selectors (no local PG overrides):
 
 ```bash
 for RAD062_CHECK in supabase/checks/rad085-p1-b-ready.sql scripts/assess/sql/rad062-b-diagnostic.sql; do
-  PGHOST="$RAD062_LOCAL_SOCKET" PGPORT=55432 PGUSER=rad062_restore_admin PGDATABASE=rad062_rehearsal \
-    psql -X -v ON_ERROR_STOP=1 -f "$RAD062_CHECK"
+  psql -X -v ON_ERROR_STOP=1 -f "$RAD062_CHECK"
 done
 ```
 
-Both must report false **exactly** for columns, constraints, effective_privileges, functions, indexes, relations, triggers; all other rows true. The diagnostic is a B-only baseline, **not** an M08 successor; false after additions is required. Its ACL normalization must not normalize bodies, ignore additions or edit catalogues. SQL exit zero alone does not prove boolean readiness.
-
-For **each other** path in `frontend-schema.json.checks`, and `supabase/checks/rad062-ready.sql`, run the same local `psql -X -v ON_ERROR_STOP=1 -f PATH` command separately; inspect every assertion as true, excluding only the explicitly disclaimed operational claims. No filtering rows, suppressing errors or claiming an overall `checks` pass. The source rehearsal verifies every required file and asserts only B fails. Record counts/yes-no only. Repeat these independent reads on live after M08 using the already verified direct PG selectors (omit the local PG overrides), with the same exact failure set. Any other result means STOP. P10 must replace/promote reviewed checks for the **whole installed catalogue**, run them all successfully, then compute/attest the new marker; do not reuse B or this diagnostic as acceptance.
+Repeat each P10 manifest check separately on live and inspect every assertion, excluding only the explicit operational non-claims, with the same exact transition failure set. Any other result means STOP. P10 must promote the reviewed checks for the whole installed catalogue and run them all successfully before computing/attesting the marker; never use frozen B or this diagnostic as acceptance. Live reads remain owner-only, never this rehearsal command.
 
 ## 4. Counts only on restored copy
 
-**Command:**
-
-```bash
-localdb counts --execute
-```
+**Command:** included in the single §3 invocation, after all checks/transition inspections and before teardown. Do not reconnect to a removed container or run counts through a live selector.
 
 **Expected:** only numeric fields: profiles failing the exact M01 name validator; distinct authors above three drafts, above ten revisions in any one draft, above 4 MiB and 8 MiB logical usage; database bytes and flags for decimal 300/350/400 MB; reserved peak bytes. No names, email, IDs, documents or answers are selected for output. Author usage uses the quota function including drafts/refs/revisions/review packages/provenance/candidates. Actual DB size after restore may differ from live due to bloat; reserve peak headroom, do not infer production capacity solely from restored size.
 

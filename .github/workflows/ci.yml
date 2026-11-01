@@ -29,6 +29,8 @@ jobs:
         run: docker pull supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d
       - name: Required synthetic Supabase vault restore proof (failure, never skip)
         run: node --test scripts/docs/laptop-icu.test.mjs
+      - name: Required owner rehearsal on synthetic RAD-086 backup (pass and STOP teardown; no skip)
+        run: node --test scripts/assess/rad062-laptop-rehearsal.test.mjs
       - name: Required P10 PostgreSQL 17.11 locale matrix image (no skip)
         run: docker pull postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
       - name: Prepare pinned isolated PostgreSQL (required, no skip)
