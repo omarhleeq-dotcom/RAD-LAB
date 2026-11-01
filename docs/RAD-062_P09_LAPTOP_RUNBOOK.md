@@ -97,9 +97,9 @@ export RAD062_SECRET_STATE=DISABLED RAD062_RAD086_VERIFIED=yes RAD062_V1_PACKET_
 live preflight --execute
 ```
 
-**Expected:** gate_rows=1, open_gates=0, required_job_a=1, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Owner decision job_b(a): assess_job_a is required; assess_job_b is optional. Every present job role and assess_worker must be NOLOGIN; worker_connections includes all three roles. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
+**Expected:** gate_rows=1, open_gates=0, required_job_a=1, login_roles=0, worker_connections=0, open_assignments=0, unsettled_sessions=0; numeric production `server_version_num` recorded privately. Owner decision job_b(a): assess_job_a is required; assess_job_b is optional. Every present job role and assess_worker must be NOLOGIN; worker_connections includes all three roles. The unchanged phone packets report missing_roles as information; absence of optional job_b does not require creating it. All assignments must already be closed through their authorized workflow, without SQL edits by this runbook.
 
-**STOP:** any nonzero prohibited count, missing role, open assignment, unknown/ENABLED secret, failed CLI/permissions/query, or active/grading/awaiting-manual session. Do not start workers, create roles or close assignments to bypass this stop.
+**STOP:** any nonzero prohibited count, missing required assess_job_a, open assignment, unknown/ENABLED secret, failed CLI/permissions/query, or active/grading/awaiting-manual session. Do not start workers, create roles or close assignments to bypass this stop.
 
 Before accepting the rehearsal, the owner checks live database ownership using the verified live selectors above. This command is read-only and prints **yes/no only**; the agent never runs it:
 
