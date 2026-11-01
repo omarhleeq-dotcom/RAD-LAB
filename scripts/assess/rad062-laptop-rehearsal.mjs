@@ -78,6 +78,7 @@ export async function rehearse(c, { env = process.env } = {}) {
     const restored = await restoreTest(c, { name: 'latest', run, spawn, beforeTeardown: async ({ database }) => {
       const db = new Client({ host: socket, port: 5432, user: 'postgres', database, password: '', ssl: false,
         options: '', application_name: 'rad062-rehearsal', connectionTimeoutMillis: 10000, query_timeout: 120000 });
+      db.on('error', () => {}); // Query/connect rejection carries STOP through finally; never emit raw idle errors.
       try { await db.connect(); result = await inspectRestored(db); } finally { await db.end(); }
     } });
     if (cleanupFailed) throw new Stop('teardown');
