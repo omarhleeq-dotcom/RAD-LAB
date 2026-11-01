@@ -17,7 +17,7 @@ Use Bash on the owner's laptop, an encrypted local volume excluded from cloud sy
 
 The owner's P10 continuation governs this order. Prepare/review Draft #175 before DB day; only the owner merges inside the booked ≤60-minute window after M01–M08 are applied and verified on live. No agent live SQL, Variable writes, ready/merge/auto-merge, gate opening, LOGIN or secret enablement. The historical P9 transition sections below retain the original B inspections. P10 requires `rad062-p1-b-ready.sql` and `rad062-ready.sql`: before M01 use frozen B; after all eight run **every P10 manifest check** and inspect every readiness boolean as true except explicit operational non-claims. Migration SHA pins in `guardedFeatures.rad062.migrationSha256` match the reviewed bytes (M02/M05 updated by the collation fix).
 
-1. Owner applies M01–M08 on live in order after all P9 prerequisites, and verifies ledger/hash/closed state and all promoted required checks.
+1. Owner applies M01–M08 on live in order after all P9 prerequisites, and verifies catalogue-probe prefix/hash/closed state and all promoted required checks.
 2. Owner sets the new marker Variable from the P10 report/PR body. The agent never sets it.
 3. Owner merges P10 in the same window.
 4. CI `check` and Deploy Pages must be green for that merged commit through normal automation.
