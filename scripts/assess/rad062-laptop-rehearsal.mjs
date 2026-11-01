@@ -18,7 +18,7 @@ export function localOnly(args, env) {
 const errnoClasses = new Set(Object.keys(constants.errno));
 const sqlstatePattern = /^(?:[0-9]{2}|0[A-Z]|[A-Z][0-9]|HV|XX)[0-9A-Z]{3}$/;
 const rehearsalStage = /^(M0[1-8]|check_[0-9]{2}|selectors|socket_auth|connect|inspect|apply_role|pre_diagnostic|pre_frozen_b|transition|counts|invalid_names|capacity|teardown)$/;
-const restoreStage = /^restore:(select|verify|meta|image|container|ready|version|extensions|roles|collation|restore|counts|log|locale)$/;
+const restoreStage = /^restore:(select|verify|meta|image|container|ready|version|extensions|roles|collation|restore|counts|rehearsal|log|locale)$/;
 export function stageStop(stage, error) {
   const stop = new Stop(rehearsalStage.test(stage) || restoreStage.test(stage) ? stage : 'internal');
   const state = error?.sqlstate ?? error?.code;
