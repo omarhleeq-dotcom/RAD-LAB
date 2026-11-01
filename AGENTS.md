@@ -7,7 +7,7 @@
 4. State one goal and exact file/shared-module budget before editing; revise scope before expanding. No opportunistic fixes. Current owner instructions and accepted decisions govern; HANDOFF cannot override them.
 Task prompts use [the shared template](docs/templates/TASK_PROMPT.md).
 ## Current boundaries
-- New exams/images and Shoulder Y are frozen; forearm deferred. Assess programming stays postponed until explicitly resumed. [Assess decisions](docs/DECISIONS.md#assess-owner-2026-10-19) and the [plan](docs/ASSESS_IMPLEMENTATION_PLAN.md) govern resumption; do not re-request accepted design approval.
+- New exams/images and Shoulder Y are frozen (S-SHOULDER-Y-6); forearm deferred. Assess programming stays postponed until explicitly resumed. [Assess decisions](docs/DECISIONS.md#assess-owner-2026-10-19) and the [plan](docs/ASSESS_IMPLEMENTATION_PLAN.md) govern resumption; do not re-request accepted design approval.
 - Practice/platform/optional pilot exist. Cleanup authorises no Assess/institutions/payments/full3D/research physics. Merge proves no deployment, phone check or clinical validation. [PR automation](docs/DECISIONS.md#pr-automation-owner-2026-10-29) governs deployments.
 - Never invent medical facts, images or evidence. BONTRAGER-9 governs X-ray; provisional clinical/teaching values await recorded review. Consult relevant [ENGINE_GUIDE](docs/ENGINE_GUIDE.md) sections for architecture, licensing, scoring, marker, rendering, scenes and runtime.
 - Historical decisions retain authority only where still applicable; consult the [Current rules index](docs/DECISIONS.md#current-rules). History cannot silently change policy.

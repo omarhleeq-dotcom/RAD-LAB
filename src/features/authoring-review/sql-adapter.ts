@@ -3,6 +3,8 @@ import { separated } from './draft';
 import { ReviewError } from '../supervisor-review/contracts';
 import type { ScopeTransport } from '../supervisor-review/sql-adapter';
 import { assignmentActions } from './sql-assignments';
+import { draftToV2 } from '../assess/import-validator';
+import { validateProvenanceV2 } from '../assess/provenance-v2';
 
 const invalid = (): never => { throw new ReviewError('invalid'); };
 const record = (v: unknown): Record<string, unknown> => v && typeof v === 'object' && !Array.isArray(v) ? v as Record<string, unknown> : invalid();
@@ -37,11 +39,30 @@ function receipt(value: unknown): Draft {
  return structuredClone(draft);
 }
 
-export function createSqlAuthoring(self: Person, transport: ScopeTransport, catalog: { parts: readonly PartReference[]; practicals: readonly PracticalReference[]; references: readonly DraftReference[] }, assignmentsEnabled = false): AuthoringAdapter {
+function receiptV2(value: unknown): Draft {
+ const r = record(value), d = record(r.document);
+ if (d.schemaVersion !== 2 || d.track !== 'mixed' || id(r.id) !== id(d.id) || revision(r.revision) !== revision(d.revision) || !Array.isArray(d.items) || !Array.isArray(r.refs) || r.refs.length) return invalid();
+ const items = d.items.map(raw => {
+  const i = record(raw), provenance = validateProvenanceV2(i.provenance, 'single-choice', true);
+  if (i.type !== 'single-choice' || provenance.kind !== 'uploader-authored' || provenance.sources.length !== 1 || !Array.isArray(i.options) || (i.shuffleOptions !== undefined && typeof i.shuffleOptions !== 'boolean')) return invalid();
+  return { id: text(i.id), type: 'single-choice' as const, prompt: text(i.prompt), maximum: text(i.maximum), options: i.options.map(raw => { const o = record(raw); return { id: text(o.id), text: text(o.text) }; }), correctOptionId: text(i.correctOptionId), shuffleOptions: (i.shuffleOptions as boolean | undefined) ?? true, authoring: { author: '', reference: provenance.sources[0]!.reference, licenceNotes: provenance.licenceNotes, notes: '' } };
+ });
+ const policy = record(d.policy);
+ if (!(policy.durationSeconds === null || typeof policy.durationSeconds === 'number') || typeof policy.maxAttempts !== 'number' || !['hidden', 'after-submission'].includes(String(policy.gradeVisibility))) return invalid();
+ const draft: Draft = { schemaVersion: 1, track: 'mixed', id: id(d.id), revision: revision(d.revision), name: text(d.name), policy: { durationSeconds: policy.durationSeconds, maxAttempts: policy.maxAttempts, gradeVisibility: policy.gradeVisibility as 'hidden' | 'after-submission' }, items, ...(d.randomPool === undefined ? {} : { randomPool: d.randomPool as Draft['randomPool'] }) };
+ draftToV2(draft);
+ return draft;
+}
+/** Opt-in v2 authoring; legacy v1 callers and assignment capability remain unchanged. */
+export function createSqlAuthoringV2(self: Person, transport: ScopeTransport): AuthoringAdapter {
+ return createSqlAuthoring(self, transport, { parts: [], practicals: [], references: [] }, false, true);
+}
+
+export function createSqlAuthoring(self: Person, transport: ScopeTransport, catalog: { parts: readonly PartReference[]; practicals: readonly PracticalReference[]; references: readonly DraftReference[] }, assignmentsEnabled = false, v2 = false): AuthoringAdapter {
  let epoch = 0, release: (() => void) | undefined;
  const listeners = new Set<() => void>(), cursors = new Map<string, string | undefined>();
  const invalidate = () => { epoch++; cursors.clear(); actions?.clear(); for (const fn of listeners) fn(); };
- function actor(actorId: string) { if (actorId !== self.id || self.role !== 'supervisor') throw new ReviewError('denied'); }
+ function actor(actorId: string) { if (actorId !== self.id || (self.role !== 'supervisor' && !(v2 && self.role === 'owner'))) throw new ReviewError('denied'); }
  async function call(name: string, args: unknown[], signal: AbortSignal) {
   signal.throwIfAborted(); const generation = epoch;
   try {
@@ -80,7 +101,7 @@ export function createSqlAuthoring(self: Person, transport: ScopeTransport, cata
  const disabled = async (): Promise<never> => { throw new ReviewError('denied'); };
  const actions = assignmentsEnabled ? assignmentActions(call, guarded, context) : undefined;
  return {
-  service: 'sql', accounts: [self], parts: catalog.parts, practicals: catalog.practicals,
+  service: 'sql', ...(v2 ? { authoringVersion: 2 as const } : {}), accounts: [self], parts: catalog.parts, practicals: catalog.practicals,
   subscribe(fn) { listeners.add(fn); if (listeners.size === 1) release = transport.subscribe?.(invalidate); return () => { listeners.delete(fn); if (!listeners.size) { release?.(); release = undefined; } }; },
   async groups(actorId, cursor, signal) {
    actor(actorId); const { groups } = await groupPage(cursor, signal);
@@ -89,14 +110,14 @@ export function createSqlAuthoring(self: Person, transport: ScopeTransport, cata
   },
   context,
   async drafts(scope, cursor, signal) {
-   return guarded(scope, signal, async () => page(await call('draft_page_v1', [scope.groupId, null, cursor ?? null, 20], signal), r => ({ id: id(r.id), revision: revision(r.revision), name: text(r.name), track: track(r.track) } satisfies DraftSummary)));
+   return guarded(scope, signal, async () => page(await call(v2 ? 'draft_page_v2' : 'draft_page_v1', [scope.groupId, null, cursor ?? null, 20], signal), r => ({ id: id(r.id), revision: revision(r.revision), name: text(r.name), track: track(r.track) } satisfies DraftSummary)));
   },
   async open(scope, draftId, signal) {
-   return guarded(scope, signal, async () => { const d = receipt(await call('draft_page_v1', [scope.groupId, id(draftId)], signal)); if (d.id !== draftId) return invalid(); return d; });
+   return guarded(scope, signal, async () => { const d = (v2 ? receiptV2 : receipt)(await call(v2 ? 'draft_page_v2' : 'draft_page_v1', [scope.groupId, id(draftId)], signal)); if (d.id !== draftId) return invalid(); return d; });
   },
   async save(scope, draft, signal) {
-   const { document, refs } = draftToSql(draft, catalog.references);
-   return guarded(scope, signal, async () => { const d = receipt(await call('draft_save_v1', [scope.groupId, id(draft.id), revision(draft.revision), JSON.stringify(document), JSON.stringify(refs)], signal)); if (d.id !== draft.id || d.track !== document.track || d.revision !== draft.revision + 1) return invalid(); return d; });
+   const { document, refs } = v2 ? { document: draftToV2(draft), refs: [] } : draftToSql(draft, catalog.references);
+   return guarded(scope, signal, async () => { const d = (v2 ? receiptV2 : receipt)(await call(v2 ? 'draft_save_v2' : 'draft_save_v1', [scope.groupId, id(draft.id), revision(draft.revision), JSON.stringify(document), JSON.stringify(refs)], signal)); if (d.id !== draft.id || d.track !== document.track || d.revision !== draft.revision + 1) return invalid(); return d; });
   },
   prepare: disabled, targets: disabled, confirm: disabled,
   ...(actions ? actions.adapter : {}),

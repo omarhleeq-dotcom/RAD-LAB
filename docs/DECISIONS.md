@@ -1316,3 +1316,15 @@ Authority: RAD-090 owner prompt; [implementation and evidence](archive/reports/2
 - L1: pending summary reads linked PR merge state/head CI via gh; unavailable means unverified, exit0; no file writes/posts.
 - L2: idempotent docs:sync updates revision/time against --base, archive reports index, moved link targets, HANDOFF pointer and M2 archive only; never prose/evidence/decisions/status values. Stale mechanics fail docs:check with the sync command; every batch ends with sync before checks.
 - L3: no bot/Action writes to main and no new workflow permissions. RAD-090 stays review/owner until PR merged + CI green; no phone check needed (docs/tooling only).
+
+<a id="rad062-4b-scope-owner-2026-11-01"></a>
+### RAD-062 4ب — تعديل نطاق S-STD-1، 2026-11-01
+
+السلطة: موافقة المالك الصريحة على [#190](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/190) في المحادثة.
+يسمح بتعديل authoring-review لوصل النموذج الفردي والاستيراد بعقد draft_save_v2 الموجود؛ تبقى استدعاءات v1 عاملة ما لم يتطلب التحويل تبديل مستهلك مسمى في التقرير.
+يسمح في frontend-schema بتغيير sha256 فقط لملفات الدفعة في browserBoundaries/explicitBoundaries/guardedFeatures، وإضافة browserBoundary لوحدة متصفح جديدة تستعمل RPC موجودة في required migration.
+لا تغيير requiredMigrations/checks/deferredMigrations/contract/version أو رموز guard/availability؛ لا RPC أو SQL أو ترحيل جديد.
+يبقى marker حرفيًا `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`؛ يُطبع قبل وبعد، ويسجل التقرير كل مفتاح manifest تغير مع old→new وسببه.
+تبقى25ملفًا وسائر حدود أمر4ب وفحوصه وشروط STOP؛ التنفيذ والتصحيحات في Draft PR نفسه وعلى الفرع نفسه، بلا ready/merge.
+حكم تجميد الفحوص لم يتغير، ودليله باقٍ في [الفهرس](#exam-freeze-current)؛ هذا توسيع نطاق مأذون لا تغيير منتج أو إذن تفعيل.
+استكمال المالك على #190: helper نقي بلا dependencies لـlocalStorage؛ يستورده useAccount ويستدعيه فقط عند SIGNED_OUT وبعد نجاح signOut؛ حفظ هوية المالك ومسح القيم عند اختلاف المستخدم/غياب الجلسة في وحدة التأليف، مع اختبارات الخروج والتبويب الآخر والتخزين المعطل والعزل؛ تحديث بصمة useAccount فقط لهذا الربط.
