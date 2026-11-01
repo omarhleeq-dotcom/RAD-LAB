@@ -1,6 +1,6 @@
 # RAD-086 — Supavisor old-credential / cache probe: owner-run SQL packet (production, session pooler)
 
-Authority: [owner decision D-D, 2026-10-31](DECISIONS.md#rad086-followup-owner-2026-10-31) (option 2: a temporary throwaway LOGIN role in production) for the [RAD-059 item](RAD-059_OWNER_DRY_RUN_2026-10-29.md). Run from the laptop over the **session pooler** with the [RAD-086 runbook](RAD-086_LAPTOP_BACKUP_RUNBOOK.md) files. **Nothing here has been run.** The agent executes no SQL, reveals no secret and enables no existing login.
+Authority: [owner decision D-D, 2026-10-31](DECISIONS.md#rad086-followup-owner-2026-10-31) (option 2: a temporary throwaway LOGIN role in production) for the [RAD-059 item](RAD-059_OWNER_DRY_RUN_2026-10-29.md). Run from the laptop over the **session pooler** with the [RAD-086 runbook](RAD-086_LAPTOP_BACKUP_RUNBOOK.md) files. **Owner-run evidence (2026-11-01):** [two runs and finding](RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01). The agent executes no SQL, reveals no secret and enables no existing login.
 
 **Scope guard.** Every statement that changes anything names only the two probe roles (`rad086_probe_<8 hex>_a` and `_b`, or matches the exact regex `^rad086_probe_[0-9a-f]{8}_[ab]$`). It never touches `assess_job_a`, `assess_job_b`, `assess_worker`, `assess.launch_gate`, any Secret Manager version or any other role; those are only *read* (P0b, P8b) to prove they did not change. No `GRANT`, no `CASCADE`, no `DROP OWNED`. Each probe role is `LOGIN NOINHERIT`, no superuser/createdb/createrole/replication/bypassrls, `CONNECTION LIMIT 1`, no memberships, and `VALID UNTIL` 45 minutes ahead as a backstop. PostgreSQL defaults to PUBLIC `CONNECT` on the database; the probe only runs `select 1`.
 
@@ -86,11 +86,25 @@ SQL
 adm -At <<'SQL'
 \set a `cat ~/probe/name_a`
 \set b `cat ~/probe/name_b`
-select count(*) filter (where rolcanlogin and not rolinherit and not rolsuper and not rolcreaterole and not rolcreatedb and not rolreplication and not rolbypassrls and rolconnlimit = 1 and rolvaliduntil is not null and rolvaliduntil < now() + interval '50 minutes') || '|' || (select count(*) from pg_auth_members m join pg_roles r on r.oid in (m.member, m.roleid) where r.rolname in (:'a', :'b')) from pg_roles where rolname in (:'a', :'b');
+select count(*) filter (where rolcanlogin and not rolinherit and not rolsuper and not rolcreaterole and not rolcreatedb and not rolreplication and not rolbypassrls and rolconnlimit = 1 and rolvaliduntil is not null and rolvaliduntil < now() + interval '50 minutes') || '|' || (select count(*) from pg_auth_members m join pg_roles r on r.oid = m.member where r.rolname in (:'a', :'b')) from pg_roles where rolname in (:'a', :'b');
 SQL
 ```
 
 Expect `2|0`. **STOP** otherwise: section 5.
+
+PostgreSQL 16+ can automatically grant each created role to its non-superuser creator. This is not a membership of the probe. Any row with a probe as the granted role must be exactly the creator grant: member `postgres`, admin true, inherit false, set false. No such rows is also valid for a superuser creator.
+
+**P2c — creator grants (separate assertion)**
+
+```bash
+adm -At <<'SQL'
+\set a `cat ~/probe/name_a`
+\set b `cat ~/probe/name_b`
+select count(*) filter (where not (member_role.rolname = 'postgres' and m.admin_option and not m.inherit_option and not m.set_option)) = 0 as creator_grants_valid from pg_auth_members m join pg_roles granted_role on granted_role.oid = m.roleid join pg_roles member_role on member_role.oid = m.member where granted_role.rolname in (:'a', :'b');
+SQL
+```
+
+Expect `t`. **STOP** otherwise: section 5. P2 and P2c must both pass before P3.
 
 ## 3. Variant 1 — NOLOGIN
 
@@ -117,7 +131,7 @@ SQL
 T=0; for d in 0 30 60 90 120; do sleep $d; T=$((T+d)); echo "nologin ${T}s $(prb "$(cat ~/probe/name_a)" ~/probe/pass_a1)"; done
 ```
 
-Pass: five lines ending `rejected` (0, 30, 90, 180, 300 s). **Any `ACCEPTED` is a finding**: write down the seconds, go straight to section 5, enable nothing, and report it.
+Pass: five lines ending `rejected` (0, 30, 90, 180, 300 s). **Any `ACCEPTED` is a finding**: write down the seconds, **finish the running loop (read-only) before teardown**, then go to section 5, enable nothing, and report it. Do not start variant 2 after a variant-1 finding without an explicit owner decision.
 
 ## 4. Variant 2 — rotation
 
@@ -145,7 +159,7 @@ SQL
 T=0; for d in 0 30 60 90 120; do sleep $d; T=$((T+d)); echo "rotation-old ${T}s $(prb "$(cat ~/probe/name_b)" ~/probe/pass_b1)"; done
 ```
 
-Pass: all `rejected`. Any `ACCEPTED` is a finding (as above).
+Pass: all `rejected`. Any `ACCEPTED` is a finding: **finish the running loop (read-only) before teardown**, then section 5 (as above).
 
 **P5d — the new password works (the rejection was credential-specific)**
 
@@ -223,4 +237,4 @@ Expect `No such file or directory`.
 
 Pass: P4b and P5c all `rejected`, P3/P5a/P5d `ACCEPTED`, P5e `2`, C3 `0`, P8b equal to P0b. Then report four lines, e.g. `nologin 0/30/90/180/300s rejected`, `rotation-old 0/30/90/180/300s rejected`, `rotation-new accepted`, `roles removed`. This is evidence about the production tenant's pooler for a role of this kind; it is not evidence about the DISABLED worker secret, which stays untouched, and it does not by itself set `pooler_cache_verified` anywhere. A finding (`ACCEPTED` after revocation) means the production pooler honored a stale credential: keep every worker login disabled and escalate; do not retry with weaker assumptions.
 
-**If a step fails midway:** run section 5 immediately. If you cannot connect at all, nothing was created or the roles expire in 45 minutes (they cannot log in after that); repeat section 5 once the connection works.
+**If a step fails midway:** run section 5 immediately, except that on any `ACCEPTED` in a timed retry loop, finish that running loop (read-only) before teardown. If you cannot connect at all, nothing was created or the roles expire in 45 minutes (they cannot log in after that); repeat section 5 once the connection works.

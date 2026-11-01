@@ -6,11 +6,11 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. قاعدة SID40in في RAD-087 منفذة للمراجعة وفق [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 in_progress/reviewer؛ P8 مدموجة خاملة في #172 بتحقق GitHub؛ P9 مدموجة في #173؛ P9b حل ACL وتشخيص B ونافذة متصلة مع P10 للمراجعة وفق [تقريرها](RAD-062_P09B_REPORT_2026-10-30.md) و[الخطة](RAD-062_3-5A_PLAN_2026-10-30.md)؛ يوم CLI ينتظر قبول البراهين ونجاح Docker وبقية RAD-086 والهاتف بعد دليل المالك للنسخة والاستعادة17.11، ثم P10 متصلة≤60دقيقة. [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) محفوظ. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
-- **ينتظر المالك:** RAD-086 review/owner؛ أتم المالك النسخ والاستعادة والسجل المشفر والجدولة في2026-10-31 وفق [الأدلة](RAD-086_REPORT_2026-10-31.md#owner-evidence-2026-10-31). المتبقي اختبار Supavisor/cache بالدور المؤقت D-D وفحص status الأسبوعي؛ ثم RAD-062 Part 2 لـP10. [قرار اللابتوب فقط](DECISIONS.md#rad086-laptop-only-owner-2026-10-31) ينسخ توصية USB وحدها من D2.
+- **الاتجاه الحالي:** قبول المالك للمهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md)؛ البقايا في RAD-057. قاعدة SID40in في RAD-087 منفذة للمراجعة وفق [تقريرها](FORTY_INCH_SID_REPORT_2026-10-30.md). RAD-062 in_progress/reviewer؛ P8 مدموجة خاملة في #172 بتحقق GitHub؛ P9 مدموجة في #173؛ P9b حل ACL وتشخيص B ونافذة متصلة مع P10 للمراجعة وفق [تقريرها](RAD-062_P09B_REPORT_2026-10-30.md) و[الخطة](RAD-062_3-5A_PLAN_2026-10-30.md)؛ يوم CLI ينتظر قبول البراهين ونجاح Docker والهاتف بعد دليل المالك للنسخة والاستعادة17.11، ثم P10 متصلة≤60دقيقة. [Random pool v1 وتعديل4/10](DECISIONS.md#random-question-pool-owner-2026-10-30) محفوظ. دليل4أ المدموجة في [تقريرها](RAD-062_PHASE4A_REPORT_2026-10-30.md) محفوظ.
+- **ينتظر المالك:** RAD-086 done بإفادة النسخ والاستعادة والسجل والجدولة2026-10-31 و[نتيجة Supavisor2026-11-01](RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01). RAD-059 review/owner للقنوات/الاستلام والبديل ودليل إلغاء اعتماد العامل وفق [قاعدة120ثانية](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01). التالي RAD-062 Part2 لـICU en-US في P10؛ status الأسبوعي عادة مستمرة. [قرار اللابتوب فقط](DECISIONS.md#rad086-laptop-only-owner-2026-10-31) محفوظ.
 - **ينتظر مراجِعًا:** RAD-032 مراجع أشعة خارجي وRAD-056 عبر RAD-063؛ عقود العشوائية والكتابي/التفويض والاحتفاظ والطوارئ والتنافس، وحزمة3+5أ والحقوق/D3 والأمن والخصوصية. لا مشرفين حقيقيين قبل O4.
 - **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ هذا الملف مصدر المهام الوحيد و[تقرير P9b](RAD-062_P09B_REPORT_2026-10-30.md) للتحقق. CI وDeploy Pages المعتادان مأذونان؛ Draft فقط.
-- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual والتحقق وdry-run تبقى هاتفية وحاجبة؛ يوم القاعدة محجوب على RAD-086 واللابتوب. النسخ على اللابتوب فقط: فقدانه أو سرقته أو عطل قرصه يفقد كل النسخ؛ BitLocker للسرية لا التوفر. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
+- **مخاطر معلنة:** gate مغلقة والعامل NOLOGIN والسر DISABLED؛ تحديث طوارئ awaiting-manual والتحقق وdry-run تبقى هاتفية وحاجبة؛ يوم القاعدة ينتظر بقية براهين RAD-062 واللابتوب. النسخ على اللابتوب فقط: فقدانه أو سرقته أو عطل قرصه يفقد كل النسخ؛ BitLocker للسرية لا التوفر. RAD-086 (المشار إليها قديمًا RAD-082) وRAD-059 والحقوق/الخصوصية قبل أول امتحان حقيقي؛ لا نشر يدوي/إضافي أو معاينة مستضافة.
 
 ## البيانات الحالية (قابلة للقراءة الآلية)
 
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 356,
-  "updated_at": "2026-10-31T12:16:16.744624+00:00",
+  "revision": 357,
+  "updated_at": "2026-11-01T03:44:56.823665+00:00",
   "timezone": "UTC",
   "next_id": "RAD-088",
   "tasks": [
@@ -551,8 +551,8 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "review",
       "priority": "high",
-      "description": "دُمجت #153 وأُنجز تمرين المالك المغلق. ميزانية GCP موجودة ومتحققة2026-10-29 ($5 شهريًا؛ RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29)؛ استلام البريد غير مختبر. ينتظر قنوات الإنذار/اختبار الاستلام والبديل؛ cache ورفض الاعتماد القديم عبر RAD-086 (مرجع RAD-082 القديم) قبل أول امتحان. العامل NOLOGIN والسر DISABLED؛ لا تفعيل حقيقي.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29",
+      "description": "دُمجت #153 وأُنجز التمرين المغلق والميزانية. أظهر اختبار المالك Supavisor قبولًا متقطعًا لاعتماد probe قديم؛ يلزم إنهاء الجلسات وانتظار≥120ثانية والتحقق من الرفض. ينتظر المالك قنوات الإنذار/استلام البريد والبديل ودليل إلغاء اعتماد العامل؛ السر DISABLED والعامل NOLOGIN.",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01",
       "waiting_on": "owner"
     },
     {
@@ -774,11 +774,11 @@
     {
       "id": "RAD-086",
       "title": "RAD-082 المرجعي: النسخ اليومية المحلية والاستعادة ورفض اعتماد Supavisor القديم",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "أتم المالك على اللابتوب في2026-10-31 النسخ والاستعادة المثبتة والسجل المشفر والجدولة؛ الأدلة في docs/RAD-086_REPORT_2026-10-31.md#owner-evidence-2026-10-31. تبقى review/owner لاختبار Supavisor/cache بالدور المؤقت D-D وفحص status الأسبوعي. التخزين على اللابتوب فقط بقرار المالك الجديد.",
-      "source_ref": "docs/DECISIONS.md#rad086-laptop-owner-2026-10-31؛ docs/DECISIONS.md#rad086-followup-owner-2026-10-31؛ docs/RAD-086_PROBE_SQL_PACKET.md؛ docs/RAD-086_LAPTOP_BACKUP_RUNBOOK.md؛ docs/RAD-086_REPORT_2026-10-31.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/status-format.md؛ docs/DECISIONS.md#rad086-icu-owner-2026-10-31؛ docs/DECISIONS.md#rad086-supabase-image-owner-2026-10-31؛ docs/DECISIONS.md#rad086-admin-rolconfig-owner-2026-10-31؛ docs/DECISIONS.md#rad086-event-trigger-owner-2026-10-31؛ docs/DECISIONS.md#rad086-laptop-only-owner-2026-10-31",
-      "waiting_on": "owner"
+      "description": "أتم المالك النسخ والاستعادة والسجل المشفر والجدولة واختبار Supavisor بنتيجة قبول متقطع لاعتماد قديم. فحص status الأسبوعي عادة تشغيل مستمرة؛ دليل إلغاء اعتماد العامل ضمن RAD-059. التخزين على اللابتوب فقط.",
+      "source_ref": "docs/DECISIONS.md#rad086-laptop-owner-2026-10-31؛ docs/DECISIONS.md#rad086-followup-owner-2026-10-31؛ docs/RAD-086_PROBE_SQL_PACKET.md؛ docs/RAD-086_LAPTOP_BACKUP_RUNBOOK.md؛ docs/RAD-086_REPORT_2026-10-31.md؛ docs/DECISIONS.md#random-question-pool-owner-2026-10-30؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/status-format.md؛ docs/DECISIONS.md#rad086-icu-owner-2026-10-31؛ docs/DECISIONS.md#rad086-supabase-image-owner-2026-10-31؛ docs/DECISIONS.md#rad086-admin-rolconfig-owner-2026-10-31؛ docs/DECISIONS.md#rad086-event-trigger-owner-2026-10-31؛ docs/DECISIONS.md#rad086-laptop-only-owner-2026-10-31؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01",
+      "completion_evidence": "تحقق خارجي بإفادة المالك: النسخ/الاستعادة/السجل/الجدولة2026-10-31 في docs/RAD-086_REPORT_2026-10-31.md#owner-evidence-2026-10-31؛ Supavisor2026-11-01 في الملف نفسه #supavisor-finding-2026-11-01؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01. الاختبار منجز بنتيجة، لا إثبات لسر العامل."
     },
     {
       "id": "RAD-087",
