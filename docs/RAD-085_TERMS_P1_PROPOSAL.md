@@ -1,6 +1,6 @@
 # RAD-085 — Terms P1 · approved proposal for DB day
 
-معتمد بقرار [O1/O5](DECISIONS.md#rad085-db-day-owner-2026-10-27)؛ **ليس النص المنشور**. لا تغيير في messages.terms أو CONSENT_VERSION الآن. النصان معتمدان معًا بحدود O1/O5، ويُضافان إلى قسم «من يرى البيانات» يوم DB day فقط؛ عندها تُرفع CONSENT_VERSION وتُطلب موافقة كل مستخدم بنفسه. نسخة المشاركة المستقلة [v2](../src/features/supervisor-review/sharing-policy.ts) معتمدة بنصها الحالي ولا تتغير هنا. الأصل: [الخطة §4](RAD-085_PLAN_2026-10-25.md#4-نموذج-البيانات-وrls-ونوافذ-الرؤية) و[D3](DECISIONS.md#rad085-owner-tidy-2026-10-27).
+معتمد بقرار [O1/O5](DECISIONS.md#rad085-db-day-owner-2026-10-27)؛ **ليس النص المنشور**. لا تغيير في messages.terms أو CONSENT_VERSION الآن. النصان معتمدان معًا بحدود O1/O5، ويُضافان إلى قسم «من يرى البيانات» يوم DB day فقط؛ عندها تُرفع CONSENT_VERSION وتُطلب موافقة كل مستخدم بنفسه. نسخة المشاركة المستقلة [v2](../src/features/supervisor-review/sharing-policy.ts) معتمدة بنصها الحالي ولا تتغير هنا. الأصل: [الخطة §4](archive/reports/2026-10/RAD-085_PLAN_2026-10-25.md#4-نموذج-البيانات-وrls-ونوافذ-الرؤية) و[D3](DECISIONS.md#rad085-owner-tidy-2026-10-27).
 
 ## AR — النص المعتمد ليوم DB day
 

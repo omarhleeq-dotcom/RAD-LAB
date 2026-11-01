@@ -69,4 +69,4 @@ RAD-085 تبقى review/owner دون completion_evidence أو اكتمال Asses
 
 PR#137 يبقى open/Draft/unmerged. فُحص حاجز Deploy Pages قبل الدفع؛ يثبت CI والتخطي على الرأس المدفوع في وصف PR، دون commit لاحق يجعل الدليل لرأس سابق. لا merge/ready/auto-merge أو variables/PILOT_SCHEMA_VERIFIED/launch_gate/CONSENT_VERSION أو شهادات أو Supabase/DB day حي أو hosted preview أو tunnel. تُغلق الخوادم وقواعد الاختبار وتُنظف مؤقتاتها عند التسليم.
 
-هل تغير الحكم؟ أذن المالك بالقناة المحلية واستثناء بصمة المصدر الثالث المحدد، دون إذن حي أو توسع تقييم أو صلاحيات عامل. هل بقي الأصل؟ نعم: [P2](RAD-085_P2_SQL_REPORT_2026-10-26.md)، [P1](RAD-085_P1_SQL_REPORT_2026-10-26.md)، [SQL](RAD-085_SQL_COMPLETION_REPORT_2026-10-26.md)، [الخطة](../../../RAD-085_PLAN_2026-10-25.md) ومراجعها؛ لا إعادة كتابة لفشل أو قبول لم يحصل.
+هل تغير الحكم؟ أذن المالك بالقناة المحلية واستثناء بصمة المصدر الثالث المحدد، دون إذن حي أو توسع تقييم أو صلاحيات عامل. هل بقي الأصل؟ نعم: [P2](RAD-085_P2_SQL_REPORT_2026-10-26.md)، [P1](RAD-085_P1_SQL_REPORT_2026-10-26.md)، [SQL](RAD-085_SQL_COMPLETION_REPORT_2026-10-26.md)، [الخطة](RAD-085_PLAN_2026-10-25.md) ومراجعها؛ لا إعادة كتابة لفشل أو قبول لم يحصل.

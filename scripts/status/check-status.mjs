@@ -10,6 +10,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { BUDGETS } from "../docs/budgets.mjs";
 
 export const STATUSES = ["planned", "in_progress", "review", "blocked", "deferred", "done"];
 export const PRIORITIES = ["high", "medium", "low"];
@@ -20,9 +21,9 @@ const OPTIONAL_TASK_FIELDS = ["completion_evidence", "blocker", "defer_reason", 
 export const FORMAT_VERSIONS = ["1.0", "1.1", "1.2"];
 export const WAITING_ON = ["owner", "reviewer", "code", "external"];
 export const NEEDS_WAITING_ON = ["planned", "in_progress", "review", "blocked"];
-export const DESCRIPTION_MAX = 350;
-export const EVIDENCE_MAX = 400;
-export const HANDOFF_MAX_LINES = 80;
+export const DESCRIPTION_MAX = BUDGETS.task_description.open;
+export const EVIDENCE_MAX = BUDGETS.completion_evidence.chars;
+export const HANDOFF_MAX_LINES = BUDGETS.handoff.lines;
 const META_FIELDS = ["project", "format_version", "revision", "updated_at", "timezone", "next_id", "tasks"];
 const BEGIN = "<!-- STATUS-DATA:BEGIN -->";
 const END = "<!-- STATUS-DATA:END -->";
@@ -131,7 +132,7 @@ export function validateStatus(markdown) {
       errors.push(`${where}: completion_evidence only belongs to done tasks`);
     }
     if (v12) {
-      if ("done_when" in task && (!isText(task.done_when) || charLength(task.done_when) > 200)) errors.push(`${where}: done_when must be non-empty text <=200 characters`);
+      if ("done_when" in task && (!isText(task.done_when) || charLength(task.done_when) > BUDGETS.done_when.chars)) errors.push(`${where}: done_when must be non-empty text <=${BUDGETS.done_when.chars} characters`);
       if (task.status === "review" && task.waiting_on === "owner" && !isText(task.done_when)) errors.push(`${where}: review/owner needs done_when`);
     }
     if (v11) {
@@ -142,8 +143,9 @@ export function validateStatus(markdown) {
       if ("waiting_on" in task && !WAITING_ON.includes(task.waiting_on) && !NEEDS_WAITING_ON.includes(task.status)) {
         errors.push(`${where}: waiting_on "${task.waiting_on}" not in ${WAITING_ON.join(", ")}`);
       }
-      if (isText(task.description) && charLength(task.description) > DESCRIPTION_MAX) {
-        errors.push(`${where}: description is ${charLength(task.description)} characters (max ${DESCRIPTION_MAX}); keep the remaining work here and the story in the session record`);
+      const descriptionMax = v12 && task.status === "done" ? BUDGETS.task_description.done : DESCRIPTION_MAX;
+      if (isText(task.description) && charLength(task.description) > descriptionMax) {
+        errors.push(`${where}: description is ${charLength(task.description)} characters (max ${descriptionMax}); keep the remaining work here and the story in the session record`);
       }
       if (isText(task.completion_evidence) && charLength(task.completion_evidence) > EVIDENCE_MAX) {
         errors.push(`${where}: completion_evidence is ${charLength(task.completion_evidence)} characters (max ${EVIDENCE_MAX}); link the evidence instead of retelling it`);

@@ -445,7 +445,7 @@ The owner decided the evidence badge labels (D5) and the table (c) corrections o
 | Vertebral bodies | أجسام الفقرات | `scene.altLateral` | DRAFT |
 | Upper-anterior lung fields | الحقول الرئوية العلوية الأمامية | `scene.armsLowered` | DRAFT |
 
-Source and scope: [owner drawing findings](DECISIONS.md#rad072-chest-owner-2026-10-23), [part report](RAD-072_PART1_REPORT_2026-10-23.md). The existing costophrenic-angle, sternum and diaphragmatic-dome terms are reused.
+Source and scope: [owner drawing findings](DECISIONS.md#rad072-chest-owner-2026-10-23), [part report](archive/reports/2026-10/RAD-072_PART1_REPORT_2026-10-23.md). The existing costophrenic-angle, sternum and diaphragmatic-dome terms are reused.
 
 ## RAD-072 part 1b — chest drawing quality pass (2026-10-23)
 
@@ -460,7 +460,7 @@ Source and scope: [owner drawing findings](DECISIONS.md#rad072-chest-owner-2026-
 | Shoulder (right–left) axis | محور الكتفين | `scene.altPlanLateral` | DRAFT |
 | The {side} lateral position / the {side} side (left / right) | الوضع الجانبي {الأيسر/الأيمن}، والجانب {الأيسر/الأيمن} | `scene.altPlanLateral`, `scene.sideLeft` / `sideRight` | DRAFT |
 
-Source and scope: [owner decision 1b](DECISIONS.md#rad072-1b-owner-2026-10-23), [part 1b report](RAD-072_PART1B_REPORT_2026-10-23.md).
+Source and scope: [owner decision 1b](DECISIONS.md#rad072-1b-owner-2026-10-23), [part 1b report](archive/reports/2026-10/RAD-072_PART1B_REPORT_2026-10-23.md).
 
 ## RAD-072 2c — shoulder reference note (DRAFT, machine-assisted, pending owner / educator review)
 Keys: `radiograph` credit of `src/data/cases/shoulder-grashey-radiograph.ts` and the matching `context` in `src/data/credits.ts` (the note shown under the shoulder result image). Source: [owner decision 2c D6 / RAD-032 note](DECISIONS.md#rad072-2c-owner-2026-10-24).

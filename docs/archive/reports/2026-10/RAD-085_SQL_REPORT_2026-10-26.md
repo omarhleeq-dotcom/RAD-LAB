@@ -7,7 +7,7 @@
 - migrations الجديدة: [نطاق المشرف](../../../../supabase/migrations/20261026000100_assess_supervisor_scope.sql)، [المسودات](../../../../supabase/migrations/20261026000200_assess_authoring_drafts.sql)، [مراجعة الإسناد](../../../../supabase/migrations/20261026000300_assess_assignment_review.sql).
 - [عقد TypeScript الخادمي](../../../../src/features/assess/server-rad085-contracts.ts)، [حاضنة PostgreSQL](../../../../src/features/assess/rad085-local-db.ts)، [اختبارات SQL](../../../../src/features/assess/rad085-db.test.ts).
 - [تصنيف المصدر](../../../../scripts/pages/frontend-schema.json)، [اختبار F](../../../../src/features/deployment/assess-f-schema.test.ts).
-- [عقود الربط](../../../RAD-085_SQL_CONTRACTS_2026-10-26.md)، هذا التقرير، [الخطة](../../../RAD-085_PLAN_2026-10-25.md)، [الحالة](../../../project-status.md)، [HANDOFF](../../../HANDOFF.md).
+- [عقود الربط](RAD-085_SQL_CONTRACTS_2026-10-26.md)، هذا التقرير، [الخطة](RAD-085_PLAN_2026-10-25.md)، [الحالة](../../../project-status.md)، [HANDOFF](../../../HANDOFF.md).
 
 لا وحدة منتج مشتركة قائمة أو مسار واجهة أو عامل تغير. حاضنة PostgreSQL ووحدة عقد خادمية جديدتان، والـmanifest مشترك؛ صُنفت الترحيلات مؤجلة دون تعديل requiredMigrations/checks أو الحارس. الاستثناء المأذون بعد شرح المالك هو توقع الفراغ في اختبار F فقط؛ باقي توقعاته وحراسه محفوظة.
 
@@ -29,7 +29,7 @@ RAD-085 تبقى review / waiting_on owner للاستثناءات الثلاثة
 
 ## 4. المشترك وScale والتغييرات غير الإضافية المحضة
 
-تفاصيل الجرد والأسماء والتواقيع ومتطلبات التطبيق في [عقد SQL](../../../RAD-085_SQL_CONTRACTS_2026-10-26.md). الترتيب scope ثم drafts ثم assignment_review؛ لا تطبيق حي أو إعادة تاريخ migrations.
+تفاصيل الجرد والأسماء والتواقيع ومتطلبات التطبيق في [عقد SQL](RAD-085_SQL_CONTRACTS_2026-10-26.md). الترتيب scope ثم drafts ثم assignment_review؛ لا تطبيق حي أو إعادة تاريخ migrations.
 
 تغيرت بنية groups/memberships بأعمدة وقيود جديدة، وأُضيفت triggers إلى groups وmemberships وpublic.attempts لأسباب حماية المجموعة المدارة والفترات ووقت التسجيل. لم يُستبدل تعريف دالة أو constraint أو trigger قديم؛ الدوال القديمة وACLs لم تعاد كتابتها. حماية الإغلاق النهائي قائمة كما هي. new assignment_page_v2 يقدم closed_at بدل تعديل owner_page_v1 القديم. هذا تقدم SQL فقط لـRAD-060.
 
@@ -101,4 +101,4 @@ npx vitest run src/features/assess/rad085-db.test.ts
 
 برومبت الاستئناف: «تابع RAD-085 على #137 نفسه وفي checkout نفسه دون worktree/subagents. شغل السياق والحالة واجلب أحدث main والرأس وتحقق من open/Draft/unmerged. اقرأ AGENTS وHANDOFF والخطة وتقرير SQL وعقوده. بعد إذن مسمى مناسب للعوائق المحددة في§7، أعلن ميزانية منقحة، واحفظ حدود fixtures وبصماتها التاريخية ثم أصلح التغطية والعقد المحلي واختبارات PostgreSQL وcheck/build، دون تغيير توقع/بصمة أخرى. لا تعتبر SQL المحلي إنجاز الربط/العامل/الموافقة/المراجعات/النسخ/القبول/الهاتف. لا تطبيق حي أو نشر أو ready/merge/auto-merge».
 
-**هل تغير الحكم؟** توقيت مراجعة المالك تغير بقراره السابق إلى ما بعد SQL والربط والمتصفح؛ أُجيز هنا استثناء F المحدد فقط، وبقي شرط إذن أي توقع إضافي. لا تغيير للأمن أو التشغيل أو التقييم. **هل بقي رابط الدليل الأصلي؟** نعم: [تقرير العائق الأول](RAD-085_SQL_BLOCKER_REPORT_2026-10-26.md) و[الجاهزية التاريخية](RAD-085_UI_READINESS_REPORT_2026-10-25.md) وتقارير P1/P2/full-practical/المشهد و[الخطة وروابط قراراتها](../../../RAD-085_PLAN_2026-10-25.md) محفوظة دون تعديل تاريخي يوحي بموافقة أو مراجعة حصلت.
+**هل تغير الحكم؟** توقيت مراجعة المالك تغير بقراره السابق إلى ما بعد SQL والربط والمتصفح؛ أُجيز هنا استثناء F المحدد فقط، وبقي شرط إذن أي توقع إضافي. لا تغيير للأمن أو التشغيل أو التقييم. **هل بقي رابط الدليل الأصلي؟** نعم: [تقرير العائق الأول](RAD-085_SQL_BLOCKER_REPORT_2026-10-26.md) و[الجاهزية التاريخية](RAD-085_UI_READINESS_REPORT_2026-10-25.md) وتقارير P1/P2/full-practical/المشهد و[الخطة وروابط قراراتها](RAD-085_PLAN_2026-10-25.md) محفوظة دون تعديل تاريخي يوحي بموافقة أو مراجعة حصلت.

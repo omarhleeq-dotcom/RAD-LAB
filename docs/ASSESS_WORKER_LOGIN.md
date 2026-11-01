@@ -1,6 +1,6 @@
 # حزمة login عامل Assess — للمراجعة المحلية
 
-حزمة منفصلة عن schema migrations؛ أذن المالك لاحقًا بمرحلة إنشاء NOLOGIN محددة على الأصلية وفق القسم التالي، دون تجهيز عامل حي. تحافظ على [حزمة الربط](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md) و[عقد runtime](ASSESS_RUNTIME_LOCAL.md)، ودور assess_worker القائم دون توسيع أو تضييق منح مشتركة. [تقرير الدفعة](ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md) يفصل نتيجة TLS من جهاز المالك عن التجارب المحلية والربط الحي غير المثبت.
+حزمة منفصلة عن schema migrations؛ أذن المالك لاحقًا بمرحلة إنشاء NOLOGIN محددة على الأصلية وفق القسم التالي، دون تجهيز عامل حي. تحافظ على [حزمة الربط](archive/reports/2026-10/ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md) و[عقد runtime](ASSESS_RUNTIME_LOCAL.md)، ودور assess_worker القائم دون توسيع أو تضييق منح مشتركة. [تقرير الدفعة](archive/reports/2026-10/ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md) يفصل نتيجة TLS من جهاز المالك عن التجارب المحلية والربط الحي غير المثبت.
 
 ## الملفات والمراحل
 
@@ -14,7 +14,7 @@
 
 ## مرحلة الأصلية المأذونة الآن
 
-بعد قراءة المالك PostgreSQL17.11 وPUBLIC TEMP=true وPUBLIC schema CREATE count0، أذن «تمام طبق» بإنشاء assess_job_a معطّلًا دون password وفحصه فقط. [ملف التطبيق الكامل](../supabase/manual/assess-original-worker-login-stage.sql) يحدد settings داخل transaction نفسها، ويعيد استعمال provision وcatalogue المراجعتين، مع فحص staged/gate/no-direct-tables/no-sessions قبل COMMIT ثم صف مستقل بعده. [تقرير المتابعة](ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md) يحفظ الإذن وحدود الدليل؛ وصل [صف المالك النهائي](ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md#worker-login-stage-owner-result): staged=true وactive=false وdirect table=false وsessions0 وgate مغلقة؛ credential/pooler/runtime=false وPUBLIC review=true. لا وصول مباشر من الوكيل.
+بعد قراءة المالك PostgreSQL17.11 وPUBLIC TEMP=true وPUBLIC schema CREATE count0، أذن «تمام طبق» بإنشاء assess_job_a معطّلًا دون password وفحصه فقط. [ملف التطبيق الكامل](../supabase/manual/assess-original-worker-login-stage.sql) يحدد settings داخل transaction نفسها، ويعيد استعمال provision وcatalogue المراجعتين، مع فحص staged/gate/no-direct-tables/no-sessions قبل COMMIT ثم صف مستقل بعده. [تقرير المتابعة](archive/reports/2026-10/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md) يحفظ الإذن وحدود الدليل؛ وصل [صف المالك النهائي](archive/reports/2026-10/ASSESS_WORKER_LOGIN_STAGE_REPORT_2026-10-21.md#worker-login-stage-owner-result): staged=true وactive=false وdirect table=false وsessions0 وgate مغلقة؛ credential/pooler/runtime=false وPUBLIC review=true. لا وصول مباشر من الوكيل.
 
 نفّذ المالك مرحلة التجهيز وأرسل الصف المتوقع؛ لا إعادة ملف الإنشاء أو طلب تنفيذ جديد. يبقى الملف مرجعًا للدفعة المأذونة فقط، وليس إجراء replay. نجاح NOLOGIN لا يرفع شرط PUBLIC/قناة السر قبل LOGIN أو يفتح gate. لا إعادة سؤال إذن هذه المرحلة أو النسخة المؤجلة.
 
@@ -42,7 +42,7 @@ PUBLIC TEMP افتراضية في PostgreSQL المحلية وظهرت في ال
 
 ## السر والتفعيل والدوران — مراحل منفصلة
 
-[قرار TEMP وقناة السر](ASSESS_WORKER_ACTIVATION_DECISION_2026-10-21.md) يحدد استثناء تجربة ≤7أيام ما زال للمراجعة. وصل نجاح اتصال إدارة read-only من Cloud Shell ثم صف المالك بعد تسلسل psql password المستهدف: worker_still_disabled=true وworker_expiry_still_closed=true. أُعدت [أداة إدخال أول إصدار](../scripts/assess/upload-worker-secret.py) واختُبرت اصطناعيًا فقط؛ لا upload أو activation مثبتان بعد. الحد العام ≤90يومًا أدناه لا يجيز تجاوز نافذة التجربة المقترحة.
+[قرار TEMP وقناة السر](archive/reports/2026-10/ASSESS_WORKER_ACTIVATION_DECISION_2026-10-21.md) يحدد استثناء تجربة ≤7أيام ما زال للمراجعة. وصل نجاح اتصال إدارة read-only من Cloud Shell ثم صف المالك بعد تسلسل psql password المستهدف: worker_still_disabled=true وworker_expiry_still_closed=true. أُعدت [أداة إدخال أول إصدار](../scripts/assess/upload-worker-secret.py) واختُبرت اصطناعيًا فقط؛ لا upload أو activation مثبتان بعد. الحد العام ≤90يومًا أدناه لا يجيز تجاوز نافذة التجربة المقترحة.
 
 بعد اعتماد سطح الصلاحية، يُولّد password عشوائي فريد بطول≥32 محرفًا في قناة إدارة سر آمنة. لا يُلصق في SQL Editor/history أو shell args/ENV أو Git أو المحادثة، ولا يستخدم service/admin key أو كلمة postgres. الإدخال عبر أداة آمنة مثل psql مع password prompt قابل للمراجعة لاحقًا؛ حتى SCRAM verifier مادة اعتماد يجب منع تسجيلها. أداة الرفع تقرأ كلمة العامل مرتين عبر getpass مع رفض fallback مكشوف، وتثبت project/secret/login/host/ref وCA fingerprint، ثم تمرر JSON UTF8 في stdin وتطبع اسم الإصدار فقط. لا كلمة من args/env/ملف، ولا استعادة secret payload. لا تثبت هذه الحماية سياسة logs لدى المزود أو صحة كلمة العامل؛ تلك شروط تفعيل مستقلة، ولا أمر LOGIN أو تشغيل من رفع السر وحده.
 

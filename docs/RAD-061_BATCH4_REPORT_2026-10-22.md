@@ -160,7 +160,7 @@
 
 ## 8. قائمة المالك
 1. راجع Draft PR الدفعة 4: commit لكل جزء (1 ثم 3 ثم 4)، ثم commit `PracticalControls` الصغير، وبصمتان فقط تغيّرتا (§4).
-2. RAD-060 محسوم بقرارك (§7): [إجراء console](ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-close-console-procedure) يبقى المعتمد، والزر مع أول migration في RAD-062.
+2. RAD-060 محسوم بقرارك (§7): [إجراء console](archive/reports/2026-10/ASSESS_TRIAL_BATCH_TWO_2026-10-22.md#trial-close-console-procedure) يبقى المعتمد، والزر مع أول migration في RAD-062.
 3. **بعد الدمج، فحص الهاتف (لا يوجد فحص زر حي):**
    - افتح `/ar/assess` و`/en/assess` وتأكد من عنوان التبويب.
    - افتح صفحة المالك وتأكد أنها تُحمَّل كالمعتاد (CLN-030). يُتوقع أن يسجل نشاط واحد عند الفتح بدل اثنين، إن رغبت بالتحقق من سجل النشاط.

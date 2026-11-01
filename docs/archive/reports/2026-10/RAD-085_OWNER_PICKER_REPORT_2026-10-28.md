@@ -40,7 +40,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://vlacestfruxooznrcjqc.supabase.co node scripts/p
 
 `pilot-v1:44acfa7ead59b8da5632652b696cbdb069c819ab078d692445ce37b353462d3a`
 
-وهو marker الأصل العام المثبت مسبقًا في [اختبار schema](../../../../src/features/deployment/frontend-schema.test.ts) و[تقرير الترقية](../../../RAD-085_PROMOTION_REPORT_2026-10-27.md). لا فرق في شجرة supabase عن origin/main؛ ولا تغيير لأي marker expectation.
+وهو marker الأصل العام المثبت مسبقًا في [اختبار schema](../../../../src/features/deployment/frontend-schema.test.ts) و[تقرير الترقية](RAD-085_PROMOTION_REPORT_2026-10-27.md). لا فرق في شجرة supabase عن origin/main؛ ولا تغيير لأي marker expectation.
 
 ## 5. الطب والدرجات
 
@@ -76,4 +76,4 @@ NEXT_PUBLIC_SUPABASE_URL=https://vlacestfruxooznrcjqc.supabase.co node scripts/p
 
 **سؤال AGENTS الأول: هل تغيّر الحكم؟** لا حكم قائم اختُصر أو تبدل؛ نُفّذ قرار المالك الحالي باختيار المشرف من قائمة، وصُححت متابعة الترقية وفق دمج #144 وإفادة P1 الحي. حدود SQL والهاتف والأمن باقية.
 
-**سؤال AGENTS الثاني: هل بقي رابط دليله الأصلي؟** نعم؛ [تقرير DB day](../../../RAD-085_DB_DAY_COMPLETED_2026-10-28.md) و[تقرير الترقية](../../../RAD-085_PROMOTION_REPORT_2026-10-27.md) و[قاعدة الهاتف ودليلها](../../../DECISIONS.md#rad085-mobile-sql-owner-2026-10-28) و[S7](../../../RAD-085_REMAINING_OPERATIONS_2026-10-26.md#s7-supervisor-restore) وsource_ref السابق محفوظة؛ أضيف تقرير هذه الدفعة فقط إلى RAD-085.
+**سؤال AGENTS الثاني: هل بقي رابط دليله الأصلي؟** نعم؛ [تقرير DB day](RAD-085_DB_DAY_COMPLETED_2026-10-28.md) و[تقرير الترقية](RAD-085_PROMOTION_REPORT_2026-10-27.md) و[قاعدة الهاتف ودليلها](../../../DECISIONS.md#rad085-mobile-sql-owner-2026-10-28) و[S7](RAD-085_REMAINING_OPERATIONS_2026-10-26.md#s7-supervisor-restore) وsource_ref السابق محفوظة؛ أضيف تقرير هذه الدفعة فقط إلى RAD-085.

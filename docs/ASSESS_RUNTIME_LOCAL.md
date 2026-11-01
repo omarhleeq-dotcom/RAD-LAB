@@ -1,12 +1,12 @@
 # ربط Assess المحلي — Node24
 
-هذه حزمة مكتبة وentrypoint محدودة وحاوية **محلية** قابلة للمراجعة، بلا HTTP endpoint أو timer أو binding حي. [تقرير المكتبة](ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md) و[تقرير الحاوية](ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md) يفصلان الفحوص عن الأدلة الحية؛ [السياسة](ASSESS_RETENTION_POLICY.md) و[S-ASSESS-15](DECISIONS.md#assess-retention-owner-2026-10-20) حاكمتان.
+هذه حزمة مكتبة وentrypoint محدودة وحاوية **محلية** قابلة للمراجعة، بلا HTTP endpoint أو timer أو binding حي. [تقرير المكتبة](archive/reports/2026-10/ASSESS_RUNTIME_LOCAL_REPORT_2026-10-20.md) و[تقرير الحاوية](archive/reports/2026-10/ASSESS_CLOUD_RUN_LOCAL_REPORT_2026-10-21.md) يفصلان الفحوص عن الأدلة الحية؛ [السياسة](ASSESS_RETENTION_POLICY.md) و[S-ASSESS-15](DECISIONS.md#assess-retention-owner-2026-10-20) حاكمتان.
 
 ## المسار المختار وحدوده
 
 المستخدم يبقى browser → Supabase Auth/Data API → RPC المفوضة، عبر adapters الموجودة في runner-data وpractical-data وhistory-data وadmin-data وcontent-data. يتحقق المزود من توقيع JWT وصلاحيته ومصدره/جمهوره وفق إعداد Auth الفعلي، ثم يحدد auth.uid داخل SQL؛ لا هوية من body أو decoded claims بلا تحقق. لا service/admin key باسم المستخدم، ولا نقل جلسة المستخدم إلى اتصال العامل. لا adapter مستخدم جديد أو قبول v2 نيابة عن أحد. محاكاة auth.uid في QA ليست تحقق JWT. تدقيق توقيع/انتهاء/مصدر/جمهور وإلغاء جلسات المزوّد الحي يبقى بوابة مستقلة، ولا يغلقها نجاح الاختبار أو إفادة اختبارات المالك أو زوج القراءة المحدود.
 
-الخادم الخاص Node24 لأنه البيئة المقترحة في خطة التجهيز والمتوافقة مع Buffer والمصحح وbigint والـregistries القائمة. لا توافق Deno/Edge أو استضافة العامل على Pages مستنتجة. اختار المالك لاحقًا [Google Cloud Run](DECISIONS.md#assess-cloud-run-owner-2026-10-21)؛ [خطة المطابقة المحلية](ASSESS_CLOUD_RUN_PLAN_2026-10-21.md) تقترح Jobs وتحدد فجوة الإيقاف. لا موارد أُنشئت أو تكلفة/region اعتُمدت. آلية سر التشغيل وقناة المراقبة والربط الخارجي ما زالت غير منفذة؛ [حزمة قرار الربط الخارجي](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md) تحدد المقترحات وشروط القبول وقيود pooler والدور الحالي دون provisioning.
+الخادم الخاص Node24 لأنه البيئة المقترحة في خطة التجهيز والمتوافقة مع Buffer والمصحح وbigint والـregistries القائمة. لا توافق Deno/Edge أو استضافة العامل على Pages مستنتجة. اختار المالك لاحقًا [Google Cloud Run](DECISIONS.md#assess-cloud-run-owner-2026-10-21)؛ [خطة المطابقة المحلية](archive/reports/2026-10/ASSESS_CLOUD_RUN_PLAN_2026-10-21.md) تقترح Jobs وتحدد فجوة الإيقاف. لا موارد أُنشئت أو تكلفة/region اعتُمدت. آلية سر التشغيل وقناة المراقبة والربط الخارجي ما زالت غير منفذة؛ [حزمة قرار الربط الخارجي](archive/reports/2026-10/ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md) تحدد المقترحات وشروط القبول وقيود pooler والدور الحالي دون provisioning.
 
 ## البناء المحلي فقط
 
@@ -49,7 +49,7 @@ SIGTERM/SIGINT أثناء finish تنتظران COMMIT ثم health/close. SIGKIL
 
 ## TLS وACL والأسرار والإلغاء — قبل أي ربط حي
 
-CA صريحة وrejectUnauthorized=true وفحص اسم المضيف الافتراضي في pg/Node، بلا تعطيل verification أو fallback إلى اتصال غير مشفر. عنوان DNS وميناء وقاعدة/login خاصون؛ socket غير مقبول لهذا الربط. لا اعتبار قبول CA الاصطناعية في mock شهادة TLS. يلزم على المزود إثبات السلسلة واسم المضيف ورفض شهادة/مضيف خاطئين، وتوافق الاتصال المباشر/الـpooler مع login وSET LOCAL وstartup options. أُضيف دعم اسم النقل المركب محليًا في [تقرير إصلاح session pooler](ASSESS_SESSION_POOLER_REPORT_2026-10-21.md)، دون شهادة Supavisor أو TLS حي.
+CA صريحة وrejectUnauthorized=true وفحص اسم المضيف الافتراضي في pg/Node، بلا تعطيل verification أو fallback إلى اتصال غير مشفر. عنوان DNS وميناء وقاعدة/login خاصون؛ socket غير مقبول لهذا الربط. لا اعتبار قبول CA الاصطناعية في mock شهادة TLS. يلزم على المزود إثبات السلسلة واسم المضيف ورفض شهادة/مضيف خاطئين، وتوافق الاتصال المباشر/الـpooler مع login وSET LOCAL وstartup options. أُضيف دعم اسم النقل المركب محليًا في [تقرير إصلاح session pooler](archive/reports/2026-10/ASSESS_SESSION_POOLER_REPORT_2026-10-21.md)، دون شهادة Supavisor أو TLS حي.
 
 صلاحية login مخصصة محدودة: CONNECT للقاعدة المقصودة وعضوية assess_worker فقط، بلا ملكية كائنات/منح جداول أو public CREATE أو أدوار إدارية. مراجعة ACL تشمل المنح المباشرة وPUBLIC والعضويات العابرة وصلاحيات assess_worker وsecurity definer/RLS، مع رفض مستخدم/anon لدوال العامل. فحص login في الكود لا يغلق هذه البوابة. أسرار login خارج Git/build/browser، تُحقن من مدير أسرار يختار لاحقًا، ولا تُرسل للمحادثة. لا نسخ JWT أو مفاتيح service/admin إلى العامل.
 
@@ -61,13 +61,13 @@ CA صريحة وrejectUnauthorized=true وفحص اسم المضيف الافت�
 
 هذا المسار يقبل port5432 فقط ويرفض6543 وبدائل المنافذ؛ ليس دعم transaction pooler. hostname يؤخذ من Connect للمشروع ولا يُخمن من region؛ CA وhostname verification تبقيان إلزاميتين. المسار لا يُكتشف من hostname أو ENV، ولا fallback من direct إلى pooler. الحد pool1 في Job و1..4 في المكتبة محفوظ؛ إعداد الحاوية يظل ملفًا واحدًا≤64KiB. لم يتغير startup options أو statement60s/lock5s/connect10s؛ قبولها لدى Supavisor يحتاج شاهدًا مأذونًا لاحقًا ولا يحسمه نجاح mock/PGlite.
 
-[دليل Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) يحدد username للـshared pooler بصيغة role.project-ref. فصل اسم النقل لا يمنح Google IAM أو login أو عضوية أو شهادة TLS؛ لا إعداد حي أو سر منشأ من هذه الدفعة. نطاق الدور assess_worker ما زال أوسع من tick-only كما تسجله [حزمة الربط](ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md).
+[دليل Supabase](https://supabase.com/docs/guides/database/connecting-to-postgres) يحدد username للـshared pooler بصيغة role.project-ref. فصل اسم النقل لا يمنح Google IAM أو login أو عضوية أو شهادة TLS؛ لا إعداد حي أو سر منشأ من هذه الدفعة. نطاق الدور assess_worker ما زال أوسع من tick-only كما تسجله [حزمة الربط](archive/reports/2026-10/ASSESS_EXTERNAL_BINDING_READINESS_2026-10-21.md).
 
 ## حزمة login مغلقة وشاهد TLS
 
 أُعدت [حزمة تجهيز login والإلغاء](ASSESS_WORKER_LOGIN.md) محليًا: دور جديد NOLOGIN/password null وصلاحية منتهية، وcatalogue read-only، وCOMMIT لسحب الصلاحية قبل قتل جلساته. لا تفعيل سر أو دور على المزود؛ PUBLIC TEMP/CREATE وCONNECT إلى قواعد أخرى ما زالت تحتاج مراجعة، ولا تعديل لصلاحيات assess_worker المشتركة.
 
-[تقرير login](ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md#إفادة-tls-من-جهاز-المالك) يحفظ PASS من جهاز المالك لـTLS1.2 وhostname وجذر مطابق تمامًا للـCA المرفقة على مضيف session5432. كان رفض Windows الأول UntrustedRoot، فحُددت الثقة في الملف المطابق فقط دون تثبيته عالميًا. لا login/SQL أو certificate revocation أو Node/Cloud Run أو startup options أو ACL/إلغاء حي ثبتت بذلك، ولا نجاح شبكة الوكيل التي بقيت بلا TCP grants.
+[تقرير login](archive/reports/2026-10/ASSESS_WORKER_LOGIN_REPORT_2026-10-21.md#إفادة-tls-من-جهاز-المالك) يحفظ PASS من جهاز المالك لـTLS1.2 وhostname وجذر مطابق تمامًا للـCA المرفقة على مضيف session5432. كان رفض Windows الأول UntrustedRoot، فحُددت الثقة في الملف المطابق فقط دون تثبيته عالميًا. لا login/SQL أو certificate revocation أو Node/Cloud Run أو startup options أو ACL/إلغاء حي ثبتت بذلك، ولا نجاح شبكة الوكيل التي بقيت بلا TCP grants.
 
 ## الإيقاف والفشل وScale
 

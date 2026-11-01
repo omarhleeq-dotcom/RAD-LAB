@@ -6,7 +6,7 @@ This seventh documentation file is within the authorised ≤7-file budget: its p
 
 Owner-approved amendments to the pasted draft: (1) remove the external-survey paragraph because no external method was selected and an internal survey is deferred; (2) retain only general non-identifying statistics/summaries for user-experience improvement or **scientific research** (matching AR); (3) prohibit account sharing and republishing training content while allowing sharing one's result screenshot or experience, retaining the prohibition on disruption. The rest, including the encrypted-password wording and pilot-version label, is retained as the owner requested. Line breaks/headings below are formatting, not further substantive amendments.
 
-> **Verification update:** official Supabase documentation now confirms bcrypt hashing and explicitly distinguishes it from encryption. The selected password wording below is contradicted by that documented mechanism; [exact proposed correction and evidence](TERMS_REVIEW_2026-10-16.md) await approval. Brevo/account and live survey settings still await owner confirmation. Selected participant text below is unchanged.
+> **Verification update:** official Supabase documentation now confirms bcrypt hashing and explicitly distinguishes it from encryption. The selected password wording below is contradicted by that documented mechanism; [exact proposed correction and evidence](archive/reports/2026-10/TERMS_REVIEW_2026-10-16.md) await approval. Brevo/account and live survey settings still await owner confirmation. Selected participant text below is unchanged.
 
 ## Latest approved password override — S-PILOT-34
 

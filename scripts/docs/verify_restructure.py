@@ -3,7 +3,6 @@
 
 RAD-090 compares with its first closure commit using the recorded move map.
 """
-import fnmatch
 import json
 import posixpath
 import re
@@ -167,6 +166,25 @@ def main():
         else:
             assert relocate(previous, old, new, moves) == current, f'Not link-target-only/equivalent: {new}'
         checked += 1
+    # DECISIONS accepts insertions only: original text and anchor order stay intact.
+    previous_decisions = relocate(git('show', f'{closure}:docs/DECISIONS.md').decode(),
+                                  'docs/DECISIONS.md', 'docs/DECISIONS.md', moves)
+    current_decisions = (ROOT / 'docs/DECISIONS.md').read_text()
+    remaining = iter(current_decisions.splitlines())
+    for line in previous_decisions.splitlines():
+        assert any(candidate == line for candidate in remaining), f'Decision text rewritten/moved: {line[:90]}'
+    anchors = re.findall(r'<a id="([^"]+)"', previous_decisions)
+    present = re.findall(r'<a id="([^"]+)"', current_decisions)
+    assert [anchor for anchor in present if anchor in anchors] == anchors, 'Decision anchors renamed/moved/deleted'
+    old_tasks = status(git('show', f'{closure}:docs/project-status.md').decode())['tasks']
+    current_tasks = {t['id']: t for t in status((ROOT / 'docs/project-status.md').read_text())['tasks']}
+    archive = (ROOT / 'docs/archive/status-archive.md').read_text()
+    for task in old_tasks:
+        current = current_tasks[task['id']]
+        for field in ['id', 'status', 'completion_evidence']:
+            assert task.get(field) == current.get(field), f'{task["id"]}: changed {field}'
+        if task['status'] == 'done' and task['description'] != current['description']:
+            assert f"## {task['id']}\n\n````text\n{task['description']}\n````" in archive, f'{task["id"]}: original description missing'
     print(f'PASS: {checked} Markdown files link-target-only; {images} moved images byte-identical; protected bytes preserved; no deletion')
 
 

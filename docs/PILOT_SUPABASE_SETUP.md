@@ -35,7 +35,7 @@
 الخادم المدمج **لا يصلح**: «Send messages only to pre-authorized addresses» (أعضاء مؤسستك فقط)، وحده 2 رسالة في الساعة. المشاركون الخارجيون لن يصلهم بريد التأكيد بدونه.
 المطلوب: خدمة إرسال بريد SMTP من اختيارك وإدخال بياناتها في Authentication → SMTP **(قد يختلف)**. لم أقرأ شروط أي خدمة بريد، فاقرأ حدودها المجانية بنفسك أو اطلب جلسة DOCS لمقارنتها. بعد الإدخال جرّب إرسال بريد تأكيد إلى عنوان **ليس عضوًا** في مؤسستك.
 
-**الحكم الحالي للمراسلات:** [قرار المالك](DECISIONS.md#rad085-owner-final-local-2026-10-26) يفصل المرسل عن مستلم التشغيل (بريد الموقع) ومستلم طلب الحساب (بريده الشخصي)، والموافقة لحساب المالك المعتمد وحده. [عقد الإعداد المحلي](../src/features/pilot/notification-routing.ts) بلا إرسال أو أسرار أو منح. الربط الحالي وملكية المرسل والحدود وصلاحية SMTP والتوصيل تحتاج تحققًا لاحقًا؛ تجربة2026-10-15 ليست تحققًا حاليًا. لا مزوّد ثانٍ أو رسالة فعلية الآن. الإعدادات المتبقية في [القائمة الموحدة](RAD-085_REMAINING_OPERATIONS_2026-10-26.md).
+**الحكم الحالي للمراسلات:** [قرار المالك](DECISIONS.md#rad085-owner-final-local-2026-10-26) يفصل المرسل عن مستلم التشغيل (بريد الموقع) ومستلم طلب الحساب (بريده الشخصي)، والموافقة لحساب المالك المعتمد وحده. [عقد الإعداد المحلي](../src/features/pilot/notification-routing.ts) بلا إرسال أو أسرار أو منح. الربط الحالي وملكية المرسل والحدود وصلاحية SMTP والتوصيل تحتاج تحققًا لاحقًا؛ تجربة2026-10-15 ليست تحققًا حاليًا. لا مزوّد ثانٍ أو رسالة فعلية الآن. الإعدادات المتبقية في [القائمة الموحدة](archive/reports/2026-10/RAD-085_REMAINING_OPERATIONS_2026-10-26.md).
 
 ## 4. تطبيق المخطط (Migration)
 
@@ -430,7 +430,7 @@ versions بيانات metadata لإصدارات منشورة مستقبلًا؛ 
 
 القراءة keyset على UUID بحد100 وخيار واجهة20؛ تغيير البحث/المجموعة/الإسناد يبدأ الصفحة الأولى. ليست snapshot عبر الزمن. إضافة عضوية/مستهدف≤100 في الطلب، اختيار مجموعات≤100، المجموعة/الإسناد≤10000مستهدف. expansion خادمي مع dedup وحد10001للإدراج ثم رفض ذري لما يتجاوز السقف؛ لا تحميل جميع الطلاب للمتصفح. فهارس owner/id وuser/assignment وgroup/user تغطي المسارات. يلزم قياس التنفيذ وتكلفة البحث/التوسعة قبل زيادة الحدود؛ لا وعد سعة Free.
 
-الفحص المحلي: `npx vitest run src/features/assess/assignments-db.test.ts src/features/assess/admin-data.test.ts`؛ PGlite يشغل SQL الفعلي مع shim هوية وأدوار وبيانات اصطناعية فقط، ولا يثبت إعداد Data API أو سياسات مزود حي أو سباق اتصالات منفصلة. [تقرير B](ASSESS_B_REPORT_2026-10-19.md) يسجل بقية QA وحدوده، و[عقد A](ASSESS_FOUNDATION.md) يبقى مرجع دورة المحاولة المستقبلية.
+الفحص المحلي: `npx vitest run src/features/assess/assignments-db.test.ts src/features/assess/admin-data.test.ts`؛ PGlite يشغل SQL الفعلي مع shim هوية وأدوار وبيانات اصطناعية فقط، ولا يثبت إعداد Data API أو سياسات مزود حي أو سباق اتصالات منفصلة. [تقرير B](archive/reports/2026-10/ASSESS_B_REPORT_2026-10-19.md) يسجل بقية QA وحدوده، و[عقد A](ASSESS_FOUNDATION.md) يبقى مرجع دورة المحاولة المستقبلية.
 
 ### فحص خدمة Assess من حسابين — قراءة فقط
 
@@ -442,12 +442,12 @@ versions بيانات metadata لإصدارات منشورة مستقبلًا؛ 
 
 القوائم الفارغة صحيحة؛ لا تُنشئ امتحانًا أو محاولة لإنتاج شاهد. لا يختبر معرف الإسناد الاختباري وصولًا إلى إسناد حقيقي أو طلاب آخرين ذوي إسناد، ولا الكتابة أو التزامن أو جميع السياسات؛ دليلها المحلي لا يتحول إلى تحقق حي بمجرد PASS. الأداة لا تطبع صفوفًا أو أسماء أو بريدًا أو IDs أو علامات أو keys أو ردود خدمة خاصة، ولا تُنشئ سجلات استخدام.
 
-أرسل فقط السطر `RADLAB_ASSESS_SERVICE_CHECK` من كل حساب. المطلوب outcome=PASS، contract=assess-b-service/1، ودورا owner/participant مع pair متطابق. تشغيل المالك الأول بتاريخ2026-10-20 توقف عند anonymous_admin_denied بسبب401للطلب المرسل عمدًا دون JWT؛ صُحح توصيف هذه الحالة في الأداة. ثم أرسل PASS للحسابين من النسخة المصححة بعقد assess-b-service/1 وpair متطابق، كما يوثق [تقرير B](ASSESS_B_REPORT_2026-10-19.md). لا تعِد الفحصين أو SQL دون تغير ذي صلة، ولا توسع المنح. STOP للتشخيص المنقح قبل أي تعديل؛ لا ترسل Console/Network/localStorage كاملًا. بعد تحقق الخدمة يُراجع إثبات المخطط ثم يُحسب marker للنسخة/المشروع الصحيحين؛ هذه الأداة لا تغير PILOT_SCHEMA_VERIFIED أو تعيد نشرًا. [`service-check.test.ts`](../src/features/assess/service-check.test.ts) اختبار اصطناعي للأداة لا دليل مزود حي.
+أرسل فقط السطر `RADLAB_ASSESS_SERVICE_CHECK` من كل حساب. المطلوب outcome=PASS، contract=assess-b-service/1، ودورا owner/participant مع pair متطابق. تشغيل المالك الأول بتاريخ2026-10-20 توقف عند anonymous_admin_denied بسبب401للطلب المرسل عمدًا دون JWT؛ صُحح توصيف هذه الحالة في الأداة. ثم أرسل PASS للحسابين من النسخة المصححة بعقد assess-b-service/1 وpair متطابق، كما يوثق [تقرير B](archive/reports/2026-10/ASSESS_B_REPORT_2026-10-19.md). لا تعِد الفحصين أو SQL دون تغير ذي صلة، ولا توسع المنح. STOP للتشخيص المنقح قبل أي تعديل؛ لا ترسل Console/Network/localStorage كاملًا. بعد تحقق الخدمة يُراجع إثبات المخطط ثم يُحسب marker للنسخة/المشروع الصحيحين؛ هذه الأداة لا تغير PILOT_SCHEMA_VERIFIED أو تعيد نشرًا. [`service-check.test.ts`](../src/features/assess/service-check.test.ts) اختبار اصطناعي للأداة لا دليل مزود حي.
 
 <a id="assess-c-local"></a>
 ### Assess C — ترحيل وخدمات محلية غير منشورة
 
-بعد دمج #90 أذن المالك ببرمجة C. [تقرير C](ASSESS_C_REPORT_2026-10-20.md) يصف [الترحيل الإضافي](../supabase/migrations/20261020000700_assess_lifecycle.sql) والـRPCs والمصحح والعامل المحلي. **ليس SQL تشغيل إنتاج في هذه الدفعة**: لا تغيّر إعداد schema أو منح B أو PILOT_SCHEMA_VERIFIED، ولا تعِد تطبيق ترحيل B أو نسخه فوق القاعدة. بوابة بدء C مغلقة افتراضيًا، وربط دور العامل واستضافة Node والجدولة والموافقة والمراقبة وbackup/restore يحتاج تجهيزًا ومراجعة قبل إذن نشر مستقل. role assess_worker بلا login ولا صلاحيات جداول، ولا يُمنح لمستخدم/متصفح؛ مستخدم RPC يجب أن يحمل JWT هويته، لا service/admin key.
+بعد دمج #90 أذن المالك ببرمجة C. [تقرير C](archive/reports/2026-10/ASSESS_C_REPORT_2026-10-20.md) يصف [الترحيل الإضافي](../supabase/migrations/20261020000700_assess_lifecycle.sql) والـRPCs والمصحح والعامل المحلي. **ليس SQL تشغيل إنتاج في هذه الدفعة**: لا تغيّر إعداد schema أو منح B أو PILOT_SCHEMA_VERIFIED، ولا تعِد تطبيق ترحيل B أو نسخه فوق القاعدة. بوابة بدء C مغلقة افتراضيًا، وربط دور العامل واستضافة Node والجدولة والموافقة والمراقبة وbackup/restore يحتاج تجهيزًا ومراجعة قبل إذن نشر مستقل. role assess_worker بلا login ولا صلاحيات جداول، ولا يُمنح لمستخدم/متصفح؛ مستخدم RPC يجب أن يحمل JWT هويته، لا service/admin key.
 
 التجربة الآمنة ببيانات اصطناعية داخل ذاكرة محلية، من جذر المشروع مع Node24:
 
@@ -468,7 +468,7 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-c.mjs
 
 `installMixedContent(worker,version)` في [server-presentation](../src/features/assess/server-presentation.ts) يحتاج منفذ assess_worker موثوقًا منفصلًا؛ يقرأ candidate خاصًا، يتحقق عبر C وD، ثم يثبت publication والإتاحة ويمحو المستند المرحلي في معاملة واحدة. لا HTTP endpoint أو worker credentials بالمتصفح؛ لا مدقق منشور أو إجراء تشغيل تلقائي. اختيار binding والمصادقة وسياسة رفض/تنظيف المرشحات ضمن تجهيز runtime والاحتفاظ قبل بيانات حقيقية، ولا تمنح الدور لحساب مالك/طالب. نجاح queue لا يثبت install أو بدءًا حيًا؛ تبقى launch_gate مغلقة حتى بعد التثبيت.
 
-التجهيز اللاحق يحتاج إذن بيئة اختبار: تطبيق سلسلة الترحيلات وفحص `supabase/checks/assess-mixed-ready.sql` مع بقية catalogue C، والتحقق بهويتين من owner submit/list ورفض participant/private table/worker calls والعزل بين مالكين، ثم إسناد اصطناعي واختبار runner والحفظ والإقرار المفقود والتعارض والقفل والتسليم/expiry وربط التصحيح والحذف. فحص catalogue قراءة فقط وليس دليل Data API أو runtime؛ لا تفتح البوابة لمجرد فحصه. موافقة Assess واحتفاظ المتروك والمرشحات والنسخ والاستعادة O106، والمراقبة والجدولة والاسترداد بوابات مستقلة قبل التخزين الحقيقي. [التقرير](ASSESS_D_REPORT_2026-10-20.md) يحفظ نتائج الفحوص المحلية وحدودها.
+التجهيز اللاحق يحتاج إذن بيئة اختبار: تطبيق سلسلة الترحيلات وفحص `supabase/checks/assess-mixed-ready.sql` مع بقية catalogue C، والتحقق بهويتين من owner submit/list ورفض participant/private table/worker calls والعزل بين مالكين، ثم إسناد اصطناعي واختبار runner والحفظ والإقرار المفقود والتعارض والقفل والتسليم/expiry وربط التصحيح والحذف. فحص catalogue قراءة فقط وليس دليل Data API أو runtime؛ لا تفتح البوابة لمجرد فحصه. موافقة Assess واحتفاظ المتروك والمرشحات والنسخ والاستعادة O106، والمراقبة والجدولة والاسترداد بوابات مستقلة قبل التخزين الحقيقي. [التقرير](archive/reports/2026-10/ASSESS_D_REPORT_2026-10-20.md) يحفظ نتائج الفحوص المحلية وحدودها.
 
 <a id="assess-staging-preparation"></a>
 ### تحضير بيئة اختبار Assess — محلي وقابل للمراجعة
@@ -515,7 +515,7 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-e.mjs
 3. إذا نجح الفحص، شغّل [assess-original-e-install.sql](../supabase/manual/assess-original-e-install.sql) كاملًا مرة واحدة، دون تغيير أو نسخ bootstrap الاختبارات. الحزمة تعيد guard تحت معاملة وقفل gate، وتحتوي bytes ترحيل E وحده وبصمته، وتتحقق من catalogue/ACL والبصمات والبوابة قبل COMMIT. سقف lock5ثوانٍ وstatement60ثانية تقنيان أوليان، لا ضمان زمن مزود. الخطأ قبل COMMIT يرجع تغييرات المعاملة فقط؛ ليس نسخة أو undo بعد COMMIT.
 4. بعد نجاح التطبيق المبلغ عنه، شغّل الجرد B/C/D/E وفحص E المغلق المرتبطين أعلاه، ثم تُراجع خدمة E بالهويات المناسبة ضمن الإذن، دون أدوات C/D القديمة أو بيانات/محاولات إنتاجية. لا تغيير إثبات النشر قبل دليل مطابق، ولا فتح بوابة أو نشر خلفية أو F من هذا الإجراء.
 
-فحوص الحزمة المحلية وحدودها وبصماتها في [تقرير E](ASSESS_E_REPORT_2026-10-20.md#متابعة-تطبيق-sql-e-على-الأصلية). لا تعديل لترحيل E أو C/D المطبقين، ولا حساب marker جديد أو تغيير Variables أو إطلاق تلقائي. ظهور Success من SQL Editor لا يثبت العامل أو الجدولة أو الموافقة أو المراقبة أو الاسترداد.
+فحوص الحزمة المحلية وحدودها وبصماتها في [تقرير E](archive/reports/2026-10/ASSESS_E_REPORT_2026-10-20.md#متابعة-تطبيق-sql-e-على-الأصلية). لا تعديل لترحيل E أو C/D المطبقين، ولا حساب marker جديد أو تغيير Variables أو إطلاق تلقائي. ظهور Success من SQL Editor لا يثبت العامل أو الجدولة أو الموافقة أو المراقبة أو الاسترداد.
 
 ### توقف E عند اختلاف أجسام دوال C/D
 
@@ -525,7 +525,7 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-e.mjs
 
 ### استئناف E بعد مراجعة LF وCRLF
 
-وصل جدول assess-e-source-diff/1 من المالك: الدوال الست والعشرون موجودة، وكل مؤشري المقارنة true. لم يُعتمد المؤشر وحده: أُعيد حساب SHA-256 وطول UTF-8 لكل مصدر Git بعد تحويل LF إلى CRLF؛ طابقت **كل البصمات والأطوال الفعلية**. روجعت أجسام B/C/D/E مع استثناء التعليقات من فحص النصوص: لا literals متعددة الأسطر أو dollar strings داخلية تتغير قيمتها. التفاصيل وحدود الدليل في [التقرير](ASSESS_E_REPORT_2026-10-20.md#reviewed-line-endings).
+وصل جدول assess-e-source-diff/1 من المالك: الدوال الست والعشرون موجودة، وكل مؤشري المقارنة true. لم يُعتمد المؤشر وحده: أُعيد حساب SHA-256 وطول UTF-8 لكل مصدر Git بعد تحويل LF إلى CRLF؛ طابقت **كل البصمات والأطوال الفعلية**. روجعت أجسام B/C/D/E مع استثناء التعليقات من فحص النصوص: لا literals متعددة الأسطر أو dollar strings داخلية تتغير قيمتها. التفاصيل وحدود الدليل في [التقرير](archive/reports/2026-10/ASSESS_E_REPORT_2026-10-20.md#reviewed-line-endings).
 
 لهذه المصادر المراجعة فقط، استخدم بدل ملفي LF-only السابقين:
 
@@ -551,7 +551,7 @@ node --import ./scripts/assess/node-loader.mjs scripts/assess/rehearse-e.mjs
 
 تفحص الأداة Auth/profile المعتمدين وهوية الزوج، وقائمة assigned_practical_page_v1 بحد صف واحد وعقد metadata مغلق، ورفض الزائر للقائمة ورفض الحساب والزائر لقراءة practical_presentations المباشرة. القوائم الفارغة صحيحة؛ لا تنشئ محتوى أو محاولة لتعبئتها. لا تقرأ read_practical_session_v1، لأن قراءة C قد تطبق انتهاء الوقت وحذف التفاصيل النهائية؛ لا start/command/content_submit/install/worker أو إعادة فحوص D. POST محصور في RPC القائمة القراءة فقط؛ لا استجابة أو صف خاص يُطبع، ولا refresh/retry تلقائي أو تغيير إعدادات.
 
-نجاح الزوج يثبت مسارات E المحددة فقط، لا قراءة جلسة E نشطة أو منع وصول حساب لصف موجود لحساب آخر أو عمل lifecycle/التصحيح/المشهد حيًا. SQL ACL يسجل فحص صلاحية read RPC وprivate installer، دون استدعائهما في هذه الأداة. بعد نتائج الخدمة تُراجع أدلة العقد قبل حساب/تسجيل إثبات نشر مطابق؛ الأداة لا تعدل PILOT_SCHEMA_VERIFIED أو pins أو workflow، ولا تفتح البوابة أو تنتقل F. [التقرير](ASSESS_E_REPORT_2026-10-20.md#e-sql-owner-results) يحفظ QA المحلي وحدوده.
+نجاح الزوج يثبت مسارات E المحددة فقط، لا قراءة جلسة E نشطة أو منع وصول حساب لصف موجود لحساب آخر أو عمل lifecycle/التصحيح/المشهد حيًا. SQL ACL يسجل فحص صلاحية read RPC وprivate installer، دون استدعائهما في هذه الأداة. بعد نتائج الخدمة تُراجع أدلة العقد قبل حساب/تسجيل إثبات نشر مطابق؛ الأداة لا تعدل PILOT_SCHEMA_VERIFIED أو pins أو workflow، ولا تفتح البوابة أو تنتقل F. [التقرير](archive/reports/2026-10/ASSESS_E_REPORT_2026-10-20.md#e-sql-owner-results) يحفظ QA المحلي وحدوده.
 
 
 <a id="assess-e-attestation"></a>
@@ -567,12 +567,12 @@ pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f
 
 في GitHub Settings → Secrets and variables → Actions → Variables، طابق NEXT_PUBLIC_SUPABASE_URL مع `https://vlacestfruxooznrcjqc.supabase.co` ثم حدّث **PILOT_SCHEMA_VERIFIED وحدها** بالقيمة أعلاه. لا تغير URL/مفتاح عام أو pins. بعدها أعد Deploy Pages الخاص بمسودة #93 للرأس المقصود وتحقق من نتيجة CI/النشر لذلك الرأس ثم الهاتف. قراءة متغير URL عبر التكامل رفضت403، ولم تُطلب صلاحيات إضافية أو تُحاول كتابة؛ لذلك مطابقة إعداد البناء الحالية تكون لدى المالك. لا نتيجة تفيد تحديث المتغير أو نجاح إعادة النشر حتى الآن.
 
-قيمة marker شهادة توافق يدوية للمشروع ومحتويات العقد، لا دليل SQL حي صادر من الحارس أو تحقق runtime/launch أو تأكيد أنهما يعملان. تبقى البوابة مغلقة وruntime_or_launch_verified=false، والنسخ/الاستعادة وO106/O108 والمراقبة والجدولة مستقلة. لا F أو تغيير حالة PR. عند تغير المشروع/المخطط/المنح أو الاستعادة يلزم إجراء التحقق القائم مجددًا؛ لا تُنقل القيمة إلى مشروع آخر أو تتغير لإخفاء فشل. [تقرير المتابعة](ASSESS_E_REPORT_2026-10-20.md#e-closed-pair-attestation) يحفظ التحقق المحلي وحدوده.
+قيمة marker شهادة توافق يدوية للمشروع ومحتويات العقد، لا دليل SQL حي صادر من الحارس أو تحقق runtime/launch أو تأكيد أنهما يعملان. تبقى البوابة مغلقة وruntime_or_launch_verified=false، والنسخ/الاستعادة وO106/O108 والمراقبة والجدولة مستقلة. لا F أو تغيير حالة PR. عند تغير المشروع/المخطط/المنح أو الاستعادة يلزم إجراء التحقق القائم مجددًا؛ لا تُنقل القيمة إلى مشروع آخر أو تتغير لإخفاء فشل. [تقرير المتابعة](archive/reports/2026-10/ASSESS_E_REPORT_2026-10-20.md#e-closed-pair-attestation) يحفظ التحقق المحلي وحدوده.
 
 <a id="assess-original-f"></a>
 ### تطبيق SQL F فقط على الأصلية
 
-بعد سؤال النسخة والاسترداد وجّه المالك «خلينا نشتغل على النسخة الاصلية الان»؛ يُتبع التوجيه لهذه العملية الحالية على **vlacestfruxooznrcjqc** دون ادعاء توفر نسخة أو استرداد متحقق. هذا إذن جديد محدود لـF، لا تعميم لاستثناء E أو فتح بوابات التشغيل. [التقرير](ASSESS_F_REPORT_2026-10-20.md#f-original-sql) يحفظ حدود الإذن والفحوص والبصمات؛ لا تكرر B/C/D/E أو أدوات حسابيها أو تشخيص CRLF السابق.
+بعد سؤال النسخة والاسترداد وجّه المالك «خلينا نشتغل على النسخة الاصلية الان»؛ يُتبع التوجيه لهذه العملية الحالية على **vlacestfruxooznrcjqc** دون ادعاء توفر نسخة أو استرداد متحقق. هذا إذن جديد محدود لـF، لا تعميم لاستثناء E أو فتح بوابات التشغيل. [التقرير](archive/reports/2026-10/ASSESS_F_REPORT_2026-10-20.md#f-original-sql) يحفظ حدود الإذن والفحوص والبصمات؛ لا تكرر B/C/D/E أو أدوات حسابيها أو تشخيص CRLF السابق.
 
 1. طابق محدد مشروع SQL Editor مع **vlacestfruxooznrcjqc**؛ SQL لا يثبت URL/origin. شغّل [assess-f-preinstall.sql](../supabase/checks/assess-f-preinstall.sql) كاملًا في استعلام جديد. يلزم ready_for_f_install=true مع بقية شروط المخطط والمصدر والبوابة والغياب true. recovery_verified=false وruntime_or_launch_verified=false مقصودتان وليستا فشلًا للشرط.
 2. عند نجاحه فقط، شغّل [assess-original-f-install.sql](../supabase/manual/assess-original-f-install.sql) كاملة مرة واحدة كمشغّل وحيد؛ لا تشغّل ترحيل F الخام منفصلًا أو تنسخ bootstrap الاختبارات. تعيد الحزمة الشروط تحت قفل ومعاملة ثم تتحقق قبل COMMIT؛ الخطأ يرجع المعاملة فقط ولا يثبت استردادًا بعد COMMIT. لا محتوى/محاولات/موافقات إنتاجية أو runtime/worker/schedule أو فتح launch_gate في الحزمة.
@@ -584,7 +584,7 @@ pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f
 <a id="assess-f-closed-service"></a>
 ### نجاح SQL F وفحص الخدمة المغلقة
 
-أرسل المالك جرد المخطط وcatalogue_ready=true بكل شروطه، ثم فحص F بكل شروطه وlaunch_gate_closed=true، وruntime_or_launch_verified=false عمدًا. مع صف assess-f-install/1 السابق اكتمل دليل SQL المفحوص؛ لا إعادة F أو B/C/D/E أو preinstall أو أدوات الخدمة القديمة. [التقرير](ASSESS_F_REPORT_2026-10-20.md#f-sql-owner-results) يحفظ النتائج وحدودها، ولا يثبت تشغيل المحاولات أو العامل حيًا.
+أرسل المالك جرد المخطط وcatalogue_ready=true بكل شروطه، ثم فحص F بكل شروطه وlaunch_gate_closed=true، وruntime_or_launch_verified=false عمدًا. مع صف assess-f-install/1 السابق اكتمل دليل SQL المفحوص؛ لا إعادة F أو B/C/D/E أو preinstall أو أدوات الخدمة القديمة. [التقرير](archive/reports/2026-10/ASSESS_F_REPORT_2026-10-20.md#f-sql-owner-results) يحفظ النتائج وحدودها، ولا يثبت تشغيل المحاولات أو العامل حيًا.
 
 الخطوة التالية [`assess-f-closed-service-check.js`](../scripts/pilot/assess-f-closed-service-check.js) الجديدة:
 
@@ -599,7 +599,7 @@ pilot-v1:0820cbdf2120261dba63397c4e2139e6f710ae6d77bbeaf49fefcb12480a9c8f
 <a id="assess-f-attestation"></a>
 ### نجاح زوج F المغلق وإثبات مخطط الواجهة
 
-ورد owner=PASS وparticipant=PASS بعقد assess-f-closed-service/1 وpair متطابق، وruntimeOrLaunchVerified=false عمدًا في السطرين. [التقرير](ASSESS_F_REPORT_2026-10-20.md#f-closed-pair-attestation) يحفظ توقيتَي الأداة وعمّان وحدود الدليل. مع SQL والجرد وفحص F السابق اكتملت مراجعة توافق المخطط لمسارات F المغلقة المحددة؛ لا إعادة SQL أو أدوات الحسابين، ولا استنتاج runtime/تصحيح أو موافقة/استرداد أو قبول حي.
+ورد owner=PASS وparticipant=PASS بعقد assess-f-closed-service/1 وpair متطابق، وruntimeOrLaunchVerified=false عمدًا في السطرين. [التقرير](archive/reports/2026-10/ASSESS_F_REPORT_2026-10-20.md#f-closed-pair-attestation) يحفظ توقيتَي الأداة وعمّان وحدود الدليل. مع SQL والجرد وفحص F السابق اكتملت مراجعة توافق المخطط لمسارات F المغلقة المحددة؛ لا إعادة SQL أو أدوات الحسابين، ولا استنتاج runtime/تصحيح أو موافقة/استرداد أو قبول حي.
 
 لم تتغير مصادر عقد pilot-through-assess-f/1 منذ مراجعة الحزمة؛ راجع الوكيل required migrations/checks وحدود المتصفح ثم حسب marker بالأمر القائم وبحساب SHA-256 مستقل مطابق. للأصلية **vlacestfruxooznrcjqc فقط**:
 
@@ -614,7 +614,7 @@ pilot-v1:79416f28ed75826571ed08c6bc9732e5278280ffa0a48437830c2b0d685a054d
 <a id="assess-retention-preinstall"></a>
 ### إنفاذ S-ASSESS-15 — نقطة SQL اليدوي للقراءة فقط
 
-هذه المتابعة أحدث من شهادة F التاريخية أعلاه. إنفاذ الإغلاق والتعطيل وموافقة v2 وتنظيف metadata محلي في المسودة فقط؛ لا تحديث PILOT_SCHEMA_VERIFIED أو إعادة نشر من قيمة F القديمة. طلب المالك متابعة العمل ثم التوقف عندما نحتاج SQL يدويًا. أُعدت الخطوة التالية دون اتصال إدارة أو تطبيق من الوكيل؛ [التقرير](ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md) يحفظ اختبارات التشخيص وحدودها.
+هذه المتابعة أحدث من شهادة F التاريخية أعلاه. إنفاذ الإغلاق والتعطيل وموافقة v2 وتنظيف metadata محلي في المسودة فقط؛ لا تحديث PILOT_SCHEMA_VERIFIED أو إعادة نشر من قيمة F القديمة. طلب المالك متابعة العمل ثم التوقف عندما نحتاج SQL يدويًا. أُعدت الخطوة التالية دون اتصال إدارة أو تطبيق من الوكيل؛ [التقرير](archive/reports/2026-10/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md) يحفظ اختبارات التشخيص وحدودها.
 
 1. افتح SQL Editor في المشروع الأصلي **vlacestfruxooznrcjqc** وطابق اسم المشروع/محدده بنفسك؛ SQL لا تثبت الهوية أو النسخ/الاسترداد.
 2. شغّل [assess-retention-preinstall.sql](../supabase/checks/assess-retention-preinstall.sql) **كاملة فقط**. هي READ ONLY وتنتهي rollback، بلا إنشاء/تعديل/حذف أو تشغيل محاولة أو عامل. لا تشغّل الترحيل الخام أو حزم B/C/D/E/F القديمة.
@@ -628,7 +628,7 @@ pilot-v1:79416f28ed75826571ed08c6bc9732e5278280ffa0a48437830c2b0d685a054d
 <a id="assess-retention-preinstall-owner-result"></a>
 ### نتيجة فحص الاحتفاظ — توقف سابق ثم توجيه أحدث من المالك
 
-أرسل المالك صف assess-retention-preinstall/1 مطابقًا: جميع مؤشرات baseline والمخطط والمصدر والصلاحيات وtrigger والبوابة المغلقة وغياب الإضافة true؛ manual_review_required=true، وapply_authorized وbackup/recovery/provider/runtime غير مثبتة (false). [التقرير](ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md#retention-preinstall-owner-result) يحفظ الصف وحدوده. انتهى انتظار الفحص المقروء؛ لا تعِده أو تشغّل أدوات حسابين لمجرد توفير شاهد آخر.
+أرسل المالك صف assess-retention-preinstall/1 مطابقًا: جميع مؤشرات baseline والمخطط والمصدر والصلاحيات وtrigger والبوابة المغلقة وغياب الإضافة true؛ manual_review_required=true، وapply_authorized وbackup/recovery/provider/runtime غير مثبتة (false). [التقرير](archive/reports/2026-10/ASSESS_RETENTION_PREFLIGHT_REPORT_2026-10-20.md#retention-preinstall-owner-result) يحفظ الصف وحدوده. انتهى انتظار الفحص المقروء؛ لا تعِده أو تشغّل أدوات حسابين لمجرد توفير شاهد آخر.
 
 أفاد المالك بأنه لا توجد نسخة حديثة مثبتة أو لا يعرف، فتوقفت الكتابة آنذاك. **وجّه لاحقًا بالمتابعة على الأصلية دون نسخة الآن وتأجيل نسخة شاملة إلى نهاية العمل**؛ [التوجيه الأحدث](DECISIONS.md#assess-retention-original-no-backup-2026-10-20) يحكم العملية الحالية، و[الحزمة المحروسة أدناه](#assess-retention-original-install) هي الخطوة التالية. لا ترفع dump أو كلمات مرور إلى Git/المحادثة. دليل §8 تاريخي لنسخته ومخططه؛ لا يثبت B–F الحالية ولا يجيز إعادة حزمة منح/استعادة قديمة أو الكتابة فوق مشروع اختبار قائم.
 
@@ -663,7 +663,7 @@ $radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
 <a id="assess-retention-original-install"></a>
 ### إضافة الاحتفاظ على الأصلية — ملف يدوي محروس واحد
 
-السلطة هي [توجيه المالك الأحدث](DECISIONS.md#assess-retention-original-no-backup-2026-10-20): الأصلية الآن، دون نسخة حديثة مثبتة، ونسخة شاملة بعد إنهاء العمل. لا حاجة لتثبيت CLI أو تشغيل Docker/7-Zip لهذه الخطوة. [تقرير التجربة المحلية](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md) يفرق بين PGlite وPostgreSQL والمزود؛ وصلت نتيجة التطبيق لاحقًا؛ [الصف الحالي](#assess-retention-install-owner-result) يحكم المتابعة، ولا تعاد هذه الخطوات.
+السلطة هي [توجيه المالك الأحدث](DECISIONS.md#assess-retention-original-no-backup-2026-10-20): الأصلية الآن، دون نسخة حديثة مثبتة، ونسخة شاملة بعد إنهاء العمل. لا حاجة لتثبيت CLI أو تشغيل Docker/7-Zip لهذه الخطوة. [تقرير التجربة المحلية](archive/reports/2026-10/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md) يفرق بين PGlite وPostgreSQL والمزود؛ وصلت نتيجة التطبيق لاحقًا؛ [الصف الحالي](#assess-retention-install-owner-result) يحكم المتابعة، ولا تعاد هذه الخطوات.
 
 1. افتح SQL Editor للمشروع الأصلي **vlacestfruxooznrcjqc** وطابق محدده يدويًا؛ SQL نفسها لا تثبت هويته. استخدم جلسة مشغّل واحدة دون تغييرات SQL متزامنة.
 2. انسخ [assess-original-retention-install.sql](../supabase/manual/assess-original-retention-install.sql) **كاملًا** من مسودة العمل وشغّله مرة واحدة. لا تحدد جزءًا ولا تعِد B/C/D/E/F أو الترحيل الخام أو أي حزمة منح/استعادة قديمة.
@@ -677,7 +677,7 @@ $radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
 <a id="assess-retention-install-owner-result"></a>
 ### نتيجة التثبيت — نجح فحص SQL النهائي وفق إفادة المالك
 
-وصل صف assess-retention-install/1 النهائي بعد COMMIT؛ جميع شروط المصدر والمخطط والصلاحيات والtrigger وinstallation_valid والبوابة المغلقة true، والنسخ/recovery/provider/runtime false. [التقرير](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result) يحفظ النتيجة وحدودها. **انتهى انتظار التثبيت؛ لا تعِد الملف أو preinstall/postinstall الآن.** النص السابق يصف خطوات العملية التي أتمها المالك؛ التالي فحص الخدمة المغلقة أدناه. لا يثبت الصف قبول v2 لأي حساب أو تشغيل محاولة/صيانة أو restore، ولا يجيز تحديث PILOT_SCHEMA_VERIFIED/pins أو فتح gate.
+وصل صف assess-retention-install/1 النهائي بعد COMMIT؛ جميع شروط المصدر والمخطط والصلاحيات والtrigger وinstallation_valid والبوابة المغلقة true، والنسخ/recovery/provider/runtime false. [التقرير](archive/reports/2026-10/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-install-owner-result) يحفظ النتيجة وحدودها. **انتهى انتظار التثبيت؛ لا تعِد الملف أو preinstall/postinstall الآن.** النص السابق يصف خطوات العملية التي أتمها المالك؛ التالي فحص الخدمة المغلقة أدناه. لا يثبت الصف قبول v2 لأي حساب أو تشغيل محاولة/صيانة أو restore، ولا يجيز تحديث PILOT_SCHEMA_VERIFIED/pins أو فتح gate.
 
 <a id="assess-retention-closed-service"></a>
 ### فحص الخدمة المغلقة الجديد — v2 وخصوصية metadata
@@ -695,7 +695,7 @@ $radlabSevenZip = Get-Command 7z.exe -ErrorAction SilentlyContinue
 <a id="assess-retention-closed-pair-owner-result"></a>
 ### وصل الزوج المطابق — لا إعادة SQL أو الحسابين
 
-وصل owner=PASS وparticipant=PASS لعقد assess-retention-closed-service/1، وبنفس pair، عند00:04و00:05 يوم2026-10-21 بتوقيت عمّان؛ runtimeOrLaunchVerified=false في كليهما. [النتيجتان وحدودهما](ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result) محفوظتان. انتهى إجراء الحسابين أعلاه؛ لا تكرره لمجرد شاهد إضافي. هذا يضيف دليل الطلبات المحدودة من الجلستين إلى صف SQL السابق؛ لا قبول v2 نيابة عن أحد أو start/عامل/صيانة/حذف حي أو نشر. التالي مراجعة الحزمة وأدلتها، مع بقاء launch_gate مغلقة وفق آخر صف SQL، والنسخ والاسترداد وبقية بوابات التشغيل والنشر مستقلة. لا marker/attestation أو إعدادات إنتاج تتغير، والنسخة الشاملة مؤجلة إلى نهاية العمل بتوجيه المالك.
+وصل owner=PASS وparticipant=PASS لعقد assess-retention-closed-service/1، وبنفس pair، عند00:04و00:05 يوم2026-10-21 بتوقيت عمّان؛ runtimeOrLaunchVerified=false في كليهما. [النتيجتان وحدودهما](archive/reports/2026-10/ASSESS_RETENTION_INSTALL_REPORT_2026-10-20.md#retention-closed-pair-owner-result) محفوظتان. انتهى إجراء الحسابين أعلاه؛ لا تكرره لمجرد شاهد إضافي. هذا يضيف دليل الطلبات المحدودة من الجلستين إلى صف SQL السابق؛ لا قبول v2 نيابة عن أحد أو start/عامل/صيانة/حذف حي أو نشر. التالي مراجعة الحزمة وأدلتها، مع بقاء launch_gate مغلقة وفق آخر صف SQL، والنسخ والاسترداد وبقية بوابات التشغيل والنشر مستقلة. لا marker/attestation أو إعدادات إنتاج تتغير، والنسخة الشاملة مؤجلة إلى نهاية العمل بتوجيه المالك.
 
 <a id="assess-retention-schema-attestation"></a>
 ### معالجة حظر نشر #96 — إثبات retention المجهز، 2026-10-21 عمّان
@@ -712,12 +712,12 @@ pilot-v1:0bc3743c707cff0fcef456d00096f6e186b759390708d2d963a6eabea55e5d52
 
 **لم يُحدّث الوكيل المتغير ولم يشغّل نشرًا.** يبقى منع تغيير الإعدادات/النشر من الإذن السابق قائمًا؛ القيمة جهزت للمراجعة والتطبيق من المالك. بعد تحديثه وفي نطاق إذن نشر الواجهة فقط: اختر تشغيل Deploy Pages المرتبط بأحدث رأس #96 المقصود ثم Re-run all jobs، وتحقق من CI وDeploy لذلك الرأس وعرض الهاتف. إعادة تشغيل رأس قديم لا تثبت أحدث رأس، وتحديث Variable وحده لا ينشر أو يثبت نجاح البناء. لا merge/ready أو نشر runtime/عامل/schedule أو فتح launch_gate من هذه الخطوة.
 
-الإثبات شهادة توافق يدوية محدودة بدليل المخطط والخدمة للطلبات المحددة؛ ليس قبول v2 أو تشغيل محاولات/عامل/صيانة أو backup/restore/provider proof. لا تغيير لقرار النسخة المؤجلة أو O108 وبوابات المراجعة والمراقبة والنسخ والاستعادة والتصدير والتشغيل المستقلة. [دليل التشخيص المحلي](ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md#retention-deploy-block-followup).
+الإثبات شهادة توافق يدوية محدودة بدليل المخطط والخدمة للطلبات المحددة؛ ليس قبول v2 أو تشغيل محاولات/عامل/صيانة أو backup/restore/provider proof. لا تغيير لقرار النسخة المؤجلة أو O108 وبوابات المراجعة والمراقبة والنسخ والاستعادة والتصدير والتشغيل المستقلة. [دليل التشخيص المحلي](archive/reports/2026-10/ASSESS_RETENTION_REVIEW_REPORT_2026-10-20.md#retention-deploy-block-followup).
 
 <a id="owner-dashboard-c1"></a>
 ### RAD-069 C1 + C2 — DB day، 2026-10-24
 
-**الحكم الحالي:** [أمر DB day](DECISIONS.md#rad069-db-day-owner-2026-10-24) يفوض الوصل وترقية المتطلبات والموافقة معًا؛ يحفظ [تقرير اليوم](RAD-069_DB_DAY_REPORT_2026-10-24.md) الدليل وحدوده. إفادة المالك للمشروع `vlacestfruxooznrcjqc`: لم توجد كائنات C1/C2 قبل التطبيق؛ ثم طُبقت [`20261024000100_owner_dashboard.sql`](../supabase/migrations/20261024000100_owner_dashboard.sql) وبعدها [`20261024000200_owner_deletion_surveys.sql`](../supabase/migrations/20261024000200_owner_deletion_surveys.sql)، كل منهما مرة واحدة وبنجاح. لا تعاد الترحيلات.
+**الحكم الحالي:** [أمر DB day](DECISIONS.md#rad069-db-day-owner-2026-10-24) يفوض الوصل وترقية المتطلبات والموافقة معًا؛ يحفظ [تقرير اليوم](archive/reports/2026-10/RAD-069_DB_DAY_REPORT_2026-10-24.md) الدليل وحدوده. إفادة المالك للمشروع `vlacestfruxooznrcjqc`: لم توجد كائنات C1/C2 قبل التطبيق؛ ثم طُبقت [`20261024000100_owner_dashboard.sql`](../supabase/migrations/20261024000100_owner_dashboard.sql) وبعدها [`20261024000200_owner_deletion_surveys.sql`](../supabase/migrations/20261024000200_owner_deletion_surveys.sql)، كل منهما مرة واحدة وبنجاح. لا تعاد الترحيلات.
 
 أفاد المالك بنجاح training/comparison وassess-mixed/practical/history/retention وفحصَي owner-dashboard-ready/1 وowner-deletion-surveys-ready/1، عدا أعلام runtime/restore المقصودة false. staging وحده يحتاج النسخة المحدثة: فحصه السابق لم يعرف كائنات Assess TRIAL المراجعة. تضاف فقط عند وجود `assess.trial_scope`، بالمنح والأدوار الأصلية؛ أي كائن آخر أو منح زائدة يبقى مرفوضًا. هذا جرد مقروء، لا إثبات تشغيل Assess أو استعادة أو نسخ مزوّد.
 
@@ -731,7 +731,7 @@ pilot-v1:0bc3743c707cff0fcef456d00096f6e186b759390708d2d963a6eabea55e5d52
 
 الحذف النهائي يشمل كل بيانات الحساب عبر CASCADE القائمة، بلا إخفاء هوية أو تغيير FK. نافذة الاستعادة30يومًا؛ نسخ المزوّد قد تبقى حتى انتهاء احتفاظه. JWT الصادر سابقًا ينتهي وفق عمره؛ التعطيل يلغي جلسات التجديد ويمنع كتابة التدريب. قيود Assess القديمة قد ترفض cascade؛ الفشل ذري، ولا تعطيل triggers أو تبديل FK. S-PILOT-15 مستقلة، ولا تشغيل Assess بهذا اليوم.
 
-[تقرير C1](RAD-069C1_REPORT_2026-10-24.md#deferred-db) و[تقرير C2](RAD-069C2_REPORT_2026-10-24.md) و[تقرير تجهيز Phase 2](RAD-069C2_PHASE2_REPORT_2026-10-24.md) تحفظ أحكام التأجيل السابقة وتحققها. دليل [RAD-044](DECISIONS.md#rad044-phone-verification-2026-10-24) باقٍ: CSV الهاتف بثلاث الملاحظات المطابقة والعربية والأسطر المتعددة ورمز المشارك فقط؛ لا إعادة طلب بياناته.
+[تقرير C1](RAD-069C1_REPORT_2026-10-24.md#deferred-db) و[تقرير C2](archive/reports/2026-10/RAD-069C2_REPORT_2026-10-24.md) و[تقرير تجهيز Phase 2](archive/reports/2026-10/RAD-069C2_PHASE2_REPORT_2026-10-24.md) تحفظ أحكام التأجيل السابقة وتحققها. دليل [RAD-044](DECISIONS.md#rad044-phone-verification-2026-10-24) باقٍ: CSV الهاتف بثلاث الملاحظات المطابقة والعربية والأسطر المتعددة ورمز المشارك فقط؛ لا إعادة طلب بياناته.
 
 <a id="c2-phase2-wiring"></a>
 ### توصيل واجهة C2 — إصدار DB day المراجع

@@ -1,0 +1,29 @@
+{
+  "handoff": {
+    "lines": 25,
+    "line_chars": 200
+  },
+  "agents": {
+    "lines": 40
+  },
+  "task_description": {
+    "done": 160,
+    "open": 350
+  },
+  "dated_report": {
+    "from": "2026-11-02",
+    "lines": 150
+  },
+  "decision_section": {
+    "lines": 15
+  },
+  "task_prompt": {
+    "lines": 60
+  },
+  "done_when": {
+    "chars": 200
+  },
+  "completion_evidence": {
+    "chars": 400
+  }
+}

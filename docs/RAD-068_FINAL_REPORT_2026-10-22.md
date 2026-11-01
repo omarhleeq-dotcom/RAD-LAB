@@ -1,6 +1,6 @@
 # RAD-068 الجزء الأخير — تنظيف نصوص الدليل (D1/D5) وفقرة الشروط (2026-10-22)
 
-المرجع: [قرار علامات provisional ونصوص الدليل](DECISIONS.md#provisional-evidence-owner-2026-10-22)، [قرارات ما بعد الجزء 2](DECISIONS.md#part2-acceptance-owner-2026-10-22)، [D1–D5](DECISIONS.md#ui-inventory-owner-2026-10-22)، [تقرير الجزء 3](RAD-068_PART3_REPORT_2026-10-22.md). كل نص تغيّر (قديم ← جديد) في [ملف التغييرات](RAD-068_FINAL_TEXT_CHANGES_2026-10-22.md). الترتيب بحسب S-STD-1.
+المرجع: [قرار علامات provisional ونصوص الدليل](DECISIONS.md#provisional-evidence-owner-2026-10-22)، [قرارات ما بعد الجزء 2](DECISIONS.md#part2-acceptance-owner-2026-10-22)، [D1–D5](DECISIONS.md#ui-inventory-owner-2026-10-22)، [تقرير الجزء 3](RAD-068_PART3_REPORT_2026-10-22.md). كل نص تغيّر (قديم ← جديد) في [ملف التغييرات](archive/reports/2026-10/RAD-068_FINAL_TEXT_CHANGES_2026-10-22.md). الترتيب بحسب S-STD-1.
 
 ## 1. الانحرافات والميزانية
 
@@ -111,7 +111,7 @@
 
 ## 9. الجولة الثانية: قرارات المالك على §7 (2026-10-23، على PR #112 نفسه)
 
-القرارات مسجلة في [القسم نفسه من DECISIONS](DECISIONS.md#provisional-evidence-owner-2026-10-22). كل نص تغيّر (199 زوجًا فريدًا) في الجزء الثاني من [ملف التغييرات](RAD-068_FINAL_TEXT_CHANGES_2026-10-22.md).
+القرارات مسجلة في [القسم نفسه من DECISIONS](DECISIONS.md#provisional-evidence-owner-2026-10-22). كل نص تغيّر (199 زوجًا فريدًا) في الجزء الثاني من [ملف التغييرات](archive/reports/2026-10/RAD-068_FINAL_TEXT_CHANGES_2026-10-22.md).
 
 1. **انحرافات/ميزانية:** نصوص بيانات في `chest-lateral-erect.ts` و`chest-ap-supine.ts` و`chest-pa-erect.ts` و`critical-common.ts` و`upper-limb-common.ts` و`upper-limb-technique.ts` و`lower-limb-common.ts` و`lower-limb-ankle-texts.ts` و`lower-limb-technique.ts` و`pelvis-ap-supine.ts` و`shoulder-grashey-erect.ts` و`pelvis-technique.ts` و`shoulder-technique.ts` وتسميتا الحالتين `cases/pelvis-ap-supine.ts` و`cases/shoulder-grashey-erect.ts`؛ الرسائل؛ `terms/page.tsx` (عدد فقرات patients من 4 إلى 6)؛ اختبارات؛ اللقطات. أُزيلت أيضًا عبارة «teaching assumption(s)» من تسمية توهين الحوض/الكتف وملاحظتي المخطط (`schematicNote`) لأنها من العائلة نفسها؛ وأُبقيت ملاحظات `technique.*.evidence.note` الداخلية غير المعروضة (قرار 5). لا تغيير في أي حالة دليل أو درجة أو قيمة أو رسم أو إصدار محرك.
 2. **المنجز:** (1) فقرة الشروط p4 تغطي الشارات الثلاث؛ (2) أُزيلت «engine teaching choice» واختيار تعليمي في المحاكي من التغذية الراجعة مع إبقاء الرقم: مثل «Full credit within ±2°, partial credit within ±5°» و«درجة كاملة ضمن ±2° ودرجة جزئية ضمن ±5°»، و«100–109 and 126–150 kV earn partial credit»، و«Margin limit: X cm»؛ جمل «حد أعلى اختيار تعليمي» حُذفت تاركةً «The textbook gives only a minimum»؛ (3) حُذفت جمل البوابات؛ (4) حُذفت جمل افتراض المريض؛ فقرتان جديدتان p5 (أخطاء حرجة تعليمية لا قرار قبول/رفض سريريًا) وp6 (سلوك المريض المحاكى يتبع افتراضات تعليمية مبسّطة) EN + AR. سطر لوحة النتيجة `scoreNote` لم يُمس.
