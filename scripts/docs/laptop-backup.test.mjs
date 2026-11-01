@@ -6,9 +6,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import pg from 'pg';
 import { validateConfig, outsideCheckout, connectionEnv, passLine, writePassFile, assertPrivate, appendEntry, readEntries, listBackups, quoteIdent, stamp,
-  slotStamp, slotsFor, collect, publish, SLOTS } from '../ops/laptop-backup-lib.mjs';
+  slotStamp, slotsFor, collect, publish, SLOTS, validateLocale, localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { runBackup, status } from '../ops/laptop-backup.mjs';
-import { restoreTest, containerArgs, parseExtensions, IMAGE } from '../ops/laptop-restore-test.mjs';
+import { restoreTest, containerArgs, parseExtensions, IMAGE, prepareRolesSql } from '../ops/laptop-restore-test.mjs';
 
 const ref = 'abcdefghijklmnopqrst', pooler = 'aws-0-eu-central-1.pooler.supabase.com';
 const tmp = mkdtempSync(join(tmpdir(), 'rad086-'));
@@ -84,7 +84,7 @@ test('encrypted reconciliation log: append-only chain, owner-only read, deletion
   assert.throws(() => readEntries(c, identity), /log_chain/);
 });
 
-function cluster() {
+function cluster(bootstrap = 'postgres') {
   let versions = [];
   try { versions = readdirSync('/usr/lib/postgresql'); } catch { /* reported below */ }
   const bin = versions.sort().map(v => `/usr/lib/postgresql/${v}/bin`).find(b => existsSync(b + '/initdb'));
@@ -93,7 +93,7 @@ function cluster() {
   if (as.length) execFileSync('chown', ['postgres', root]);
   chmodSync(root, 0o700);
   const sh = (p, a) => execFileSync(as[0] ?? p, [...as.slice(1), ...(as.length ? [p] : []), ...a], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
-  sh(`${bin}/initdb`, ['-D', root + '/data', '-A', 'trust', '-U', 'postgres', '--encoding=UTF8', '--locale=C']);
+  sh(`${bin}/initdb`, ['-D', root + '/data', '-A', 'trust', '-U', bootstrap, '--encoding=UTF8', '--locale=C']);
   sh(`${bin}/pg_ctl`, ['-D', root + '/data', '-o', `-c listen_addresses='' -k ${root} -p 55433`, '-w', '-l', root + '/log', 'start']);
   const major = Number(/ (\d+)\./.exec(execFileSync('pg_dump', ['--version'], { encoding: 'utf8' }))[1]);
   return { root, major, stop: () => sh(`${bin}/pg_ctl`, ['-D', root + '/data', '-m', 'immediate', 'stop']) };
@@ -101,7 +101,7 @@ function cluster() {
 const pgc = cluster();
 after(() => { try { pgc?.stop(); } catch { /* already stopped */ } });
 const local = (root, env = {}) => ({ conn: { PGHOST: root, PGPORT: '55433', PGUSER: 'postgres', PGDATABASE: 'postgres', PGPASSFILE: '/dev/null', PATH: process.env.PATH, ...env },
-  makeClient: () => new pg.Client({ host: root, port: 55433, user: 'postgres', database: 'postgres' }) });
+  makeClient: () => new pg.Client({ host: root, port: 55433, user: 'postgres', database: env.PGDATABASE ?? 'postgres' }) });
 
 test('real local rehearsal (synthetic data, no provider): snapshot-consistent dump, counts, checksums, modes, encrypted log, no secrets', { timeout: 300000 }, async () => {
   const q = sql => execFileSync('psql', ['-X', '-h', pgc.root, '-p', '55433', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1', '-c', sql]);
@@ -170,7 +170,7 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
   assert.ok(log.some(e => e.kind === 'prune' && e.removed.includes('20261031T031500Z')) && log.filter(e => e.kind === 'stop').length >= 4);
   // Restore test with a fake docker: exact container flags, count comparison, extension STOP, and logged results.
   const calls = [];
-  const fake = (counts, avail = 'plpgsql\npgcrypto') => (p, a, o) => {
+  const fake = (counts, avail = 'plpgsql\npgcrypto', locale = 'c||C|C') => (p, a, o) => {
     if (p !== 'docker') return execFileSync(p, a, o);
     calls.push(a);
     if (a[0] === 'image') return 'sha256:' + 'a'.repeat(64);
@@ -178,11 +178,12 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
     const sql = a.at(-1);
     if (sql === 'show server_version_num') return String(meta.server_version_num);
     if (sql.includes('pg_available_extensions')) return avail;
-    if (sql.includes('from pg_database')) return 'C|C';
+    if (sql.includes('from pg_event_trigger')) return '[]';
+    if (sql.includes('from pg_database')) return locale;
     const m = /count\(\*\) from "([^"]+)"\."(.*)"$/.exec(sql);
     return m ? String(counts[m[1] + '.' + m[2].replaceAll('""', '"')]) : '';
   };
-  const spawn = () => ({ status: 0, stdout: '' });
+  const spawn = () => ({ status: 0, stdout: 'RAD086_supabase_admin_extra_settings []\n' });
   const good = { 'app.items': 25, 'public.Odd "Name"': 2 };
   const ok = await restoreTest(c, { name: 'monthly', run: fake(good), spawn, wait: async () => {} });
   assert.equal(ok.restore_test_pass, 1); assert.equal(ok.tables_mismatched, 0); assert.equal(ok.rows_restored, 27);
@@ -196,6 +197,8 @@ test('real local rehearsal (synthetic data, no provider): snapshot-consistent du
   const results = readEntries(c, identity).filter(e => e.kind === 'restore_test');
   assert.deepEqual(results.map(e => e.result).slice(0, 3), ['pass', 'fail', 'fail']); assert.equal(results[1].stage, 'counts'); assert.equal(results[1].tables_mismatched, 1);
   assert.deepEqual([results[2].stage, results[2].missing_extensions], ['extensions', 1]);
+  for (const wrong of ['i||C|C', 'c|en-US|C|C', 'c||POSIX|C', 'c||C|POSIX'])
+    await assert.rejects(restoreTest(c, { name: 'monthly', run: fake(good, 'plpgsql\npgcrypto', wrong), spawn, wait: async () => {} }), e => e.stage === 'collation');
   // A tampered archive is refused before any container exists.
   const before = calls.length, monthly = join(c.backupRoot, 'store', slotStamp(c.backupRoot, 'monthly'));
   writeFileSync(join(monthly, 'project.dump'), Buffer.concat([readFileSync(join(monthly, 'project.dump')), Buffer.from('x')]));
@@ -221,9 +224,9 @@ test('slot promotion rule and collection are exact and never delete without a re
 });
 
 test('container arguments never publish ports, keep no network, and never carry a password', () => {
-  const a = containerArgs('n', { datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' });
+  const a = containerArgs('n', { datlocprovider: 'c', datlocale: null, datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' });
   assert.deepEqual(a.slice(a.indexOf('--network'), a.indexOf('--network') + 2), ['--network', 'none']);
-  assert.ok(!a.includes('-p') && !a.includes('-P') && !a.some(x => /PASSWORD=/.test(x)) && a.at(-1) === 'postgres:17.11');
+  assert.ok(!a.includes('-p') && !a.includes('-P') && !a.some(x => /PASSWORD=/.test(x)) && a.at(-1) === 'supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d');
   assert.deepEqual(parseExtensions('1; 0 0 EXTENSION - pgcrypto\n2; 0 0 COMMENT - EXTENSION pgcrypto\n3; 0 0 EXTENSION - "uuid-ossp"\n'), ['pgcrypto']);
   assert.equal(stamp(new Date('2026-10-31T03:15:00.123Z')), '20261031T031500Z');
 });
@@ -235,9 +238,9 @@ test('CLI never prints secrets or raw errors and init-password refuses a non-ter
 const packet = readFileSync('docs/RAD-086_PROBE_SQL_PACKET.md', 'utf8');
 const steps = new Map([...packet.matchAll(/\*\*([A-Z]\d[a-z]?) — [^\n]*\*\*\n\n```bash\n([\s\S]*?)```/g)].map(m => [m[1], m[2]]));
 const sqlOf = id => /<<'SQL'\n([\s\S]*?)\nSQL\n/.exec(steps.get(id) + '\n')?.[1];
-test('probe packet: every part under 15k, mutations name only probe roles, and the SQL runs, tears down and leaves everything else untouched', () => {
+test('probe packet: every part under 15k, mutations name only probe roles, and the SQL runs, tears down and leaves everything else untouched', t => {
   for (const m of packet.matchAll(/```[a-z]*\n([\s\S]*?)```/g)) assert.ok(m[1].length < 15000);
-  for (const id of ['P0a', 'P0b', 'P1a', 'P1b', 'P2', 'P4a', 'P5b', 'P5e', 'C1', 'C2', 'C3', 'P8b']) assert.ok(sqlOf(id), id);
+  for (const id of ['P0a', 'P0b', 'P1a', 'P1b', 'P2', 'P2c', 'P4a', 'P5b', 'P5e', 'C1', 'C2', 'C3', 'P8b']) assert.ok(sqlOf(id), id);
   for (const [id, body] of steps) {
     const sql = sqlOf(id) ?? '';
     if (/\b(create|alter|drop|grant|revoke)\b/i.test(sql)) {
@@ -251,18 +254,94 @@ test('probe packet: every part under 15k, mutations name only probe roles, and t
   const probe = join(tmp, 'probe'); mkdirSync(probe, { recursive: true });
   writeFileSync(join(probe, 'name_a'), 'rad086_probe_deadbeef_a\n'); writeFileSync(join(probe, 'name_b'), 'rad086_probe_deadbeef_b\n');
   for (const f of ['pa1', 'pb1', 'pb2']) writeFileSync(join(probe, f), 'a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718\n');
-  const env = { ...process.env, HOME: tmp, PGHOST: pgc.root, PGPORT: '55433', PGUSER: 'postgres', PGDATABASE: 'postgres' };
+  const packetCluster = cluster('packet_test_admin');
+  t.after(() => packetCluster.stop());
+  const env = { ...process.env, HOME: tmp, PGHOST: packetCluster.root, PGPORT: '55433', PGUSER: 'packet_test_admin', PGDATABASE: 'postgres' };
   const run = id => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1'], { env, input: sqlOf(id), encoding: 'utf8' }).trim();
   const admin = sql => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-c', sql], { env, encoding: 'utf8' }).trim();
-  admin('create role assess_worker nologin; create role bystander login');
+  admin('create role postgres login createrole; create role assess_worker nologin; create role bystander login');
+  env.PGUSER = 'postgres';
   const snap = () => admin("select string_agg(rolname||rolcanlogin||rolsuper, ',' order by rolname) from pg_roles where rolname in ('assess_worker','bystander','postgres')");
   const before = snap(), protectedBefore = run('P0b');
   assert.equal(run('P0a'), '0'); assert.equal(protectedBefore, '0|1');
-  run('P1a'); run('P1b'); assert.equal(run('P2'), '2|0');
+  // Reproduce PostgreSQL 16+ automatic creator grants with the packet's real creator identity.
+  const elevated = sql => execFileSync('psql', ['-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1', '-c', sql],
+    { env: { ...env, PGUSER: 'packet_test_admin' }, encoding: 'utf8' }).trim();
+  run('P1a'); run('P1b');
+  assert.equal(admin("select count(*) from pg_auth_members m join pg_roles r on r.oid=m.roleid where r.rolname ~ '^rad086_probe_[0-9a-f]{8}_[ab]$'"), '2');
+  assert.equal(run('P2'), '2|0'); assert.equal(run('P2c'), 't');
+  // A probe becoming a member must fail P2, independently of creator grants.
+  elevated('grant bystander to rad086_probe_deadbeef_a');
+  assert.equal(run('P2'), '2|1'); assert.equal(run('P2c'), 't');
+  elevated('revoke bystander from rad086_probe_deadbeef_a');
+  for (const option of ['admin', 'inherit', 'set']) {
+    elevated(`grant rad086_probe_deadbeef_a to postgres with ${option} ${option === 'admin' ? 'false' : 'true'}`);
+    assert.equal(run('P2c'), 'f', option);
+    elevated(`grant rad086_probe_deadbeef_a to postgres with ${option} ${option === 'admin' ? 'true' : 'false'}`);
+  }
+  elevated('grant rad086_probe_deadbeef_a to bystander with admin true, inherit false, set false');
+  assert.equal(run('P2c'), 'f');
+  elevated('revoke rad086_probe_deadbeef_a from bystander');
+  assert.equal(run('P2'), '2|0'); assert.equal(run('P2c'), 't');
   run('P4a'); assert.equal(admin("select rolcanlogin from pg_roles where rolname='rad086_probe_deadbeef_a'"), 'f');
   run('P5b'); assert.equal(run('P5e'), '2');
   assert.match(run('C1'), /^\d+$/); run('C2'); assert.equal(run('C3'), '0');
   assert.equal(run('P8b'), protectedBefore); assert.equal(snap(), before);
   // Midway cleanup path: only role A was created, shell variables are gone, the exact-pattern teardown still removes it and nothing else.
-  run('P1a'); assert.equal(run('P0a'), '1'); run('C2'); assert.equal(run('C3'), '0'); assert.equal(snap(), before);
+  run('P1a'); assert.equal(run('P2c'), 't'); assert.equal(run('P0a'), '1'); run('C2'); assert.equal(run('C3'), '0'); assert.equal(snap(), before);
+});
+
+test('locale provider is exact: ICU needs a bounded locale; unknown provider or missing ICU locale stops', () => {
+  const m = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
+  assert.doesNotThrow(() => validateLocale(m));
+  assert.deepEqual(localeArgs(m), ['--locale-provider=icu', '--icu-locale=en-US', '--lc-collate=en_US.UTF-8', '--lc-ctype=en_US.UTF-8']);
+  for (const bad of [{ datlocprovider: 'b' }, { datlocprovider: '' }, { datlocale: '' }, { datlocale: null }, { datlocale: undefined },
+    { datlocale: 'en-US;id' }, { datlocale: 'en US' }, { datlocale: 'en-US\n' }, { datlocale: 'a'.repeat(65) }])
+    assert.throws(() => validateLocale({ ...m, ...bad }), e => e.stage === 'locale');
+});
+
+test('ICU backup records all four locale fields in metadata and encrypted log; unsupported or empty locale stops', async () => {
+  execFileSync('psql', ['-X','-h',pgc.root,'-p','55433','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-c',
+    "create database rad086_icu template template0 encoding 'UTF8' locale_provider icu icu_locale 'en-US' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8'"]);
+  execFileSync('psql', ['-X','-h',pgc.root,'-p','55433','-U','postgres','-d','rad086_icu','-c','create table public.icu_witness(id integer)']);
+  const c = validateConfig({ ...base, pgMajor: pgc.major, backupRoot: join(tmp, 'icu-backup') });
+  mkdirSync(c.backupRoot, { mode: 0o700 });
+  const deps = local(pgc.root, { PGDATABASE: 'rad086_icu' });
+  await runBackup(c, { ...deps, now: new Date('2026-10-31T04:00:00Z') });
+  const meta = JSON.parse(readFileSync(join(c.backupRoot,'store','20261031T040000Z','db-meta.json')));
+  const entry = readEntries(c, identity).find(e => e.kind === 'backup');
+  for (const [k,v] of Object.entries({ datlocprovider:'i', datlocale:'en-US', datcollate:'en_US.UTF-8', datctype:'en_US.UTF-8' })) {
+    assert.equal(meta[k],v); assert.equal(entry[k],v);
+  }
+  for (const [i,bad] of [{ p:'b' },{ l:'' }].entries()) {
+    const makeClient = () => {
+      const client = deps.makeClient(), query = client.query.bind(client);
+      client.query = async (sql, ...args) => {
+        const r = await query(sql, ...args);
+        if (sql.includes('pg_encoding_to_char')) Object.assign(r.rows[0], bad);
+        return r;
+      };
+      return client;
+    };
+    await assert.rejects(runBackup(c, { ...deps, makeClient, now: new Date(`2026-10-31T04:0${i+1}:00Z`) }), e => e.stage === 'locale');
+  }
+});
+
+// Exercise the role rule through PostgreSQL, including defaults omitted by pg_dumpall.
+test('role archive accepts matching existing attributes and loads new roles/settings cleanly', () => {
+  const q = sql => execFileSync('psql', ['-X', '-h', pgc.root, '-p', '55433', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'], { input: sql, stdio: 'pipe' });
+  q('CREATE ROLE "rad086 existing" NOLOGIN NOINHERIT CONNECTION LIMIT 2;');
+  const sql = 'CREATE ROLE "rad086 existing";\nALTER ROLE "rad086 existing" WITH NOSUPERUSER NOINHERIT NOCREATEROLE NOCREATEDB NOLOGIN NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 2;\n';
+  assert.doesNotThrow(() => q(prepareRolesSql(sql + 'CREATE ROLE rad086_new;\nALTER ROLE rad086_new WITH LOGIN;\nALTER ROLE rad086_new SET search_path TO public;\n')));
+  q('ALTER ROLE \"rad086 existing\" SET search_path TO public;');
+  assert.doesNotThrow(() => q(prepareRolesSql(sql + 'ALTER ROLE \"rad086 existing\" SET search_path TO public;\n')));
+  assert.equal(String(q("SELECT rolcanlogin FROM pg_roles WHERE rolname='rad086_new'")).includes('t'), true);
+});
+test('role attribute differences STOP roles, including archive default connection limit; no earlier work persists', () => {
+  const q = sql => execFileSync('psql', ['-X', '-h', pgc.root, '-p', '55433', '-U', 'postgres', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1'], { input: sql, stdio: 'pipe' });
+  for (const attrs of ['NOLOGIN NOINHERIT', 'LOGIN NOINHERIT CONNECTION LIMIT 2', 'NOLOGIN INHERIT CONNECTION LIMIT 2', 'NOLOGIN NOINHERIT CONNECTION LIMIT 2 BYPASSRLS', 'NOLOGIN NOINHERIT CONNECTION LIMIT 2']) {
+    assert.throws(() => q(prepareRolesSql('CREATE ROLE rad086_rolled_back;\nCREATE ROLE "rad086 existing";\nALTER ROLE "rad086 existing" WITH ' + attrs + ';\n')), e => String(e.stderr).includes('roles'));
+    assert.match(String(q("SELECT count(*) FROM pg_roles WHERE rolname='rad086_rolled_back' OR rolname LIKE 'rad086_role_attribute_probe_%'")), /0/);
+  }
+  assert.throws(() => q(prepareRolesSql('GRANT rad086_missing TO rad086_new;')), e => String(e.stderr).includes('does not exist'));
 });
