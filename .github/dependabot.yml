@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: sunday
+      time: "09:00"
+      timezone: Asia/Amman
+    open-pull-requests-limit: 3
+    groups:
+      npm-minor-patch:
+        update-types:
+          - minor
+          - patch
+    labels: ["dependencies"]
+    commit-message:
+      prefix: deps
+  # Refresh pinned action SHAs and version comments, including the Node 20 actions.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: sunday
+      time: "09:00"
+      timezone: Asia/Amman
+    groups:
+      github-actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: ci
