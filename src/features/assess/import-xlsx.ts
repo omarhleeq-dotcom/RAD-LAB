@@ -1,4 +1,4 @@
-import { boundedRows, checkImportSize, IMPORT_LIMITS, ImportError, MISSING_CACHED_VALUE } from './import-parser';
+import { boundedRows, checkImportSize, IMPORT_LIMITS, ImportError, MISSING_CACHED_VALUE, XLSX_VALUES, type ImportTable } from './import-parser';
 type Entry = { name: string; size: number; packed: number; method: number; crc: number; offset: number; flags: number };
 const bad = (): never => { throw new ImportError('malformed'); };
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -80,9 +80,10 @@ async function readWorkbook(buffer: ArrayBuffer): Promise<string[][]> {
    const column = [...ref[1]!].reduce((n, c) => n * 26 + c.charCodeAt(0) - 64, 0) - 1;
    if (column <= previous || column >= 55) bad(); previous = column;
    while (values.length < column) values.push('');
+   const formula = nodes(cell, 'f').length > 0;
    const type = cell.getAttribute('t'), cached = nodes(cell, 'v')[0]?.textContent;
    let value = cached ?? '';
-   if (nodes(cell, 'f').length && (cached === undefined || type === 'e')) value = MISSING_CACHED_VALUE;
+   if (formula) value = cached === undefined || cached === '' ? MISSING_CACHED_VALUE : cached;
    else if (type === 's') { if (!/^\d+$/.test(value) || shared[Number(value)] === undefined) bad(); value = shared[Number(value)]!; }
    else if (type === 'inlineStr' && !nodes(cell, 'f').length) value = nodes(cell, 't').map(t => t.textContent ?? '').join('');
    else if (type === 'e') value = '';
@@ -92,5 +93,5 @@ async function readWorkbook(buffer: ArrayBuffer): Promise<string[][]> {
   if (values.some(v => v.trim()) || rows.length) rows.push(values);
   if (rows.length > IMPORT_LIMITS.questions + 2) throw new ImportError('rowLimit');
  }
- return boundedRows(rows);
+ const result: ImportTable = boundedRows(rows); Object.defineProperty(result, XLSX_VALUES, { value: true }); return result;
 }

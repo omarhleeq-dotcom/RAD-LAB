@@ -1798,7 +1798,11 @@
     "installed": "Installed version",
     "saved": "Version queued. No publication or launch is confirmed.",
     "error": "Unable to process the content request. Check the document, version and service availability.",
-    "tracks": "Mixed questions and full practical examinations use separate, immutable versions. Installation requires the trusted validator for the selected track."
+    "tracks": "Mixed questions and full practical examinations use separate, immutable versions. Installation requires the trusted validator for the selected track.",
+    "advanced": "Advanced: publish a fixed version (JSON)",
+    "notWriting": "This tool publishes a fixed version. Questions are written from an appointed supervisor account.",
+    "documentReason": "Add a JSON document to publish.",
+    "publishing": "Publishing…"
   },
   "assessHistory": {
     "title": "Assessment history",
@@ -1962,7 +1966,7 @@
     "name": "Group name",
     "ends": "Ends at (UTC)",
     "rotate": "Rotate join code",
-    "end": "End group",
+    "end": "End and archive group",
     "confirmEnd": "Confirm end group",
     "confirmRevoke": "Confirm revocation",
     "confirmLeave": "Confirm leave",
@@ -2026,7 +2030,7 @@
     "pageCount": "On this page: ",
     "opened": "Group open",
     "openGroup": "Open group",
-    "settings": "Settings · code and end",
+    "settings": "Settings",
     "groupSections": "Group sections",
     "selectGroupHint": "Select a group above to see its requests, students and results.",
     "discardHelp": "Created this group by mistake? End and archive it below to remove it from active groups.",
@@ -2043,7 +2047,15 @@
     "done": "Done",
     "copied": "Code copied.",
     "shared": "Code shared.",
-    "copyFailed": "Copy unavailable. Select and copy the code above."
+    "copyFailed": "Copy unavailable. Select and copy the code above.",
+    "details": "Details",
+    "copyReference": "Copy group reference",
+    "students": "Students",
+    "dangerZone": "Danger zone",
+    "newGroup": "+ New group",
+    "shortHelp": "Open a group to manage students and results.",
+    "unloadedCount": "—",
+    "noResults": "No results yet"
   },
   "supervisor": {
     "notSupervisor": "This account is not a supervisor. An active supervisor appointment is required.",
@@ -2142,7 +2154,7 @@
     "pageCount": "On this page: ",
     "opened": "Group open",
     "openGroup": "Open group",
-    "settings": "Settings · code and end",
+    "settings": "Settings",
     "groupSections": "Group sections",
     "selectGroupHint": "Select a group above to see its requests, students and results.",
     "discardHelp": "Created this group by mistake? End and archive it below to remove it from active groups.",
@@ -2159,7 +2171,15 @@
     "done": "Done",
     "copied": "Code copied.",
     "shared": "Code shared.",
-    "copyFailed": "Copy unavailable. Select and copy the code above."
+    "copyFailed": "Copy unavailable. Select and copy the code above.",
+    "details": "Details",
+    "copyReference": "Copy group reference",
+    "students": "Students",
+    "dangerZone": "Danger zone",
+    "newGroup": "+ New group",
+    "shortHelp": "Open a group to manage students and results.",
+    "unloadedCount": "—",
+    "noResults": "No results yet"
   },
   "ownerAssignments": {
     "title": "Assignment closure",
@@ -2197,7 +2217,7 @@
     "columnsHelp": "Use English content. Required: Question, A, B, Answer. Options C…AX are optional. Answer must name a nonempty option, such as A or AA. Points default to 1. Reference overrides the batch reference. True/false uses A=True, B=False.",
     "batchReference": "Batch Reference",
     "batchLicence": "Batch Licence notes",
-    "memoryHelp": "These editable values are remembered on this device for your account and cleared on sign-out. Prefill is not licence verification.",
+    "memoryHelp": "Original questions use your account name. Edited Reference/Licence values are remembered for this account on this device until sign-out. Prefill is not licence verification.",
     "paste": "Paste a table from Excel or Google Sheets (TSV, including headers)",
     "previewPaste": "Preview pasted rows",
     "file": "Choose an .xlsx or .csv file",
@@ -2274,7 +2294,7 @@
       "write": "Write one question"
     },
     "template": "Download template (.csv)",
-    "sourceDetails": "Source & licence details",
+    "sourceDetails": "Questions from another source?",
     "importHelp": "ⓘ File and table help",
     "rulesHelp": "ⓘ Question rules",
     "more": "More",
@@ -2296,6 +2316,17 @@
     "close": "Close",
     "shuffleOn": "Questions and options are shuffled for each student.",
     "shuffleMixed": "Questions are shuffled; option shuffling is off for some questions.",
-    "shuffleOff": "Questions are shuffled; option shuffling is off."
+    "shuffleOff": "Questions are shuffled; option shuffling is off.",
+    "referenceHint": "Example: Bontrager 10th ed., ch. 7, p. 245 / own question",
+    "licenceHint": "Example: used with permission of … / CC BY 4.0",
+    "pendingReason": "Finish the preview or cancel the import first.",
+    "recoveryReason": "Verify the previous save in the recovery panel first.",
+    "fixRows": "Fix errors in {n} rows.",
+    "referenceRows": "Add a reference for {n} rows.",
+    "licenceRows": "Add a licence for {n} rows.",
+    "noIncludedRows": "Include at least one row.",
+    "pasteReason": "Paste rows to preview.",
+    "fixField": "{field}: {reason}",
+    "appointmentsLink": "Go to supervisor appointments"
   }
 }

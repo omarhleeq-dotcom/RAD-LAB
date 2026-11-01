@@ -61,3 +61,43 @@ it('rejects 201 question rows, external worksheet references and missing shared-
  await expect(parseXlsx(zip(book('<row r="2"><c r="A2" t="s"><v>9</v></c></row>')))).rejects.toThrow('malformed');
  vi.stubGlobal('DecompressionStream', undefined); await expect(parseXlsx(zip(book()))).rejects.toThrow('unsupportedBrowser');
 });
+
+it('imports the owner HU regression verbatim via XLSX, CSV file and TSV paste', async () => {
+ const { importTableRows, rowToQuestion, draftToV2 } = await import('./import-validator');
+ const { newDraft } = await import('../authoring-review/draft');
+ const { originalQuestionNotes } = await import('./import-preferences');
+ const batch = originalQuestionNotes('Synthetic Supervisor Account');
+ const cells = ['In Hounsfield Units (HU), dense cortical bone…', '+40 to +60 HU', '+100 to +300 HU', '+1000 HU', 'C'];
+ const columns = ['Question', 'A', 'B', 'C', 'Answer'];
+ const workbook = book(); workbook['xl/worksheets/first.xml'] = `<worksheet><sheetData>${[columns,cells].map((row,n) => `<row r="${n+1}">${row.map((value,k) => inline(String.fromCharCode(65+k)+(n+1),value)).join('')}</row>`).join('')}</sheetData></worksheet>`;
+ const csv = [columns,cells].map(row => row.join(',')).join('\n');
+ // The question contains a comma, so quote it exactly as a CSV exporter does.
+ const quotedCsv = csv.replace(cells[0]!, '"' + cells[0]! + '"');
+ for (const table of [await parseImportFile(new NodeFile([zip(workbook)], 'sample.xlsx') as unknown as File), await parseImportFile(new NodeFile([quotedCsv], 'sample.csv') as unknown as File), parseDelimited([columns,cells].map(row=>row.join('\t')).join('\n'), '\t')]) {
+  const values = importTableRows(table)[0]!.values, item = rowToQuestion(values,batch);
+  expect(item.prompt).toBe(cells[0]); expect(item.options.map(o=>o.text)).toEqual(cells.slice(1,4));
+  const wire = draftToV2({...newDraft(), name:'Synthetic HU import',items:[item]});
+  expect(wire.items[0]!.provenance).toMatchObject({kind:'uploader-authored',licenceNotes:batch.licenceNotes,sources:[{reference:batch.reference,licenceEvidence:batch.licenceNotes}]});
+ }
+});
+it('treats XLSX string/shared-string content as values regardless of prefixes and only rejects formulas without cached v', async () => {
+ const { importTableRows, validateAssessImportRowV1, rowToQuestion, draftToV2 } = await import('./import-validator');
+ const { newDraft } = await import('../authoring-review/draft');
+ const batch = {reference:'Own question',licenceNotes:'Original work'};
+ for (const prefix of ['=SUM(A1)','+SUM(A1)','-SUM(A1)','@SUM(A1)','+1000 HU','-1000 HU']) {
+  const workbook = book(`<row r="2">${inline('A2',prefix)}<c r="B2" t="s"><v>0</v></c>${inline('C2','False')}${inline('D2','A')}</row>`);
+  workbook['xl/sharedStrings.xml'] = `<sst><si><t>${prefix}</t></si></sst>`;
+  const row=importTableRows(await parseXlsx(zip(workbook)))[0]!.values;
+  expect(validateAssessImportRowV1({...row},batch).issues).toEqual([]);
+  const item=rowToQuestion(row,batch); expect(item.prompt).toBe(prefix); expect(item.options[0]!.text).toBe(prefix);
+  expect(draftToV2({...newDraft(),name:'Synthetic literals',items:[item]}).items[0]!.prompt).toBe(prefix);
+ }
+ for (const value of ['<f>SUM(A1)</f><v>Cached string</v>', '<f>SUM(A1)</f>', '<f>SUM(A1)</f><v/>']) {
+  const row=importTableRows(await parseXlsx(zip(book(`<row r="2"><c r="A2" t="str">${value}</c>${inline('B2','True')}${inline('C2','False')}${inline('D2','A')}</row>`))))[0]!.values;
+  const issues=validateAssessImportRowV1(row,batch).issues;
+  if(value.includes('Cached string')) {expect(issues).toEqual([]);expect(row.Question).toBe('Cached string');}
+  else expect(issues).toContainEqual({column:'Question',code:'formula'});
+ }
+ for (const text of ['=SUM(A1)','@SUM(A1)','+SUM(A1)','-SUM(A1)','+(A1)','-(A1)']) expect(validateAssessImportRowV1({Question:text,A:'True',B:'False',Answer:'A'},batch).issues).toContainEqual({column:'Question',code:'formula'});
+ for (const text of ['+1000 HU','-1000 HU','+40 to +60 HU','+ 100 HU','- 100 HU']) expect(rowToQuestion({Question:'Synthetic text',A:text,B:'Other',Answer:'A'},batch).options[0]!.text).toBe(text);
+});

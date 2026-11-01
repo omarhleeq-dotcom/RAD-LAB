@@ -4,9 +4,9 @@ import { assertAttemptPolicy, decimalPoints } from './policies';
 import { AUTHORING_LIMITS_V1 } from './authoring-limits';
 import { randomPoolMaximum } from './random-pool';
 import { validateProvenanceV2 } from './provenance-v2';
-import { IMPORT_LIMITS, ImportError, MISSING_CACHED_VALUE } from './import-parser';
+import { IMPORT_LIMITS, ImportError, MISSING_CACHED_VALUE, XLSX_VALUES, type ImportTable } from './import-parser';
 export type BatchNotes = { reference: string; licenceNotes: string };
-export type ImportRow = Record<string, string>;
+export type ImportRow = Record<string, string> & { [XLSX_VALUES]?: true };
 export type RowIssue = { column: string; code: 'required' | 'answer' | 'options' | 'points' | 'formula' | 'length' | 'column' };
 export type ChoiceDraft = Extract<DraftItem, { type: 'single-choice' }>;
 export function optionLetter(index: number): string { return index < 26 ? String.fromCharCode(65 + index) : 'A' + String.fromCharCode(65 + index - 26); }
@@ -17,7 +17,7 @@ export function validateAssessImportRowV1(row: ImportRow, batch: BatchNotes) {
  const issues: RowIssue[] = [], add = (column: string, code: RowIssue['code']) => issues.push({ column, code });
  for (const [key, value] of Object.entries(row)) {
   if (!allowed.has(key)) add(key, 'column');
-  if (/^\s*(?:[=+@]|-\s*[A-Za-z_(])/.test(value) || value.includes(MISSING_CACHED_VALUE)) add(key, 'formula');
+  if ((!row[XLSX_VALUES] && /^\s*(?:[=@]|[+-][\p{L}(])/u.test(value)) || value.includes(MISSING_CACHED_VALUE)) add(key, 'formula');
  }
  row = Object.fromEntries(Object.entries(row).map(([k, v]) => [k, v.replaceAll(MISSING_CACHED_VALUE, '')]));
  const question = row.Question ?? '', reference = row.Reference?.trim() ? row.Reference : batch.reference, licenceNotes = batch.licenceNotes;
@@ -36,10 +36,10 @@ export function validateAssessImportRowV1(row: ImportRow, batch: BatchNotes) {
  }
  return { issues, value: { question, options, answer, points, reference, licenceNotes } };
 }
-export function importTableRows(table: string[][]): { row: number; values: ImportRow }[] {
+export function importTableRows(table: ImportTable): { row: number; values: ImportRow }[] {
  const header = table[0]?.map(v => v.trim()) ?? [];
  if (!header.length || new Set(header).size !== header.length || header.some(h => !allowed.has(h)) || ['Question', 'A', 'B', 'Answer'].some(h => !header.includes(h))) throw new ImportError('header');
- return table.slice(1).map((row, n) => ({ row: n + 2, values: { ...Object.fromEntries(header.map((h, i) => [h, row[i] ?? ''])), ...(row.length > header.length ? { __extra: 'Unexpected cells' } : {}) } }));
+ return table.slice(1).map((row, n) => ({ row: n + 2, values: { ...(table[XLSX_VALUES] ? { [XLSX_VALUES]: true as const } : {}), ...Object.fromEntries(header.map((h, i) => [h, row[i] ?? ''])), ...(row.length > header.length ? { __extra: 'Unexpected cells' } : {}) } }));
 }
 export function rowToQuestion(row: ImportRow, batch: BatchNotes): ChoiceDraft {
  const result = validateAssessImportRowV1(row, batch); if (result.issues.length) throw Error('invalid_import_row');
@@ -47,7 +47,8 @@ export function rowToQuestion(row: ImportRow, batch: BatchNotes): ChoiceDraft {
  return { id: crypto.randomUUID(), type: 'single-choice', prompt: value.question, options, correctOptionId: options[value.options.findIndex(o => o.letter === value.answer)]!.id, maximum: value.points, shuffleOptions: true, authoring: { author: '', reference: value.reference, licenceNotes: value.licenceNotes, notes: '' } };
 }
 export function questionToRow(item: ChoiceDraft): ImportRow {
- return { Question: item.prompt, ...Object.fromEntries(item.options.map((o, n) => [optionLetter(n), o.text])), Answer: optionLetter(item.options.findIndex(o => o.id === item.correctOptionId)), Points: item.maximum, Reference: item.authoring.reference };
+ // Draft text is already stored content, not a spreadsheet expression. Never reclassify it on reopen/save.
+ return { [XLSX_VALUES]: true, Question: item.prompt, ...Object.fromEntries(item.options.map((o, n) => [optionLetter(n), o.text])), Answer: optionLetter(item.options.findIndex(o => o.id === item.correctOptionId)), Points: item.maximum, Reference: item.authoring.reference };
 }
 export function authoringV2Issues(draft: Draft): { path: string; message: string }[] {
  const issues: { path: string; message: string }[] = [];

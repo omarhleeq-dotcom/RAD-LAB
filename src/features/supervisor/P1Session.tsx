@@ -95,5 +95,5 @@ export function P1View({ adapter, actorId, locale }: { adapter: ReviewAdapter; a
   document.addEventListener('visibilitychange', change);
   return () => document.removeEventListener('visibilitychange', change);
  }, []);
- return visible ? <><p>{appCopy[locale].archiveHint}</p><p>{appCopy[locale].refreshHint}</p><ReviewSession key={epoch} adapter={adapter} actorId={actorId} groupId={groupId} selectGroup={setGroupId} locale={locale} text={appCopy[locale]} ownerAppointments={act => <OwnerSupervisorPicker adapter={adapter} act={act} locale={locale}/>}/></> : null;
+ return visible ? <><p>{appCopy[locale].shortHelp}</p><details><summary className="min-h-11 cursor-pointer" aria-label={appCopy[locale].details}>ⓘ</summary><p>{appCopy[locale].archiveHint}</p><p>{appCopy[locale].refreshHint}</p></details><ReviewSession key={epoch} adapter={adapter} actorId={actorId} groupId={groupId} selectGroup={setGroupId} locale={locale} text={appCopy[locale]} ownerAppointments={act => <OwnerSupervisorPicker adapter={adapter} act={act} locale={locale}/>}/></> : null;
 }
