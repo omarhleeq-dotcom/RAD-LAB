@@ -59,7 +59,10 @@ export async function inspectRestored(db, observeFrozenB) {
     // Synthetic CI observer only: fixed check kinds, never catalogue identities or data.
     observeFrozenB?.(rows.filter(row => row.ready === false).map(row => row.kind).sort());
     frozenFailures = verifyRestoredFrozenB(result);
-  } catch (e) { await db.query('rollback'); throw stageStop('pre_frozen_b', e); }
+  } catch (e) {
+    try { await db.query('rollback'); } catch { /* preserve the frozen-check stage and primary SQLSTATE */ }
+    throw stageStop('pre_frozen_b', e);
+  }
   let migrations = 0;
   for (let n = 1; n <= 8; n++) {
     try { await apply(db, `M0${n}`, { RAD062_SECRET_STATE: 'DISABLED' }); migrations++; }

@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { containerArgs } from '../ops/laptop-restore-test.mjs';
 import { sha256Bytes, Stop } from '../ops/laptop-backup-lib.mjs';
-import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, verifyRestoredFrozenB } from './rad062-laptop-rehearsal.mjs';
+import { localOnly, rehearse, stopLine, stageStop, verifyCounts, prepareSocketAuth, verifyRestoredFrozenB, inspectRestored } from './rad062-laptop-rehearsal.mjs';
 const docker = (args, input) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args], { input, stdio: 'pipe', timeout: 120000, maxBuffer: 64 * 1024 * 1024 });
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 
@@ -68,6 +68,18 @@ test('restored frozen B row contract rejects zero/additional/wrong failures, nul
     rows.slice(1), [...rows, rows[0]], [rows[0], ...rows.slice(0, -1)],
     [...rows.slice(1), { kind: 'unknown', ready: true }], [], [null],
   ]) assert.throws(() => verifyRestoredFrozenB({ rows: bad }), stop);
+});
+
+test('restored frozen B SQL error remains pre_frozen_b even if rollback also fails', async () => {
+  const diagnosticSQL = readFileSync('scripts/assess/sql/rad062-b-diagnostic.sql', 'utf8');
+  const frozenSQL = readFileSync('supabase/checks/rad085-p1-b-ready.sql', 'utf8');
+  const db = { query: async sql => {
+    if (sql.includes('select current_user, session_user')) return { rows: [{ current_user: 'postgres', session_user: 'postgres', rolsuper: false, phase: 'initialized' }] };
+    if (sql === diagnosticSQL) return { rows: [{ ready: true }] };
+    if (sql === frozenSQL) throw Object.assign(new Error('PRIVATE_SQL_MESSAGE'), { code: '42501' });
+    throw Object.assign(new Error('PRIVATE_ROLLBACK_MESSAGE'), { code: '08006' });
+  } };
+  await assert.rejects(inspectRestored(db), e => stopLine(e) === 'STOP rad062_laptop_rehearsal:pre_frozen_b sqlstate=42501');
 });
 
 test('pinned Supabase restore -> postgres M01–M08 -> individual P10 checks/counts; check and migration STOP both tear down', { timeout: 300000 }, async () => {
