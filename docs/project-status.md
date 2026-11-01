@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 385,
-  "updated_at": "2026-11-01T12:02:26+00:00",
+  "revision": 386,
+  "updated_at": "2026-11-01T13:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-090",
   "tasks": [
@@ -795,11 +795,11 @@
     {
       "id": "RAD-089",
       "title": "تنظيم الوثائق ومسار عمل واحد وجرد المحتوى",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "نقل التقارير المؤرخة ومجموعات صورها المؤهلة، وتوحيد workflow والملخص وفق قرارات2026-11-01؛ ينتظر مراجعة المالك للنقل والأدلة وتوصيات الجرد واستكمال docs:test المحجوب بمساحة Docker. الإغلاق في أول commit من الدفعة التالية بعد إفادة المالك.",
+      "description": "تنظيم الوثائق والجرد؛ #188 مدموج وفحوص CI ناجحة، وقرارات الجرد 1–4 معتمدة 2026-11-01.",
       "source_ref": "docs/DECISIONS.md#workflow-owner-2026-11-01؛ docs/archive/reports/2026-11/DOCS_RESTRUCTURE_REPORT_2026-11-01.md",
-      "waiting_on": "owner"
+      "completion_evidence": "#188 merged; CI check + deploy green; docs:test passed with Docker. Owner 2026-11-01: 53 link-target-only moves, 13 images R100, no deletions, protected files unchanged; inventory 1–4 approved."
     }
   ]
 }
