@@ -6,7 +6,7 @@
 
 ## ملخص الحالة الحالية (سرد قصير، يُحدَّث كله في كل جلسة؛ لا يُقرأ آلياً)
 
-- **الاتجاه الحالي:** RAD-088 ترقية next16.4.3 وإغلاق audit critical/high في Draft ينتظر الدمج وفحص الهاتف ([التقرير](DEPS_SECURITY_REPORT_2026-11-01.md)). اكتمل يوم RAD-062 P10 بإفادة المالك ودمج #175؛ [دليل اليوم](RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01). RAD-062 in_progress/code للمتابعة4ب/5ب المستقلة و[القرارات التالية](DECISIONS.md#db-followups-owner-2026-11-01). قبول المهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md) وبقايا RAD-057 وRAD-087 محفوظة.
+- **الاتجاه الحالي:** RAD-088 done: next16.4.3 وaudit صفر critical/high بدمج #186 وفحص الهاتف4/4 ([التقرير](DEPS_SECURITY_REPORT_2026-11-01.md))؛ 16 moderate بند مفتوح. اكتمل يوم RAD-062 P10 بإفادة المالك ودمج #175؛ [دليل اليوم](RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01). RAD-062 in_progress/code للمتابعة4ب/5ب المستقلة و[القرارات التالية](DECISIONS.md#db-followups-owner-2026-11-01). قبول المهام المحددة في [تقرير2026-10-30](OWNER_SIGNOFF_REPORT_2026-10-30.md) وبقايا RAD-057 وRAD-087 محفوظة.
 - **ينتظر المالك:** RAD-059 review/owner للقنوات/ACK والبديل وإلغاء اعتماد العامل وفق [قاعدة Supavisor](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01)؛ dry run v2 لا يغلقها. RAD-086 done؛ [قيد اللابتوب فقط](DECISIONS.md#rad086-laptop-only-owner-2026-10-31) وstatus الأسبوعي مستمران. تواصل أصحاب الأسماء القديمة اختياري.
 - **ينتظر مراجِعًا:** RAD-032 مراجع أشعة خارجي وRAD-056 عبر RAD-063؛ بقايا الحقوق والخصوصية والأمن وعقود الكتابي/التفويض والاحتفاظ والتنافس مستقلة. لا مشرفين حقيقيين قبل O4 ولا اعتماد طبي أو أول امتحان من يوم القاعدة.
 - **مرجع Git:** `npm run docs:context` لحالة الفرع وPR؛ الحالة هنا مصدر المهام الوحيد، و[تقرير P10](RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01) للدليل. CI وDeploy Pages المعتادان مأذونان؛ التسليم الجديد Draft فقط.
@@ -19,8 +19,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.1",
-  "revision": 383,
-  "updated_at": "2026-11-01T11:25:57+00:00",
+  "revision": 384,
+  "updated_at": "2026-11-01T11:50:47+00:00",
   "timezone": "UTC",
   "next_id": "RAD-089",
   "tasks": [
@@ -792,11 +792,11 @@
     {
       "id": "RAD-088",
       "title": "ترقية next إلى16.4.3 وإغلاق npm audit critical/high",
-      "status": "review",
+      "status": "done",
       "priority": "high",
-      "description": "Draft PR يرقّي next وeslint-config-next إلى16.4.3 وzod4.6.7 وvite8.3.5؛ audit صفر critical/high والعلامة ثابتة. ينتظر دمج المالك وفحص الهاتف المختصر بعد Deploy Pages. 16 moderate في سلسلة eslint بند مفتوح بحد وtrigger في التقرير.",
+      "description": "منجز: next وeslint-config-next16.4.3 وzod4.6.7 وvite8.3.5؛ audit صفر critical/high. 16 moderate في سلسلة eslint بند مفتوح بحد وtrigger في التقرير، لا ضمن هذه المهمة.",
       "source_ref": "docs/DEPS_SECURITY_REPORT_2026-11-01.md؛ docs/DECISIONS.md#db-followups-owner-2026-11-01",
-      "waiting_on": "owner"
+      "completion_evidence": "دُمج #186 بـCI أخضر (check وdeploy)، ونجح Deploy Pages على main؛ العلامة ثابتة. فحص المالك على الهاتف بعد النشر 2026-11-01: الموقع، تدريب فحص كامل، تبديل EN/AR، صفحة الدخول — 4/4 نجحت. التقرير §8."
     }
   ]
 }
