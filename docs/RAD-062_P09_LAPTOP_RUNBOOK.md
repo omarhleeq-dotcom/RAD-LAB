@@ -152,7 +152,7 @@ PY
 
 ## 3. Owner-only RAD-086 Docker restore and full P10 rehearsal
 
-**Current blocker:** required synthetic CI reaches M01, then stops at statement class `CREATE FUNCTION`, SQLSTATE `42501`. No full rehearsal pass is established. Source/target database ownership differs in the harness construction; catalogue confirmation and any temporary ownership correction require the owner's explicit decision under the current privilege-change prohibition. See the [current P10 report](RAD-062_P10_REPORT_2026-10-30.md). Do not book the window or export restore verified while this STOP remains.
+**Current blocker:** required synthetic CI reaches M01, then stops at statement class `CREATE FUNCTION`, SQLSTATE `42501`. No full rehearsal pass is established. CI confirms that source/target database ownership differs and postgres loses CREATE after restore through that ownership difference. Correcting temporary database ownership requires the owner's explicit decision under the current privilege-change prohibition. See the [current P10 report](RAD-062_P10_REPORT_2026-10-30.md). Do not book the window or export restore verified while this STOP remains.
 
 The owner runs one command from the checkout, using the existing private RAD-086 configuration and its `daily`/latest completed backup. No local PostgreSQL server/client installation is needed. Docker must use the local Unix daemon socket `/var/run/docker.sock`; have the exact image below present (the RAD-086 runbook documents its pull). A missing image/tool is STOP, never a fallback.
 
