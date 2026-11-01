@@ -98,6 +98,9 @@ it('treats XLSX string/shared-string content as values regardless of prefixes an
   if(value.includes('Cached string')) {expect(issues).toEqual([]);expect(row.Question).toBe('Cached string');}
   else expect(issues).toContainEqual({column:'Question',code:'formula'});
  }
+ // A formula whose cached result is an Excel error (t="e") is never imported as option text.
+ const errorRow=importTableRows(await parseXlsx(zip(book(`<row r="2"><c r="A2" t="e"><f>1/0</f><v>#DIV/0!</v></c>${inline('B2','True')}${inline('C2','False')}${inline('D2','A')}</row>`))))[0]!.values;
+ expect(errorRow.Question).toBe(MISSING_CACHED_VALUE); expect(validateAssessImportRowV1(errorRow,batch).issues).toContainEqual({column:'Question',code:'formula'});
  for (const text of ['=SUM(A1)','@SUM(A1)','+SUM(A1)','-SUM(A1)','+(A1)','-(A1)']) expect(validateAssessImportRowV1({Question:text,A:'True',B:'False',Answer:'A'},batch).issues).toContainEqual({column:'Question',code:'formula'});
  for (const text of ['+1000 HU','-1000 HU','+40 to +60 HU','+ 100 HU','- 100 HU']) expect(rowToQuestion({Question:'Synthetic text',A:text,B:'Other',Answer:'A'},batch).options[0]!.text).toBe(text);
 });

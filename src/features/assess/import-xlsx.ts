@@ -83,7 +83,7 @@ async function readWorkbook(buffer: ArrayBuffer): Promise<string[][]> {
    const formula = nodes(cell, 'f').length > 0;
    const type = cell.getAttribute('t'), cached = nodes(cell, 'v')[0]?.textContent;
    let value = cached ?? '';
-   if (formula) value = cached === undefined || cached === '' ? MISSING_CACHED_VALUE : cached;
+   if (formula) value = cached === undefined || cached === '' || type === 'e' ? MISSING_CACHED_VALUE : cached;
    else if (type === 's') { if (!/^\d+$/.test(value) || shared[Number(value)] === undefined) bad(); value = shared[Number(value)]!; }
    else if (type === 'inlineStr' && !nodes(cell, 'f').length) value = nodes(cell, 't').map(t => t.textContent ?? '').join('');
    else if (type === 'e') value = '';
