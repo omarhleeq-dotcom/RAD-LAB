@@ -1,12 +1,13 @@
 "use client";
 
+import {RAD085_REVIEW_AVAILABLE} from '@/features/assess/review-availability';
 import { useTranslations } from "next-intl";
 
 // Number of paragraphs (keys p1…pN) per section of the `terms` messages.
 const SECTIONS = [["keep", 4], ["why", 3], ["who", 7], ["protect", 1], ["howLong", 4], ["rights", 3], ["patients", 6]] as const;
 
 export function TermsContent({ nested = false }: { nested?: boolean }) {
-  const t = useTranslations("terms");
+  const t = useTranslations("terms"),disclosure=useTranslations("rad085Disclosure");
   const Title = nested ? "h2" : "h1";
   const SectionTitle = nested ? "h3" : "h2";
   return (
@@ -24,6 +25,7 @@ export function TermsContent({ nested = false }: { nested?: boolean }) {
           </ul>
         </section>
       ))}
+      {RAD085_REVIEW_AVAILABLE&&<p className="mt-8" data-testid="pending-request-disclosure">{disclosure("pending")}</p>}
       <p className="mt-8 rounded-md border border-line bg-paper px-3 py-2">{t("closing")}</p>
     </div>
   );

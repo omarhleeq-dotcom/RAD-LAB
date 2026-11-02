@@ -34,7 +34,7 @@ function group(r: Record<string, unknown>): Group {
 function request(r: Record<string, unknown>, self: Person, groupId?: string): JoinRequest {
  const status = str(r.state);
  if (!['pending', 'approved', 'rejected', 'cancelled'].includes(status)) return invalid();
- return { id: id(r.id), groupId: groupId ?? id(r.group_id), studentId: r.user_id === undefined ? self.id : id(r.user_id), studentName: name(r.display_name), groupName: name(r.group_name), status: status as JoinRequest['status'], revision: integer(r.revision) };
+ return { id: id(r.id), groupId: groupId ?? id(r.group_id), studentId: r.user_id === undefined ? (groupId ? id(r.id) : self.id) : id(r.user_id), studentName: name(r.display_name), groupName: name(r.group_name), status: status as JoinRequest['status'], revision: integer(r.revision) };
 }
 export function createSqlReview(self: Person, transport: ScopeTransport): ReviewAdapter {
  let epoch = 0;

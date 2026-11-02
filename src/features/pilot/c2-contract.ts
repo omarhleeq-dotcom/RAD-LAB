@@ -116,12 +116,25 @@ export function createC2Adapter(client:Pick<SupabaseClient,'rpc'>):C2Adapter {
   try {const {data,error}=await client.rpc(name,args);if(error)return {kind:missingC2(error)?'unavailable':'error'};return {kind:'ready',data:parse(data)};}
   catch{return {kind:'error'};}
  }
+ let finaliseAfter:string|null=null;
+ const uuid=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
  const deletion='owner_account_deletion_v1',directory='owner_account_directory_v1',surveys='owner_surveys_v1',participant='participant_survey_v1';
  const truth=(v:unknown):true=>{if(!v||typeof v!=='object'||typeof (v as {id?:unknown}).id!=='string')throw new Error('Invalid result');return true;};
  return {
   directory:(search,status,p)=>call(directory,{p_search:search,p_status:status,p_cursor:p.cursor,p_boundary:p.boundary,p_limit:20},parseDirectory),
   deletions:after=>call(deletion,{p_action:'list',p_after:after,p_limit:20},v=>parsePage(v,20,parseDeletion)),
-  deletion:(action,user)=>call(deletion,{p_action:action,p_user:user??null,p_limit:action==='finalise'?100:20},v=>{const n=(v as {processed?:unknown})?.processed;if(!Number.isSafeInteger(n)||Number(n)<0||Number(n)>100)throw new Error('Invalid result');return Number(n);}),
+  deletion:(action,user)=>call(deletion,{p_action:action,p_user:user??null,...(action==='finalise'&&finaliseAfter?{p_after:finaliseAfter}:{}),p_limit:action==='finalise'?100:20},v=>{const n=(v as {processed?:unknown})?.processed;if(!Number.isSafeInteger(n)||Number(n)<0||Number(n)>100)throw new Error('Invalid result');const r=v as {blocked?:{user_id?:unknown}[];next?:unknown};
+   if(action==='finalise'){
+    const newPass=finaliseAfter===null;
+    if(r.next!==undefined&&r.next!==null&&!uuid(r.next))throw new Error('Invalid continuation');
+    const next=typeof r.next==='string'?r.next:null;
+    if(r.blocked!==undefined){
+     if(!Array.isArray(r.blocked)||r.blocked.length>100||r.blocked.some(b=>!b||!uuid(b.user_id)))throw new Error('Invalid blocked account');
+     finaliseAfter=next;
+     return {processed:Number(n),blocked:r.blocked.map(b=>String(b.user_id)),more:!!next,newPass};
+    }
+   }
+   return Number(n);}),
   versions:after=>call(surveys,{p_action:'versions',p_after:after,p_limit:20},v=>parsePage(v,20,parseVersion)),
   rounds:after=>call(surveys,{p_action:'rounds',p_after:after,p_limit:20},v=>parsePage(v,20,parseRound)),
   answers:(round,after,limit=20)=>call(surveys,{p_action:'answers',p_data:{round_id:round},p_after:after,p_limit:Math.min(100,Math.max(1,limit))},v=>parsePage(v,Math.min(100,Math.max(1,limit)),parseAnswer)),

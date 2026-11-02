@@ -54,22 +54,29 @@
       "serverModules": [
         "src/features/assess/rad059-alternate.test.ts"
       ]
+    },
+    "20261102000300_rad085_rights_write_disclosures.sql": {
+      "sha256": "5ddaf223e783e5dd3f92e0b428d7d1718f41f0fc19df9fac024a718d61330f44",
+      "reason": "RAD-085 R1/R2/S1/P2/P3 deferred after 0200; owner must approve S1 values and EN/AR disclosure drafts before the laptop window.",
+      "serverModules": [
+        "src/features/assess/rad085-review-fixes.test.ts"
+      ]
     }
   },
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
   "browserBoundaries": {
-    "src/features/pilot/FeedbackBox.tsx": "c6ae92fc0d39108fc60f8bac3f4028ca3e6b8bb950061e24166c4de47db4e703",
+    "src/features/pilot/FeedbackBox.tsx": "6c49fc9ae12127a7fafa190a50fbfab471b3313f75977a8320d914a59fd5b2f8",
     "src/features/pilot/client.ts": "e4ad823775d64b2e7a650a61674bdbd00d76cff838397e5274c6ea34971ecdf0",
     "src/features/pilot/AttemptRecorder.tsx": "e282d08e647d245b1a82f1a2695b4105c55afb55a510754a62cfc5e7de5ae7a9",
-    "src/features/pilot/attempt-logger.ts": "871679b87fd9c4d6eca92f5be5de3a6f47d4db9f6d26d7a938ec7a9df5d4196c",
+    "src/features/pilot/attempt-logger.ts": "720e96055deb2459dd9e514ad9aa752005072651c7db21de731f3bd781e42ee9",
     "src/features/pilot/saved-results.ts": "691407a50686f264bb71e66bc1e6ef08573010c30b69c557c94c253235022f82",
     "src/features/pilot/profile-read.ts": "466b47e31c3433eaa6a6cc93af1beb9a511b20b124071a7e895af0c77ac067a1",
     "src/features/pilot/training.ts": "6040ad4bf434348458319e9746847cecb1b64630f845e85b2f79e9b1b7b970a3",
     "src/features/pilot/useSavedResults.ts": "f1ce44bf9531208500eb7645ea0c037027bf385451af19b534fd6c454170cdaf",
     "src/features/pilot/useAccount.ts": "9a02c3edbecd8c39961c7619e814c58664c1625688f41bfe9d66497dd93e6073",
-    "src/features/pilot/activity.ts": "ef0fbb293a0fdd42faa46d5a5556b10b570f65396dd884e8f707186fba7d0f4a",
+    "src/features/pilot/activity.ts": "07fc9bc2f87161a92836dd043d5e9936117da4a4b130b0497813e046558c48f9",
     "src/features/pilot/PilotSessionKeeper.tsx": "c812951455090fc989fd481ddaadced07e16b2533af8d359e276857779b6fe88",
     "src/features/pilot/useOwnerData.ts": "bd6ef03a4143401f32617e24e1ce1d15466b2953151bfcae55e3ffb44958e534",
     "src/features/pilot/owner-data.ts": "a6b0f47c993869e60c605009d9b7cb483f94bfda3bce83e2e20b1934bb2ea5c4",
@@ -82,7 +89,7 @@
     "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
     "src/features/pilot/OwnerPanel.tsx": "c302104f4ce9d9213d312c197a0c470fd78e0b0512bfa5be1d2b2a3639d78e55",
     "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
-    "src/features/pilot/c2-contract.ts": "bbf1d8373042124ba88b5e7b59052dc1c55466972bf3cdfdcf54b448389972ec",
+    "src/features/pilot/c2-contract.ts": "2ea21fcb5b638ccc29dd5bea00801ba0c2d0216b4a6d99c6774255c55a4a91e0",
     "src/features/assess/OwnerAssessPanel.tsx": "5a930f2898549d14b651a961fbf5d4fd3be64440de5b55a6a342aa606dcee5f8",
     "src/features/assess/admin-data.ts": "52ff118a27ef5d09e87cec66642c7e2bf0d4d76717790e08b3c9c14fd5b1b610",
     "src/features/assess/OwnerContentPanel.tsx": "3e0c676a98b1d3774fa0db3c17be42759a2a1dfaaf806f1df6dc26b83d9b40e7",
@@ -91,7 +98,7 @@
     "src/features/assess/HistoryPanel.tsx": "2a98829cf8b922e238a735b13dcfc93f06c83dd444c9e641c341d2305f4b9424",
     "src/features/assess/history-data.ts": "057759a67ae86f91c497528aa5859b468a882f731edfbc10a1ee0c7bf2da671e",
     "src/features/assess/AssessPanel.tsx": "ecdcf10460d5d53135206f95fa73f9e5597cea7351ed800dd11e22c109cfe71d",
-    "src/features/assess/AssessConsent.tsx": "32f970a60dc71bcc9a8b79ced8e5b08644e6852c78152154c79bc908b7b65dbb",
+    "src/features/assess/AssessConsent.tsx": "fc93ff5276d200a5fe08cb53e5a1e5d1d94940f7e9ba0f7baa0acdcaac96c74c",
     "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31",
     "src/features/assess/OwnerAssignments.tsx": "ebfff4c4967f64915ec7c06483e59007ac9d52da908d8d5f9ad11a3bee90ebee",
     "src/features/assess/owner-assignments.ts": "d48d42288bb2b1d628b5e36103ebad383c08e98e4c61506f2049811ccf7caf3c",
@@ -134,7 +141,7 @@
       },
       "boundaries": {
         "src/features/supervisor/p1-live.ts": "6a19d4f3876ba8be7313fdeac02f324f7609a9bf9cb7725692231d79ed64a44c",
-        "src/features/supervisor-review/sql-adapter.ts": "d61d586ba6b9477908d682a09ff5d1d078da4527826d99ed736107d6cd93a7f0"
+        "src/features/supervisor-review/sql-adapter.ts": "77579c1b101c058a4e8799144932fb0db000534ca2059c3944ed4aa357337419"
       },
       "consumer": {
         "path": "src/features/supervisor/P1Session.tsx",
@@ -190,6 +197,24 @@
       "consumer": {
         "path": "src/features/emergency/EmergencySession.tsx",
         "sha256": "e04626cc50e57215f4690365ace6afae86aede91a221c497b31b15c3774e9e73"
+      }
+    },
+    "rad085Review": {
+      "migrations": [
+        "20261102000200_rad059_emergency_alternate.sql",
+        "20261102000300_rad085_rights_write_disclosures.sql"
+      ],
+      "guard": {
+        "path": "src/features/assess/review-availability.ts",
+        "symbol": "RAD085_REVIEW_AVAILABLE",
+        "sha256": "1df16a2913151a8d76ca6e169b2d88083ba945661f4a780a93957757b51e67c2"
+      },
+      "boundaries": {
+        "src/features/assess/written-consent.ts": "9f9e673e2b2e3bd0b483adc690a7d559f7096413b71fbbbda83fc0a12f0c02c6"
+      },
+      "consumer": {
+        "path": "src/features/assess/AssessConsent.tsx",
+        "sha256": "fc93ff5276d200a5fe08cb53e5a1e5d1d94940f7e9ba0f7baa0acdcaac96c74c"
       }
     }
   }

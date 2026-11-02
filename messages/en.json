@@ -2435,5 +2435,12 @@
     "loading": "Loading…",
     "error": "The request could not be confirmed. Refresh and check the current appointment before trying again.",
     "retention": "Activity is deleted within six months after the announced end of the pilot. Erasing an account removes its actor reference."
+  },
+  "rad085Disclosure": {
+    "written": "For Assess written answers, your group supervisor grades your answers. The site owner may grade them through owner takeover when supervisor grading is unavailable. Grading must finish within 168 hours of submission; after that the attempt expires without a final grade. Free-text answers may reveal your identity, even when your name is hidden. Withdrawing sharing consent or leaving the group stops the supervisor from retrieving further data. Answers already open may remain visible until the current view expires or that page is closed or refreshed. Withdrawal does not by itself delete your answers or cancel an assigned exam. The owner may still grade within the same 168-hour window. Disabling Assess stops new attempts; retention and account deletion follow the policy above.",
+    "pending": "When you request to join a group, your name is shown to that group’s supervisor so they can approve or deny the request. The request alone does not give the supervisor access to your training history, answers or results. Only a pending request from an account still eligible to join is shown; historical requests do not reveal your identity.",
+    "writeLimit": "Some data could not be saved because your account has reached a saving limit. Your current work is kept on this page. Please try saving again later.",
+    "blocked": "Some accounts could not be erased and still need owner action. Their original deadlines remain in force. Resolve their rights and run finalise again.",
+    "more": "More accounts may remain. Run finalise again to continue the batch."
   }
 }
