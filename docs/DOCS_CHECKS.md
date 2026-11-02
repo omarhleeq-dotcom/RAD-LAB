@@ -105,7 +105,14 @@ npm run qa:exam-audit -- knee-ap --locales=ar --widths=390                      
 
 ## CI
 
-CI يشغّل `docs:check` و`docs:test` على الشجرة المختبرة. على PR يضيف مقارنة القرارات بـ`--base origin/<target> --head <PR-head>` وفحص انتقال الحالة مع `--require-previous`. يُستخدم head الحقيقي لتحديد fork point لأن checkout قد يكون merge commit. يشمل `docs:test` اختبارات context، وتظهر تنبيهات الاتساق في ناتج `docs:check` نفسه محليًا وفي CI. فحوص التطبيق القائمة باقية؛ إضافة فحص docs لا تتجاوزها أو تغيّر توقعاتها.
+تعمل أربع jobs بالتوازي: `unit` للتدقيق/typecheck/lint والاختبارات غير المتصلة بالقاعدة؛ `db` للأدوات والصور والبروفات وDB Vitest و`docs:test` (تضم اختبارات restore/DB).
+`docs` لفحص الوثائق وانتقال الحالة؛ `build` للبناء العادي ثم static. [`vitest.config.mts`](../vitest.config.mts) يحدد قسمين متكاملين؛ بلا متغير lane يعمل الجميع محليًا.
+`check` جامع إلزامي مع `always()` و`needs` للأربع؛ failure/cancelled/skipped لأي job يفشله. timeout لكل job ثابت15د، وNode22 والصور المثبتة ثابتة.
+على PR فقط تصفَّى بروفة المالك والكتالوج CRLF والعامل الثقيل وفق allowlist ضيقة في [CI](../.github/workflows/ci.yml)؛ أي مسار آخر أو خطأ diff أو diff فارغ يشغل الكامل.
+القائمة الآمنة تقريران للتدقيق/التنظيف وجرد التدقيق فقط؛ SQL/scripts/src/workflow/lock/config وحزم الهاتف والوثائق التي يقرؤها الكود تشغل الكامل؛ push إلى main كامل دائمًا.
+الحراس السريعة وDB Vitest وICU والبروفات الأمنية/الأقفال/erasure لا تُصفّى. ICU تنفذ مرة واحدة بمسار مستقل إلزامي؛ `docs:test` تستثني ذلك الملف وحده.
+CI يشغّل `docs:check` على الشجرة؛ وعلى PR يقارن القرارات ويفحص انتقال الحالة بـ`--base origin/<target> --head <PR-head> --require-previous`؛ head الحقيقي يحدد fork point.
+التفاصيل ومطابقة كل خطوة والقياسات وحدود البيئة في [تقرير التنظيف](TEST_CLEANUP_REPORT_2026-11-02.md)؛ Deploy Pages مستقلة دون تغيير.
 
 ## حدود الفحص والمراجعة
 

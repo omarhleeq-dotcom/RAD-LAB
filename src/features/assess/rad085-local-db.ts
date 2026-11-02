@@ -1,12 +1,19 @@
 /** Test-only isolated PostgreSQL. No TCP, provider URL, inherited PG config or real data. */
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { chmodSync, cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import type { Client as PgClient } from 'pg';
 import { RAD085_MIGRATIONS } from './server-rad085-contracts';
 
+// Cold, stopped cluster templates preserve cluster-global roles/ACL as well as DB state.
+// Each test starts its own clone/socket/clients; beforeUpgrade retains the uncached path.
+const templates = new Map<string, string>();
+const cleanupTemplates = () => { for (const dir of templates.values()) rmSync(dir, { recursive: true, force: true }); };
+// Manual QA also bundles this helper outside Vitest. Keep that entry point usable.
+if (process.env.VITEST) (await import('vitest')).afterAll(cleanupTemplates);
+else process.once('exit', cleanupTemplates);
 export const fixtureId = (n: number) => `00000000-0000-0000-0000-${String(n).padStart(12, '0')}`;
 export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Promise<void>, migrations: readonly string[] = RAD085_MIGRATIONS) {
   // Only a local package selector; never a database connection selector.
@@ -15,6 +22,8 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
   const binaries = await import(require.resolve('@embedded-postgres/linux-x64')) as { initdb: string; pg_ctl: string };
   const childEnv = { ...process.env, LD_LIBRARY_PATH: join(dirname(binaries.initdb), '../lib') };
   const dir = mkdtempSync(join(tmpdir(), 'rad085-sql-'));
+  const key = JSON.stringify([binaries.initdb, 'C', 'UTF8', migrations]);
+  const template = beforeUpgrade ? undefined : templates.get(key);
   const clients = new Set<PgClient>();
   const ctl = (args: string[]) => execFileSync(binaries.pg_ctl, ['-D', join(dir, 'data'), ...args], { stdio: 'pipe', timeout: 15000, env: childEnv });
   let started = false;
@@ -30,18 +39,33 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
     if (results.some(r => r.status === 'rejected')) throw Error('rad085_local_cleanup_failed');
   }
   try {
-    execFileSync(binaries.initdb, ['-D', join(dir, 'data'), '-A', 'trust', '-U', 'postgres', '--no-locale', '--encoding=UTF8'], { stdio: 'pipe', timeout: 15000, env: childEnv });
+    if (template) {
+      cpSync(template, join(dir, 'data'), { recursive: true });
+      chmodSync(join(dir, 'data'), 0o700);
+    }
+    else execFileSync(binaries.initdb, ['-D', join(dir, 'data'), '-A', 'trust', '-U', 'postgres', '--no-locale', '--encoding=UTF8'], { stdio: 'pipe', timeout: 15000, env: childEnv });
     started = true;
     ctl(['-l', join(dir, 'postgres.log'), '-o', `-F -c listen_addresses='' -k ${dir} -p 55432 -c log_min_messages=panic -c log_min_error_statement=panic -c log_statement=none -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0`, '-w', '-t', '10', 'start']);
-    const admin = await connect('rad085-admin');
-    await admin.query(`create role anon nologin; create role authenticated nologin; create role service_role nologin; create schema auth;
+    let admin = await connect('rad085-admin');
+    if (!template) {
+      await admin.query(`create role anon nologin; create role authenticated nologin; create role service_role nologin; create schema auth;
       create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
       create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
       grant usage on schema auth to authenticated,anon; grant execute on function auth.uid() to authenticated,anon;`);
-    const names = readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort();
-    for (const file of names.filter(f => f < RAD085_MIGRATIONS[0])) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
-    if (beforeUpgrade) await beforeUpgrade(admin);
-    for (const file of migrations) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
+      const names = readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort();
+      for (const file of names.filter(f => f < RAD085_MIGRATIONS[0])) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
+      if (beforeUpgrade) await beforeUpgrade(admin);
+      for (const file of migrations) await admin.query(readFileSync(`supabase/migrations/${file}`, 'utf8'));
+    }
+    if (!beforeUpgrade && !template) {
+      await admin.end(); clients.delete(admin);
+      ctl(['-m', 'fast', '-w', 'stop']);
+      const snapshot = mkdtempSync(join(tmpdir(), 'rad085-template-'));
+      cpSync(join(dir, 'data'), snapshot, { recursive: true });
+      templates.set(key, snapshot);
+      ctl(['-l', join(dir, 'postgres.log'), '-o', `-F -c listen_addresses='' -k ${dir} -p 55432 -c log_min_messages=panic -c log_min_error_statement=panic -c log_statement=none -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0`, '-w', '-t', '10', 'start']);
+      admin = await connect('rad085-admin');
+    }
     async function transaction<T>(who: number | 'anon' | 'worker', work: (c: PgClient) => Promise<T>, label = 'rad085-rpc') {
       const c = await connect(label);
       try {

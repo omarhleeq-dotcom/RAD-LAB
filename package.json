@@ -20,7 +20,7 @@
     "qa:a11y": "node scripts/qa/a11y-audit.mjs",
     "qa:exam-audit": "node scripts/qa/exam-audit.mjs",
     "docs:check": "node scripts/docs/check-docs.mjs",
-    "docs:test": "node --test scripts/docs/*.test.mjs scripts/status/*.test.mjs",
+    "docs:test": "node -e \"const fs=require('node:fs'),cp=require('node:child_process');const files=['scripts/docs','scripts/status'].flatMap(d=>fs.readdirSync(d).filter(f=>f.endsWith('.test.mjs')&&f!=='laptop-icu.test.mjs').sort().map(f=>d+'/'+f));const r=cp.spawnSync(process.execPath,['--test',...files],{stdio:'inherit'});if(r.error)throw r.error;process.exit(r.status??1)\"",
     "status:summary": "node scripts/status/summary.mjs",
     "docs:context": "node scripts/docs/context.mjs",
     "docs:sync": "node scripts/docs/sync.mjs"

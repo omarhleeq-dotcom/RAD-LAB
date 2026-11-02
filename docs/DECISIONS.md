@@ -1376,3 +1376,15 @@ CSV/TSV: رفض `=` و`@` في البداية، و`+`/`-` يليهما حرف أ
 الدليل1–6 على SHA main قبل الترقية؛2 بالفحوص القديمة و5 بالجديدين وبقية required الثابتة؛ المالك يضبط marker ويدمج في7 بعد5/6 وقبل8. [RAD-059 ACK/البديل](RAD-059_PHONE_RUNBOOK.md) و[RAD-085 الحقوق/الخصوصية/الموافقة](project-status.md) شروط فتح البوابة فقط؛ بقية الشروط ثابتة.
 لا إذن حي/Variable/بوابة/عامل/سر/5ب؛ Draft فقط وRAD-062 in_progress حتى التطبيق والترقية وCI/Deploy والهاتف؛ deploy يفشل متوقعًا مع Variable القديم ولا يُتجاوز؛ البوابة مغلقة والعامل NOLOGIN والسر DISABLED.
 أصل تصحيح الأستاذ في [التأليف1/3](#assess-authoring-owner-2026-10-22) و[قواعد المرحلتين](#rad062-phase2-owner-2026-10-29) و[S3](#rad085-sec-fixes-owner-2026-10-27) محفوظة.
+
+<a id="test-cleanup-owner-2026-11-02"></a>
+## Test cleanup — owner decisions 2026-11-02
+Authority: owner task prompt; [closure evidence and cleanup report](TEST_CLEANUP_REPORT_2026-11-02.md).
+1 = A: four parallel CI jobs (unit, DB+Docker, docs/status, build). Keep timeout-minutes 15 per job; never raise it.
+2 = yes: heavy rehearsals path-filtered on PRs only. Always full on push to main (DB windows always run on a main SHA). Unknown/unclassified path → run full (fail-open). Fast guards always run.
+3 = yes: laptop-icu.test.mjs runs exactly once in CI, as a mandatory, blocking path. The witness itself is unchanged.
+4 = yes: consolidate the six whole-list manifest pins (name:55, freeze:72, lifecycle:257, manual:215, erasure:353, Node db-day:90/99, per inventory overlap_groups) into ONE standalone test with a reviewed literal expected list (requiredMigrations, deferredMigrations, checks, marker). Never derive the expectation from the live manifest. Remove ONLY those duplicated whole-list asserts. Every other assertion in those files stays: behaviour, tamper, privileges, rollback, bytes, historical snapshots.
+5 = yes: a measured trial of DB templates (one migrated baseline per version/locale, cloned per test), with isolation, roles/ACL, rollback and locale unchanged. No global isolate:false. Keep it ONLY if a before/after measurement on the same head shows a net saving. Otherwise revert it and report the numbers. Docker-image cache: adopt only if a measured net saving; otherwise drop it.
+6 = yes, new witnesses: (a) missing golden must FAIL. In the 7 scene-dom tests, a missing baseline file fails with a clear message; writing stays only behind the explicit UPDATE_* env var. No existing hash or golden file changes. (b) A negative witness for session-account: a namespace import (`import * as x` … `x.useAccount()`) outside SessionGate must be caught; extend the guard minimally if it is not. (c) A finalize-headers test on a temporary out/ directory. (d) security-rehearsal.test.mjs full wiring is OUT of this batch (separate later scope). The rehearseM09 witness is already merged (#203); do not redo it.
+7 = A: Deploy Pages stays independent. No deploy workflow change.
+8 = yes: this batch.
