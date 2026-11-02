@@ -51,7 +51,8 @@ it("the rendered wrist scenes and result panels are unchanged (S14.1c)", () => {
       }
     }
   }
-  if (process.env.UPDATE_WRIST_HASHES === "1" || !existsSync(FILE)) writeFileSync(FILE, JSON.stringify(out, null, 1) + "\n");
+  if (process.env.UPDATE_WRIST_HASHES === "1") writeFileSync(FILE, JSON.stringify(out, null, 1) + "\n");
+  if (!existsSync(FILE)) throw new Error(`Missing scene golden: ${FILE}. Restore the reviewed baseline; writing requires the explicit UPDATE_* variable.`);
   const golden = JSON.parse(readFileSync(FILE, "utf8")) as Record<string, string>;
   expect(Object.keys(out)).toEqual(Object.keys(golden));
   expect(Object.keys(out).filter((k) => out[k] !== golden[k])).toEqual([]);

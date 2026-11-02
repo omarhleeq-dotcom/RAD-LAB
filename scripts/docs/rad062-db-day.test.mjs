@@ -86,10 +86,7 @@ test('boolean readiness failures stop; explicitly disclaimed operational claims 
 });
 test('promotion preserves both emergency packets and every original SQL/check byte', () => {
   const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
-  const current = JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8'));
-  assert.deepEqual(current.requiredMigrations, [...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations, '20261102000100_rad062_supervisor_grading_authorization.sql']);
-  assert.deepEqual(current.deferredMigrations, {});
-  assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-m09-ready.sql' : f), 'supabase/checks/rad062-m09-ready.sql']);
+  // Whole-list promotion pin: src/features/deployment/frontend-manifest.test.ts.
   for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md',
     'supabase/manual/assess-emergency-stop.sql','supabase/manual/assess-emergency-stop-v2.sql',
     'supabase/checks/assess-emergency-stopped.sql','supabase/checks/assess-emergency-stopped-v2.sql',

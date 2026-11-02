@@ -69,7 +69,7 @@ it('promoted M05 retains historical current schema and v1 packet work first; exp
  expect(read('src/features/assess/rad062-availability.ts')).toContain('RAD062_AVAILABLE: boolean = true');
  expect(read('src/features/supervisor/p1-availability.ts')).toContain('P1_AVAILABLE: boolean = true');
  const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
- expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations, '20261102000100_rad062_supervisor_grading_authorization.sql']); expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-m09-ready.sql' : p), 'supabase/checks/rad062-m09-ready.sql']);
+ // Whole-list promotion pin: deployment/frontend-manifest.test.ts.
  for (const path of [...base.requiredMigrations.map((f: string) => 'supabase/migrations/' + f), ...base.checks,
   'supabase/manual/assess-emergency-stop.sql', 'supabase/checks/assess-emergency-stopped.sql',
   'scripts/assess/emergency-stop-packet.mjs', 'scripts/assess/emergency-stop-rehearsal.test.mjs', 'docs/RAD-059_PHONE_PACKET.md'])
