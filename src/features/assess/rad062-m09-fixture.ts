@@ -16,6 +16,13 @@ export const modes = ['embedded', 'supabase17'] as const;
 export type Mode = typeof modes[number];
 export const image = 'supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d';
 const docker = (args: string[]) => execFileSync('docker', args, { encoding: 'utf8', stdio: 'pipe', timeout: 120000 });
+// Image startup chowns the bind-mounted socket directory (sticky bit); return it to
+// the test user before removal so the host directory can be deleted (as in the
+// existing laptop rehearsal teardown).
+function removeContainer(name: string, socket: string) {
+ try { docker(['exec', '--user', '0', name, 'chown', '-R', `${process.getuid!()}:${process.getgid!()}`, '/var/run/postgresql']); } catch { /* always attempt removal */ }
+ docker(['rm', '-fv', name]); rmSync(socket, { recursive: true, force: true });
+}
 let container: Promise<{ name: string; socket: string; password: string; startedAt: number; databasesCloned: number }> | undefined;
 async function startContainer() {
  const startedAt = performance.now();
@@ -50,12 +57,12 @@ async function startContainer() {
    await new Promise(r => setTimeout(r, 1000));
   }
   throw Error('M09 Supabase17 startup failed');
- } catch (e) { docker(['rm', '-fv', name]); rmSync(socket, { recursive: true, force: true }); throw e; }
+ } catch (e) { removeContainer(name, socket); throw e; }
 }
 afterAll(async () => {
  if (container) {
   const source = await container;
-  docker(['rm', '-fv', source.name]); rmSync(source.socket, { recursive: true, force: true });
+  removeContainer(source.name, source.socket);
   // Includes image startup, the one template migration, all clones and teardown.
   console.info('M09 Supabase17 fixture timing', JSON.stringify({ databasesCloned: source.databasesCloned, elapsedSeconds: (performance.now() - source.startedAt) / 1000 }));
  }
