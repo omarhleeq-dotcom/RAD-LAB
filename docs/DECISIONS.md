@@ -1410,3 +1410,12 @@ Authority: owner's replies to the two implementation questions; [concrete protoc
 Allow narrowly pinned guard expectations: only the exact RAD-059 deferred filename/SHA/reason expectations may change; all other assertions and the marker remain unchanged.
 Keep per-phase limits; review a multi-RPC stop protocol. This selects the review direction, not an overall-deadline replacement or permission to claim per-phase deadlines from function SET/set_config.
 The protocol below is a proposal awaiting review; no alternate migration, API, availability or UI is implemented in this batch. Existing decisions1–11 remain binding.
+
+<a id="rad059-implementation-owner-2026-11-02"></a>
+### RAD-059 — implementation decisions 12–14, 2026-11-02
+Authority: owner's continuation of PR #207; recorded verbatim. Supersedes the unresolved deadline/retention items in the earlier protocol proposal.
+12. Per-phase time bound = the existing Supabase per-request limit for logged-in users (authenticated role statement_timeout, 8 s by default) — NOT a new 5 s setting. Do not change any role/database/PostgREST setting. lock_timeout stays 2 s, set on each phase function (prove with a real-PostgreSQL test that a function-level lock_timeout does bound a lock wait inside that RPC). Each phase is its own RPC/transaction, as in the multi-RPC protocol already chosen.
+   - Local tests must simulate PostgREST faithfully: each phase call runs in its own transaction with `SET LOCAL statement_timeout` taken from the authenticated role config BEFORE the RPC SELECT; prove a slow phase is cancelled at that bound and earlier phases stay committed (result PARTIAL).
+   - The live laptop runbook adds a read-only preflight: confirm the authenticated role's statement_timeout exists and is ≤ 8 s; if absent or larger → STOP (no setting change).
+13. Audit retention: the stop/appoint/remove audit follows the same retention as other pilot data (deleted within 6 months after the pilot ends, per Terms). If the alternate's account is erased, the actor reference is set to NULL and the event stays (no new tombstone); prove this with a test through the existing erasure path.
+14. Closure to record: RAD-062 5b — #206 merged, CI (4 lanes) and Deploy green on main; owner phone check 2026-11-02 OK: grading entry visible to the owner, empty queue message, layout fine. RAD-062 stays open only for the P2 consent disclosure (gate prerequisite) and the remaining launch items.
