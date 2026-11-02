@@ -5,7 +5,7 @@ import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { rehearseM09 } from '../assess/rad062-m09-rehearsal.mjs';
+import { inspectM09, rehearseM09 } from '../assess/rad062-m09-rehearsal.mjs';
 import { localOnly } from '../assess/rad062-laptop-rehearsal.mjs';
 import { verifyMigrations } from '../assess/rad062-db-day.mjs';
 import { containerArgs, IMAGE_DIGEST } from '../ops/laptop-restore-test.mjs';
@@ -86,6 +86,58 @@ test('M09 CLI refuses selectors before reading configuration and redacts output'
     assert.equal(result.status, 1);
     assert.equal(result.stdout, '');
     assert.equal(result.stderr.trim(), 'STOP rad062_m09_rehearsal; inspect locally with the owner; no live action authorized');
+  }
+});
+
+test('inspectM09 orders the M08 guard, both anchor rollbacks and the single M09 commit', async () => {
+  const guard = read('supabase/checks/rad062-ready.sql');
+  const ready = read('supabase/checks/rad062-m09-ready.sql');
+  const migration = read('supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql');
+  const snapshot = `select jsonb_build_object('functions',(select jsonb_agg(to_jsonb(p) order by oid) from pg_proc p where pronamespace='assess'::regnamespace),
+ 'foreign_keys',(select jsonb_agg(to_jsonb(k) order by oid) from pg_constraint k where contype='f')) v`;
+  const variants = ['$anchor$\n NO_SUCH_ANCHOR;$anchor$', '$anchor$\n$anchor$'].map(replacement =>
+    migration.replace('$anchor$\n return receipt;$anchor$', replacement));
+  assert.notEqual(variants[0], migration); assert.notEqual(variants[1], migration);
+  assert.notEqual(variants[0], variants[1]);
+  const fixed = { functions: ['SYNTHETIC_FUNCTION'], foreign_keys: ['SYNTHETIC_FK'] };
+  const anchorError = { code: '55000', message: 'M09 anchor count 0, expected 1' };
+  const recording = (guardOK = true, outcomes = [anchorError, anchorError]) => ({
+    sent: [],
+    async query(sql) {
+      this.sent.push(sql);
+      if (sql === guard || sql === ready) return { rows: Array.from({ length: 6 }, (_, i) => ({ ok: sql !== guard || guardOK || i !== 0 })) };
+      if (sql === snapshot) return { rows: [{ v: fixed }] };
+      const variant = variants.indexOf(sql);
+      if (variant !== -1) {
+        if (outcomes[variant]) throw outcomes[variant];
+        return { rows: [] };
+      }
+      if (sql === 'rollback' || sql === migration) return { rows: [] };
+      throw Error('Unexpected inspectM09 query');
+    },
+  });
+
+  const failedGuard = recording(false);
+  await assert.rejects(inspectM09(failedGuard), { message: 'M09 rehearsal assertion' });
+  assert.deepEqual(failedGuard.sent, [guard]);
+  assert.equal(failedGuard.sent.includes(migration), false);
+
+  const pass = recording();
+  assert.deepEqual(await inspectM09(pass), {
+    m09_committed: 1, pre_m08_ready: 1, post_m09_ready: 1, anchor_rollbacks: 2, foreign_keys_unchanged: 1,
+  });
+  assert.deepEqual(pass.sent, [guard, snapshot, variants[0], 'rollback', snapshot,
+    variants[1], 'rollback', snapshot, migration, ready, snapshot]);
+  assert.equal(pass.sent.filter(sql => sql === migration).length, 1);
+
+  for (const index of [0, 1]) {
+    for (const outcome of [null, { code: 'XX000', message: anchorError.message }, { code: '55000', message: 'Unrelated failure' }]) {
+      const outcomes = [anchorError, anchorError]; outcomes[index] = outcome;
+      const failedAnchor = recording(true, outcomes);
+      await assert.rejects(inspectM09(failedAnchor), { message: 'M09 rehearsal assertion' });
+      assert.equal(failedAnchor.sent.includes(migration), false);
+      assert.equal(failedAnchor.sent.at(-1), 'rollback');
+    }
   }
 });
 
@@ -181,8 +233,8 @@ test('encrypted synthetic M08 -> rehearseM09 PASS; M07 -> STOP; both restore tar
       assert.equal(entry.result, stop ? 'fail' : 'pass');
       assert.equal(entry.image_digest, IMAGE_DIGEST);
       if (stop) {
-        // Restore/counts succeeded; the M07 catalogue was refused inside the callback,
-        // at the M08 readiness guard before M09 can commit. No success is recorded.
+        // Restore/counts succeeded; the M07 backup failed in the rehearsal callback,
+        // with no success recorded. The inspectM09 recording test proves guard/rollback ordering.
         assert.equal(entry.stage, 'rehearsal');
         assert.equal(entries.some(e => e.dir === at && e.result === 'pass'), false);
       } else {
