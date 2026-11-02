@@ -1338,3 +1338,13 @@ Authority: RAD-090 owner prompt; [implementation and evidence](archive/reports/2
 رسالة EN/AR للمالك بدل منتقي فارغ، زر ملف محلي بإتاحة 44px، وحفظ البيانات في الرجوع والتنقل والتبديل بين التطبيقات.
 UI فقط بسقف 30 ملفًا ومسودة PR واحدة؛ validator والحدود وauto-author وReference/Licence وK≤N وتساوي النقاط وعقد v2 ثابتة؛ لا SQL أو تبعية أو فتح بوابة.
 فحص 4ب الجزئي ليس إغلاقًا؛ الشرط الموسع ودليله في [تقرير 4ج](RAD-062_PHASE4C_REPORT_2026-11-01.md#phone-check)، و5ب خارج الإذن.
+
+<a id="dependabot-owner-2026-11-01"></a>
+## Dependabot and CI audit — owner approved 2026-11-01
+
+السلطة: طلب المالك لهذه الدفعة؛ يحسم قرار الأتمتة المفتوح في [تقرير الاعتماديات §4](DEPS_SECURITY_REPORT_2026-11-01.md#4-التغييرات-المشتركة-وscale-s-std-3)، امتدادًا [للبند3](#db-followups-owner-2026-11-01).
+- Dependabot أسبوعيًا: npm يوم الأحد09:00 بتوقيت Asia/Amman؛ حد3 لطلبات تحديث الإصدارات، minor/patch مجموعة واحدة وmajor منفصل؛ وGitHub Actions مجموعة واحدة مع إبقاء SHA وتعليق الإصدار.
+- CI ينفذ `npm audit --audit-level=high` بعد `npm ci` لكل اعتماديات التطوير والإنتاج؛ high/critical تفشل وmoderate لا تفشل.
+- الدمج للمالك وحده؛ لا auto-merge أو auto-approve أو assignees أو تغيير صلاحيات أو أسرار. تفعيل alerts/security updates يدوي بيد المالك.
+- تبقى16 moderate في سلسلة eslint مفتوحة؛ محفز المتابعة ترقية eslint الرئيسية التالية أو ارتفاع أي منها إلى high وفق [§7](DEPS_SECURITY_REPORT_2026-11-01.md#7-البنود-المفتوحة).
+- دليل التنفيذ وحدود النشر وخطوات Settings في [التقرير](DEPENDABOT_REPORT_2026-11-01.md)؛ المهمة RAD-091 تبقى review/owner حتى استيفاء done_when.

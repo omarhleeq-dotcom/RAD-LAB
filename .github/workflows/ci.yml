@@ -20,6 +20,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm audit --audit-level=high
       - name: Required RAD-086 tools for the laptop backup tests (age, PostgreSQL 16 server and client; no skip)
         run: |
           sudo apt-get update
