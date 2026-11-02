@@ -13,7 +13,7 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 407,
+  "revision": 408,
   "updated_at": "2026-11-02T12:51:39.853Z",
   "timezone": "UTC",
   "next_id": "RAD-094",
