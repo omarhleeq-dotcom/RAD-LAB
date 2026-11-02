@@ -2,7 +2,7 @@
 
 ## 1. الانحرافات والميزانية
 
-Verified: الهدف تجهيز0200 ثم0300 من main؛ لا إجراء حي. حد PR A عشرة ملفات؛ الدفعة تستهدف ثمانية، وتشمل CI والحالة والتسليم.
+Verified: الهدف تجهيز0200 ثم0300 من main؛ لا إجراء حي. حد PR A عشرة ملفات؛ الدفعة ثمانية ملفات من عشرة، وتشمل CI والحالة والتسليم.
 لا تعديل لترحيل أو فحص SQL قائم؛ حزم الهاتف تبقى مطابقة بايتًا. PR B منفصلة Draft بحد15 ملفًا.
 
 ## 2. المنجز والمحذوف
@@ -34,8 +34,11 @@ Verified: لا حقائق طبية أو نقاط/صور/مشاهد/goldens/chara
 
 Verified: typecheck وlint؛ التحذيران السابقان في simulator-layout-audit فقط. build وbuild:pages نجحا؛ unit2516/2516.
 Verified: الشاهد embedded الجديد نجح للحالة الصحيحة ورفض M08 قبل إنشاء كائنات؛ التشغيل الكامل مطلوب أدناه.
-Verified: docs:sync مرتان، الثانية0؛ docs/status مع base origin/main وrequire-previous وdiff check نجحت قبل التقرير النهائي.
-Not run (قيد التنفيذ): DB الكامل بالوضعين؛ ستُحدّث النتيجة قبل التسليم.
+Verified: docs:sync مرتان، الثانية0؛ docs/status مع base origin/main وrequire-previous وdiff check نجحت على النسخة النهائية من الوثائق.
+Verified: شُغّل DB الكامل بلا skip:908 ناجحة و131 فشل إعداد supabase17 لغياب الصورة؛117 ملفًا، منها109 ناجحة.
+Not run (env): تأكيدات الوضع supabase17 لم تبدأ بسبب الصورة المفقودة؛ يعيد المراجع الوضعين والشاهد المشفر.
+Verified: docs:test أعطى120 نجاحًا و6 إخفاقات إعداد دون skip.
+Not run (env): إكمال docs:test: `Required tool unavailable: psql (install the PostgreSQL client packages)` و`ENOENT: no such file or directory, scandir '/usr/lib/postgresql'` وصورتا PostgreSQL17 مفقودتان.
 Not run (env): محاولة الاختبار المشفر توقفت عند `No such image: supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`؛ تنزيل الصورة فشل: `failed to register layer: no space left on device`. يعيد المراجع الشاهد المشفر والوضع supabase17.
 Inferred: اكتمال الأوامر في الدليل مستند إلى M09 والمراجعة؛ لا يمثل تنفيذها على لابتوب المالك.
 
@@ -47,6 +50,6 @@ Inferred: اكتمال الأوامر في الدليل مستند إلى M09 و
 
 ## 8. قائمة المالك والجلسة التالية
 
-راجع Draft A والبروفة ثم Draft B وماركرها، واملأ SHA الرأسين المراجعين في الدليل قبل النافذة.
+راجع [Draft A #211](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/211) والبروفة ثم Draft B وماركرها، واملأ SHA الرأسين المراجعين في الدليل قبل النافذة.
 أثبت CI والبروفة والنسخة والمهلة والاحتواء؛ نفّذ0200 وتحقق، ثم0300 وتحقق، ثم محاولة الاعتماد بعد≥120ث وإعادة الاحتواء.
 لا ترقية قبل قبول الأدلة؛ Variable والدمج والهاتف للمالك في النافذة نفسها، ولا إطلاق ضمن ذلك.

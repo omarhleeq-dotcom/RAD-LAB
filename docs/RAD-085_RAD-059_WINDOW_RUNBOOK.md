@@ -6,14 +6,14 @@ Use WSL Ubuntu on the owner laptop, repository `~/RAD-LAB`, the existing encrypt
 
 ## 1. Freeze both reviewed heads and prepare the shell (offline)
 
-Replace the two SHA placeholders with the **40-character reviewed preparation PR A and promotion PR B commit IDs** from GitHub. PR A must first be merged; its reviewed head remains the source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
+The executable preparation source is pinned below to commit `8edbee944402e351a15c628ae182afa7f5649203` from PR A. Replace the promotion placeholder with the **40-character reviewed PR B commit ID** from GitHub. PR A must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
 
 ```bash
 set -euo pipefail
 set +x
 umask 077
 cd ~/RAD-LAB
-export RAD_WINDOW_PREP_SHA='REPLACE_WITH_REVIEWED_PR_A_40_HEX_HEAD'
+export RAD_WINDOW_PREP_SHA='8edbee944402e351a15c628ae182afa7f5649203'
 export RAD_WINDOW_PROMOTION_SHA='REPLACE_WITH_REVIEWED_PR_B_40_HEX_HEAD'
 [[ "$RAD_WINDOW_PREP_SHA" =~ ^[0-9a-f]{40}$ ]]
 [[ "$RAD_WINDOW_PROMOTION_SHA" =~ ^[0-9a-f]{40}$ ]]
