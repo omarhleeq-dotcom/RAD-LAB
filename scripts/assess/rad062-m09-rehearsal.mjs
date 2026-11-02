@@ -19,7 +19,11 @@ async function ready(db, path) { const rows = (await db.query(read(path))).rows;
 export async function inspectM09(db) {
  const migration = read('supabase/migrations/' + file);
  const manifest = JSON.parse(read('scripts/pages/frontend-schema.json'));
- assert(manifest.deferredMigrations[file].sha256 === createHash('sha256').update(migration).digest('hex'));
+ const reviewedSha256 = '9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a';
+ const deferred = Object.hasOwn(manifest.deferredMigrations, file);
+ const required = manifest.requiredMigrations.includes(file);
+ assert(deferred !== required && (!deferred || manifest.deferredMigrations[file]?.sha256 === reviewedSha256)
+  && createHash('sha256').update(migration).digest('hex') === reviewedSha256);
  await ready(db, 'supabase/checks/rad062-ready.sql');
  const before = (await db.query(snapshot)).rows[0].v;
  for (const replacement of ['$anchor$\n NO_SUCH_ANCHOR;$anchor$', '$anchor$\n$anchor$']) {

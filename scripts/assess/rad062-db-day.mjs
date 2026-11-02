@@ -6,6 +6,19 @@ import { pathToFileURL } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { Client } from 'pg';
 export const manifest = () => JSON.parse(readFileSync('scripts/pages/frontend-schema.json', 'utf8'));
+// M01–M08 rehearsal: frozen pre-M09 checks
+export const M08_CHECKS = [
+  "supabase/checks/training-ready.sql",
+  "supabase/checks/comparison-ready.sql",
+  "supabase/checks/assess-mixed-ready.sql",
+  "supabase/checks/assess-practical-ready.sql",
+  "supabase/checks/rad062-p1-b-ready.sql",
+  "supabase/checks/assess-history-ready.sql",
+  "supabase/checks/assess-retention-ready.sql",
+  "supabase/checks/owner-dashboard-ready.sql",
+  "supabase/checks/owner-deletion-surveys-ready.sql",
+  "supabase/checks/rad062-ready.sql"
+];
 export const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 export function verifyMigrations(read = file => readFileSync('supabase/migrations/' + file)) {
   const m = manifest(), files = m.guardedFeatures.rad062.migrations;

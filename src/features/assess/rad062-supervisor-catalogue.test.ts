@@ -60,9 +60,9 @@ describe.each(modes)('M09 catalogue %s', mode => {
   } finally { await db.close(); }
  }, 120000);
 });
-it('dormant manifest changes neither required migrations/checks nor marker', () => {
- const before = JSON.parse(execFileSync('git', ['show','origin/main:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
- expect(manifest.requiredMigrations).toEqual(before.requiredMigrations); expect(manifest.checks).toEqual(before.checks);
- expect(manifest.deferredMigrations[M09]).toMatchObject({ sha256: createHash('sha256').update(sql()).digest('hex') });
- expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs','--print-marker'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' } }).trim()).toBe('pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c');
+it('pins the exact promoted migrations, checks, reviewed M09 bytes and marker', () => {
+ const before = JSON.parse(execFileSync('git', ['show','3c887cb31f523f3a49128305da50dd433f8e6a0c:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
+ expect(manifest.requiredMigrations).toEqual([...before.requiredMigrations, M09]); expect(manifest.checks).toEqual(before.checks.map((file: string) => file === 'supabase/checks/rad062-ready.sql' ? 'supabase/checks/rad062-m09-ready.sql' : file === 'supabase/checks/rad062-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-m09-ready.sql' : file));
+ expect(createHash('sha256').update(sql()).digest('hex')).toBe('9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a');
+ expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs','--print-marker'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' } }).trim()).toBe('pilot-v1:001c0cf80c1a4530e7144edfe252912c34ce3859f56c1e47a59524b1cae713e3');
 });

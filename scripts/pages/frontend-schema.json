@@ -32,29 +32,22 @@
     "20261030000500_rad062_manual_foundation_freeze.sql",
     "20261030000600_rad062_lifecycle_v2.sql",
     "20261030000700_rad062_manual_grading.sql",
-    "20261030000800_rad062_erasure_operations.sql"
+    "20261030000800_rad062_erasure_operations.sql",
+    "20261102000100_rad062_supervisor_grading_authorization.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/assess-mixed-ready.sql",
     "supabase/checks/assess-practical-ready.sql",
-    "supabase/checks/rad062-p1-b-ready.sql",
+    "supabase/checks/rad062-p1-b-m09-ready.sql",
     "supabase/checks/assess-history-ready.sql",
     "supabase/checks/assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
     "supabase/checks/owner-deletion-surveys-ready.sql",
-    "supabase/checks/rad062-ready.sql"
+    "supabase/checks/rad062-m09-ready.sql"
   ],
-  "deferredMigrations": {
-    "20261102000100_rad062_supervisor_grading_authorization.sql": {
-      "sha256": "9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a",
-      "reason": "Dormant M09 authorization; live apply and promotion require a separate owner window.",
-      "serverModules": [
-        "src/features/assess/server-manual-service.ts"
-      ]
-    }
-  },
+  "deferredMigrations": {},
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],

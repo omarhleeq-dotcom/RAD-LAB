@@ -10,7 +10,7 @@ import { Client } from 'pg';
 import { IMAGE, restoreTest } from '../ops/laptop-restore-test.mjs';
 import { loadConfig, Stop } from '../ops/laptop-backup-lib.mjs';
 import { dataPrecheck } from './rad062-data-precheck.mjs';
-import { apply, checks, checkRows, manifest, readOnly, verifyMigrations } from './rad062-db-day.mjs';
+import { apply, checks, checkRows, M08_CHECKS, readOnly, verifyMigrations } from './rad062-db-day.mjs';
 
 export function localOnly(args, env) {
   if (args.length || (env.PGHOST && !['localhost', '127.0.0.1', '::1'].includes(env.PGHOST)) ||
@@ -74,7 +74,7 @@ export async function inspectRestored(db, observeFrozenB, syntheticWitnesses) {
   }
   await syntheticWitnesses?.('after', db);
   let passed = 0;
-  for (const file of manifest().checks) {
+  for (const file of M08_CHECKS) {
     try { await checks(db, [file]); passed++; } catch (e) { throw stageStop('check_' + String(passed + 1).padStart(2, '0'), e); }
   }
   for (const file of [frozen, diagnostic]) {

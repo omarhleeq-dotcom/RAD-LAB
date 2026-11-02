@@ -33,16 +33,9 @@ it('real bundled consumer loads only the reviewed name gate despite a tampered b
  finally{await act(async()=>root.unmount());delete globals.__rad062probe;delete globals.IS_REACT_ACT_ENVIRONMENT;}
  expect(readFileSync(feature.guard.path,'utf8')).toContain('export const RAD062_AVAILABLE: boolean = true;');
  expect(readFileSync('src/features/supervisor/p1-availability.ts','utf8')).toContain('export const P1_AVAILABLE: boolean = true;');
- // M09 dormant until promotion; the promotion batch restores {}
- expect(manifest.deferredMigrations).toEqual({
-  '20261102000100_rad062_supervisor_grading_authorization.sql': {
-   sha256: '9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a',
-   reason: 'Dormant M09 authorization; live apply and promotion require a separate owner window.',
-   serverModules: ['src/features/assess/server-manual-service.ts'],
-  },
- });
- expect(manifest.checks).toContain('supabase/checks/rad062-p1-b-ready.sql');
- expect(manifest.checks).toContain('supabase/checks/rad062-ready.sql');
+ expect(manifest.deferredMigrations).toEqual({});
+ expect(manifest.checks).toContain('supabase/checks/rad062-p1-b-m09-ready.sql');
+ expect(manifest.checks).toContain('supabase/checks/rad062-m09-ready.sql');
  expect(manifest.checks).not.toContain('supabase/checks/rad085-p1-b-ready.sql');
  for (const file of feature.migrations) {
   expect(manifest.requiredMigrations).toContain(file);
@@ -52,7 +45,7 @@ it('real bundled consumer loads only the reviewed name gate despite a tampered b
 
 it('pins the exact promotion, unchanged migration/check bytes and independently derived marker',()=>{
  const base=JSON.parse(execFileSync('git',['show','023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'],{encoding:'utf8'}));
- expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]);expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-ready.sql']);
+ expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations, '20261102000100_rad062_supervisor_grading_authorization.sql']);expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-m09-ready.sql' : p), 'supabase/checks/rad062-m09-ready.sql']);
  const hash=(data:Buffer|string)=>createHash('sha256').update(data).digest('hex');
  for(const file of [...base.requiredMigrations.map((f:string)=>'supabase/migrations/'+f),...base.checks])expect(hash(readFileSync(file))).toBe(hash(execFileSync('git',['show','023ec84c15bfd744f317ec079e2587d90e099414:'+file])));
  const expectedMarker = createHash('sha256').update('https://vlacestfruxooznrcjqc.supabase.co\n');

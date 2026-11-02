@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url';
 import { Client } from 'pg';
 import { localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { openLocalDatabase } from './local-database.mjs';
-import { apply, checks, manifest, readOnly, verifyMigrations, migrationState } from './rad062-db-day.mjs';
+import { apply, checks, M08_CHECKS, readOnly, verifyMigrations, migrationState } from './rad062-db-day.mjs';
 const image = 'postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382';
 function docker(args, input) {
   const env = { ...process.env };
@@ -48,7 +48,7 @@ export async function rehearse() {
     const diagnostic = 'scripts/assess/sql/rad062-b-diagnostic.sql';
     const successor = 'supabase/checks/rad062-p1-b-ready.sql';
     // Preserve the historical B restore ceiling independently of current requirements.
-    const historicalChecks = manifest().checks.filter(f => f !== 'supabase/checks/rad062-ready.sql').map(f => f === successor ? bCheck : f);
+    const historicalChecks = M08_CHECKS.filter(f => f !== 'supabase/checks/rad062-ready.sql').map(f => f === successor ? bCheck : f);
     await checks(original, [bCheck, diagnostic]);
     const common = ['run','--rm','-i','--network=none','--user',`${process.getuid()}:${process.getgid()}`,
       '--mount',`type=bind,src=${cfg.host},dst=${cfg.host}`,'--entrypoint'];
@@ -136,7 +136,7 @@ export async function rehearse() {
     assert.deepEqual(installedB.flatMap(r => r.rows ?? []).filter(r => r.ready !== true).map(r => r.kind).sort(), diagnosticFailures);
     let requiredFailures = 0;
     const requiredFailedFiles = [];
-    for (const file of manifest().checks) {
+    for (const file of M08_CHECKS) {
       try { await checks(target, [file]); } catch { requiredFailures++; requiredFailedFiles.push(file); }
     }
     assert.deepEqual(requiredFailedFiles, []);
