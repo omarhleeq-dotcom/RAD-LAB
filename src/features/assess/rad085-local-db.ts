@@ -1,7 +1,7 @@
 /** Test-only isolated PostgreSQL. No TCP, provider URL, inherited PG config or real data. */
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
+import { chmodSync, cpSync, existsSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import type { Client as PgClient } from 'pg';
@@ -39,7 +39,10 @@ export async function openRad085Database(beforeUpgrade?: (admin: PgClient) => Pr
     if (results.some(r => r.status === 'rejected')) throw Error('rad085_local_cleanup_failed');
   }
   try {
-    if (template) cpSync(template, join(dir, 'data'), { recursive: true });
+    if (template) {
+      cpSync(template, join(dir, 'data'), { recursive: true });
+      chmodSync(join(dir, 'data'), 0o700);
+    }
     else execFileSync(binaries.initdb, ['-D', join(dir, 'data'), '-A', 'trust', '-U', 'postgres', '--no-locale', '--encoding=UTF8'], { stdio: 'pipe', timeout: 15000, env: childEnv });
     started = true;
     ctl(['-l', join(dir, 'postgres.log'), '-o', `-F -c listen_addresses='' -k ${dir} -p 55432 -c log_min_messages=panic -c log_min_error_statement=panic -c log_statement=none -c log_parameter_max_length=0 -c log_parameter_max_length_on_error=0`, '-w', '-t', '10', 'start']);
