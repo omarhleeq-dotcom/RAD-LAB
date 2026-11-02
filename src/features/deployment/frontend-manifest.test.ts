@@ -39,7 +39,7 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   '20261030000800_rad062_erasure_operations.sql',
   '20261102000100_rad062_supervisor_grading_authorization.sql',
  ]);
- expect(manifest.deferredMigrations).toEqual({"20261102000200_rad059_emergency_alternate.sql":{"sha256":"4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610","reason":"RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.","serverModules":["src/features/assess/rad059-alternate.test.ts"]},"20261102000300_rad085_rights_write_disclosures.sql":{"sha256":"5ddaf223e783e5dd3f92e0b428d7d1718f41f0fc19df9fac024a718d61330f44","reason":"RAD-085 R1/R2/S1/P2/P3 deferred after 0200; owner must approve S1 values and EN/AR disclosure drafts before the laptop window.","serverModules":["src/features/assess/rad085-review-fixes.test.ts"]}});
+ expect(manifest.deferredMigrations).toEqual({"20261102000200_rad059_emergency_alternate.sql":{"sha256":"4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610","reason":"RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.","serverModules":["src/features/assess/rad059-alternate.test.ts"]},"20261102000300_rad085_rights_write_disclosures.sql":{"sha256":"707362db6890b027bcfee29c07f644fdb207d58e56d52803a4dab0a0dd1baee1","reason":"RAD-085 R1/R2/S1/P2/P3 deferred after 0200; owner must approve S1 values and EN/AR disclosure drafts before the laptop window.","serverModules":["src/features/assess/rad085-review-fixes.test.ts"]}});
  expect(manifest.checks).toEqual([
   'supabase/checks/training-ready.sql',
   'supabase/checks/comparison-ready.sql',

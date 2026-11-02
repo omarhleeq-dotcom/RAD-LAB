@@ -56,7 +56,7 @@
       ]
     },
     "20261102000300_rad085_rights_write_disclosures.sql": {
-      "sha256": "5ddaf223e783e5dd3f92e0b428d7d1718f41f0fc19df9fac024a718d61330f44",
+      "sha256": "707362db6890b027bcfee29c07f644fdb207d58e56d52803a4dab0a0dd1baee1",
       "reason": "RAD-085 R1/R2/S1/P2/P3 deferred after 0200; owner must approve S1 values and EN/AR disclosure drafts before the laptop window.",
       "serverModules": [
         "src/features/assess/rad085-review-fixes.test.ts"

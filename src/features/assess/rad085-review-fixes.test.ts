@@ -157,6 +157,148 @@ const inserts={
  attempts:"insert into public.attempts(attempt_no,exam_id,case_id,definition_version,settings,result,locale,finished_at) values(1,'synthetic','default','1','{}','{}','en','1900-01-01') returning id v",
  feedback:"insert into public.feedback(exam_id,text,at) values('synthetic','SYNTHETIC','1900-01-01') returning id v",
 } as const;
+const streams=['events','attempts','feedback'] as const;
+async function practiceSetup(mode:Mode){
+ const db=await setup(mode);
+ await db.admin.query("update public.profiles set consent_version='2026-10-27',consented_at=now()");
+ return db;
+}
+async function beginUser(c:Client,user:number){
+ await c.query("begin;set local role authenticated;set local statement_timeout='4s'");
+ await c.query("select set_config('request.jwt.claim.sub',$1,true)",[id(user)]);
+ return (await c.query('select pg_backend_pid() pid')).rows[0].pid as number;
+}
+async function waitsFor(db:Db,waiting:number,holding:number){
+ for(let n=0;n<200;n++){
+  if((await db.admin.query('select $1=any(pg_blocking_pids($2)) waiting',[holding,waiting])).rows[0].waiting)return;
+  await new Promise(r=>setTimeout(r,10));
+ }
+ throw Error('missing directed PostgreSQL lock witness');
+}
+const outcome=<T>(p:Promise<T>)=>p.then(value=>({value}),error=>({error}));
+async function writeCounts(db:Db,user=3){
+ return (await db.admin.query(`select
+  (select count(*) from public.profiles where user_id=$1) profiles,
+  (select count(*) from assess.pilot_write_usage where user_id=$1) usage,
+  (select count(*) from public.events where user_id=$1) events,
+  (select count(*) from public.attempts where user_id=$1) attempts,
+  (select count(*) from public.feedback where user_id=$1) feedback,
+  (select count(*) from assess.practice_recordings where user_id=$1) recordings`,[id(user)])).rows[0];
+}
+describe.each(modes)('RAD085 account-only write ordering %s',mode=>{
+ it('events, attempts and feedback complete under 500ms while exclusive capacity stays held',async()=>{
+  const db=await practiceSetup(mode),capacity=await db.connect(),writer=await db.connect();
+  try{
+   await capacity.query("begin;select pg_advisory_xact_lock(hashtextextended('rad062-capacity',0))");
+   const timings:Record<string,number>={};
+   for(const stream of streams){
+    await beginUser(writer,3);await writer.query("set local statement_timeout='400ms'");
+    const start=performance.now();await writer.query(inserts[stream]);
+    expect((await writer.query("select count(*) n from pg_locks where pid=pg_backend_pid() and locktype='advisory'")).rows[0].n).toBe('1');
+    await writer.query('commit');
+    timings[stream]=performance.now()-start;expect(timings[stream]).toBeLessThan(500);
+    // The exclusive lock is still owned by the other session throughout each INSERT.
+    expect((await capacity.query("select exists(select 1 from pg_locks where pid=pg_backend_pid() and locktype='advisory' and mode='ExclusiveLock' and granted) held")).rows[0].held).toBe(true);
+   }
+   expect(await writeCounts(db)).toEqual({profiles:'1',usage:'3',events:'1',attempts:'1',feedback:'1',recordings:'1'});
+   console.info('RAD085 exclusive capacity write milliseconds',mode,JSON.stringify(timings));
+  }finally{await writer.query('rollback');await capacity.query('rollback');await writer.end();await capacity.end();await db.close();}
+ },120000);
+ for(const path of ['d3','finalise'] as const)for(const stream of streams)for(const first of ['write','erase'] as const){
+  it(`${path} vs ${stream}: ${first} commits first; profile precedes usage and cascades leave no partial rows`,async()=>{
+   const db=await practiceSetup(mode),writer=await db.connect(),eraser=await db.connect();
+   try{
+    if(path==='finalise'){
+     // Trusted adversarial due ledger keeps the account approved so the INSERT
+     // reaches the profile wait; normal C2 suspension rejects it even earlier.
+     await db.admin.query('alter table auth.users add column banned_until timestamptz');
+     await db.admin.query("insert into public.c2_account_deletions(user_id,restore_status,previous_banned_until,requested_at) values($1,'approved','-infinity',clock_timestamp()-interval '31 days')",[id(3)]);
+    }
+    const writerPid=await beginUser(writer,3);
+    await eraser.query("begin;set local statement_timeout='4s'");
+    await eraser.query("select set_config('request.jwt.claim.sub',$1,true)",[id(1)]);
+    const eraserPid=(await eraser.query('select pg_backend_pid() pid')).rows[0].pid as number;
+    const eraseQuery=()=>path==='d3'
+     ?eraser.query('select assess.erase_account_d3_v1($1) v',[id(3)])
+     :eraser.query("select public.owner_account_deletion_v1('finalise') v");
+    if(first==='write'){
+     await writer.query(inserts[stream]);
+     const erasing=outcome(eraseQuery());await waitsFor(db,eraserPid,writerPid);
+     // Neither the usage nor the Practice row is visible before writer COMMIT.
+     expect(await writeCounts(db)).toEqual({profiles:'1',usage:'0',events:'0',attempts:'0',feedback:'0',recordings:'0'});
+     await writer.query('commit');const r=await erasing;expect(r).toHaveProperty('value');
+     if(path==='finalise'&&'value' in r)expect(r.value.rows[0].v).toMatchObject({processed:1,blocked:[],alert:false});
+     await eraser.query('commit');
+    }else{
+     const r=await eraseQuery();if(path==='finalise')expect(r.rows[0].v).toMatchObject({processed:1,blocked:[],alert:false});
+     const writing=outcome(writer.query(inserts[stream]));await waitsFor(db,writerPid,eraserPid);
+     await eraser.query('commit');expect(await writing).toMatchObject({error:{code:'42501'}});
+     await writer.query('rollback');
+    }
+    expect(await writeCounts(db)).toEqual({profiles:'0',usage:'0',events:'0',attempts:'0',feedback:'0',recordings:'0'});
+    expect((await db.admin.query('select count(*) n from auth.users where id=$1',[id(3)])).rows[0].n).toBe('0');
+   }finally{await writer.query('rollback');await eraser.query('rollback');await writer.end();await eraser.end();await db.close();}
+  },120000);
+ }
+ for(const stream of streams){
+  it.each(['commit','rollback'] as const)(`${stream}: concurrent first inserts serialize before usage; first writer %s`,async finish=>{
+   const db=await practiceSetup(mode),first=await db.connect(),second=await db.connect();
+   try{
+    const firstPid=await beginUser(first,3),secondPid=await beginUser(second,3);
+    await first.query(inserts[stream]);const writing=outcome(second.query(inserts[stream]));
+    await waitsFor(db,secondPid,firstPid);
+    // SHARE profile locks coexist, so the observed wait must be per-account advisory.
+    expect((await db.admin.query("select wait_event from pg_stat_activity where pid=$1",[secondPid])).rows[0].wait_event).toBe('advisory');
+    await first.query(finish);expect(await writing).toHaveProperty('value');await second.query('commit');
+    const count=finish==='commit'?2:1;
+    expect((await db.admin.query('select stream,hour_count,day_count from assess.pilot_write_usage where user_id=$1',[id(3)])).rows).toEqual([{stream,hour_count:count,day_count:count}]);
+    expect((await db.admin.query(`select count(*) n from public.${stream} where user_id=$1`,[id(3)])).rows[0].n).toBe(String(count));
+    // A later failing row rolls back the earlier row and its counter increment.
+    const invalid=stream==='events'?"insert into public.events(type) values('heartbeat'),('INVALID')"
+     :stream==='attempts'?"insert into public.attempts(attempt_no,exam_id,case_id,definition_version,settings,result,locale,finished_at) values(1,'synthetic','default','1','{}','{}','en','1900-01-01'),(0,'synthetic','default','1','{}','{}','en','1900-01-01')"
+     :"insert into public.feedback(exam_id,text) values('synthetic','SYNTHETIC'),('synthetic','')";
+    await expect(asUser(db,3,invalid)).rejects.toMatchObject({code:'23514'});
+    expect((await db.admin.query('select hour_count,day_count from assess.pilot_write_usage where user_id=$1',[id(3)])).rows).toEqual([{hour_count:count,day_count:count}]);
+    expect((await db.admin.query(`select count(*) n from public.${stream} where user_id=$1`,[id(3)])).rows[0].n).toBe(String(count));
+   }finally{await first.query('rollback');await second.query('rollback');await first.end();await second.end();await db.close();}
+  },120000);
+ }
+ for(const stream of streams){
+  it(`${stream}: C2 deactivation commits first; approval is rechecked after the profile wait`,async()=>{
+   const db=await practiceSetup(mode),writer=await db.connect(),eraser=await db.connect();
+   try{
+    await db.admin.query('alter table auth.users add column banned_until timestamptz');
+    const writerPid=await beginUser(writer,3),eraserPid=await beginUser(eraser,1);
+    await eraser.query("select public.owner_account_deletion_v1('deactivate',$1)",[id(3)]);
+    const writing=outcome(writer.query(inserts[stream]));await waitsFor(db,writerPid,eraserPid);
+    await eraser.query('commit');expect(await writing).toMatchObject({error:{code:'42501'}});await writer.query('rollback');
+    expect(await writeCounts(db)).toEqual({profiles:'1',usage:'0',events:'0',attempts:'0',feedback:'0',recordings:'0'});
+   }finally{await writer.query('rollback');await eraser.query('rollback');await writer.end();await eraser.end();await db.close();}
+  },120000);
+ }
+ it.each(['write','stop'] as const)('all six 0200 stop phases coexist with uncommitted writes: %s first',async first=>{
+  const db=await practiceSetup(mode),writer=await db.connect(),stopper=await db.connect();
+  try{
+   // The writing account is also the appointed alternate: profile SHARE is compatible.
+   await asUser(db,1,'select public.emergency_alternate_set_v1($1) v',[id(3)]);
+   await asUser(db,3,'select public.emergency_stop_v1($1) v',[id(900)]);
+   for(let phase=1;phase<=6;phase++){
+     await beginUser(writer,3);await beginUser(stopper,3);
+     const stop=async()=>{
+      const r=(await stopper.query('select public.emergency_stop_phase_v1($1::uuid,$2::smallint) v',[id(900),phase])).rows[0].v;
+      expect(r.phases).toHaveLength(phase);expect(r.phases.every((p:{ok:boolean})=>p.ok)).toBe(true);
+      if(phase===6)expect(r.status).toBe('STOPPED');
+     };
+     const write=async()=>{for(const stream of streams)await writer.query(inserts[stream]);};
+     if(first==='write'){await write();await stop();await stopper.query('commit');await writer.query('commit');}
+     else{await stop();await write();await writer.query('commit');await stopper.query('commit');}
+   }
+   expect((await db.admin.query('select stream,hour_count,day_count from assess.pilot_write_usage order by stream')).rows).toEqual(
+    ['attempts','events','feedback'].map(stream=>({stream,hour_count:6,day_count:6})));
+   expect(await writeCounts(db)).toEqual({profiles:'1',usage:'3',events:'6',attempts:'6',feedback:'6',recordings:'6'});
+  }finally{await writer.query('rollback');await stopper.query('rollback');await writer.end();await stopper.end();await db.close();}
+ },120000);
+});
 describe.each(modes)('RAD085 server write limits %s',mode=>{
  it('reviewed hourly/day values are 5x and 20x the recorded actual 3600-second UI counts',async()=>{
   const db=await setup(mode);

@@ -237,12 +237,12 @@ declare used assess.pilot_write_usage; lim assess.pilot_write_limits; ts timesta
 begin
  if new.user_id is distinct from auth.uid() or not public.is_approved() then
   raise exception 'pilot writer denied' using errcode='42501'; end if;
- -- Match the reviewed containment/erasure order. Do not mutate a usage row
- -- before protecting its profile against a concurrent cascading deletion.
- perform pg_advisory_xact_lock_shared(hashtextextended('rad062-capacity',0));
- if not public.is_approved() then raise exception 'pilot writer denied' using errcode='42501'; end if;
+ -- Account-only order: profile SHARE -> account/stream advisory -> usage.
+ -- Erasure takes capacity -> profiles -> cascades. It must wait for this
+ -- profile before touching usage; we never request its capacity/scope locks.
+ -- Emergency phases share the profile lock and touch no quota/write rows.
  perform 1 from public.profiles where user_id=new.user_id for share;
- if not public.is_approved() then raise exception 'pilot writer denied' using errcode='42501'; end if;
+ if not found or not public.is_approved() then raise exception 'pilot writer denied' using errcode='42501'; end if;
  perform pg_advisory_xact_lock(hashtextextended('rad085-write:'||new.user_id::text||':'||tg_table_name,0));
  ts:=clock_timestamp();
  if not public.is_approved() then raise exception 'pilot writer denied' using errcode='42501'; end if;
