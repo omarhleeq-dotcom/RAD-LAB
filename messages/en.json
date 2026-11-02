@@ -2375,6 +2375,7 @@
       "conflict": "The revision changed. The current server scores and revision have been read again; review them before saving.",
       "invalid": "The request or score is invalid. Check each score and its maximum.",
       "limit": "The 100 grading-operation limit has been reached. Complete saved scores can still be finalized.",
+      "closed": "This answer set can't be graded now: it is final, on hold or past its deadline.",
       "unavailable": "Grading is unavailable or the response is uncertain. A hold, deadline or access change may prevent grading. Read again or resolve the pending operation; contact the owner if needed."
     }
   }

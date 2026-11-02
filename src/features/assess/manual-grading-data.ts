@@ -2,9 +2,9 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { getPilotClient } from '../pilot/client';
 import type { ManualAck, ManualFinalReceipt, ManualQueue, ManualRead, ManualScoreCommand } from './server-manual-contracts';
 
-export type GradingIssue = 'denied' | 'conflict' | 'invalid' | 'limit' | 'unavailable';
+export type GradingIssue = 'denied' | 'conflict' | 'invalid' | 'limit' | 'closed' | 'unavailable';
 export class GradingError extends Error {
- constructor(public readonly kind: GradingIssue) { super(kind); }
+ constructor(public readonly kind: GradingIssue, public readonly uncertain = kind === 'unavailable') { super(kind); }
 }
 export interface ManualTransport {
  call<T>(name: string, args: Record<string, unknown>): Promise<T>;
@@ -21,8 +21,11 @@ export function createManualGradingPort(transport: ManualTransport): ManualGradi
  const call = async <T>(name: string, args: Record<string, unknown>): Promise<T> => {
   try { return await transport.call<T>(name, args); }
   catch (error) {
-   const code = error && typeof error === 'object' && 'code' in error ? String(error.code) : '';
-   throw new GradingError(({ '42501': 'denied', '40001': 'conflict', '22023': 'invalid', '54000': 'limit' } as Record<string, GradingIssue>)[code] ?? 'unavailable');
+   const rawCode = error && typeof error === 'object' && 'code' in error ? error.code : null;
+   const code = rawCode == null ? '' : String(rawCode);
+   // A coded response is a definite rejection, including unknown SQLSTATEs.
+   // Only a missing response/code can leave the write's acknowledgement uncertain.
+   throw new GradingError(({ '42501': 'denied', '40001': 'conflict', '22023': 'invalid', '54000': 'limit', '55000': 'closed' } as Record<string, GradingIssue>)[code] ?? 'unavailable', !code);
   }
  };
  const read = <T>(name: string, attempt: string) => {

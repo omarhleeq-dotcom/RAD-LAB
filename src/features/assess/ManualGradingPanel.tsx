@@ -49,9 +49,9 @@ export function ManualGradingPanel({ port, owner = false }: { port: ManualGradin
     </li>)}</ul>
     {s.queue?.next && <button className={button} disabled={s.busy} onClick={() => void controller.queue(true)}>{t('more')}</button>}
    </>}
-   {s.attempt && <>
+   {(s.attempt || s.issue === 'closed') && <>
     {!s.pending && <button className={button} disabled={s.busy} onClick={() => { controller.clear(false); setConfirm(false); void controller.queue(); }}>{t('back')}</button>}
-    {!s.read && !s.receipt && !s.busy && <button className={button} onClick={() => void controller.refresh()}>{t('refresh')}</button>}
+    {s.attempt && !s.read && !s.receipt && !s.busy && <button className={button} onClick={() => void controller.refresh()}>{t('refresh')}</button>}
    </>}
    {s.read && <>
     <p className="font-semibold">{t('deadline')} <time dateTime={s.read.finalizeBefore}>{date(s.read.finalizeBefore)}</time> · {t('timeZone')}</p>

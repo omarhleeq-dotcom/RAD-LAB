@@ -45,11 +45,37 @@ export class ManualGradingController {
   try { await work(current); }
   catch (error) {
    if (!current()) return;
-   const issue = error instanceof GradingError ? error.kind : 'unavailable';
+   let failure = error;
+   if (error instanceof GradingError && error.kind === 'closed') {
+    try { await this.closed(this.state.attempt, current); return; }
+    catch (recoveryError) { failure = recoveryError; }
+   }
+   if (!current()) return;
+   const issue = failure instanceof GradingError ? failure.kind : 'unavailable';
    if (issue === 'denied') this.clear(false);
-   this.state = { ...this.state, issue, ...(issue !== 'unavailable' ? { pending: null } : {}) };
+   this.state = { ...this.state, issue, ...(failure instanceof GradingError && !failure.uncertain ? { pending: null } : {}) };
    this.emit();
   } finally { if (current()) { this.state = { ...this.state, busy: false }; this.emit(); } }
+ }
+ private async closed(attempt: string | null, current: () => boolean) {
+  // Discard the rejected operation and loaded answers before any follow-up read.
+  this.state = { ...initial(), busy: true, issue: 'closed' }; this.emit();
+  if (attempt) {
+   try {
+    const receipt = await this.port.receipt(attempt);
+    if (!current()) return;
+    if (receipt) { this.state = { ...this.state, attempt, receipt, issue: null }; return; }
+   } catch { /* Held/expired attempts can reject receipt reads too; no final state is inferred. */ }
+  }
+  if (!current()) return;
+  try {
+   const queue = await this.port.queue(null, 20);
+   if (current()) this.state = { ...this.state, queue };
+  } catch (error) {
+   if (!current()) return;
+   if (error instanceof GradingError && error.kind === 'denied') throw error;
+   // Stay on the queue with the closed message and navigation/refresh available.
+  }
  }
  async queue(more = false) {
   await this.run(async current => {
@@ -104,12 +130,22 @@ export class ManualGradingController {
      if (current()) this.state = { ...this.state, receipt, read: null, drafts: [], pending: null, suspended: false };
     }
    } catch (error) {
+    if (error instanceof GradingError && !error.uncertain && this.state.pending === pending) {
+     this.state = { ...this.state, pending: null }; this.emit();
+    }
     if (!current()) return;
-    // A score racing a finalization returns 55000. Receipt is authoritative;
-    // never infer final/void/denied from an unavailable error alone.
+    // Follow-up read failures cannot make a definite write rejection uncertain.
+    // Receipt is authoritative; an unavailable response alone proves no final state.
     if (error instanceof GradingError && ['conflict', 'unavailable', 'limit'].includes(error.kind)) {
      const attempt = pending.kind === 'score' ? pending.command.attemptId : pending.attempt;
-     const receipt = await this.port.receipt(attempt);
+     let receipt: ManualFinalReceipt | null;
+     try { receipt = await this.port.receipt(attempt); }
+     catch (receiptError) {
+      // A receipt lookup rejection cannot settle an earlier transport-uncertain
+      // write. Closed/denied still end the screen's access to that attempt.
+      if (error.uncertain && !(receiptError instanceof GradingError && ['closed', 'denied'].includes(receiptError.kind))) throw error;
+      throw receiptError;
+     }
      if (!current()) return;
      if (receipt) { this.state = { ...this.state, receipt, read: null, drafts: [], pending: null, suspended: false }; return; }
      if (error.kind === 'conflict' || error.kind === 'limit') {

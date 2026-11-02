@@ -79,8 +79,8 @@ it('browser adapter calls only the five public RPCs and maps errors without expo
  await p.queue(null, 100); await p.read(attempt); await p.receipt(attempt); await p.finalize(attempt, attempt, 0);
  expect(calls.map(c => c.name)).toEqual(['manual_queue_v1', 'manual_read_v1', 'manual_receipt_v1', 'manual_finalize_v1']);
  expect(() => p.queue(null, 101)).toThrow('invalid');
- for (const [code, kind] of Object.entries({ '42501': 'denied', '40001': 'conflict', '22023': 'invalid', '54000': 'limit', '55000': 'unavailable', '': 'unavailable' })) {
+ for (const [code, kind] of Object.entries({ '42501': 'denied', '40001': 'conflict', '22023': 'invalid', '54000': 'limit', '55000': 'closed', 'XX000': 'unavailable', '': 'unavailable' })) {
   const broken = createManualGradingPort({ async call() { throw { code, message: 'private identity' }; } });
-  await expect(broken.read(attempt)).rejects.toMatchObject({ kind, message: kind });
+  await expect(broken.read(attempt)).rejects.toMatchObject({ kind, message: kind, uncertain: !code });
  }
 });

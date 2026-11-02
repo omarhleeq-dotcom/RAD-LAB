@@ -37,7 +37,7 @@ describe.each(modes)('grading screen against real M09 %s', mode => {
    await enter('1.000001'); await click(en.manualGrading.save); await enter('3.000001'); await click(en.manualGrading.save);
    await click(en.manualGrading.finalize); await click(en.manualGrading.confirmFinalize);
    expect(host.textContent).toContain(en.manualGrading.final); expect(host.querySelector('input')).toBeNull();
-   await expect(port.score({ schemaVersion: 1, attemptId: s, operationId: id(900), expectedGradingRevision: 2, scores: [{ item: { id: 'w0', version: '1' }, score: '0' }], reason: 'correction' })).rejects.toMatchObject({ kind: 'unavailable' });
+   await expect(port.score({ schemaVersion: 1, attemptId: s, operationId: id(900), expectedGradingRevision: 2, scores: [{ item: { id: 'w0', version: '1' }, score: '0' }], reason: 'correction' })).rejects.toMatchObject({ kind: 'closed', uncertain: false });
    expect(await port.receipt(s)).toMatchObject({ operation_count: 2, outcome: 'finalized' });
   } finally { await act(async () => root.unmount()); host.remove(); await db.close(); }
  }, 120000);
