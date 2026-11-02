@@ -6,7 +6,7 @@ Use WSL Ubuntu on the owner laptop, repository `~/RAD-LAB`, the existing encrypt
 
 ## 1. Freeze both reviewed heads and prepare the shell (offline)
 
-The executable preparation source is pinned below to commit `8edbee944402e351a15c628ae182afa7f5649203` from PR A. Replace the promotion placeholder with the **40-character reviewed PR B commit ID** from GitHub. PR A must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
+The executable preparation source is pinned below to commit `8edbee944402e351a15c628ae182afa7f5649203` from PR A. The promotion source is pinned to commit `9d2ebb5826190601f8658e21109e23a59105a87a` from [Draft PR B #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213). Review both pinned commits and final PR documentation before the window. PR A must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
 
 ```bash
 set -euo pipefail
@@ -14,11 +14,12 @@ set +x
 umask 077
 cd ~/RAD-LAB
 export RAD_WINDOW_PREP_SHA='8edbee944402e351a15c628ae182afa7f5649203'
-export RAD_WINDOW_PROMOTION_SHA='REPLACE_WITH_REVIEWED_PR_B_40_HEX_HEAD'
+export RAD_WINDOW_PROMOTION_SHA='9d2ebb5826190601f8658e21109e23a59105a87a'
 [[ "$RAD_WINDOW_PREP_SHA" =~ ^[0-9a-f]{40}$ ]]
 [[ "$RAD_WINDOW_PROMOTION_SHA" =~ ^[0-9a-f]{40}$ ]]
 test -z "$(git status --porcelain)"
-git fetch origin main rad085/window-preparation rad085/window-promotion
+git fetch origin main
+git fetch origin "$RAD_WINDOW_PREP_SHA" "$RAD_WINDOW_PROMOTION_SHA"
 git cat-file -e "${RAD_WINDOW_PREP_SHA}^{commit}"
 git cat-file -e "${RAD_WINDOW_PROMOTION_SHA}^{commit}"
 git merge-base --is-ancestor "$RAD_WINDOW_PREP_SHA" origin/main
@@ -235,6 +236,6 @@ Expected STOPPED twice, zero worker backends/unheld sessions, NOLOGIN, every suc
 
 ## 10. Coordinated promotion, normal automation and owner checks
 
-Only after the owner accepts steps1–9 evidence: on GitHub review the exact PR B head already frozen at step1 and its separately derived marker. The owner alone sets repository Settings → Secrets and variables → Actions → Variables → `PILOT_SCHEMA_VERIFIED` to **that exact reviewed PR B marker**, then merges the separately approved promotion in this same window. No agent Variable/merge action. Expected deploy/schema gate failure before this Variable change is never bypassed. PR B moves both migrations to required, replaces the obsolete check pair with rad085-review-ready.sql, keeps the eight valid checks, enables both literal guards and pins the new marker. It must not be merged before live evidence.
+Only after the owner accepts steps1–9 evidence: on GitHub review the exact PR B code commit already frozen at step1 and confirm that later commits only finalize documentation and its separately derived marker. The owner alone sets repository Settings → Secrets and variables → Actions → Variables → `PILOT_SCHEMA_VERIFIED` to **that exact reviewed PR B marker**: `pilot-v1:a3d6a4050f7d7a232bea9dac5f8bdeacb1ef5baec6bef5cd6091fed89bb65123`, then merges the separately approved promotion in this same window. No agent Variable/merge action. Expected deploy/schema gate failure before this Variable change is never bypassed. PR B moves both migrations to required, replaces the obsolete check pair with rad085-review-ready.sql, keeps the eight valid checks, enables both literal guards and pins the new marker. It must not be merged before live evidence.
 
 Expected normal required CI and Deploy Pages success; owner phone checks login/Practice/Assess entry, approved Terms/disclosures and personal v3 re-consent with synthetic accounts. Follow the [alternate appointment/removal and channels/ACK drill](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#5-alternate-and-channels-drill-then-a-separate-promotion-pr) and daily rights/erasure follow-up. Gate stays closed, worker NOLOGIN, secret DISABLED; promotion alone closes neither RAD-059 nor RAD-085 and grants no real-exam launch. No manual deployment, frontend rollback, old SQL rerun or restoration over erased data. Any post-COMMIT recovery requires a reviewed forward change and separate owner action.
