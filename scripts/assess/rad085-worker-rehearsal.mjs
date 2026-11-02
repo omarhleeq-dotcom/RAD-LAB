@@ -209,6 +209,7 @@ try {
   const required=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations;
   const applied = readdirSync('supabase/migrations').filter(p => p.endsWith('.sql')&&required.includes(p)).sort();
   assert.deepEqual(Object.keys(manifest.migrations),applied);
+  if(required.includes('20261102000200_rad059_emergency_alternate.sql')) await admin.query('create role assess_job_a nologin;create role assess_job_b nologin;');
   for (const file of applied) {
     migrationOrdinal++;
     const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]); await admin.query(sql.toString());

@@ -13,7 +13,7 @@ import { localeArgs } from '../ops/laptop-backup-lib.mjs';
 export async function openLocalDatabase(backend, {through='historical-b',lineEndings='lf',allMigrationLineEndings=false,locale='C',productionVersion=false}={}) {
   if(!['pglite','postgres'].includes(backend))throw new Error('invalid_backend');
   // A finite migration ceiling exists only for destructive synthetic upgrade QA.
-  if(!['latest','historical-b','f','pre-rad085'].includes(through))throw new Error('invalid_migration_ceiling');
+  if(!['latest','historical-m09','historical-b','f','pre-rad085'].includes(through))throw new Error('invalid_migration_ceiling');
   if(!['lf','crlf'].includes(lineEndings))throw new Error('invalid_line_endings');
   if(typeof allMigrationLineEndings!=='boolean')throw new Error('invalid_all_migration_line_endings');
   // Finite synthetic regression matrix; ICU must never fall back to libc.
@@ -88,7 +88,8 @@ export async function openLocalDatabase(backend, {through='historical-b',lineEnd
     // Existing no-option callers are historical B/explicit-upgrade witnesses.
     // Only explicit latest models the full currently required production schema.
     const required=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations;
-    const ceiling=through==='historical-b'?'20261030000100':through==='pre-rad085'?'20261026000100':'20261020001100';
+    const ceiling=through==='historical-m09'?'20261102000200':through==='historical-b'?'20261030000100':through==='pre-rad085'?'20261026000100':'20261020001100';
+    if(through==='latest' && required.includes('20261102000200_rad059_emergency_alternate.sql')) await exec('create role assess_job_a nologin;create role assess_job_b nologin;');
     for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'?required.includes(f):f<ceiling)).sort()) {
       const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
       try { await exec(lineEndings==='crlf'&&(allMigrationLineEndings||file>='20261020000600')?sql.replaceAll('\n','\r\n'):sql); }

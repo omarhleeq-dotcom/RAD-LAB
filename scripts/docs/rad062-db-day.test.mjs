@@ -1,3 +1,5 @@
+// Existing M09 tamper witnesses keep their literal historical catalogue; latest remains current.
+import {M09_CHECKS} from '../assess/rad085-window-rehearsal.mjs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -145,6 +147,13 @@ test('explicit latest applies the entire promoted required set', {timeout:30000}
     assert.notEqual((await db.query("select to_regprocedure('assess.name_entry_v1()') v"))[0].v, null);
     assert.notEqual((await db.query("select to_regprocedure('assess.freeze_v2()') v"))[0].v, null);
     assert.notEqual((await db.query("select to_regclass('assess.manual_final_receipts_v1') v"))[0].v, null);
+    assert.notEqual((await db.query("select to_regprocedure('assess.consent_v3(text)') v"))[0].v,null);
+    await db.exec(`alter table auth.users add column banned_until timestamptz;
+      create table auth.sessions(user_id uuid);create table auth.refresh_tokens(user_id uuid);`);
+    const [cfg]=await db.query("select current_setting('unix_socket_directories') host,current_setting('port') port,current_database() database");
+    const client=new pg.Client({host:cfg.host,port:Number(cfg.port),user:'postgres',database:cfg.database,password:'',ssl:false});
+    try {await client.connect();assert.deepEqual(await checks(client),{checks_passed:manifest().checks.length});}
+    finally {await client.end();}
   } finally { await db.close(); }
 });
 
@@ -152,8 +161,8 @@ for (const { productionVersion, locale } of [
   ...['C','en_US.UTF-8','icu-en-US'].map(locale=>({productionVersion:true,locale})),
   ...['C','en_US.UTF-8'].map(locale=>({productionVersion:false,locale})),
 ]) {
-test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and every required check: ${locale}`, {timeout:90000}, async () => {
-    const db = await openLocalDatabase('postgres', { through:'latest', locale, productionVersion });
+test(`PostgreSQL ${productionVersion?'17.11':'18.4'} historical M09 full-apply and all M09 checks: ${locale}`, {timeout:90000}, async () => {
+    const db = await openLocalDatabase('postgres', { through:'historical-m09', locale, productionVersion });
     let client, sqlstate='none (boolean assertion)';
     try {
       // Same synthetic Auth/role surface as the restore rehearsal; never a provider schema.
@@ -172,7 +181,7 @@ test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and eve
       const query=client.query.bind(client);
       client.query=async(...args)=>{try{return await query(...args);}catch(e){sqlstate=e.code??'unavailable';throw e;}};
       await client.query("set rad085.sharing_phase='pre-initializer'");
-      assert.deepEqual(await checks(client, manifest().checks), { checks_passed: manifest().checks.length });
+      assert.deepEqual(await checks(client, M09_CHECKS), { checks_passed: M09_CHECKS.length });
       for (const file of ['supabase/checks/rad062-m09-ready.sql','supabase/checks/rad062-p1-b-m09-ready.sql']) {
         await client.query('begin');
         await client.query('grant execute on function assess.freeze_v2() to authenticated');
@@ -188,7 +197,7 @@ test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and eve
       assert.equal(rows.find(r=>r.check_name==='relations').ok,false);
       assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,true);
       await assert.rejects(checks(client,[ready]),{message:'required_check_failed:'+ready});
-      assert.deepEqual(await checks(client,manifest().checks),{checks_passed:manifest().checks.length});
+      assert.deepEqual(await checks(client,M09_CHECKS),{checks_passed:M09_CHECKS.length});
       if(!productionVersion){
         // Owner 3b: a scratch column has no protected expected value. The new
         // row must reject an unvalidated NOT NULL independently of its fingerprint.
@@ -200,7 +209,7 @@ test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and eve
         rows=await readyRows();
         assert.equal(rows.find(r=>r.check_name==='not_null_constraints_plain').ok,false);
         await assert.rejects(checks(client,[ready]),{message:'required_check_failed:'+ready});
-        assert.deepEqual(await checks(client,manifest().checks),{checks_passed:manifest().checks.length});
+        assert.deepEqual(await checks(client,M09_CHECKS),{checks_passed:M09_CHECKS.length});
       }
     } catch(e) { throw new Error(`${locale}:${e.message}:SQLSTATE=${sqlstate}`,{cause:e}); }
     finally { if (client) await client.end(); await db.close(); }
