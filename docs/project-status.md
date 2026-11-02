@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 405,
-  "updated_at": "2026-11-02T11:18:33.860+00:00",
+  "revision": 406,
+  "updated_at": "2026-11-02T11:37:55.975+00:00",
   "timezone": "UTC",
   "next_id": "RAD-094",
   "tasks": [
@@ -844,11 +844,11 @@
     {
       "id": "RAD-093",
       "title": "تنظيف الاختبارات وCI وفق التدقيق RAD-092",
-      "status": "in_progress",
+      "status": "review",
       "priority": "medium",
-      "description": "تنفيذ قرارات المالك الثمانية: أربع وظائف CI وحراس ثابتة وشواهد سلبية وتجربة templates مقاسة؛ ينتظر تحقق الدفعة ومراجعتها.",
+      "description": "نُفذت أربع وظائف CI وcheck جامع وتقوية الشواهد وtemplate مقاسة؛ ينتظر CI والمراجعة وقياس PR. تحقق محلي:3295pass،60 محجوبة بصورة Docker؛ docs:test محجوب جزئيًا بالأدوات. docs/TEST_CLEANUP_REPORT_2026-11-02.md",
       "source_ref": "docs/DECISIONS.md#test-cleanup-owner-2026-11-02؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md",
-      "waiting_on": "code",
+      "waiting_on": "reviewer",
       "done_when": "PR مدمجة وCI خضراء؛ جميع الحراس محفوظة وقياس الوفر والشواهد السلبية موثقة."
     }
   ]

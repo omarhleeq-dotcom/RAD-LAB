@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 // heartbeat and duplicates the profile read (see PilotSessionKeeper.tsx). Pages read the shared one with useSessionAccount().
 const ROOT = resolve(__dirname, "../../..");
 const ALLOWED = new Set(["src/features/pilot/SessionGate.tsx", "src/features/pilot/useAccount.ts", "src/features/pilot/session-account.test.ts"]);
-const CALL = /(?<![\w$.])useAccount\s*\(/;
+const CALL = /(?<![\w$])useAccount\s*\(/;
 // A value import of the hook (aliased or not) would allow a call under another name; `import type` stays allowed.
 const IMPORT = /import\s*\{[^}]*(?<![\w$])useAccount(?![\w$])[^}]*\}\s*from/;
 
@@ -23,6 +23,13 @@ function accountInstanceViolations(files: Record<string, string>): string[] {
 }
 
 describe("one account instance per page", () => {
+  it("detects a namespace useAccount call outside SessionGate", () => {
+    expect(accountInstanceViolations({
+      "src/namespace.tsx": 'import * as x from "@/features/pilot/useAccount";\nx.useAccount();',
+      "src/namespace-type.ts": 'import type * as x from "@/features/pilot/useAccount";',
+    })).toEqual(["src/namespace.tsx"]);
+  });
+
   it("useAccount is called and imported only by SessionGate (and its own definition)", () => {
     const files = Object.fromEntries(sources(join(ROOT, "src")).map((path) => [relative(ROOT, path).split("\\").join("/"), readFileSync(path, "utf8")]));
     expect(Object.keys(files).length).toBeGreaterThan(100);

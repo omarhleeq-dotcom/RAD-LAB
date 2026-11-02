@@ -2,10 +2,38 @@
 
 ## 1. الانحرافات والميزانية
 الهدف أربع وظائف متوازية مع الحراس ثابتة؛ السقف32 ملفًا، والقائمة المعلنة25 بما فيها helper تجريبي مشروط.
+القائمة الدقيقة25 ملفًا (helper اعتُمد بعد القياس):
+
+- `.github/workflows/ci.yml`
+- `package.json`
+- `vitest.config.mts`
+- `scripts/docs/rad062-db-day.test.mjs`
+- `src/features/assess/rad062-name.test.ts`
+- `src/features/assess/rad062-freeze-foundation.test.ts`
+- `src/features/assess/rad062-lifecycle.test.ts`
+- `src/features/assess/rad062-manual-grading.test.ts`
+- `src/features/assess/rad062-erasure-operations.test.ts`
+- `src/features/assess/rad085-local-db.ts`
+- `src/features/deployment/frontend-manifest.test.ts`
+- `src/features/deployment/finalize-headers.test.ts`
+- `src/features/pilot/session-account.test.ts`
+- `src/features/qa/scene-dom-ankle.test.ts`
+- `src/features/qa/scene-dom-elbow.test.ts`
+- `src/features/qa/scene-dom-hand.test.ts`
+- `src/features/qa/scene-dom-lower-limb.test.ts`
+- `src/features/qa/scene-dom-pelvis.test.ts`
+- `src/features/qa/scene-dom-shoulder.test.ts`
+- `src/features/qa/scene-dom-wrist.test.ts`
+- `docs/project-status.md`
+- `docs/HANDOFF.md`
+- `docs/DECISIONS.md`
+- `docs/DOCS_CHECKS.md`
+- `docs/TEST_CLEANUP_REPORT_2026-11-02.md`
+
 سؤالا AGENTS: هل تغيّر حكم مختصر؟ **لا**. هل بقي رابط دليله الأصلي؟ **نعم**؛ لا اختصار للأحكام السابقة.
 
 ## 2. المنجز والمستبعد
-الإغلاقات وقرارات المالك سُجلت أولًا؛ التنفيذ وQA أدناه يُستكملان في الدفعة نفسها.
+الإغلاقات وقرارات المالك في أول commit توثيقي؛ split CI والشواهد وتجربة template في الدفعة نفسها.
 لا SQL حي أو نشر إضافي أو إعادة توليد goldens؛ #196/#197 وشاشة5ب وإصلاحات RAD-085 خارج النطاق.
 
 ## 3. حالة المهام وإغلاقات المالك
@@ -29,16 +57,78 @@ Verified: قراءة GitHub تثبت دمج #200 و#202 و#203 و#204؛ #203 أ�
 سُجل التدقيق عبر next_id كمهمة RAD-092 منجزة بدليل #202، والتنظيف RAD-093 تحتها؛ التنظيف غير منجز قبل المراجعة والدمج.
 
 ## 4. التغييرات المشتركة وScale
-التنفيذ والقياس ومطابقة خطوات CI تُضاف هنا بعد التحقق.
+Verified: أربع jobs مع جامع `check` حاجب؛ Node22 وtimeout15 والصور وأدوات apt المثبتة ثابتة؛ [التخطيط](DOCS_CHECKS.md#ci) و[التنفيذ](../.github/workflows/ci.yml).
+Verified: لكل اختبار Vitest قسم واحد؛ قائمة الجمع قبل1856 وبعد1861 (+5: pin1، namespace1، headers3)، دون حذف حالة. التعريفات المعلَمة parameterized تُحسب منفصلة عن عدد التنفيذ أدناه.
+Verified:106 ملفات DB و145 unit؛ التقاطع0 وكل71 ملفًا محتاجًا DB في الجرد داخل DB lane؛ جرى فحص union مقابل قائمة ما قبل التغيير، والفروق فقط الشواهد الخمسة.
+Verified: أزيلت whole-list asserts فقط؛ بقيت derived-marker والbytes والتاريخ والprivileges والrollback وكل السلوك. الأرقام من main الحالية بعد #200 (name كانت55 في الجرد القديم):
+| الملف داخل assess إلا Node | الأسطر قبل ← موضع الإحالة بعد |
+|---|---|
+| rad062-name.test.ts |48 ←48|
+| rad062-freeze-foundation.test.ts |72 ←72|
+| rad062-lifecycle.test.ts |257 ←257|
+| rad062-manual-grading.test.ts |215 ←215|
+| rad062-erasure-operations.test.ts |353 ←353|
+| scripts/docs/rad062-db-day.test.mjs |90–92 ←89|
+البديل [pin مستقل](../src/features/deployment/frontend-manifest.test.ts) بتوقع literal لـ32 required وdeferred فارغة و10 checks وmarker المرقّى؛ لا اشتقاق للتوقع من manifest.
+Verified: تجربة template على HEAD نفسه `af0f2e5`، Node22.23.4، الأمر `npx vitest run src/features/assess/rad085-db.test.ts --reporter=json`:14/14 قبل وبعد.
+القياس النهائي يشمل العملية كاملة من الإطلاق حتى الخروج/التنظيف: قبل23.817ث وبعد21.863ث؛ وفر صافٍ1.955ث (8.2%)؛ هذا لملف التجربة فقط، لا وعد لوفر lane كاملة.
+اعتمدت [helper](../src/features/assess/rad085-local-db.ts): baseline واحدة لكل binary/C/UTF8/migration-list، نسخ cluster متوقفة لكل حالة لحفظ عزل roles/ACL، مع sockets/clients/teardown مستقلة.
+Verified: تجربة مستقلة مؤقتة أثبتت عدم تسرب rows/roles/ACL، rollback، وهوية version/locale؛ مسار beforeUpgrade غير مخبأ؛ Supabase17/ICU وباقي helpers بلا تغيير، ولا isolate:false.
+Not run (env): قياس Docker-image cache محجوب بفشل pull؛ لم يُضف cache بلا دليل وفر. Scale: القياس المحلي عينة واحدة؛ اعتماد توزيعات CI وتوسيع allowlist ينتظر دليلًا ومراجعة تتبع المستدعين.
+
+المطابقة التالية لكل25 خطوة أصلية في [CI السابقة](https://github.com/omarhleeq-dotcom/RAD-LAB/blob/411df95feca88b5b5b16fb9ce2ded4f6ebd41408/.github/workflows/ci.yml)؛ لا خطوة عمل مفقودة أو مكررة.
+checkout/setup-node/npm ci تهيئة مستقلة لكل runner؛ `npm test` قسمان متكاملان ينفذ كل اختبار مرة؛ ICU كانت مكررة والآن مرة حاجبة.
+| خطوة قبل | العمل | job بعد |
+|---|---|---|
+|1|checkout الكامل|الأربع، تهيئة|
+|2|setup-node22/npm cache|الأربع، تهيئة|
+|3|npm ci|الأربع، تهيئة|
+|4|npm audit high|unit|
+|5|apt age وPG16 client/server|db|
+|6|pull Supabase17.11 digest نفسه|db|
+|7|laptop-icu|db، إلزامي مرة|
+|8|laptop-rehearsal + data-precheck|db، filter PR فقط|
+|9|CRLF catalogue-rehearsal|db، filter PR فقط|
+|10|pull postgres17.11 digest نفسه|db|
+|11|setup-rad085-postgres|db|
+|12|emergency-stop-rehearsal|db، دائمًا|
+|13|rad085-lock-witness|db، دائمًا|
+|14|rad085-erasure-recovery|db، دائمًا|
+|15|rad085-worker-rehearsal|db، filter PR فقط|
+|16|docs:check|docs|
+|17|docs:test، باستثناء ICU المكرر فقط|db|
+|18|Python secret uploader|db|
+|19|connection-probe|db|
+|20|typecheck|unit|
+|21|lint|unit|
+|22|npm test|unit+db، بلا تداخل|
+|23|PR docs:check + status:check/previous|docs، الشرط السابق نفسه|
+|24|build|build|
+|25|build:pages|build|
+Verified:11 تجارب على filter الفعلية داخل Git مؤقتة: docs audit فقط=false؛ supabase/scripts/src/lock/phone/runbook/unknown=true؛ push main=true؛ فشل diff=true؛ diff فارغ=true.
+Verified:16 نتيجة للجامع (كل job مع success/failure/cancelled/skipped)؛ success للجميع فقط ينجح، وكل timeout15. لا تغيير Deploy Pages أو صلاحيات workflow.
 
 ## 5. الطب والدرجات
 لا تغيير طبي أو scoring أو منتج؛ الحراس والبصمات والـpackets ثابتة.
 
 ## 6. QA
-Not run (قيد التنفيذ): اختبارات الدفعة وقياسات templates وCI؛ لا تُنسب نتائج قبل تشغيلها.
+Verified: الشواهد ذات الصلة37/37 ناجحة قبل full؛ mutation: فقد baseline في السبع suites يفشل (9 حالات ثم حالتان)، بلا إنشاء ملف؛ استعادة bytes ثم full أدناه.
+Verified: mutation لـrequired/deferred/checks وstdout marker تفشل pin؛ إعادة regex القديم تفشل namespace؛ تعطيل write يفشل headers؛ كل مصدر/manifest/golden مستعاد byte-identical.
+Verified: typecheck ناجح بعد إصلاح tuple في الشاهد الجديد؛ lint صفر أخطاء وتحذيران سابقان في simulator-layout-audit؛ فشل البداية مسجل ولم يُخفَ.
+Not run (env): docs:test126 إجمالًا،119pass/7fail/0skip؛ `Required tool unavailable: psql (install the PostgreSQL client packages)` و`spawnSync age-keygen ENOENT` و`ENOENT: no such file or directory, scandir '/usr/lib/postgresql'` وصورة postgres17.11 غائبة.
+Not run (env): pull لصورة Supabase المثبتة فشل حرفيًا `failed to register layer: no space left on device`؛ تثبيت أدوات النظام محجوب بـ`sudo: command not found`؛ لا fallback ولا تعطيل شاهد.
+Not run (env): full `npm run check` انتهى type/lint ناجحين؛ Vitest248 ملفًا ناجحًا و3 ملفات M09 محجوبة بالصورة:3295pass/60fail/0skip من3355،568.85ث.
+الخطأ: `No such image: supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`؛ لا فشل مستقل عن البيئة.
+Verified:3355 حالة نهائية؛ Inferred:3350 قبل ←3355 بعد (+pin1/namespace1/headers3، يطابق التدقيق). قائمة الجمع قبل/بعد وdiff يثبتان عدم حذف أي حالة؛ Node بلا حذف، وتكرار ICU فقط أزيل.
+Verified: displayed-text/banned words/schema gate/marker/supervisor privacy/emergency packets/goldens ضمن الملفات248 الناجحة؛ الحراس ثابتة عدا تقوية session-account المأذونة.
+Verified: manual-QA helper bundle يفتح ويغلق fixture نظيفة مرتين خارج Vitest؛ typecheck وchanged-file lint ناجحان بعد ضبط lifecycle الشرطية. Python8/8 وconnection-probe10/10 ناجحة.
+Verified: `npm run build` و`npm run build:pages` ناجحان؛ emergency-stop/lock/erasure29/29 ناجحة؛ audit high ناجح مع16 moderate سابقة دون تعديل الحزم؛ لا نشر يدوي أو preview URL.
+Verified: `docs:sync` مرتان مع idempotence، ثم `docs:check --base origin/main` و`status:check --base origin/main --require-previous` و`git diff --check`؛ تنبيهات السقوف للمراجعة لا أخطاء.
+Not run (external): قياس PR CI بعد مقابل13:08 main القديم في [التدقيق](TEST_AUDIT_REPORT_2026-11-02.md) يحتاج اكتمال CI على رأس PR؛ النوعان مختلفان فلا ادعاء مقارنة مكافئة أو وفر CI مقاس.
+Not run: browser/phone/live لهذه الدفعة؛ اختبارات الحراس البنيوية لا تثبت تحققًا سريريًا أو نشرًا؛ لا subscribe/poll أو تشغيل workflow يدوي.
 
 ## 7. البنود المفتوحة
-إعادة تمرين الهاتف RAD-059 وقرار ملفات اللابتوب RAD-085 P5؛ شاشة5ب في دفعة مستقلة.
+إعادة تمرين الهاتف RAD-059 وقرار ملفات اللابتوب RAD-085 P5؛ شاشة5ب في دفعة مستقلة. CI وقياس PR والمراجعة حاجبة لإغلاق RAD-093؛ القيود البيئية لا تعني نجاحًا.
 
 ## 8. قائمة المالك الموحدة والمتابعة
 القرارات الثمانية المعتمدة محفوظة حرفيًا في [DECISIONS](DECISIONS.md#test-cleanup-owner-2026-11-02)؛ لا قرارات جديدة مطلوبة الآن.
