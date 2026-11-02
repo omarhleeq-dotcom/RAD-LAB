@@ -9,6 +9,8 @@ import { PilotSessionKeeper } from "./PilotSessionKeeper";
 import { accountDestination, sessionAccess } from "./session-access";
 import { useAccount } from "./useAccount";
 
+import {EmergencySession} from '@/features/emergency/EmergencySession';
+
 type SessionAccount = ReturnType<typeof useAccount> & { recovery: ReturnType<typeof recoveryFromHash>; consumeRecovery: () => void };
 const AccountContext = createContext<SessionAccount | null>(null);
 
@@ -33,6 +35,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   return (
     <AccountContext.Provider value={{ ...account, recovery, consumeRecovery }}>
       {PILOT && account.state.kind === "signedIn" && <PilotSessionKeeper profileStatus={account.state.profile.status} />}
+      <EmergencySession/>
       {children}
     </AccountContext.Provider>
   );

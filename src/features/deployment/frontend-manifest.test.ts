@@ -39,7 +39,15 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   '20261030000800_rad062_erasure_operations.sql',
   '20261102000100_rad062_supervisor_grading_authorization.sql',
  ]);
- expect(manifest.deferredMigrations).toEqual({});
+ expect(manifest.deferredMigrations).toEqual({
+  "20261102000200_rad059_emergency_alternate.sql": {
+    "sha256": "efd5a5e61e93beef66354c016f619f17ed0acb59ad52eada7b374ebba0068c1e",
+    "reason": "RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.",
+    "serverModules": [
+      "src/features/assess/rad059-alternate.test.ts"
+    ]
+  }
+});
  expect(manifest.checks).toEqual([
   'supabase/checks/training-ready.sql',
   'supabase/checks/comparison-ready.sql',

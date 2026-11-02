@@ -1,44 +1,50 @@
 # RAD-059 — later owner laptop window
 
-**Preparation only; implementation is blocked. Do not apply SQL from this batch.**
-The [report](RAD-059_ALTERNATE_REPORT_2026-11-02.md) records the timeout evidence and scope; the [owner reply](DECISIONS.md#rad059-protocol-review-owner-2026-11-02) permits narrow guard expectations and selects multi-RPC protocol review.
-The alternate migration and successor check do not yet exist. Steps 2–4 below are a review plan requiring a completed implementation, green required QA and separate owner permission.
-Authority: [owner decisions 1–11](DECISIONS.md#rad059-alternate-owner-2026-11-02). No gate opening, worker start, rotation, new role or secret Enable belongs to this window.
+**Prepared dormant implementation. No live step until separate owner permission, complete QA and reviewed promotion artifacts.**
+Authority: [decisions 1–11](DECISIONS.md#rad059-alternate-owner-2026-11-02), [multi-RPC direction](DECISIONS.md#rad059-protocol-review-owner-2026-11-02), and [binding decisions 12–14](DECISIONS.md#rad059-implementation-owner-2026-11-02). No gate opening, worker start, rotation, new role or secret Enable belongs to this window.
 
-## Protocol for review — not approved for implementation
+<a id="protocol-for-review--not-approved-for-implementation"></a>
+## Implemented phase protocol — dormant until promotion
 
-The owner selected **independent per-phase limits and a multi-RPC review**. This proposal replaces the original single-call completion contract and needs acceptance before implementation. It requires no new browser dependency or provider account for the alternate.
+The historical anchor above remains for existing links; decisions12–14 authorize implementation and supersede the old five-second proposal. [Report](RAD-059_ALTERNATE_REPORT_2026-11-02.md).
+Owner-only set/remove/read RPCs appoint at most one approved account. `emergency_access_v1` reveals only the caller's current capability. `emergency_stop_v1(uuid)` starts/reuses an operation; `emergency_stop_phase_v1(uuid,smallint)` commits one ordered phase; `emergency_stop_receipt_v1(uuid)` reads its aggregate receipt. No actor, role, project or SQL input.
 
-| Proposed RPC | Fixed contract and authority |
+| Phase | Fixed effect |
 |---|---|
-| `emergency_alternate_set_v1(p_target uuid)` / `emergency_alternate_remove_v1()` | Approved owner only via existing is_owner; chosen target must be approved, unsuspended and not pending deletion. Singleton appointment, revision increases on set/remove; no self-appointment by the alternate. |
-| `emergency_alternate_read_v1(p_after bigint, p_limit integer)` | Owner-only appointment/audit read, stable cursor and limit1–100; approved-account picker reuses bounded owner directory. No new student-data endpoint. |
-| `emergency_stop_v1(p_operation uuid)` | Authenticate auth.uid(), acquire locks, bind operation to caller and current appointment revision; return existing receipt for replay. First call creates a pending operation, not STOPPED. Owner may start independently. |
-| `emergency_stop_phase_v1(p_operation uuid, p_phase smallint)` | Only phases0–5; require exact next phase, or return the stored result for an already committed phase. No SQL/role/project/session input. Reauthorize each call and after every lock wait; the client cannot skip phases or act under an old revision. |
-| `emergency_stop_receipt_v1(p_operation uuid)` | Reauthorize before returning only the caller's aggregate receipt; owner may read all. A removed/suspended/deleted alternate cannot replay an old success. No student data, identifiers or raw errors. |
+| 1 | Exclusive gate lock, close admission. |
+| 2 | Existing assess_job_a NOLOGIN. |
+| 3 | Existing optional assess_job_b NOLOGIN; no role provisioning. |
+| 4 | Terminate only those worker session_user identities, across databases and even after SET ROLE. |
+| 5 | Unchanged assess.freeze_v2(): hold all four reviewed states without extending submission/deadlines. |
+| 6 | Fresh aggregate verification: one closed gate, NOLOGIN, zero worker backends and zero unheld sessions. |
 
-Each RPC is a separate committed database request. The browser confirmation starts a finite sequential loop of at most six phase requests and a receipt read, not a timer/daemon/poll. Transport uncertainty stops automatic advancement; retry the **same operation and phase** or read the receipt. A page reload loses no server receipt; a private local incident log records the operation mapping, never Git.
+Each call uses the existing authenticated per-request statement_timeout (8s by default), armed by PostgREST before SELECT; no setting change. Each function sets lock_timeout=2s. All new RPCs fix UTC locally to preserve the reviewed v2 168-hour deadlines, even if the API request selects another timezone. A request timeout rolls back only that request; earlier committed phases remain. QUERY_CANCELED is not caught inside the RPC; the client displays UNKNOWN and reads a separate receipt before continuing unfinished phases. Lock/other phase failures record a false phase result and allow the remaining containment phases to proceed. There is no service restart/undo.
+Replay returns committed receipts without repeating effects. There is one unfinished operation per actor/revision. Healthy redundant new-operation requests reuse the last STOPPED receipt within30s; any unsafe current fact permits a fresh stop immediately. STOPPED is historical database evidence, never cloud/cache proof.
+Lock order: profiles table, emergency singleton, operation, then the phase's gate/sessions locks. Account status/pending deletion and appointment/revision are checked after waits. Removal commits a new revision under the same lock; the removed account cannot obtain a new stop success or advance its old operation. Owner starts an independently authorized operation if needed.
+Audit stores actor/action/time/revision/operation and phase booleans only, with owner-only paged reads. Existing C2/D3 erasure sets actor references to NULL and preserves events; no identity tombstone. Appointing does not grant any other product authority or provider access.
 
-| Phase | Effect and verification scope |
-|---|---|
-| 0 gate | Exclusive launch_gate lock; insert closed singleton if missing and set enabled=false, preserving reviewed v2 semantics. |
-| 1 login_a | NOLOGIN for existing assess_job_a only; absence reported, no role provisioning. |
-| 2 login_b | NOLOGIN for existing assess_job_b only; absence harmless and reported. |
-| 3 terminate | Across databases, terminate only pg_stat_activity.usename assess_job_a/b (session_user even after SET ROLE); no Supavisor/shared/non-worker termination. |
-| 4 freeze | Call unchanged assess.freeze_v2(); preserve original submission/deadline and capture all four reviewed states. |
-| 5 verify | Fresh snapshot: one closed gate, existing slots NOLOGIN, zero worker backends and zero unheld sessions using the reviewed v2 predicate. Return counts/phase flags only; cloud/cache claims remain false. |
+### Read-only authenticated request-timeout preflight — STOP if absent or >8s
 
-**Actual deadline enforcement is a release blocker:** the trusted API connection must arm statement_timeout≤5s **before** issuing each phase's top-level SELECT, with lock_timeout=2s. Function SET/set_config does not provide this. Inspect the provider/PostgREST request transaction behavior and prove it with real request-level timeout witnesses before applying. An existing stricter API deadline is acceptable if its behavior is proved; an unbounded/unknown deadline fails closed. No shared-role timeout/settings change is authorized by this proposal.
-If the existing gateway cannot prove that guarantee, STOP: a trusted server executor sending SET LOCAL then SELECT as separate commands would need an explicitly reviewed hosting/file scope. Do not hide the gap behind AbortController, a browser timeout, a new extension, a background job or new credentials.
-Do not catch QUERY_CANCELED and then continue work inside the same request: the timer is not rearmed. The timed-out phase rolls back its transactional effects; a later, newly bounded receipt/reconciliation request records a fixed timeout/UNKNOWN phase result. Other errors may be caught as fixed codes within the phase. This relocates timeout handling across transactions and is an explicit contract change for review.
-Gate/NOLOGIN/freeze commits from earlier phases survive a later failure. Backend termination is nontransactional: a canceled phase may already have killed some sessions, so absence of its receipt is UNKNOWN, never FAILED-with-no-effects. Reconciliation reads actual facts before recording an outcome. A failed phase must be settled explicitly before later phases; it must not block the remaining containment phases permanently.
-Proposed lock order for set/remove/start/phase: profiles table SHARE ROW EXCLUSIVE (consistent with existing C2/erasure), affected profile rows in user_id order, emergency singleton, operation row, then gate/sessions for the selected phase. Recheck account, pending deletion and appointment/revision after every wait. Do not hold a sessions lock while attempting worker termination. Prove both winner orders against suspension/deletion and existing start/freeze paths; any lock-order conflict is STOP.
-Removal commits a revision change under the same serialization lock. A phase already holding the lock may commit before removal; after removal completes, that account cannot advance a pending operation or obtain a new STOPPED response. Owner continuation starts an independently authorized operation; the removed alternate gains no fallback power.
-Proposed receipt states: pending/uncertain internal state never maps to STOPPED. A terminal receipt is STOPPED only when all six phase results are committed and phase5 verifies containment; otherwise PARTIAL if any effect is proven, FAILED if no effect is proven, and UNKNOWN remains visible until reconciled. Receipts include completion time and are historical evidence, not proof of current cloud/cache state.
-Abuse control needs a measured, reviewed bound: one pending operation globally, serialized phase advancement, no duplicate audit rows on phase replay. During an active incident reuse the pending operation rather than rate-limit containment. Limit creation of redundant completed-stop receipts only after a current containment check; do not impose a lifetime quota that can block a later incident. Exact retention/capacity limits remain part of implementation review.
-Proposed audit: protected actor/action/time/revision/operation/phase flags, owner-only bounded reads, no student/answer/score/secret/raw error. Appointment user FK cascades on deletion; nullable appointed_by/audit actor FKs SET NULL, with no identity tombstone. Extend the anchored D3 FK inventory only in the new migration and prove erasure/reconciliation; if this differs from existing erasure policy, STOP for an explicit decision. Receipt retention and restore handling must follow the existing erasure journal, not recreate deleted identities.
-All RPCs: SECURITY DEFINER, search_path='', reviewed SQL owner able to ALTER only the two fixed job roles and terminate their backends; fail preconditions atomically if that authority cannot be held safely. Revoke PUBLIC/anon, grant only intended entrypoints to authenticated; private helpers/API-role table access denied. No gate open, LOGIN, recover/unhold, start, secret, grading, account/group/membership/D3 or appointment power for the alternate.
-The owner-panel picker/audit and alternate confirmation UI remain dormant until a separate promotion. The browser has no resume/undo and cannot present six requests as one atomic transaction. EN/AR390/1440/axe, phase replay, disconnect before/after COMMIT, both removal orders, erasure, forbidden APIs and both PostgreSQL modes are required before acceptance. Owner-only cloud steps and channels/ACK stay independent.
+Run this entire query as the trusted owner connection before apply; it only inspects role configuration. Unitless PostgreSQL timeout values mean milliseconds. Zero/unrecognized/duplicate/absent values fail closed; do not ALTER ROLE/DATABASE or PostgREST to make it pass.
+
+```sql
+begin read only;
+set local lock_timeout='2s';
+set local statement_timeout='5s';
+with configured as (
+ select regexp_match(split_part(setting,'=',2),'^([0-9]+)(ms|s|min|h|d)?$') parts
+ from pg_roles r cross join lateral unnest(r.rolconfig) setting
+ where r.rolname='authenticated' and setting like 'statement_timeout=%'
+), limits as (
+ select (parts[1])::numeric * case coalesce(parts[2],'ms')
+  when 'ms' then 1 when 's' then 1000 when 'min' then 60000 when 'h' then 3600000 when 'd' then 86400000 end milliseconds
+ from configured
+)
+select count(*)=1 and coalesce(bool_and(milliseconds>0 and milliseconds<=8000),false) authenticated_request_bound_ok from limits;
+rollback;
+```
+
+Expected exactly one row, authenticated_request_bound_ok=true. Missing/false/unknown is STOP; the eight-second assumption is not proof. No alternate API request or worker connection is needed for this read.
 
 ## 1. Freeze source and evidence before the window
 
@@ -67,14 +73,14 @@ Use a fresh administrative connection through the reviewed session-pooler path, 
 Use [unchanged v2 verification](../supabase/checks/assess-emergency-stopped-v2.sql) and [backlog read](../supabase/checks/rad059-backlog-health.sql). Neither proves credential rejection or cloud containment.
 If any precheck fails, stop the apply window and preserve containment. Do not repair data/grants or create roles to pass it.
 
-## 3. Apply once, then independently verify — currently blocked
+## 3. Apply once, then independently verify
 
-After implementation and review resolve the report's blockers, the intended files are `supabase/migrations/20261102000200_rad059_emergency_alternate.sql` and `supabase/checks/rad059-alternate-ready.sql`.
-Their final reviewed bytes must provide atomic prerequisite/anchor assertions and successor catalogue/ACL verification before this plan becomes executable.
-Apply the reviewed migration once with `psql -X -v ON_ERROR_STOP=1 -f` only in a separately authorized live window. Expect one COMMIT. A connection loss around COMMIT is UNKNOWN: inspect independently, never rerun automatically.
-On a new connection run the new successor check, unchanged compatible required checks, and v2 stop verification. Inspect every boolean; compare protected baseline for changes outside the reviewed scope.
-Existing M09/D3 checks fingerprint full assess catalogues: adding tables/functions can require reviewed successor checks in the later promotion PR. Do not edit existing checks or pretend their old digests attest the new catalogue.
-Before COMMIT, abort rolls back the migration. After COMMIT, keep containment and prepare a reviewed forward fix; never restore erased accounts or rerun old migrations.
+The reviewed files are [migration](../supabase/migrations/20261102000200_rad059_emergency_alternate.sql) and [successor](../supabase/checks/rad059-alternate-ready.sql). Compare their SHA256 with the deferred manifest/review before applying.
+The new migration asserts the complete reviewed M09 catalogue, existing NOLOGIN slots and operator authority atomically. It creates only the emergency schema, fixed public RPCs and an additive D3 identity-FK contract; it changes no existing function body or role/database/PostgREST setting.
+Apply the migration once with `psql -X -v ON_ERROR_STOP=1 -f supabase/migrations/20261102000200_rad059_emergency_alternate.sql` only in the separately authorized owner window. Expect one COMMIT. Connection loss around COMMIT is UNKNOWN: inspect independently, never rerun automatically.
+On a fresh connection run `psql -X -v ON_ERROR_STOP=1 -f supabase/checks/rad059-alternate-ready.sql`, then every unchanged current required check and the v2 independent stop verification. Inspect every boolean, not merely psql exit status. All must pass; expected fingerprints include exact emergency owner/config/ACL/columns/FKs/policies/indexes as well as the unchanged M09 package.
+Compare protected baseline OIDs/definitions/ACLs for existing objects; only the reviewed additive identity-FK inventory changes. The new objects live outside assess, so the current M09 catalogue checks remain compatible; promotion adds the new successor while retaining the existing checks.
+Before COMMIT, failure rolls back all new objects and the FK inventory update. After COMMIT, keep containment and prepare a reviewed forward fix; never restore erased accounts or rerun old migrations. A dormant frontend is not an attestation of the applied new catalogue.
 
 ## 4. Live old-credential proof — one attempt only
 
@@ -99,7 +105,7 @@ if LC_ALL=C PGUSER="$RAD059_OLD_USER" PGPASSFILE="$RAD059_OLD_PASSFILE" PGCONNEC
  -c 'begin read only; select 1; rollback;' \
  >"$RAD059_ATTEMPT/stdout" 2>"$RAD059_ATTEMPT/stderr"; then
  RAD059_CLASS=ACCEPTED
-elif LC_ALL=C rg -q '^psql: error: connection to server .*FATAL:  (password authentication failed for user|role ".*" is not permitted to log in)' "$RAD059_ATTEMPT/stderr"; then
+elif test "$(LC_ALL=C grep -c '[^[:space:]]' "$RAD059_ATTEMPT/stderr" 2>/dev/null)" = 1 && LC_ALL=C grep -Eq '^psql: error: connection to server .*FATAL:  (password authentication failed for user|role ".*" is not permitted to log in)' "$RAD059_ATTEMPT/stderr"; then
  RAD059_CLASS=AUTH_REJECTED
 else
  RAD059_CLASS=UNKNOWN
@@ -109,7 +115,7 @@ unset RAD059_OLD_USER RAD059_OLD_PASSFILE
 ```
 
 Only this one worker connection attempt is allowed. The query is a read-only constant and psql closes its connection immediately on exit; no interactive worker session is left open. Local raw files remain private and are encrypted at rest; do not print them.
-The anchored English libpq FATAL messages are a conservative allowlist. Pooler-specific errors, changed formatting, TLS/DNS/timeout/unavailable project, missing password, or an error after successful authentication stay UNKNOWN. The owner/reviewer must validate the exact provider rejection privately; no broad “any failure means rejected” rule.
+Only one nonempty stderr line matching the anchored English libpq FATAL allowlist can classify AUTH_REJECTED. Mixed failures or extra detail lines remain UNKNOWN. Pooler-specific errors, changed formatting, TLS/DNS/timeout/unavailable project, missing password, or an error after successful authentication stay UNKNOWN. The owner/reviewer must validate the exact provider rejection privately; no broad “any failure means rejected” rule.
 ACCEPTED means **FAILED revocation** even if a later check rejects. Immediately run the unchanged owner stop packet to terminate any surviving job-role backends, verify zero, keep gate closed/NOLOGIN/secret DISABLED and record FAILED; do not attempt the old credential again.
 AUTH_REJECTED is evidence only for the privately verified credential/path/time; it is not a guarantee for all pooler nodes forever. Record slot expiry as a possible independent cause; never enable LOGIN as a control. UNKNOWN or Not run leaves RAD-059 blocked.
 After the attempt, a new administrative connection verifies the unchanged v2 stop counts; owner rechecks cloud metadata. Record t0, attemptUTC, elapsed≥120, classification, containment and redacted results in the encrypted log. No raw errors or account/project identifiers in Git.
@@ -123,3 +129,8 @@ At the end of successful apply/verification/revocation evidence, prepare a **sep
 Owner alone coordinates the later Variable update and promotion merge in its separately authorized window, followed by normal CI/Deploy Pages and phone checks. No manual extra deployment or gate bypass.
 Any pre-promotion alternate app drill must use the reviewed disposable rehearsal build; do not flip a live flag early to manufacture a test. After promotion, prove the live drill before closing RAD-059.
 RAD-059 stays open until **channels/ACK + alternate + live revocation** are evidenced and accepted; promotion/merge alone does not close it or authorize exams.
+
+## 6. Pilot-end audit cleanup
+
+The owner records the announced pilot end privately and schedules deletion of emergency audit/operations within six calendar months of that announcement, alongside the other pilot data under Terms. This is an owner retention obligation, not a new scheduled service.
+The private SQL-operator helper `emergency.purge_after_pilot_v1(p_ended_at)` can delete the emergency events and phase receipts after the announced end; it rejects a future end time. It has no API-role EXECUTE grant. Use only the privately verified announcement time in the approved end-of-pilot erasure window, then verify zero emergency audit/operations and cleared appointment identity. Do not retain an identity mapping or reimport erased actor references from backups; follow the existing RAD-086 journal/reconciliation procedure.

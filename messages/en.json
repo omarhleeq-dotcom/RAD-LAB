@@ -2378,5 +2378,60 @@
       "closed": "This answer set can't be graded now: it is final, on hold or past its deadline.",
       "unavailable": "Grading is unavailable or the response is uncertain. A hold, deadline or access change may prevent grading. Read again or resolve the pending operation; contact the owner if needed."
     }
+  },
+  "emergency": {
+    "ownerTitle": "Emergency alternate",
+    "ownerHelp": "Appoint one approved account to stop assessments in an emergency. This gives no other authority.",
+    "stopTitle": "Emergency stop",
+    "warning": "This closes admission, blocks worker sign-in, ends worker connections and holds ongoing assessments.",
+    "cloud": "The owner must also pause Google Cloud schedules, cancel executions and disable secret versions. This action cannot do those steps.",
+    "confirmStop": "I confirm that emergency containment is needed.",
+    "stop": "Emergency stop",
+    "continue": "Continue stop",
+    "newStop": "Prepare another stop",
+    "status": {
+      "PENDING": "Waiting to start",
+      "PARTIAL": "PARTIAL — containment incomplete",
+      "FAILED": "FAILED — containment not confirmed",
+      "STOPPED": "STOPPED — database containment confirmed",
+      "RECORDED": "Recorded"
+    },
+    "phases": {
+      "1": "Close admission",
+      "2": "Block worker sign-in",
+      "3": "Block alternate worker sign-in",
+      "4": "End worker connections",
+      "5": "Hold ongoing assessments",
+      "6": "Check containment"
+    },
+    "completed": "Completed",
+    "failed": "Not completed",
+    "pending": "Waiting",
+    "receiptTime": "Receipt time (UTC):",
+    "unknown": "UNKNOWN: a response was lost or a request timed out. Keep containment in place. Continue stop checks the receipt before running any unfinished phase.",
+    "rejected": "The request was rejected. Keep containment in place and contact the owner.",
+    "denied": "Emergency authority is unavailable. Contact the owner immediately.",
+    "working": "Stopping…",
+    "ack": "Send your human ACK and record this action in the protected encrypted incident log.",
+    "details": "Details",
+    "choose": "Choose an approved account",
+    "unnamed": "Name unavailable",
+    "none": "No alternate appointed",
+    "appoint": "Appoint this account",
+    "danger": "Remove alternate",
+    "removeWarning": "Removal blocks further stop phases from this account immediately after it completes.",
+    "confirmRemove": "I confirm removal of this alternate.",
+    "remove": "Remove alternate",
+    "auditTitle": "Emergency activity",
+    "auditEmpty": "No emergency activity yet.",
+    "actions": {
+      "appoint": "Appointed",
+      "remove": "Removed",
+      "stop": "Stop"
+    },
+    "more": "Load more",
+    "loading": "Loading…",
+    "error": "The request could not be confirmed. Refresh and check the current appointment before trying again.",
+    "retention": "Activity is deleted within six months after the announced end of the pilot. Erasing an account removes its actor reference."
   }
 }
