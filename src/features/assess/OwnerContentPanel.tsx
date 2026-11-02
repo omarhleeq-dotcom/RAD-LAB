@@ -13,14 +13,16 @@ export function OwnerContentPanel(){
   useEffect(()=>{let cancelled=false;void getPilotClient()?.then(async c=>{try{const p=await contentPage(c,null);if(!cancelled)setPage(p);}catch{if(!cancelled)setError(true);}});return ()=>{cancelled=true;};},[]);
   async function submit(){setBusy(true);setSaved(false);setError(false);try{const client=await getPilotClient();if(!client)throw new Error();await submitContent(client,raw);setRaw("");setSaved(true);setPage(await contentPage(client,null));}catch{setError(true);}finally{setBusy(false);}}
   return <section className="mt-8 space-y-4 border-t border-line pt-5" data-testid="assess-content">
-    <AuthoringEntry/><h3 className="text-lg font-semibold">{t("title")}</h3><ResultDisclosure title="ⓘ" label={t("title")}><p>{t("help")}</p><p>{t("review")}</p><p>{t("tracks")}</p></ResultDisclosure>
+    <AuthoringEntry/><details className="space-y-4 rounded border border-line p-3"><summary className="min-h-11 cursor-pointer font-semibold">{t("advanced")}</summary><p>{t("notWriting")}</p><h2 className="text-lg font-semibold">{t("title")}</h2><ResultDisclosure title="ⓘ" label={t("title")}><p>{t("help")}</p><p>{t("review")}</p><p>{t("tracks")}</p></ResultDisclosure>
     {error&&<p role="alert">{t("error")}</p>}{saved&&<p role="status">{t("saved")}</p>}
     <form onSubmit={e=>{e.preventDefault();void submit();}} className="space-y-3">
-      <label className="block">{t("document")}<textarea dir="ltr" lang="en" className="mt-2 block min-h-64 w-full rounded border border-line bg-panel p-3 font-mono text-sm" value={raw} maxLength={2000000} required disabled={busy} onChange={e=>setRaw(e.target.value)}/></label>
+      <label className="block">{t("document")}<textarea aria-label={t("document")} id="owner-publishing-document" dir="ltr" lang="en" className="mt-2 block min-h-64 w-full rounded border border-line bg-panel p-3 font-mono text-sm" value={raw} maxLength={2000000} required disabled={busy} onChange={e=>setRaw(e.target.value)}/></label>
       <button type="submit" className={button} disabled={busy||!raw.trim()}>{t("submit")}</button>
+      {(busy||!raw.trim())&&<p role="status"><a className="underline" href="#owner-publishing-document">{t(busy?"publishing":"documentReason")}</a></p>}
     </form>
     <button className={button} disabled={busy} onClick={()=>void load()}>{t("refresh")}</button>
     <ul className="space-y-2">{page?.rows.map(r=><li key={r.id} className="break-words"><span lang="en" dir="ltr">{r.name} — {r.version}</span> · {t(r.state)}</li>)}</ul>
     {page?.next&&<button className={button} disabled={busy} onClick={()=>void load(page.next)}>{t("next")}</button>}
+    </details>
   </section>;
 }

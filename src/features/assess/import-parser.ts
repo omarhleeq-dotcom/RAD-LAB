@@ -1,5 +1,7 @@
 /** Local values only. No file contents leave this module's caller. */
 export const IMPORT_LIMITS = Object.freeze({ bytes: 1_000_000, questions: 200, options: 50, expandedBytes: 8 * 1024 * 1024, cells: 20_000 });
+export const XLSX_VALUES = Symbol('xlsx-values');
+export type ImportTable = string[][] & { [XLSX_VALUES]?: true };
 export const MISSING_CACHED_VALUE = '\u0000';
 export type ImportErrorCode = 'fileType' | 'fileSize' | 'rowLimit' | 'malformed' | 'encrypted' | 'macros' | 'unsupportedBrowser' | 'header';
 export class ImportError extends Error { constructor(public readonly code: ImportErrorCode) { super(code); } }

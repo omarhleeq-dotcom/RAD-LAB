@@ -19,7 +19,7 @@ export function AuthoringEntry() {
  const { state } = useSessionAccount(), t = useTranslations('assessImport');
  if (state.kind !== 'signedIn' || state.profile.status !== 'approved') return null;
  return <section className="mt-8 min-w-0 space-y-4 border-t border-line pt-5" data-testid="assess-authoring">
-  {state.profile.role === 'owner' ? <p>{t('ownerOnly')}</p> : <Rad062Entry><BoundAuthoring key={state.userId} actor={state.userId} role="supervisor" name={state.displayName ?? ''}/></Rad062Entry>}
+  {state.profile.role === 'owner' ? <p><span>{t('ownerOnly')}</span> <a className="underline" href="#supervisor-appointments">{t('appointmentsLink')}</a></p> : <Rad062Entry><BoundAuthoring key={state.userId} actor={state.userId} role="supervisor" name={state.displayName ?? ''}/></Rad062Entry>}
  </section>;
 }
 function BoundAuthoring({ actor, role, name }: { actor: string; role: 'owner' | 'supervisor'; name: string }) {
