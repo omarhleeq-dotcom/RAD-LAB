@@ -1421,3 +1421,9 @@ Authority: owner's continuation of PR #207; recorded verbatim. Supersedes the un
 14. Closure to record: RAD-062 5b — #206 merged, CI (4 lanes) and Deploy green on main; owner phone check 2026-11-02 OK: grading entry visible to the owner, empty queue message, layout fine. RAD-062 stays open only for the P2 consent disclosure (gate prerequisite) and the remaining launch items.
 
 Owner exception on PR #207: ONLY line8 of `src/features/assess/manual-grading-availability.test.ts` may replace `toEqual({})` with the exact single RAD-059 deferred entry (filename/SHA/reason/serverModules); all other bytes and manual-grading files remain unchanged. Report the before/after line; deferred does not change the marker. The later promotion PR restores this line to `toEqual({})`.
+
+<a id="rad085-p4-ttl-owner-2026-11-02"></a>
+### RAD-085 P4 — supervisor data lifetime approved, 2026-11-02
+Authority: owner's explicit instruction in this conversation after [PR #208](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/208).
+Owner approves `SUPERVISOR_DATA_TTL_MS = 900000` (15 minutes) for RAD-085 P4; record this approval in the next batch's first commit.
+The owner reports #208 merged after green CI. Independent merge/CI verification is recorded in [RAD-085 status](project-status.md); this approval does not close the remaining RAD-085 reviews or authorize live actions.
