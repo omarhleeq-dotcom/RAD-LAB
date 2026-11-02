@@ -254,7 +254,7 @@ it.each(['active', 'grading', 'grading-failed', 'awaiting-manual'])('freeze hold
 });
 it('M06 is required, promoted guard and derived marker are exact; required SQL/checks and v1 emergency-stop artifacts are byte-identical to main', () => {
  const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
- expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]); expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-ready.sql']);
+ expect(manifest.requiredMigrations).toEqual([...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations, '20261102000100_rad062_supervisor_grading_authorization.sql']); expect(manifest.checks).toEqual([...base.checks.map((p: string) => p === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : p), 'supabase/checks/rad062-m09-ready.sql']);
  expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(sql()).digest('hex'));
  expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
  for (const p of [...base.requiredMigrations.map((f: string) => 'supabase/migrations/' + f), ...base.checks,

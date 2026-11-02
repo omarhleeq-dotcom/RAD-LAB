@@ -1,12 +1,12 @@
 # RAD-062 M09 — later owner laptop window
 
-**DORMANT preparation only. No step below runs until the owner gives separate live permission.** This batch adds M09 to deferredMigrations only. It changes neither required migrations/checks nor the current marker. [Approved design §4.7](RAD-062_SUPERVISOR_GRADING_DESIGN_2026-11-02.md), [authority](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02), [server evidence](RAD-062_SUPERVISOR_GRADING_SERVER_REPORT_2026-11-02.md).
+**Prepared promotion only. No step below runs until the owner gives separate live permission.** Steps 1–6 use the reviewed pre-promotion main SHA with M09 still deferred; [Draft #200](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/200) is merged only at step 7. [Approved design §4.7](RAD-062_SUPERVISOR_GRADING_DESIGN_2026-11-02.md), [authority](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02), [server evidence](RAD-062_SUPERVISOR_GRADING_SERVER_REPORT_2026-11-02.md).
 
-Use the owner laptop, protected local RAD-086 configuration and trusted postgres session-pooler connection from [P9](RAD-062_P09_LAPTOP_RUNBOOK.md#1-preconditions--no-mutation). No credentials in arguments, logs, shell history or Git. Commands assume that runbook's verified PGHOST/PGPORT/PGUSER/PGDATABASE/PGSSLMODE=verify-full/PGSSLROOTCERT and protected password file; do not guess selectors or reuse old credentials. Keep `set +x`. Book owner/reviewer/alternate responder and the reviewed coordinated promotion PR before the window; no unattended transition or automatic retry.
+Use the owner laptop, protected local RAD-086 configuration and trusted postgres session-pooler connection from [P9](RAD-062_P09_LAPTOP_RUNBOOK.md#1-preconditions--no-mutation). No credentials in arguments, logs, shell history or Git. Commands assume that runbook's verified PGHOST/PGPORT/PGUSER/PGDATABASE/PGSSLMODE=verify-full/PGSSLROOTCERT and protected password file; do not guess selectors or reuse old credentials. Keep `set +x`. Book owner/reviewer and the reviewed coordinated promotion PR before the window; no unattended transition or automatic retry.
 
 ## 1. Freeze source, reviews, restore and channels
 
-Only after explicit permission, use the reviewed merged commit. Set the exact reviewed SHA and source paths:
+Only after explicit permission, run **all steps 1–6, including the step-3 rehearsal**, on the reviewed pre-promotion main SHA `3c887cb31f523f3a49128305da50dd433f8e6a0c`, where M09 is still in deferredMigrations. Do not check out the promotion PR for these steps: the owner window uses that reviewed pre-promotion source and its deferred manifest throughout these steps; the promotion PR separately pins the reviewed M09 SHA for either classified state. This PR remains Draft and unmerged until step 7. Set that exact reviewed pre-promotion SHA and source paths:
 
 ```bash
 set -euo pipefail
@@ -24,7 +24,7 @@ Expected current marker: `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd60
 
 [RAD-059 delivery ACK/alternate responder](RAD-059_PHONE_RUNBOOK.md) and [RAD-085 rights/privacy/consent](project-status.md) remain gate-opening prerequisites, not M09 apply-window preconditions, per the [owner decision](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02); all other preconditions remain.
 
-Coordinate steps 5–8 before starting: after step 5 verification and step 6 containment, in step 7 the owner opens this GitHub repository's Settings → Secrets and variables → Actions → Variables, sets `PILOT_SCHEMA_VERIFIED` to the exact new marker printed by the separately reviewed promotion PR for `https://vlacestfruxooznrcjqc.supabase.co`, then merges that PR inside this same window before step 8. Its deploy/schema gate is expected to fail while the Variable still holds the old marker; that expected failure never authorizes a gate bypass or an early Variable change. The [promotion report](RAD-062_M09_PROMOTION_REPORT_2026-11-02.md) currently records scope blockers; no new marker or live permission is supplied here.
+Coordinate steps 5–8 before starting: after step 5 verification and step 6 containment, in step 7 the owner opens this GitHub repository's Settings → Secrets and variables → Actions → Variables, sets `PILOT_SCHEMA_VERIFIED` to the exact new marker printed by the separately reviewed promotion PR for `https://vlacestfruxooznrcjqc.supabase.co`, then merges that PR inside this same window before step 8. Its deploy/schema gate is expected to fail while the Variable still holds the old marker; that expected failure never authorizes a gate bypass or an early Variable change. The [promotion report](RAD-062_M09_PROMOTION_REPORT_2026-11-02.md) supplies the reviewed promotion marker and QA limits; this preparation supplies no live permission.
 
 ## 2. Read-only preflight on the existing M08 database
 
@@ -82,7 +82,7 @@ Follow the complete unchanged [P5 v2 packet](RAD-062_P05_PHONE_PACKET.md) stop b
 
 ## 7. Later coordinated promotion, owner only
 
-This dormant batch supplies **no new marker** and authorizes no promotion. The separately reviewed promotion PR must move M09 from deferred to required, replace only the RAD-062 readiness path, pin reviewed bytes and print its new marker for the actual project. Owner alone sets that exact marker Variable, then merges that promotion PR in the same separate window. Do not compute a provisional marker by editing this checkout or attest M09 with the old marker. If the promotion PR, owner permission or new marker is missing, STOP before live step4.
+Keep steps 1–6 on the reviewed pre-promotion main SHA above. After successful step 5 verification and step 6 containment, the owner alone opens this GitHub repository’s Settings → Secrets and variables → Actions → Variables and sets `PILOT_SCHEMA_VERIFIED` to the exact marker printed from reviewed [Draft #200](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/200) for `https://vlacestfruxooznrcjqc.supabase.co`: `pilot-v1:868e3885959d076de1ee17a2e9d5de96dfb6f72c18b55a1d7830f0c4c8f261a8`. Then the owner merges that PR in this same separately authorized window, before step 8. It moves M09 from deferred to required and replaces only the RAD-062 readiness path; guardedFeatures.rad062 stays unchanged. Its deploy/schema gate is expected to fail until the Variable is updated here; do not bypass the gate. Do not compute a provisional marker by editing the pre-promotion checkout or attest M09 with the old marker. If the promotion PR, owner permission or new marker is missing, STOP before live step4.
 
 ## 8. Normal automation and phone check
 

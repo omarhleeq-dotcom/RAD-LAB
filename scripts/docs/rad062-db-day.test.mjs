@@ -87,24 +87,18 @@ test('boolean readiness failures stop; explicitly disclaimed operational claims 
 test('promotion preserves both emergency packets and every original SQL/check byte', () => {
   const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
   const current = JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8'));
-  assert.deepEqual(current.requiredMigrations, [...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]);
-  // M09 dormant until promotion; the promotion batch restores {}
-  assert.deepEqual(current.deferredMigrations, {
-    '20261102000100_rad062_supervisor_grading_authorization.sql': {
-      sha256: '9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a',
-      reason: 'Dormant M09 authorization; live apply and promotion require a separate owner window.',
-      serverModules: ['src/features/assess/server-manual-service.ts'],
-    },
-  });
-  assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : f), 'supabase/checks/rad062-ready.sql']);
+  assert.deepEqual(current.requiredMigrations, [...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations, '20261102000100_rad062_supervisor_grading_authorization.sql']);
+  assert.deepEqual(current.deferredMigrations, {});
+  assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : f), 'supabase/checks/rad062-m09-ready.sql']);
   for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md',
     'supabase/manual/assess-emergency-stop.sql','supabase/manual/assess-emergency-stop-v2.sql',
     'supabase/checks/assess-emergency-stopped.sql','supabase/checks/assess-emergency-stopped-v2.sql',
     ...base.checks,
-    ...current.requiredMigrations.map(f=>'supabase/migrations/'+f)]) {
+    ...[...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations].map(f=>'supabase/migrations/'+f)]) {
     const original = execFileSync('git',['show',`023ec84c15bfd744f317ec079e2587d90e099414:${path}`]);
     assert.deepEqual(undoCRLF(path, readFileSync(path)),reviewed[path] ? substitute(original, reviewed[path]) : original);
   }
+  assert.equal(sha256(readFileSync('supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql')), '9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a');
 });
 // Owner-approved fixes of never-applied M02/M05/M06: only these exact byte changes.
 const fkOrder = [['do $$ declare expected jsonb; begin\n select jsonb_agg(e order by e->>0,e->>1,e->>2) into expected',
