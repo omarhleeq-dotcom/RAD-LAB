@@ -21,7 +21,7 @@ M09 في deferredMigrations فقط؛ requiredMigrations/checks/marker والبو
 
 RAD-062 تبقى in_progress/reviewer؛ شرط هذه الخطوة: `PR merged + CI green + reviewer audit; live apply waits for a separate owner window`.
 الإغلاقات السابقة محفوظة؛ [STOP5ب](RAD-062_PHASE5B_REPORT_2026-11-02.md#stop) أصل الفصل بين دفعة التفويض والشاشة، و#196 مؤجلة لـa dedicated TS7 batch.
-Draft واحدة فقط؛ لا ready/merge/auto-merge أو subscribe/poll؛ CI المرجع النهائي، ولا ادعاء جاهزية حية من هذا التنفيذ.
+Verified: [Draft #199](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/199) واحدة فقط؛ لا ready/merge/auto-merge أو subscribe/poll؛ CI المرجع النهائي، ولا ادعاء جاهزية حية من هذا التنفيذ.
 
 ## 4 — المشترك وScale
 
@@ -40,14 +40,18 @@ Draft واحدة فقط؛ لا ready/merge/auto-merge أو subscribe/poll؛ CI �
 
 ## 6 — QA وحدود الدليل
 
-Verified: PostgreSQL18 الحقيقي أثبت60حالة M09 محلية، وفحص manifest/marker مستقلًا؛ التشغيل الكامل للنمطين121اختبارًا، ولا skip عند فقد الصورة. أُصلحت موافقة Assess في fixture صف paging الاصطناعي، ونجح شاهدها بعد الإصلاح.
+Verified: PostgreSQL18 الحقيقي أثبت60حالة M09 محلية، وفحص manifest/marker مستقلًا؛ التشغيل الكامل للنمطين121اختبارًا. نمطSupabase60حالة فشل بسبب الصورة المفقودة بلا skip. أُصلحت موافقة Assess في fixture صف paging، وأُثبتت منفردة.
+Verified: فحص الأقفال النهائي25/25؛ تُسلح نافذة500ms بعد شاهد انتظار profile، ويُجهز مسار commit تحت savepoint تتراجع كل آثاره قبل التسليح؛ لا تغيير لأي مهلة أو تقليل لأي تأكيد.
 Verified: byte proof لكل205ملفات محمية من main، بما فيها كل SQL/checks القديمة وmanual/fixtures وحزمتا الهاتف وبيانات/اختبارات QA؛ لا تغيّر توقع قائم أو golden/characterisation.
 Verified: الماركر قبل وبعد التعديل `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`؛ بلا تغيير متغير أو اتصال حي.
 Verified: npm ci وإعداد PostgreSQL المثبت وnpm audit --audit-level=high؛16تنبيهًا متوسطًا قائمًا، بلا إصلاح dependency خارج النطاق.
 Verified: فحوص CI PostgreSQL للطوارئ/الأقفال/الاسترداد/connection-probe:39/39؛ secret-uploader Python:8/8، دون skip.
+Verified: حراس displayed-text/session-account/schema/supervisor-review الخصوصية:71/71 في11ملفًا بلا تغيير.
 Verified: typecheck وlint بلا خطأ جديد؛ تحذيرا lint سابقان فقط؛ build وbuild:pages نجحا مرة لكل منهما دون نشر، وdocs:sync مرتان idempotent وdocs:check وstatus:check --require-previous وdiff --check خضراء.
+Verified: إعادة معزولة لاختبارات manual-grading11 والخدمة7 وlifecycle19 وtrial14:51/51 خضراء بالمهلات الأصلية. مهلات5000/20000ms في التشغيل المتزامن باقية دليلًا تاريخيًا، لا نجاحًا مخفيًا.
 Not run (env): تثبيت age/PG16 تعذر: `sudo: command not found` ثم apt `Acquire (13: Permission denied)`؛ توثيق الاستعادة لا يعوض تشغيلها.
 Not run (env): نمطM09/Supabase17 والبروفات المطابقة وlocale matrix؛ صورة Supabase وصورةpostgres17.11 كلتاهما فشلتا عند تسجيل layer بمساحة القرص. Worker rehearsal توقف عند postgres-container مع cleanup=true.
+Verified: npm run check شُغّلت كاملة:3283pass/67fail/0skip؛ تضمنت عوائق الصورة/التوقع القديم ومهلات وشاهدَي SHA/fixture أُصلحا وفُحصا لاحقًا؛ ليست خضراء.
 Verified: docs:test شُغّلت:115pass/9fail/0skip؛ عائق manifest أدناه غير بيئي، والبقية age-keygen/psql/PG16 أو صور Docker المفقودة؛ ليست خضراء.
 Inferred: توافق صورة الإنتاج والنسخة الحقيقية يحتاج بروفة المالك وCI؛ لا نتائج سريرية أو تشغيل حقيقي أو فحص هاتف تصحيح في هذه الدفعة.
 

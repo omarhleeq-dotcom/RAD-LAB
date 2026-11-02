@@ -47,18 +47,18 @@ describe.each(modes)('M09 lock barriers %s',mode=>{
   },120000);
  }
  for(const operation of ['score','finalize']) for(const clock of ['ends_at','168h']) {
-  it(`${operation} rechecks ${clock} after session wait`,async()=>{
+  it(`${operation} rechecks ${clock} after a witnessed profile wait`,async()=>{
    const {db,s}=await fixture(mode); const hold=await begin(db,1);
    try {
     await scores(db,s);
-    // Position the real clock close to the boundary, without changing any timeout.
-    if(clock==='ends_at') {
-     await db.admin.query('alter table assess.groups disable trigger assess_managed_group');
-     await db.admin.query("update assess.groups set ends_at=clock_timestamp()+interval '500 milliseconds' where id=$1",[db.group]);
-    } else await db.admin.query("update assess.sessions set submitted_at=clock_timestamp()-interval '7 days'+interval '500 milliseconds' where id=$1",[s]);
-    await hold.query('select 1 from assess.sessions where id=$1 for update',[s]);
+    // The clock boundary is configured ONLY after PostgreSQL proves the wait.
+    // Keep the same 500ms window and test timeout; no race with fixture startup.
+    if(clock==='ends_at') await db.admin.query('alter table assess.groups disable trigger assess_managed_group');
+    await hold.query('select 1 from public.profiles where user_id=$1 for update',[id(3)]);
     const pid=(await hold.query('select pg_backend_pid() pid')).rows[0].pid;
     const waiting=Promise.allSettled([operation==='score'?scores(db,s,1,201):finalize(db,s)]); await blocked(db,pid);
+    if(clock==='ends_at') await hold.query("update assess.groups set ends_at=clock_timestamp()+interval '500 milliseconds' where id=$1",[db.group]);
+    else await hold.query("update assess.sessions set submitted_at=clock_timestamp()-interval '7 days'+interval '500 milliseconds' where id=$1",[s]);
     for(let i=0;i<100;i++) {
      const crossed=(await hold.query(clock==='ends_at'?'select ends_at<=clock_timestamp() ok from assess.groups where id=$1':"select submitted_at+interval '7 days'<=clock_timestamp() ok from assess.sessions where id=$1",[clock==='ends_at'?db.group:s])).rows[0].ok;
      if(crossed) break;
@@ -73,16 +73,19 @@ describe.each(modes)('M09 lock barriers %s',mode=>{
  }
  for(const operation of ['score','finalize']) for(const clock of ['ends_at','168h']) {
   it(`${operation} rolls back writes when ${clock} crosses at the commit barrier`,async()=>{
-   const {db,s}=await fixture(mode);const hold=await begin(db,1);
+   const {db,s}=await fixture(mode);const hold=await begin(db,1),g=await begin(db);
    try {
     await scores(db,s);
+    // Compile the real endpoint on this connection before arming a short clock.
+    // Roll back every warm-up effect; the measured call is a fresh operation.
+    await g.query('savepoint warm');await grade(g,s,operation);await g.query('rollback to savepoint warm');
     await db.admin.query(`create function assess.m09_commit_barrier() returns trigger language plpgsql as $$ begin perform pg_advisory_xact_lock(9109); return new; end $$`);
     await db.admin.query(`create trigger m09_commit_barrier before insert on assess.${operation==='score'?'manual_events_v1':'results'} for each row execute function assess.m09_commit_barrier()`);
     await hold.query('select pg_advisory_xact_lock(9109)');
     if(clock==='ends_at') {await db.admin.query('alter table assess.groups disable trigger assess_managed_group');await db.admin.query("update assess.groups set ends_at=clock_timestamp()+interval '500 milliseconds' where id=$1",[db.group]);}
     else await db.admin.query("update assess.sessions set submitted_at=clock_timestamp()-interval '7 days'+interval '500 milliseconds' where id=$1",[s]);
     const pid=(await hold.query('select pg_backend_pid() pid')).rows[0].pid;
-    const waiting=Promise.allSettled([operation==='score'?scores(db,s,1,201):finalize(db,s)]);await blocked(db,pid);
+    const waiting=Promise.allSettled([grade(g,s,operation)]);await blocked(db,pid);
     for(let i=0;i<100;i++) {
      const crossed=(await hold.query(clock==='ends_at'?'select ends_at<=clock_timestamp() ok from assess.groups where id=$1':"select submitted_at+interval '7 days'<=clock_timestamp() ok from assess.sessions where id=$1",[clock==='ends_at'?db.group:s])).rows[0].ok;
      if(crossed) break;
@@ -90,10 +93,11 @@ describe.each(modes)('M09 lock barriers %s',mode=>{
      await new Promise(r=>setTimeout(r,10));
     }
     await hold.query('commit');expect((await waiting)[0]).toMatchObject({status:'rejected',reason:{code:clock==='ends_at'?'42501':'55000'}});
+    await g.query('rollback');
     expect((await db.admin.query('select operation_count from assess.manual_work_v1')).rows[0].operation_count).toBe(1);
     expect((await db.admin.query('select count(*)::int n from assess.manual_events_v1')).rows[0].n).toBe(1);
     expect((await db.admin.query('select count(*)::int n from assess.results')).rows[0].n).toBe(0);
-   }finally{await hold.query('rollback');await hold.end();await db.close();}
+   }finally{await g.query('rollback');await g.end();await hold.query('rollback');await hold.end();await db.close();}
   },120000);
  }
  it('D3 erases only the grader identity after rights clearance and transfer, retaining another student result',async()=>{
