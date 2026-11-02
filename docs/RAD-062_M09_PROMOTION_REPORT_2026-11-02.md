@@ -4,7 +4,7 @@
 
 الهدف PR ترقية مراجعة تبقى Draft حتى نافذة المالك؛ توقف التنفيذ عند شروط STOP الصريحة في أمر المالك.
 التعديل الفعلي خمسة ملفات توثيقية فقط: DECISIONS، project-status، HANDOFF، هذا التقرير، وM09_LAPTOP_RUNBOOK.
-Commit1 يوثق إغلاق الخادم والقرار والحواجز؛ تصحيح الخطوة1 في commit تالٍ. لا وحدات مشتركة متغيرة.
+Commit1 يوثق إغلاق الخادم والقرار والحواجز؛ commit2 يصحح الخطوة1 فقط. لا وحدات مشتركة متغيرة.
 الحد الأدنى للترقية **13/12** ملفًا؛ القائمة الكاملة المطلوبة قبل أي تعديل برمجي:
 
 1. `scripts/pages/frontend-schema.json`
@@ -27,7 +27,7 @@ Verified (GitHub read): [#199](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/
 Verified (GitHub read): على الرأس `5739d8d8e49e454ffa4c9c1f0be69086853c25a3` نجحت [CI](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41404586717) و[Deploy](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41404586531).
 Verified (owner-provided reviewer evidence, 2026-11-02): `npm run check` كامل،3350/3350 في249ملفًا كمستخدم non-root، بما فيها M09 في embedded والصورة المثبتة Supabase17.11/ICU؛ أصلح المراجع teardown في5739d8d.
 هذه إفادة المالك عن تدقيق المراجع، وليست إعادة تشغيل محلية في هذه الدفعة؛ [التقرير السابق](RAD-062_SUPERVISOR_GRADING_SERVER_REPORT_2026-11-02.md) يبقى سجلًا تاريخيًا دون إعادة كتابة.
-سُجل option A في [القرار القائم](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02)؛ تصحيح الخطوة1 وحدها تالٍ.
+سُجل option A في [القرار القائم](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02)؛ صُححت الخطوة1 وحدها، مع موضع Variable وترتيب الخطوات5–8؛ بقية الدليل ثابتة البايتات.
 لم تُنفذ الترقية؛ لا PR ترقية مكتملة أو marker جديد موثّق. تبقى M09 deferred وكل SQL/checks ثابتة.
 
 ## 3 — المهمة والتوقعات المطلوبة
@@ -66,10 +66,13 @@ RAD-062 تبقى in_progress/waiting_on owner؛ شرطها التالي:
 
 ## 6 — QA
 
-Verified: قراءة main المحدث ودمج #199 ونجاح CI/Deploy كما في القسم2؛ الأدلة المحلية النهائية تسجل بعد فحص الوثائق.
+Verified: قراءة main المحدث ودمج #199 ونجاح CI/Deploy كما في القسم2.
+Verified: docs:sync مرتان بلا تغييرات، docs:check وstatus:check --require-previous وgit diff --check؛ أربعة تحذيرات ميزانية قائمة تخص AGENTS/design/RAD-059/RAD-060، لا تعديل خارج النطاق.
+Verified: كل الملفات المتتبعة خارج قائمة الوثائق الخمس ثابتة SHA256 مقابل main، بما فيها supabase/** وحزمتا الهاتف والبيانات وgoldens/characterisation؛ مقدمة الدليل وخطوات2–8 ثابتة، وكل STOP والقيم السابقة محفوظة.
+Not run (initial env attempt): docs:check أعاد `spawnSync git EPERM`؛ نجح باستخدام أداة التنفيذ مع صلاحية الشبكة، دون تغيير فحص أو ملف.
 Not run (STOP scope): اختبارات الترقية و`npm run check` و`npm run build` و`npm run build:pages`؛ لا تنفيذ ترقية أو تغيير منتج، وليست عوائق pg/Docker/build مثبتة.
 Not run (STOP scope): M09 بالنمطين؛ fixture لم تُمس، ونجاح المراجع السابق منفصل أعلاه.
-الماركر القديم: `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`.
+Verified (`--print-marker` على checkout الخامل، بلا اتصال حي): الماركر القديم: `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`.
 Not run (STOP scope): الماركر الجديد/`--print-marker` للترقية؛ لا قيمة مؤقتة أو Variable معدلة.
 Inferred: بعد الترقية يُتوقع فشل deploy/schema gate ما دام `PILOT_SCHEMA_VERIFIED` قديمًا وفق P10؛ لا ينطبق اختلاف marker على هذه الوثائق وحدها.
 

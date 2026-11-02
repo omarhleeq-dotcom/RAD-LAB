@@ -20,7 +20,11 @@ sha256sum "$RAD062_M09_SQL" "$RAD062_M09_READY"
 NEXT_PUBLIC_SUPABASE_URL=https://vlacestfruxooznrcjqc.supabase.co node scripts/pages/pilot-schema-gate.mjs --print-marker
 ```
 
-Expected current marker: `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`. Independently compare the printed SQL SHA to deferredMigrations.sha256 and the reviewed PR. Required CI must be entirely green, including both M09 PostgreSQL modes, Supabase17.11 ICU and encrypted restore rehearsals. The report's Not run items are blockers until proved; PG18 alone is insufficient. Confirm RAD-086 backup/reconciliation/restore, rights/privacy/consent, RAD-059 delivery ACK and alternate responder from their own evidence. Check both unchanged phone packets are available independently. STOP for any missing proof.
+Expected current marker: `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`. Independently compare the printed SQL SHA to deferredMigrations.sha256 and the reviewed PR. Required CI must be entirely green, including both M09 PostgreSQL modes, Supabase17.11 ICU and encrypted restore rehearsals. The report's Not run items are blockers until proved; PG18 alone is insufficient. Confirm RAD-086 backup/reconciliation/restore from its own evidence. Check both unchanged phone packets are available independently. STOP for any missing proof.
+
+[RAD-059 delivery ACK/alternate responder](RAD-059_PHONE_RUNBOOK.md) and [RAD-085 rights/privacy/consent](project-status.md) remain gate-opening prerequisites, not M09 apply-window preconditions, per the [owner decision](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02); all other preconditions remain.
+
+Coordinate steps 5–8 before starting: after step 5 verification and step 6 containment, in step 7 the owner opens this GitHub repository's Settings → Secrets and variables → Actions → Variables, sets `PILOT_SCHEMA_VERIFIED` to the exact new marker printed by the separately reviewed promotion PR for `https://vlacestfruxooznrcjqc.supabase.co`, then merges that PR inside this same window before step 8. Its deploy/schema gate is expected to fail while the Variable still holds the old marker; that expected failure never authorizes a gate bypass or an early Variable change. The [promotion report](RAD-062_M09_PROMOTION_REPORT_2026-11-02.md) currently records scope blockers; no new marker or live permission is supplied here.
 
 ## 2. Read-only preflight on the existing M08 database
 
