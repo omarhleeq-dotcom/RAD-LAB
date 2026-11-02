@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 396,
-  "updated_at": "2026-11-01T18:33:25.210Z",
+  "revision": 397,
+  "updated_at": "2026-11-02T00:22:49.000Z",
   "timezone": "UTC",
-  "next_id": "RAD-091",
+  "next_id": "RAD-092",
   "tasks": [
     {
       "id": "RAD-001",
@@ -820,6 +820,16 @@
       "source_ref": "docs/DECISIONS.md#workflow-hardening-owner-2026-11-01",
       "done_when": "PR merged + CI green; no phone check needed (docs/tooling only)",
       "completion_evidence": "#189 merged 2026-11-01؛ CI وDeploy Pages success على رأس PR؛ docs/archive/reports/2026-11/RAD-090_REPORT_2026-11-01.md؛ no phone check needed (docs/tooling only)."
+    },
+    {
+      "id": "RAD-091",
+      "title": "Dependabot and CI audit gate",
+      "status": "review",
+      "priority": "high",
+      "description": "إعداد Dependabot وبوابة audit منفذان للمراجعة؛ ينتظران الدمج وCI وتفعيل إعدادات GitHub ورصد أول Dependabot PR. تبقى16 moderate دون تغيير.",
+      "source_ref": "docs/DECISIONS.md#dependabot-owner-2026-11-01؛ docs/DEPENDABOT_REPORT_2026-11-01.md",
+      "waiting_on": "owner",
+      "done_when": "PR merged + CI green incl. audit step + owner enabled Dependabot alerts/security updates in Settings + first Dependabot PR observed"
     }
   ]
 }
