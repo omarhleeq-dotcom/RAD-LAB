@@ -41,7 +41,7 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
  ]);
  expect(manifest.deferredMigrations).toEqual({
   "20261102000200_rad059_emergency_alternate.sql": {
-    "sha256": "efd5a5e61e93beef66354c016f619f17ed0acb59ad52eada7b374ebba0068c1e",
+    "sha256": "4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610",
     "reason": "RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.",
     "serverModules": [
       "src/features/assess/rad059-alternate.test.ts"

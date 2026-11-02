@@ -102,22 +102,37 @@ revoke all on all sequences in schema emergency from public,anon,authenticated,s
 -- Incoming identity FKs are an additive, reviewed part of the erasure contract.
 update assess.erasure_fk_contract set inventory=assess.d3_fk_inventory_v1() where singleton;
 
--- Same order for appointment mutation and every stop RPC. C2/erasure also lock
--- profiles before deleting account references. Authorization is repeated after
--- each wait; table lock prevents account-status/deletion races until COMMIT.
-create function emergency.authorize_v1(p_owner boolean default false) returns bigint
+-- Unlocked eligibility is also the read-only capability probe. Never expose an
+-- identity or let a rejected account enter the lock queue.
+create function emergency.eligible_v1(p_owner boolean default false) returns boolean
+language sql stable security definer set search_path='' set timezone='UTC' as $$
+ select exists(select 1 from public.profiles p where p.user_id=auth.uid() and p.status='approved'
+  and not exists(select 1 from public.c2_account_deletions d where d.user_id=p.user_id)
+  and (p.role='owner' or (not p_owner and exists(select 1 from emergency.appointment a
+   where a.singleton and a.user_id=p.user_id and a.revoked_at is null))))
+$$;
+-- One order: unlocked rejection -> capacity(shared) -> profiles(UUID order,
+-- SHARE: caller and, only for set, target) -> appointment -> operation -> phase.
+-- C2/D3 take capacity(exclusive) BEFORE scope/profiles and FK SET NULL, so even
+-- multi-account erasure cannot hold a profile/appointment while we enter this
+-- order. SHARE blocks status UPDATE/DELETE until COMMIT, unlike KEY SHARE.
+create function emergency.authorize_v1(p_owner boolean default false,p_target uuid default null) returns bigint
 language plpgsql security definer set search_path='' set lock_timeout='2s' set timezone='UTC' as $$
-declare a emergency.appointment; allowed boolean; begin
+declare a emergency.appointment; begin
+ if not emergency.eligible_v1(p_owner) then raise exception 'not authorized' using errcode='42501'; end if;
  if current_setting('transaction_isolation')<>'read committed' then raise exception 'read committed required' using errcode='55000'; end if;
- if auth.uid() is null then raise exception 'not authorized' using errcode='42501'; end if;
- lock table public.profiles in share row exclusive mode;
- if not exists(select 1 from public.profiles p where p.user_id=auth.uid() and p.status='approved'
-  and not exists(select 1 from public.c2_account_deletions d where d.user_id=p.user_id)) then raise exception 'not authorized' using errcode='42501'; end if;
+ if p_target is not null and not exists(select 1 from public.profiles p where p.user_id=p_target and p.status='approved'
+  and not exists(select 1 from public.c2_account_deletions d where d.user_id=p.user_id)) then raise exception 'approved account required' using errcode='22023'; end if;
+ perform pg_catalog.pg_advisory_xact_lock_shared(hashtextextended('rad062-capacity',0));
+ -- Recheck after each wait before acquiring any subsequent lock.
+ if not emergency.eligible_v1(p_owner) then raise exception 'not authorized' using errcode='42501'; end if;
+ perform 1 from public.profiles where user_id in (auth.uid(),p_target) order by user_id for share;
+ if not emergency.eligible_v1(p_owner) then raise exception 'not authorized' using errcode='42501'; end if;
+ if p_target is not null and not exists(select 1 from public.profiles p where p.user_id=p_target and p.status='approved'
+  and not exists(select 1 from public.c2_account_deletions d where d.user_id=p.user_id)) then raise exception 'approved account required' using errcode='22023'; end if;
  select * into strict a from emergency.appointment where singleton for update;
  -- Re-read after the appointment lock wait; never trust a browser identity/role.
- allowed:=public.is_owner() or (not p_owner and a.user_id=auth.uid() and a.revoked_at is null);
- if not coalesce(allowed,false) or not exists(select 1 from public.profiles p where p.user_id=auth.uid() and p.status='approved'
-  and not exists(select 1 from public.c2_account_deletions d where d.user_id=p.user_id)) then raise exception 'not authorized' using errcode='42501'; end if;
+ if not emergency.eligible_v1(p_owner) then raise exception 'not authorized' using errcode='42501'; end if;
  return a.revision;
 end $$;
 create function emergency.facts_v1() returns jsonb
@@ -145,7 +160,7 @@ $$;
 create function public.emergency_alternate_set_v1(p_target uuid) returns jsonb
 language plpgsql security definer set search_path='' set lock_timeout='2s' set timezone='UTC' as $$
 declare rev bigint; begin
- perform emergency.authorize_v1(true);
+ perform emergency.authorize_v1(true,p_target);
  if p_target is null or not exists(select 1 from public.profiles p where p.user_id=p_target and p.status='approved'
   and not exists(select 1 from public.c2_account_deletions d where d.user_id=p.user_id)) then raise exception 'approved account required' using errcode='22023'; end if;
  update emergency.appointment set user_id=p_target,appointed_by=auth.uid(),appointed_at=clock_timestamp(),revoked_at=null,revision=revision+1 where singleton returning revision into rev;
@@ -174,11 +189,9 @@ declare rows jsonb; a jsonb; begin
 end $$;
 -- Safe capability probe, no privileged data and no account existence leakage.
 create function public.emergency_access_v1() returns boolean
-language plpgsql security definer set search_path='' set lock_timeout='2s' set timezone='UTC' as $$
-begin
- perform emergency.authorize_v1(); return true;
-exception when insufficient_privilege then return false;
-end $$;
+language sql stable security definer set search_path='' set lock_timeout='2s' set timezone='UTC' as $$
+ select emergency.eligible_v1()
+$$;
 create function public.emergency_stop_v1(p_operation uuid) returns jsonb
 language plpgsql security definer set search_path='' set lock_timeout='2s' set timezone='UTC' as $$
 declare rev bigint; prior emergency.operations; facts jsonb; begin
@@ -260,7 +273,7 @@ create function emergency.purge_after_pilot_v1(p_ended_at timestamptz) returns v
 language plpgsql security definer set search_path='' set lock_timeout='2s' set timezone='UTC' as $$
 begin
  if p_ended_at is null or clock_timestamp()<p_ended_at then raise exception 'pilot has not ended' using errcode='22023'; end if;
- lock table public.profiles in share row exclusive mode;
+ perform pg_catalog.pg_advisory_xact_lock_shared(hashtextextended('rad062-capacity',0));
  perform 1 from emergency.appointment where singleton for update;
  delete from emergency.operations; delete from emergency.audit;
  update emergency.appointment set user_id=null,appointed_by=null,appointed_at=null,revoked_at=clock_timestamp(),revision=revision+1 where singleton;

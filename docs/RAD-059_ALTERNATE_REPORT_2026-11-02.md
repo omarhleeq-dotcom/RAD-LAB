@@ -84,3 +84,43 @@ Not run (owner evidence) — TEST لكل إشارة ومستجيب، ACK الب�
 القائمة المعتمدة محفوظة حرفيًا: [1–11](DECISIONS.md#rad059-alternate-owner-2026-11-02) و[12–14](DECISIONS.md#rad059-implementation-owner-2026-11-02)، مع [إذن الحراس واتجاه المراحل](DECISIONS.md#rad059-protocol-review-owner-2026-11-02). لا إعادة قرار النسخ الاحتياطي أو بروفة P5v2 المثبتة.
 المالك لاحقًا: ينفذ قائمة القنوات و ACK والغياب، ويحجز نافذة اللابتوب بعد المراجعة و QA، ويثبت الإبطال بالمحاولة الواحدة، ثم PR ترقية منفصلة بالماركر المراجع، ثم بروفة البديل الحي وقبول الأدلة. يسجل إعلان نهاية التجربة وموعد تنظيف audit ضمن ستة أشهر في السجل المشفر.
 تبقى البوابة مغلقة والعامل NOLOGIN والسر DISABLED؛ RAD-059 مفتوحة، و P2 وبقية شروط الإطلاق مستقلة.
+
+
+<a id="review-fixes-2026-11-02"></a>
+## متابعة المراجعة — 2026-11-02
+
+### 1. الانحرافات والميزانية
+Verified — إصلاحان في Draft #207 نفسها؛ 28/28 ملفًا إجمالًا. الإضافة الوحيدة `src/features/assess/rad062-m09-fixture.ts` لحاجة مصادقة العامل الاصطناعي. لا إغلاقات جديدة؛ الفرع يحتوي origin/main الحالي، فلم يحتج merge.
+
+### 2. المنجز والمستبعد
+Verified — Fix1 في harness فقط: كلمة مرور عشوائية وSCRAM وقاعدة HBA محلية مقيدة بـrad_restore/assess_job_a في supabase17 وحده؛ إدخال عبر stdin، مع تعطيل تسجيل جملة الاعتماد وحجب أخطاء الإعداد، وانتظار reload. لا اعتماد ثابت أو مطبوع أو محفوظ في Git.
+Verified — Fix2: probe دالة SQL/STABLE للقراءة فقط، بلا أقفال صفوف أو LOCK TABLE. الرفض غير المقفل يسبق الأقفال؛ المستخدم غير المعتمد/المعلق أو غير المعيّن لا يدخل طابورها. بقيت الإتاحة false والترحيل مؤجلًا ولم يُطبّق حيًا.
+
+### 3. حالة المهمة
+Verified — RAD-059 تبقى review/owner وdone_when ثابتة؛ التصحيح يحتاج مراجعة وإعادة QA المحجوبة قبل أي تطبيق. لم تُفتح البوابة ولم يتغير أي إعداد حي أو secret أو deploy؛ تبقى PR مسودة.
+
+### 4. المشتركات وScale وترتيب الأقفال
+Verified — الترتيب: رفض غير مقفل ← capacity مشترك ← صفوف profiles بترتيبUUID (المتصل وهدف set فقط) FOR SHARE ← appointment ← operation ← قفل المرحلة. FOR SHARE يمنع UPDATE للحالة وDELETE حتىCOMMIT، مع إعادة التفويض بعد الانتظار.
+Inferred — برهان غياب الدورة مع C2/D3: الدوال القائمة تأخذ capacity حصريًا قبل scope/profiles وقبل FK SET NULL؛ الطوارئ تأخذه مشتركًا قبل أي صف. لذلك لا يمسك المحو صفًا/تعيينًا بينما تدخل الطوارئ ترتيبها؛ عمليات المحو المتعددة لا تعكس ترتيب صفّي set. ترتيب الإزالة/المرحلة السابق محفوظ.
+Verified — SHA256 الجديد للترحيل `4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610` في manifest والحراس الثلاثة exact toEqual فقط؛ كل بايت آخر في manual-grading ثابت مقابل e728071.
+Verified — successor functions: `81acc8de1f4ff453a559d2d2bb54f4c1`؛ relations: `de33f5f3cca804a454bcae95157ea28f` ثابتة؛ بصمتا أساسM09 ثابتتان. marker ثابت: `pilot-v1:001c0cf80c1a4530e7144edfe252912c34ce3859f56c1e47a59524b1cae713e3`.
+Inferred — capacity قد ينتظر محوًا قائمًا حتىمهلة القفل2ث؛ هذا يحمي دورة المحو ولا يمنع probe، ولا تحجزه كتابة profile عادية. أي تغيير لهذه الحدود يحتاج تصميمًا وشواهد جديدة.
+هل تغير حكم بالاختصار؟ لا. هل بقي رابط الدليل الأصلي؟ نعم، القرارات1–14 وروابطها في القسم8 أعلاه؛ لا اختصار لحكم جديد.
+
+### 5. الطب والدرجات
+Verified — لا تغيير طب/درجات أو سلوك manual-grading؛ الاستثناء الوحيد سطرSHA المؤجل. SQL السابق والحزمتان وملفات catalogue/worker rehearsal ثابتة بايتًا، ولم تُغيّر الشواهد القديمة أو المهلات أو توقعات السباق/ACL/PARTIAL.
+
+### 6. QA النهائي لهذه المتابعة
+Verified — الأمر `CI_TEST_LANE=db npx vitest run src/features/assess/rad059-alternate.test.ts` شغّل النمطين: 21/21 في embedded ناجحة؛ منها8 شواهد جديدة، مع13 شاهدًا قائمًا بلا تخفيف (تعديل مصادقة العامل وحده مستثنى).
+Verified — probe يعمل داخل BEGIN READ ONLY مع صف المتصل والتعيين مقفلين؛ تحديث owner غير المرتبط غير مثبت لا يعطل access/stop أو أي مرحلة من الست، وكل نداء<1000ms. تعليق/محو المتصل في ترتيبيCOMMIT يعطي رفض42501؛ حالة الهدف تمنع التعيين بعد الانتظار؛ صفوف التعيين محمية حتىCOMMIT، وC2→D3 اكتمل دون deadlock.
+Not run (env) — حالاتsupabase17 الـ21 فشلت قبل assertions: `No such image: supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`. محاولة تحميل الصورة فشلت بـ`failed to register layer: no space left on device`؛ Fix1 هنا Inferred حتى إعادة التشغيل على الصورة المثبتة، بلا skip.
+Verified — `npm run typecheck` و`npm run build` ناجحان خارج عزل الملفات؛ داخله تعثّرSWC بـ`ERR_SWC_NATIVE_CACHE: cache root has a parent writable by another user without trusted sticky protection`. تغيير سياق التنفيذ حل العطل دون تغيير حزمة أوإعداد؛ لا نشر من البناء.
+Verified — unit:2495/2495 في147 ملفًا؛ lint ناجح بتحذيريunused السابقين. docs:check --base origin/main: صفر أخطاء و9 تحذيرات قرب السقف؛ status:check --require-previous وgit diff --check ناجحان. docs:sync مرتان والثانية0 تغيير؛ فحص البايتات أكد28 ملفًا وكل الحدود أعلاه.
+Not run (scope) — لم تُعد catalogue/worker rehearsals أو المتصفح/Pages؛ إفادة المراجع علىe728071 محفوظة كدليل سابق، وفشل البروفتين مطابقmain حسب المراجعة. لا qa:golden أوqa:characterise أوaudit fix.
+
+### 7. المفتوح
+Inferred — preflight للترحيل0200 يثبت كتالوجassess+profiles بعدM09؛ يجب تأليف أيSQL لـRAD-085 فوق حالةpost-0200 وتطبيقه بعد0200 في نافذة اللابتوب. تسجيل فقط؛ لا عمل حي الآن.
+Not run (env/later owner) — إعادةsupabase17 على بيئة تحمل الصورة، ثم المراجعة قبلapply؛ القنوات/ACK والبديل/الغياب ورفض الاعتماد القديم بعد≥120ث تبقى للنافذة المأذونة لاحقًا.
+
+### 8. قائمة المالك وبداية الجلسة التالية
+راجع فرق الإصلاح والبصمات وشواهد الأقفال، وأعدQA المحجوبة على الرأسالنهائي؛ أبقِ#207 Draft دونready/merge. لا تطبق0200 قبلقبول المراجعة، وابنِRAD-085 لاحقًا فوقه؛ بقية قائمة المالك في القسم8 الأصلي ثابتة.

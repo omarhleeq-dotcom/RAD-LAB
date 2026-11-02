@@ -70,7 +70,7 @@ with functions as (
  from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_roles r on r.oid=c.relowner
  where n.nspname='emergency' and c.relkind in ('r','p')
 ), fingerprints as (
- select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'bdb4a054bcccc6d5be2fa00f7a998179' expected
+ select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'81acc8de1f4ff453a559d2d2bb54f4c1' expected
  union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),'de33f5f3cca804a454bcae95157ea28f'
 )
 select check_name,actual=expected ok from fingerprints

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import {Client,type QueryResult} from 'pg';
-import { catalogueFixture, modes, id, sql } from './rad062-m09-fixture';
+import { catalogueFixture, modes, id, sql, syntheticWorkerPassword } from './rad062-m09-fixture';
 const migration = readFileSync('supabase/migrations/20261102000200_rad059_emergency_alternate.sql', 'utf8');
 const ready = () => readFileSync('supabase/checks/rad059-alternate-ready.sql', 'utf8');
 type Receipt = {operation:string;nextPhase:number;status:string;phases:{phase:number;ok:boolean}[];verification:Record<string,unknown>|null};
@@ -93,6 +93,112 @@ async function session(db:Pick<Db,'connect'>,user:number) {
  await c.query('set local role authenticated');await c.query("select set_config('request.jwt.claim.sub',$1,true)",[id(user)]);return c;
 }
 describe.each(modes)('RAD059 revocation, deadlines and privacy %s',mode=>{
+ it('probe is read-only without row locks even while caller and appointment rows are being written',async()=>{
+  const db=await setup(mode);const blocker=await db.connect(),probe=await db.connect();
+  try{
+   await db.rpc(1,'emergency_alternate_set_v1',[id(3)]);
+   await blocker.query('begin');
+   await blocker.query('update public.profiles set display_name=display_name where user_id=$1',[id(3)]);
+   await blocker.query('select * from emergency.appointment for update');
+   await probe.query('begin read only;set local role authenticated');
+   await probe.query("select set_config('request.jwt.claim.sub',$1,true)",[id(3)]);
+   const start=performance.now();
+   expect((await probe.query('select public.emergency_access_v1() v')).rows[0].v).toBe(true);
+   expect(performance.now()-start).toBeLessThan(1000);
+  }finally{await probe.query('rollback');await blocker.query('rollback');await probe.end();await blocker.end();await db.close();}
+ },120000);
+ it('uncommitted unrelated owner profile UPDATE does not block access, stop or any phase',async()=>{
+  const db=await setup(mode);const blocker=await db.connect();
+  try{
+   await db.rpc(1,'emergency_alternate_set_v1',[id(3)]);
+   await blocker.query('begin');await blocker.query('update public.profiles set display_name=display_name where user_id=$1',[id(1)]);
+   const timings:number[]=[];
+   let start=performance.now();expect(await db.rpc(3,'emergency_access_v1')).toBe(true);timings.push(performance.now()-start);
+   start=performance.now();await db.rpc(3,'emergency_stop_v1',[id(900)]);timings.push(performance.now()-start);
+   for(let phase=1;phase<=6;phase++){
+    start=performance.now();const result=await db.rpc<Receipt>(3,'emergency_stop_phase_v1',[id(900),phase]);timings.push(performance.now()-start);
+    expect(result.phases.every(p=>p.ok)).toBe(true);
+   }
+   expect(timings.every(ms=>ms<1000)).toBe(true);
+   console.info('RAD059 unrelated profile contention milliseconds',mode,JSON.stringify(timings.map(Math.round)));
+  }finally{await blocker.query('rollback');await blocker.end();await db.close();}
+ },120000);
+ it('cheap rejection precedes capacity, profile and appointment waits for anon, non-appointed, pending and suspended callers',async()=>{
+  const db=await setup(mode);const blocker=await db.connect();
+  try{
+   for(const status of ['approved','pending','suspended']){
+    await db.admin.query('update public.profiles set status=$1 where user_id=$2',[status,id(2)]);
+    await blocker.query("begin;select pg_advisory_xact_lock(hashtextextended('rad062-capacity',0));select * from public.profiles for update;select * from emergency.appointment for update");
+    const start=performance.now();
+    expect(await db.rpc(2,'emergency_access_v1')).toBe(false);
+    await expect(db.rpc(2,'emergency_stop_v1',[id(900)])).rejects.toMatchObject({code:'42501'});
+    await expect(db.rpc(2,'emergency_alternate_set_v1',[id(3)])).rejects.toMatchObject({code:'42501'});
+    await expect(db.rpc('anon','emergency_stop_v1',[id(900)])).rejects.toMatchObject({code:'42501'});
+    expect(performance.now()-start).toBeLessThan(1000);
+    await blocker.query('rollback');
+   }
+  }finally{await blocker.query('rollback');await blocker.end();await db.close();}
+ },120000);
+ it.each(['suspend','erase'] as const)('caller %s racing a phase denies deterministically in both commit orders',async(kind)=>{
+  const db=await setup(mode);let locker:Client|undefined,writer:Client|undefined;
+  const mutate=async(c:Client)=>{
+   if(kind==='suspend')await c.query("update public.profiles set status='suspended' where user_id=$1",[id(3)]);
+   else{await c.query("select set_config('request.jwt.claim.sub',$1,true)",[id(1)]);await c.query('select assess.erase_account_d3_v1($1)',[id(3)]);}
+  };
+  try{
+   await db.rpc(1,'emergency_alternate_set_v1',[id(3)]);await db.rpc(3,'emergency_stop_v1',[id(900)]);
+   // Emergency first: caller SHARE and appointment locks survive the RPC until COMMIT.
+   locker=await session(db,3);const pid=(await locker.query('select pg_backend_pid() pid')).rows[0].pid;
+   await locker.query('select public.emergency_stop_phase_v1($1::uuid,1::smallint)',[id(900)]);
+   writer=await db.connect();await writer.query('begin');const pending=mutate(writer);
+   await waitForBlock(db,pid);await locker.query('commit');await pending;await writer.query('rollback');
+   // Mutation first: the old committed identity may pass the cheap check, but
+   // must be rejected after waiting for the profile/capacity lock and COMMIT.
+   await writer.query('begin');await mutate(writer);const writerPid=(await writer.query('select pg_backend_pid() pid')).rows[0].pid;
+   const denied=db.rpc(3,'emergency_stop_phase_v1',[id(900),2]).catch(error=>error);
+   await waitForBlock(db,writerPid);await writer.query('commit');expect(await denied).toMatchObject({code:'42501'});
+   expect(await db.rpc(3,'emergency_access_v1')).toBe(false);
+  }finally{if(locker){await locker.query('rollback');await locker.end();}if(writer){await writer.query('rollback');await writer.end();}await db.close();}
+ },120000);
+ it.each(['suspend','c2-erase'] as const)('appointment target SHARE precedes appointment wait and serializes %s until COMMIT',async(kind)=>{
+  const db=await setup(mode);let appointment:Client|undefined,setter:Client|undefined,writer:Client|undefined;
+  try{
+   await db.admin.query('alter table auth.users add column banned_until timestamptz');
+   await db.rpc(1,'emergency_alternate_set_v1',[id(3)]);
+   appointment=await session(db,1);await appointment.query('select public.emergency_alternate_remove_v1()');
+   const appointmentPid=(await appointment.query('select pg_backend_pid() pid')).rows[0].pid;
+   setter=await session(db,1);const setterPid=(await setter.query('select pg_backend_pid() pid')).rows[0].pid;
+   const setting=setter.query('select public.emergency_alternate_set_v1($1)',[id(3)]);
+   await waitForBlock(db,appointmentPid);
+   writer=await db.connect();await writer.query('begin');
+   await writer.query("select set_config('request.jwt.claim.sub',$1,true)",[id(1)]);
+   const writerPid=(await writer.query('select pg_backend_pid() pid')).rows[0].pid;
+   const mutation=async()=>{
+    if(kind==='suspend')await writer!.query("update public.profiles set status='suspended' where user_id=$1",[id(3)]);
+    else{
+     await writer!.query("select public.owner_account_deletion_v1('deactivate',$1)",[id(3)]);
+     await writer!.query("update public.c2_account_deletions set requested_at=clock_timestamp()-interval '31 days' where user_id=$1",[id(3)]);
+     await writer!.query("select public.owner_account_deletion_v1('finalise')");
+    }
+   };
+   const changing=mutation();await waitForBlock(db,setterPid);
+   await appointment.query('commit');await setting;
+   // Locks survive function return, including the target row and shared capacity.
+   expect((await db.admin.query('select $1=any(pg_blocking_pids($2)) blocked',[setterPid,writerPid])).rows[0].blocked).toBe(true);
+   await setter.query('commit');await changing;await writer.query('commit');
+   expect(await db.rpc(3,'emergency_access_v1')).toBe(false);
+  }finally{for(const c of [appointment,setter,writer])if(c){await c.query('rollback');await c.end();}await db.close();}
+ },120000);
+ it('target suspension committed before appointment is rejected after the profile wait',async()=>{
+  const db=await setup(mode);const writer=await db.connect();
+  try{
+   await writer.query('begin');await writer.query("update public.profiles set status='suspended' where user_id=$1",[id(3)]);
+   const pid=(await writer.query('select pg_backend_pid() pid')).rows[0].pid;
+   const setting=db.rpc(1,'emergency_alternate_set_v1',[id(3)]).catch(error=>error);
+   await waitForBlock(db,pid);await writer.query('commit');expect(await setting).toMatchObject({code:'22023'});
+   expect((await db.admin.query('select revision from emergency.appointment')).rows[0].revision).toBe('0');
+  }finally{await writer.query('rollback');await writer.end();await db.close();}
+ },120000);
  it('missing M09 prerequisite aborts the whole migration without creating objects',async()=>{
   const db=await catalogueFixture(mode);
   try{
@@ -163,7 +269,8 @@ describe.each(modes)('RAD059 revocation, deadlines and privacy %s',mode=>{
   try{
    await db.admin.query('alter role assess_job_a login;grant assess_worker to assess_job_a with admin false,inherit false,set true;');
    const params=(db.admin as unknown as {connectionParameters:{host:string;port:number;database:string}}).connectionParameters;
-   worker=new Client({host:params.host,port:params.port,database:params.database,user:'assess_job_a',password:'',ssl:false});worker.on('error',()=>{});await worker.connect();await worker.query('set role assess_worker');
+   const password=mode==='supabase17'?await syntheticWorkerPassword():'';
+   worker=new Client({host:params.host,port:params.port,database:params.database,user:'assess_job_a',password,ssl:false});worker.on('error',()=>{});await worker.connect();await worker.query('set role assess_worker');
    other=await db.connect();const otherPid=(await other.query('select pg_backend_pid() pid')).rows[0].pid;
    await db.rpc(1,'emergency_alternate_set_v1',[id(3)]);await db.rpc(3,'emergency_stop_v1',[id(900)]);
    for(let phase=1;phase<=4;phase++)await db.rpc(3,'emergency_stop_phase_v1',[id(900),phase]);
