@@ -1388,3 +1388,36 @@ Authority: owner task prompt; [closure evidence and cleanup report](TEST_CLEANUP
 6 = yes, new witnesses: (a) missing golden must FAIL. In the 7 scene-dom tests, a missing baseline file fails with a clear message; writing stays only behind the explicit UPDATE_* env var. No existing hash or golden file changes. (b) A negative witness for session-account: a namespace import (`import * as x` … `x.useAccount()`) outside SessionGate must be caught; extend the guard minimally if it is not. (c) A finalize-headers test on a temporary out/ directory. (d) security-rehearsal.test.mjs full wiring is OUT of this batch (separate later scope). The rehearseM09 witness is already merged (#203); do not redo it.
 7 = A: Deploy Pages stays independent. No deploy workflow change.
 8 = yes: this batch.
+
+<a id="rad059-alternate-owner-2026-11-02"></a>
+### RAD-059 emergency alternate and owner evidence — 2026-11-02
+Authority: owner's task prompt, recorded verbatim below; supersedes conflicting recommendations in the remaining plan. Implementation/evidence: [report](RAD-059_ALTERNATE_REPORT_2026-11-02.md).
+1. Channels = A: email to owner AND alternate (GCP budget email, Cloud Monitoring email policies, manual Supabase Usage reads + email); phone mail notifications on. No paid service.
+2. N = 30 minutes: no human ACK from the owner within 30 min of a signal → the alternate runs the stop. Critical incidents: whoever detects starts containment immediately, no waiting.
+3. Option C: one in-app alternate (normal approved RAD-LAB account) with a server-side stop-only function. It CANNOT pause/cancel Google Cloud; the owner does the cloud steps from the phone (Scheduler Pause / Executions Cancel / Secret versions Disable per RAD-059_PHONE_RUNBOOK). A NOLOGIN worker cannot use the database.
+4. Revocation = A: NOLOGIN + secret DISABLED + terminate sessions + wait ≥120 s + prove the OLD credential is rejected via the same session pooler path. No rotation, no secret Enable.
+5. Revocation proof runs on the LIVE project (no separate non-prod project), carefully, in a later laptop window: read-only pre-checks; ONE connection attempt with the old worker credential from the laptop; no new roles; no secret Enable. If the old credential is not already available locally → record "Not run", never Enable the secret to obtain it. If accepted → terminate immediately, keep everything closed, record FAILED.
+6. Documentation: every TEST signal, human ACK (reply `ACK / id / UTC / owner|alternate / action / next check`), alternate stop and absence drill is logged in a protected encrypted local log (RAD-086 style). Git gets only redacted times/results — no emails, names, numbers or UUIDs.
+7. No third backup copy: live DB + daily encrypted laptop backup (RAD-086) suffice; the one-laptop risk is accepted (closes the "re-decide before first exam" item).
+8. CORRECTION to the M09 window record: the P5 v2 phone copy/paste dry run was already proven by the owner on 2026-11-01 (see RAD-059 status/P10 evidence). Close the OPEN ITEM recorded by #205.
+9. RAD-085 P5 closed: owner deleted the unencrypted DB-day backup copy, old schema/roles dumps, an old repo clone, and an old attempts CSV found in a Windows recycle bin. Kept: encrypted backup store, backup runner clone, M09 evidence folder (no personal data). No remaining RAD-LAB CSV found.
+10. RAD-085 P1 provider evidence (owner, Supabase dashboard + read-only SQL Editor): auth.audit_log_entries = 0 rows; auth.flow_state = 0 rows; refresh-token rows for deleted users = 0; flow_state orphans = 0; plan FREE: external logs retention 24 h max (longer ranges locked); no provider backups on FREE. If the plan is upgraded later, Terms/retention text must be revisited.
+11. Launch checklist item: FREE projects pause after ~1 week of inactivity — check before launch.
+
+<a id="rad059-protocol-review-owner-2026-11-02"></a>
+### RAD-059 — guard exception and phased protocol review, 2026-11-02
+Authority: owner's replies to the two implementation questions; [concrete protocol for review](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#protocol-for-review--not-approved-for-implementation).
+Allow narrowly pinned guard expectations: only the exact RAD-059 deferred filename/SHA/reason expectations may change; all other assertions and the marker remain unchanged.
+Keep per-phase limits; review a multi-RPC stop protocol. This selects the review direction, not an overall-deadline replacement or permission to claim per-phase deadlines from function SET/set_config.
+The protocol below is a proposal awaiting review; no alternate migration, API, availability or UI is implemented in this batch. Existing decisions1–11 remain binding.
+
+<a id="rad059-implementation-owner-2026-11-02"></a>
+### RAD-059 — implementation decisions 12–14, 2026-11-02
+Authority: owner's continuation of PR #207; recorded verbatim. Supersedes the unresolved deadline/retention items in the earlier protocol proposal.
+12. Per-phase time bound = the existing Supabase per-request limit for logged-in users (authenticated role statement_timeout, 8 s by default) — NOT a new 5 s setting. Do not change any role/database/PostgREST setting. lock_timeout stays 2 s, set on each phase function (prove with a real-PostgreSQL test that a function-level lock_timeout does bound a lock wait inside that RPC). Each phase is its own RPC/transaction, as in the multi-RPC protocol already chosen.
+   - Local tests must simulate PostgREST faithfully: each phase call runs in its own transaction with `SET LOCAL statement_timeout` taken from the authenticated role config BEFORE the RPC SELECT; prove a slow phase is cancelled at that bound and earlier phases stay committed (result PARTIAL).
+   - The live laptop runbook adds a read-only preflight: confirm the authenticated role's statement_timeout exists and is ≤ 8 s; if absent or larger → STOP (no setting change).
+13. Audit retention: the stop/appoint/remove audit follows the same retention as other pilot data (deleted within 6 months after the pilot ends, per Terms). If the alternate's account is erased, the actor reference is set to NULL and the event stays (no new tombstone); prove this with a test through the existing erasure path.
+14. Closure to record: RAD-062 5b — #206 merged, CI (4 lanes) and Deploy green on main; owner phone check 2026-11-02 OK: grading entry visible to the owner, empty queue message, layout fine. RAD-062 stays open only for the P2 consent disclosure (gate prerequisite) and the remaining launch items.
+
+Owner exception on PR #207: ONLY line8 of `src/features/assess/manual-grading-availability.test.ts` may replace `toEqual({})` with the exact single RAD-059 deferred entry (filename/SHA/reason/serverModules); all other bytes and manual-grading files remain unchanged. Report the before/after line; deferred does not change the marker. The later promotion PR restores this line to `toEqual({})`.

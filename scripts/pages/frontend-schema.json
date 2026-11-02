@@ -47,7 +47,15 @@
     "supabase/checks/owner-deletion-surveys-ready.sql",
     "supabase/checks/rad062-m09-ready.sql"
   ],
-  "deferredMigrations": {},
+  "deferredMigrations": {
+    "20261102000200_rad059_emergency_alternate.sql": {
+      "sha256": "4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610",
+      "reason": "RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.",
+      "serverModules": [
+        "src/features/assess/rad059-alternate.test.ts"
+      ]
+    }
+  },
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
@@ -72,7 +80,7 @@
     "src/features/pilot/OwnerDirectory.tsx": "6366210e4d150e53af4415d639729e5684e25966d18cac3cbcb9b641b0874032",
     "src/features/pilot/OwnerActivity.tsx": "9ebd86037a0874fb366b42e0718348cec62ea2a9a368b48a4395c82e544c7f1d",
     "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
-    "src/features/pilot/OwnerPanel.tsx": "af817f0c4b38d9da149b2af32db88069f4930d43bf721ef493bb469a10476a57",
+    "src/features/pilot/OwnerPanel.tsx": "c302104f4ce9d9213d312c197a0c470fd78e0b0512bfa5be1d2b2a3639d78e55",
     "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
     "src/features/pilot/c2-contract.ts": "bbf1d8373042124ba88b5e7b59052dc1c55466972bf3cdfdcf54b448389972ec",
     "src/features/assess/OwnerAssessPanel.tsx": "5a930f2898549d14b651a961fbf5d4fd3be64440de5b55a6a342aa606dcee5f8",
@@ -165,6 +173,23 @@
         "20261030000600_rad062_lifecycle_v2.sql": "accc596ef048465249ed1cd431a5e06d81d70ae9f4c83211aa9b4d7456d01580",
         "20261030000700_rad062_manual_grading.sql": "e88c2528f08e27cb9255e2f59551fa3e5e6f2232708d3676b9fff549887f2624",
         "20261030000800_rad062_erasure_operations.sql": "b1db1c4f7e30fa662c00cef03d7cb3dec898b61e904e2c9c752b1773442cdccd"
+      }
+    },
+    "emergencyAlternate": {
+      "migrations": [
+        "20261102000200_rad059_emergency_alternate.sql"
+      ],
+      "guard": {
+        "path": "src/features/emergency/availability.ts",
+        "symbol": "EMERGENCY_AVAILABLE",
+        "sha256": "2d9f0bce02f0dfb5cfb6d82b8146173c435ee2543fe37d01b4c08b3cdc6e66de"
+      },
+      "boundaries": {
+        "src/features/emergency/browser-adapter.ts": "bf2824776e358dc44fda15c1dd28ec211f0e4c4e41585b18ec02ad658cc348ab"
+      },
+      "consumer": {
+        "path": "src/features/emergency/EmergencySession.tsx",
+        "sha256": "e04626cc50e57215f4690365ace6afae86aede91a221c497b31b15c3774e9e73"
       }
     }
   }

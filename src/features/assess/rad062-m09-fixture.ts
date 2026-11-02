@@ -2,6 +2,7 @@
 import { afterAll } from 'vitest';
 import { Client } from 'pg';
 import { execFileSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import { chmodSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -58,6 +59,39 @@ async function startContainer() {
   }
   throw Error('M09 Supabase17 startup failed');
  } catch (e) { removeContainer(name, socket); throw e; }
+}
+// Only the synthetic worker-login witness uses this, only on the isolated PG17
+// cluster. Secret travels over stdin, never argv/files/log output or error text.
+export async function syntheticWorkerPassword() {
+ if (!container) throw Error('synthetic worker cluster not started');
+ const { name } = await container;
+ const password = randomBytes(32).toString('hex');
+ const admin = (input: string) => execFileSync('docker', ['exec', '-i', name, 'psql', '-X', '-At', '-v', 'ON_ERROR_STOP=1', '-U', 'supabase_admin', '-d', 'rad_restore', '-f', '-'],
+  { input, encoding: 'utf8', stdio: 'pipe', timeout: 10000 }).trim();
+ try {
+  // psql -f dispatches logging suppression BEFORE the credential statement.
+  admin(`set log_statement='none';
+set log_min_error_statement='panic';
+set password_encryption='scram-sha-256';
+alter role assess_job_a password '${password}';`);
+  const hba = admin('show hba_file;');
+  if (!/^\/[A-Za-z0-9_./-]+$/.test(hba) || hba.includes('..')) throw Error('invalid synthetic hba path');
+  execFileSync('docker', ['exec', '-i', '--user', '0', name, 'sh', '-s', '--', hba], { input: `set -eu
+cp -p "$1" "$1.rad059"
+{ printf '%s\n' 'local rad_restore assess_job_a scram-sha-256'; cat "$1"; } > "$1.rad059"
+mv "$1.rad059" "$1"
+`, stdio: 'pipe', timeout: 10000 });
+  const loaded = admin('select pg_conf_load_time();');
+  if (admin('select pg_reload_conf();') !== 't') throw Error('synthetic hba reload failed');
+  let reloaded = false;
+  for (let n = 0; n < 100; n++) {
+   if (admin('select pg_conf_load_time();') !== loaded) { reloaded = true; break; }
+   await new Promise(resolve => setTimeout(resolve, 10));
+  }
+  if (!reloaded) throw Error('synthetic hba reload not observed');
+  if (admin("select count(*)=1 from pg_hba_file_rules where rule_number=1 and type='local' and database=array['rad_restore'] and user_name=array['assess_job_a'] and auth_method='scram-sha-256' and error is null;") !== 't') throw Error('synthetic hba rule missing');
+  return password;
+ } catch { throw Error('synthetic worker socket authentication setup failed'); }
 }
 afterAll(async () => {
  if (container) {

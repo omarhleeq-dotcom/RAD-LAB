@@ -16,6 +16,7 @@ import type { DirectoryPerson } from "./owner-dashboard-data";
 import { useC2Adapter } from "./C2Session";
 import { OwnerDeletion } from "./OwnerDeletion";
 import { OwnerSurveys } from "./OwnerSurveys";
+import {EmergencySession} from '@/features/emergency/EmergencySession';
 const tabs=["participants","training","assess"] as const;
 type Tab=typeof tabs[number];
 function tabFromUrl():Tab {const v=new URL(location.href).searchParams.get("tab");return tabs.includes(v as Tab)?v as Tab:"participants";}
@@ -49,6 +50,7 @@ function OwnerPanelSession() {
  if(!isOwner)return <p role="alert" data-testid="owner-denied">{t("denied")}</p>;
  const when=(s:string|null)=>s?formatStamp(new Date(s)):t("never");
  return <section data-testid="owner-list" className="min-w-0 space-y-4">
+  <EmergencySession owner/>
   <nav aria-label={d("tabs")} className="flex flex-wrap gap-2">{tabs.map(s=><a key={s} href={`?tab=${s}`} aria-current={tab===s?"page":undefined} className={`${btn} ${tab===s?"bg-paper ring-2 ring-brand":""}`} onClick={e=>{if(e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;e.preventDefault();history.pushState(null,"",`?tab=${s}`);setTab(s);}}>{d(s)}</a>)}</nav>
   {tab==="participants"&&<>
    <div className="flex items-center justify-between gap-2"><h2 className="text-xl font-semibold">{t("participants")}</h2><button className={btn} onClick={()=>setVersion(v=>v+1)}>{t("refresh")}</button></div>

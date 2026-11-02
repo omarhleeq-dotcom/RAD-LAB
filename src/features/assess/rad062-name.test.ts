@@ -33,7 +33,15 @@ it('real bundled consumer loads only the reviewed name gate despite a tampered b
  finally{await act(async()=>root.unmount());delete globals.__rad062probe;delete globals.IS_REACT_ACT_ENVIRONMENT;}
  expect(readFileSync(feature.guard.path,'utf8')).toContain('export const RAD062_AVAILABLE: boolean = true;');
  expect(readFileSync('src/features/supervisor/p1-availability.ts','utf8')).toContain('export const P1_AVAILABLE: boolean = true;');
- expect(manifest.deferredMigrations).toEqual({});
+ expect(manifest.deferredMigrations).toEqual({
+  "20261102000200_rad059_emergency_alternate.sql": {
+    "sha256": "4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610",
+    "reason": "RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.",
+    "serverModules": [
+      "src/features/assess/rad059-alternate.test.ts"
+    ]
+  }
+});
  expect(manifest.checks).toContain('supabase/checks/rad062-p1-b-m09-ready.sql');
  expect(manifest.checks).toContain('supabase/checks/rad062-m09-ready.sql');
  expect(manifest.checks).not.toContain('supabase/checks/rad085-p1-b-ready.sql');
