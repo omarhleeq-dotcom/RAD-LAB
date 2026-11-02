@@ -2,7 +2,7 @@
 
 ## 1. الانحرافات والميزانية
 
-Verified: هذه PR B مبنية على فرع [Draft A #211](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/211)، منفصلة عنه؛13 ملفًا من15.
+Verified: هذه PR B  [Draft #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213) مبنية على فرع [Draft A #211](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/211)، منفصلة عنه؛14 ملفًا من15.
 لا تُدمج قبل أدلة التطبيق الحي؛ تبقى Draft. لا SQL حي أو Variables أو GCP أو أسرار أو ready/merge في هذه الدفعة.
 
 ## 2. المنجز والمحذوف
@@ -25,6 +25,8 @@ local-database يضيف سقف historical-m09 المحدد لشواهد M09 فق
 readiness-diagnostic يبقى through latest وmanifest().checks؛ تهيئة slotيه شرطية لأن0200 يحتاج وجودهما مسبقًا.
 worker-rehearsal يهيئ نفس slotي الاختبار قبل تطبيق كامل required؛ لا استبدال للملفات الحالية أو تجميد لمسار الخدمة.
 Verified: اختبار الحراسة يثبت النسختين v3 وTerms والماركر؛ اختبار المتصفح يبقي غير الموافق مخفيًا ويصل للناقل بعد موافقته الحالية.
+Verified: pin الحارس emergency: `2d9f0bce02f0dfb5cfb6d82b8146173c435ee2543fe37d01b4c08b3cdc6e66de` → `f9649cd682ea017b4defa759291d8c120f33f85fc32c6733914896981bfb11e1` لتمكينه.
+Verified: pin الحارس review: `1df16a2913151a8d76ca6e169b2d88083ba945661f4a780a93957757b51e67c2` → `8cd3e5e8ead67310f0c3442d25462f5218a2070b3c04488d3b53cdc3d56cfee4` لتمكينه وتوضيح تعليق الترقية.
 Scale: لا خدمة جديدة أو حد أو مؤقت؛ جميع إضافات الأدوار محصورة في بيئات الاختبار المعزولة.
 
 ## 5. الطب والتقييم
@@ -37,13 +39,19 @@ v2 لا تمنح التصحيح بعد0300؛ يلزم قبول v3 شخصيًا �
 Verified: اشتقاق مستقل من URL وملفات required مرتبة وبايتاتها ثم checks بترتيبها؛ طابق إخراج pilot-schema-gate:
 `pilot-v1:a3d6a4050f7d7a232bea9dac5f8bdeacb1ef5baec6bef5cd6091fed89bb65123`
 Verified: شاهد explicit latest ينشئ الكتالوج الحالي ويثبت consent_v3 وكل default checks التسعة؛1/1 دون skip.
-Not run (قيد التنفيذ): typecheck وlint وunit وDB بالوضعين وbuild وbuild:pages؛ تُحدّث الأدلة قبل التسليم.
+Verified: typecheck وlint؛ التحذيران السابقان فقط؛ unit2517/2517 وbuild ناجحة.
+Verified: شواهد الحارسين والماركر ونسخ الموافقة3/3؛ جميعها على كود الترقية النهائي.
+Verified: build:pages ناجحة.
+Not run (قيد التنفيذ): DB بالوضعين؛ تُحدّث الأدلة قبل التسليم.
+Verified: شاهد COMMIT ACK التاريخي تجاوز مهلة120ث تحت الحمل في التشغيل الكامل؛ نجح دون تغيير منفردًا في61.63ث.
+Verified: حُدثت فقط إحالة check القديمة في اختبار محو M08 إلى successor الترقية؛ بقية تأكيداته محفوظة.
 Not run (env): Supabase17 والصورة المشفرة؛ `No such image: supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`.
 تنزيلها فشل في التجهيز بـ`failed to register layer: no space left on device`؛ يعيد المراجع الشاهد والوضعين؛ لا skip أو رفع للمهلة.
 Inferred: schema gate الخاص بالنشر سيرفض الماركر الحي القديم حتى إجراء المالك المنسق؛ هذا رفض متوقع، لا إذن لتجاوزه.
 
 ## 7. المفتوح
 
+Not run (env): docs:test أعطى120 نجاحًا و6 إخفاقات إعداد: psql و/usr/lib/postgresql مفقودان وصورتا17 غير متاحتين؛ دون skip.
 يلزم CI أخضر على الرأس النهائي، بما فيه الشاهد المشفر وSupabase17، ومراجعة أدلة live0200/0300 والإبطال والاحتواء قبل الدمج.
 Not run (scope): SQL حي، اعتماد قديم حي، Variables، GCP، أسرار، نشر يدوي أو فحص هاتف؛ كلها للمالك في النافذة المصرح بها.
 سؤالا AGENTS: هل تغيّر حكم مختصر؟ **لا؛ لم نختصر قاعدة قائمة.** هل بقي رابط الدليل الأصلي؟ **نعم؛ روابط M09 و0200 و0300 في الدليل الموحد.**
