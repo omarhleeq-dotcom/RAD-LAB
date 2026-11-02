@@ -3,6 +3,8 @@ import { ReviewError, type Command, type Query, type ReviewAdapter, type Snapsho
 import { copy, type ReviewCopy } from './copy';
 import { control, JoinCodePanel, SupervisorReview } from './SupervisorReview';
 import { createSyntheticReview } from './synthetic';
+// P4: owner approval required for this maximum age; expiry only hides data.
+export const SUPERVISOR_DATA_TTL_MS = 15 * 60 * 1000;
 type Props = { adapter: ReviewAdapter; actorId: string; groupId?: string; selectGroup: (id: string) => void; locale: 'en' | 'ar'; text?: ReviewCopy; ownerAppointments?: (act: (command: Command) => void) => ReactNode };
 export function ReviewSession(props: Props) {
  return <Session key={props.actorId} {...props}/>;
@@ -15,7 +17,7 @@ function Session({ adapter, actorId, groupId, selectGroup, locale, text, ownerAp
  const query = useMemo<Query>(() => ({ ...pages, actorId, groupId,
   ...(pages.groupId !== groupId ? { requestsCursor: undefined, membersCursor: undefined, resultsCursor: undefined } : {}),
  }), [pages, actorId, groupId]);
- const [loaded, setLoaded] = useState<{ value: Snapshot; adapter: ReviewAdapter; query: Query; revision: number }>(), [error, setError] = useState<string>(), [busy, setBusy] = useState(false), [revision, setRevision] = useState(0), [receipt, setReceipt] = useState<{ code?: string; groupId?: string }>(), [confirming, setConfirming] = useState<Command>(), [success, setSuccess] = useState(false);
+ const [loaded, setLoaded] = useState<{ value: Snapshot; adapter: ReviewAdapter; query: Query; revision: number; loadedAt: number }>(), [error, setError] = useState<string>(), [busy, setBusy] = useState(false), [revision, setRevision] = useState(0), [receipt, setReceipt] = useState<{ code?: string; groupId?: string }>(), [confirming, setConfirming] = useState<Command>(), [success, setSuccess] = useState(false);
  const autoOpened = useRef(false);
  const data = loaded?.adapter === adapter && loaded.query === query && loaded.revision === revision ? loaded.value : undefined;
  const request = useRef<AbortController | null>(null), action = useRef<AbortController | null>(null), mounted = useRef(true), generation = useRef(0), applying = useRef(false);
@@ -34,24 +36,28 @@ function Session({ adapter, actorId, groupId, selectGroup, locale, text, ownerAp
    if (mounted.current && !controller.signal.aborted && version === generation.current) {
     if (!autoOpened.current && !groupId && actor?.role === 'supervisor' && value.groups.rows.length) {
      autoOpened.current = true; selectGroup(value.groups.rows[0]!.id);
-    } else setLoaded({ value, adapter, query, revision });
+    } else setLoaded({ value, adapter, query, revision, loadedAt: performance.now() });
    }
   }).catch(e => {
-   if (mounted.current && !controller.signal.aborted && version === generation.current) { setLoaded(undefined); if (e instanceof ReviewError && (e.reason === 'denied' || e.reason === 'expired')) setReceipt(undefined); setError(e instanceof ReviewError ? t[e.reason] : t.offline); }
+   if (mounted.current && !controller.signal.aborted && version === generation.current) { setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setSuccess(false); setError(e instanceof ReviewError ? t[e.reason] : t.offline); }
   });
   return () => { controller.abort(); };
  }, [adapter, query, revision, t, actor?.role, groupId, selectGroup]);
  useEffect(() => {
-  if (!data || !Number.isFinite(data.visibilityUntil)) return;
-  const started = performance.now();
+  if (!data || !loaded) return;
+  // Both deadlines start at the successful load, never at an effect rerun.
+  const visibilityAge = data.visibilityUntil - data.now;
+  const maxAge = actor?.role === 'supervisor' ? Math.min(SUPERVISOR_DATA_TTL_MS, visibilityAge) : visibilityAge;
+  if (!Number.isFinite(maxAge)) return;
   let timer: ReturnType<typeof setTimeout>;
   const tick = () => {
-   const remaining = data.visibilityUntil - data.now - (performance.now() - started);
+   const remaining = maxAge - (performance.now() - loaded.loadedAt);
    if (remaining > 0) { timer = setTimeout(tick, Math.min(remaining, 2147483647)); return; }
-   generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setError(t.expired);
+   generation.current++; request.current?.abort(); setLoaded(undefined); setReceipt(undefined); setConfirming(undefined); setSuccess(false);
+   setError(actor?.role === 'supervisor' && SUPERVISOR_DATA_TTL_MS < visibilityAge ? t.refreshToView : t.expired);
   };
   tick(); return () => clearTimeout(timer);
- }, [data, t]);
+ }, [data, loaded, actor?.role, t]);
  function chooseGroup(id: string) { if (id === (groupId ?? '')) return; autoOpened.current = true; generation.current++; request.current?.abort(); setLoaded(undefined); setConfirming(undefined); setError(undefined); selectGroup(id); }
  function refresh() { generation.current++; request.current?.abort(); setLoaded(undefined); setConfirming(undefined); setError(undefined); setRevision(v => v + 1); }
  async function execute(command: Command) {
