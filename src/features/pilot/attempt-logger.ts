@@ -8,6 +8,7 @@ import { evaluationComparison } from "@/features/evaluation/version";
 import type { EvaluationResult } from "@/features/evaluation/types";
 import type { ProfileStatus } from "./account-state";
 import { buildEventRow, buildAttemptRow, definitionVersion, splitCaseId, type Device } from "./attempt-record";
+import { reportWriteLimit } from "./WriteLimitNotice";
 import type { SavedAttempt } from "./saved-attempt";
 
 export type Snapshot = {
@@ -59,7 +60,8 @@ export function createAttemptLogger(deps: LoggerDeps) {
 
   const event = (type: string, payload: Record<string, unknown>) =>
     run(async (client) => {
-      await client.from("events").insert(buildEventRow(type, payload));
+      const {error}=await client.from("events").insert(buildEventRow(type, payload));
+      reportWriteLimit(error);
     });
 
   const ids = (c: RadCase) => {
@@ -106,7 +108,7 @@ export function createAttemptLogger(deps: LoggerDeps) {
       report({ id, status: "pending" });
       void run(async (client) => {
         const { error } = await client.from("attempts").insert(await row);
-        if (error) throw new Error("attempt not saved");
+        if (error) {reportWriteLimit(error);throw new Error("attempt not saved");}
       }).then((saved) => {
         if (attemptId === id) report({ id, status: saved ? "saved" : "unavailable" });
       });

@@ -20,7 +20,7 @@ export type Sent = Outcome<true>|{kind:'already'}|{kind:'closed'}|{kind:'stale'}
 export interface C2Adapter {
  directory(search:string,status:string,position:DirectoryPosition):Promise<Outcome<Directory>>;
  deletions(after:string|null):Promise<Outcome<Page<Deletion>>>;
- deletion(action:'deactivate'|'restore'|'finalise',user?:string):Promise<Outcome<number>>;
+ deletion(action:'deactivate'|'restore'|'finalise',user?:string):Promise<Outcome<number|{processed:number;blocked:string[];more:boolean;newPass:boolean}>>;
  versions(after:string|null):Promise<Outcome<Page<SurveyVersion>>>;
  rounds(after:string|null):Promise<Outcome<Page<Round>>>;
  answers(round:string,after:string|null,limit?:number):Promise<Outcome<Page<Answer>>>;

@@ -7,6 +7,7 @@ import { useId, useState, useSyncExternalStore } from "react";
 import { buildEventRow, buildFeedbackRow } from "./attempt-record";
 import { getPilotClient } from "./client";
 import { FEEDBACK_MAX, cleanNote, noteLength } from "./feedback";
+import { reportWriteLimit } from "./WriteLimitNotice";
 import { savedAttempt } from "./saved-attempt";
 
 type Phase = "idle" | "sending" | "sent" | "failed";
@@ -33,8 +34,9 @@ export function FeedbackBox({ examId }: { examId: string }) {
       setPhase("sent");
       setText("");
       // Event payload: ids only, never the text.
-      void Promise.resolve(client.from("events").insert(buildEventRow("feedback_sent", { exam_id: examId, attempt_id: attemptId }))).catch(() => undefined);
-    } catch {
+      void Promise.resolve(client.from("events").insert(buildEventRow("feedback_sent", { exam_id: examId, attempt_id: attemptId }))).then(({error})=>{reportWriteLimit(error);}).catch(() => undefined);
+    } catch (error) {
+      reportWriteLimit(error);
       setPhase("failed");
     }
   }

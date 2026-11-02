@@ -2,9 +2,10 @@
 import {useEffect,useState} from 'react';
 import {useTranslations} from 'next-intl';
 import {C2_FIRST,c2Button as btn,c2Field,safely,type C2Adapter,type Directory,type DirectoryPosition,type Deletion,type Outcome,type Page,type Person} from './c2-ui';
-/** Prepared UI only: the live OwnerPanel does not import this component. */
+/** Owner-only C2 management with explicit partial-finalise reporting. */
 export function OwnerDeletion({adapter,ownerId,onChanged}:{adapter:C2Adapter;ownerId:string|null;onChanged?:()=>void}) {
- const t=useTranslations('c2');
+ const t=useTranslations('c2'),disclosure=useTranslations('rad085Disclosure');
+ const [blocked,setBlocked]=useState<string[]>([]),[more,setMore]=useState(false);
  const [search,setSearch]=useState(''),[draft,setDraft]=useState(''),[status,setStatus]=useState('');
  const [position,setPosition]=useState<DirectoryPosition>(C2_FIRST),[after,setAfter]=useState<string|null>(null),[revision,setRevision]=useState(0);
  const [snapshot,setSnapshot]=useState<{key:string;directory:Outcome<Directory>;pending:Outcome<Page<Deletion>>}|null>(null);
@@ -22,13 +23,22 @@ export function OwnerDeletion({adapter,ownerId,onChanged}:{adapter:C2Adapter;own
  async function act(action:'deactivate'|'restore'|'finalise',id?:string) {
   if(busy)return;setBusy(true);setNotice('');
   const result=await safely(()=>adapter.deletion(action,id));
-  if(result.kind==='ready'){setNotice('changed');setConfirm(null);setAgreed(false);setPosition(C2_FIRST);setAfter(null);setRevision(v=>v+1);onChanged?.();}
+  if(result.kind==='ready'){
+   if(typeof result.data==='object'){
+    // A successful continuation must not hide the previous blocked batch.
+    if(result.data.newPass||result.data.blocked.length)setBlocked(result.data.blocked);
+    setMore(result.data.more);
+   }else setMore(false);
+   setNotice('changed');setConfirm(null);setAgreed(false);setPosition(C2_FIRST);setAfter(null);setRevision(v=>v+1);onChanged?.();
+  }
   else setNotice(result.kind==='unavailable'?'unavailable':'error');
   setBusy(false);
  }
  return <section aria-labelledby="c2-deletion-title" className="min-w-0 space-y-4 rounded-lg border border-line bg-panel p-4" data-testid="c2-deletion">
   <h2 id="c2-deletion-title" className="text-xl font-semibold">{t('deletionTitle')}</h2>
   {(!data||unavailable||error)&&<p role={error?'alert':'status'}>{t(!data?'loading':unavailable?'unavailable':'error')}</p>}
+  {blocked.length>0&&<div role="alert"><p>{disclosure('blocked')}</p><ul>{blocked.map(id=><li key={id}><bdi className="break-all">{pending?.rows.find(p=>p.id===id)?.code??id}</bdi></li>)}</ul></div>}
+  {more&&<p role="status">{disclosure('more')}</p>}
   {notice&&<p role={notice==='error'?'alert':'status'}>{t(notice)}</p>}
   {!unavailable&&!error&&directory&&pending&&<>
    <form className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end" onSubmit={e=>{e.preventDefault();setSearch(draft.trim());setPosition(C2_FIRST);setConfirm(null);setAgreed(false);}}>

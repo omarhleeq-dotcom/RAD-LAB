@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { recoveryFromHash } from "./account-state";
 import { PILOT } from "./config";
+import { WriteLimitNotice } from "./WriteLimitNotice";
 import { PilotSessionKeeper } from "./PilotSessionKeeper";
 import { accountDestination, sessionAccess } from "./session-access";
 import { useAccount } from "./useAccount";
@@ -36,6 +37,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     <AccountContext.Provider value={{ ...account, recovery, consumeRecovery }}>
       {PILOT && account.state.kind === "signedIn" && <PilotSessionKeeper profileStatus={account.state.profile.status} />}
       <EmergencySession/>
+      <WriteLimitNotice identity={account.state.kind==="signedIn"?account.state.userId:null}/>
       {children}
     </AccountContext.Provider>
   );
