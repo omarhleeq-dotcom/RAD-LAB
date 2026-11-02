@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 408,
-  "updated_at": "2026-11-02T12:51:39.853Z",
+  "revision": 409,
+  "updated_at": "2026-11-02T16:55:06.472Z",
   "timezone": "UTC",
   "next_id": "RAD-094",
   "tasks": [
@@ -548,8 +548,8 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "review",
       "priority": "high",
-      "description": "خيارC خامل في Draft #207؛ أُصلح تنافس profiles وfixture العامل، والتحقق النهائي وحدود البيئة في التقرير. ينتظر مراجعة الإصلاح والقنوات/ACK وبروفة البديل ورفض الاعتماد القديم حيًا بعد≥120ث. بروفة P5v2 مثبتة؛ البوابة مغلقة والعاملNOLOGIN والسرDISABLED.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02",
+      "description": "دُمج #207: خيارC خامل و0200 مؤجلة؛ إصلاحات المراجعة متحققة على PG17 بإفادة المراجع التي نقلها المالك. ينتظر القنوات/ACK وبروفة البديل ورفض الاعتماد القديم حيًا بعد≥120ث. بروفة P5v2 مثبتة؛ البوابة مغلقة والعاملNOLOGIN والسرDISABLED.",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md#closure",
       "waiting_on": "owner",
       "done_when": "القنوات/ACK والبديل وإلغاء الاعتماد؛ إنهاء جلسات Supavisor وانتظار≥120ثانية ورفض القديم؛ بروفة P5v2 الهاتف مثبتة2026-11-01."
     },
