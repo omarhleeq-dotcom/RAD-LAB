@@ -3,6 +3,7 @@ import { OwnerDirectory } from "@/features/pilot/OwnerDirectory";
 import { ResultDisclosure } from "@/features/evaluation/ResultDisclosure";
 import { OwnerContentPanel } from "./OwnerContentPanel";
 import { OwnerAssignments } from "./OwnerAssignments";
+import { ManualGradingEntry } from './ManualGradingEntry';
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -133,6 +134,6 @@ export function OwnerAssessPanel() {
   const t=useTranslations("assessAdmin");
   return <section className="rounded-lg border border-line bg-panel p-4" aria-label={t("title")}>
     <h2 className="text-lg font-semibold">{t("title")}</h2>
-    <OwnerAssignments/><Administration/><OwnerContentPanel/>
+    <ManualGradingEntry/><OwnerAssignments/><Administration/><OwnerContentPanel/>
   </section>;
 }

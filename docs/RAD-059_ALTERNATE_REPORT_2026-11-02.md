@@ -3,7 +3,7 @@
 ## 1. الانحرافات والميزانية
 
 **خيار C غير منفذ.** اختار المالك مراجعة بروتوكول متعدد RPC بعد إثبات عائق المهلات؛ هذه الدفعة تحفظ التحضير والعمل المستقل، ولا تدعي إكمال التنفيذ.
-Verified — الفرع `rad059/emergency-alternate`؛ أول commit وثائق فقط لقرارات المالك والإغلاقات المعلقة. تحديث main حافظ على تغييرات #205؛ تحقق GitHub من أن #206 مفتوحة Draft، وملفات 5ب لم تُعدّل.
+Verified — الفرع `rad059/emergency-alternate`؛ أول commit وثائق فقط لقرارات المالك والإغلاقات المعلقة. تحديث main حافظ على تغييرات #205؛ تحقق GitHub أولًا من أن #206 مفتوحة، ثم وصلت مدموجة في main أثناء التسليم؛ دمجنا main دون تعديل ملفات 5ب، وحُفظت تحديثات RAD-062.
 النطاق الحالي 8 ملفات من سقف 28، بدل 19 المقترحة قبل العوائق؛ لا وحدات منتج مشتركة:
 
 - `docs/DECISIONS.md`
@@ -47,9 +47,9 @@ Verified — لا تعديل طبي أو احتساب درجات أو بيانا
 Verified — قراءة AGENTS/HANDOFF والمراجع، docs:context وstatus:summary للمهمتين، fetch main والتحقق من #206 دون subscribe/poll.
 Verified — PostgreSQL المضمّن: اختبار backlog بالأعمار الاصطناعية وheld وREAD ONLY وبقاء الصفوف، واختبار مهلات الدالة أدناه. أُصلح consent في fixture الجديدة فقط؛ لم يُعدّل اختبار سابق.
 Not run (env) — نمط Supabase17.11/ICU: `No such image: supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d`؛ التشغيل الكامل ذو النمطين فشل setup، وليس نجاحًا كاملًا.
-Verified — `npm run build` و`npm run build:pages` نجحا؛ Pages بلا public Variables: `NEXT_PUBLIC_SUPABASE_URL not set; CSP unchanged (connect-src 'self')`؛ لا دليل نشر أو اتصال حي.
+Verified (قبل دمج #206) — `npm run build` و`npm run build:pages` نجحا؛ Pages بلا public Variables: `NEXT_PUBLIC_SUPABASE_URL not set; CSP unchanged (connect-src 'self')`؛ لا دليل نشر أو اتصال حي.
 Not run (env) — بعض docs:test: `Required tool unavailable: psql (install the PostgreSQL client packages)` و`spawnSync age-keygen ENOENT`؛ أُطلق الأمر دون تخفيف التوقعات، وليس أخضر.
-Verified — شُغل `npm run check` كاملًا: typecheck/lint ناجحان بتحذيرين سابقين؛ 3298 اختبارًا ناجحًا و62 فشل setup في4ملفات للصورة المفقودة أعلاه، مع فشل teardown التابع لها. لا assertion فاشلة بعد نجاح setup؛ ليست check خضراء، ولا skip في التشغيل الكامل.
+Verified (قبل دمج main الأحدث الحاوي #206) — شُغل `npm run check` كاملًا: typecheck/lint ناجحان بتحذيرين سابقين؛ 3298 اختبارًا ناجحًا و62 فشل setup في4ملفات للصورة المفقودة أعلاه، مع فشل teardown التابع لها. لا assertion فاشلة بعد نجاح setup؛ ليست check خضراء، ولا skip في التشغيل الكامل.
 Verified — الحراس السابقة للنص والحساب والمخطط/الماركر وخصوصية المشرف والحزم وgoldens نجحت ضمن التشغيل الكامل؛ لم تتغير توقعاتها أو ملفاتها.
 Verified — docs:sync مرتان والثانية صفر تغيير؛ docs:check بصفر أخطاء وتحذيرات سقف، status:check --require-previous وgit diff --check ناجحان. احتاج docs:check صلاحية البيئة المدعومة بعد `spawnSync git EPERM` دون تعديل الفاحص.
 Not run (pending implementation) — owner/alternate flows وEN/AR390/1440 وaxe؛ لا واجهة جديدة لاختبارها، ولا حذف لمعيار قبول.

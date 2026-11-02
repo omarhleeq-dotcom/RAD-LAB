@@ -1,5 +1,7 @@
 "use client";
 import { AuthoringEntry } from "./AuthoringEntry";
+import { ManualGradingEntry } from './ManualGradingEntry';
+import { MANUAL_GRADING_AVAILABLE } from './manual-grading-availability';
 import { useSupervisorAppointment } from "../supervisor/P1Session";
 import { useEffect,useRef,useState,useSyncExternalStore } from "react";
 import { useLocale,useTranslations } from "next-intl";
@@ -77,12 +79,14 @@ function TrackSelection(){
 export function AssessPanel(){
  const {state}=useSessionAccount(),supervisor=useSupervisorAppointment(),t=useTranslations("assess"),a=useTranslations("assessImport");
  const author=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("author")==="1",()=>false);
+ const grading=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("grading")==="1",()=>false),g=useTranslations('manualGrading');
  return state.kind==="signedIn"&&state.profile.status==="approved"?<div key={state.userId}>
   <nav className="mt-5 flex flex-wrap gap-3" aria-label={t("sections")}>
+   {MANUAL_GRADING_AVAILABLE&&(supervisor||state.profile.role==="owner")&&<a className={button} href="?grading=1" aria-current={grading?"page":undefined}>{g('title')}</a>}
    {(supervisor||state.profile.role==="owner")&&<a className={button} href="?author=1" aria-current={author?"page":undefined}>{a("entry")}</a>}
    <a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a>
   </nav>
-  <Rad062Entry>{author?(supervisor||state.profile.role==="owner")&&<AuthoringEntry/>:<AssessView/>}</Rad062Entry>
+  <Rad062Entry>{grading?<ManualGradingEntry/>:author?(supervisor||state.profile.role==="owner")&&<AuthoringEntry/>:<AssessView/>}</Rad062Entry>
  </div>:<p className="mt-6">{t("approved")}</p>;
 }
 

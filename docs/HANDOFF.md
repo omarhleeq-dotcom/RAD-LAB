@@ -7,7 +7,7 @@
 - **الاتجاه الحالي:** قراراتRAD-059 وقنواتها وخطة الإبطال وقراءةbacklog؛ [التقرير](RAD-059_ALTERNATE_REPORT_2026-11-02.md) يبين أنC غير منفذة.
 - **ينتظر المالك:** مراجعة [بروتوكول المراحل](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#protocol-for-review--not-approved-for-implementation)؛ استثناء الحارسين مقبول؛ أدلةRAD-059 باقية.
 - **ينتظر مراجِعًا:** إعادة الفحوص المحجوبة؛ بروفةP5v2 مثبتة سابقًا، وRAD-085 P1/P5 مغلقتان بإفادة المالك في [القرارات](DECISIONS.md#rad059-alternate-owner-2026-11-02).
-- **مرجع Git:** `docs:context`؛ Draft فقط؛ #206 لشاشة5ب متوازية وخارج التعديل؛ نتائج تنظيفCI في [تقريره](TEST_CLEANUP_REPORT_2026-11-02.md).
+- **مرجع Git:** `docs:context`؛ Draft فقط؛ 5ب وصلت من main دون تعديل؛ [أدلة 5ب](RAD-062_PHASE5B_REJECTION_FIX_REPORT_2026-11-02.md) و[تنظيف CI](TEST_CLEANUP_REPORT_2026-11-02.md).
 - **مخاطر معلنة:** نافذةM09 مكتملة؛ البوابة مغلقة والعاملNOLOGIN والسرDISABLED؛ SQL الطوارئ الجديدة والواجهة لم تُنشآ، ولا إذن حي.
 
 ## المتابعة
