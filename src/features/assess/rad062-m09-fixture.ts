@@ -16,8 +16,9 @@ export const modes = ['embedded', 'supabase17'] as const;
 export type Mode = typeof modes[number];
 export const image = 'supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d';
 const docker = (args: string[]) => execFileSync('docker', args, { encoding: 'utf8', stdio: 'pipe', timeout: 120000 });
-let container: Promise<{ name: string; socket: string; password: string }> | undefined;
+let container: Promise<{ name: string; socket: string; password: string; startedAt: number; databasesCloned: number }> | undefined;
 async function startContainer() {
+ const startedAt = performance.now();
  const socket = mkdtempSync(join(tmpdir(), 'rad062-m09-')); chmodSync(socket, 0o777);
  const name = `rad062-m09-${process.pid}-${Date.now()}`;
  try {
@@ -30,10 +31,21 @@ async function startContainer() {
    if (docker(['logs', name]).includes('PostgreSQL init process complete; ready for start up.')) {
     try { docker(['exec', name, 'pg_isready', '-U', 'supabase_admin']); }
     catch { await new Promise(r => setTimeout(r, 1000)); continue; }
-    docker(['exec',name,'createdb','-U','supabase_admin','-O','postgres','-T','template0','rad_restore']);
+    docker(['exec',name,'createdb','-U','supabase_admin','-O','postgres','-T','template0','--encoding=UTF8','--locale-provider=icu','--icu-locale=en-US','--lc-collate=en_US.UTF-8','--lc-ctype=en_US.UTF-8','rad_restore']);
     const password = prepareSocketAuth(execFileSync, name, 'rad_restore');
-    docker(['exec',name,'dropdb','-U','supabase_admin','rad_restore']);
-    return { name, socket, password };
+    // Roles are cluster-global: migrate exactly once, then clone the closed M08
+    // catalogue. Keep synthetic users/groups and M09 out of the template.
+    const template = new Client({ host: socket, user: 'postgres', password, database: 'rad_restore', query_timeout: 10000 });
+    try {
+     await template.connect();
+     await template.query(`create schema auth; create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
+      create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
+      grant usage on schema auth to authenticated,anon; grant execute on function auth.uid() to authenticated,anon;`);
+     for (const f of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql') && f <= '20261030000800_rad062_erasure_operations.sql').sort()) await template.query(sql(f));
+    } finally { await template.end(); }
+    docker(['exec',name,'psql','-X','-v','ON_ERROR_STOP=1','-U','supabase_admin','-d','postgres','-c',
+     'alter database rad_restore rename to m09_template; alter database m09_template with is_template true allow_connections false;']);
+    return { name, socket, password, startedAt, databasesCloned: 0 };
    }
    await new Promise(r => setTimeout(r, 1000));
   }
@@ -41,12 +53,19 @@ async function startContainer() {
  } catch (e) { docker(['rm', '-fv', name]); rmSync(socket, { recursive: true, force: true }); throw e; }
 }
 afterAll(async () => {
- if (container) { const { name, socket } = await container; docker(['rm', '-fv', name]); rmSync(socket, { recursive: true, force: true }); }
+ if (container) {
+  const source = await container;
+  docker(['rm', '-fv', source.name]); rmSync(source.socket, { recursive: true, force: true });
+  // Includes image startup, the one template migration, all clones and teardown.
+  console.info('M09 Supabase17 fixture timing', JSON.stringify({ databasesCloned: source.databasesCloned, elapsedSeconds: (performance.now() - source.startedAt) / 1000 }));
+ }
 });
 async function dockerDatabase() {
- const { name, socket, password } = await (container ??= startContainer());
+ const source = await (container ??= startContainer());
+ const { name, socket, password } = source;
  const database = 'rad_restore';
- docker(['exec',name,'createdb','-U','supabase_admin','-O','postgres','-T','template0','--encoding=UTF8','--locale-provider=icu','--icu-locale=en-US','--lc-collate=en_US.UTF-8','--lc-ctype=en_US.UTF-8',database]);
+ docker(['exec',name,'createdb','-U','supabase_admin','-O','postgres','-T','m09_template','--encoding=UTF8','--locale-provider=icu','--icu-locale=en-US','--lc-collate=en_US.UTF-8','--lc-ctype=en_US.UTF-8',database]);
+ source.databasesCloned++;
  const connect = async () => { const c = new Client({ host: socket, user: 'postgres', password, database, query_timeout: 10000 }); await c.connect(); return c; };
  const admin = await connect();
  async function close() { await admin.end(); docker(['exec',name,'dropdb','--force','-U','supabase_admin',database]); }
@@ -60,10 +79,6 @@ async function dockerDatabase() {
   } catch (e) { await c.query('rollback'); throw e; } finally { await c.end(); }
  }
  try {
-  await admin.query(`create schema auth; create table auth.users(id uuid primary key,email text,email_confirmed_at timestamptz,raw_user_meta_data jsonb);
-   create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
-   grant usage on schema auth to authenticated,anon; grant execute on function auth.uid() to authenticated,anon;`);
-  for (const f of readdirSync('supabase/migrations').filter(f => f.endsWith('.sql') && f < '20261030000500').sort()) await admin.query(sql(f));
   for (const n of [1, 2, 3]) await admin.query('insert into auth.users values($1,$2,now(),$3)', [id(n), `synthetic${n}@example.invalid`, { display_name: 'SYNTHETIC Account Name' }]);
   await admin.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end", [id(1)]);
   await rpc(1, 'appointment_v1', [id(2), true]);
@@ -81,7 +96,8 @@ async function dockerDatabase() {
  } catch (e) { await close(); throw e; }
 }
 export async function catalogueFixture(mode: Mode) {
- const db = mode === 'embedded' ? await rad062Fixture(4) : await dockerDatabase();
+ if (mode === 'supabase17') return dockerDatabase();
+ const db = await rad062Fixture(4);
  try {
   for (const f of ['20261030000500_rad062_manual_foundation_freeze.sql', '20261030000600_rad062_lifecycle_v2.sql', '20261030000700_rad062_manual_grading.sql', '20261030000800_rad062_erasure_operations.sql']) await db.admin.query(sql(f));
   return db;

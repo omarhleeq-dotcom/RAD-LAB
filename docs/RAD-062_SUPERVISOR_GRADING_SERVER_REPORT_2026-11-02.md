@@ -4,7 +4,7 @@
 
 تنفيذ خادمي خامل وفق [التصميم المعتمد، القسم4 كاملًا](RAD-062_SUPERVISOR_GRADING_DESIGN_2026-11-02.md) و[قرار المالك](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02).
 Recorded (GitHub read): #198 مدموجة عبر GitHub؛ الفرع `rad062/supervisor-grading-server` من main المحدث؛ commit الأول توثيقي للموافقة1–9 و5=A وشرط الإتمام.
-الدفعة الأصلية13ملفًا؛ متابعة المالك2026-11-02 أعلنت6ملفات قبل تحريرها، وأضافت ملفي توقعات فقط: **15/22** إجمالًا؛ لا dependency أو workflow.
+الدفعة الأصلية13ملفًا؛ متابعة الاستثناء أضافت ملفي توقعات فقط: **15/22** إجمالًا. متابعة عيب الأدوار أعلنت fixture وهذا التقرير فقط؛ لا dependency أو workflow.
 القائمة: DECISIONS/project-status/HANDOFF، هذا التقرير، [الدليل](RAD-062_M09_LAPTOP_RUNBOOK.md)، [M09](../supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql)، [check الجديد](../supabase/checks/rad062-m09-ready.sql)، [fixture](../src/features/assess/rad062-m09-fixture.ts)، اختبارات [التفويض](../src/features/assess/rad062-supervisor-grading.test.ts)/[الأقفال](../src/features/assess/rad062-supervisor-locks.test.ts)/[الكتالوج](../src/features/assess/rad062-supervisor-catalogue.test.ts)، [البروفة](../scripts/assess/rad062-m09-rehearsal.mjs)، و[manifest](../scripts/pages/frontend-schema.json)؛ أضيف [اختبار يوم القاعدة](../scripts/docs/rad062-db-day.test.mjs) و[اختبار الاسم](../src/features/assess/rad062-name.test.ts) للاستثناء المحدد أدناه.
 Not run (env): سحب صورة Supabase17.11 المطابقة فشل `failed to register layer: no space left on device`؛ نجاح PG18 لا يعوضه؛ CI والمراجع حاجبان قبل الدمج/النافذة.
 
@@ -59,7 +59,16 @@ Inferred: توافق صورة الإنتاج والنسخة الحقيقية ي�
 
 Inferred (local follow-up; CI/reviewer pending): اجتاز شاهد يوم القاعدة المعدل محليًا1/1، واختبار الاسم7/7 وlint للملفين؛ أُثبت حرفيًا أن الفرق في كل ملف هو التوقع المحدد والتعليق فقط، وباقي الملفات خارج الستة ثابتة البايتات.
 Not run (env): docs:test في المتابعة116pass/8fail/0skip؛ زال فشل التوقع المحدد، وبقيت أدوات age/PG16 وصور Docker/الاستعادة محجوبة محليًا. امتلأ القرص أثناء البروفة (`No space left on device`)؛ حُذفت صورتها المحلية غير المستخدمة فقط لاستكمال الفحوص والدفع؛ لا تخفيف للفحص.
-Not run (CI): بإفادة المالك2026-11-02، نمط Supabase17.11/ICU لم يُشغل على PR #199 بعد؛ docs:test أوقف الوظيفة أولًا. CI هو المرجع لهذا النمط؛ لا انتظار أو polling هنا.
+Not run (CI, prior owner statement): توقف CI عند docs:test قبل نمط17.11؛ الإفادة التالية من المراجع تشغيل محلي لاحق على8b0c038، وليست نجاح CI. لا انتظار أو polling هنا.
+### متابعة fixture — عيب الأدوار العامة، 2026-11-02
+
+Verified (reviewer, 8b0c038): embedded نجح كله؛ Supabase17.11 المثبت مرّ بأول حالة لكل ملف ثم فشل57بـ`role "assess_worker" already exists`؛ السبب إعادة الترحيلات لكل قاعدة داخل الحاوية، لا M09.
+Inferred (fixture repair; production rerun pending): تُطبّق M01–M08 مرة واحدة لكل حاوية بلا بيانات أشخاص أو M09، ثم يغلق اتصال القالب ويُسمى m09_template ويُمنع الاتصال به. كل حالة تستنسخ قاعدة مستقلة وتزرع بياناتها وتطبق M09 صراحةً؛ لا catch/ignore للأدوار الموجودة.
+Inferred (local run, three files, no skip): embedded: catalogue8/8 + grading27/27 + locks25/25 =60pass/0fail؛ فحص manifest المستقل1pass. Supabase17:0pass/60setup-fail، موزعة8+27+25؛ لم تصل أي حالة إلى SQL في الحاوية لأن الصورة مفقودة.
+Not run (env): سحب digest المثبت فشل مجددًا بـ`failed to register layer: no space left on device` على Docker vfs؛ الزمن الكلي للمحاولة165.294ثانية، وembedded160.720ثانية مجموع الحالات. هذه ليست قياسًا صالحًا لزمن Supabase.
+Inferred (supplemental PG18 SQL only): قاعدتان مستنسختان من قالب M08 مغلق اجتازتا old readiness ثم M09 ثم new readiness، ودور assess_worker موجود مرة واحدة؛ لا دليل بديل على17.11/ICU. typecheck وlint نجحا محليًا.
+Not run (valid Supabase timing): الميزانية15دقيقة وmain≈11بإفادة المالك، فيبقى≈240ثانية؛ زمن الإضافة غير معلوم، ولا يجوز استنتاج ملاءمتها من فشل setup. سجل fixture الجديد `M09 Supabase17 fixture timing` يطبع عدد القواعد المستنسخة وزمن عمر الحاوية شاملًا بدءها وترحيل القالب والإزالة عند تشغيل صالح؛ CI timeout ثابت.
+
 ## 7 — المفتوح ومحفزات STOP
 
 اعتمد المالك2026-11-02 استثناء الموضعين الأصليين [rad062-db-day.test.mjs:91](../scripts/docs/rad062-db-day.test.mjs) و[rad062-name.test.ts:36](../src/features/assess/rad062-name.test.ts) فقط: deep-equal حرفي لإدخال M09 الوحيد، بالاسم وSHA `9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a` وreason وserverModules كما في manifest؛ بلا wildcard أو تعديل أي تأكيد آخر.
@@ -67,7 +76,7 @@ Not run (CI): بإفادة المالك2026-11-02، نمط Supabase17.11/ICU ل�
 
 أي فشل CI غير بيئي يحتاج إصلاحًا في Draft نفسها؛ فشل البيئة هنا لا يرفع شرط Supabase17/ICU أو يخفف مهلة/حارس/اختبار؛ المراجع يشغل الحزمة كاملة قبل الدمج.
 STOP عند أي drift/ACL/FK/anchor أو packet أو marker أو توقع قديم متغير خارج الاستثناء المسمى، أو حاجة توقيع/JSON/grant/table، أو تبعية جديدة أو تجاوز22؛ حزم الهاتف وlive خارج التعديل.
-لا ادعاء نجاح نسخة مشفرة مستعادة أو بيئة الإنتاج حتى إثباتها؛ شروط القنوات/ACK/البديل والحقوق/الخصوصية/الموافقة والنسخ المستقلة تبقى قبل التشغيل.
+تحقق17.11/ICU وإثبات زمن الإضافة مقابل هامش240ثانية حاجبان؛ STOP إذا تجاوز التقدير15دقيقة، بلا رفع مهلة CI. لا ادعاء نجاح نسخة مشفرة مستعادة أو بيئة الإنتاج حتى إثباتها؛ شروط القنوات/ACK/البديل والحقوق/الخصوصية/الموافقة والنسخ المستقلة تبقى قبل التشغيل.
 
 ## 8 — قائمة قرارات المالك الموحدة والمتابعة
 
