@@ -1403,3 +1403,10 @@ Authority: owner's task prompt, recorded verbatim below; supersedes conflicting 
 9. RAD-085 P5 closed: owner deleted the unencrypted DB-day backup copy, old schema/roles dumps, an old repo clone, and an old attempts CSV found in a Windows recycle bin. Kept: encrypted backup store, backup runner clone, M09 evidence folder (no personal data). No remaining RAD-LAB CSV found.
 10. RAD-085 P1 provider evidence (owner, Supabase dashboard + read-only SQL Editor): auth.audit_log_entries = 0 rows; auth.flow_state = 0 rows; refresh-token rows for deleted users = 0; flow_state orphans = 0; plan FREE: external logs retention 24 h max (longer ranges locked); no provider backups on FREE. If the plan is upgraded later, Terms/retention text must be revisited.
 11. Launch checklist item: FREE projects pause after ~1 week of inactivity — check before launch.
+
+<a id="rad059-protocol-review-owner-2026-11-02"></a>
+### RAD-059 — guard exception and phased protocol review, 2026-11-02
+Authority: owner's replies to the two implementation questions; [concrete protocol for review](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#protocol-for-review--not-approved-for-implementation).
+Allow narrowly pinned guard expectations: only the exact RAD-059 deferred filename/SHA/reason expectations may change; all other assertions and the marker remain unchanged.
+Keep per-phase limits; review a multi-RPC stop protocol. This selects the review direction, not an overall-deadline replacement or permission to claim per-phase deadlines from function SET/set_config.
+The protocol below is a proposal awaiting review; no alternate migration, API, availability or UI is implemented in this batch. Existing decisions1–11 remain binding.
