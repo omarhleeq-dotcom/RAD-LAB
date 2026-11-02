@@ -2,9 +2,17 @@
 
 ## 1. الانحرافات والميزانية
 
-Verified — استكمال Draft #210 على rad085/review-fixes؛ origin/main المحدّث سلف بالفعل ولا دمج إضافيًا لازمًا. إصلاح S1 داخل10 ملفات من ملفاتPR الثلاثين القائمة؛ صفر ملفات جديدة أو subagents/worktree. أول commit للدفعة الحالية توثيقي للإغلاقات أدناه؛ 0300 مؤجلة.
+Verified — استكمال Draft #210 على rad085/review-fixes؛ origin/main المحدّث سلف بالفعل ولا دمج إضافيًا لازمًا. إصلاح S1 السابق داخل10 ملفات من ملفاتPR الثلاثين؛ دفعة الاعتماد الحالية توثيقية وفق §1.a؛ بلا subagents/worktree و0300 مؤجلة.
 Verified — لا تعديل لأي ملف قائم تحت supabase، ولا للحزمتين المحميتين؛ الاستثناء الوحيد لتوقعات الاختبارات القائمة هو توسيع toEqual الدقيق في الملفات الثلاثة المسمّاة.
 Verified — توجيه المالك اللاحق حدّد ساعة فعلية عبر الواجهة وحصة ساعة/يوم؛ القياس الكامل هو أساس القيم أدناه، وليس بروفة smoke أو اختبار تكرار الوحدات.
+
+### 1.a استثناء الملف 31 وموافقة المالك
+
+Verified — وافق المالك صراحةً على إضافة docs/DECISIONS.md وحدها إلى نطاقPR؛31/31 ملفًا، وأي ملف إضافي يستلزم سؤالًا جديدًا. نص الموافقة:
+
+> Approved: file 31 = docs/DECISIONS.md only, for the verbatim owner decisions (S1 values, P2/P3 texts, TTL 900000, #208 merge/#209 closed records). No other new file; any further file needs a new question. Note the 31-file exception and this approval in the report §1.a
+
+Verified — ميزانية الدفعة خمسة ملفات توثيق قائمة: DECISIONS والتقرير والحالة وHANDOFF ودليل اللابتوب؛ صفر وحدات مشتركة. أول commit يسجّل القرارات الحرفية، بلا تغيير SQL أو manifest أو pins أو النصوص المعتمدة.
 
 ## 2. المنجز والمستبعد
 
@@ -14,7 +22,7 @@ Verified (إفادة المالك) — إصلاحات #207 تحقق منها ا�
 <a id="p4-d1-closure"></a>
 Verified — أول commit من دفعة إصلاح قفل S1 توثيقي فقط: أُغلق نطاق P4/D1 بعد [دمج #208](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/208) في2026-11-02T17:57:22Z بعد CI أخضر؛ تحقق GitHub وorigin/main متطابقان، و[دليله الأصلي](RAD-085_P4_D1_REPORT_2026-11-02.md) محفوظ.
 Verified (قرار المالك2026-11-02) — اعتماد `SUPERVISOR_DATA_TTL_MS = 900000`، أي15دقيقة؛ لا قرار مفتوح لهذه القيمة. RAD-085 تبقى review/owner لبقية الحقوق والخصوصية.
-Verified (إفادة المالك) — [#209](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/209) أُغلقت دون دمج؛ هذا السجل يحل محلها. قراءة GitHub المتاحة ما زالت تعرض open/unmerged؛ التعارض محفوظ ولا نغيّر حالتها عبر الأداة.
+Verified — [#209](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/209) أُغلقت دون دمج في2026-11-02T19:22:45Z؛ هذا السجل يحل محلها. قراءة الأداة السابقة عرضت open/unmerged؛ القراءة الحالية تطابق إفادة المالك وتغلق التعارض، دون تغيير حالتها عبر الأداة.
 Verified — أُضيفت [0300](../supabase/migrations/20261102000300_rad085_rights_write_disclosures.sql) و[successor](../supabase/checks/rad085-review-ready.sql) و[الفحص اليومي](../supabase/checks/rad085-erasure-health.sql) و[دليل اللابتوب](RAD-085_FIXES_LAPTOP_RUNBOOK.md). P4 وD1 خارج تنفيذنا وتحديثاتهما من main محفوظة؛ لا SQL حي أو نشر أو تغيير سر/دور/Variables.
 
 ## 3. بحسب المهمة
@@ -55,6 +63,8 @@ Verified — لا طب أو امتحانات أو مشاهد أو scoring/golden
 
 ## 6. QA وحدود الإثبات
 
+Verified — دفعة اعتماد المالك تغيّر الوثائق الخمس فقط؛ النصوص المقتبسة والقيم وبقية بايتات المنتج/SQL ثابتة مقارنةً بالرأس السابق. Not run (documentation only) — إعادة typecheck/lint/unit/DB والبناءين لهذه الدفعة؛ أدلة التنفيذ السابقة أدناه.
+
 Verified — focused embedded:43/43؛ تحت القفل الحصري events=14.67ms وattempts=8.90ms وfeedback=12.85ms؛ شواهد جديدة للمسارات الثلاثة تحت capacity حصري بأقل من500ms، وترتيبَي COMMIT لـD3 وR1 finalise، ورفض C2 بعد انتظار profile، وتزامن الحساب/المسار في COMMIT وROLLBACK وذرية الفشل متعدد الصفوف، ومراحل0200 الست بترتيبَي الدخول؛ اختبارات الحدود الأصلية unchanged.
 Not run (environment: Docker storage exhausted) — شواهد Supabase17 على الصورة المثبتة لم تُنفّذ: فشل pull مرتين بنفاد المساحة حتى بعد تفريغ cache الصور؛ digest ثابت بلا بديل أو تغيير fixtures. المسار الكامل الأول:901 ناجحًا و128 فشلًا، منها126 لغياب الصورة و2 timeout عند الحمل؛ نجح الاختباران منفردين بلا تغيير مهلة/توقع. إعادة المسار على الكود النهائي ناجحة أدناه؛ لا نجاح مُدّعى لـSupabase17.
 Verified — بعد focused النهائي شُغّل DB كاملًا للحالات المتاحة: `CI_TEST_LANE=db npm test -- --maxWorkers=1 -t '^(?!.*supabase17)'`؛116ملفًا و906/906 ناجحة، و129حالة Supabase17 مستبعدة صراحةً بسبب العائق أعلاه؛ لم يتغير أي توقع أو timeout قائم.
@@ -72,10 +82,12 @@ Verified — P4/D1 مغلقتان ومهلة15دقيقة معتمدة؛ [قرا�
 
 ## 8. قرارات المالك الموحدة
 
-1. **S1 — اعتماد القيم المقترحة**: ساعة واحدة عبر [السكريبت الفعلي](../scripts/qa/rad085-intensive-scenario.mjs)، طالب واحد/Chest PA/EN/1440؛ إعدادات قائمة بلا تعديل درجات، ملاحظة «OK» لكل محاولة، Retry فور إتمام الملاحظة، دون زمن تفكير أو انتظار بين الدورات. حركة1600px/s، ضغطة60ms وكتابة10 أحرف/s تمثل إدخالًا بشريًا سريعًا؛ النقل الاصطناعي لا يضيف زمن شبكة.
+Verified — اعتمد المالك S1 ونصي P2/P3 EN/AR حرفيًا عند1ebe90a؛ [السجل الحرفي وTTL والإغلاقات والاستثناء](DECISIONS.md#rad085-owner-approvals-2026-11-02). ترتيب النافذة والتحقق والترقية ما زال مستقلًا ومؤجلًا.
+
+1. **S1 — القيم المعتمدة**: ساعة واحدة عبر [السكريبت الفعلي](../scripts/qa/rad085-intensive-scenario.mjs)، طالب واحد/Chest PA/EN/1440؛ إعدادات قائمة بلا تعديل درجات، ملاحظة «OK» لكل محاولة، Retry فور إتمام الملاحظة، دون زمن تفكير أو انتظار بين الدورات. حركة1600px/s، ضغطة60ms وكتابة10 أحرف/s تمثل إدخالًا بشريًا سريعًا؛ النقل الاصطناعي لا يضيف زمن شبكة.
 Verified — البداية `2026-11-02T17:19:30.068Z`؛ نافذة العد3600ث بالضبط، وزمن إنهاء الدورة العابرة 3605.280ث؛ 660 ملاحظة داخل النافذة و661 دورة مكتملة إجمالًا. تُستبعد كتابات التهيئة وما بعد نهاية الساعة من الأعداد أدناه؛ أي دورة تعبر النهاية تُتم ملاحظتها دون تحريف العد.
 Verified — إعادة التشغيل بعد build: `node scripts/qa/rad085-intensive-scenario.mjs --tools /tmp/rad085-browser --out /tmp/rad085-intensive`؛ خيارsmoke ليس قياس الحصص.
-Inferred — هذا نموذج لإيقاع بشري سريع عبر عناصر التحكم الفعلية، وليس تجربة متطوع أو حدًا أعلى لكل جهاز/أسلوب. القيم قرار مالك صريح قبل التطبيق؛ اليوم = أربع ساعات مماثلة.
+Inferred — هذا نموذج لإيقاع بشري سريع عبر عناصر التحكم الفعلية، وليس تجربة متطوع أو حدًا أعلى لكل جهاز/أسلوب. القيم معتمدة بقرار المالك2026-11-02؛ اليوم = أربع ساعات مماثلة والتطبيق مؤجل.
 
 | المسار | الكتابات المقاسة/ساعة | الحصة/ساعة =5× | الحصة/يوم =20× |
 |---|---:|---:|---:|
@@ -89,9 +101,9 @@ Inferred — هذا نموذج لإيقاع بشري سريع عبر عناصر 
 ```
 <!-- RAD085-MEASUREMENT:END -->
 
-2. **P2 — اعتماد مسودة v3 التالية بالنص الكامل EN/AR**؛ تضم الفقرات الأربع التاريخية المعروضة من v2 بلا إعادة كتابة، ثم الإفصاح الكتابي الجديد. القبول شخصي جديد، ولا يُنشر النص قبل موافقة المالك وترقية الحارس.
+2. **P2 — نص v3 التالي معتمد كاملًا EN/AR كما في1ebe90a**؛ تضم الفقرات الأربع التاريخية المعروضة من v2 بلا إعادة كتابة، ثم الإفصاح الكتابي الجديد. القبول شخصي جديد؛ النشر مؤجل إلى ترقية الحارس.
 
-**EN — DRAFT**
+**EN — APPROVED / DEFERRED**
 
 > The first Assess pilot supports timed assessments only. Your history contains the assessment name, track, submission date, and mark and maximum when the assessment policy permits showing them. Results are deleted six calendar months after submission. Activity and export do not extend that period.
 >
@@ -103,7 +115,7 @@ Inferred — هذا نموذج لإيقاع بشري سريع عبر عناصر 
 >
 > For Assess written answers, your group supervisor grades your answers. The site owner may grade them through owner takeover when supervisor grading is unavailable. Grading must finish within 168 hours of submission; after that the attempt expires without a final grade. Free-text answers may reveal your identity, even when your name is hidden. Withdrawing sharing consent or leaving the group stops the supervisor from retrieving further data. Answers already open may remain visible until the current view expires or that page is closed or refreshed. Withdrawal does not by itself delete your answers or cancel an assigned exam. The owner may still grade within the same 168-hour window. Disabling Assess stops new attempts; retention and account deletion follow the policy above.
 
-**AR — مسودة**
+**AR — معتمد / مؤجل**
 
 > تجربة Assess الأولى للاختبارات المؤقتة فقط. يتضمن السجل اسم الاختبار ونوعه وتاريخ التسليم والعلامة ومجموعها؛ تظهر العلامة إذا سمحت سياسة الاختبار. تحذف النتائج بعد ستة أشهر تقويمية من التسليم، ولا يمدد النشاط أو التصدير هذه المدة.
 >
@@ -115,12 +127,12 @@ Inferred — هذا نموذج لإيقاع بشري سريع عبر عناصر 
 >
 > في الإجابات الكتابية في Assess، يصحح مشرف مجموعتك إجاباتك. ويمكن لمالك الموقع تصحيحها عبر استلام المالك للتصحيح عند تعذر تصحيح المشرف. يجب إتمام التصحيح خلال 168 ساعة من التسليم؛ وبعدها تنتهي المحاولة دون درجة نهائية. قد تكشف الإجابات الحرة هويتك، حتى عند إخفاء اسمك. سحب موافقة المشاركة أو مغادرة المجموعة يوقف جلب المشرف لبيانات جديدة. قد تبقى الإجابات المفتوحة مرئية حتى انتهاء صلاحية العرض الحالي أو إغلاق صفحتها أو تحديثها. ولا يحذف السحب إجاباتك أو يلغي اختبارًا مسندًا إليك بحد ذاته. وقد يستمر المالك في التصحيح ضمن مهلة 168 ساعة نفسها. تعطيل Assess يوقف المحاولات الجديدة؛ ويخضع الاحتفاظ وحذف الحساب للسياسة أعلاه.
 
-3. **P3 — اعتماد إضافة Terms التالية كما هي، وتاريخ موافقة Terms الجديد2026-11-02**؛ لا تضعف S3 أو تمنح الوصول إلى تاريخ التدريب.
+3. **P3 — إضافة Terms التالية معتمدة كما هي، وتاريخ موافقة Terms الجديد2026-11-02**؛ لا تضعف S3 أو تمنح الوصول إلى تاريخ التدريب.
 
-**EN — DRAFT**
+**EN — APPROVED / DEFERRED**
 > When you request to join a group, your name is shown to that group’s supervisor so they can approve or deny the request. The request alone does not give the supervisor access to your training history, answers or results. Only a pending request from an account still eligible to join is shown; historical requests do not reveal your identity.
 
-**AR — مسودة**
+**AR — معتمد / مؤجل**
 > عندما تطلب الانضمام إلى مجموعة، يظهر اسمك لمشرف تلك المجموعة ليوافق على الطلب أو يرفضه. ولا يمنح الطلب وحده المشرف وصولًا إلى سجل تدريبك أو إجاباتك أو نتائجك. لا يظهر إلا الطلب المعلق من حساب ما زال مؤهلًا للانضمام؛ ولا تكشف الطلبات التاريخية هويتك.
 
 4. **ترتيب نافذة اللابتوب**: بروفة الحالة الحديثة →M09 إن لم تكن مطبقة→0200 وفحصها→0300 وsuccessor الجديد، في النافذة نفسها. بعد الاعتماد والتحقق فقط تأتي PR ترقية منفصلة للنصوص/الإتاحة/manifest/attestation؛ لا إعادة تشغيل الفحوص القديمة ذات أجسام M09 بعد0300. [الخطوات اليومية والرفض والمصالحة](RAD-085_FIXES_LAPTOP_RUNBOOK.md).

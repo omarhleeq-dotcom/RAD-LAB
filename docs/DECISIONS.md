@@ -1421,3 +1421,20 @@ Authority: owner's continuation of PR #207; recorded verbatim. Supersedes the un
 14. Closure to record: RAD-062 5b — #206 merged, CI (4 lanes) and Deploy green on main; owner phone check 2026-11-02 OK: grading entry visible to the owner, empty queue message, layout fine. RAD-062 stays open only for the P2 consent disclosure (gate prerequisite) and the remaining launch items.
 
 Owner exception on PR #207: ONLY line8 of `src/features/assess/manual-grading-availability.test.ts` may replace `toEqual({})` with the exact single RAD-059 deferred entry (filename/SHA/reason/serverModules); all other bytes and manual-grading files remain unchanged. Report the before/after line; deferred does not change the marker. The later promotion PR restores this line to `toEqual({})`.
+
+
+<a id="rad085-owner-approvals-2026-11-02"></a>
+### RAD-085 — owner approvals and file 31 exception, 2026-11-02
+Authority: owner messages in this conversation, recorded verbatim below.
+
+> Owner decisions 2026-11-02 (record verbatim in DECISIONS in the first commit): S1 values approved as proposed (events 9955/h 39820/day; attempts 3300/h 13200/day; feedback 3300/h 13200/day); P2 and P3 EN/AR texts approved exactly as in PR #210 at 1ebe90a.
+
+> Approved: file 31 = docs/DECISIONS.md only, for the verbatim owner decisions (S1 values, P2/P3 texts, TTL 900000, #208 merge/#209 closed records). No other new file; any further file needs a new question. Note the 31-file exception and this approval in the report §1.a
+
+> #208 merged 2026-11-02T17:57Z after green CI. Verify this on origin/main.
+> Record the RAD-085 P4/D1 closure.
+> Record the owner decision SUPERVISOR_DATA_TTL_MS = 900000 (15 minutes).
+> #209 was closed unmerged by the owner; this record supersedes it.
+
+Verified: [#208](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/208) merged at17:57:22Z and is on origin/main; [#209](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/209) closed unmerged at19:22:45Z. P4/D1 closure and TTL approval stand; the earlier conflicting read is preserved in the [report](RAD-085_FIXES_REPORT_2026-11-02.md#p4-d1-closure).
+Approved P2/P3 wording is pinned to [the report at 1ebe90a](https://github.com/omarhleeq-dotcom/RAD-LAB/blob/1ebe90a8589776d17aa7bc83163bd9461d26d9bf/docs/RAD-085_FIXES_REPORT_2026-11-02.md#8-قرارات-المالك-الموحدة). SQL, promotion and live actions remain deferred.
