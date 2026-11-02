@@ -11,6 +11,10 @@ Verified — توجيه المالك اللاحق حدّد ساعة فعلية �
 <a id="closure"></a>
 Verified — أول commit يسجل [دمج #207](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/207) المتحقق من GitHub؛ خيارC خامل و0200 مؤجلة غير مطبقة.
 Verified (إفادة المالك) — إصلاحات #207 تحقق منها المراجع على PG17 حقيقي؛ هذه إفادة منقولة، لا إعادة تحقق منا. RAD-059 تبقى review/owner للقنوات/ACK والبروفة والإبطال الحي؛ [الأصل](RAD-059_ALTERNATE_REPORT_2026-11-02.md#review-fixes-2026-11-02).
+<a id="p4-d1-closure"></a>
+Verified — أول commit من دفعة إصلاح قفل S1 توثيقي فقط: أُغلق نطاق P4/D1 بعد [دمج #208](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/208) في2026-11-02T17:57:22Z بعد CI أخضر؛ تحقق GitHub وorigin/main متطابقان، و[دليله الأصلي](RAD-085_P4_D1_REPORT_2026-11-02.md) محفوظ.
+Verified (قرار المالك2026-11-02) — اعتماد `SUPERVISOR_DATA_TTL_MS = 900000`، أي15دقيقة؛ لا قرار مفتوح لهذه القيمة. RAD-085 تبقى review/owner لبقية الحقوق والخصوصية.
+Verified (إفادة المالك) — [#209](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/209) أُغلقت دون دمج؛ هذا السجل يحل محلها. قراءة GitHub المتاحة ما زالت تعرض open/unmerged؛ التعارض محفوظ ولا نغيّر حالتها عبر الأداة.
 Verified — أُضيفت [0300](../supabase/migrations/20261102000300_rad085_rights_write_disclosures.sql) و[successor](../supabase/checks/rad085-review-ready.sql) و[الفحص اليومي](../supabase/checks/rad085-erasure-health.sql) و[دليل اللابتوب](RAD-085_FIXES_LAPTOP_RUNBOOK.md). P4 وD1 خارج تنفيذنا وتحديثاتهما من main محفوظة؛ لا SQL حي أو نشر أو تغيير سر/دور/Variables.
 
 ## 3. بحسب المهمة
@@ -59,7 +63,7 @@ Not run (scope) — هاتف المالك، أي SQL/مزوّد حي، ACK وق�
 ## 7. المفتوح
 
 Inferred — يلزم المراجع إعادة مسار Supabase17 على الصورة المثبتة والرأس النهائي، ثم بروفة الاستعادة ونافذة المالك. لا يُعد الدمج إغلاقًا تشغيليًا لـRAD-085 أوRAD-059 ولا إذن فتح.
-Verified — لم تعدّل هذه الدفعة P4/D1؛ تغييرات [#208](RAD-085_P4_D1_REPORT_2026-11-02.md) الموروثة محفوظة، وقبول مهلة العرض وفق تقريرها. بقية شروط الإطلاق والخصوصية والقنوات في مصادرها.
+Verified — P4/D1 مغلقتان ومهلة15دقيقة معتمدة؛ [قرار المالك ودليل الإغلاق](#p4-d1-closure). بقية شروط الإطلاق والخصوصية والقنوات في مصادرها.
 
 ## 8. قرارات المالك الموحدة
 
