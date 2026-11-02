@@ -8,21 +8,8 @@ import { pathToFileURL } from 'node:url';
 import { Client } from 'pg';
 import { localeArgs } from '../ops/laptop-backup-lib.mjs';
 import { openLocalDatabase } from './local-database.mjs';
-import { apply, checks, manifest, readOnly, verifyMigrations, migrationState } from './rad062-db-day.mjs';
+import { apply, checks, M08_CHECKS, readOnly, verifyMigrations, migrationState } from './rad062-db-day.mjs';
 const image = 'postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382';
-// M01–M08 rehearsal: frozen pre-M09 checks
-const M08_CHECKS = [
-  "supabase/checks/training-ready.sql",
-  "supabase/checks/comparison-ready.sql",
-  "supabase/checks/assess-mixed-ready.sql",
-  "supabase/checks/assess-practical-ready.sql",
-  "supabase/checks/rad062-p1-b-ready.sql",
-  "supabase/checks/assess-history-ready.sql",
-  "supabase/checks/assess-retention-ready.sql",
-  "supabase/checks/owner-dashboard-ready.sql",
-  "supabase/checks/owner-deletion-surveys-ready.sql",
-  "supabase/checks/rad062-ready.sql"
-];
 function docker(args, input) {
   const env = { ...process.env };
   for (const key of ['DOCKER_HOST','DOCKER_CONTEXT','DOCKER_TLS','DOCKER_TLS_VERIFY','DOCKER_CERT_PATH']) delete env[key];
