@@ -3,9 +3,9 @@
 ## 1 — الانحرافات والميزانية
 
 تنفيذ خادمي خامل وفق [التصميم المعتمد، القسم4 كاملًا](RAD-062_SUPERVISOR_GRADING_DESIGN_2026-11-02.md) و[قرار المالك](DECISIONS.md#rad062-supervisor-grading-owner-2026-11-02).
-Verified: #198 مدموجة عبر GitHub؛ الفرع `rad062/supervisor-grading-server` من main المحدث؛ commit الأول توثيقي للموافقة1–9 و5=A وشرط الإتمام.
-أُعلنت12ملفًا ثم إضافة بروفة اللابتوب بالاسم قبل تحريرها: **13/22**، بلا استثناء اختبار قائم أو dependency أو workflow.
-القائمة: DECISIONS/project-status/HANDOFF، هذا التقرير، [الدليل](RAD-062_M09_LAPTOP_RUNBOOK.md)، [M09](../supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql)، [check الجديد](../supabase/checks/rad062-m09-ready.sql)، [fixture](../src/features/assess/rad062-m09-fixture.ts)، اختبارات [التفويض](../src/features/assess/rad062-supervisor-grading.test.ts)/[الأقفال](../src/features/assess/rad062-supervisor-locks.test.ts)/[الكتالوج](../src/features/assess/rad062-supervisor-catalogue.test.ts)، [البروفة](../scripts/assess/rad062-m09-rehearsal.mjs)، و[manifest](../scripts/pages/frontend-schema.json).
+Recorded (GitHub read): #198 مدموجة عبر GitHub؛ الفرع `rad062/supervisor-grading-server` من main المحدث؛ commit الأول توثيقي للموافقة1–9 و5=A وشرط الإتمام.
+الدفعة الأصلية13ملفًا؛ متابعة المالك2026-11-02 أعلنت6ملفات قبل تحريرها، وأضافت ملفي توقعات فقط: **15/22** إجمالًا؛ لا dependency أو workflow.
+القائمة: DECISIONS/project-status/HANDOFF، هذا التقرير، [الدليل](RAD-062_M09_LAPTOP_RUNBOOK.md)، [M09](../supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql)، [check الجديد](../supabase/checks/rad062-m09-ready.sql)، [fixture](../src/features/assess/rad062-m09-fixture.ts)، اختبارات [التفويض](../src/features/assess/rad062-supervisor-grading.test.ts)/[الأقفال](../src/features/assess/rad062-supervisor-locks.test.ts)/[الكتالوج](../src/features/assess/rad062-supervisor-catalogue.test.ts)، [البروفة](../scripts/assess/rad062-m09-rehearsal.mjs)، و[manifest](../scripts/pages/frontend-schema.json)؛ أضيف [اختبار يوم القاعدة](../scripts/docs/rad062-db-day.test.mjs) و[اختبار الاسم](../src/features/assess/rad062-name.test.ts) للاستثناء المحدد أدناه.
 Not run (env): سحب صورة Supabase17.11 المطابقة فشل `failed to register layer: no space left on device`؛ نجاح PG18 لا يعوضه؛ CI والمراجع حاجبان قبل الدمج/النافذة.
 
 ## 2 — المنجز والمستبعد
@@ -21,7 +21,7 @@ M09 في deferredMigrations فقط؛ requiredMigrations/checks/marker والبو
 
 RAD-062 تبقى in_progress/reviewer؛ شرط هذه الخطوة: `PR merged + CI green + reviewer audit; live apply waits for a separate owner window`.
 الإغلاقات السابقة محفوظة؛ [STOP5ب](RAD-062_PHASE5B_REPORT_2026-11-02.md#stop) أصل الفصل بين دفعة التفويض والشاشة، و#196 مؤجلة لـa dedicated TS7 batch.
-Verified: [Draft #199](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/199) واحدة فقط؛ لا ready/merge/auto-merge أو subscribe/poll؛ CI المرجع النهائي، ولا ادعاء جاهزية حية من هذا التنفيذ.
+Recorded (GitHub read): [Draft #199](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/199) واحدة فقط؛ لا ready/merge/auto-merge أو subscribe/poll؛ CI المرجع النهائي، ولا ادعاء جاهزية حية من هذا التنفيذ.
 
 ## 4 — المشترك وScale
 
@@ -40,33 +40,39 @@ Verified: [Draft #199](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/199) و�
 
 ## 6 — QA وحدود الدليل
 
-Verified: PostgreSQL18 الحقيقي أثبت60حالة M09 محلية، وفحص manifest/marker مستقلًا؛ التشغيل الكامل للنمطين121اختبارًا. نمطSupabase60حالة فشل بسبب الصورة المفقودة بلا skip. أُصلحت موافقة Assess في fixture صف paging، وأُثبتت منفردة.
-Verified: فحص الأقفال النهائي25/25؛ تُسلح نافذة500ms بعد شاهد انتظار profile، ويُجهز مسار commit تحت savepoint تتراجع كل آثاره قبل التسليح؛ لا تغيير لأي مهلة أو تقليل لأي تأكيد.
-Verified: byte proof لكل205ملفات محمية من main، بما فيها كل SQL/checks القديمة وmanual/fixtures وحزمتا الهاتف وبيانات/اختبارات QA؛ لا تغيّر توقع قائم أو golden/characterisation.
-Verified: الماركر قبل وبعد التعديل `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`؛ بلا تغيير متغير أو اتصال حي.
-Verified: npm ci وإعداد PostgreSQL المثبت وnpm audit --audit-level=high؛16تنبيهًا متوسطًا قائمًا، بلا إصلاح dependency خارج النطاق.
-Verified: فحوص CI PostgreSQL للطوارئ/الأقفال/الاسترداد/connection-probe:39/39؛ secret-uploader Python:8/8، دون skip.
-Verified: حراس displayed-text/session-account/schema/supervisor-review الخصوصية:71/71 في11ملفًا بلا تغيير.
-Verified: typecheck وlint بلا خطأ جديد؛ تحذيرا lint سابقان فقط؛ build وbuild:pages نجحا مرة لكل منهما دون نشر، وdocs:sync مرتان idempotent وdocs:check وstatus:check --require-previous وdiff --check خضراء.
-Verified: إعادة معزولة لاختبارات manual-grading11 والخدمة7 وlifecycle19 وtrial14:51/51 خضراء بالمهلات الأصلية. مهلات5000/20000ms في التشغيل المتزامن باقية دليلًا تاريخيًا، لا نجاحًا مخفيًا.
+السجلات التالية أدلة محلية، ولا تمنح تحقق CI/المراجع؛ لا وصف Verified لنمط17.11/ICU قبل تشغيله ونجاحه لدى CI أو المراجع.
+
+Inferred (local evidence; CI/reviewer pending): PostgreSQL18 الحقيقي أثبت60حالة M09 محلية، وفحص manifest/marker مستقلًا؛ التشغيل الكامل للنمطين121اختبارًا. نمطSupabase60حالة فشل بسبب الصورة المفقودة بلا skip. أُصلحت موافقة Assess في fixture صف paging، وأُثبتت منفردة.
+Inferred (local evidence; CI/reviewer pending): فحص الأقفال النهائي25/25؛ تُسلح نافذة500ms بعد شاهد انتظار profile، ويُجهز مسار commit تحت savepoint تتراجع كل آثاره قبل التسليح؛ لا تغيير لأي مهلة أو تقليل لأي تأكيد.
+Inferred (local evidence; CI/reviewer pending): byte proof لكل205ملفات محمية من main، بما فيها كل SQL/checks القديمة وmanual/fixtures وحزمتا الهاتف وبيانات/اختبارات QA؛ التوقعان المحددان فقط مستثنيان لاحقًا؛ بقية التأكيدات والملفات المحمية وgolden/characterisation ثابتة.
+Inferred (local evidence; CI/reviewer pending): الماركر قبل وبعد التعديل `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`؛ بلا تغيير متغير أو اتصال حي.
+Inferred (local evidence; CI/reviewer pending): npm ci وإعداد PostgreSQL المثبت وnpm audit --audit-level=high؛16تنبيهًا متوسطًا قائمًا، بلا إصلاح dependency خارج النطاق.
+Inferred (local evidence; CI/reviewer pending): فحوص CI PostgreSQL للطوارئ/الأقفال/الاسترداد/connection-probe:39/39؛ secret-uploader Python:8/8، دون skip.
+Inferred (local evidence; CI/reviewer pending): حراس displayed-text/session-account/schema/supervisor-review الخصوصية:71/71 في11ملفًا بلا تغيير.
+Inferred (local evidence; CI/reviewer pending): typecheck وlint بلا خطأ جديد؛ تحذيرا lint سابقان فقط؛ build وbuild:pages نجحا مرة لكل منهما دون نشر، وdocs:sync مرتان idempotent وdocs:check وstatus:check --require-previous وdiff --check خضراء.
+Inferred (local evidence; CI/reviewer pending): إعادة معزولة لاختبارات manual-grading11 والخدمة7 وlifecycle19 وtrial14:51/51 خضراء بالمهلات الأصلية. مهلات5000/20000ms في التشغيل المتزامن باقية دليلًا تاريخيًا، لا نجاحًا مخفيًا.
 Not run (env): تثبيت age/PG16 تعذر: `sudo: command not found` ثم apt `Acquire (13: Permission denied)`؛ توثيق الاستعادة لا يعوض تشغيلها.
 Not run (env): نمطM09/Supabase17 والبروفات المطابقة وlocale matrix؛ صورة Supabase وصورةpostgres17.11 كلتاهما فشلتا عند تسجيل layer بمساحة القرص. Worker rehearsal توقف عند postgres-container مع cleanup=true.
-Verified: npm run check شُغّلت كاملة:3283pass/67fail/0skip؛ تضمنت عوائق الصورة/التوقع القديم ومهلات وشاهدَي SHA/fixture أُصلحا وفُحصا لاحقًا؛ ليست خضراء.
-Verified: docs:test شُغّلت:115pass/9fail/0skip؛ عائق manifest أدناه غير بيئي، والبقية age-keygen/psql/PG16 أو صور Docker المفقودة؛ ليست خضراء.
+Inferred (local evidence; CI/reviewer pending): npm run check شُغّلت كاملة:3283pass/67fail/0skip؛ تضمنت عوائق الصورة/التوقع القديم ومهلات وشاهدَي SHA/fixture أُصلحا وفُحصا لاحقًا؛ ليست خضراء.
+Inferred (local evidence; CI/reviewer pending): docs:test السابقة:115pass/9fail/0skip قبل الاستثناء؛ لا تُعد نتيجة CI.
 Inferred: توافق صورة الإنتاج والنسخة الحقيقية يحتاج بروفة المالك وCI؛ لا نتائج سريرية أو تشغيل حقيقي أو فحص هاتف تصحيح في هذه الدفعة.
 
+Inferred (local follow-up; CI/reviewer pending): اجتاز شاهد يوم القاعدة المعدل محليًا1/1، واختبار الاسم7/7 وlint للملفين؛ أُثبت حرفيًا أن الفرق في كل ملف هو التوقع المحدد والتعليق فقط، وباقي الملفات خارج الستة ثابتة البايتات.
+Not run (env): docs:test في المتابعة116pass/8fail/0skip؛ زال فشل التوقع المحدد، وبقيت أدوات age/PG16 وصور Docker/الاستعادة محجوبة محليًا. امتلأ القرص أثناء البروفة (`No space left on device`)؛ حُذفت صورتها المحلية غير المستخدمة فقط لاستكمال الفحوص والدفع؛ لا تخفيف للفحص.
+Not run (CI): بإفادة المالك2026-11-02، نمط Supabase17.11/ICU لم يُشغل على PR #199 بعد؛ docs:test أوقف الوظيفة أولًا. CI هو المرجع لهذا النمط؛ لا انتظار أو polling هنا.
 ## 7 — المفتوح ومحفزات STOP
 
-Verified: عائق غير بيئي: [scripts/docs/rad062-db-day.test.mjs:91](../scripts/docs/rad062-db-day.test.mjs) و[src/features/assess/rad062-name.test.ts:36](../src/features/assess/rad062-name.test.ts) يفرضان deferredMigrations={}، ويتعارض مع إضافة M09 المؤجلة. التوقعان والملفان ثابتان؛ لا التفاف أو تعديل دون استثناء مالك مسمى، ولا ادعاء docs:test خضراء.
+اعتمد المالك2026-11-02 استثناء الموضعين الأصليين [rad062-db-day.test.mjs:91](../scripts/docs/rad062-db-day.test.mjs) و[rad062-name.test.ts:36](../src/features/assess/rad062-name.test.ts) فقط: deep-equal حرفي لإدخال M09 الوحيد، بالاسم وSHA `9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a` وreason وserverModules كما في manifest؛ بلا wildcard أو تعديل أي تأكيد آخر.
+التعليق الحرفي في الموضعين: `M09 dormant until promotion; the promotion batch restores {}`؛ دفعة الترقية ملزمة بإرجاع التوقعين إلى `{}`. لا تغيير SQL أو manifest أو marker في المتابعة.
 
 أي فشل CI غير بيئي يحتاج إصلاحًا في Draft نفسها؛ فشل البيئة هنا لا يرفع شرط Supabase17/ICU أو يخفف مهلة/حارس/اختبار؛ المراجع يشغل الحزمة كاملة قبل الدمج.
-STOP عند أي drift/ACL/FK/anchor أو packet أو marker أو توقع قديم متغير، أو حاجة توقيع/JSON/grant/table، أو تبعية جديدة أو تجاوز22؛ حزم الهاتف وlive خارج التعديل.
+STOP عند أي drift/ACL/FK/anchor أو packet أو marker أو توقع قديم متغير خارج الاستثناء المسمى، أو حاجة توقيع/JSON/grant/table، أو تبعية جديدة أو تجاوز22؛ حزم الهاتف وlive خارج التعديل.
 لا ادعاء نجاح نسخة مشفرة مستعادة أو بيئة الإنتاج حتى إثباتها؛ شروط القنوات/ACK/البديل والحقوق/الخصوصية/الموافقة والنسخ المستقلة تبقى قبل التشغيل.
 
 ## 8 — قائمة قرارات المالك الموحدة والمتابعة
 
 1. النقاط1–9 مع5=A معتمدة ومحفوظة؛ لا قرار اسم طالب أو ملء scope audit في هذه الدفعة.
-2. قرار مطلوب: استثناء مسمى لتوقع deferredMigrations الفارغة في scripts/docs/rad062-db-day.test.mjs:91 وsrc/features/assess/rad062-name.test.ts:36، ليقبلا M09 المؤجلة وحدها ببصمتها المراجعة مع بقاء بقية الحراس؛ ممنوع تنفيذه بالإذن الحالي. ثم مراجعة Draft وCI كاملة والمراجع على بيانات اصطناعية، ثم المالك وحده يدمجها خاملة؛ لا ترقية تلقائية.
+2. حُسم استثناء التوقعين المحددين أعلاه؛ لا قرار معلق بشأنهما. دفعة الترقية تعيدهما إلى `{}`. ينتظر الدمج الخامل CI كاملة والمراجع على بيانات اصطناعية، وينفذه المالك وحده؛ لا ترقية تلقائية.
 3. استكمال إثبات صورة Supabase17.11/ICU والنسخة المستعادة، ثم تجهيز PR ترقية منفصلة وماركرها المراجع وحجز نافذة وفق [الدليل الجديد](RAD-062_M09_LAPTOP_RUNBOOK.md)؛ شاشة5ب بعد التطبيق والتحقق.
 4. نص الإذن الحي المستقل لاحقًا: «أجيز نافذة تطبيق M09 الحية من اللابتوب على SHA المراجع، بعد اكتمال CI والبروفات والنسخة والاستعادة والقنوات، وفق دليل M09 وخطواته1–8 ومع PR الترقية والماركر المراجعين. أنا المالك أنفذ SQL والمتغير والدمج والهاتف؛ تبقى البوابة مغلقة والعامل NOLOGIN والسر DISABLED؛ لا شاشة5ب أو إطلاق ضمن هذا الإذن».
 5. #196 لا تستأنف إلا في a dedicated TS7 batch؛ بقية متطلبات أول امتحان مستقلة، ولا إطلاق MCQ مؤقت.

@@ -33,7 +33,14 @@ it('real bundled consumer loads only the reviewed name gate despite a tampered b
  finally{await act(async()=>root.unmount());delete globals.__rad062probe;delete globals.IS_REACT_ACT_ENVIRONMENT;}
  expect(readFileSync(feature.guard.path,'utf8')).toContain('export const RAD062_AVAILABLE: boolean = true;');
  expect(readFileSync('src/features/supervisor/p1-availability.ts','utf8')).toContain('export const P1_AVAILABLE: boolean = true;');
- expect(manifest.deferredMigrations).toEqual({});
+ // M09 dormant until promotion; the promotion batch restores {}
+ expect(manifest.deferredMigrations).toEqual({
+  '20261102000100_rad062_supervisor_grading_authorization.sql': {
+   sha256: '9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a',
+   reason: 'Dormant M09 authorization; live apply and promotion require a separate owner window.',
+   serverModules: ['src/features/assess/server-manual-service.ts'],
+  },
+ });
  expect(manifest.checks).toContain('supabase/checks/rad062-p1-b-ready.sql');
  expect(manifest.checks).toContain('supabase/checks/rad062-ready.sql');
  expect(manifest.checks).not.toContain('supabase/checks/rad085-p1-b-ready.sql');
