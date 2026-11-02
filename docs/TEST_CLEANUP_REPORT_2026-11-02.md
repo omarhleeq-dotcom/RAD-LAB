@@ -1,8 +1,8 @@
 # تنظيف الاختبارات وCI — 2026-11-02
 
 ## 1. الانحرافات والميزانية
-الهدف أربع وظائف متوازية مع الحراس ثابتة؛ السقف32 ملفًا، والقائمة المعلنة25 بما فيها helper تجريبي مشروط.
-القائمة الدقيقة25 ملفًا (helper اعتُمد بعد القياس):
+الهدف أربع وظائف متوازية مع الحراس ثابتة؛ السقف32 ملفًا؛25 في الدفعة الأولى و26 بعد شاهد إصلاح umask بطلب مراجعة #205.
+القائمة الدقيقة26 ملفًا (helper اعتُمد بعد القياس؛ يضيف الإصلاح شاهد umask):
 
 - `.github/workflows/ci.yml`
 - `package.json`
@@ -14,6 +14,7 @@
 - `src/features/assess/rad062-manual-grading.test.ts`
 - `src/features/assess/rad062-erasure-operations.test.ts`
 - `src/features/assess/rad085-local-db.ts`
+- `src/features/assess/rad085-template.test.ts`
 - `src/features/deployment/frontend-manifest.test.ts`
 - `src/features/deployment/finalize-headers.test.ts`
 - `src/features/pilot/session-account.test.ts`
@@ -58,8 +59,8 @@ Verified: قراءة GitHub تثبت دمج #200 و#202 و#203 و#204؛ #203 أ�
 
 ## 4. التغييرات المشتركة وScale
 Verified: أربع jobs مع جامع `check` حاجب؛ Node22 وtimeout15 والصور وأدوات apt المثبتة ثابتة؛ [التخطيط](DOCS_CHECKS.md#ci) و[التنفيذ](../.github/workflows/ci.yml).
-Verified: لكل اختبار Vitest قسم واحد؛ قائمة الجمع قبل1856 وبعد1861 (+5: pin1، namespace1، headers3)، دون حذف حالة. التعريفات المعلَمة parameterized تُحسب منفصلة عن عدد التنفيذ أدناه.
-Verified:106 ملفات DB و145 unit؛ التقاطع0 وكل71 ملفًا محتاجًا DB في الجرد داخل DB lane؛ جرى فحص union مقابل قائمة ما قبل التغيير، والفروق فقط الشواهد الخمسة.
+Verified: لكل اختبار Vitest قسم واحد؛ قائمة الجمع قبل1856 وبعد1861 بالدفعة الأولى (+5: pin1، namespace1، headers3؛ أضاف إصلاح umask حالة لاحقًا)، دون حذف حالة. التعريفات المعلَمة parameterized تُحسب منفصلة عن عدد التنفيذ أدناه.
+Verified:106 ملفات DB و145 unit في القياس الأول؛ أضاف إصلاح umask ملف DB واحدًا؛ التقاطع0 وكل71 ملفًا محتاجًا DB في الجرد داخل DB lane؛ جرى فحص union مقابل قائمة ما قبل التغيير، والفروق فقط الشواهد الخمسة.
 Verified: أزيلت whole-list asserts فقط؛ بقيت derived-marker والbytes والتاريخ والprivileges والrollback وكل السلوك. الأرقام من main الحالية بعد #200 (name كانت55 في الجرد القديم):
 | الملف داخل assess إلا Node | الأسطر قبل ← موضع الإحالة بعد |
 |---|---|
@@ -112,6 +113,7 @@ Verified:16 نتيجة للجامع (كل job مع success/failure/cancelled/ski
 لا تغيير طبي أو scoring أو منتج؛ الحراس والبصمات والـpackets ثابتة.
 
 ## 6. QA
+نتائج الدفعة الأولى أدناه تخص `c77178c`؛ نتائج متابعة إصلاح umask مميزة في نهاية هذا القسم.
 Verified: الشواهد ذات الصلة37/37 ناجحة قبل full؛ mutation: فقد baseline في السبع suites يفشل (9 حالات ثم حالتان)، بلا إنشاء ملف؛ استعادة bytes ثم full أدناه.
 Verified: mutation لـrequired/deferred/checks وstdout marker تفشل pin؛ إعادة regex القديم تفشل namespace؛ تعطيل write يفشل headers؛ كل مصدر/manifest/golden مستعاد byte-identical.
 Verified: typecheck ناجح بعد إصلاح tuple في الشاهد الجديد؛ lint صفر أخطاء وتحذيران سابقان في simulator-layout-audit؛ فشل البداية مسجل ولم يُخفَ.
@@ -126,6 +128,13 @@ Verified: `npm run build` و`npm run build:pages` ناجحان؛ emergency-stop/
 Verified: `docs:sync` مرتان مع idempotence، ثم `docs:check --base origin/main` و`status:check --base origin/main --require-previous` و`git diff --check`؛ تنبيهات السقوف للمراجعة لا أخطاء.
 Not run (external): قياس PR CI بعد مقابل13:08 main القديم في [التدقيق](TEST_AUDIT_REPORT_2026-11-02.md) يحتاج اكتمال CI على رأس PR؛ النوعان مختلفان فلا ادعاء مقارنة مكافئة أو وفر CI مقاس.
 Not run: browser/phone/live لهذه الدفعة؛ اختبارات الحراس البنيوية لا تثبت تحققًا سريريًا أو نشرًا؛ لا subscribe/poll أو تشغيل workflow يدوي.
+
+### متابعة مراجعة #205 — صلاحيات clone
+Verified: أُعيد إنتاج `pg_ctl: could not start server` بشاهد جديد تحت umask0022 قبل الإصلاح؛ بعده يفتح أول fixture وclone ويتحقق من mode0700 ويعيد umask في finally.
+Verified: التغيير التنفيذي فقط import chmodSync ثم chmodSync(data,0o700) مباشرة بعد cpSync؛ لا تغيير SQL أو roles/ACL/locale أو مهلة أو حارس.
+Verified: typecheck وeslint للملفين ناجحان؛ `umask 0022; CI_TEST_LANE=db npm test`:104 ملفات/809 حالات ناجحة، صفر pg_ctl startup failures، وشاهد mode0700 ناجح.
+Not run (env):60 حالة M09 في3 ملفات محجوبة بالصورة المثبتة المفقودة نفسها الموثقة أعلاه؛ إجمالي DB869/107 ملفات،0skip؛ الزمن463.79ث.
+Not run (external، وقت دفع الإصلاح): CI على رأس الإصلاح وwall time تنتظر التشغيل المعتاد؛ يسجل التقرير النهائي زمن التشغيل الأخضر ورابطه؛ لا قياس من تشغيل failed.
 
 ## 7. البنود المفتوحة
 إعادة تمرين الهاتف RAD-059 وقرار ملفات اللابتوب RAD-085 P5؛ شاشة5ب في دفعة مستقلة. CI وقياس PR والمراجعة حاجبة لإغلاق RAD-093؛ القيود البيئية لا تعني نجاحًا.
