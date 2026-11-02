@@ -89,7 +89,7 @@ test('promotion preserves both emergency packets and every original SQL/check by
   const current = JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8'));
   assert.deepEqual(current.requiredMigrations, [...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations, '20261102000100_rad062_supervisor_grading_authorization.sql']);
   assert.deepEqual(current.deferredMigrations, {});
-  assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : f), 'supabase/checks/rad062-m09-ready.sql']);
+  assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-m09-ready.sql' : f), 'supabase/checks/rad062-m09-ready.sql']);
   for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md',
     'supabase/manual/assess-emergency-stop.sql','supabase/manual/assess-emergency-stop-v2.sql',
     'supabase/checks/assess-emergency-stopped.sql','supabase/checks/assess-emergency-stopped-v2.sql',
@@ -176,12 +176,12 @@ test(`PostgreSQL ${productionVersion?'17.11':'18.4'} promoted full-apply and eve
       client.query=async(...args)=>{try{return await query(...args);}catch(e){sqlstate=e.code??'unavailable';throw e;}};
       await client.query("set rad085.sharing_phase='pre-initializer'");
       assert.deepEqual(await checks(client, manifest().checks), { checks_passed: manifest().checks.length });
-      for (const file of ['supabase/checks/rad062-ready.sql','supabase/checks/rad062-p1-b-ready.sql']) {
+      for (const file of ['supabase/checks/rad062-m09-ready.sql','supabase/checks/rad062-p1-b-m09-ready.sql']) {
         await client.query('begin');
         await client.query('grant execute on function assess.freeze_v2() to authenticated');
         await assert.rejects(checks(client, [file]), { message: 'required_check_failed:' + file });
       }
-      const ready='supabase/checks/rad062-ready.sql';
+      const ready='supabase/checks/rad062-m09-ready.sql';
       const readyRows=async()=>(await client.query(readFileSync(ready,'utf8'))).rows;
       // Owner D3: excluding pg_constraint NOT NULL entries must not hide a
       // nullable column: attnotnull remains part of the relation fingerprint.

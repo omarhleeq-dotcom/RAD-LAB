@@ -1364,15 +1364,15 @@ CSV/TSV: رفض `=` و`@` في البداية، و`+`/`-` يليهما حرف أ
 <a id="rad062-supervisor-grading-owner-2026-11-02"></a>
 ### RAD-062 — تفويض تصحيح المشرف قبل التشغيل، 2026-11-02
 
-السلطة: أوامر المالك2026-11-02؛ [التصميم المعتمد](RAD-062_SUPERVISOR_GRADING_DESIGN_2026-11-02.md) و[تفاصيل التنفيذ والإغلاق](RAD-062_SUPERVISOR_GRADING_SERVER_REPORT_2026-11-02.md).
-اعتمد الخيار B لتصحيح مشرف المجموعة، ورفض شاشة المالك وحده/الخيار A؛ النقاط1–9 نعم و5=A: M09 تفويض فقط، بلا اسم طالب أو تعبئة حقول scope بالأثر؛ لا تشغيل MCQ مؤقت.
-[#198](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/198) و[#199](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/199) مدموجتان؛ خطوة الخادم الخاملة بسقف22 أُغلقت مع CI/Deploy وتدقيق المراجع بإفادة المالك؛ [الدليل](RAD-062_M09_PROMOTION_REPORT_2026-11-02.md).
-استثناء الخمول المسمى لتوقعي rad062-db-day.test.mjs:91 وrad062-name.test.ts:36 كان إدخال M09 الحرفي بالاسم/SHA/reason/serverModules؛ التعليق `M09 dormant until promotion; the promotion batch restores {}`؛ الترقية تعيدهما إلى `{}`.
-قرار option A للنافذة: [RAD-059 ACK/البديل](RAD-059_PHONE_RUNBOOK.md) و[RAD-085 الحقوق/الخصوصية/الموافقة](project-status.md) شروط فتح البوابة، لا شروط تطبيق M09؛ بقية شروط الدليل ثابتة مع البوابة مغلقة والعامل NOLOGIN والسر DISABLED.
-استئناف [Draft #200](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/200) بسقف15؛ manifest فقط: إضافة M09 إلى required، deferred={}، واستبدال rad062-ready بـrad062-m09-ready وحده في checks؛ لا تغيير آخر.
-لا إضافة M09 إلى guardedFeatures.rad062 أو migrationSha256؛ marker يبصم كل required؛ برنامج يوم القاعدة وحزمة8 ثابتان، وقرار guarded feature مستقل مؤجل لدفعة5ب.
-استثناء rad062-db-day.test.mjs:104–106: حلقة الهوية التاريخية تغطي بالضبط required+rad062.migrations من023ec84 مع packets/checks القائمة؛ تأكيد SHA مستقل لـM09 `9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a`؛ لا ملف تاريخي يسقط.
-توقعات الترقية فقط: required+=M09، check القديم→الجديد، deferred={}، marker الجديد المطبوع، وتأكيد SHA لـM09 من المؤجل→القيمة المراجعة؛ لا حذف/تخفيف تأكيدات، وكل فرق file:line قبل/بعد في التقرير.
-استثناء inspectM09 المسمى لاحقًا: ثابت SHA المراجع أعلاه؛ M09 مؤجلة مع sha256 مطابق له أو required، حصريًا، وبايتاتها تطابقه في الحالتين؛ غير ذلك يرفض؛ لا تغيير آخر للبروفة أو إعداد/تأكيد الكتالوج، ولا git archive. خطوات1–6 على SHA main قبل الترقية، والمالك يضبط marker ويدمج في7 بعد5/6 وقبل8.
-لا إذن حي/Variable/بوابة/عامل/سر أو شاشة5ب؛ Draft فقط، وRAD-062 تبقى in_progress حتى التطبيق والترقية وCI/Deploy والهاتف؛ deploy المتوقع يفشل مع Variable القديم ولا يُصلح بتجاوزه.
-أصل تصحيح الأستاذ في [متطلبات التأليف1/3](#assess-authoring-owner-2026-10-22)، و[قواعد المرحلتين](#rad062-phase2-owner-2026-10-29) و[S3](#rad085-sec-fixes-owner-2026-10-27) محفوظة.
+السلطة: أوامر المالك2026-11-02؛ [التصميم المعتمد](RAD-062_SUPERVISOR_GRADING_DESIGN_2026-11-02.md)، [الخادم وإغلاقه](RAD-062_SUPERVISOR_GRADING_SERVER_REPORT_2026-11-02.md)، و[استثناءات الترقية ودليلها](RAD-062_M09_PROMOTION_REPORT_2026-11-02.md).
+اعتمد الخيار B لتصحيح المشرف ورفض شاشة المالك وحده؛ النقاط1–9 نعم و5=A: M09 تفويض فقط بلا اسم طالب أو تعبئة scope بالأثر؛ لا تشغيل MCQ مؤقت. [#198](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/198)/[#199](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/199) مدموجتان والخادم مغلق مع CI/Deploy وتدقيق المراجع بإفادة المالك؛ سقف الخادم22.
+استثناء الخمول لتوقعي rad062-db-day.test.mjs:91 وrad062-name.test.ts:36 كان إدخال M09 الحرفي بالاسم/SHA/reason/serverModules وتعليق `M09 dormant until promotion; the promotion batch restores {}`؛ الترقية تعيدهما إلى{}.
+[Draft #200](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/200) بسقف17 بدل15؛ manifest: required+=M09 وdeferred={}، واستبدال rad062-ready→rad062-m09-ready وrad062-p1-b-ready→rad062-p1-b-m09-ready في الموضعين نفسيهما؛ بقية المدخلات ثابتة.
+لا M09 في guardedFeatures.rad062 أو migrationSha256؛ marker يبصم كل required؛ برنامج يوم القاعدة وحزمة8 ثابتان، وقرار feature مستقل مؤجل لدفعة5ب.
+استثناء حلقة rad062-db-day.test.mjs:104–106: بالضبط required+rad062.migrations من023ec84 مع packets/checks القائمة، وتأكيد M09 مستقل `9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a`؛ لا ملف تاريخي يسقط؛ توقعات القوائم/marker/SHA تتغير للقيم الدقيقة فقط، وكل فرق file:line في التقرير.
+استثناء inspectM09: ثابت SHA أعلاه؛ M09 مؤجلة مع sha256 مطابق أو required حصريًا، وبايتاتها تطابق الثابت دائمًا؛ لا تغيير آخر للبروفة أو إعداد/تأكيد الكتالوج، ولا git archive.
+استثناء SQL الجديد rad062-p1-b-m09-ready.sql: مطابق للقديم عدا التعليق وصف functions،131 ثابتة، والبصمة من تطبيق محلي نظيف current+M01–M09؛ أي فرق آخر STOP؛ القديم ثابت ولا يعمل علىM09، وdiff الحرفي في التقرير.
+استثناء rad062-restore-rehearsal.mjs: استبدال manifest().checks في الموضعين فقط بثابت حرفي M08_CHECKS ينسخ قائمة main قبل الترقية، بتعليق `M01–M08 rehearsal: frozen pre-M09 checks`؛ لا تغيير آخر.
+الدليل1–6 على SHA main قبل الترقية؛2 بالفحوص القديمة و5 بالجديدين وبقية required الثابتة؛ المالك يضبط marker ويدمج في7 بعد5/6 وقبل8. [RAD-059 ACK/البديل](RAD-059_PHONE_RUNBOOK.md) و[RAD-085 الحقوق/الخصوصية/الموافقة](project-status.md) شروط فتح البوابة فقط؛ بقية الشروط ثابتة.
+لا إذن حي/Variable/بوابة/عامل/سر/5ب؛ Draft فقط وRAD-062 in_progress حتى التطبيق والترقية وCI/Deploy والهاتف؛ deploy يفشل متوقعًا مع Variable القديم ولا يُتجاوز؛ البوابة مغلقة والعامل NOLOGIN والسر DISABLED.
+أصل تصحيح الأستاذ في [التأليف1/3](#assess-authoring-owner-2026-10-22) و[قواعد المرحلتين](#rad062-phase2-owner-2026-10-29) و[S3](#rad085-sec-fixes-owner-2026-10-27) محفوظة.

@@ -14,6 +14,10 @@ set +x
 read -r -p 'Reviewed merged commit SHA: ' RAD062_M09_REVIEWED_SHA
 test "$(git rev-parse HEAD)" = "$RAD062_M09_REVIEWED_SHA"
 test -z "$(git status --porcelain)"
+read -r -p 'Reviewed promotion PR head SHA (available locally): ' RAD062_M09_PROMOTION_SHA
+[[ "$RAD062_M09_PROMOTION_SHA" =~ ^[0-9a-f]{40}$ ]]
+git cat-file -e "${RAD062_M09_PROMOTION_SHA}^{commit}"
+test "$(git show "${RAD062_M09_PROMOTION_SHA}:supabase/checks/rad062-p1-b-m09-ready.sql" | sha256sum | cut -d ' ' -f 1)" = 'f286232c9bdd171413c4df20c3e70276c348ca61d8e6d44c7717ece756f3c4a6'
 RAD062_M09_SQL=supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql
 RAD062_M09_READY=supabase/checks/rad062-m09-ready.sql
 sha256sum "$RAD062_M09_SQL" "$RAD062_M09_READY"
@@ -33,6 +37,7 @@ Use the exact project and fresh connection; independently verify project identit
 ```bash
 psql -X -v ON_ERROR_STOP=1 -c "begin read only; select current_database(),current_user,session_user; select count(*)=1 and bool_and(not enabled) closed_gate from assess.launch_gate; select rolname,not rolcanlogin nologin from pg_roles where rolname in ('assess_job_a','assess_job_b','assess_worker'); select count(*)=0 no_worker_connections from pg_stat_activity where usename in ('assess_job_a','assess_job_b','assess_worker'); select inventory=assess.d3_fk_inventory_v1() exact_d3 from assess.erasure_fk_contract; commit;"
 psql -X -v ON_ERROR_STOP=1 -f supabase/checks/rad062-ready.sql
+psql -X -v ON_ERROR_STOP=1 -f supabase/checks/rad062-p1-b-ready.sql
 ```
 
 Expected postgres/session identity and approved project, one closed gate, all present worker logins NOLOGIN, no worker connections, exact D3, all six old readiness booleans true. Require assess_job_a present; optional job_b may be absent per P9. Readiness SQL returning false does not make psql fail: inspect **every** row. STOP on false/null/missing/duplicate/unknown state. Never run the new readiness against M08. Keep existing stopped assignments and settled-session constraints from P9; no closing/deleting data to bypass preflight.
@@ -67,14 +72,31 @@ Expected one COMMIT. Preconditions compare the complete reviewed M08 catalogue; 
 
 ## 5. Independent post-apply verification
 
+Keep HEAD on the pre-promotion SHA. The new B successor exists only in the reviewed promotion commit: extract its exact bytes from that local Git object into the protected evidence directory and verify SHA256 before executing it. Step 1 must already have confirmed that reviewed commit and artifact are available; do not wait until after live apply to obtain them.
+
 ```bash
+git show "${RAD062_M09_PROMOTION_SHA}:supabase/checks/rad062-p1-b-m09-ready.sql" > "$RAD062_M09_EVIDENCE/rad062-p1-b-m09-ready.sql"
+printf '%s  %s\n' 'f286232c9bdd171413c4df20c3e70276c348ca61d8e6d44c7717ece756f3c4a6' "$RAD062_M09_EVIDENCE/rad062-p1-b-m09-ready.sql" | sha256sum -c -
 psql -X -v ON_ERROR_STOP=1 -f "$RAD062_M09_READY"
+psql -X -v ON_ERROR_STOP=1 -f "$RAD062_M09_EVIDENCE/rad062-p1-b-m09-ready.sql"
+for RAD062_M09_OTHER_CHECK in \
+  supabase/checks/training-ready.sql \
+  supabase/checks/comparison-ready.sql \
+  supabase/checks/assess-mixed-ready.sql \
+  supabase/checks/assess-practical-ready.sql \
+  supabase/checks/assess-history-ready.sql \
+  supabase/checks/assess-retention-ready.sql \
+  supabase/checks/owner-dashboard-ready.sql \
+  supabase/checks/owner-deletion-surveys-ready.sql
+do
+  psql -X -v ON_ERROR_STOP=1 -f "$RAD062_M09_OTHER_CHECK"
+done
 psql -X -qAt -v ON_ERROR_STOP=1 -c "begin read only; select jsonb_build_object('oid',p.oid,'catalogue',to_jsonb(p)-'prosrc') from pg_proc p where p.pronamespace='assess'::regnamespace order by p.oid; select inventory=assess.d3_fk_inventory_v1() exact_d3 from assess.erasure_fk_contract; select count(*)=1 and bool_and(not enabled) closed_gate from assess.launch_gate; commit;" > "$RAD062_M09_EVIDENCE/post.jsonl"
 psql -X -qAt -v ON_ERROR_STOP=1 -c "begin read only; select jsonb_build_object('oid',oid,'definition',pg_get_constraintdef(oid)) from pg_constraint where contype='f' order by oid; commit;" > "$RAD062_M09_EVIDENCE/post-fks.jsonl"
 cmp "$RAD062_M09_EVIDENCE/fks.jsonl" "$RAD062_M09_EVIDENCE/post-fks.jsonl"
 ```
 
-All six new readiness booleans true; exact FK identity and unchanged function OID/ACL/owner/config/properties compared with protected baseline; only six reviewed manual function bodies differ. No row changes by M09; inspect application tables via protected local count evidence if needed without printing user data. Re-run other required manifest checks; replace **only** old rad062-ready with the new check for this post-M09 inspection. Never run old readiness against M09, and never interpret the unchanged dormant marker as attesting M09.
+All six new M09 readiness booleans true, every rad062-p1-b-m09-ready.sql row true and every boolean assertion in the eight unchanged required checks true (except their explicitly disclaimed operational claims); exact FK identity and unchanged function OID/ACL/owner/config/properties compared with protected baseline; only six reviewed manual function bodies differ. No row changes by M09; inspect application tables via protected local count evidence if needed without printing user data. The block above runs both M09 successors plus all eight unchanged required checks. Replace old rad062-ready with rad062-m09-ready AND old rad062-p1-b-ready with rad062-p1-b-m09-ready, in their original manifest positions. Never run either old rad062-ready.sql or old rad062-p1-b-ready.sql against M09, and never interpret the unchanged dormant marker as attesting M09.
 
 ## 6. Phone containment and independent verification
 
@@ -82,7 +104,7 @@ Follow the complete unchanged [P5 v2 packet](RAD-062_P05_PHONE_PACKET.md) stop b
 
 ## 7. Later coordinated promotion, owner only
 
-Keep steps 1–6 on the reviewed pre-promotion main SHA above. After successful step 5 verification and step 6 containment, the owner alone opens this GitHub repository’s Settings → Secrets and variables → Actions → Variables and sets `PILOT_SCHEMA_VERIFIED` to the exact marker printed from reviewed [Draft #200](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/200) for `https://vlacestfruxooznrcjqc.supabase.co`: `pilot-v1:868e3885959d076de1ee17a2e9d5de96dfb6f72c18b55a1d7830f0c4c8f261a8`. Then the owner merges that PR in this same separately authorized window, before step 8. It moves M09 from deferred to required and replaces only the RAD-062 readiness path; guardedFeatures.rad062 stays unchanged. Its deploy/schema gate is expected to fail until the Variable is updated here; do not bypass the gate. Do not compute a provisional marker by editing the pre-promotion checkout or attest M09 with the old marker. If the promotion PR, owner permission or new marker is missing, STOP before live step4.
+Keep steps 1–6 on the reviewed pre-promotion main SHA above. After successful step 5 verification and step 6 containment, the owner alone opens this GitHub repository’s Settings → Secrets and variables → Actions → Variables and sets `PILOT_SCHEMA_VERIFIED` to the exact marker printed from reviewed [Draft #200](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/200) for `https://vlacestfruxooznrcjqc.supabase.co`: `pilot-v1:001c0cf80c1a4530e7144edfe252912c34ce3859f56c1e47a59524b1cae713e3`. Then the owner merges that PR in this same separately authorized window, before step 8. It moves M09 from deferred to required and replaces exactly the two RAD-062 readiness paths; guardedFeatures.rad062 stays unchanged. Its deploy/schema gate is expected to fail until the Variable is updated here; do not bypass the gate. Do not compute a provisional marker by editing the pre-promotion checkout or attest M09 with the old marker. If the promotion PR, owner permission or new marker is missing, STOP before live step4.
 
 ## 8. Normal automation and phone check
 

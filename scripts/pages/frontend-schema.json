@@ -40,7 +40,7 @@
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/assess-mixed-ready.sql",
     "supabase/checks/assess-practical-ready.sql",
-    "supabase/checks/rad062-p1-b-ready.sql",
+    "supabase/checks/rad062-p1-b-m09-ready.sql",
     "supabase/checks/assess-history-ready.sql",
     "supabase/checks/assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
