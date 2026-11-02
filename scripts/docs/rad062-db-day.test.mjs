@@ -88,7 +88,14 @@ test('promotion preserves both emergency packets and every original SQL/check by
   const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
   const current = JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8'));
   assert.deepEqual(current.requiredMigrations, [...base.requiredMigrations, ...base.guardedFeatures.rad062.migrations]);
-  assert.deepEqual(current.deferredMigrations, {});
+  // M09 dormant until promotion; the promotion batch restores {}
+  assert.deepEqual(current.deferredMigrations, {
+    '20261102000100_rad062_supervisor_grading_authorization.sql': {
+      sha256: '9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a',
+      reason: 'Dormant M09 authorization; live apply and promotion require a separate owner window.',
+      serverModules: ['src/features/assess/server-manual-service.ts'],
+    },
+  });
   assert.deepEqual(current.checks, [...base.checks.map(f => f === 'supabase/checks/rad085-p1-b-ready.sql' ? 'supabase/checks/rad062-p1-b-ready.sql' : f), 'supabase/checks/rad062-ready.sql']);
   for (const path of ['docs/RAD-059_PHONE_PACKET.md','docs/RAD-062_P05_PHONE_PACKET.md',
     'supabase/manual/assess-emergency-stop.sql','supabase/manual/assess-emergency-stop-v2.sql',

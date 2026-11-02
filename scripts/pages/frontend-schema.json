@@ -46,7 +46,15 @@
     "supabase/checks/owner-deletion-surveys-ready.sql",
     "supabase/checks/rad062-ready.sql"
   ],
-  "deferredMigrations": {},
+  "deferredMigrations": {
+    "20261102000100_rad062_supervisor_grading_authorization.sql": {
+      "sha256": "9152676e5975333e1bedaf453c7b7855d5f8e910df7d03dc1e64cdf78037dc0a",
+      "reason": "Dormant M09 authorization; live apply and promotion require a separate owner window.",
+      "serverModules": [
+        "src/features/assess/server-manual-service.ts"
+      ]
+    }
+  },
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
