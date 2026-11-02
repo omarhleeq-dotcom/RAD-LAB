@@ -62,13 +62,18 @@ Scale المحفوظ:10كتابيات،4000code points للجواب،100عملي
 
 ## 6 — QA وحدود الدليل
 
-Verified: اختبارات server-manual-service السبعة نجحت دون تعديل.
+Verified: اختبارات server-manual-service السبعة نجحت دون تعديل، قبل تحديث checkout إلى main الأحدث؛ ملفات الخدمة/SQL لم تتغير بينهما.
 Not run (env):10اختبارات PostgreSQL فشلت عند الإعداد: `Cannot find module 'pg'` من `/tmp/radlab-ops-postgres/package.json`.
-Not run (env): اختبار الحزمة/marker داخل الملف نفسه تعطل بـ`spawnSync git EPERM`؛ لا تغيير اختبار أو توقع.
-Verified: طُبع marker قبل التحرير: `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`.
+Not run (env): اختبار الحزمة/marker تعطل أولًا بـ`spawnSync git EPERM`؛ بعد إتاحة subprocess تعطل بـ`Test timed out in 5000ms`.
+لم تُرفع مهلة أو تُعدل اختبارات أو توقعات؛ نتيجة ملف manual-grading ليست خضراء.
+Verified: displayed-text وsession-account وreview/session-invalidation/usability نجحت دون تغيير؛ schema gate:27اختبارًا/7ملفات نجحت بعد إتاحة subprocess.
+Not run (env):11اختبارًا في sharing-policy وp1-b-db وsql-adapter-db تعذرت عند الإعداد لنفس خطأ pg؛ حراس الخصوصية المعتمدة على المُجهّز ليست خضراء.
+Verified: طُبع marker قبل وبعد مطابقًا: `pilot-v1:a405c50c66f64fd7521434e09bffb1da008b38fd3cd6010b2e64c0980ba6c93c`.
+Verified: الفرق عن origin/main محصور بالملفات الثلاثة المعلنة؛ supabase وحزم الهاتف وبيانات الامتحانات وgoldens وcharacterisation والاختبارات ثابتة البايتات.
+Verified: docs:sync مرتان، الثانية0تغيير؛ docs:check وstatus:check --require-previous وgit diff --check ناجحة.
+فحص docs الأول تعطل بـspawnSync git EPERM ثم نجح بعد إتاحة subprocess؛ بقيت3تحذيرات ميزانية سابقة فقط بعد تقصير سطر HANDOFF.
 Not run (STOP): قبول شاشة اصطناعي/SQL وEN/AR390/1440 وaxe؛ الشاشة غير منفذة بسبب التفويض.
 Not run (STOP): check وbuild وbuild:pages؛ هذه دفعة توثيق فقط بعد التوقف، وليست ادعاء تحقق المنتج.
-Not run (pending): حراس الخصوصية والمخطط وفحص الوثائق النهائي جارٍ؛ يسجل commit المتابعة النتيجة.
 Not run (pending owner): فحص هاتف التصحيح الحي ينتظر محاولات حقيقية بعد فتح البوابة؛ التدقيق الاصطناعي لا يعوضه.
 Inferred: نجاح CI/Deploy Pages والإعدادات المذكور أعلاه من إفادة المالك؛ أداة قراءة GitHub تحققت من الدمج فقط، ولم تُتابع workflows.
 
