@@ -2,7 +2,7 @@
 
 ## 1. الانحرافات والميزانية
 
-Verified — فرع جديد من origin/main؛ هدف واحد R1/R2/S1/P2/P3، و30/30 ملفًا، دون subagents أو worktree. أول commit للإغلاق المعلق؛ دُمج تحديث main الذي يحمل #208 أثناء القياس دون تغيير SQL أو Practice؛ التنفيذ الجديد مؤجل.
+Verified — استكمال Draft #210 على rad085/review-fixes؛ origin/main المحدّث سلف بالفعل ولا دمج إضافيًا لازمًا. إصلاح S1 داخل10 ملفات من ملفاتPR الثلاثين القائمة؛ صفر ملفات جديدة أو subagents/worktree. أول commit للدفعة الحالية توثيقي للإغلاقات أدناه؛ 0300 مؤجلة.
 Verified — لا تعديل لأي ملف قائم تحت supabase، ولا للحزمتين المحميتين؛ الاستثناء الوحيد لتوقعات الاختبارات القائمة هو توسيع toEqual الدقيق في الملفات الثلاثة المسمّاة.
 Verified — توجيه المالك اللاحق حدّد ساعة فعلية عبر الواجهة وحصة ساعة/يوم؛ القياس الكامل هو أساس القيم أدناه، وليس بروفة smoke أو اختبار تكرار الوحدات.
 
@@ -21,18 +21,20 @@ Verified — أُضيفت [0300](../supabase/migrations/20261102000300_rad085_ri
 
 Verified — R1: savepoint لكل حساب؛ الحراس باقية، والفشل يعاد بمعرف الحساب ورمز SQLSTATE مع WARNING وNOTIFY مجمع وalert بالواجهة. الآخرون يُمحون؛ المحجوب يبقى في القائمة والموعد الأصلي. متابعة UUID صريحة حتى بحجم1؛ لا تمديد requested_at أو30/37.
 Verified — R2: إعادة تفويض المجموعة بعد قفل profile وقبل/بعد الكتابات، بما فيها انتظار trigger/صف الطلب. شاهدَا قفل profile وكتابة العضوية بعد ends_at يرفضان ذريًا دون عضوية/period جزئية.
-Verified — S1: trigger على INSERT المباشر لكل من events/attempts/feedback؛ وقت خادمي ونوافذ ساعة/يوم UTC، وقفل سعة مشترك ثم profile ثم حساب/مسار؛ P0851 للمعدل وP0852 للحصة. الرسالة EN/AR تبقي العمل الحالي في الصفحة، بلا مساس بالدرجات.
+Verified — S1: trigger على INSERT المباشر لكل من events/attempts/feedback؛ وقت خادمي ونوافذ ساعة/يوم UTC، وقفل profile FOR SHARE ثم حساب/مسار ثم usage؛ لا قفل سعة في trigger بأي وضع؛ P0851 للمعدل وP0852 للحصة. الرسالة EN/AR تبقي العمل الحالي في الصفحة، بلا مساس بالدرجات.
 Verified — P2: consent_v3 شخصية، ونسخة assess-written-2026-11-02-v3؛ v2 لا تفوض التصحيح. فلترة القبول قبل paging، وإعادة فحصه في التفويض لكل قراءة/كتابة/إيصال. ثمانية مواضع زمنية محسوبة تستعمل168 ساعة فعلية حتى مع DST؛ حسابات الاختبار تعيد القبول ولا قبول جماعيًا.
 Verified — P3: حمولة المشرف هي id طلب مبهم، display_name، revision وstate=pending فقط؛ لا user_id أو بريد أو تاريخ. القرار يستخدم request id؛ شروط S3 قبل paging ثابتة. Terms الجديدة مؤجلة مع تاريخ2026-11-02.
 
 ## 4. المشتركات و Scale والحراسة
 
 Verified — requiredMigrations/checks ثابتة؛ 0300 في deferredMigrations فقط مع حارس literal=false. البصمات الثلاثة المأذونة تبقى toEqual كاملًا للمدخلين، دون partial matcher أو تعديل أي تأكيد آخر.
-Verified — SHA256 للترحيل الجديد: `5ddaf223e783e5dd3f92e0b428d7d1718f41f0fc19df9fac024a718d61330f44`.
-Verified — اختبار الاستثناء: [manual-grading-availability.test.ts](../src/features/assess/manual-grading-availability.test.ts)، [rad062-name.test.ts](../src/features/assess/rad062-name.test.ts) و[frontend-manifest.test.ts](../src/features/deployment/frontend-manifest.test.ts): مدخل0200 بقي حرفيًا وأضيف مدخل0300؛ مقارنة بقية بايتات الملفات بعد عزل toEqual متطابقة.
+Verified — SHA256 للترحيل الجديد: `707362db6890b027bcfee29c07f644fdb207d58e56d52803a4dab0a0dd1baee1`.
+Verified — تحديث SHA0300 فقط داخل الاستثناء نفسه وبقاء التوقعات exact toEqual؛ اختبار الاستثناء: [manual-grading-availability.test.ts](../src/features/assess/manual-grading-availability.test.ts)، [rad062-name.test.ts](../src/features/assess/rad062-name.test.ts) و[frontend-manifest.test.ts](../src/features/deployment/frontend-manifest.test.ts): مدخل0200 ثابت؛ مقارنة بقية بايتات الملفات مع1ebe90a بعد عزل SHA0300 متطابقة.
 Verified — marker ثابت: `pilot-v1:001c0cf80c1a4530e7144edfe252912c34ce3859f56c1e47a59524b1cae713e3`.
-Verified — preflight ما بعد0200: functions=`93e22a77fb747f843e12c7bb1eaf17ad`، relations=`3d7d341aff9dcd9fd73c5fc1f7d9132b`؛ successor: functions=`56681d7fa7dbacc6c97ebf8be577a127`، relations=`377272711efab27ce3047cad42e0ac57`، مع ACL فعلي وجرد FK والحصة والبوابة/العامل.
+Verified — preflight ما بعد0200: functions=`93e22a77fb747f843e12c7bb1eaf17ad`، relations=`3d7d341aff9dcd9fd73c5fc1f7d9132b`؛ successor: functions=`eda72b4daaa7effcc4e2aba1fffe8653`، relations=`377272711efab27ce3047cad42e0ac57`، مع ACL فعلي وجرد FK والحصة والبوابة/العامل.
 Verified — البصمات تشمل وظائف Assess/emergency ووظائف public SQL/PLpgSQL غير التابعة للإضافات، وجداول Assess/emergency وprofiles/events/attempts/feedback/c2_account_deletions؛ لا ادعاء بصمة كتالوج المزوّد كله.
+Verified — بعد تطبيق0300 لن تتطابق `rad062-m09-ready.sql` و`rad062-p1-b-m09-ready.sql` و`rad059-alternate-ready.sql`؛ يجب أن تستبدلها دفعة الترقية اللاحقة بـ`rad085-review-ready.sql`؛ حارس الترقية وmarker لم يتغيرا.
+Inferred — لا دورة قفل: المحو C2/D3 وR1 يأخذ capacity ثم profiles ثم cascades؛ كاتب Practice يمسك profile فقط قبل usage ولا يطلب capacity/scope أو مورد الإيقاف. المحو ينتظر الكاتب ثم يمحو الاستخدام، أو يسبقه فيُرفض الكاتب بعد انتظار profile. مراحل0200 تتشارك SHARE وتكتب موارد أخرى؛ كتّاب الحساب/المسار يتسلسلون قبل upsert.
 Verified — الحصة في جدول مراجَع واحد pilot_write_limits؛ usage ثلاثة صفوف كحد أقصى/حساب وتُمحى عبر CASCADE. لا عدّاد تاريخي نامٍ. فحص finalise≤100 حساب/نداء؛ التنبيه يحتفظ بآخر جزء فاشل أثناء المتابعة، وقائمة الحذف الأصلية مقسمة بالكامل.
 Inferred — السقف ليس حدًا رياضيًا للواجهة أو ضمان كلفة المزوّد؛ نافذتان ثابتتان قد تسمحان بدفعة عند حد الساعة/اليوم. رفع القيم يتطلب قياسًا ومراجعة وpin جديدًا؛ لا تغيير صلاحيات API أو مهلات الحسابات.
 Verified — سؤالا AGENTS: هل غيّر الاختصار حكمًا؟ لا. هل بقي رابط الدليل الأصلي؟ نعم: [O5](DECISIONS.md#rad085-db-day-owner-2026-10-27)، [S2/S3](DECISIONS.md#rad085-sec-fixes-owner-2026-10-27)، [Auth](DECISIONS.md#rad085-auth-fk-owner-2026-10-28)، [0200](DECISIONS.md#rad059-implementation-owner-2026-11-02) و[المراجعة](RAD-085_OPEN_REVIEWS_2026-11-02.md).
@@ -53,16 +55,19 @@ Verified — لا طب أو امتحانات أو مشاهد أو scoring/golden
 
 ## 6. QA وحدود الإثبات
 
-Not run (usage limit; reviewer will run) — DB lane: embedded + supabase17؛ أُوقف المسار بأمر المالك قبل اعتماد نتيجته النهائية. شواهد الترتيب والكتالوج والتزامن موجودة للمراجع؛ لا ادعاء نجاح المسار النهائي.
-Verified — typecheck وlint (تحذيران سابقان)؛ unit: 2516 ناجحًا؛ build وbuild:pages ناجحان. تحذير Pages: NEXT_PUBLIC_SUPABASE_URL not set; CSP unchanged (connect-src 'self').
-Verified — Chromium/axe:20 حالة للمكونات الفعلية EN/AR×390/1440، 0violations/overflow/page errors، مع إثبات بقاء نص الملاحظة بعد الرفض؛ نقل اصطناعي وحارس معاينة فقط. ليست هاتفًا أو تشغيلًا حيًا.
-Verified — الساعة الفعلية والسكريبت والعدّادات مدرجة أدناه؛ لا تسريع للساعة أو حقن درجات/مخزن. source checks تثبت ثبات ملفات supabase القائمة والحزمتين وmarker والتوقعات خارج الاستثناء.
+Verified — focused embedded:43/43؛ تحت القفل الحصري events=14.67ms وattempts=8.90ms وfeedback=12.85ms؛ شواهد جديدة للمسارات الثلاثة تحت capacity حصري بأقل من500ms، وترتيبَي COMMIT لـD3 وR1 finalise، ورفض C2 بعد انتظار profile، وتزامن الحساب/المسار في COMMIT وROLLBACK وذرية الفشل متعدد الصفوف، ومراحل0200 الست بترتيبَي الدخول؛ اختبارات الحدود الأصلية unchanged.
+Not run (environment: Docker storage exhausted) — شواهد Supabase17 على الصورة المثبتة لم تُنفّذ: فشل pull مرتين بنفاد المساحة حتى بعد تفريغ cache الصور؛ digest ثابت بلا بديل أو تغيير fixtures. المسار الكامل الأول:901 ناجحًا و128 فشلًا، منها126 لغياب الصورة و2 timeout عند الحمل؛ نجح الاختباران منفردين بلا تغيير مهلة/توقع. إعادة المسار على الكود النهائي ناجحة أدناه؛ لا نجاح مُدّعى لـSupabase17.
+Verified — بعد focused النهائي شُغّل DB كاملًا للحالات المتاحة: `CI_TEST_LANE=db npm test -- --maxWorkers=1 -t '^(?!.*supabase17)'`؛116ملفًا و906/906 ناجحة، و129حالة Supabase17 مستبعدة صراحةً بسبب العائق أعلاه؛ لم يتغير أي توقع أو timeout قائم.
+Verified — typecheck وlint وunit:2516/2516 في149ملفًا وbuild وbuild:pages؛ typecheck والبناءان بحاوية Node24 محلية بلا شبكة بسبب خلل cache في SWC ببيئة المضيف. تحذير Pages: NEXT_PUBLIC_SUPABASE_URL not set; CSP unchanged (connect-src 'self').
+Verified (دليل1ebe90a السابق) — Chromium/axe:20 حالة للمكونات الفعلية EN/AR×390/1440، 0violations/overflow/page errors، مع إثبات بقاء نص الملاحظة بعد الرفض؛ نقل اصطناعي وحارس معاينة فقط. ليست هاتفًا أو تشغيلًا حيًا.
+Verified (دليل1ebe90a السابق) — الساعة الفعلية والسكريبت والعدّادات مدرجة أدناه؛ لا تسريع للساعة أو حقن درجات/مخزن. source checks تثبت ثبات ملفات supabase القائمة والحزمتين وmarker والتوقعات خارج الاستثناء.
 Verified — docs:check --base origin/main، status:check --base origin/main --require-previous، git diff --check؛ docs:sync مرتان والثانية0 تغييرات. تحذيرات السقف مراجعة فقط، لا تجاوز للميزانية.
+Not run (missing local tools/images) — docs:test كاملًا؛ المحاولة119 ناجحًا/7 فشلًا لغياب psql وage و/usr/lib/postgresql وصورة postgres17.11 المثبتة. لم تتغير الاختبارات لتجاوز ذلك.
 Not run (scope) — هاتف المالك، أي SQL/مزوّد حي، ACK وقنوات خارجية أو تطبيق/ترقية؛ NOTIFY ليس إثبات وصول تنبيه للهاتف.
 
 ## 7. المفتوح
 
-Inferred — يلزم المراجع إعادة مسار Supabase17 على الصورة المثبتة والرأس النهائي، ثم بروفة الاستعادة ونافذة المالك. لا يُعد الدمج إغلاقًا تشغيليًا لـRAD-085 أوRAD-059 ولا إذن فتح.
+Inferred — يلزم focused ثم المسار الكامل على Supabase17 المثبتة بعد توفير مساحة Docker؛ embedded الحالي ناجح. CI للإصلاح كان قيد التشغيل عند القراءة الوحيدة؛ لا انتظار أو polling. بعدها بروفة الاستعادة ونافذة المالك. لا يُعد الدمج إغلاقًا تشغيليًا لـRAD-085 أوRAD-059 ولا إذن فتح.
 Verified — P4/D1 مغلقتان ومهلة15دقيقة معتمدة؛ [قرار المالك ودليل الإغلاق](#p4-d1-closure). بقية شروط الإطلاق والخصوصية والقنوات في مصادرها.
 
 ## 8. قرارات المالك الموحدة
