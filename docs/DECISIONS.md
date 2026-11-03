@@ -1456,6 +1456,22 @@ Authority: owner's records-batch prompt on PR #215, recorded as stated; evidence
 - D13: absence drill — the 30-minute wait may be compressed for simulation; the 30-minute rule itself is unchanged.
 No live SQL, Variables, gate, LOGIN, secret or Scheduler permission follows from these records; the gate stays closed (W1–W8 in the [gate runbook](ASSESS_GATE_OPEN_RUNBOOK.md)).
 
+<a id="code-health-pins-owner-2026-11-03"></a>
+### RAD-094 — pinned dead exports، 2026-11-03
+
+قرار المالك في طلب استئناف #216: لا تعديل لـ`src/features/pilot/owner-data.ts` أو `scripts/pages/frontend-schema.json`.
+استثناء Knip رمزي للـ`ATTEMPT_COLUMNS` و`NOTE_COLUMNS` في ذلك الملف فقط؛ لا استثناء ملف/مجلد/pattern.
+السبب الحرفي: "pinned browser boundary; remove with the next authorised pin change".
+يبقي [التقرير](CODE_HEALTH_REPORT_2026-11-03.md) الرمزين كودًا ميتًا معلنًا؛ رفع الاستثناء عند تغيير pin مأذون لاحقًا.
+
+<a id="code-health-size-owner-2026-11-03"></a>
+### RAD-094 — size caps، 2026-11-03
+
+قرار المالك في طلب استئناف #216: الوحدة KiB =1024 بايت؛ القياس gzip JS+CSS لكل صفحة بمنهج baseline.
+السقوف في [budgets.json](budgets.json): home/training/supervisor/account=400؛ practice/owner/assess=500 KiB.
+أي صورة جديدة≤500 KiB؛ الصور الموجودة قياس فقط، بلا تطبيق رجعي أو تغيير صور في هذه الدفعة.
+هذه القرارات ليست مسجلة في #215؛ تبقى PR Draft ولا إذن SQL حي أو Variables أو نشر.
+
 <a id="launch-practice-only-owner-2026-11-03"></a>
 ### Launch — Practice-only Thursday and W1–W8 decisions, 2026-11-03
 Authority: owner decisions on Draft #218, recorded as stated; evidence in the [W report](RAD-085_GATE_W_REPORT_2026-11-03.md) and [packages](ASSESS_GATE_W_PACKAGES.md).

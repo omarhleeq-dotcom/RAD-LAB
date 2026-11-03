@@ -25,5 +25,21 @@
   },
   "completion_evidence": {
     "chars": 400
+  },
+  "code_health": {
+    "decision": "docs/DECISIONS.md#code-health-size-owner-2026-11-03",
+    "unit": "KiB",
+    "bytes_per_unit": 1024,
+    "measurement": "gzip JS+CSS linked from each exported HTML, gzip level 9 / mtime 0; existing images measure-only",
+    "pages": {
+      "home": 400,
+      "training": 400,
+      "supervisor": 400,
+      "account": 400,
+      "practice": 500,
+      "owner": 500,
+      "assess": 500
+    },
+    "new_image": 500
   }
 }

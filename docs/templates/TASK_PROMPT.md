@@ -11,6 +11,8 @@ AGENTS, HANDOFF, selected task evidence and applicable decisions.
 
 ## Scope + file budget
 Allowed files/modules and an exact file budget; revise before expanding.
+Reuse check: name the existing registries/helpers from [FEATURE_MAP](../FEATURE_MAP.md)
+that cover this feature; justify any new mechanism before rebuilding one.
 
 ## Out of scope
 Explicit exclusions and protected files.
