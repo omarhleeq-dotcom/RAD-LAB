@@ -2388,7 +2388,8 @@
       "Knip CLI/hooks/library entries are explicit; locally used symbols are live; exact retained-dead-symbol exceptions and triggers in policy.json. No unused-file exception.",
       "Size method remains Python gzip.compress(compresslevel=9,mtime=0); EN/AR and every practice route are checked. New image additions compared with CODE_HEALTH_BASE, plus untracked files; existing images measure-only."
     ],
-    "launch_records_main": "a20867d38",
-    "launch_records_merge": "Docs-only #215 merged after code verification; source tree unchanged"
+    "launch_records_main": "a20867d8ac82b556a8d204d34b81eb51c7aea8ad",
+    "launch_records_merge": "Docs-only #215 merged after code verification; source tree unchanged",
+    "launch_records_merge_head": "683c12d5dc9a0ef113aab8e0848dec65919d207b"
   }
 }
