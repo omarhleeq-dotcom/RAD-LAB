@@ -1505,6 +1505,16 @@ Authority: owner decision on the W4 Phase A proposal in this session, recorded a
 - The mount layout (separate directories per secret) was checked against the official Cloud Run jobs secrets page.
 - The PR stays Draft and merges only after the Thursday launch. No live SQL, secret, Job, image push or gate permission follows from this record.
 
+<a id="alternate-stop-page-owner-2026-11-03"></a>
+### Alternate emergency stop page — 2026-11-03
+Authority: owner's UX task; presentation/routing only, at most14 files, one Draft PR from latest main; never ready/merge.
+Placement A: `/[locale]/emergency` only; site-menu “Emergency stop” only for the appointed alternate using the existing EmergencySession/browser-adapter `access()` check. Others get neutral “not available”, no stop controls. Remove the SessionGate per-page panel.
+Design2: calm card, title, “You are the appointed alternate”, existing containment status only if already exposed (no new RPC), “Start emergency stop”; accessible modal confirmation (focus trap, Esc/cancel, aria-modal,44px targets) holds existing warning/cloud texts, checkbox and “Stop now”. Receipt/six phases stay on the page; running/results/issues cannot be dismissed; denied path unchanged. Red only on stop actions.
+Existing emergency values, StopController, flow, ACK and Option C semantics remain byte-identical; only menu/page/intro/button/dialog chrome keys may be added, EN/AR synced; Arabic DRAFT per [terminology](ARABIC_TERMINOLOGY.md).
+Supersedes the implemented presentation in SessionGate: `<EmergencySession/>` in the shared provider on every page, and EmergencyView: `<p>{t('warning')}</p><p>{t('cloud')}</p>` fully expanded. [Decisions1–11, including “Option C: one in-app alternate”](#rad059-alternate-owner-2026-11-02) and [12–14](#rad059-implementation-owner-2026-11-02) contain no every-page requirement; any such inferred presentation rule is superseded only. Original authority/evidence links remain.
+Pins: prefer reusing EmergencySession unchanged; if necessary, ONLY sha256 values for changed SessionGate/AppShell/EmergencySession are pre-approved, with printed main/branch markers and identical browser rpc/from/call set. Any other pin/check/manifest change → STOP.
+No RPC/schema/migration/marker/write/dependency change; owner emergency section from #219 unchanged; no guard weakening. Static EN/AR route, noindex and unchanged404 policy; budgets/health gates and full product QA apply.
+
 <a id="radiograph-plan-owner-2026-11-03"></a>
 ## Radiograph plan owner decisions — 2026-11-03
 Authority: owner's four-session radiograph prompt; tracked by RAD-098.

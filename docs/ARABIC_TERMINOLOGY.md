@@ -469,3 +469,7 @@ Keys: `radiograph` credit of `src/data/cases/shoulder-grashey-radiograph.ts` and
 | Per the image uploader's description | بحسب وصف من رفع الصورة | shoulder credit note (DRAFT) |
 | has a history of recurrent dislocation | لهذا الكتف تاريخ من الخلع المتكرر | shoulder credit note (DRAFT) |
 | no abnormality is visible on the image | ولا يظهر على الصورة أي شذوذ | shoulder credit note (DRAFT) |
+
+## Session alternate stop page — 2026-11-03 (DRAFT, pending owner / educator review)
+
+New `emergency` chrome keys, machine-assisted: `menuEntry` / `pageTitle` «إيقاف الطوارئ»؛ `pageIntro` «أنت البديل المعيّن»؛ `startStop` «بدء إيقاف الطوارئ»؛ `dialogTitle` «تأكيد إيقاف الطوارئ»؛ `dialogCancel` «إلغاء»؛ `stopNow` «إيقاف الآن»؛ `pageUnavailable` «إيقاف الطوارئ غير متاح لهذا الحساب.». Existing emergency text unchanged.
