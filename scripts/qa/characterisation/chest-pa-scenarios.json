@@ -19069,16 +19069,16 @@
    "representative": false,
    "schemaVersion": 1,
    "technique": {
-    "detailGain": 0.5128205128205127,
+    "detailGain": 0.5871322171613224,
     "noiseSeed": 2445381386,
-    "noiseSigma": 17.54422982065614,
+    "noiseSigma": 15.094198145671758,
     "penetrationContrastKept": 0.3
    }
   },
   "primaryVariant": "wrong-projection",
   "render": {
    "height": 258,
-   "sha256": "36584730c31b6b7caa9dca4754e72d49bc47ed10e32dd7177fa3a2d438843528",
+   "sha256": "1b1a216f840a6cb448fa094f3658dff3b955af3f1e52437a9863da98582f87ea",
    "width": 210
   },
   "result": {
@@ -22705,16 +22705,16 @@
    "representative": true,
    "schemaVersion": 1,
    "technique": {
-    "detailGain": 0.20919098588113313,
+    "detailGain": 0.2530750179460908,
     "noiseSeed": 2445381386,
-    "noiseSigma": 34.997484291096406,
+    "noiseSigma": 30.923337443978713,
     "penetrationContrastKept": 0.3
    }
   },
   "primaryVariant": "low-penetration",
   "render": {
    "height": 258,
-   "sha256": "fbdee84450b1db1ae1d751244487bbc5a467c815d865b08d71fb86a4b25b80c3",
+   "sha256": "541ee870d52f95aabbc72ceab079bb1d0d6b448f3e5e45a25408082232afafe7",
    "width": 210
   },
   "result": {
@@ -35594,16 +35594,16 @@
    "representative": true,
    "schemaVersion": 1,
    "technique": {
-    "detailGain": 0.8903309539260221,
+    "detailGain": 0.9556340244129653,
     "noiseSeed": 2445381386,
-    "noiseSigma": 6.317406191725655,
+    "noiseSigma": 3.8783921672729846,
     "penetrationContrastKept": null
    }
   },
   "primaryVariant": "low-exposure",
   "render": {
    "height": 258,
-   "sha256": "054b5530da478581da9ac9c89c422fbc01fc30faa5b67ca36775d71f7a73acfd",
+   "sha256": "20fec00ee17b2ccf19ef60ccb7555f823f774b1e7c3da354abaf697f12b1ef41",
    "width": 210
   },
   "result": {
@@ -45628,16 +45628,16 @@
    "representative": true,
    "schemaVersion": 1,
    "technique": {
-    "detailGain": 0.6027907621956506,
+    "detailGain": 0.679345519344386,
     "noiseSeed": 2445381386,
-    "noiseSigma": 14.611637227474874,
+    "noiseSigma": 12.366471583538955,
     "penetrationContrastKept": null
    }
   },
   "primaryVariant": "low-exposure",
   "render": {
    "height": 258,
-   "sha256": "6863bccce74bda11ce91cb85d2bba92764775ec720e6094e1bdc48641a533e05",
+   "sha256": "88423f13d63ee7ee76990c6c52ac4684f5e5ab64b87f11e68c25c5a9b4a463a2",
    "width": 210
   },
   "result": {
@@ -46722,16 +46722,16 @@
    "representative": true,
    "schemaVersion": 1,
    "technique": {
-    "detailGain": 0.3894231307801746,
+    "detailGain": 0.45578643744267644,
     "noiseSeed": 2445381386,
-    "noiseSigma": 22.538852786569667,
+    "noiseSigma": 19.66873760191418,
     "penetrationContrastKept": null
    }
   },
   "primaryVariant": "low-exposure",
   "render": {
    "height": 258,
-   "sha256": "a215f30599451d9f1626262c6205f2440e59c13d75c794ad31f47cceefca4d52",
+   "sha256": "39cd19183d1c36fcd69a32408bf5cd8a6353bdc7d05a87e55c059ffc0d5484e4",
    "width": 210
   },
   "result": {
@@ -60116,16 +60116,16 @@
    "representative": true,
    "schemaVersion": 1,
    "technique": {
-    "detailGain": 0.9085331325488635,
+    "detailGain": 0.9722412380025537,
     "noiseSeed": 2445381386,
-    "noiseSigma": 5.7112875049543375,
+    "noiseSigma": 3.04148397640579,
     "penetrationContrastKept": null
    }
   },
   "primaryVariant": "low-exposure",
   "render": {
    "height": 258,
-   "sha256": "849127c02b3caa043ba39bd03577b84cb7f5af9a739ddbe013cffa91d41015b4",
+   "sha256": "988b9a454bb0376a80353552e8c10a562f39cdb28a1c0f060cdd8703e98f28f4",
    "width": 210
   },
   "result": {
