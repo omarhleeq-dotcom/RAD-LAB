@@ -1,0 +1,167 @@
+{
+  "versions": {
+    "jscpd": "4.0.5",
+    "knip": "6.44.1"
+  },
+  "longClones": [
+    {
+      "key": "[[\"scripts/qa/rad085-d3-routes-audit.mjs\",\"scripts/qa/rad085-p1-routes-audit.mjs\"],\"javascript\",\"324a9700786966b530134fd019ba872cd9c5192dd87ac8365bda7571d3fa4a90\"]",
+      "count": 1,
+      "reason": "Existing independent audit scenario bootstrap; only byte-identical portions may be shared; preserve scenario order and assertions."
+    },
+    {
+      "key": "[[\"scripts/qa/rad-085-supervisor-audit.mjs\",\"scripts/qa/rad085-p4-lifetime-audit.mjs\"],\"javascript\",\"c9f6f44072db39da2cf12d0d2e3e33f8d8a7231cc2b732526f7fa819107f1ef8\"]",
+      "count": 1,
+      "reason": "Existing independent audit scenario bootstrap; only byte-identical portions may be shared; preserve scenario order and assertions."
+    },
+    {
+      "key": "[[\"scripts/qa/ankle-audit.mjs\",\"scripts/qa/wrist-audit.mjs\"],\"javascript\",\"68d234cec779f7e3771bdc57517a3a0b59e519b3e5c6f3bd99616cc0d1ebfb6a\"]",
+      "count": 1,
+      "reason": "Existing independent audit scenario bootstrap; only byte-identical portions may be shared; preserve scenario order and assertions."
+    },
+    {
+      "key": "[[\"scripts/qa/ankle-audit.mjs\",\"scripts/qa/wrist-audit.mjs\"],\"javascript\",\"1fbf9de94ba5687d77df0f4ddb94897dc113e39ecaee9d07d676702463ad2d16\"]",
+      "count": 1,
+      "reason": "Existing independent audit scenario bootstrap; only byte-identical portions may be shared; preserve scenario order and assertions."
+    },
+    {
+      "key": "[[\"scripts/pilot/assess-retention-closed-service-check.js\",\"scripts/pilot/assess-service-check.js\"],\"javascript\",\"fb51efbb9de91fb05a10e459b8e8c0752920472f61cacae15304766b4936bfda\"]",
+      "count": 1,
+      "reason": "Existing isolated service-check scenario; differing RPC contracts retained to preserve negative witnesses."
+    },
+    {
+      "key": "[[\"scripts/pilot/assess-f-closed-service-check.js\",\"scripts/pilot/assess-service-check.js\"],\"javascript\",\"afe60dc8d18171ec35ac6b40f7dcf5e449fbcc531f4fb338199975a5986f600a\"]",
+      "count": 1,
+      "reason": "Existing isolated service-check scenario; differing RPC contracts retained to preserve negative witnesses."
+    },
+    {
+      "key": "[[\"scripts/pilot/assess-e-closed-service-check.js\",\"scripts/pilot/assess-service-check.js\"],\"javascript\",\"f5cbdffb473a17acd84046bb401e34394fb27f39354c8c4717fcf405ce4fb164\"]",
+      "count": 1,
+      "reason": "Existing isolated service-check scenario; differing RPC contracts retained to preserve negative witnesses."
+    },
+    {
+      "key": "[[\"scripts/pilot/assess-d-closed-service-check.js\",\"scripts/pilot/assess-service-check.js\"],\"javascript\",\"c258121a1f2bcca4fc7e912080aeb515bceeeb0e009a478e79c0be0feb491c40\"]",
+      "count": 1,
+      "reason": "Existing isolated service-check scenario; differing RPC contracts retained to preserve negative witnesses."
+    },
+    {
+      "key": "[[\"src/features/positioning/detector-figures.tsx\",\"src/features/positioning/detector-figures.tsx\"],\"javascript\",\"5165c417abdcb140feb5d5db0885a50210de013a7740ee0a33dcbe5c7effc54f\"]",
+      "count": 1,
+      "reason": "Existing isolated service-check scenario; differing RPC contracts retained to preserve negative witnesses."
+    },
+    {
+      "key": "[[\"src/features/positioning/detector-figures.tsx\",\"src/features/positioning/detector-figures.tsx\"],\"javascript\",\"c41f17e297f5947c0e89f1ea9195f0bdbc3c90e48185bd28633a2b0c23e7272e\"]",
+      "count": 1,
+      "reason": "Existing isolated service-check scenario; differing RPC contracts retained to preserve negative witnesses."
+    },
+    {
+      "key": "[[\"scripts/qa/hand-audit.mjs\",\"scripts/qa/wrist-audit.mjs\"],\"javascript\",\"f62c7c9c46de92d9368843033e53c09dfaf09e7f1a6af408d7f1dfb394fc0a2f\"]",
+      "count": 1,
+      "reason": "Re-segmented existing limb-audit clone after extracting byte-identical axe/overflow helpers. Full source expansion is byte-identical to merged main in health:test; retain family-specific controls and assertions."
+    },
+    {
+      "key": "[[\"scripts/qa/elbow-audit.mjs\",\"scripts/qa/wrist-audit.mjs\"],\"javascript\",\"f283e7a3c860d37a2052e2f35a5ea8634190089b1d25e0b2da6ed3e3a8d9db9d\"]",
+      "count": 1,
+      "reason": "Re-segmented existing limb-audit clone after extracting byte-identical axe/overflow helpers. Full source expansion is byte-identical to merged main in health:test; retain family-specific controls and assertions."
+    }
+  ],
+  "knipExceptions": [
+    {
+      "file": "package.json",
+      "kind": "devDependencies",
+      "name": "jscpd",
+      "reason": "Pinned scanner invoked by health:source through spawnSync; Knip does not resolve the constructed binary path."
+    },
+    {
+      "file": "scripts/assess/rad085-production-shape.mjs",
+      "kind": "exports",
+      "name": "productionApplicationSql",
+      "reason": "Existing production-fixture projection API retained with the protected RAD-085 calibration code; remove only in a separately authorised fixture change."
+    },
+    {
+      "file": "src/features/assess/server-rad085-contracts.ts",
+      "kind": "exports",
+      "name": "RAD085_PUBLIC_RPCS",
+      "reason": "Deferred SQL contract DTO/API retained byte-identical with the promoted Assess contract; remove with the next authorised contract change."
+    },
+    {
+      "file": "src/features/assess/server-rad085-contracts.ts",
+      "kind": "types",
+      "name": "DraftReceipt",
+      "reason": "Deferred SQL contract DTO/API retained byte-identical with the promoted Assess contract; remove with the next authorised contract change."
+    },
+    {
+      "file": "src/features/assess/server-rad085-contracts.ts",
+      "kind": "types",
+      "name": "AssignmentReviewReceipt",
+      "reason": "Deferred SQL contract DTO/API retained byte-identical with the promoted Assess contract; remove with the next authorised contract change."
+    },
+    {
+      "file": "scripts/library-graphics/build-library-graphics.mjs",
+      "kind": "exports",
+      "name": "ids",
+      "reason": "Graphics builder API retained byte-identical; graphics and generated image/hash changes are out of scope; remove in a dedicated graphics cleanup."
+    },
+    {
+      "file": "src/features/pilot/owner-data.ts",
+      "kind": "exports",
+      "name": "ATTEMPT_COLUMNS",
+      "reason": "pinned browser boundary; remove with the next authorised pin change"
+    },
+    {
+      "file": "src/features/pilot/owner-data.ts",
+      "kind": "exports",
+      "name": "NOTE_COLUMNS",
+      "reason": "pinned browser boundary; remove with the next authorised pin change"
+    },
+    {
+      "file": "src/features/pilot/survey.ts",
+      "kind": "exports",
+      "name": "SURVEY_URL",
+      "reason": "Unused survey URL binding retained byte-identical with existing survey helpers; remove in the next authorised survey cleanup."
+    },
+    {
+      "file": "src/features/wrist-model/wrist-model.ts",
+      "kind": "exports",
+      "name": "PA_FOREARM",
+      "reason": "Declared dead geometry constant retained byte-identical; scene/model changes are out of scope; remove with the next authorised model change."
+    },
+    {
+      "file": "src/data/exams/xray/elbow-geometry.ts",
+      "kind": "exports",
+      "name": "ELBOW_CM_PER_PX",
+      "reason": "Unused geometry re-export retained byte-identical; exam/scene changes are out of scope; remove with the next authorised geometry change."
+    },
+    {
+      "file": "src/features/assess/server-contracts.ts",
+      "kind": "types",
+      "name": "AssignmentSnapshot",
+      "reason": "Unused DTO exported shape retained byte-identical with the protected Assess API; remove in a separately authorised contract cleanup."
+    },
+    {
+      "file": "src/features/assess/server-contracts.ts",
+      "kind": "types",
+      "name": "AttemptSnapshot",
+      "reason": "Unused DTO exported shape retained byte-identical with the protected Assess API; remove in a separately authorised contract cleanup."
+    },
+    {
+      "file": "src/features/assess/contracts-v2.ts",
+      "kind": "types",
+      "name": "AttemptStateV2",
+      "reason": "Unused versioned DTO retained byte-identical with the protected Assess API; remove in a separately authorised contract cleanup."
+    },
+    {
+      "file": "src/features/positioning/foot-outline-drawing.ts",
+      "kind": "types",
+      "name": "Pt",
+      "reason": "Unused exported point type retained byte-identical; scene/drawing source is out of scope; remove in a dedicated type-only drawing cleanup."
+    },
+    {
+      "file": "src/features/positioning/wrist-outline-drawing.ts",
+      "kind": "types",
+      "name": "Pt",
+      "reason": "Unused exported point type retained byte-identical; scene/drawing source is out of scope; remove in a dedicated type-only drawing cleanup."
+    }
+  ],
+  "layerExceptions": []
+}

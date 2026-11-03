@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 414,
-  "updated_at": "2026-11-03T07:30:18.895Z",
+  "revision": 415,
+  "updated_at": "2026-11-03T08:09:02.455Z",
   "timezone": "UTC",
-  "next_id": "RAD-094",
+  "next_id": "RAD-095",
   "tasks": [
     {
       "id": "RAD-001",
@@ -850,6 +850,16 @@
       "source_ref": "docs/DECISIONS.md#test-cleanup-owner-2026-11-02؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md",
       "waiting_on": "reviewer",
       "done_when": "PR مدمجة وCI خضراء؛ جميع الحراس محفوظة وقياس الوفر والشواهد السلبية موثقة."
+    },
+    {
+      "id": "RAD-094",
+      "title": "Code Health قبل الإطلاق",
+      "status": "review",
+      "priority": "medium",
+      "description": "استؤنفت #216 بعد دمج main وقراري المالك؛ أدوات مثبتة وبوابات ازدواج/Knip/طبقات/أحجام KiB وشواهد رفض مزروعة، حذف بطاقة غير مركبة وتوحيد QA مطابق وخريطة reuse. ينتظر CI والمراجعة؛ التقرير CODE_HEALTH_REPORT_2026-11-03.md.",
+      "source_ref": "docs/DECISIONS.md#code-health-pins-owner-2026-11-03؛ docs/DECISIONS.md#code-health-size-owner-2026-11-03؛ docs/CODE_HEALTH_REPORT_2026-11-03.md",
+      "waiting_on": "reviewer",
+      "done_when": "PR مدمجة بعد #213؛ CI والبوابات الأربع خضراء؛ تنظيف بلا تغير سلوك وخريطة مزايا وReuse check ومقاييس وصور للقياس فقط."
     }
   ]
 }
