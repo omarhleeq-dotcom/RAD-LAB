@@ -4,6 +4,8 @@
 
 ## Current verdict — read before Wednesday
 
+- **Thursday 2026-11-05 launches Practice-only; the Assess gate stays closed** ([decisions](DECISIONS.md#launch-practice-only-owner-2026-11-03)). D-W1, D-W5, W4 and W7 are deferred until after launch.
+
 - **CLOSE (§8) is executable now** from reviewed sources: the phone stop packet, its verification and the cloud steps.
 - **OPEN is blocked at §4.** W4 and W7 are STOP and W1/W5/W6 need owner decisions (table below). Do not improvise, and do not run §5 (gate open) while any item is not Ready-for-owner and executed.
 - Steps §1–§3 are read-only. You may run them to confirm readiness, but they open nothing.
@@ -18,9 +20,9 @@ Status after the [W1–W8 packages](ASSESS_GATE_W_PACKAGES.md) (reviewed and reh
 | W3 | New credential (rotation, not Enable) and IAM review | **Ready-for-owner** after W1/W4/W5 | same package: new numeric version, disabled at once; IAM review step W2.4 |
 | W4 | Job image from `build-worker.mjs`, pinned by digest | **STOP** | [W4](ASSESS_GATE_W_PACKAGES.md#3-w4--image-stop): that image is synthetic-only; needs a recovery-verifier decision and a reviewed production entrypoint |
 | W5 | Network path for the grading worker | **Decision-needed (D-W5)** | [W5](ASSESS_GATE_W_PACKAGES.md#4-w5--network-path-decision-needed): FREE direct host is IPv6-only; credential-free TLS probe Job packaged; options A/B/C |
-| W6 | Scheduler / continuous operation | **Decision-needed (D-W6)** | [W6](ASSESS_GATE_W_PACKAGES.md#5-w6--scheduler-decision-proposal): Scheduler absent/paused, sequential manual Execute, one attempt per run, within 24 h |
+| W6 | Scheduler / continuous operation | **Accepted 2026-11-03** ([decisions](DECISIONS.md#launch-practice-only-owner-2026-11-03)) | [W6](ASSESS_GATE_W_PACKAGES.md#5-w6--scheduler-decision-proposal): Scheduler absent/paused, sequential manual Execute, one attempt per run, within 24 h |
 | W7 | Live end-to-end smoke (§6) | **STOP** | [W7](ASSESS_GATE_W_PACKAGES.md#6-w7--live-smoke-recipe-stop): no written-item path in the deployed v1 UI and no reviewed content install; auto-only recipe ready for later |
-| W8 | Opening without a worker | **Rejected (proposed)** | [W8](ASSESS_GATE_W_PACKAGES.md#7-w8--no-worker-opening-proposed-rejected): every submission needs the worker |
+| W8 | Opening without a worker | **Rejected 2026-11-03** ([decisions](DECISIONS.md#launch-practice-only-owner-2026-11-03)) | [W8](ASSESS_GATE_W_PACKAGES.md#7-w8--no-worker-opening-proposed-rejected): every submission needs the worker |
 
 ## 0. Rules for every step
 
@@ -113,7 +115,7 @@ This order is fixed by the [phone restore section](RAD-059_PHONE_RUNBOOK.md#ال
 | 4.4 Recover frozen attempts | Only owner-selected attempts inside 7 days, one `assess.recover_v1` per transaction, as in phone restore steps 4–5 | Reviewed; run only if V2 showed frozen attempts |
 | 4.5 Readiness again | §3.2, then `owner_sql -f supabase/checks/assess-grading-worker-ready.sql`: every row `t` (replaces packet 5.a/5.b, which validate the `assess_worker` model) | Ready after 4.3 |
 | 4.6 One bounded run | Only with a separate run permission: Jobs → Execute once. Expected: one completion, matching tick, then zero executions; re-read SQL afterwards. Exit 0 alone proves nothing. One run grades at most one attempt ([W6](ASSESS_GATE_W_PACKAGES.md#5-w6--scheduler-decision-proposal)) | Depends on W1–W5 |
-| 4.7 Scheduler | Stays PAUSED/ABSENT under the D-W6 proposal; Resume needs a separate continuous-operation decision | **Decision-needed W6** |
+| 4.7 Scheduler | Stays ABSENT (D-W6 accepted); Resume needs a separate continuous-operation decision | Decided: ABSENT |
 
 ## 5. Gate open — exact reviewed SQL (only after §4 is complete and §0.3 is written)
 

@@ -10,11 +10,11 @@
 | W2+W3 | **Ready-for-owner** (after W1, W4, W5) | Laptop transport: in-memory password, local SCRAM verifier over `owner_sql` stdin, plaintext only to a new numeric secret version that is disabled at once |
 | W4 | **STOP** | The image built by `build-worker.mjs` is synthetic-only by construction, so no production grading image exists yet |
 | W5 | **Decision-needed (D-W5)** | The FREE direct host is IPv6-only. Cloud Run reaches IPv6 only through Direct VPC egress on a dual-stack subnet, which is unproven here. A credential-free probe is packaged |
-| W6 | **Decision-needed (D-W6)** | Proposal: Scheduler stays absent or paused; the owner runs sequential manual executions. One execution grades at most one attempt, inside 24 h |
+| W6 | **Accepted 2026-11-03** | Proposal: Scheduler stays absent or paused; the owner runs sequential manual executions. One execution grades at most one attempt, inside 24 h |
 | W7 | **STOP** | The deployed student UI is v1 only: written items cannot be assigned or taken, and no reviewed production content-install path exists |
-| W8 | **Rejected (proposed)** | Every submission needs the worker before it can be graded or reach manual grading |
+| W8 | **Rejected 2026-11-03** | Every submission needs the worker before it can be graded or reach manual grading |
 
-The fixed order for the owner's live steps is the table in [§9](#9-owner-live-steps-in-order).
+Owner decisions 2026-11-03 ([decisions](DECISIONS.md#launch-practice-only-owner-2026-11-03)): Practice-only launch on Thursday; deviations 1–2 and D-W6 accepted; W8 rejected; D-W1, D-W5, W4 and W7 deferred until after launch. The fixed order for the owner's live steps is the table in [§9](#9-owner-live-steps-in-order).
 
 ## 1. W1 — grading role and one LOGIN slot
 

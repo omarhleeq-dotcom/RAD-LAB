@@ -16,7 +16,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Rotation and image honesty](#rotation-honesty)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03)
 
 ## Active Binding Decisions
 
@@ -1455,3 +1455,14 @@ Authority: owner's records-batch prompt on PR #215, recorded as stated; evidence
 - D12: TEST/ACK — one consolidated alternate ACK covers all signals on the same email channel.
 - D13: absence drill — the 30-minute wait may be compressed for simulation; the 30-minute rule itself is unchanged.
 No live SQL, Variables, gate, LOGIN, secret or Scheduler permission follows from these records; the gate stays closed (W1–W8 in the [gate runbook](ASSESS_GATE_OPEN_RUNBOOK.md)).
+
+<a id="launch-practice-only-owner-2026-11-03"></a>
+### Launch — Practice-only Thursday and W1–W8 decisions, 2026-11-03
+Authority: owner decisions on Draft #218, recorded as stated; evidence in the [W report](RAD-085_GATE_W_REPORT_2026-11-03.md) and [packages](ASSESS_GATE_W_PACKAGES.md).
+- Launch: Thursday 2026-11-05 launches Practice-only; the Assess gate stays closed (the owner's Addendum 1 item 3 fallback rule, now applied).
+- Deviation 1 accepted: the credential transport keeps the slot NOLOGIN; LOGIN happens only at gate step 4.3.
+- Deviation 2 accepted: the single LOGIN slot is `assess_job_b`, so stop packet v2 and the in-app stop cover it.
+- D-W6 accepted: the Scheduler stays ABSENT; after each exam batch the owner runs N bounded manual executions, sequentially, inside the 24 h grading window.
+- W8 rejected: opening Assess without a worker is not viable.
+- Deferred until after launch, no decision yet: D-W1 (PUBLIC TEMP change), D-W5 (network probe), the W4 production worker entrypoint PR and the W7 written-item production scope.
+No live SQL, Variables, gate, LOGIN, secret, Job or Scheduler permission follows from these records.
