@@ -141,8 +141,9 @@ test('actual local logical restore applies eight transactions, rolls failures ba
   assert.equal(r.required_check_failures,0);
 });
 
-test('explicit latest applies the entire promoted required set', {timeout:30000}, async () => {
-  const db = await openLocalDatabase('postgres', { through:'latest' });
+for(const {productionVersion,locale} of [{productionVersion:false,locale:'C'},{productionVersion:true,locale:'icu-en-US'}]) {
+test(`explicit latest applies the entire promoted required set: ${productionVersion?'pinned 17.11 ICU':'embedded'}`, {timeout:90000}, async () => {
+  const db = await openLocalDatabase('postgres', { through:'latest',productionVersion,locale });
   try {
     assert.notEqual((await db.query("select to_regprocedure('assess.name_entry_v1()') v"))[0].v, null);
     assert.notEqual((await db.query("select to_regprocedure('assess.freeze_v2()') v"))[0].v, null);
@@ -156,6 +157,8 @@ test('explicit latest applies the entire promoted required set', {timeout:30000}
     finally {await client.end();}
   } finally { await db.close(); }
 });
+
+}
 
 for (const { productionVersion, locale } of [
   ...['C','en_US.UTF-8','icu-en-US'].map(locale=>({productionVersion:true,locale})),

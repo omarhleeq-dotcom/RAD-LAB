@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 // Production-version regression, separate from RAD-086's full Supabase restore image.
 const IMAGE='postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5';
 import { localeArgs } from '../ops/laptop-backup-lib.mjs';
+import { productionShapeSql } from './rad085-production-shape.mjs';
 
 export async function openLocalDatabase(backend, {through='historical-b',lineEndings='lf',allMigrationLineEndings=false,locale='C',productionVersion=false}={}) {
   if(!['pglite','postgres'].includes(backend))throw new Error('invalid_backend');
@@ -92,6 +93,8 @@ export async function openLocalDatabase(backend, {through='historical-b',lineEnd
     if(through==='latest' && required.includes('20261102000200_rad059_emergency_alternate.sql')) await exec('create role assess_job_a nologin;create role assess_job_b nologin;');
     for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&(through==='latest'?required.includes(f):f<ceiling)).sort()) {
       const sql=readFileSync(`supabase/migrations/${file}`,'utf8');
+      // Current synthetic installs must present the reviewed production catalogue.
+      if(file==='20261102000300_rad085_rights_write_disclosures.sql') await exec(productionShapeSql());
       try { await exec(lineEndings==='crlf'&&(allMigrationLineEndings||file>='20261020000600')?sql.replaceAll('\n','\r\n'):sql); }
       catch(error){throw Object.assign(new Error(`migration_failed:${file}:SQLSTATE=${error.code??'unavailable'}`,{cause:error}),{code:error.code});}
     }

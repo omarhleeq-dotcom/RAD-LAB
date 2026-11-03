@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { build } from 'esbuild';
 import { Client } from 'pg';
 import { openSyntheticRecoveryEvidence, reconcileSynthetic } from './rad085-erasure-recovery.mjs';
+import { productionShapeSql } from './rad085-production-shape.mjs';
 
 const PG_IMAGE = 'postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382';
 const dockerEnv = { ...process.env };
@@ -212,7 +213,9 @@ try {
   if(required.includes('20261102000200_rad059_emergency_alternate.sql')) await admin.query('create role assess_job_a nologin;create role assess_job_b nologin;');
   for (const file of applied) {
     migrationOrdinal++;
-    const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]); await admin.query(sql.toString());
+    const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]);
+    if(file==='20261102000300_rad085_rights_write_disclosures.sql') await admin.query(productionShapeSql());
+    await admin.query(sql.toString());
   }
   // Fixture-only role DDL, never an operational migration or provider grant.
   phase = 'postgres-fixture-role';
