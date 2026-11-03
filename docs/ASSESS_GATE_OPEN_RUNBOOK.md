@@ -32,16 +32,16 @@
 
 | # | Precondition | Evidence / expected | Source |
 |---|---|---|---|
-| P1 | Promotion #213 merged; Variable `PILOT_SCHEMA_VERIFIED` = `pilot-v1:a3d6a4050f7d7a232bea9dac5f8bdeacb1ef5baec6bef5cd6091fed89bb65123` | GitHub: merged; Settings → Variables shows the exact value | [window §10](RAD-085_RAD-059_WINDOW_RUNBOOK.md#10-coordinated-promotion-normal-automation-and-owner-checks) |
-| P2 | CI and Deploy Pages green on the merge commit | Actions: both workflows succeed on that commit; no bypass | same |
-| P3 | Owner phone check after deploy | Login, Practice, Assess entry, approved Terms/disclosures, personal v3 re-consent with synthetic accounts | same; [G7](LAUNCH_READINESS_AUDIT_2026-11-02.md#3-الشروط-المفتوحة-بحسب-المهمة) |
-| P4 | 0200 and 0300 applied once; successor checks pass | Window steps 5–6: every `ok=true` | [window §5–6](RAD-085_RAD-059_WINDOW_RUNBOOK.md#5-apply-0200-exactly-once-verify-before-proceeding) |
+| P1 | Promotion #213 merged; Variable `PILOT_SCHEMA_VERIFIED` = `pilot-v1:3d8b505ca8605f99f226475ced8e7aa1db576a5829c66cc5e6499e1aab4c18b7` | **Evidenced 2026-11-03 (owner-stated, redacted).** GitHub: merged; Settings → Variables shows the exact value | [window §10](RAD-085_RAD-059_WINDOW_RUNBOOK.md#10-coordinated-promotion-normal-automation-and-owner-checks); marker per the [#217 calibration](RAD-085_PREFLIGHT_CALIBRATION_REPORT_2026-11-03.md) |
+| P2 | CI and Deploy Pages green on the merge commit | **Evidenced 2026-11-03 (owner-stated, redacted).** Actions: both workflows succeed on that commit; no bypass | same |
+| P3 | Owner phone check after deploy | **Evidenced 2026-11-03 (owner-stated, redacted).** Login, Practice, Assess entry, approved Terms/disclosures, personal v3 re-consent with synthetic accounts | same; [G7](LAUNCH_READINESS_AUDIT_2026-11-02.md#3-الشروط-المفتوحة-بحسب-المهمة) |
+| P4 | 0200 and 0300 applied once; successor checks pass | **Evidenced 2026-11-03 (owner-stated, redacted).** Window steps 5–6: every `ok=true` | [window §5–6](RAD-085_RAD-059_WINDOW_RUNBOOK.md#5-apply-0200-exactly-once-verify-before-proceeding) |
 | P5 | Old-credential revocation accepted | D11 (owner-stated); recorded in DECISIONS before opening | [Supavisor rule](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01) |
 | P6 | RAD-041 isolation: three phases | `pending`: checks 1,2; `approved`: `TOTAL 4 checks: PASS 4 FAIL 0 UNKNOWN 0`; `suspended`: 1,6,5 PASS; no FAIL/UNKNOWN | [RAD-041 runbook §3](RAD-041_LIVE_ISOLATION_RUNBOOK.md#3-المراحل-الثلاث-بالترتيب) |
 | P7 | Channels: TEST signal received by each responder; human ACK `ACK / id / UTC / owner\|alternate / action / next check` | Encrypted log rows for budget email, the three alert policies and the Supabase Usage read; receipt proven, not just Save | [decisions 1–2, 6](DECISIONS.md#rad059-alternate-owner-2026-11-02) |
 | P8 | Alternate appointed; drill done | Appoint/remove, stop from the alternate account, 30-minute absence rule, critical immediate containment | [alternate §5](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#5-alternate-and-channels-drill-then-a-separate-promotion-pr) |
 | P9 | FREE plan inactivity pause checked | Dashboard shows the project active; plan for activity under one week | [decision 11](DECISIONS.md#rad059-alternate-owner-2026-11-02) |
-| P10 | Fresh RAD-086 backup the same day | `laptop-backup.mjs verify daily` passes | [RAD-086](RAD-086_LAPTOP_BACKUP_RUNBOOK.md) |
+| P10 | Fresh RAD-086 backup the same day | **Evidenced 2026-11-03 (owner-stated, redacted).** `laptop-backup.mjs verify daily` passes. Repeat on the opening day if it is later. | [RAD-086](RAD-086_LAPTOP_BACKUP_RUNBOOK.md) |
 | P11 | Open owner decisions D1–D9 recorded (content/O108, FREE, RAD-047, G8) | DECISIONS entries exist | [audit §8](LAUNCH_READINESS_AUDIT_2026-11-02.md#8-قائمة-المالك-الموحدة-والمسار-الحرج-وبرومبت-المتابعة) |
 | P12 | W1–W8 resolved by merged reviewed PRs; permission sentence 0.3 written | PR links in the encrypted log | this page |
 
@@ -60,7 +60,7 @@ node -e "const m=require('./scripts/pages/frontend-schema.json');if(!m.checks.in
 NEXT_PUBLIC_SUPABASE_URL=https://vlacestfruxooznrcjqc.supabase.co node scripts/pages/pilot-schema-gate.mjs --print-marker
 ```
 
-**Expected:** `promoted_checks=9`, then exactly `pilot-v1:a3d6a4050f7d7a232bea9dac5f8bdeacb1ef5baec6bef5cd6091fed89bb65123`, the same value as the Variable in P1. **STOP** on a dirty tree, any other marker or an npm error.
+**Expected:** `promoted_checks=9`, then exactly `pilot-v1:3d8b505ca8605f99f226475ced8e7aa1db576a5829c66cc5e6499e1aab4c18b7`, the same value as the Variable in P1. **STOP** on a dirty tree, any other marker or an npm error.
 
 Next, run the **unchanged** [window step 2 block](RAD-085_RAD-059_WINDOW_RUNBOOK.md#2-select-the-protected-connection-and-evidence-directory) with the same private placeholders. It defines `owner_sql` and `RAD_WINDOW_LOG`. **Expected:** no output. Missing encrypted volume, wrong TLS or a wrong project means **STOP**.
 
