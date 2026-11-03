@@ -97,9 +97,15 @@ jobs:
       - name: Required RAD-085 local worker image and PostgreSQL witnesses (no skip)
         if: steps.rehearsals.outputs.full == 'true'
         run: node scripts/assess/rad085-worker-rehearsal.mjs
+      - name: Required W1-W3 grading worker rehearsal (embedded, pinned 17.11, Supabase 17.11; no skip)
+        run: node --test scripts/assess/grading-worker-rehearsal.test.mjs
       - run: npm run docs:test
       - name: Test first-version secret uploader (synthetic only)
         run: python3 -B -m unittest discover -s scripts/assess -p test_upload_worker_secret.py
+      - name: Test W2/W3 credential transport (synthetic only, fake secret sink)
+        run: python3 -B -m unittest discover -s scripts/assess -p test_rotate_grading_credential.py
+      - name: Test W5 credential-free TLS probe (synthetic only)
+        run: node --test scripts/assess/direct-tls-probe.test.mjs
       - name: Test read-only connection probe (synthetic only)
         run: node --test scripts/assess/connection-probe.test.mjs
       - name: Required DB lane including production fixture calibration in embedded and pinned Supabase 17.11 ICU (no skip)
