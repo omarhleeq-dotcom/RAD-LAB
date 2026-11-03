@@ -13,6 +13,7 @@ import type { ViewerSide } from "@/domain/simulation";
 import type { Evidence } from "@/domain/technique";
 import { fieldCutsLandmarkBox, fitAnatomyBox, viewerSideOf } from "@/features/simulation/geometry";
 import { expectedViewerSide as expectedViewerSideOf, isMarkerWrongSide } from "@/features/simulation/marker-rule";
+import { exposureRatioFromDI } from "@/features/technique/di";
 import { LIMB_ROTATION_EFFECT } from "./limb-effects";
 import { TUNING } from "./tuning";
 
@@ -283,7 +284,11 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
   const moved = patientResponse.motion === "motion";
   const rel = exposure.quantumNoise.relative;
   const noisy = exposure.quantumNoise.level === "increased" || exposure.quantumNoise.level === "marked";
-  const excessNoise = Math.sqrt(Math.max(0, rel * rel - 1));
+  // D-R2 amended (DECISIONS radiograph-dr2-amended-owner-2026-11-03): no extra noise inside the pass band; below its lower
+  // edge (the case's own `deviation.ideal[0]`, as a ratio) the existing relation √(rel² − 1) is taken relative to the edge,
+  // so noise and detail loss start from 0 at the edge and rise continuously (no category step, no new constant).
+  const belowEdge = noisy ? rel * rel * exposureRatioFromDI(radCase.technique.deviation.ideal[0]) - 1 : 0;
+  const excessNoise = Math.sqrt(Math.max(0, belowEdge));
   // D-R1 causal contract: an effect is drawn only if the asset can express it. Low penetration needs declared dense
   // zones; without them the kVp finding stays scored and is labelled "not drawn in this image" (consistency.ts).
   const lowPenetration = exposure.penetration === "low" && (spec.denseZones?.length ?? 0) > 0;
@@ -379,7 +384,7 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
     technique: {
       noiseSigma: noisy ? TUNING.noise.sigmaPerUnit * excessNoise : 0,
       noiseSeed: noiseSeedFor(state.caseId),
-      detailGain: noisy ? 1 / (1 + TUNING.noise.detailLoss * (rel * rel - 1)) : 1,
+      detailGain: noisy ? 1 / (1 + TUNING.noise.detailLoss * Math.max(0, belowEdge)) : 1,
       penetrationContrastKept: lowPenetration ? TUNING.penetration.contrastKept : null,
     },
     marker,

@@ -992,7 +992,7 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "5bb3a879307a19cd"
+  "hash": "82d738a847188721"
  },
  "kvp-105": {
   "score": 94,
@@ -1026,7 +1026,7 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "3c9f009d110675a5"
+  "hash": "385bbc6f932f0e51"
  },
  "kvp-70": {
   "score": 96,
@@ -1127,7 +1127,7 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "040b113bf9fdb4bb"
+  "hash": "b6b4f9f355781572"
  },
  "mas-very-low": {
   "score": 92,
@@ -1160,7 +1160,7 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "b03121314442f946"
+  "hash": "58c5a2375285832a"
  },
  "mas-above": {
   "score": 96,
@@ -1547,7 +1547,7 @@
    "visibleFraction": 1,
    "wrongSide": false
   },
-  "hash": "3271762242ebe03c"
+  "hash": "af018b0eeefb9332"
  },
  "combo-low-kvp-high-mas": {
   "score": 92,
@@ -1842,7 +1842,7 @@
    "visibleFraction": 0,
    "wrongSide": true
   },
-  "hash": "9b180cb7fa54222c"
+  "hash": "50186c9c559a65f1"
  },
  "initial-state": {
   "score": 15.6,
