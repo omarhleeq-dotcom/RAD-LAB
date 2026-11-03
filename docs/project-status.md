@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 421,
-  "updated_at": "2026-11-03T19:00:00Z",
+  "revision": 423,
+  "updated_at": "2026-11-03T17:23:54Z",
   "timezone": "UTC",
-  "next_id": "RAD-098",
+  "next_id": "RAD-099",
   "tasks": [
     {
       "id": "RAD-001",
@@ -890,6 +890,16 @@
       "source_ref": "docs/DECISIONS.md#rad085-w4-verifier-owner-2026-11-03؛ docs/RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md",
       "waiting_on": "owner",
       "done_when": "Owner-approved design merged with a rehearsal proving a restored database is refused by the worker; or the owner records that decision B stays."
+    },
+    {
+      "id": "RAD-098",
+      "title": "خطة محرك صورة الأشعة بأربع جلسات",
+      "status": "planned",
+      "priority": "high",
+      "description": "المتبقي الجلسات2–4 ومراجعة #220 وفق D-R1…D-R3؛ صُححت قابلية نقل هاش الخطة وشهود main على Node22/Ubuntu ونجح CI unit محليًا. فجوة الاختراق محفوظة للجلسة2؛ خُصص RAD-098 بعد دمج #222 وحفظ مهمتها RAD-097.",
+      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION1_2026-11-03.md",
+      "waiting_on": "code",
+      "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة."
     }
   ]
 }

@@ -27,12 +27,17 @@ import { shoulderAnchors, shoulderValue } from "@/features/shoulder-model/should
  */
 import type { LimbRotationLandmarks, LowerLimbModelId } from "@/domain/radiograph";
 import type { Evidence } from "@/domain/technique";
-import type { EffectDefinition, LimbRotationPlan } from "./plan";
+import type { EffectDefinition, LimbRotationPlan, RenderPlan } from "./plan";
 import { elbowApShifts, elbowLateralCopies } from "@/features/elbow-model/elbow-model";
 import { handLateralShifts, handPaAnchors, oddPart } from "@/features/hand-model/hand-model";
 import { ankleApAnchors, ankleLateralCopies, footAnchors, footValue, kneeApShifts, kneeLateralCopies, oddPart as lowerOddPart } from "@/features/lower-limb-model/lower-limb-model";
 import { wristLateralCopies, wristPaShifts } from "@/features/wrist-model/wrist-model";
+import type { ImageBand, RadiographAssetSpec } from "@/domain/radiograph";
+import { interpolateAnchors as anchorShift } from "@/features/limb-warp/warp";
 import { TUNING } from "./tuning";
+
+/** Compatibility interpolation binding; the original limb-warp implementation is unchanged. */
+export { anchorShift };
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
@@ -117,7 +122,9 @@ export const limbRotationConcept = (kind: LimbRotationLandmarks["kind"], model?:
         note: "True lateral: the ulnar head superimposed over the distal radius and the proximal 2nd–5th metacarpals superimposed. Provisional until the educator review (O5).",
       };
 
-/** The plan of the active limb rotation effect, or null (pure; shared by the effect predicate and the plan builder). */
+const rotationValue = (deg: number, landmarks: LimbRotationLandmarks | undefined) => landmarks && "model" in landmarks && landmarks.model === "foot-oblique" ? footValue("oblique", deg) : landmarks && "model" in landmarks && landmarks.model === "shoulder-grashey" ? shoulderValue(deg) : deg;
+
+/** The active limb rotation plan, or null; its predicate shares the value conversion and null guard only. */
 export function limbRotationPlan(
   deg: number,
   failed: boolean,
@@ -125,7 +132,7 @@ export function limbRotationPlan(
 ): LimbRotationPlan | null {
   // The foot oblique's console value is the absolute plantar angle; its model value is the deviation from the 40° reference (S14.4).
   // The shoulder Grashey console value is the absolute body obliquity; its model value is the distance to the 35°–45° band (S-SHOULDER-2-6).
-  const value = landmarks && "model" in landmarks && landmarks.model === "foot-oblique" ? footValue("oblique", deg) : landmarks && "model" in landmarks && landmarks.model === "shoulder-grashey" ? shoulderValue(deg) : deg;
+  const value = rotationValue(deg, landmarks);
   if (!landmarks || !failed || value === 0) return null;
   // the shoulder's closure keeps growing over its whole console range (DECISIONS 2c D2); every other model clamps at the shared limit
   const cap = landmarks.kind === "limb-warp" && landmarks.model === "shoulder-grashey" ? TUNING.limbRotation.shoulderMaxDeg : TUNING.limbRotation.maxDeg;
@@ -220,6 +227,147 @@ export const LIMB_ROTATION_EFFECT: EffectDefinition = {
   },
   changesPixels: true,
   fault: true,
-  active: (state, radCase) => limbRotationPlan(state.geometry.rotationDeg, failedRotation(state.findings), radCase.radiograph.limbRotation) !== null,
+  active: (state, radCase) => radCase.radiograph.limbRotation !== undefined && failedRotation(state.findings) && rotationValue(state.geometry.rotationDeg, radCase.radiograph.limbRotation) !== 0,
   limb: (state, radCase) => limbRotationPlan(state.geometry.rotationDeg, failedRotation(state.findings), radCase.radiograph.limbRotation),
 };
+
+// Generic source-space operations shared by the limb families.
+const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const smoothstep = (a: number, b: number, v: number) => {
+  const t = clamp01((v - a) / (b - a));
+  return t * t * (3 - 2 * t);
+};
+
+/** Weight (0–1) of a horizontal band of the image with a soft edge, v = fraction of the image height. */
+export function bandWeight(band: { v1: number; v2: number }, v: number): number {
+  const s = TUNING.limbRotation.bandSoft;
+  return smoothstep(band.v1 - s, band.v1 + s, v) * (1 - smoothstep(band.v2 - s, band.v2 + s, v));
+}
+
+/** Band-weighted column displacement through sorted anchors (originally the Hand PA kernel). */
+export function warpColumnsShiftU(u: number, v: number, anchors: { u: number; du: number }[][] | undefined, bands: (ImageBand & { u1?: number; u2?: number })[], bandWeights?: number[]): number {
+  let shift = 0;
+  bands.forEach((b, i) => {
+    // A band may carry a horizontal window of the SOURCE content (soft edge 0.06 of the image width): the thumb band moves the thumb only.
+    const win = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.06, b.u1 + 0.06, u) * (1 - smoothstep(b.u2 - 0.06, b.u2 + 0.06, u));
+    const w = (bandWeights?.[i] ?? bandWeight(b, v)) * win;
+    if (w > 0) shift += w * anchorShift(anchors?.[i] ?? [], u);
+  });
+  return shift;
+}
+
+/** Column warp with two independently displaced layers on either side of a contact line.
+ * Overlap uses the original equal blend; gaps use the original five-sample row mean. */
+export function twoLayerValue(
+  anchors: { u: number; du: number }[],
+  layers: { first: { u: number; du: number }[]; second: { u: number; du: number }[] },
+  lm: { band: ImageBand; splitU: number },
+  sample: (u: number, v: number) => number,
+  u: number,
+  v: number,
+  rowWeight?: number,
+): number {
+  let us = u;
+  for (let k = 0; k < 4; k++) us = u - anchorShift(anchors, us);
+  const warped = sample(clamp01(us), v);
+  const s = TUNING.limbRotation.bandSoft;
+  const wf = rowWeight ?? smoothstep(lm.band.v1 - s, lm.band.v1 + s, v);
+  if (wf <= 0) return warped;
+  const e = 0.02, sp = lm.splitU;
+  let firstU = u, secondU = u;
+  for (let k = 0; k < 4; k++) { firstU = u - anchorShift(layers.first, firstU); secondU = u - anchorShift(layers.second, secondU); }
+  const firstWeight = 1 - smoothstep(sp - e, sp + e, firstU);
+  const secondWeight = smoothstep(sp - e, sp + e, secondU);
+  const tot = firstWeight + secondWeight;
+  let fv = 0;
+  if (firstWeight > 0) fv += firstWeight * sample(clamp01(firstU), v);
+  if (secondWeight > 0) fv += secondWeight * sample(clamp01(secondU), v);
+  if (tot < 1) {
+    let gap = 0;
+    for (let k = -2; k <= 2; k++) gap += sample(clamp01(sp + k * 0.02), v);
+    fv += (1 - tot) * (gap / 5);
+  }
+  fv /= Math.max(1, tot);
+  return warped + wf * (fv - warped);
+}
+
+type WindowBand = ImageBand & { u1?: number; u2?: number };
+type Sample = (u: number, v: number) => number;
+type Rotation = NonNullable<RenderPlan["limb"]>["rotation"];
+
+/** Equal window copies (hand lateral); preserves the original equal-blend accumulation. */
+function equalWindowCopiesValue(bands: WindowBand[], shiftsByBand: number[][] | undefined, weights: number[], sample: Sample, u: number, v: number): number {
+  // One copy per structure at its projected position, blended equally inside each band (the optional horizontal window limits the band
+  // to the finger / metacarpal column so the separated thumb is not copied). At the base pose every shift is 0: the picture is the baseline.
+  const value = sample(clamp01(u), v);
+  let out = value;
+  bands.forEach((b, i) => {
+    const shifts = shiftsByBand?.[i];
+    if (!shifts || shifts.length === 0) return;
+    const wv = weights[i]!;
+    if (wv <= 0) return;
+    let sum = 0, win = 0;
+    for (const sh of shifts) {
+      const us = clamp01(u - sh);
+      const w = b.u1 === undefined || b.u2 === undefined ? 1 : smoothstep(b.u1 - 0.02, b.u1 + 0.02, us) * (1 - smoothstep(b.u2 - 0.02, b.u2 + 0.02, us));
+      sum += sample(us, v) * w + value * (1 - w);
+      win += 1;
+    }
+    out += wv * (sum / win - value);
+  });
+  return out;
+}
+
+
+/** Weighted window copies (lateral wrist, elbow, knee and ankle). */
+function windowCopiesValue(bands: (WindowBand & { u1: number; u2: number })[], copiesByBand: { du: number; w: number }[][] | undefined, weights: number[], sample: Sample, u: number, v: number): number {
+  // Per band: the lateral-side and the medial-side copy of the structures (window of the SOURCE content), weighted; at the base pose every shift is 0 and the picture is the baseline.
+  const value = sample(clamp01(u), v);
+  let out = value;
+  bands.forEach((b, i) => {
+    const copies = copiesByBand?.[i];
+    if (!copies || copies.length === 0) return;
+    const wv = weights[i]!;
+    if (wv <= 0) return;
+    let sum = 0, wsum = 0;
+    for (const c of copies) {
+      const us = clamp01(u - c.du);
+      const w = smoothstep(b.u1 - 0.02, b.u1 + 0.02, us) * (1 - smoothstep(b.u2 - 0.02, b.u2 + 0.02, us));
+      sum += c.w * (sample(us, v) * w + value * (1 - w));
+      wsum += c.w;
+    }
+    out += wv * (sum / wsum - value);
+  });
+  return out;
+}
+
+
+/** Select once per row; weights/windows depend only on the row and immutable plan/asset data.
+ * No Float32 intermediates are introduced: weights remain ordinary JS Numbers. */
+export function prepareLimbRow(rot: Rotation, lm: NonNullable<RadiographAssetSpec["limbRotation"]>, sample: Sample, v: number): (u: number) => number {
+  if ((lm.kind === "hand-pa" && rot.kind === "hand-pa") || (lm.kind === "limb-warp" && rot.kind === "limb-warp")) {
+    const weights = lm.bands.map(b => bandWeight(b, v));
+    return (u) => {
+      let us = u;
+      for (let k = 0; k < 4; k++) us = u - warpColumnsShiftU(us, v, rot.hand?.anchors, lm.bands, weights);
+      return sample(clamp01(us), v);
+    };
+  }
+  if (lm.kind === "hand-lateral" && rot.kind === "hand-lateral") {
+    const weights = lm.bands.map(b => bandWeight(b, v));
+    return (u) => equalWindowCopiesValue(lm.bands, rot.hand?.shifts, weights, sample, u, v);
+  }
+  if (((lm.kind === "elbow-ap" && rot.kind === "elbow-ap") || (lm.kind === "wrist-pa" && rot.kind === "wrist-pa") || (lm.kind === "limb-layers" && rot.kind === "limb-layers")) && rot.elbow?.anchors && rot.elbow.layers) {
+    const anchors = rot.elbow.anchors, layers = { first: rot.elbow.layers.ulna, second: rot.elbow.layers.radius };
+    const region = { band: lm.forearm, splitU: lm.forearm.splitU };
+    const s = TUNING.limbRotation.bandSoft;
+    const wf = smoothstep(lm.forearm.v1 - s, lm.forearm.v1 + s, v);
+    return (u) => twoLayerValue(anchors, layers, region, sample, u, v, wf);
+  }
+  if ((lm.kind === "elbow-lateral" && rot.kind === "elbow-lateral") || (lm.kind === "wrist-lateral" && rot.kind === "wrist-lateral") || (lm.kind === "limb-copies" && rot.kind === "limb-copies")) {
+    const bands = lm.bands.map(b => ({ u1: 0, u2: 1, ...b }));
+    const weights = bands.map(b => bandWeight(b, v));
+    return (u) => windowCopiesValue(bands, rot.elbow?.copies, weights, sample, u, v);
+  }
+  return (u) => sample(u, v);
+}
