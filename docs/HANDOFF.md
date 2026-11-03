@@ -12,7 +12,7 @@
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
 
-RAD-098 الجلسة2: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2_2026-11-03.md) — جزء A في Draft؛ D-R2 ينتظر قرار مرساة التعريض من المالك.
+RAD-098 الجلسة2b: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2B_2026-11-03.md) — ضجيج مستمر تحت النطاق فقط في Draft؛ ينتظر مراجعة المالك.
 
 ## المتابعة
 
