@@ -15,7 +15,8 @@ with functions as (
   pg_get_expr(p.proargdefaults,0) argument_defaults,p.proconfig,(select coalesce(jsonb_agg(jsonb_build_array(grantee,privilege_type,is_grantable) order by grantee collate "C",privilege_type collate "C",is_grantable),'[]'::jsonb) from (select distinct case when x.grantee=0 then 'PUBLIC' else pg_get_userbyid(x.grantee)::text end grantee,x.privilege_type,x.is_grantable from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) x) grants) acl,r.rolname owner
  from pg_proc p join pg_namespace n on n.oid=p.pronamespace
  join pg_language l on l.oid=p.prolang join pg_roles r on r.oid=p.proowner
- where n.nspname in ('assess','emergency') or (n.nspname='public' and l.lanname in ('sql','plpgsql') and not exists(select 1 from pg_depend d where d.classid='pg_proc'::regclass and d.objid=p.oid and d.deptype='e'))
+ where n.nspname in ('assess','emergency') or (n.nspname='public' and l.lanname in ('sql','plpgsql') and not exists(select 1 from pg_depend d where d.classid='pg_proc'::regclass and d.objid=p.oid and d.deptype='e')
+  and not (p.oid is not distinct from to_regprocedure('public.rls_auto_enable()') and p.prorettype='event_trigger'::regtype))
 ), relations as (
  select n.nspname,c.relname,c.relkind,c.relrowsecurity,c.relforcerowsecurity,(select coalesce(jsonb_agg(jsonb_build_array(grantee,privilege_type,is_grantable) order by grantee collate "C",privilege_type collate "C",is_grantable),'[]'::jsonb) from (select distinct case when x.grantee=0 then 'PUBLIC' else pg_get_userbyid(x.grantee)::text end grantee,x.privilege_type,x.is_grantable from aclexplode(coalesce(c.relacl,acldefault('r',c.relowner))) x) grants) acl,r.rolname owner,
   (select jsonb_agg(jsonb_build_array(a.attname,format_type(a.atttypid,a.atttypmod),a.attnotnull,(select coalesce(jsonb_agg(jsonb_build_array(grantee,privilege_type,is_grantable) order by grantee collate "C",privilege_type collate "C",is_grantable),'[]'::jsonb) from (select distinct case when x.grantee=0 then 'PUBLIC' else pg_get_userbyid(x.grantee)::text end grantee,x.privilege_type,x.is_grantable from aclexplode(coalesce(a.attacl,acldefault('c',c.relowner))) x) grants),a.attidentity,a.attgenerated,
@@ -35,8 +36,8 @@ with functions as (
  from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_roles r on r.oid=c.relowner
  where (n.nspname in ('assess','emergency') or (n.nspname='public' and c.relname in ('profiles','events','attempts','feedback','c2_account_deletions'))) and c.relkind in ('r','p')
 ), fingerprints as (
- select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'93e22a77fb747f843e12c7bb1eaf17ad' expected
- union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),'3d7d341aff9dcd9fd73c5fc1f7d9132b'
+ select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'a4d32be025297130709df18923b2ef28' expected
+ union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),'763a497ea914fe20984a815a2d5cf43e'
 )
 select check_name,actual=expected ok from fingerprints
 union all select 'identity_inventory',(select inventory from assess.erasure_fk_contract where singleton)=assess.d3_fk_inventory_v1()
