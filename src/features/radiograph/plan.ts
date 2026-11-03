@@ -284,7 +284,9 @@ export function buildRenderPlan(state: RadiographResultState, radCase: RadCase, 
   const rel = exposure.quantumNoise.relative;
   const noisy = exposure.quantumNoise.level === "increased" || exposure.quantumNoise.level === "marked";
   const excessNoise = Math.sqrt(Math.max(0, rel * rel - 1));
-  const lowPenetration = exposure.penetration === "low";
+  // D-R1 causal contract: an effect is drawn only if the asset can express it. Low penetration needs declared dense
+  // zones; without them the kVp finding stays scored and is labelled "not drawn in this image" (consistency.ts).
+  const lowPenetration = exposure.penetration === "low" && (spec.denseZones?.length ?? 0) > 0;
   const scapulaeOverlap = patient.shoulders !== undefined && patient.shoulders !== "rolled-forward" && spec.scapulae !== undefined;
   const jawOverlap = patient.chin === "tucked" && spec.jaw !== undefined;
   // S12: representative when the simulated projection is the one the baseline depicts (absent = the PA baseline).
