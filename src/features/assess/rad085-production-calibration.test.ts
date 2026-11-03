@@ -17,8 +17,18 @@ describe.each(modes)('production fixture 0200 -> 0300 calibration %s (required)'
    // production function bodies and all ACL/default ACL statements in this scope.
    const roles=[...readFileSync('supabase/fixtures/production-schema-2026-11-01/roles.sql','utf8').matchAll(/^CREATE ROLE ([a-z_]+);$/gm)].map(m=>m[1]);
    const bootstrapSql='drop schema assess cascade;drop schema public cascade;drop schema auth cascade;create schema public authorization postgres;'+roles.map(role=>
-    `do $$begin if not exists(select 1 from pg_roles where rolname='${role}') then create role ${role} nologin;end if;end$$;`).join('\n')+productionApplicationSql();
-   if(mode==='embedded')await db.admin.query(bootstrapSql);
+    `do $$begin if not exists(select 1 from pg_roles where rolname='${role}') then create role ${role} nologin;end if;end$$;`).join('\n')+productionApplicationSql()+"grant assess_job_a to postgres with admin option, inherit false, set false;grant pg_signal_backend to postgres;";
+   if(mode==='embedded'){
+    // Preserve PG18's immutable initial superuser; execute application SQL as a
+    // separate non-superuser postgres, matching the pinned provider image.
+    await db.admin.query('create role rad085_fixture_bootstrap superuser login');
+    const bootstrap=await db.connect('fixture-bootstrap','rad085_fixture_bootstrap');
+    try{
+     await bootstrap.query('alter role postgres rename to rad085_initial_superuser;create role postgres login nosuperuser createdb createrole;alter database postgres owner to postgres');
+     await bootstrap.query(bootstrapSql);
+    }finally{await bootstrap.end();}
+    await db.admin.end();db.admin=await db.connect();
+   }
    else {
     // Provider-owned dump objects require the local image's bootstrap identity.
     // Use its existing peer map inside the container; no host auth/HBA change.
@@ -26,6 +36,7 @@ describe.each(modes)('production fixture 0200 -> 0300 calibration %s (required)'
     expect(names).toHaveLength(1);expect(names[0]).toMatch(new RegExp(`^rad062-m09-${process.pid}-[0-9]+$`));
     execFileSync('docker',['exec','-i',names[0]!,'psql','-X','-v','ON_ERROR_STOP=1','-U','supabase_admin','-d','rad_restore','-f','-'],{input:bootstrapSql,stdio:'pipe',timeout:120000,maxBuffer:64*1024*1024});
    }
+   expect((await db.admin.query('select current_user,rolsuper from pg_roles where rolname=current_user')).rows[0]).toEqual({current_user:'postgres',rolsuper:false});
    for(const [file,table] of [
     ['20261020000700_assess_lifecycle.sql','launch_gate'],['20261026000100_assess_supervisor_scope.sql','scope_lock'],
     ['20261027000100_assess_management_erasure.sql','erasure_fk_contract'],['20261026000100_assess_supervisor_scope.sql','sharing_policy'],
@@ -47,7 +58,7 @@ describe.each(modes)('production fixture 0200 -> 0300 calibration %s (required)'
    for(const [change,expected] of [
     ["create or replace function public.rls_auto_enable() returns event_trigger language plpgsql as $$begin end$$",[]],
     ["drop function public.rls_auto_enable();create function public.rls_auto_enable() returns text language sql as $$select 'synthetic'::text$$",['functions']],
-    ["create function public.rls_auto_enable(integer) returns event_trigger language plpgsql as $$begin end$$",['functions']],
+    ["create function public.rls_auto_enable(integer) returns text language sql as $$select 'synthetic'::text$$",['functions']],
     ["create function public.other_platform_trigger() returns event_trigger language plpgsql as $$begin end$$",['functions']],
     ["drop function public.rls_auto_enable();create function public.other_platform_trigger() returns event_trigger language plpgsql as $$begin end$$",['functions']],
     ["revoke references,trigger,truncate,maintain on public.events from service_role",['relations']],
