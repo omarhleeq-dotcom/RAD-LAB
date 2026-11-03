@@ -78,6 +78,8 @@ jobs:
       - name: Required owner rehearsal on synthetic RAD-086 backup (pass and STOP teardown; no skip)
         if: steps.rehearsals.outputs.full == 'true'
         run: node --test scripts/assess/rad062-laptop-rehearsal.test.mjs scripts/assess/rad062-data-precheck.test.mjs
+      - name: Required 0200 then 0300 window on synthetic encrypted RAD-086 backup (no skip)
+        run: node --test scripts/assess/rad085-window-rehearsal.test.mjs
       - name: Required real CRLF production catalogue rehearsal (empty RAD-086 backup; no skip)
         if: steps.rehearsals.outputs.full == 'true'
         run: node --test scripts/assess/rad062-catalogue-rehearsal.test.mjs
