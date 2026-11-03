@@ -1471,3 +1471,12 @@ No live SQL, Variables, gate, LOGIN, secret or Scheduler permission follows from
 السقوف في [budgets.json](budgets.json): home/training/supervisor/account=400؛ practice/owner/assess=500 KiB.
 أي صورة جديدة≤500 KiB؛ الصور الموجودة قياس فقط، بلا تطبيق رجعي أو تغيير صور في هذه الدفعة.
 هذه القرارات ليست مسجلة في #215؛ تبقى PR Draft ولا إذن SQL حي أو Variables أو نشر.
+
+<a id="owner-ux-phase1-owner-2026-11-03"></a>
+### UX المرحلة 1 (#219) — إذن البصمات وتأجيل إيقاف المالك، 2026-11-03
+
+السلطة: قرار المالك على مسودة #219؛ [التقرير](OWNER_UX_PHASE1_REPORT_2026-11-03.md).
+1. إذن وفق [قاعدة RAD-094](#code-health-pins-owner-2026-11-03): تحديث قيم sha256 فقط في `scripts/pages/frontend-schema.json` لملفات المتصفح التي غيرتها #219: OwnerPanel وOwnerDirectory وOwnerActivity وOwnerTraining وOwnerAssessPanel وOwnerAssignments وAssessConsent.
+الأساس: marker مطابق لـmain ومجموعة نداءات المتصفح→الخادم بلا تغيير. لا إذن لأي pin أو check أو تغيير manifest آخر.
+2. إيقاف الطوارئ للمالك داخل التطبيق مؤجل إلى ما بعد إطلاق الخميس؛ يبقى إيقاف [دليل الهاتف](RAD-059_PHONE_RUNBOOK.md) مسار المالك. متابعة مخططة RAD-095.
+ميزانية #219 مُدّت إلى27ملفًا لهذين السجلين فقط؛ تبقى PR Draft بلا دمج أو نشر.
