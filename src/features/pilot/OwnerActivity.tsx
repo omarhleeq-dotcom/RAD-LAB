@@ -9,7 +9,7 @@ import { createOwnerExport, EXPORT_PAGE_SIZE } from "./owner-export";
 import { useOwnerData } from "./useOwnerData";
 import { formatStamp } from "./owner-state";
 
-const btn = "rounded-md border border-line px-3 py-1.5 text-sm font-medium hover:bg-paper disabled:opacity-60";
+const btn = "min-h-11 rounded-md border border-line px-3 py-1.5 text-sm font-medium hover:bg-paper disabled:opacity-60";
 
 function download(name: string, text: string) {
   const url = URL.createObjectURL(new Blob([text], { type: name.endsWith(".json") ? "application/json;charset=utf-8" : "text/csv;charset=utf-8" }));
@@ -48,7 +48,7 @@ export function CsvBar({ filters }: { filters: OwnerFilters }) {
     {state.files>0&&state.stream&&<p data-testid="export-status" role="status">{t(`exportFlow.${state.stream}Downloaded`,{count:state.written,files:state.files})}</p>}
     {state.skipped>0&&<p role="alert">{t("exportFlow.skipped",{count:state.skipped})}</p>}
     <details data-testid="export-info" className="text-sm text-muted">
-      <summary aria-label={t("dashboard.exportInfo")} className="min-h-11 cursor-pointer">ⓘ</summary>
+      <summary className="min-h-11 cursor-pointer py-2">ⓘ {t("dashboard.exportInfo")}</summary>
       <p>{t("paging.exportHint")}</p>
       {state.multipart&&state.files>0&&<button data-testid="export-report" className={btn} onClick={()=>download("radlab-export-report.json",JSON.stringify(flow.report(),null,2))}>{t("paging.report")}</button>}
     </details>
@@ -71,7 +71,7 @@ export function ParticipantActivity({ code, userId, filters, version }: { code: 
   const label = t("dashboard.activity");
   return (
     <details onToggle={(e) => setOpen(e.currentTarget.open)} data-testid={`activity-${code}`} className="mt-3 rounded-md border border-line">
-      <summary className="cursor-pointer px-3 py-2 text-sm font-medium">{label}</summary>
+      <summary className="min-h-11 cursor-pointer px-3 py-2 text-sm font-medium">{label}</summary>
       <div className="space-y-4 px-3 pb-3">
         <div className="flex flex-wrap gap-2">{(["attempts", "notes"] as const).map((s) => <button key={s} data-testid={`show-${s}-${code}`} className={btn} onClick={() => { setStream(s); setCursor(null); setBoundary(null); }}>{t(`activity.${s}Title`)}</button>)}</div>
         {data.kind === "loading" && <p role="status">{t("loading")}</p>}
@@ -79,8 +79,10 @@ export function ParticipantActivity({ code, userId, filters, version }: { code: 
         {page && <p data-testid={`total-${code}`}>{t("paging.total", { total: page.total })}</p>}
         {page && page.rows.length === 0 && <p>{t("activity.none")}</p>}
         {pa.skipped + pn.skipped > 0 && <p role="status">{t("activity.skipped", { count: pa.skipped + pn.skipped })}</p>}
-        <button className={btn} onClick={() => { setCursor(null); setBoundary(null); }}>{t("paging.first")}</button>
-        <button data-testid={`detail-next-${code}`} className={btn} disabled={!page?.next} onClick={() => { setCursor(page!.next); setBoundary(page!.boundary); }}>{t("paging.next")}</button>
+        {page && (cursor !== null || page.next) && <div className="flex flex-wrap gap-2">
+          <button className={btn} disabled={cursor === null} onClick={() => { setCursor(null); setBoundary(null); }}>{t("paging.first")}</button>
+          <button data-testid={`detail-next-${code}`} className={btn} disabled={!page.next} onClick={() => { setCursor(page.next); setBoundary(page.boundary); }}>{t("paging.next")}</button>
+        </div>}
         {attempts.length > 0 && (
           <div role="region" aria-label={t("activity.attemptsOf", { code })} tabIndex={0} className="overflow-x-auto">
             <table className="w-full min-w-[34rem] border-collapse text-start text-sm">

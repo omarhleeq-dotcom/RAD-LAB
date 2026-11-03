@@ -5,7 +5,6 @@ export const c2Field = 'mt-1 block w-full rounded-md border border-line bg-panel
 export type Outcome<T> = {kind:'ready';data:T}|{kind:'unavailable'}|{kind:'error'};
 export type Page<T> = {rows:T[];next:string|null};
 export type DirectoryPosition = {cursor:{id:string;rank:number}|null;boundary:string|null};
-export const C2_FIRST:DirectoryPosition = {cursor:null,boundary:null};
 export type Person = {id:string;code:string;status:'pending'|'approved'|'suspended';role:'owner'|'participant'};
 export type Directory = {rows:Person[];next:DirectoryPosition|null;counts:Record<Person['status'],number>};
 export type Deletion = {id:string;code:string;days:number;expires:string};
