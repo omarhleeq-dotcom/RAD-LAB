@@ -2382,6 +2382,14 @@
     }
   },
   "emergency": {
+    "menuEntry": "Emergency stop",
+    "pageTitle": "Emergency stop",
+    "pageIntro": "You are the appointed alternate",
+    "startStop": "Start emergency stop",
+    "dialogTitle": "Confirm emergency stop",
+    "dialogCancel": "Cancel",
+    "stopNow": "Stop now",
+    "pageUnavailable": "Emergency stop is not available for this account.",
     "ownerTitle": "Emergency alternate",
     "ownerHelp": "Appoint one approved account to stop assessments in an emergency. This gives no other authority.",
     "stopTitle": "Emergency stop",

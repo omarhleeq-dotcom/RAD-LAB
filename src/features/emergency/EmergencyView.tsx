@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useId,useMemo,useState} from 'react';
+import {useEffect,useId,useMemo,useRef,useState} from 'react';
 import {useLocale,useTranslations} from 'next-intl';
 import {OwnerDirectory} from '../pilot/OwnerDirectory';
 import {StopController} from './controller';
@@ -7,16 +7,32 @@ import {EmergencyError,type Candidate,type EmergencyPort,type OwnerSnapshot} fro
 const button='min-h-11 rounded border border-line px-3 py-2 disabled:opacity-50';
 const danger='min-h-11 rounded border border-red-700 bg-red-700 px-3 py-2 font-semibold text-white disabled:opacity-50';
 
-export function EmergencyStopView({port}:{port:EmergencyPort}) {
+export function EmergencyStopView({port,controller:sharedController}:{port:EmergencyPort;controller?:StopController}) {
  const t=useTranslations('emergency'),[confirmed,setConfirmed]=useState(false),[,changed]=useState(0),confirmId=useId();
- const controller=useMemo(()=>new StopController(port,()=>changed(n=>n+1)),[port]);
- useEffect(()=>()=>controller.clear(false),[controller]);
+ const dialog=useRef<HTMLDialogElement>(null),dialogTitle=useId(),warningId=useId(),cloudId=useId();
+ const controller=useMemo(()=>sharedController??new StopController(port,()=>changed(n=>n+1)),[port,sharedController]);
+ useEffect(()=>()=>{if(!sharedController)controller.clear(false);},[controller,sharedController]);
  const {receipt,busy,issue,operation}=controller.state;
  if(issue==='denied')return <p role="alert">{t('denied')}</p>;
- return <section data-testid="emergency-stop" aria-label={t('stopTitle')} className="mx-auto my-4 w-full min-w-0 max-w-3xl space-y-3 rounded border border-red-700 bg-panel p-4" style={{overflowWrap:'anywhere'}}>
-  <h2 className="text-xl font-semibold">{t('stopTitle')}</h2>
-  <p>{t('warning')}</p><p>{t('cloud')}</p>
-  {!operation&&<><label htmlFor={confirmId} className="flex min-h-11 items-start gap-2"><input id={confirmId} type="checkbox" className="mt-1 size-5 shrink-0" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/><span>{t('confirmStop')}</span></label><button className={danger} disabled={!confirmed||busy} onClick={()=>void controller.start()}>{t('stop')}</button></>}
+ const result=!!(operation||busy||receipt||issue);
+ const open=()=>{setConfirmed(false);dialog.current?.showModal();};
+ return <section data-testid="emergency-stop" aria-label={t('pageTitle')} className="mx-auto my-4 w-full min-w-0 max-w-3xl space-y-3 rounded border border-line bg-panel p-4" style={{overflowWrap:'anywhere'}}>
+  <p>{t('pageIntro')}</p>
+  {!result&&<button className={danger} onClick={open}>{t('startStop')}</button>}
+  <dialog ref={dialog} aria-modal="true" aria-labelledby={dialogTitle} aria-describedby={`${warningId} ${cloudId}`} className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl space-y-4 overflow-y-auto rounded border border-line bg-panel p-5 text-ink backdrop:bg-black/40" onClose={()=>setConfirmed(false)} onKeyDown={e=>{
+   if(e.key!=='Tab')return;
+   const controls=[...e.currentTarget.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled])')];
+   const first=controls[0],last=controls.at(-1);
+   if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus();}
+   else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus();}
+  }}>
+   <h2 id={dialogTitle} className="text-xl font-semibold">{t('dialogTitle')}</h2>
+   <p id={warningId}>{t('warning')}</p><p id={cloudId}>{t('cloud')}</p>
+   <label htmlFor={confirmId} className="flex min-h-11 cursor-pointer items-center gap-2"><input id={confirmId} type="checkbox" className="size-5 shrink-0" checked={confirmed} onChange={e=>setConfirmed(e.target.checked)}/><span>{t('confirmStop')}</span></label>
+   <div className="flex flex-wrap gap-3"><button className={button} autoFocus onClick={()=>dialog.current?.close()}>{t('dialogCancel')}</button><button className={danger} disabled={!confirmed||busy} onClick={()=>{dialog.current?.close();void controller.start();}}>{t('stopNow')}</button></div>
+   <p className="text-sm">{t('ack')}</p>
+  </dialog>
+  {result&&<><p>{t('warning')}</p><p>{t('cloud')}</p></>}
   {receipt&&<><p role="status" data-testid="stop-result">{t(`status.${receipt.status}`)}</p><ol className="space-y-2">{Array.from({length:6},(_,i)=>i+1).map(phase=>{
    const result=receipt.phases.find(p=>p.phase===phase);
    return <li key={phase} className="flex min-w-0 flex-wrap gap-x-2"><span>{t(`phases.${phase}`)}</span><strong>{t(result?result.ok?'completed':'failed':'pending')}</strong></li>;
@@ -24,8 +40,8 @@ export function EmergencyStopView({port}:{port:EmergencyPort}) {
   {issue&&<p role="alert">{t(issue==='unknown'?'unknown':'rejected')}</p>}
   {busy&&<p role="status">{t('working')}</p>}
   {operation&&!busy&&receipt?.nextPhase!==7&&<button className={danger} onClick={()=>void controller.continue()}>{t('continue')}</button>}
-  {receipt?.nextPhase===7&&receipt.status!=='STOPPED'&&<button className={danger} onClick={()=>{controller.clear();setConfirmed(false);}}>{t('newStop')}</button>}
-  <p className="text-sm">{t('ack')}</p>
+  {receipt?.nextPhase===7&&receipt.status!=='STOPPED'&&<button className={danger} onClick={open}>{t('newStop')}</button>}
+  {result&&<p className="text-sm">{t('ack')}</p>}
  </section>;
 }
 
