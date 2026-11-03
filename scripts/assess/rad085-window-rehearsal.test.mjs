@@ -11,6 +11,7 @@ import { verifyMigrations } from './rad062-db-day.mjs';
 import { containerArgs, IMAGE_DIGEST } from '../ops/laptop-restore-test.mjs';
 import { loadConfig, readEntries, sha256Bytes, stamp, Stop, verifyBackup } from '../ops/laptop-backup-lib.mjs';
 
+import { productionShapeSql } from './rad085-production-shape.mjs';
 const locale = { datlocprovider: 'i', datlocale: 'en-US', datcollate: 'en_US.UTF-8', datctype: 'en_US.UTF-8' };
 const read = file => readFileSync(file, 'utf8');
 const sourceSnapshotSQL = `select jsonb_build_object(
@@ -157,6 +158,7 @@ test('encrypted synthetic M09 -> rehearseWindow PASS; M08 -> STOP; both restore 
     q(read('supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql'));
     const readiness = q(read('supabase/checks/rad062-m09-ready.sql')).split('\n');
     assert.equal(readiness.length, 6); assert.ok(readiness.every(row => row.endsWith('|t')));
+    q(productionShapeSql());
     await save(passStamp);
     const sourceSnapshot = q(sourceSnapshotSQL);
 

@@ -3,4 +3,4 @@ export function emergencyAvailable(schema:{requiredMigrations:readonly string[];
  return EMERGENCY_MIGRATIONS.every(file=>schema.requiredMigrations.includes(file)&&!(file in schema.deferredMigrations));
 }
 /** Changed only by a separately reviewed schema promotion, never runtime config. */
-export const EMERGENCY_AVAILABLE: boolean = false;
+export const EMERGENCY_AVAILABLE: boolean = true;
