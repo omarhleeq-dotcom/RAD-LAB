@@ -14,6 +14,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
 - [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03)
@@ -1513,3 +1514,12 @@ Existing emergency values, StopController, flow, ACK and Option C semantics rema
 Supersedes the implemented presentation in SessionGate: `<EmergencySession/>` in the shared provider on every page, and EmergencyView: `<p>{t('warning')}</p><p>{t('cloud')}</p>` fully expanded. [Decisions1–11, including “Option C: one in-app alternate”](#rad059-alternate-owner-2026-11-02) and [12–14](#rad059-implementation-owner-2026-11-02) contain no every-page requirement; any such inferred presentation rule is superseded only. Original authority/evidence links remain.
 Pins: prefer reusing EmergencySession unchanged; if necessary, ONLY sha256 values for changed SessionGate/AppShell/EmergencySession are pre-approved, with printed main/branch markers and identical browser rpc/from/call set. Any other pin/check/manifest change → STOP.
 No RPC/schema/migration/marker/write/dependency change; owner emergency section from #219 unchanged; no guard weakening. Static EN/AR route, noindex and unchanged404 policy; budgets/health gates and full product QA apply.
+
+<a id="radiograph-plan-owner-2026-11-03"></a>
+## Radiograph plan owner decisions — 2026-11-03
+Authority: owner's four-session radiograph prompt; tracked by RAD-098.
+- **D-R1:** Session 2 Priority 1 is fixing the causal contract for effects declared but not drawn.
+- **D-R2:** From Session 2, exposure/noise may respond continuously inside the pass band; score/rubric stays separate. Rotation continuity is a separate later decision. Session 1 changes no pixels.
+- **D-R3:** Deeper geometry (SID/OID magnification, tube angle, off-axis distortion) belongs in a separate, declared explanatory diagram; never fake it on the patient image.
+- Session 1 locks real-asset cross-family luma witnesses before product edits, then extracts/optimises with byte identity. Missing denseZones remains an explicit expected gap until Session 2.
+- Sessions 2–4 continue under these decisions; their detailed implementation scope must be stated in each session. No new exams/images, scoring changes or Assess/pilot work is authorised here.

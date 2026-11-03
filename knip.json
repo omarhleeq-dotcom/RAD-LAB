@@ -94,6 +94,7 @@
     "scripts/qa/rad085-p1-routes-audit.mjs",
     "scripts/qa/rad085-p4-lifetime-audit.mjs",
     "scripts/qa/result-marker-audit.mjs",
+    "scripts/qa/radiograph-performance.mjs",
     "scripts/qa/session-gate-audit.mjs",
     "scripts/qa/shoulder-audit.mjs",
     "scripts/qa/simulator-layout-audit.mjs",
