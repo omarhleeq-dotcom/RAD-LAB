@@ -1,0 +1,14 @@
+export type Outcome = 'PASS' | 'FAIL' | 'UNKNOWN';
+export type CheckResult = { n: number; result: Outcome; why?: string };
+export type Account = { email: string; password: string };
+export type Accounts = { A: Account; B: Account };
+export type Phase = 'pending' | 'approved' | 'suspended';
+type FetchLike = (url: string, init: { method: string; headers: Record<string, string>; body?: string; signal?: AbortSignal; redirect?: string }) => Promise<Response>;
+type LoadOptions = { stat?: (p: string) => { isFile(): boolean; mode: number; uid: number }; read?: (p: string, enc: 'utf8') => string; uid?: number };
+export const PHASES: Readonly<Record<Phase, { checks: number[]; states: string }>>;
+export function loadAccounts(path: string | undefined, options?: LoadOptions): Accounts;
+export function readPublicConfig(env: Record<string, string | undefined>): { url: string; key: string };
+export function runPhase(args: { phase: string; url: string; key: string; accounts: Accounts; fetch: FetchLike; timeoutMs?: number }): Promise<CheckResult[]>;
+export function formatReport(phase: string, results: CheckResult[]): string[];
+export function exitCode(results: CheckResult[]): number;
+export function main(args?: { env?: Record<string, string | undefined>; fetch?: FetchLike; ask: (q: string) => Promise<string>; print?: (line: string) => void; loadOptions?: LoadOptions }): Promise<number>;
