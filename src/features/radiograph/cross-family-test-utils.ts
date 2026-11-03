@@ -87,19 +87,22 @@ export function witnessProbes(c: RadCase): PixelProbe[] {
     const p = make(patch);
     probes.push({ id, effect, patch, plan: p, solo: isolate(base, p, effect) });
   };
-  const numeric = (effect: string, name: string, values: number[], ref: number, patch: (v: number) => Partial<SimulationSettings>) => {
+  const numeric = (effect: string, name: string, values: number[], ref: number, patch: (v: number) => Partial<SimulationSettings>,
+    // Boundary of the SCORED finding where it differs from the drawn effect (D-R1: an asset may not express it).
+    finding?: (v: number) => boolean) => {
     add(`${name}/min`, effect, patch(values[0]!));
     add(`${name}/max`, effect, patch(values.at(-1)!));
     // Closest selectable active value on either side, plus its inactive neighbour (exact gating witness).
     for (const [side, vs] of [["low", values.filter(v => v < ref).reverse()], ["high", values.filter(v => v > ref)]] as const) {
-      const index = vs.findIndex(v => make(patch(v)).effects.some(e => e.id === effect));
+      const index = vs.findIndex(v => finding ? finding(v) : make(patch(v)).effects.some(e => e.id === effect));
       if (index < 0) continue;
       add(`${name}/threshold-${side}`, effect, patch(vs[index]!));
       add(`${name}/before-${side}`, effect, patch(index === 0 ? ref : vs[index - 1]!));
     }
   };
   numeric("rotation", "rotation", stations(c.controls.rotationDeg), reference.rotationDeg, v => ({ rotationDeg: v }));
-  numeric("low-penetration", "penetration", stations(c.controls.kvp), reference.kvp, v => ({ kvp: v }));
+  numeric("low-penetration", "penetration", stations(c.controls.kvp), reference.kvp, v => ({ kvp: v }),
+    v => evaluate(c, { ...reference, kvp: v }).resultState.exposure.penetration === "low");
   numeric("low-exposure", "exposure", stations(c.controls.mas), reference.mas, v => ({ mas: v }));
   numeric("excess-exposure", "excess-exposure", stations(c.controls.mas), reference.mas, v => ({ mas: v }));
   for (const axis of ["width", "height"] as const) {

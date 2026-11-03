@@ -6,13 +6,15 @@ import { dirname, resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { evaluate } from "@/features/evaluation/engine";
 import * as elbowModel from "@/features/elbow-model/elbow-model";
-import { checkIsDrawn } from "./consistency";
+import { checkIsDrawn, needsNotDrawnLabel } from "./consistency";
 import { anchorShift, elbowApValue, handPaShiftU, renderRadiograph, type LumaImage } from "./pipeline";
 import { WITNESS_CASES, witnessPlanJson, witnessProbes, witnessReference, witnessResolution } from "./cross-family-test-utils";
 import { limbRotationPlan } from "./limb-effects";
 import { buildRenderPlan } from "./plan";
 
 const FILE = "scripts/qa/radiograph-pixel-witnesses.json";
+/** Effects whose isolated pixel input exists only when the finding is drawn (D-R1 causal contract). */
+const FINDING_GATED = ["rotation", "inspiration", "scapulae", "chin", "motion", "low-exposure", "excess-exposure", "low-penetration"];
 const sha = (v: string | Uint8Array | Uint8ClampedArray) => createHash("sha256")
   .update(typeof v === "string" ? v : Buffer.from(v.buffer, v.byteOffset, v.byteLength)).digest("hex");
 // Next's lockfile-pinned image decoder; no new dependency or browser/font requirement in CI.
@@ -108,13 +110,23 @@ describe("real-asset cross-family byte witnesses (never regenerate after a produ
         expect(row, `${c.id}/${probe.id}: metadata`).toEqual(expected);
       }
     }
-    if (["chest-lateral-erect", "pelvis-ap-supine", "shoulder-grashey-erect"].includes(c.id)) {
-      const gap = probes.find(p => p.id === "penetration/min")!;
-      expect(c.radiograph.denseZones, "known gap: asset has no penetration zones").toBeUndefined();
-      expect(gap.plan.effects.find(e => e.id === "low-penetration")?.changesPixels).toBe(true);
-      expect(checkIsDrawn("kvp", "fail", gap.plan), "known gap: declared drawn, although isolated pixels are identical").toBe(true);
-      expect(witness.scenarios[gap.id]!.soloLuma).toBe(witness.scenarios.baseline!.luma);
+    // D-R1 causal contract, every exam × effect: a declared pixel-changing effect ⇔ its isolated luma differs from the
+    // baseline. A finding the asset cannot express (low penetration without denseZones) is absent from the plan and
+    // labelled "not drawn", and its isolated luma is identical to the baseline.
+    // Declared limits: field/centering probes change geometry with or without a finding, the marker is an annotation
+    // glyph (never rendered here) and projection draws nothing; those are covered by the gating witnesses above.
+    for (const probe of probes.filter(p => FINDING_GATED.includes(p.effect))) {
+      const declared = probe.solo.effects.find(e => e.id === probe.effect)?.changesPixels === true;
+      const differs = witness.scenarios[probe.id]!.soloLuma !== witness.scenarios.baseline!.luma;
+      expect(differs, `${c.id}/${probe.id}: drawn=${declared} ⇔ isolated luma differs`).toBe(declared);
     }
+    const penetration = probes.find(p => p.id === "penetration/min")!;
+    const expressible = (c.radiograph.denseZones?.length ?? 0) > 0;
+    expect(penetration.plan.effects.some(e => e.id === "low-penetration"), `${c.id}: low penetration drawn ⇔ denseZones`).toBe(expressible);
+    expect(checkIsDrawn("kvp", "fail", penetration.plan), `${c.id}: kvp fail drawn ⇔ denseZones`).toBe(expressible);
+    expect(needsNotDrawnLabel("kvp", "fail", penetration.plan), `${c.id}: kvp fail labelled not drawn ⇔ no denseZones`).toBe(!expressible);
+    expect(penetration.plan.technique.penetrationContrastKept !== null).toBe(expressible);
+    expect(witness.scenarios[penetration.id]!.soloLuma !== witness.scenarios.baseline!.luma, `${c.id}: isolated penetration pixels`).toBe(expressible);
     if (!capture) expect(witness).toEqual(locked[c.id]);
     captured[c.id] = witness;
   }, 120_000);
