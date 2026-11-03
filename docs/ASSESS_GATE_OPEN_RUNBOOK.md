@@ -5,20 +5,22 @@
 ## Current verdict — read before Wednesday
 
 - **CLOSE (§8) is executable now** from reviewed sources: the phone stop packet, its verification and the cloud steps.
-- **OPEN is blocked at §4.** Several worker-enablement steps have no reviewed source in the repository. They are marked **MISSING** below. Do not improvise them, and do not run §5 (gate open) while any MISSING item is unresolved.
+- **OPEN is blocked at §4.** W4 and W7 are STOP and W1/W5/W6 need owner decisions (table below). Do not improvise, and do not run §5 (gate open) while any item is not Ready-for-owner and executed.
 - Steps §1–§3 are read-only. You may run them to confirm readiness, but they open nothing.
 - D11 (RAD-059 old-credential revocation accepted on the 2026-11-01 Supavisor evidence) is recorded in [launch records](DECISIONS.md#launch-records-owner-2026-11-03).
 
-| ID | MISSING item | Why there is no reviewed source | Lifting trigger |
+Status after the [W1–W8 packages](ASSESS_GATE_W_PACKAGES.md) (reviewed and rehearsed locally; nothing run live):
+
+| ID | Item | Status | Package / lifting trigger |
 |---|---|---|---|
-| W1 | Production role `assess_grading_worker` plus a LOGIN slot whose only membership is that role | The current worker binding requires that membership ([server-runtime.ts:109](../src/features/assess/server-runtime.ts)). The role is created only in fixtures ([rehearsal:217](../scripts/assess/rad085-worker-rehearsal.mjs)). The reviewed provision grants `assess_worker` instead ([provision:35](../supabase/manual/assess-worker-login-provision.sql)). | A reviewed migration or manual SQL with a rehearsal, plus an owner decision |
-| W2 | LOGIN activation with a new password and `VALID UNTIL` ≤90 days | [ASSESS_WORKER_LOGIN](ASSESS_WORKER_LOGIN.md#الملفات-والمراحل) states there is no activation SQL. The phone line `alter role … login` only re-enables an existing credential. | A reviewed activation transport that never pastes a password |
-| W3 | New credential: rotation, not Enable | The revoked old credential must not be reused (D11; [worker report §7](archive/reports/2026-10/RAD-085_WORKER_LOCAL_REPORT_2026-10-26.md#7-المراقبة-والتكلفة-وبوابات-التشغيل): no reuse of historical credentials). The uploader handles version 1 only ([upload-worker-secret.py:16](../scripts/assess/upload-worker-secret.py)). | A reviewed new-version uploader or new secret, plus an IAM review |
-| W4 | Cloud Run Job image built from `build-worker.mjs`, pushed and pinned by registry digest | The build is local-only (`runtimeOrLaunchVerified: false`), and no registry was created. The historical trial image is invalid after B8 ([phone runbook](RAD-059_PHONE_RUNBOOK.md#تجهيز-المالك-قبل-نافذة-مستقلة)). | A reviewed push/deploy procedure and digest binding |
-| W5 | Network path for the grading worker | The grading binding refuses the session pooler ([server-runtime.ts:49](../src/features/assess/server-runtime.ts)). Reachability of the direct host from Cloud Run is unproven. | A reviewed connection decision and a TLS probe |
-| W6 | Scheduler Resume (continuous operation) | The phone runbook allows Resume only with a separate continuous-operation decision that proves no overlap. No such decision exists. | An owner decision (cron, retries 0, maxRetryDuration 0) |
-| W7 | Live end-to-end Assess smoke procedure (§6) | No reviewed live smoke script or recipe exists. The UI path in §6 is Inferred. | A reviewed smoke recipe, plus synthetic-data retention/erasure |
-| W8 | Opening without a worker (written-only exams) | No source states that a manual-only flow works without the worker, or permits it. | An owner decision after review |
+| W1 | Production role `assess_grading_worker` plus slot `assess_job_b` (only membership that role) | **Decision-needed (D-W1)** | [W1](ASSESS_GATE_W_PACKAGES.md#1-w1--grading-role-and-one-login-slot): provision/check/LOGIN SQL rehearsed in three modes; the binding refuses TEMP and PUBLIC holds TEMP, so the owner decides the PUBLIC TEMP change |
+| W2 | LOGIN activation, `VALID UNTIL` ≤90 days, no pasted password | **Ready-for-owner** after W1/W4/W5 | [W2+W3](ASSESS_GATE_W_PACKAGES.md#2-w2w3--activation-transport-and-new-secret-version): SCRAM verifier over `owner_sql` stdin; LOGIN only at 4.3 |
+| W3 | New credential (rotation, not Enable) and IAM review | **Ready-for-owner** after W1/W4/W5 | same package: new numeric version, disabled at once; IAM review step W2.4 |
+| W4 | Job image from `build-worker.mjs`, pinned by digest | **STOP** | [W4](ASSESS_GATE_W_PACKAGES.md#3-w4--image-stop): that image is synthetic-only; needs a recovery-verifier decision and a reviewed production entrypoint |
+| W5 | Network path for the grading worker | **Decision-needed (D-W5)** | [W5](ASSESS_GATE_W_PACKAGES.md#4-w5--network-path-decision-needed): FREE direct host is IPv6-only; credential-free TLS probe Job packaged; options A/B/C |
+| W6 | Scheduler / continuous operation | **Decision-needed (D-W6)** | [W6](ASSESS_GATE_W_PACKAGES.md#5-w6--scheduler-decision-proposal): Scheduler absent/paused, sequential manual Execute, one attempt per run, within 24 h |
+| W7 | Live end-to-end smoke (§6) | **STOP** | [W7](ASSESS_GATE_W_PACKAGES.md#6-w7--live-smoke-recipe-stop): no written-item path in the deployed v1 UI and no reviewed content install; auto-only recipe ready for later |
+| W8 | Opening without a worker | **Rejected (proposed)** | [W8](ASSESS_GATE_W_PACKAGES.md#7-w8--no-worker-opening-proposed-rejected): every submission needs the worker |
 
 ## 0. Rules for every step
 
@@ -26,7 +28,7 @@
 0.2 Never paste passwords, connection strings, emails, UUIDs or screenshots of secrets into Git, chat or shell arguments. Evidence goes to the encrypted RAD-086 store; Git receives only redacted times and results ([decision 6](DECISIONS.md#rad059-alternate-owner-2026-11-02)).
 0.3 Permission sentence, which the owner writes in the encrypted log and in the session before §4 (template; fill the brackets privately):
 
-> I, the RAD-LAB owner, permit opening assess.launch_gate on project vlacestfruxooznrcjqc on [YYYY-MM-DD] between [HH:MM] and [HH:MM] UTC for [N] real students, using worker slot [assess_job_a|assess_job_b], secret version [number] and Job image digest [sha256:…]. Preconditions P1–P12 are evidenced in my encrypted log, MISSING items W1–W8 are resolved by [reviewed PR numbers], and I am the present responder with [the appointed alternate|no alternate] covering.
+> I, the RAD-LAB owner, permit opening assess.launch_gate on project vlacestfruxooznrcjqc on [YYYY-MM-DD] between [HH:MM] and [HH:MM] UTC for [N] real students, using worker slot assess_job_b, secret version [number] and Job image digest [sha256:…]. Preconditions P1–P12 are evidenced in my encrypted log, items W1–W7 are resolved and W8 recorded rejected by [reviewed PR numbers], and I am the present responder with [the appointed alternate|no alternate] covering.
 
 ## 1. Preconditions checklist — every box needs evidence
 
@@ -99,19 +101,19 @@ owner_sql -f supabase/checks/assess-operations-monitor.sql
 - Secret Manager: every numeric version DISABLED.
 - Job configuration: record the image digest, tasks, parallelism, retries, timeout and service account. Never use `latest`, and never execute the Job here.
 
-## 4. Worker enablement — reviewed ORDER, blocked by MISSING items
+## 4. Worker enablement — reviewed ORDER, blocked by W4/W7 and owner decisions
 
 This order is fixed by the [phone restore section](RAD-059_PHONE_RUNBOOK.md#الاستعادة--قرار-مستقل-عكس-الاعتمادات-والبوابة-آخرًا). The gate and the Scheduler always come last. Keep the Scheduler PAUSED, the gate closed and zero executions throughout.
 
 | Step | Reviewed action | Status |
 |---|---|---|
-| 4.1 Image/Job check | Job → Configuration: image digest equals the reviewed build of `build-worker.mjs` at the promoted commit; limits: task count 1, parallelism 1, retries 0, timeout 300 s, CPU 1, memory 512Mi (proposed for owner decision) | **MISSING W4**: no reviewed pushed image; the trial image is forbidden |
-| 4.2 Secret | Decisions require a **new credential (rotation)**. Enabling the revoked old version is forbidden. Only after W3: Secret Manager → Versions → the reviewed new numeric version → Enable; Expected ENABLED; never `latest` | **MISSING W3** |
-| 4.3 Role LOGIN | Exactly **one** slot that matches the secret; never both. Read the slots read-only first (phone query: `rolname, rolcanlogin, rolvaliduntil`). The phone `alter role assess_job_a login` line is **not** usable: that slot is a member of `assess_worker`, its old credential is revoked, and the current worker refuses it | **MISSING W1, W2, W5** |
+| 4.1 Image/Job check | [W4 step 6](ASSESS_GATE_W_PACKAGES.md#3-w4--image-stop): image digest equals the reviewed build at the promoted commit; tasks 1, parallelism 1, retries 0, timeout 300 s, CPU 1, 512Mi; numeric secret version | **STOP W4** (no production image yet) |
+| 4.2 Secret | Secret Manager → Versions → the version N recorded at W2.2 → Enable; Expected ENABLED; never the revoked version 1, never `latest` | Ready after W2.2; depends on W1/W4/W5 |
+| 4.3 Role LOGIN | `owner_sql -f supabase/manual/assess-grading-worker-login.sql` (slot `assess_job_b` only; refuses if the gate is open, `assess_job_a` can log in, expiry is not 1 h–90 days, membership drifted or the group has TEMP). The phone `alter role assess_job_a login` line is **not** usable | Ready after D-W1 and W2 |
 | 4.4 Recover frozen attempts | Only owner-selected attempts inside 7 days, one `assess.recover_v1` per transaction, as in phone restore steps 4–5 | Reviewed; run only if V2 showed frozen attempts |
-| 4.5 Readiness again | §3.2 plus the matching LOGIN check of [phone packet 5.a/5.b](RAD-059_PHONE_PACKET.md#5a-فحص-login--اختر-الدور-المطابق-للسر-فقط): `active_catalogue_valid=t` | 5.a/5.b validate the `assess_worker` slot model; for the grading-worker model this is **MISSING W1** |
-| 4.6 One bounded run | Only with a separate run permission: Jobs → Execute once. Expected: one completion, matching tick, then zero executions; re-read SQL afterwards. Exit 0 alone proves nothing | Reviewed text; depends on W1–W5 |
-| 4.7 Scheduler Resume | Last of all, and only with a continuous-operation decision that proves no overlap; otherwise it stays PAUSED/ABSENT | **MISSING W6** |
+| 4.5 Readiness again | §3.2, then `owner_sql -f supabase/checks/assess-grading-worker-ready.sql`: every row `t` (replaces packet 5.a/5.b, which validate the `assess_worker` model) | Ready after 4.3 |
+| 4.6 One bounded run | Only with a separate run permission: Jobs → Execute once. Expected: one completion, matching tick, then zero executions; re-read SQL afterwards. Exit 0 alone proves nothing. One run grades at most one attempt ([W6](ASSESS_GATE_W_PACKAGES.md#5-w6--scheduler-decision-proposal)) | Depends on W1–W5 |
+| 4.7 Scheduler | Stays PAUSED/ABSENT under the D-W6 proposal; Resume needs a separate continuous-operation decision | **Decision-needed W6** |
 
 ## 5. Gate open — exact reviewed SQL (only after §4 is complete and §0.3 is written)
 
@@ -128,14 +130,14 @@ commit;
 
 **Expected:** `gate_open=t`, then COMMIT. Any failure, doubt or lost connection means UNKNOWN: run §8 at once. Never rerun automatically.
 
-## 6. Immediate smoke test — ONE synthetic student (MISSING W7: Inferred UI path)
+## 6. Immediate smoke test — ONE synthetic student (W7 STOP: use the [auto-only recipe](ASSESS_GATE_W_PACKAGES.md#6-w7--live-smoke-recipe-stop))
 
 Use the RAD-041 synthetic student account only, never a real participant. Before and after, run `owner_sql -f supabase/checks/assess-operations-monitor.sql`.
-1. As the owner or supervisor: create one assignment for the synthetic group, containing one auto-graded item and one written item.
-2. As the synthetic student on the phone: accept the personal v3 consent, start, answer and submit. **Expected:** a submitted screen; the monitor shows one more `grading` or `awaiting-manual` session.
+1. As the owner or supervisor: create one assignment for the synthetic group from an available v1 version (auto-graded only; written items have no deployed v1 path, see W7).
+2. As the synthetic student on the phone: accept the personal v3 consent, start, answer and submit. **Expected:** a submitted screen; the monitor shows one more `grading` session.
 3. Worker: within one bounded run, the auto-graded part is graded. **Expected:** the result is visible to the student; monitor counts settle; zero failed executions. Otherwise **STOP → §8**.
-4. Written item: owner/supervisor opens the grading entry in Assess ([5b screen](RAD-062_PHASE5B_SCREEN_REPORT_2026-11-02.md)), grades, then finalises. **Expected:** the receipt is shown and the student sees the final result according to visibility. Finalise must happen within 168 h.
-5. Record redacted counts and UTC only. Synthetic rows stay under normal pilot retention. Erasure of synthetic accounts follows the existing erasure path; nothing new is invented here.
+4. Written item and manual finalise: **not executable** with the deployed v1 UI ([W7](ASSESS_GATE_W_PACKAGES.md#6-w7--live-smoke-recipe-stop)); the [5b screen](RAD-062_PHASE5B_SCREEN_REPORT_2026-11-02.md) applies only once a v2 student path exists.
+5. Record redacted counts and UTC only. Synthetic rows stay under normal pilot retention. Erasure of synthetic accounts follows the existing owner deletion path (deactivate, then finalise); nothing new is invented here.
 
 ## 7. First hour monitoring (cadence Inferred: T+0, +15, +30, +60 min)
 
