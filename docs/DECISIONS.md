@@ -16,7 +16,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Rotation and image honesty](#rotation-honesty)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03)
 
 ## Active Binding Decisions
 
@@ -1492,3 +1492,14 @@ Authority: owner decisions on Draft #218, recorded as stated; evidence in the [W
 - Deferred until after launch, no decision yet: D-W1 (PUBLIC TEMP change), D-W5 (network probe), the W4 production worker entrypoint PR and the W7 written-item production scope.
 - Post-launch code-health follow-up deferred to after the launch (dead-symbol removal, pinned owner-data exports with an authorised marker change, detector-figures clone reason); tracked as the new project-status task.
 No live SQL, Variables, gate, LOGIN, secret, Job or Scheduler permission follows from these records.
+
+<a id="rad085-w4-verifier-owner-2026-11-03"></a>
+### RAD-085 W4 — production recovery verifier, decision B, 2026-11-03
+Authority: owner decision on the W4 Phase A proposal in this session, recorded as stated; evidence in the [W4 report](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md) and [packages §3](ASSESS_GATE_W_PACKAGES.md#3-w4--image-ready-for-review-after-the-launch).
+- Option B: an unsigned no-restore attestation in its own Secret Manager secret (`assess-worker-recovery`, numeric version), trusted through Secret Manager IAM. Option A (signed) and option C (database-held epoch) were not chosen.
+- Expiry cap: `expiresAt − issuedAt` ≤ 48 hours. One attestation version per exam batch covers the batch plus the 24 h grading window.
+- Checks: `projectRef` from the W2 host, `manifestSha256` of the image's own manifest, `restoresSinceBaseline` exactly 0, an exact field set, `issuedAt ≤ now < expiresAt`, re-read and re-checked on every verify call; missing or extra keys and symlinks are refused with no detail in the output.
+- Restore rule: before ANY restore, disable every enabled `assess-worker-recovery` version and keep the Assess gate closed; after a restore, no new attestation is issued until the reconcile is evidenced.
+- Option C is the future lifting path, tracked as RAD-097 (planned, waiting on the owner); not implemented here.
+- The mount layout (separate directories per secret) was checked against the official Cloud Run jobs secrets page.
+- The PR stays Draft and merges only after the Thursday launch. No live SQL, secret, Job, image push or gate permission follows from this record.
