@@ -10,9 +10,11 @@ import { join } from 'node:path';
 import { probeTls, pinnedCa } from './direct-tls-probe.mjs';
 
 const dir = mkdtempSync(join(tmpdir(), 'rad085-tls-probe-'));
+// Same wrapper pattern as rad085-worker-rehearsal.mjs: the program is a parameter.
+const command = (program, args) => execFileSync(program, args, { stdio: 'pipe' });
 function certificate(name, san) {
-  execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=' + name,
-    '-addext', 'subjectAltName=' + san, '-keyout', join(dir, name + '.key'), '-out', join(dir, name + '.crt')], { stdio: 'pipe' });
+  command('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=' + name,
+    '-addext', 'subjectAltName=' + san, '-keyout', join(dir, name + '.key'), '-out', join(dir, name + '.crt')]);
   return { key: readFileSync(join(dir, name + '.key')), cert: readFileSync(join(dir, name + '.crt'), 'utf8') };
 }
 const good = certificate('rad085-probe', 'DNS:localhost'), other = certificate('rad085-other', 'DNS:localhost');
