@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useId,useMemo,useState} from 'react';
-import {useTranslations} from 'next-intl';
+import {useLocale,useTranslations} from 'next-intl';
 import {OwnerDirectory} from '../pilot/OwnerDirectory';
 import {StopController} from './controller';
 import {EmergencyError,type Candidate,type EmergencyPort,type OwnerSnapshot} from './contracts';
@@ -30,7 +30,9 @@ export function EmergencyStopView({port}:{port:EmergencyPort}) {
 }
 
 export function EmergencyOwnerView({port}:{port:EmergencyPort}) {
- const t=useTranslations('emergency'),[snapshot,setSnapshot]=useState<OwnerSnapshot|null>(null),[candidate,setCandidate]=useState<Candidate|null>(null);
+ const t=useTranslations('emergency'),locale=useLocale(),[snapshot,setSnapshot]=useState<OwnerSnapshot|null>(null),[candidate,setCandidate]=useState<Candidate|null>(null);
+ // Same Asia/Amman formatting as the grading screen; ISO strings and account ids are never displayed.
+ const stamp=(value:string|null)=>value&&Number.isFinite(Date.parse(value))?new Date(value).toLocaleString(locale,{timeZone:'Asia/Amman'}):'';
  const [busy,setBusy]=useState(false),[issue,setIssue]=useState<'denied'|'error'|null>(null),[confirm,setConfirm]=useState(false),[choosing,setChoosing]=useState(false),confirmId=useId();
  useEffect(()=>{let active=true;void port.owner().then(value=>{if(active)setSnapshot(value);}).catch(error=>{if(active)setIssue(error instanceof EmergencyError&&error.kind==='denied'?'denied':'error');});return()=>{active=false;};},[port]);
  async function act(action:()=>Promise<void>) {
@@ -46,20 +48,21 @@ export function EmergencyOwnerView({port}:{port:EmergencyPort}) {
   {issue&&<p role="alert">{t('error')}</p>}
   {!snapshot?<p role="status">{t('loading')}</p>:<>
    <p>{snapshot.appointment.active?snapshot.appointment.name||t('unnamed'):t('none')}</p>
-   {snapshot.appointment.active&&<details><summary className="min-h-11 cursor-pointer">{t('details')}</summary><bdi className="block break-all">{snapshot.appointment.id}</bdi><bdi>{snapshot.appointment.appointedAt}</bdi></details>}
+   {snapshot.appointment.active&&snapshot.appointment.appointedAt&&<details><summary className="min-h-11 cursor-pointer">{t('details')}</summary><time dateTime={snapshot.appointment.appointedAt}><bdi>{stamp(snapshot.appointment.appointedAt)}</bdi></time></details>}
    <details open={choosing} onToggle={e=>setChoosing(e.currentTarget.open)}><summary className="min-h-11 cursor-pointer">{t('choose')}</summary>
     {choosing&&<OwnerDirectory approvedOnly>{p=><div className="min-w-0 space-y-1">
      <label className="flex min-h-11 items-start gap-2"><input type="radio" name={`alternate-${confirmId}`} className="mt-1 size-5 shrink-0" checked={candidate?.id===p.userId} onChange={()=>setCandidate({id:p.userId,name:p.name||t('unnamed'),email:p.email})}/><span>{p.name||t('unnamed')}</span></label>
-     <details><summary className="min-h-11 cursor-pointer">{t('details')}</summary><bdi className="block break-all">{p.email}</bdi><bdi className="block break-all">{p.userId}</bdi></details>
+     <details><summary className="min-h-11 cursor-pointer">{t('details')}</summary><bdi className="block break-all">{p.email}</bdi></details>
     </div>}</OwnerDirectory>}
     <button className={button} disabled={!candidate||busy} onClick={()=>void act(()=>port.appoint(candidate!.id))}>{t('appoint')}</button>
    </details>
    {snapshot.appointment.active&&<details className="rounded border border-red-700 p-3"><summary className="min-h-11 cursor-pointer font-semibold">{t('danger')}</summary><p>{t('removeWarning')}</p>
     <label htmlFor={confirmId} className="flex min-h-11 items-start gap-2"><input id={confirmId} type="checkbox" className="mt-1 size-5 shrink-0" checked={confirm} onChange={e=>setConfirm(e.target.checked)}/><span>{t('confirmRemove')}</span></label><button className={danger} disabled={!confirm||busy} onClick={()=>void act(()=>port.remove())}>{t('remove')}</button>
    </details>}
-   <h3 className="font-semibold">{t('auditTitle')}</h3>
-   {snapshot.audit.length===0?<p>{t('auditEmpty')}</p>:<ul className="divide-y divide-line">{snapshot.audit.map(row=><li key={row.id} className="flex min-w-0 flex-wrap gap-x-2 py-2"><bdi>{row.at}</bdi><span>{t(`actions.${row.action}`)}</span><strong>{t(`status.${row.result}`)}</strong></li>)}</ul>}
+   <details data-testid="emergency-audit"><summary className="min-h-11 cursor-pointer font-semibold">{t('auditTitle')}</summary>
+   {snapshot.audit.length===0?<p>{t('auditEmpty')}</p>:<ul className="divide-y divide-line">{snapshot.audit.map(row=><li key={row.id} className="flex min-w-0 flex-wrap gap-x-2 py-2"><time dateTime={row.at}><bdi>{stamp(row.at)}</bdi></time><span>{t(`actions.${row.action}`)}</span><strong>{t(`status.${row.result}`)}</strong></li>)}</ul>}
    {snapshot.next&&<button className={button} disabled={busy} onClick={()=>void more()}>{t('more')}</button>}
+   </details>
    <p className="text-sm">{t('retention')}</p>
   </>}
  </section>;

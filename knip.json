@@ -61,6 +61,7 @@
     "scripts/qa/lateral-audit.mjs",
     "scripts/qa/lower-limb-audit.mjs",
     "scripts/qa/my-attempts-audit.mjs",
+    "scripts/qa/owner-ux-phase1-audit.mjs",
     "scripts/qa/p1-owner-picker-audit.mjs",
     "scripts/qa/pelvis-audit.mjs",
     "scripts/qa/phone-navigation-audit.mjs",

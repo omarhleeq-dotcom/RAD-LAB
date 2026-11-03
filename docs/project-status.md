@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 415,
-  "updated_at": "2026-11-03T08:09:02.455Z",
+  "revision": 416,
+  "updated_at": "2026-11-03T08:49:09.000Z",
   "timezone": "UTC",
-  "next_id": "RAD-095",
+  "next_id": "RAD-096",
   "tasks": [
     {
       "id": "RAD-001",
@@ -860,6 +860,16 @@
       "source_ref": "docs/DECISIONS.md#code-health-pins-owner-2026-11-03؛ docs/DECISIONS.md#code-health-size-owner-2026-11-03؛ docs/CODE_HEALTH_REPORT_2026-11-03.md",
       "waiting_on": "reviewer",
       "done_when": "PR مدمجة بعد #213؛ CI والبوابات الأربع خضراء؛ تنظيف بلا تغير سلوك وخريطة مزايا وReuse check ومقاييس وصور للقياس فقط."
+    },
+    {
+      "id": "RAD-095",
+      "title": "إيقاف الطوارئ للمالك داخل التطبيق",
+      "status": "planned",
+      "priority": "medium",
+      "description": "مؤجل بقرار المالك إلى ما بعد إطلاق الخميس. SQL يسمح للمالك بالإيقاف لكن واجهة المالك تعرض إدارة البديل فقط؛ يبقى إيقاف دليل الهاتف مسار المالك. لم يبدأ.",
+      "source_ref": "docs/DECISIONS.md#owner-ux-phase1-owner-2026-11-03؛ docs/OWNER_UX_PHASE1_REPORT_2026-11-03.md",
+      "waiting_on": "owner",
+      "done_when": "أمر المالك بعد الإطلاق بتصميم ونطاق، ثم تنفيذ بموافقة مستقلة واختبار؛ حتى ذلك يبقى دليل الهاتف."
     }
   ]
 }
