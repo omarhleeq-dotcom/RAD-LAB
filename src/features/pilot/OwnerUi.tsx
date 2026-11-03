@@ -15,7 +15,7 @@ export function Pager({ atStart, hasNext, first, next, firstLabel, nextLabel, di
 /** A long section, collapsed by default, with a visible labelled toggle (F3/F4). */
 export function Fold({ title, children, open, testId, className = "", onToggle }: { title: ReactNode; children: ReactNode; open?: boolean; testId?: string; className?: string; onToggle?: (open: boolean) => void }) {
  return <details open={open} data-testid={testId} onToggle={onToggle ? e => onToggle(e.currentTarget.open) : undefined} className={`min-w-0 rounded-lg border border-line bg-panel ${className}`}>
-  <summary className="flex min-h-11 cursor-pointer items-center px-3 py-2 font-semibold">{title}</summary>
+  <summary className="min-h-11 cursor-pointer px-3 py-2 font-semibold">{title}</summary>
   <div className="min-w-0 space-y-3 px-3 pb-3">{children}</div>
  </details>;
 }
