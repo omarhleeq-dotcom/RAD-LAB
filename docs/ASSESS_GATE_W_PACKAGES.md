@@ -8,7 +8,7 @@
 |---|---|---|
 | W1 | **Decision-needed (D-W1)** | Role, slot, grants and checks are rehearsed. The binding refuses any role with TEMP, and PUBLIC holds TEMP in production; lifting it is a shared ACL change |
 | W2+W3 | **Ready-for-owner** (after W1, W4, W5) | Laptop transport: in-memory password, local SCRAM verifier over `owner_sql` stdin, plaintext only to a new numeric secret version that is disabled at once |
-| W4 | **STOP** | The image built by `build-worker.mjs` is synthetic-only by construction, so no production grading image exists yet |
+| W4 | **Ready-for-owner** (after merge post-launch, and D-W5) | Production entrypoint, build and image rehearsal exist; verifier decision B (no-restore attestation, 48 h cap) is recorded |
 | W5 | **Decision-needed (D-W5)** | The FREE direct host is IPv6-only. Cloud Run reaches IPv6 only through Direct VPC egress on a dual-stack subnet, which is unproven here. A credential-free probe is packaged |
 | W6 | **Accepted 2026-11-03** | Proposal: Scheduler stays absent or paused; the owner runs sequential manual executions. One execution grades at most one attempt, inside 24 h |
 | W7 | **STOP** | The deployed student UI is v1 only: written items cannot be assigned or taken, and no reviewed production content-install path exists |
@@ -72,27 +72,36 @@ Test file: `scripts/assess/grading-worker-rehearsal.test.mjs`.
 
 **Rollback:** Secret Manager → Versions → N → Disable. The slot goes NOLOGIN through the v2 stop packet (§8 of the gate runbook), which covers `assess_job_b`. Disabling the version does not end an open DB session; follow the 120-second rejection rule in the [Supavisor decision](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01).
 
-## 3. W4 — image (STOP)
+## 3. W4 — image (ready for review after the launch)
 
-**Finding (Verified from source):** `worker-main.mjs` (line 1) is a "Local synthetic image only". Its checks refuse to run unless all of the following hold:
+**Verifier decision B (owner, 2026-11-03; [decision](DECISIONS.md#rad085-w4-verifier-owner-2026-11-03)):** the recovery verifier is an unsigned no-restore attestation in its own Secret Manager secret, `assess-worker-recovery`, trusted through Secret Manager IAM only. Evidence: [W4 report](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md).
 
-- `RAD085_SYNTHETIC_WORKER=1` (line 34);
-- the manifest contains `localOnly: true` (line 37; `build-worker.mjs` line 29);
-- the destination is `rad085-postgres`/`rad085_synthetic` (line 43);
-- a synthetic reconciliation permit is mounted (line 49). Line 48 says: "No operational verifier exists."
+**Artefacts:** [entrypoint](../scripts/assess/grading-worker-main.mjs), [build](../scripts/assess/build-grading-worker.mjs), [Dockerfile](../scripts/assess/grading-worker.Dockerfile), [image rehearsal](../scripts/assess/grading-worker-image-rehearsal.test.mjs). The synthetic `worker-main.mjs`, `build-worker.mjs` and their rehearsal are unchanged and are never pushed.
 
-Pushing that image would always end `STOP`. A production entrypoint needs new reviewed code: a secret mount path, a production destination check, and an **operational recovery verifier** whose meaning the owner must decide. One possibility is a signed "no restore since the baseline" attestation. This batch writes no such code.
+**Entrypoint rules (Verified by the rehearsal):**
 
-**Lifting trigger:** an owner decision on the production recovery verifier, then a reviewed entrypoint PR with its own image rehearsal.
+- The config is read from `/run/secrets/assess-worker.json` with no symlink. Its keys must be exactly the W2 payload keys. It must name host `db.vlacestfruxooznrcjqc.supabase.co`, port 5432, database `postgres` and user `assess_job_b`. Any other host, pooler host, port 6543, pooler user, `sessionPoolerProjectRef` or missing key ends `STOP configuration` before any connection.
+- The attestation is read from `/run/recovery/assess-recovery.json` with no symlink, again on **every** verify call. Its fields must be exactly `contract` (`assess-recovery-attestation/1`), `projectRef` (the ref in the W2 host), `manifestSha256` (this image's manifest), `baselineAt`, `restoresSinceBaseline` (exactly `0`), `issuedAt` and `expiresAt`. All three times must be canonical ISO strings with milliseconds, with `baselineAt ≤ issuedAt ≤ now < expiresAt` and `expiresAt − issuedAt ≤ 48 h`. Anything else ends `STOP quarantined` before any connection, or `STOP unavailable` mid-run, before the next claim or finish. The output is one fixed JSON line with no detail.
+- Mount directories: Cloud Run "doesn't allow you to mount multiple secrets at the same path because two volume mounts can't be mounted at the same location" ([Cloud Run jobs secrets](https://docs.cloud.google.com/run/docs/configuring/jobs/secrets)). So each secret gets its own directory.
 
-**Procedure chosen for later: Cloud Shell.** It is browser-based, already authenticated, has Docker, and builds with no laptop Docker install. Use a laptop instead only if Cloud Shell's disk is full. Steps, once the entrypoint exists:
+**Owner steps (Cloud Shell, after this PR is merged post-launch and D-W5 is recorded; each needs written permission):**
 
 1. `git clone` the repository; `git checkout --detach <promoted merge commit>`; `npm ci`.
-2. Run `node scripts/assess/build-worker.mjs` twice. **Expected:** the same `manifestSha256` both times.
+2. Run `node scripts/assess/build-grading-worker.mjs` twice. **Expected:** the same `manifestSha256` both times. Write it down; the attestation needs it.
 3. `docker pull` the pinned `node:24.19.0-bookworm-slim@sha256:a9f5f7c9…` base. Then build with `docker build --network=none -t europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-grading-worker:<commit12> <output dir>`.
 4. Run `gcloud auth configure-docker europe-west3-docker.pkg.dev` and answer **Y** only to this registry prompt. Then `docker push`. Record the pushed `sha256:` digest.
-5. Update the Job by digest: `gcloud run jobs update assess-worker --region=europe-west3 --image=…/assess-grading-worker@sha256:<digest> --tasks=1 --parallelism=1 --max-retries=0 --task-timeout=300s --cpu=1 --memory=512Mi --service-account=assess-job@project-bff9124a-ec31-4d57-bc0.iam.gserviceaccount.com --set-secrets=<entrypoint path>=assess-worker-config:<N>`. Answer **N** to any execute prompt, and never use `--execute-now`.
-6. **Digest binding check:** `gcloud run jobs describe assess-worker --region=europe-west3 --format=yaml`. **Expected:** the image line ends in exactly the recorded `@sha256:` digest; limits are 1/1/0/300 s/1 CPU/512Mi; the secret version is numeric, never `latest`; zero executions.
+5. Once: `gcloud secrets create assess-worker-recovery --project=project-bff9124a-ec31-4d57-bc0 --replication-policy=user-managed --locations=europe-west3`, then grant `roles/secretmanager.secretAccessor` on that secret to the `assess-job` service account only. Repeat the W2.4 IAM review for both secrets.
+6. Before each exam batch, add one attestation version and record its number M. Pipe the JSON on stdin, never in a file or argv: `gcloud secrets versions add assess-worker-recovery --project=project-bff9124a-ec31-4d57-bc0 --data-file=-`. Content: `{"contract":"assess-recovery-attestation/1","projectRef":"vlacestfruxooznrcjqc","manifestSha256":"<step 2>","baselineAt":"<last reconciled baseline>","restoresSinceBaseline":0,"issuedAt":"<now>","expiresAt":"<now + 48 h at most>"}`. Write only `0` if no restore has happened since the baseline. Disable the previous version.
+7. Update the Job by digest: `gcloud run jobs update assess-worker --region=europe-west3 --image=…/assess-grading-worker@sha256:<digest> --tasks=1 --parallelism=1 --max-retries=0 --task-timeout=300s --cpu=1 --memory=512Mi --service-account=assess-job@project-bff9124a-ec31-4d57-bc0.iam.gserviceaccount.com --set-secrets=/run/secrets/assess-worker.json=assess-worker-config:<N>,/run/recovery/assess-recovery.json=assess-worker-recovery:<M>`. Answer **N** to any execute prompt, and never use `--execute-now`. Each new attestation version M needs this update again (`--update-secrets` for that path).
+8. **Digest binding check:** `gcloud run jobs describe assess-worker --region=europe-west3 --format=yaml`. **Expected:** the image line ends in exactly the recorded `@sha256:` digest; limits are 1/1/0/300 s/1 CPU/512Mi; both secret versions are numeric, never `latest`; zero executions.
+
+**Restore rule:** before **any** restore, disable every enabled `assess-worker-recovery` version and keep the Assess gate closed. After a restore, issue no new attestation until the reconcile is evidenced.
+
+**Open items (S-STD-3):**
+
+- The docs do not state whether a mounted secret is a regular file or a symlink. If it is a symlink, every run ends `STOP`, failing closed. The lifting trigger is the first post-launch run.
+- The attestation is an owner statement, not detection. The lifting path is a database-held restore epoch, tracked as RAD-097.
+- The entrypoint does not pin the CA; the W2 transport pins it before upload.
 
 ## 4. W5 — network path (Decision-needed)
 
@@ -172,7 +181,7 @@ Without a worker, every submission stays in `grading`, then fails at 24 h and be
 
 ## 8. Open owner decisions
 
-D-W1 (PUBLIC TEMP), D-W5 (network option A, B or C, after the probe), D-W6 (manual cadence), a W4 recovery-verifier decision, and W7 scope: auto-only smoke, plus a content-install path. Until all of these are recorded and merged, **§5 of the gate runbook stays blocked**.
+D-W1 (PUBLIC TEMP), D-W5 (network option A, B or C, after the probe), D-W6 (manual cadence), and W7 scope: auto-only smoke, plus a content-install path. Until all of these are recorded and merged, **§5 of the gate runbook stays blocked**.
 
 ## 9. Owner live steps in order
 
@@ -187,7 +196,7 @@ Device: L = laptop (WSL, `owner_sql`), CS = Cloud Shell, P = phone. Every step n
 | 5 | W1.1 provision, then W1.2 check | L | written; check R |
 | 6 | W1.3 D-W1 TEMP change, then a Practice smoke | L, P | written |
 | 7 | W2.1 metadata read, W2.2 transport, W2.3 check, W2.4 IAM review | L | W2.2 written; others R |
-| 8 | W4 step 5 Job update by digest, step 6 binding check | CS | written; check R |
+| 8 | W4 steps 5–6 recovery secret and attestation, step 7 Job update by digest, step 8 binding check | CS | written; check R |
 | 9 | Runbook 4.2: enable version N | P | written |
 | 10 | Runbook 4.3: `owner_sql -f supabase/manual/assess-grading-worker-login.sql`, then the W1.2 check (all `t`) | L | written |
 | 11 | Runbook 4.4–4.6: recover if needed, readiness, one bounded Execute | L, P | written (run permission) |
