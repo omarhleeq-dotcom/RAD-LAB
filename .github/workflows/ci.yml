@@ -109,6 +109,8 @@ jobs:
         run: python3 -B -m unittest discover -s scripts/assess -p test_rotate_grading_credential.py
       - name: Test W5 credential-free TLS probe (synthetic only)
         run: node --test scripts/assess/direct-tls-probe.test.mjs
+      - name: Test W4 recovery attestation helper against the worker check text (synthetic only)
+        run: node --test scripts/assess/recovery-attestation.test.mjs
       - name: Test read-only connection probe (synthetic only)
         run: node --test scripts/assess/connection-probe.test.mjs
       - name: Required DB lane including production fixture calibration in embedded and pinned Supabase 17.11 ICU (no skip)
