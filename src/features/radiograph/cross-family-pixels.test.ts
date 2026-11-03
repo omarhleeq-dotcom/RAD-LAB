@@ -1,12 +1,14 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { execFileSync } from "node:child_process";
+import { dirname, resolve } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { evaluate } from "@/features/evaluation/engine";
 import * as elbowModel from "@/features/elbow-model/elbow-model";
 import { checkIsDrawn } from "./consistency";
 import { anchorShift, elbowApValue, handPaShiftU, renderRadiograph, type LumaImage } from "./pipeline";
-import { WITNESS_CASES, witnessProbes, witnessReference, witnessResolution } from "./cross-family-test-utils";
+import { WITNESS_CASES, witnessPlanJson, witnessProbes, witnessReference, witnessResolution } from "./cross-family-test-utils";
 import { limbRotationPlan } from "./limb-effects";
 import { buildRenderPlan } from "./plan";
 
@@ -20,9 +22,29 @@ const sharp = requireNext("sharp") as (input: Buffer) => {
 };
 type Witness = { source: string; decoded: string; scenarios: Record<string, { effect: string; patch: unknown; plan: string; soloPlan: string; luma: string; soloLuma: string; size: number[]; effects: string[] }> };
 const capture = process.env.CAPTURE_RADIOGRAPH_BASELINE === "origin/main";
-if (capture && existsSync(FILE)) throw Error("Baseline already locked: never overwrite witnesses.");
+const output = process.env.RADIOGRAPH_WITNESS_OUTPUT ?? FILE;
+const git = (...args: string[]) => execFileSync("git", args, { encoding: "utf8" }).trim();
+if (capture) {
+  // Validate BEFORE any capture work; output is fresh and external to the repo. Never capture on branch code.
+  if (git("rev-parse", "HEAD") !== git("rev-parse", "origin/main")) throw Error("Capture requires HEAD at origin/main");
+  if (git("diff", "origin/main", "--", "src", ":(exclude)src/features/radiograph/*test*")) throw Error("Capture refuses product edits");
+  if (git("ls-files", "--others", "--exclude-standard", "--", "src", ":(exclude)src/features/radiograph/*test*")) throw Error("Capture refuses untracked product modules");
+  if (process.versions.node.split(".")[0] !== "22" || !/^ID=ubuntu$/m.test(readFileSync("/etc/os-release", "utf8"))) throw Error("Capture requires CI-equivalent Node 22 / Ubuntu");
+  if (existsSync(output) || resolve(output) === resolve(FILE) || dirname(resolve(output)).startsWith(process.cwd())) throw Error("Capture requires a fresh output path outside the repo");
+}
 const locked: Record<string, Witness> = capture ? {} : JSON.parse(readFileSync(FILE, "utf8")).exams;
 const captured: Record<string, Witness> = {};
+
+it("canonical plan hashes ignore key order and insignificant V8 rounding without modifying the raw plan", () => {
+  const raw = Object.freeze({ technique: Object.freeze({ noiseSigma: 7.679062442772553, detailGain: 0.8460236886632826 }), z: [2, 1] });
+  const before = JSON.stringify(raw);
+  expect(witnessPlanJson(raw)).toBe(witnessPlanJson({ z: [2, 1], technique: { detailGain: 0.8460236886632826, noiseSigma: 7.6790624427725565 } }));
+  expect(witnessPlanJson(raw)).not.toBe(witnessPlanJson({ ...raw, z: [1, 2] }));
+  expect(witnessPlanJson(raw)).not.toBe(witnessPlanJson({ ...raw, technique: { ...raw.technique, noiseSigma: 7.68 } }));
+  expect(JSON.stringify(raw)).toBe(before);
+  expect(raw.technique.noiseSigma).toBe(7.679062442772553);
+  expect(() => witnessPlanJson({ noiseSigma: Number.NaN })).toThrow("Non-finite");
+});
 
 it("compatibility exports retain interpolation and neutral-image kernel contracts", () => {
   expect(anchorShift([{ u: 0, du: 0 }, { u: 1, du: 0.2 }], 0.5)).toBe(0.1);
@@ -72,7 +94,7 @@ describe("real-asset cross-family byte witnesses (never regenerate after a produ
       const actual = hash(probe.plan);
       const solo = probe.solo === probe.plan ? actual : hash(probe.solo);
       const row = {
-        effect: probe.effect, patch: probe.patch, plan: sha(JSON.stringify(probe.plan)), soloPlan: sha(JSON.stringify(probe.solo)),
+        effect: probe.effect, patch: probe.patch, plan: sha(witnessPlanJson(probe.plan)), soloPlan: sha(witnessPlanJson(probe.solo)),
         luma: actual.hash, soloLuma: solo.hash, size: actual.size, effects: probe.plan.effects.map(e => e.id),
       };
       witness.scenarios[probe.id] = row;
@@ -100,11 +122,11 @@ describe("real-asset cross-family byte witnesses (never regenerate after a produ
   it("covers the locked exam set; capture is permitted only against untouched origin/main product code", () => {
     expect(Object.keys(captured).sort()).toEqual(WITNESS_CASES.map(c => c.id).sort());
     if (capture) {
-      // One-time baseline lock; this mode refuses any product diff, including staged changes.
-      const { execFileSync } = createRequire(import.meta.url)("node:child_process");
-      expect(execFileSync("git", ["diff", "origin/main", "--", "src", ":(exclude)src/features/radiograph/*test*"], { encoding: "utf8" })).toBe("");
-      writeFileSync(FILE, JSON.stringify({
-        version: 1, baseline: execFileSync("git", ["rev-parse", "origin/main"], { encoding: "utf8" }).trim(),
+      expect(git("diff", "origin/main", "--", "src", ":(exclude)src/features/radiograph/*test*")).toBe("");
+      writeFileSync(output, JSON.stringify({
+        version: 2, baseline: git("rev-parse", "origin/main"),
+        runtime: { node: process.versions.node, v8: process.versions.v8, os: readFileSync("/etc/os-release", "utf8").match(/^PRETTY_NAME=(.*)$/m)?.[1] },
+        planEncoding: "sorted object keys; finite numbers at 12 significant digits (hash only); raw plans render unchanged",
         decoder: `Next dependency sharp ${requireNext("sharp").versions.sharp}; original resolution, red channel to Float32`,
         seed: "0x52414431", resolution: "resultPxPerCm; no annotation glyphs", exams: captured,
       }, null, 2) + "\n");

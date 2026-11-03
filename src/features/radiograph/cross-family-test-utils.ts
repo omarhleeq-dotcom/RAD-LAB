@@ -9,6 +9,20 @@ import { buildRenderPlan, type RenderPlan } from "./plan";
 
 export const WITNESS_SEED = 0x52414431;
 export const WITNESS_CASES = CASES;
+/** Diagnostic plan hash only. Math.pow is implementation-approximated (Node 22/24 differ by one ULP).
+ * Keep raw plans for rendering: no rounding of inputs, Float32 intermediates or output luma. */
+export function witnessPlanJson(value: unknown): string {
+  return JSON.stringify(value, (_key, item: unknown) => {
+    if (typeof item === "number") {
+      if (!Number.isFinite(item)) throw Error("Non-finite witness plan number");
+      return Number(item.toPrecision(12));
+    }
+    if (item && typeof item === "object" && !Array.isArray(item)) {
+      return Object.fromEntries(Object.keys(item).sort().map(key => [key, (item as Record<string, unknown>)[key]]));
+    }
+    return item;
+  });
+}
 export interface PixelProbe {
   id: string;
   effect: string;
