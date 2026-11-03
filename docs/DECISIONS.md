@@ -1490,4 +1490,5 @@ Authority: owner decisions on Draft #218, recorded as stated; evidence in the [W
 - D-W6 accepted: the Scheduler stays ABSENT; after each exam batch the owner runs N bounded manual executions, sequentially, inside the 24 h grading window.
 - W8 rejected: opening Assess without a worker is not viable.
 - Deferred until after launch, no decision yet: D-W1 (PUBLIC TEMP change), D-W5 (network probe), the W4 production worker entrypoint PR and the W7 written-item production scope.
+- Post-launch code-health follow-up deferred to after the launch (dead-symbol removal, pinned owner-data exports with an authorised marker change, detector-figures clone reason); tracked as the new project-status task.
 No live SQL, Variables, gate, LOGIN, secret, Job or Scheduler permission follows from these records.

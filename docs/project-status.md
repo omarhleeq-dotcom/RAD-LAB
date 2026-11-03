@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 417,
-  "updated_at": "2026-11-03T12:41:01Z",
+  "revision": 418,
+  "updated_at": "2026-11-03T12:41:29Z",
   "timezone": "UTC",
-  "next_id": "RAD-096",
+  "next_id": "RAD-097",
   "tasks": [
     {
       "id": "RAD-001",
@@ -870,6 +870,16 @@
       "source_ref": "docs/DECISIONS.md#owner-ux-phase1-owner-2026-11-03؛ docs/OWNER_UX_PHASE1_REPORT_2026-11-03.md",
       "waiting_on": "owner",
       "done_when": "أمر المالك بعد الإطلاق بتصميم ونطاق، ثم تنفيذ بموافقة مستقلة واختبار؛ حتى ذلك يبقى دليل الهاتف."
+    },
+    {
+      "id": "RAD-096",
+      "title": "Post-launch code-health follow-up",
+      "status": "planned",
+      "priority": "medium",
+      "description": "After the 2026-11-05 launch: (1) remove dead symbols kept as knipExceptions in scripts/code-health/policy.json where no pin/hash/guard covers the file; (2) remove ATTEMPT_COLUMNS/NOTE_COLUMNS from owner-data.ts only with an authorised pin change and marker promotion; (3) fix the copy-pasted reason on both detector-figures.tsx longClones entries.",
+      "source_ref": "docs/CODE_HEALTH_REPORT_2026-11-03.md؛ docs/DECISIONS.md#code-health-pins-owner-2026-11-03",
+      "waiting_on": "owner",
+      "done_when": "health:source passes with only justified exceptions, and the new marker is promoted and evidenced."
     }
   ]
 }
