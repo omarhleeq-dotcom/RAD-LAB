@@ -12,6 +12,8 @@
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
 
+RAD-098 الجلسة2: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2_2026-11-03.md) — جزء A في Draft؛ D-R2 ينتظر قرار مرساة التعريض من المالك.
+
 ## المتابعة
 
 إطلاق Practice فقط يوم الخميس؛ Assess يبقى مغلقًا حتى قرارات ما بعد الإطلاق ودمج PR مدخل W4 ([المحقق B](DECISIONS.md#rad085-w4-verifier-owner-2026-11-03)) بعد الإطلاق؛ لا إذن حي من الدمج.

@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 422,
-  "updated_at": "2026-11-03T15:24:46Z",
+  "revision": 423,
+  "updated_at": "2026-11-03T19:30:00Z",
   "timezone": "UTC",
   "next_id": "RAD-099",
   "tasks": [
@@ -896,9 +896,9 @@
       "title": "خطة محرك صورة الأشعة بأربع جلسات",
       "status": "planned",
       "priority": "high",
-      "description": "المتبقي الجلسات2–4 ومراجعة #220 وفق D-R1…D-R3؛ صُححت قابلية نقل هاش الخطة وشهود main على Node22/Ubuntu ونجح CI unit محليًا. فجوة الاختراق محفوظة للجلسة2؛ خُصص RAD-098 بعد دمج #222 وحفظ مهمتها RAD-097.",
-      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION1_2026-11-03.md",
-      "waiting_on": "code",
+      "description": "الجلسة2 جزء A (D-R1) في Draft: لا رسم لنقص الاختراق بلاdenseZones مع وسم «غير مرسوم» وluma مطابقة للـ17. الجزء B (D-R2) مؤجل: مرساة المرجع غير موجودة في البيانات؛ ينتظر قرار المالك. ثم denseZones(2b) والجلسات3–4.",
+      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2_2026-11-03.md",
+      "waiting_on": "owner",
       "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة."
     }
   ]
