@@ -10,6 +10,7 @@ import { join } from 'node:path';
 import { build } from 'esbuild';
 import { Client } from 'pg';
 import { openSyntheticRecoveryEvidence, reconcileSynthetic } from './rad085-erasure-recovery.mjs';
+import { productionShapeSql } from './rad085-production-shape.mjs';
 
 const PG_IMAGE = 'postgres:18.4-bookworm@sha256:882236b897e39051d2368c5ccc6cda944904723506b2dfc97f2a8f5bc9afa382';
 const dockerEnv = { ...process.env };
@@ -209,9 +210,12 @@ try {
   const required=JSON.parse(readFileSync('scripts/pages/frontend-schema.json','utf8')).requiredMigrations;
   const applied = readdirSync('supabase/migrations').filter(p => p.endsWith('.sql')&&required.includes(p)).sort();
   assert.deepEqual(Object.keys(manifest.migrations),applied);
+  if(required.includes('20261102000200_rad059_emergency_alternate.sql')) await admin.query('create role assess_job_a nologin;create role assess_job_b nologin;');
   for (const file of applied) {
     migrationOrdinal++;
-    const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]); await admin.query(sql.toString());
+    const sql = readFileSync(`supabase/migrations/${file}`); assert.equal(sha(sql), manifest.migrations[file]);
+    if(file==='20261102000300_rad085_rights_write_disclosures.sql') await admin.query(productionShapeSql());
+    await admin.query(sql.toString());
   }
   // Fixture-only role DDL, never an operational migration or provider grant.
   phase = 'postgres-fixture-role';
@@ -250,7 +254,12 @@ try {
   phase = 'content';
   for (const n of [1, 2]) await admin.query('insert into auth.users values($1,$2,now(),$3)', [id(n), `synthetic${n}@example.test`, { display_name: 'SYNTHETIC Worker Account' }]);
   await admin.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end", [id(1)]);
-  await as('authenticated', id(2), 'consent_v2', ['assess-pilot-2026-10-20-v2']); // synthetic identity only
+  // Synthetic identity follows the installed schema; historical builds retain v2.
+  if (required.includes('20261102000300_rad085_rights_write_disclosures.sql')) {
+    await as('authenticated', id(2), 'consent_v3', ['assess-written-2026-11-02-v3']);
+  } else {
+    await as('authenticated', id(2), 'consent_v2', ['assess-pilot-2026-10-20-v2']);
+  }
   for (const track of ['mixed', 'full-practical']) {
     const document = track === 'mixed' ? f.mixedFixture() : f.practicalFixture();
     for (const key of document.privateItems) key.review.scope += ' RAD085_PRIVATE_NOTE_CANARY';
