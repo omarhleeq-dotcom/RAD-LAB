@@ -23,6 +23,8 @@ jobs:
       - run: npm audit --audit-level=high
       - run: npm run typecheck
       - run: npm run lint
+      - run: npm run health:source
+      - run: npm run health:test
       - run: npm test
         env:
           CI_TEST_LANE: unit
@@ -138,6 +140,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm run build:pages   # the static export used by the pilot preview (out/)
+      - run: npm run health:sizes
+        env:
+          CODE_HEALTH_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
   check:
     name: check
     if: always()
