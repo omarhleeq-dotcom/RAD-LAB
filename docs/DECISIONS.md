@@ -14,6 +14,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
 - [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03)
@@ -1492,3 +1493,12 @@ Authority: owner decisions on Draft #218, recorded as stated; evidence in the [W
 - Deferred until after launch, no decision yet: D-W1 (PUBLIC TEMP change), D-W5 (network probe), the W4 production worker entrypoint PR and the W7 written-item production scope.
 - Post-launch code-health follow-up deferred to after the launch (dead-symbol removal, pinned owner-data exports with an authorised marker change, detector-figures clone reason); tracked as the new project-status task.
 No live SQL, Variables, gate, LOGIN, secret, Job or Scheduler permission follows from these records.
+
+<a id="radiograph-plan-owner-2026-11-03"></a>
+## Radiograph plan owner decisions — 2026-11-03
+Authority: owner's four-session radiograph prompt; tracked by RAD-097.
+- **D-R1:** Session 2 Priority 1 is fixing the causal contract for effects declared but not drawn.
+- **D-R2:** From Session 2, exposure/noise may respond continuously inside the pass band; score/rubric stays separate. Rotation continuity is a separate later decision. Session 1 changes no pixels.
+- **D-R3:** Deeper geometry (SID/OID magnification, tube angle, off-axis distortion) belongs in a separate, declared explanatory diagram; never fake it on the patient image.
+- Session 1 locks real-asset cross-family luma witnesses before product edits, then extracts/optimises with byte identity. Missing denseZones remains an explicit expected gap until Session 2.
+- Sessions 2–4 continue under these decisions; their detailed implementation scope must be stated in each session. No new exams/images, scoring changes or Assess/pilot work is authorised here.

@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 418,
-  "updated_at": "2026-11-03T12:41:29Z",
+  "revision": 419,
+  "updated_at": "2026-11-03T14:18:36Z",
   "timezone": "UTC",
-  "next_id": "RAD-097",
+  "next_id": "RAD-098",
   "tasks": [
     {
       "id": "RAD-001",
@@ -880,6 +880,16 @@
       "source_ref": "docs/CODE_HEALTH_REPORT_2026-11-03.md؛ docs/DECISIONS.md#code-health-pins-owner-2026-11-03",
       "waiting_on": "owner",
       "done_when": "health:source passes with only justified exceptions, and the new marker is promoted and evidenced."
+    },
+    {
+      "id": "RAD-097",
+      "title": "خطة محرك صورة الأشعة بأربع جلسات",
+      "status": "planned",
+      "priority": "high",
+      "description": "تنفيذ خطة محرك الأشعة بأربع جلسات: تثبيت الشهود والاستخراج المطابق، ثم أولوية العقد السببي D-R1 واستجابة التعريض وفق D-R2؛ الهندسة الأعمق مخطط مستقل وفق D-R3. الجلسات اللاحقة تحتاج نطاقًا معلنًا.",
+      "source_ref": "docs/DECISIONS.md#radiograph-plan-owner-2026-11-03",
+      "waiting_on": "code",
+      "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة."
     }
   ]
 }
