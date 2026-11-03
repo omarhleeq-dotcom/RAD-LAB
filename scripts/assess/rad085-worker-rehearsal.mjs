@@ -251,7 +251,12 @@ try {
   phase = 'content';
   for (const n of [1, 2]) await admin.query('insert into auth.users values($1,$2,now(),$3)', [id(n), `synthetic${n}@example.test`, { display_name: 'SYNTHETIC Worker Account' }]);
   await admin.query("update public.profiles set status='approved',role=case when user_id=$1 then 'owner' else 'participant' end", [id(1)]);
-  await as('authenticated', id(2), 'consent_v2', ['assess-pilot-2026-10-20-v2']); // synthetic identity only
+  // Synthetic identity follows the installed schema; historical builds retain v2.
+  if (required.includes('20261102000300_rad085_rights_write_disclosures.sql')) {
+    await as('authenticated', id(2), 'consent_v3', ['assess-written-2026-11-02-v3']);
+  } else {
+    await as('authenticated', id(2), 'consent_v2', ['assess-pilot-2026-10-20-v2']);
+  }
   for (const track of ['mixed', 'full-practical']) {
     const document = track === 'mixed' ? f.mixedFixture() : f.practicalFixture();
     for (const key of document.privateItems) key.review.scope += ' RAD085_PRIVATE_NOTE_CANARY';
