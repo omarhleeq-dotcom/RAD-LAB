@@ -77,3 +77,7 @@ Verified: node --check وlint للسكربت؛ الماركر بقي `pilot-v1:a
 Not run (local STOP): بروفة العامل الكاملة توقفت عند recovery-gate مع image-stderr-Error/assertion-failed؛ cleanup=true، قبل sample-seed. هذا ليس نجاحًا كاملًا ولا إثباتًا لخطأ الموافقة المصحح.
 فحص DB المستضاف يُقرأ مرة واحدة بعد إتاحة وقت تشغيله؛ deploy الأحمر متوقع للمـاركر الحي القديم، بلا أي إجراء أو تجاوز.
 الميزانية باقية A8/10 وB14/15؛ كلاهما Draft؛ لا إجراء حي ولا تغيير في الحكم أو روابط الأدلة الأصلية.
+Verified: القراءة المستضافة الوحيدة لنتيجة الإصلاح عند `3cf6621337b5e901e19a7e2fb27989c1feb388fa` أثبتت نجاح CI بكل وظائفه؛ [DB والعامل الإلزامي](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41568029439/job/125694147685) ناجحان، بلا skip.
+Verified: Deploy Pages فشل كما هو متوقع للمـاركر الحي القديم؛ لم يُغيّر Variable أو gate.
+Verified: رُبط موضعا SHA في دليل #211 بكود الإصلاح الأخضر ثم دُمج فرع التجهيز في #213 بمعاملة merge عادية؛ بلا rebase أو force.
+Verified: ما بعد الكود المختبر وثائق فقط؛ تطابق بايتات fixture/manifest/SQL والحارسين مثبت. لم يُكرر فحص CI بعد merge الوثائق التزامًا بالقراءة الواحدة.

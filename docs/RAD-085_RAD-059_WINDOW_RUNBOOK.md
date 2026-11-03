@@ -6,7 +6,7 @@ Use WSL Ubuntu on the owner laptop, repository `~/RAD-LAB`, the existing encrypt
 
 ## 1. Freeze both reviewed heads and prepare the shell (offline)
 
-The executable preparation source is pinned below to commit `8edbee944402e351a15c628ae182afa7f5649203` from PR A. The promotion source is pinned to commit `3d6824ff40acd4b5f9e06199a548e6dda0aef65a` from [Draft PR B #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213). Review both pinned commits and final PR documentation before the window. PR A must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
+The executable preparation source is pinned below to commit `8edbee944402e351a15c628ae182afa7f5649203` from PR A. The promotion source is pinned to commit `3cf6621337b5e901e19a7e2fb27989c1feb388fa` from [Draft PR B #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213). Review both pinned commits and final PR documentation before the window. PR A must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
 
 ```bash
 set -euo pipefail
@@ -14,7 +14,7 @@ set +x
 umask 077
 cd ~/RAD-LAB
 export RAD_WINDOW_PREP_SHA='8edbee944402e351a15c628ae182afa7f5649203'
-export RAD_WINDOW_PROMOTION_SHA='3d6824ff40acd4b5f9e06199a548e6dda0aef65a'
+export RAD_WINDOW_PROMOTION_SHA='3cf6621337b5e901e19a7e2fb27989c1feb388fa'
 [[ "$RAD_WINDOW_PREP_SHA" =~ ^[0-9a-f]{40}$ ]]
 [[ "$RAD_WINDOW_PROMOTION_SHA" =~ ^[0-9a-f]{40}$ ]]
 test -z "$(git status --porcelain)"
