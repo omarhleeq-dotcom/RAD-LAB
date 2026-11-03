@@ -72,6 +72,7 @@ Test file: `scripts/assess/grading-worker-rehearsal.test.mjs`.
 
 **Rollback:** Secret Manager → Versions → N → Disable. The slot goes NOLOGIN through the v2 stop packet (§8 of the gate runbook), which covers `assess_job_b`. Disabling the version does not end an open DB session; follow the 120-second rejection rule in the [Supavisor decision](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01).
 
+<a id="3-w4--image-stop"></a>
 ## 3. W4 — image (ready for review after the launch)
 
 **Verifier decision B (owner, 2026-11-03; [decision](DECISIONS.md#rad085-w4-verifier-owner-2026-11-03)):** the recovery verifier is an unsigned no-restore attestation in its own Secret Manager secret, `assess-worker-recovery`, trusted through Secret Manager IAM only. Evidence: [W4 report](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md).

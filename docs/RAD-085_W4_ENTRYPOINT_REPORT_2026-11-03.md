@@ -58,8 +58,9 @@
 | تشغيل محدود واحد | Verified | COMPLETE، `graded: 1`، رمز الخروج 0. صحّح المحاولة الأقدم فقط، وبقيت الثانية `grading`. الاتصال `assess_job_b` عبر TLS وSCRAM، ثم أُغلقت الجلسة |
 | اختبار الطفرة (رفع السقف إلى 7 أيام) | Verified | فشلت التجربة (`COMPLETE` بدل `STOP`)، ثم أُعيد الملف |
 | `node scripts/assess/rad085-worker-rehearsal.mjs` دون تغيير | Verified | PASS بـuid 1001. بـroot يقف عند `postgres-connect` لأن PostgreSQL يرفض العمل كـroot (قيد في البيئة المحلية) |
-| `grading-worker-rehearsal.test.mjs` نمط Supabase | Verified | PASS |
-| النمطان embedded وpinned-17.11 | Not run | حزمة `/tmp/radlab-ops-postgres` غير مثبتة محليًا. الملف لم يتغير، وCI يشغلهما |
+| `grading-worker-rehearsal.test.mjs` نمطا Supabase وembedded | Verified | PASS بـuid 1001 |
+| النمط pinned-17.11 | Not run | Docker Hub أعاد 429 مرتين (محاولة إعادة واحدة فقط وفق AGENTS). الملف لم يتغير، وCI يشغله |
+| `npm run docs:test` | Not verified locally | 137 نجاحًا و8 إخفاقات بيئية: سبعة تحتاج صورة 17.11 المحجوبة بـ429، وواحد يحتاج locale `en_US.UTF-8` غير الموجود على المضيف. الملفات المختبرة لم تتغير، وCI يحسم |
 | `eslint` للملفات الثلاثة، و`npm run health:test` | Verified | نظيف؛ 9/9 |
 | `docs:check`، و`status:check --require-previous`، و`docs:sync` مرتين، و`git diff --check` | Verified | انظر commit الحالة |
 | build التطبيق وتدقيقات المتصفح | Not run | لا تغيير في المنتج أو الواجهة |
