@@ -99,7 +99,7 @@ owner_sql -qAt -c "begin read only; select current_user='postgres' operator_ok, 
 node scripts/ops/laptop-backup.mjs run && node scripts/ops/laptop-backup.mjs verify daily
 ```
 
-**Expected:** the B2 JSON line with `count_errors` 0, then `{"verified_files":2,…}`. Write the backup UTC time in the log; step 6 may use it as `baselineAt`.
+**Expected:** the B2 JSON line with `count_errors` 0, then `{"verified_files":2,…}`. Write the backup completion time in the log as a canonical UTC string with milliseconds; it is `baselineAt` for step 6 ([review decision](DECISIONS.md#assess-window-review-owner-2026-11-03)).
 **STOP → rollback:** nothing was changed. End the window.
 
 ## 2. W5 probe, mount check and D-W5 (Cloud Shell; 45 min)
@@ -165,7 +165,7 @@ Run [W2.1–W2.4](ASSESS_GATE_W_PACKAGES.md#2-w2w3--activation-transport-and-new
 
 6.1 W4 step 5 once: create `assess-worker-recovery` and grant the accessor role to `assess-job` only; repeat the W2.4 IAM review for both secrets.
 
-6.2 W4 step 6 with the helper (decision B: `restoresSinceBaseline` 0, at most 48 h). Pass `--no-restore-since-baseline` only if no production restore has happened since `baselineAt`. `baselineAt` is the owner's recorded reconciled baseline, for example the step 1.5 backup time, as a canonical UTC string with milliseconds:
+6.2 W4 step 6 with the helper (decision B: `restoresSinceBaseline` 0, at most 48 h). Pass `--no-restore-since-baseline` only if no production restore has happened since `baselineAt`. `baselineAt` is the completion time of the step 1.5 backup verified in this window:
 
 ```bash
 node scripts/assess/recovery-attestation.mjs --manifest "$RAD_W4_OUT/manifest.json" \
@@ -204,7 +204,9 @@ Answer **N** to any execute prompt; never `--execute-now`.
 
 ## 8. Synthetic smoke — open, smoke, close (L, B, P; 30 min)
 
-Use one RAD-041 synthetic account (approved, never the owner's, never a real participant; prefer one that is not the appointed alternate account). Auto-graded only ([W7 recipe](ASSESS_GATE_W_PACKAGES.md#6-w7--live-smoke-recipe-stop)); written items have no deployed path.
+This is the single exception to "the gate opens only for a scheduled exam window": at most 30 minutes, owner present, synthetic accounts only, closed by §8 right after.
+
+Use one RAD-041 synthetic account (approved, never the owner's, never a real participant; never an account appointed as alternate; currently no alternate is appointed). Auto-graded only ([W7 recipe](ASSESS_GATE_W_PACKAGES.md#6-w7--live-smoke-recipe-stop)); written items have no deployed path.
 
 1. Precondition (L): `owner_sql -qAt -c "begin read only; select count(*) filter (where available and schema_version=1) from assess.versions; rollback;"`. **Expected:** at least `1`. If `0`: skip to step 9; the smoke is Not run (content waits for O108).
 2. Owner assigns that version to the synthetic participant only (B, owner pages). The assignment does not need the gate open.

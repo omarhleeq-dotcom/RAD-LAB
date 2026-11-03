@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 420,
-  "updated_at": "2026-11-03T18:00:00Z",
+  "revision": 421,
+  "updated_at": "2026-11-03T19:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-098",
   "tasks": [
@@ -548,8 +548,8 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "review",
       "priority": "high",
-      "description": "الإبطال مقبول (D11). تمرين البديل والقنوات نجح بحساب اختبار يملكه المالك (D12/D13). هذا الحساب بديل مؤقت وليس تغطية مستقلة: تُفتح البوابة لنافذة امتحان مجدولة بحضور المالك فقط وتُغلق بعدها، والدخان الاصطناعي وحده حتى بديل بشري حقيقي مُمرَّن. باقٍ: ذلك البديل وتمرينه، واستلام تنبيه/ميزانية أصلي (P7) في نافذة التفعيل.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md#closure؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-window-owner-2026-11-03؛ docs/ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md",
+      "description": "الإبطال مقبول (D11). تمرين البديل والقنوات نجح بحساب اختبار يملكه المالك (D12/D13)، وأُزيل تعيينه2026-11-03؛ لا بديل معيّن الآن. تُفتح البوابة لنافذة امتحان مجدولة بحضور المالك فقط، والاستثناء الوحيد دخان اصطناعي ≤30 دقيقة، حتى بديل بشري حقيقي مُمرَّن. باقٍ: ذلك البديل وتمرينه، واستلام تنبيه/ميزانية أصلي (P7) في نافذة التفعيل.",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md#closure؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-window-owner-2026-11-03؛ docs/DECISIONS.md#assess-window-review-owner-2026-11-03؛ docs/ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md",
       "waiting_on": "owner",
       "done_when": "بديل بشري حقيقي معيّن ومُمرَّن قبل أي طالب حقيقي في Assess، واستلام تنبيه/ميزانية أصلي من المزوّد (P7)؛ الحساب الثاني للمالك بديل مؤقت فقط حتى ذلك."
     },

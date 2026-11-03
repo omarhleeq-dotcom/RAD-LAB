@@ -16,7 +16,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Rotation and image honesty](#rotation-honesty)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03))
 
 ## Active Binding Decisions
 
@@ -1525,3 +1525,13 @@ Authority: owner's enablement-window task, recorded as stated; script in the [wi
 - Execution model: every live enablement step runs in ONE owner laptop window (WSL `~/RAD-LAB`, laptop browser for Cloud Shell and consoles), each step with Expected/STOP.
 - Permission: one consolidated written sentence at the start of the window; the separate gate-open sentence (gate runbook §0.3) only if a real exam window is scheduled.
 This record grants no live action by itself; the owner's written sentence in the window does.
+
+<a id="assess-window-review-owner-2026-11-03"></a>
+### Assess enablement window — owner review of #223, 2026-11-03
+Authority: owner decisions on Draft #223, recorded as stated; amends the [window record](#assess-window-owner-2026-11-03) and the [runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md).
+- Deviations 1–3 accepted: option A network flags on the Job update; deleting the TLS probe Job in cleanup; running `recovery-attestation.mjs` in Cloud Shell, with the `--manifest-sha256` fallback kept.
+- Synthetic smoke exception: the gate may open ONLY for the step-8 synthetic smoke, at most 30 minutes, owner present, synthetic accounts only, closed by gate runbook §8 right after. This is the single exception to "the gate opens only for a scheduled exam window".
+- `baselineAt` is the completion time of the step-1 fresh RAD-086 backup verified in the same window.
+- Smoke account: a RAD-041 synthetic account that is NOT appointed as alternate.
+- No alternate is appointed now: the owner removed the test appointment on 2026-11-03. A real human alternate is appointed and drilled before any real exam window.
+No live action follows from this record; the PR stays Draft.
