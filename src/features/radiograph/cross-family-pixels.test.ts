@@ -1,10 +1,14 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { evaluate } from "@/features/evaluation/engine";
+import * as elbowModel from "@/features/elbow-model/elbow-model";
 import { checkIsDrawn } from "./consistency";
 import { anchorShift, elbowApValue, handPaShiftU, renderRadiograph, type LumaImage } from "./pipeline";
-import { WITNESS_CASES, witnessProbes, witnessResolution } from "./cross-family-test-utils";
+import { WITNESS_CASES, witnessProbes, witnessReference, witnessResolution } from "./cross-family-test-utils";
+import { limbRotationPlan } from "./limb-effects";
+import { buildRenderPlan } from "./plan";
 
 const FILE = "scripts/qa/radiograph-pixel-witnesses.json";
 const sha = (v: string | Uint8Array | Uint8ClampedArray) => createHash("sha256")
@@ -24,6 +28,20 @@ it("compatibility exports retain interpolation and neutral-image kernel contract
   expect(anchorShift([{ u: 0, du: 0 }, { u: 1, du: 0.2 }], 0.5)).toBe(0.1);
   expect(handPaShiftU(0.5, 0.5, { kind: "hand-pa", degrees: 0, shiftU: 0, overlapShiftU: 0 }, { bands: [{ v1: 0.2, v2: 0.8 }] })).toBe(0);
   expect(elbowApValue([], { ulna: [], radius: [] }, { forearm: { v1: 0.4, v2: 1, splitU: 0.5 } }, () => 7, 0.5, 0.7)).toBe(7);
+});
+
+it("buildRenderPlan constructs the active rotation model only once", () => {
+  const c = WITNESS_CASES.find(c => c.id === "elbow-ap")!;
+  const state = evaluate(c, { ...witnessReference(c), rotationDeg: 8 }).resultState;
+  const spy = vi.spyOn(elbowModel, "elbowApShifts");
+  try {
+    limbRotationPlan(8, true, c.radiograph.limbRotation);
+    const callsForOnePlan = spy.mock.calls.length;
+    expect(callsForOnePlan).toBeGreaterThan(0);
+    spy.mockClear();
+    expect(buildRenderPlan(state, c).limb).toBeDefined();
+    expect(spy).toHaveBeenCalledTimes(callsForOnePlan);
+  } finally { spy.mockRestore(); }
 });
 
 describe("real-asset cross-family byte witnesses (never regenerate after a product edit)", () => {
