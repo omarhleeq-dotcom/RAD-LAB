@@ -100,7 +100,7 @@ Test file: `scripts/assess/grading-worker-rehearsal.test.mjs`.
 
 **Open items (S-STD-3):**
 
-- The docs do not state whether a mounted secret is a regular file or a symlink. If it is a symlink, every run ends `STOP`, failing closed. The lifting trigger is the first post-launch run.
+- The docs do not state whether a mounted secret is a regular file or a symlink. If it is a symlink, every run ends `STOP`, failing closed. This is settled by W5 probe steps 6–8 (mount-type check) before any real run.
 - The attestation is an owner statement, not detection. The lifting path is a database-held restore epoch, tracked as RAD-097.
 - The entrypoint does not pin the CA; the W2 transport pins it before upload.
 
@@ -124,6 +124,9 @@ No page states that a job reaches a public AAAA destination, and no prices were 
 3. Grant the Cloud Run service agent `roles/compute.publicIpAdmin`. This is a project IAM change, so record it.
 4. `gcloud run jobs create assess-direct-tls-probe --region=europe-west3 --image=…@sha256:<digest> --network=radlab-egress --subnet=radlab-egress-ew3 --vpc-egress=all-traffic --tasks=1 --parallelism=1 --max-retries=0 --task-timeout=60s --cpu=1 --memory=512Mi`. Use no secret. Then execute it once with `--wait`.
 5. **Expected** in the execution log: `{"outcome":"PASS","stage":"complete","family":6}`. Any other stage is **STOP**, and the stage names where the path failed.
+6. **Mount-type check (settles the W4 symlink question before any real run; credential-free).** Create a throw-away secret with dummy content: `printf 'dummy' | gcloud secrets create assess-mount-probe-dummy --project=project-bff9124a-ec31-4d57-bc0 --replication-policy=user-managed --locations=europe-west3 --data-file=-`. Grant `roles/secretmanager.secretAccessor` on that secret only to the `assess-job` service account.
+7. Create a second Job from the same probe image digest, using the W4 path layout and printing only types and modes, never content: `gcloud run jobs create assess-mount-probe --region=europe-west3 --image=…@sha256:<probe digest> --service-account=assess-job@project-bff9124a-ec31-4d57-bc0.iam.gserviceaccount.com --set-secrets=/run/recovery/assess-recovery.json=assess-mount-probe-dummy:1 --tasks=1 --parallelism=1 --max-retries=0 --task-timeout=60s --cpu=1 --memory=512Mi --command=node --args='^@^-e@const fs=require("fs"),t=s=>s.isSymbolicLink()?"symlink":s.isFile()?"file":s.isDirectory()?"dir":"other";for(const p of ["/run/recovery",...fs.readdirSync("/run/recovery").map(n=>"/run/recovery/"+n)]){const s=fs.lstatSync(p);console.log(JSON.stringify({p,type:t(s),mode:(s.mode&0o7777).toString(8)}))}'`. Execute it once with `--wait`.
+8. **Expected** in the log: one line for `/run/recovery` (`dir`), plus one line per entry. W4 runs as written only if `assess-recovery.json` is `file`. If it is `symlink`, the result is still safe (every run would end `STOP`), but record the lines and follow the proposal in the [W4 report](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md#7-البنود-المفتوحة-s-std-3) before any real run. Then delete both: `gcloud run jobs delete assess-mount-probe --region=europe-west3` and `gcloud secrets delete assess-mount-probe-dummy --project=project-bff9124a-ec31-4d57-bc0`.
 
 **Options for the owner:**
 

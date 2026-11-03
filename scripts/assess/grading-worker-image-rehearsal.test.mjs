@@ -25,6 +25,8 @@ for (const name of ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS', 'DOCKER_TLS_V
 const docker = (args, input, timeout = 180000) => execFileSync('docker', ['--host=unix:///var/run/docker.sock', ...args],
   { input, env: dockerEnv, stdio: 'pipe', timeout, maxBuffer: 64 * 1024 * 1024 }).toString();
 const lines = text => text.split('\n').filter(Boolean);
+// Same wrapper pattern as direct-tls-probe.test.mjs: the program is a parameter.
+const command = (program, args) => execFileSync(program, args, { stdio: 'pipe' });
 
 // The real W2 transport with a gcloud stand-in that keeps the payload in a 0600 temp file.
 function transport() {
@@ -119,8 +121,8 @@ test('W4 production grading image: refusals, re-read verifier, one bounded run a
     su(load);
     su('set role postgres;' + read('supabase/migrations/20261020000700_assess_lifecycle.sql').match(/^insert into assess\.launch_gate [^;]+;/m)[0]);
     // TLS for the direct host, SCRAM-only over TLS for the slot from the network, connection logging.
-    execFileSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', `/CN=${DIRECT_HOST}`,
-      '-addext', `subjectAltName=DNS:${DIRECT_HOST}`, '-keyout', join(dir, 'server.key'), '-out', join(dir, 'server.crt')], { stdio: 'pipe' });
+    command('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', `/CN=${DIRECT_HOST}`,
+      '-addext', `subjectAltName=DNS:${DIRECT_HOST}`, '-keyout', join(dir, 'server.key'), '-out', join(dir, 'server.crt')]);
     docker(['exec', '-u', 'root', db, 'mkdir', '-p', '/etc/rad085-tls']);
     for (const file of ['server.key', 'server.crt']) docker(['cp', join(dir, file), `${db}:/etc/rad085-tls/${file}`]);
     docker(['exec', '-u', 'root', db, 'sh', '-c', 'chown -R postgres:postgres /etc/rad085-tls && chmod 600 /etc/rad085-tls/server.key']);
