@@ -1,5 +1,4 @@
 import {describe,expect,it} from 'vitest';
-import {Client} from 'pg';
 import {readFileSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {openRad085Database} from './rad085-local-db';
@@ -16,15 +15,17 @@ describe.each(modes)('production fixture 0200 -> 0300 calibration %s (required)'
   try {
    // Replace synthetic objects with byte-exact dump sections, including Auth FKs,
    // production function bodies and all ACL/default ACL statements in this scope.
-   const parameters=(db.admin as unknown as {connectionParameters:{host:string;database:string}}).connectionParameters;
-   const bootstrap=mode==='supabase17'?new Client({host:parameters.host,database:parameters.database,user:'supabase_admin',password:'',ssl:false}):db.admin;
-   if(bootstrap!==db.admin)await bootstrap.connect();
-   try {
-    await bootstrap.query('drop schema assess cascade;drop schema public cascade;drop schema auth cascade;create schema public authorization postgres');
-    const roles=[...readFileSync('supabase/fixtures/production-schema-2026-11-01/roles.sql','utf8').matchAll(/^CREATE ROLE ([a-z_]+);$/gm)].map(m=>m[1]);
-    for(const role of roles)if(!(await bootstrap.query('select 1 from pg_roles where rolname=$1',[role])).rowCount)await bootstrap.query(`create role ${role} nologin`);
-    await bootstrap.query(productionApplicationSql());
-   } finally {if(bootstrap!==db.admin)await bootstrap.end();}
+   const roles=[...readFileSync('supabase/fixtures/production-schema-2026-11-01/roles.sql','utf8').matchAll(/^CREATE ROLE ([a-z_]+);$/gm)].map(m=>m[1]);
+   const bootstrapSql='drop schema assess cascade;drop schema public cascade;drop schema auth cascade;create schema public authorization postgres;'+roles.map(role=>
+    `do $$begin if not exists(select 1 from pg_roles where rolname='${role}') then create role ${role} nologin;end if;end$$;`).join('\n')+productionApplicationSql();
+   if(mode==='embedded')await db.admin.query(bootstrapSql);
+   else {
+    // Provider-owned dump objects require the local image's bootstrap identity.
+    // Use its existing peer map inside the container; no host auth/HBA change.
+    const names=execFileSync('docker',['ps','--filter',`name=rad062-m09-${process.pid}-`,'--format','{{.Names}}'],{encoding:'utf8'}).trim().split('\n');
+    expect(names).toHaveLength(1);expect(names[0]).toMatch(new RegExp(`^rad062-m09-${process.pid}-[0-9]+$`));
+    execFileSync('docker',['exec','-i',names[0]!,'psql','-X','-v','ON_ERROR_STOP=1','-U','supabase_admin','-d','rad_restore','-f','-'],{input:bootstrapSql,stdio:'pipe',timeout:120000,maxBuffer:64*1024*1024});
+   }
    for(const [file,table] of [
     ['20261020000700_assess_lifecycle.sql','launch_gate'],['20261026000100_assess_supervisor_scope.sql','scope_lock'],
     ['20261027000100_assess_management_erasure.sql','erasure_fk_contract'],['20261026000100_assess_supervisor_scope.sql','sharing_policy'],
