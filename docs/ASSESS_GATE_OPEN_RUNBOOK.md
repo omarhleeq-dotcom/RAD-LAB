@@ -6,6 +6,7 @@
 
 - **Thursday 2026-11-05 launches Practice-only; the Assess gate stays closed** ([decisions](DECISIONS.md#launch-practice-only-owner-2026-11-03)). D-W1, D-W5, W4 and W7 are deferred until after launch.
 
+- **Enablement window:** the single ordered script for the post-launch live steps is the [enablement window runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md) ([decision](DECISIONS.md#assess-window-owner-2026-11-03)). Real students still wait for a real human alternate and drill.
 - **CLOSE (§8) is executable now** from reviewed sources: the phone stop packet, its verification and the cloud steps.
 - **OPEN is blocked at §4.** W4 and W7 are STOP and W1/W5/W6 need owner decisions (table below). Do not improvise, and do not run §5 (gate open) while any item is not Ready-for-owner and executed.
 - Steps §1–§3 are read-only. You may run them to confirm readiness, but they open nothing.
