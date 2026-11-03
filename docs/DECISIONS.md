@@ -16,7 +16,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Rotation and image honesty](#rotation-honesty)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03)
 
 ## Active Binding Decisions
 
@@ -1513,3 +1513,15 @@ Existing emergency values, StopController, flow, ACK and Option C semantics rema
 Supersedes the implemented presentation in SessionGate: `<EmergencySession/>` in the shared provider on every page, and EmergencyView: `<p>{t('warning')}</p><p>{t('cloud')}</p>` fully expanded. [Decisions1–11, including “Option C: one in-app alternate”](#rad059-alternate-owner-2026-11-02) and [12–14](#rad059-implementation-owner-2026-11-02) contain no every-page requirement; any such inferred presentation rule is superseded only. Original authority/evidence links remain.
 Pins: prefer reusing EmergencySession unchanged; if necessary, ONLY sha256 values for changed SessionGate/AppShell/EmergencySession are pre-approved, with printed main/branch markers and identical browser rpc/from/call set. Any other pin/check/manifest change → STOP.
 No RPC/schema/migration/marker/write/dependency change; owner emergency section from #219 unchanged; no guard weakening. Static EN/AR route, noindex and unchanged404 policy; budgets/health gates and full product QA apply.
+
+<a id="assess-window-owner-2026-11-03"></a>
+### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03
+Authority: owner's enablement-window task, recorded as stated; script in the [window runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md); prior records [Practice-only launch](#launch-practice-only-owner-2026-11-03) and [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03).
+- D-W1 accepted: in the window, apply `supabase/manual/assess-grading-worker-public-temp.sql`, then a Practice smoke at once; on any failure run the file's rollback line `grant temporary on database postgres to public;`.
+- Interim alternate: the owner's own second (test) account stays the appointed alternate for now. This is NOT independent coverage.
+- Compensating rule: the Assess gate opens only for a scheduled exam window while the owner is present and monitoring, and closes (gate runbook §8 or gate close) right after; small cohorts first.
+- A real human alternate is appointed and drilled BEFORE real students use Assess; until then only synthetic smoke may run.
+- D-W5 pre-decision: probe `{"outcome":"PASS","stage":"complete","family":6}` plus mount type `file` accepts option A (dual-stack Direct VPC egress) and the window continues. Any other result STOPs the window with nothing else changed; options B and C stay undecided.
+- Execution model: every live enablement step runs in ONE owner laptop window (WSL `~/RAD-LAB`, laptop browser for Cloud Shell and consoles), each step with Expected/STOP.
+- Permission: one consolidated written sentence at the start of the window; the separate gate-open sentence (gate runbook §0.3) only if a real exam window is scheduled.
+This record grants no live action by itself; the owner's written sentence in the window does.
