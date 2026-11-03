@@ -6,15 +6,19 @@ Use WSL Ubuntu on the owner laptop, repository `~/RAD-LAB`, the existing encrypt
 
 ## 1. Freeze both reviewed heads and prepare the shell (offline)
 
-The owner STOP on 2026-11-03 applied nothing live. The executable preparation source is re-pinned below to commit `7a998a76cfa9a14f4252a141f21eac9ac2d7f5ea` from [calibration Draft #217](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/217). The promotion review candidate is pinned to commit `3a813881cf6d87fc325aa51b44120cdec5a7d2d0` on `rad085/calibration-promotion-review`, a two-parent merge of the calibration code into the existing promotion source. This is a review ref; [Draft PR B #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213) remains unchanged until #217 merges. Merge order: #217 into main first; then merge main into #213 with a normal merge commit, resolving its manifest in favor of the reviewed promotion classifications. No rebase, squash, force-push or promotion merge. Verify the resulting code/marker against this candidate and re-pin if it differs. Review both pinned commits and final PR documentation before the window. #217 must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
+The owner STOP on 2026-11-03 applied nothing live. The executable preparation source is re-pinned below to commit `a0898c286a7c6ebaac0f235a4f576d755586f4cf` from [calibration Draft #217](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/217). The promotion review candidate is pinned to commit `7a6d8583afd6f1ed7e096acb1f292102183e83e3` on `rad085/calibration-promotion-review`, a two-parent merge of the calibration code into the existing promotion source.
+
+This is a review ref; [Draft PR B #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213) remains unchanged until #217 merges. Merge order: #217 into main first; then merge main into #213 with a normal merge commit, resolving its manifest in favor of the reviewed promotion classifications. No rebase, squash, force-push or promotion merge. Verify the resulting code/marker against this candidate and re-pin if it differs.
+
+Review both pinned commits and final PR documentation before the window. #217 must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
 
 ```bash
 set -euo pipefail
 set +x
 umask 077
 cd ~/RAD-LAB
-export RAD_WINDOW_PREP_SHA='7a998a76cfa9a14f4252a141f21eac9ac2d7f5ea'
-export RAD_WINDOW_PROMOTION_SHA='3a813881cf6d87fc325aa51b44120cdec5a7d2d0'
+export RAD_WINDOW_PREP_SHA='a0898c286a7c6ebaac0f235a4f576d755586f4cf'
+export RAD_WINDOW_PROMOTION_SHA='7a6d8583afd6f1ed7e096acb1f292102183e83e3'
 [[ "$RAD_WINDOW_PREP_SHA" =~ ^[0-9a-f]{40}$ ]]
 [[ "$RAD_WINDOW_PROMOTION_SHA" =~ ^[0-9a-f]{40}$ ]]
 test -z "$(git status --porcelain)"

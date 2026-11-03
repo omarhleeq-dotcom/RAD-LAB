@@ -34,8 +34,8 @@ Scale: لا حدود أو خدمات أو جدولة جديدة؛ المقارن
 | بعد 0300 | 5fcd5e713c9e39b74f39ba6a969080d5 | 95ae71fb2b1b1c45707cb6247ef6e95a |
 
 Verified: SHA256 الجديد لـ0300 هو `accad4b814dc82674e4653059a4ce9991b2c8cd977a6556de067b812a8bf7f4a`؛ مطابق في manifest والبروفة.
-رأس التجهيز المراجع `7a998a76cfa9a14f4252a141f21eac9ac2d7f5ea`؛ [Draft #217](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/217).
-مرجع مراجعة الترقية `3a813881cf6d87fc325aa51b44120cdec5a7d2d0` على `rad085/calibration-promotion-review`؛ دمج ذو والدين دون تعديل #213.
+رأس التجهيز المراجع `a0898c286a7c6ebaac0f235a4f576d755586f4cf`؛ [Draft #217](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/217).
+مرجع مراجعة الترقية `7a6d8583afd6f1ed7e096acb1f292102183e83e3` على `rad085/calibration-promotion-review`؛ دمج ذو والدين دون تعديل #213.
 marker المرشح: `pilot-v1:3d8b505ca8605f99f226475ced8e7aa1db576a5829c66cc5e6499e1aab4c18b7`.
 
 ## 5. الطب والتقييم
@@ -47,16 +47,26 @@ Verified: لا تغيير طب أو صور أو درجات أو نصوص معت�
 Verified: نجح 47 اختبار embedded موجّهًا، يشمل رفض 0300 القديمة بسبب functions/relations وقبول الجديدة وجميع صفوف successor الأحد عشر.
 Verified: اختبارات الاستثناء تشمل العودة المختلفة والتوقيع الزائد والدوال الأخرى وغياب الدالة الوحيدة وانجراف الجسم وACL.
 Verified: اختبار STOP الحقيقي يذكر 0300_preflight وfunctions,relations، ولا ينشئ جداول 0300؛ M08 يذكر m09_checks.
+Verified: unit كاملة محليًا: 2535 اختبارًا ناجحًا في 150 ملفًا.
 Verified: typecheck وlint للملفات المتغيرة؛ إثبات بايتات 0200 والمطبق وحزم الهاتف؛ git diff --check.
 Not run بنجاح محليًا: الصورة المثبتة؛ فشل سحب Supabase عند `no space left on device`، ولا صلاحية لتغيير daemon أو driver.
 Not run بنجاح محليًا: البروفة المشفرة والكتالوج الكامل؛ استُدعيتا وفشلتا لغياب الصورة، دون skip أو ادعاء نجاح.
-Verified: DB lane المحلية اكتملت: 906 ناجحة و137 فاشلة؛ منها فشل الصورة المثبتة وتوقعا manifest قديمان صُحّحا.
+Verified: DB lane المحلية المعادة اكتملت: 910 ناجحة و133 فاشلة لغياب الصورة المثبتة؛ لا اختبارات متجاوزة.
+Verified: اختبار fixture الأخير يطبق بحساب postgres غير فائق في الوضعين؛ اجتاز embedded وجميع صفوف successor.
+يحمّل مخططات المصدر وملكيتها وACL حرفيًا، ويمنح قدرات stop المراجعة ضمن قاعدة الاختبار المعزولة فقط.
 Verified: أُعيد اختبارا trial-removal بعد تعارض مؤقت سببه تبديل الفرع أثناء التشغيل؛ نجحا.
 Verified: نجحت ملفات إعادة التثبيت وtrial-removal الأربعة بكاملها: 11 اختبارًا دون استبعاد، ثم typecheck.
+Verified: مرجع الترقية اجتاز 7 اختبارات مختارة للـmanifest وembedded، تشمل marker الجديد وSTOP وfixture الإنتاج.
 Verified: CI على 01c604a أثبت نجاح البروفة المشفرة والكتالوج الإنتاجي الكامل؛ DB lane كانت جارية عند القراءة.
 [شاهد خطوات CI](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41578299189/job/125726868143).
 فشل unit الوحيد في ذلك التشغيل هو SHA القديمة في frontend-manifest؛ صُححت التوقعات الثلاثة حرفيًا.
-Not run: إعادة قراءة شواهد CI على رأس الكود النهائي؛ لا يُنسب نجاح الرأس القديم إليه دون تحقق.
+Verified: CI عند 7a998a7 اجتازت 1042 اختبار DB؛ فشل fixture بسبب ملكية مخطط assess في مدخل الاختبار.
+صُحّح تحميل المخططات وACL الأصلية وأضيف شاهد postgres غير الفائق؛ لا تعديل SQL تشغيلية لإخفاء الفشل.
+Verified: CI لرأس التجهيز a0898c2 نجحت في unit وbuild وdocs، وDB بكل خطواتها المطلوبة دون skip.
+[شاهد DB النهائي](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41580507692/job/125733969277):
+1043 اختبار DB ناجحًا في 118 ملفًا؛ fixture في embedded وSupabase 17.11 ICU مرّت بجميع صفوف successor.
+بروفتا النسخة المشفرة والكتالوج الإنتاجي الكامل ناجحتان على الرأس نفسه؛ القديمة ترفض والجديدة تطبق و11 صفًا ok.
+Verified: Deploy Pages التلقائي ناجح؛ لا نشر يدوي. ما بعد رأس الكود هنا توثيق فقط، ولا ندعي قراءة CI جديدة له.
 Verified: docs:check وstatus:check وgit diff --check؛ docs:sync مرتان والثانية صفر تغيير.
 تنبيهات docs تخص الاقتراب من ميزانيات ملفات قائمة ووصف RAD-085؛ لا أخطاء ولا رفع سقوف.
 
