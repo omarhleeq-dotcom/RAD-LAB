@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 413,
-  "updated_at": "2026-11-03T04:30:17.894Z",
+  "revision": 414,
+  "updated_at": "2026-11-03T08:04:16.102Z",
   "timezone": "UTC",
   "next_id": "RAD-095",
   "tasks": [
@@ -854,12 +854,11 @@
     {
       "id": "RAD-094",
       "title": "Code Health قبل الإطلاق",
-      "status": "blocked",
+      "status": "review",
       "priority": "medium",
-      "description": "توقف قبل التنفيذ: Knip يكشف صادرات غير مستخدمة في owner-data المثبت؛ حذفها يغير pin والاستثناء يحتاج قرارًا محددًا. قياسات main محفوظة؛ البوابات والتنظيف وخريطة المزايا وReuse check لم تنفذ.",
-      "source_ref": "docs/CODE_HEALTH_REPORT_2026-11-03.md؛ docs/CODE_HEALTH_BASELINE_2026-11-03.json",
-      "waiting_on": "owner",
-      "blocker": "شرط STOP: حذف ATTEMPT_COLUMNS وNOTE_COLUMNS يحتاج ملفًا مثبتًا؛ PA_FOREARM ضمن نموذج خارج النطاق. يحدد المالك معالجة الرموز ووحدة سقف الحجم.",
+      "description": "استؤنفت #216 بعد دمج main وقراري المالك؛ أدوات مثبتة وبوابات ازدواج/Knip/طبقات/أحجام KiB وشواهد رفض مزروعة، حذف بطاقة غير مركبة وتوحيد QA مطابق وخريطة reuse. ينتظر CI والمراجعة؛ التقرير CODE_HEALTH_REPORT_2026-11-03.md.",
+      "source_ref": "docs/DECISIONS.md#code-health-pins-owner-2026-11-03؛ docs/DECISIONS.md#code-health-size-owner-2026-11-03؛ docs/CODE_HEALTH_REPORT_2026-11-03.md",
+      "waiting_on": "reviewer",
       "done_when": "PR مدمجة بعد #213؛ CI والبوابات الأربع خضراء؛ تنظيف بلا تغير سلوك وخريطة مزايا وReuse check ومقاييس وصور للقياس فقط."
     }
   ]

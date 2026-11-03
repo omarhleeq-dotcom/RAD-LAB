@@ -1438,3 +1438,19 @@ Authority: owner messages in this conversation, recorded verbatim below.
 
 Verified: [#208](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/208) merged at17:57:22Z and is on origin/main; [#209](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/209) closed unmerged at19:22:45Z. P4/D1 closure and TTL approval stand; the earlier conflicting read is preserved in the [report](RAD-085_FIXES_REPORT_2026-11-02.md#p4-d1-closure).
 Approved P2/P3 wording is pinned to [the report at 1ebe90a](https://github.com/omarhleeq-dotcom/RAD-LAB/blob/1ebe90a8589776d17aa7bc83163bd9461d26d9bf/docs/RAD-085_FIXES_REPORT_2026-11-02.md#8-قرارات-المالك-الموحدة). SQL, promotion and live actions remain deferred.
+
+<a id="code-health-pins-owner-2026-11-03"></a>
+### RAD-094 — pinned dead exports، 2026-11-03
+
+قرار المالك في طلب استئناف #216: لا تعديل لـ`src/features/pilot/owner-data.ts` أو `scripts/pages/frontend-schema.json`.
+استثناء Knip رمزي للـ`ATTEMPT_COLUMNS` و`NOTE_COLUMNS` في ذلك الملف فقط؛ لا استثناء ملف/مجلد/pattern.
+السبب الحرفي: "pinned browser boundary; remove with the next authorised pin change".
+يبقي [التقرير](CODE_HEALTH_REPORT_2026-11-03.md) الرمزين كودًا ميتًا معلنًا؛ رفع الاستثناء عند تغيير pin مأذون لاحقًا.
+
+<a id="code-health-size-owner-2026-11-03"></a>
+### RAD-094 — size caps، 2026-11-03
+
+قرار المالك في طلب استئناف #216: الوحدة KiB =1024 بايت؛ القياس gzip JS+CSS لكل صفحة بمنهج baseline.
+السقوف في [budgets.json](budgets.json): home/training/supervisor/account=400؛ practice/owner/assess=500 KiB.
+أي صورة جديدة≤500 KiB؛ الصور الموجودة قياس فقط، بلا تطبيق رجعي أو تغيير صور في هذه الدفعة.
+هذه القرارات ليست مسجلة في #215؛ تبقى PR Draft ولا إذن SQL حي أو Variables أو نشر.

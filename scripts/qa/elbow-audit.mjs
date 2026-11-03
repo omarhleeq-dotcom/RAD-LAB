@@ -7,6 +7,7 @@
 import { chromium } from "playwright";
 import { mkdirSync, readFileSync } from "node:fs";
 import { driver, startPractice } from "./workspace.mjs";
+import { pageChecks } from "./page-checks.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const EXAM = process.argv[2] ?? "elbow-ap";
@@ -29,12 +30,7 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
   const tag = `${loc}/${dev}`;
   const ctx = await browser.newContext({ ...opts, locale: loc === "ar" ? "ar" : "en-US" });
   const page = await ctx.newPage();
-  const axe = async (area) => {
-    await page.evaluate(axeSrc);
-    const r = await page.evaluate(() => axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] } }));
-    ok(`${tag} axe ${area}`, r.violations.length === 0, JSON.stringify(r.violations.map((v) => ({ id: v.id, n: v.nodes.slice(0, 3).map((x) => x.target.join(" ")) }))));
-  };
-  const noOverflow = async (area) => ok(`${tag} no horizontal overflow ${area}`, await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+  const { axe, noOverflow } = pageChecks(page, axeSrc, ok, tag);
 
   await page.goto(`${BASE}/${loc}/xray/${EXAM}`, { waitUntil: "networkidle" });
   await axe("exam hub");

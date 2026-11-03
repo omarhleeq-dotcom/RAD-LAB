@@ -1292,5 +1292,1101 @@
     "duplicated_lines_all_occurrences": 1772,
     "percentage": 3.9626101346214053,
     "method": "12 consecutive nonblank whitespace-normalized lines; comments retained; ts,tsx,js,jsx,mjs,cjs excluding test/spec/declarations; not comparable to reviewer method without its scanner"
+  },
+  "resume": {
+    "date": "2026-11-03",
+    "merged_head": "b2ffffa",
+    "main_at_merge": "5fc5a9d4bf39ff1520b531396fa285de1a74294a",
+    "original_baseline_unchanged": true,
+    "merged_duplication": {
+      "lines": 50324,
+      "tokens": 985592,
+      "sources": 584,
+      "clones": 63,
+      "duplicatedLines": 1499,
+      "duplicatedTokens": 24199,
+      "percentage": 2.98,
+      "percentageTokens": 2.46,
+      "newDuplicatedLines": 0,
+      "newClones": 0
+    },
+    "merged_pages": [
+      {
+        "page": "404.html",
+        "gzip_bytes": 186144,
+        "assets": 8
+      },
+      {
+        "page": "_not-found.html",
+        "gzip_bytes": 186144,
+        "assets": 8
+      },
+      {
+        "page": "ar/account.html",
+        "gzip_bytes": 320268,
+        "assets": 15
+      },
+      {
+        "page": "ar/assess.html",
+        "gzip_bytes": 403532,
+        "assets": 18
+      },
+      {
+        "page": "ar/credits.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/feedback.html",
+        "gzip_bytes": 315997,
+        "assets": 15
+      },
+      {
+        "page": "ar/owner.html",
+        "gzip_bytes": 485836,
+        "assets": 20
+      },
+      {
+        "page": "ar/simulation/chest-pa-erect.html",
+        "gzip_bytes": 313348,
+        "assets": 15
+      },
+      {
+        "page": "ar/supervisor.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/terms.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/training.html",
+        "gzip_bytes": 387796,
+        "assets": 16
+      },
+      {
+        "page": "ar/xray/ankle-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/ankle-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/ankle-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/ankle-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/chest-ap-supine/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/chest-ap-supine.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/chest-lateral-erect/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/chest-lateral-erect.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/chest-pa-erect/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/chest-pa-erect.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/elbow-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/elbow-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/elbow-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/elbow-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/foot-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/foot-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/foot-oblique/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/foot-oblique.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/hand-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/hand-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/hand-pa/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/hand-pa.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/knee-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/knee-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/knee-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/knee-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/pelvis-ap-supine/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/pelvis-ap-supine.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/shoulder-grashey-erect/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/shoulder-grashey-erect.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/wrist-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/wrist-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray/wrist-pa/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "ar/xray/wrist-pa.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "ar/xray.html",
+        "gzip_bytes": 332368,
+        "assets": 16
+      },
+      {
+        "page": "ar.html",
+        "gzip_bytes": 386608,
+        "assets": 16
+      },
+      {
+        "page": "en/account.html",
+        "gzip_bytes": 320268,
+        "assets": 15
+      },
+      {
+        "page": "en/assess.html",
+        "gzip_bytes": 403532,
+        "assets": 18
+      },
+      {
+        "page": "en/credits.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/feedback.html",
+        "gzip_bytes": 315997,
+        "assets": 15
+      },
+      {
+        "page": "en/owner.html",
+        "gzip_bytes": 485836,
+        "assets": 20
+      },
+      {
+        "page": "en/simulation/chest-pa-erect.html",
+        "gzip_bytes": 313348,
+        "assets": 15
+      },
+      {
+        "page": "en/supervisor.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/terms.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/training.html",
+        "gzip_bytes": 387796,
+        "assets": 16
+      },
+      {
+        "page": "en/xray/ankle-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/ankle-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/ankle-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/ankle-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/chest-ap-supine/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/chest-ap-supine.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/chest-lateral-erect/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/chest-lateral-erect.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/chest-pa-erect/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/chest-pa-erect.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/elbow-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/elbow-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/elbow-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/elbow-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/foot-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/foot-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/foot-oblique/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/foot-oblique.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/hand-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/hand-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/hand-pa/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/hand-pa.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/knee-ap/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/knee-ap.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/knee-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/knee-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/pelvis-ap-supine/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/pelvis-ap-supine.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/shoulder-grashey-erect/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/shoulder-grashey-erect.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/wrist-lateral/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/wrist-lateral.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray/wrist-pa/practice.html",
+        "gzip_bytes": 485998,
+        "assets": 18
+      },
+      {
+        "page": "en/xray/wrist-pa.html",
+        "gzip_bytes": 312784,
+        "assets": 14
+      },
+      {
+        "page": "en/xray.html",
+        "gzip_bytes": 332368,
+        "assets": 16
+      },
+      {
+        "page": "en.html",
+        "gzip_bytes": 386608,
+        "assets": 16
+      }
+    ],
+    "final_source_gates": {
+      "mode": "source",
+      "results": {
+        "duplication": {
+          "lines": 50453,
+          "tokens": 988014,
+          "sources": 584,
+          "clones": 64,
+          "duplicatedLines": 1484,
+          "duplicatedTokens": 23534,
+          "percentage": 2.94,
+          "percentageTokens": 2.38,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        },
+        "longCloneScan": {
+          "lines": 50453,
+          "tokens": 988014,
+          "sources": 584,
+          "clones": 64,
+          "duplicatedLines": 1484,
+          "duplicatedTokens": 23534,
+          "percentage": 2.94,
+          "percentageTokens": 2.38,
+          "newDuplicatedLines": 0,
+          "newClones": 0
+        },
+        "knip": {
+          "errors": [],
+          "reviewed": [
+            {
+              "file": "package.json",
+              "kind": "devDependencies",
+              "name": "jscpd",
+              "reason": "Pinned scanner invoked by health:source through spawnSync; Knip does not resolve the constructed binary path."
+            },
+            {
+              "file": "scripts/assess/rad085-production-shape.mjs",
+              "kind": "exports",
+              "name": "productionApplicationSql",
+              "reason": "Existing production-fixture projection API retained with the protected RAD-085 calibration code; remove only in a separately authorised fixture change."
+            },
+            {
+              "file": "src/data/exams/xray/elbow-geometry.ts",
+              "kind": "exports",
+              "name": "ELBOW_CM_PER_PX",
+              "reason": "Unused geometry re-export retained byte-identical; exam/scene changes are out of scope; remove with the next authorised geometry change."
+            },
+            {
+              "file": "src/features/assess/server-rad085-contracts.ts",
+              "kind": "exports",
+              "name": "RAD085_PUBLIC_RPCS",
+              "reason": "Deferred SQL contract DTO/API retained byte-identical with the promoted Assess contract; remove with the next authorised contract change."
+            },
+            {
+              "file": "src/features/assess/server-rad085-contracts.ts",
+              "kind": "types",
+              "name": "DraftReceipt",
+              "reason": "Deferred SQL contract DTO/API retained byte-identical with the promoted Assess contract; remove with the next authorised contract change."
+            },
+            {
+              "file": "src/features/assess/server-rad085-contracts.ts",
+              "kind": "types",
+              "name": "AssignmentReviewReceipt",
+              "reason": "Deferred SQL contract DTO/API retained byte-identical with the promoted Assess contract; remove with the next authorised contract change."
+            },
+            {
+              "file": "scripts/library-graphics/build-library-graphics.mjs",
+              "kind": "exports",
+              "name": "ids",
+              "reason": "Graphics builder API retained byte-identical; graphics and generated image/hash changes are out of scope; remove in a dedicated graphics cleanup."
+            },
+            {
+              "file": "src/features/pilot/owner-data.ts",
+              "kind": "exports",
+              "name": "ATTEMPT_COLUMNS",
+              "reason": "pinned browser boundary; remove with the next authorised pin change"
+            },
+            {
+              "file": "src/features/pilot/owner-data.ts",
+              "kind": "exports",
+              "name": "NOTE_COLUMNS",
+              "reason": "pinned browser boundary; remove with the next authorised pin change"
+            },
+            {
+              "file": "src/features/pilot/survey.ts",
+              "kind": "exports",
+              "name": "SURVEY_URL",
+              "reason": "Unused survey URL binding retained byte-identical with existing survey helpers; remove in the next authorised survey cleanup."
+            },
+            {
+              "file": "src/features/wrist-model/wrist-model.ts",
+              "kind": "exports",
+              "name": "PA_FOREARM",
+              "reason": "Declared dead geometry constant retained byte-identical; scene/model changes are out of scope; remove with the next authorised model change."
+            },
+            {
+              "file": "src/features/assess/server-contracts.ts",
+              "kind": "types",
+              "name": "AssignmentSnapshot",
+              "reason": "Unused DTO exported shape retained byte-identical with the protected Assess API; remove in a separately authorised contract cleanup."
+            },
+            {
+              "file": "src/features/assess/server-contracts.ts",
+              "kind": "types",
+              "name": "AttemptSnapshot",
+              "reason": "Unused DTO exported shape retained byte-identical with the protected Assess API; remove in a separately authorised contract cleanup."
+            },
+            {
+              "file": "src/features/assess/contracts-v2.ts",
+              "kind": "types",
+              "name": "AttemptStateV2",
+              "reason": "Unused versioned DTO retained byte-identical with the protected Assess API; remove in a separately authorised contract cleanup."
+            },
+            {
+              "file": "src/features/positioning/foot-outline-drawing.ts",
+              "kind": "types",
+              "name": "Pt",
+              "reason": "Unused exported point type retained byte-identical; scene/drawing source is out of scope; remove in a dedicated type-only drawing cleanup."
+            },
+            {
+              "file": "src/features/positioning/wrist-outline-drawing.ts",
+              "kind": "types",
+              "name": "Pt",
+              "reason": "Unused exported point type retained byte-identical; scene/drawing source is out of scope; remove in a dedicated type-only drawing cleanup."
+            }
+          ]
+        },
+        "layers": []
+      },
+      "errors": []
+    },
+    "final_size_gates": {
+      "mode": "sizes",
+      "results": {
+        "pages": [
+          {
+            "page": "404.html",
+            "gzip_bytes": 186144,
+            "assets": 8
+          },
+          {
+            "page": "_not-found.html",
+            "gzip_bytes": 186144,
+            "assets": 8
+          },
+          {
+            "page": "ar/account.html",
+            "gzip_bytes": 320268,
+            "assets": 15
+          },
+          {
+            "page": "ar/assess.html",
+            "gzip_bytes": 403532,
+            "assets": 18
+          },
+          {
+            "page": "ar/credits.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/feedback.html",
+            "gzip_bytes": 315997,
+            "assets": 15
+          },
+          {
+            "page": "ar/owner.html",
+            "gzip_bytes": 485836,
+            "assets": 20
+          },
+          {
+            "page": "ar/simulation/chest-pa-erect.html",
+            "gzip_bytes": 313348,
+            "assets": 15
+          },
+          {
+            "page": "ar/supervisor.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/terms.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/training.html",
+            "gzip_bytes": 387796,
+            "assets": 16
+          },
+          {
+            "page": "ar/xray/ankle-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/ankle-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/ankle-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/ankle-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/chest-ap-supine/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/chest-ap-supine.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/chest-lateral-erect/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/chest-lateral-erect.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/chest-pa-erect/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/chest-pa-erect.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/elbow-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/elbow-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/elbow-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/elbow-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/foot-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/foot-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/foot-oblique/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/foot-oblique.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/hand-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/hand-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/hand-pa/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/hand-pa.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/knee-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/knee-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/knee-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/knee-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/pelvis-ap-supine/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/pelvis-ap-supine.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/shoulder-grashey-erect/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/shoulder-grashey-erect.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/wrist-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/wrist-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray/wrist-pa/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "ar/xray/wrist-pa.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "ar/xray.html",
+            "gzip_bytes": 332368,
+            "assets": 16
+          },
+          {
+            "page": "ar.html",
+            "gzip_bytes": 386608,
+            "assets": 16
+          },
+          {
+            "page": "en/account.html",
+            "gzip_bytes": 320268,
+            "assets": 15
+          },
+          {
+            "page": "en/assess.html",
+            "gzip_bytes": 403532,
+            "assets": 18
+          },
+          {
+            "page": "en/credits.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/feedback.html",
+            "gzip_bytes": 315997,
+            "assets": 15
+          },
+          {
+            "page": "en/owner.html",
+            "gzip_bytes": 485836,
+            "assets": 20
+          },
+          {
+            "page": "en/simulation/chest-pa-erect.html",
+            "gzip_bytes": 313348,
+            "assets": 15
+          },
+          {
+            "page": "en/supervisor.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/terms.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/training.html",
+            "gzip_bytes": 387796,
+            "assets": 16
+          },
+          {
+            "page": "en/xray/ankle-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/ankle-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/ankle-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/ankle-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/chest-ap-supine/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/chest-ap-supine.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/chest-lateral-erect/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/chest-lateral-erect.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/chest-pa-erect/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/chest-pa-erect.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/elbow-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/elbow-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/elbow-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/elbow-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/foot-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/foot-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/foot-oblique/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/foot-oblique.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/hand-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/hand-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/hand-pa/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/hand-pa.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/knee-ap/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/knee-ap.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/knee-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/knee-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/pelvis-ap-supine/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/pelvis-ap-supine.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/shoulder-grashey-erect/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/shoulder-grashey-erect.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/wrist-lateral/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/wrist-lateral.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray/wrist-pa/practice.html",
+            "gzip_bytes": 485998,
+            "assets": 18
+          },
+          {
+            "page": "en/xray/wrist-pa.html",
+            "gzip_bytes": 312784,
+            "assets": 14
+          },
+          {
+            "page": "en/xray.html",
+            "gzip_bytes": 332368,
+            "assets": 16
+          },
+          {
+            "page": "en.html",
+            "gzip_bytes": 386608,
+            "assets": 16
+          }
+        ],
+        "newImages": []
+      },
+      "errors": []
+    },
+    "proofs": {
+      "gate_tests": 9,
+      "passed": 9,
+      "skipped": 0,
+      "production_source_seed_exit": 1,
+      "production_size_seed_exit": 1,
+      "qa_expansion": "hand/wrist/elbow source re-expanded byte-identically to merged main; original function text and success/failure call traces equal"
+    },
+    "marker": "pilot-v1:3d8b505ca8605f99f226475ced8e7aa1db576a5829c66cc5e6499e1aab4c18b7",
+    "comparison": "all src/supabase/public/scripts-pages/QA golden and scene-dom files byte-identical to merged head except deletion of unmounted ExternalSurveyCard.tsx",
+    "method_notes": [
+      "Original jscpd scan retains implicit maxLines=1000 and maxSize=100kb for ratio comparability; separate long-clone scan expands to 1000000 lines / 100mb. Both scans yield identical source inventory on merged head.",
+      "Knip CLI/hooks/library entries are explicit; locally used symbols are live; exact retained-dead-symbol exceptions and triggers in policy.json. No unused-file exception.",
+      "Size method remains Python gzip.compress(compresslevel=9,mtime=0); EN/AR and every practice route are checked. New image additions compared with CODE_HEALTH_BASE, plus untracked files; existing images measure-only."
+    ]
   }
 }

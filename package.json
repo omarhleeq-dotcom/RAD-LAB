@@ -23,7 +23,10 @@
     "docs:test": "node -e \"const fs=require('node:fs'),cp=require('node:child_process');const files=['scripts/docs','scripts/status'].flatMap(d=>fs.readdirSync(d).filter(f=>f.endsWith('.test.mjs')&&f!=='laptop-icu.test.mjs').sort().map(f=>d+'/'+f));const r=cp.spawnSync(process.execPath,['--test',...files],{stdio:'inherit'});if(r.error)throw r.error;process.exit(r.status??1)\"",
     "status:summary": "node scripts/status/summary.mjs",
     "docs:context": "node scripts/docs/context.mjs",
-    "docs:sync": "node scripts/docs/sync.mjs"
+    "docs:sync": "node scripts/docs/sync.mjs",
+    "health:source": "node scripts/code-health/check.mjs source",
+    "health:sizes": "node scripts/code-health/check.mjs sizes",
+    "health:test": "node --test scripts/code-health/gates.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.118.0",
@@ -45,7 +48,9 @@
     "esbuild": "^0.28.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.3",
+    "jscpd": "4.0.5",
     "jsdom": "^30.1.3",
+    "knip": "6.44.1",
     "postcss": "^8.5.29",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
