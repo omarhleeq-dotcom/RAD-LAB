@@ -99,6 +99,9 @@ jobs:
         run: node scripts/assess/rad085-worker-rehearsal.mjs
       - name: Required W1-W3 grading worker rehearsal (embedded, pinned 17.11, Supabase 17.11; no skip)
         run: node --test scripts/assess/grading-worker-rehearsal.test.mjs
+      - name: Required W4 production grading image rehearsal (Supabase 17.11, W1 SQL, refusals; no skip)
+        if: steps.rehearsals.outputs.full == 'true'
+        run: node --test scripts/assess/grading-worker-image-rehearsal.test.mjs
       - run: npm run docs:test
       - name: Test first-version secret uploader (synthetic only)
         run: python3 -B -m unittest discover -s scripts/assess -p test_upload_worker_secret.py

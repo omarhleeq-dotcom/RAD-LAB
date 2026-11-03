@@ -158,6 +158,8 @@ stat -c '%a %n' ~/rad-lab-backups ~/rad-lab-backups/store ~/rad-lab-backups/dail
 
 Expect `700` for the root and `store`, and `600` for every file in the daily backup (`checksums.json`, `db-meta.json`, `project.dump`, `roles.sql`). STOP if any differs. Then `ls -l ~/rad-lab-backups | grep -- '->'` shows `daily`, `weekly` and `monthly`, all three pointing at the same `store/<stamp>` after the first backup.
 
+**Production restore (pointer only):** before any restore into production, apply the [W4 restore rule](ASSESS_GATE_W_PACKAGES.md#3-w4--image-ready-for-review-after-the-launch) ([decision](DECISIONS.md#rad085-w4-verifier-owner-2026-11-03)).
+
 ## C. Restore proof into a local container
 
 The container runs `supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d` with `--network none` (no network at all, no published port), the recorded `datlocprovider`/`datlocale`/`datcollate`/`datctype` from `db-meta.json` (production: ICU `en-US`, both lc `en_US.UTF-8`), `--pull never`, and is removed with its explicitly allocated anonymous data volume at the end. It creates the target from `template0` and verifies all four locale fields before and after restore. Run A5 first: only the owner pulls the pinned digest. No password is passed in arguments; local image bootstrap uses `supabase_admin`. The encrypted result records both `image_digest` and the architecture-specific `image_id` (also on failure if inspect succeeded).
