@@ -3,7 +3,7 @@
 ## 1. الانحراف والميزانية
 
 Verified: رُفع STOP بقراري المالك المؤرخين2026-11-03 في [DECISIONS](DECISIONS.md#code-health-pins-owner-2026-11-03) و[وحدة الحجم](DECISIONS.md#code-health-size-owner-2026-11-03).
-Verified: دمج main بـmerge commit دون rebase/force؛ حُفظ محتوى main في HANDOFF/project-status وأعيدت أسطر RAD-094 فقط.
+Verified: دمج main بعد #213/#217 ثم مجددًا بعد #215 بـmerge commits دون rebase/force؛ حُفظ محتوى main وأعيدت أسطر RAD-094 فقط.
 الميزانية22/25 ملفًا مقابل main؛ ثلاثة modules مشتركة للأدوات: checker وlayer resolver وhelper QA؛ صفر وحدات منتج مشتركة معدلة.
 حُفظ [baseline الأصلي](CODE_HEALTH_BASELINE_2026-11-03.json) دون تغيير أرقامه؛ حقل resume يضم القياس بعد الدمج ونتيجة الرأس.
 حد jscpd الافتراضي1000سطر/100kb محفوظ لمقارنة النسبة؛ مسح ثانٍ موسع يمنع إخفاء clone طويل في ملف أكبر.

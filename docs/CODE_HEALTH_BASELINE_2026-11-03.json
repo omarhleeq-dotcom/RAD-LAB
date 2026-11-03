@@ -1815,12 +1815,6 @@
               "reason": "Existing production-fixture projection API retained with the protected RAD-085 calibration code; remove only in a separately authorised fixture change."
             },
             {
-              "file": "src/data/exams/xray/elbow-geometry.ts",
-              "kind": "exports",
-              "name": "ELBOW_CM_PER_PX",
-              "reason": "Unused geometry re-export retained byte-identical; exam/scene changes are out of scope; remove with the next authorised geometry change."
-            },
-            {
               "file": "src/features/assess/server-rad085-contracts.ts",
               "kind": "exports",
               "name": "RAD085_PUBLIC_RPCS",
@@ -1867,6 +1861,12 @@
               "kind": "exports",
               "name": "PA_FOREARM",
               "reason": "Declared dead geometry constant retained byte-identical; scene/model changes are out of scope; remove with the next authorised model change."
+            },
+            {
+              "file": "src/data/exams/xray/elbow-geometry.ts",
+              "kind": "exports",
+              "name": "ELBOW_CM_PER_PX",
+              "reason": "Unused geometry re-export retained byte-identical; exam/scene changes are out of scope; remove with the next authorised geometry change."
             },
             {
               "file": "src/features/assess/server-contracts.ts",
@@ -2387,6 +2387,8 @@
       "Original jscpd scan retains implicit maxLines=1000 and maxSize=100kb for ratio comparability; separate long-clone scan expands to 1000000 lines / 100mb. Both scans yield identical source inventory on merged head.",
       "Knip CLI/hooks/library entries are explicit; locally used symbols are live; exact retained-dead-symbol exceptions and triggers in policy.json. No unused-file exception.",
       "Size method remains Python gzip.compress(compresslevel=9,mtime=0); EN/AR and every practice route are checked. New image additions compared with CODE_HEALTH_BASE, plus untracked files; existing images measure-only."
-    ]
+    ],
+    "launch_records_main": "a20867d38",
+    "launch_records_merge": "Docs-only #215 merged after code verification; source tree unchanged"
   }
 }

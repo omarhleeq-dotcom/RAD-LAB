@@ -16,7 +16,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Rotation and image honesty](#rotation-honesty)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03)
 
 ## Active Binding Decisions
 
@@ -1284,6 +1284,9 @@ Both phone packets, supabase/manual and supabase/fixtures remain byte-identical.
 4. **اختبار DB من اليوم الأول:** كل عمل قاعدة على صورة `supabase/postgres:17.11.0.016` المثبتة واللقطة الحقيقية بلا بيانات، مع diagnostics كاملة في CI فقط وحلقة إصلاح ذاتية. الحد أن synthetic وحدها لا تثبت الكتالوج الحقيقي، وأن [لقطة2026-11-01](../supabase/fixtures/production-schema-2026-11-01/schema.sql) أصبحت قديمة بعدM01–M08. **trigger: من بداية أي عمل DB تالٍ، وأخذ snapshot جديدة مؤرخة قبل أي تغيير DB تالٍ**؛ لا تحديث snapshot الآن ولا diagnostics كاملة على بيانات حقيقية.
 5. **مراجعة Supabase default privileges في public:** [schema.sql الأسطر14048–14050](../supabase/fixtures/production-schema-2026-11-01/schema.sql) تمنح الجداول الجديدة REFERENCES/TRIGGER/TRUNCATE/MAINTAIN لـanon/authenticated/service_role. الحد امتيازات تلقائية لجداول مستقبلية؛ **trigger: قبل أي جدول public جديد**، بمراجعة أمنية وقرار محدد قبل تغييرات الصلاحيات. هذا لا يوسع revoke profiles المعتمدة ولا ينفذ revoke/grant الآن.
 
+Item 4, only its "new dated snapshot before any next DB change" clause:
+Superseded by #launch-records-owner-2026-11-03
+
 **بند مفتوح للأسماء:**10حسابات موجودة لا تحقق قاعدة الاسم الكامل؛ يطلب الاسم الكامل عند Assess entry وفق [D-NAMES](#rad062-d-names-2026-11-01). تواصل المالك اختياري؛ لا بيانات تعريفية أو تعديل بيانات أو backfill.
 
 
@@ -1438,6 +1441,20 @@ Authority: owner messages in this conversation, recorded verbatim below.
 
 Verified: [#208](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/208) merged at17:57:22Z and is on origin/main; [#209](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/209) closed unmerged at19:22:45Z. P4/D1 closure and TTL approval stand; the earlier conflicting read is preserved in the [report](RAD-085_FIXES_REPORT_2026-11-02.md#p4-d1-closure).
 Approved P2/P3 wording is pinned to [the report at 1ebe90a](https://github.com/omarhleeq-dotcom/RAD-LAB/blob/1ebe90a8589776d17aa7bc83163bd9461d26d9bf/docs/RAD-085_FIXES_REPORT_2026-11-02.md#8-قرارات-المالك-الموحدة). SQL, promotion and live actions remain deferred.
+
+<a id="launch-records-owner-2026-11-03"></a>
+### Launch records — owner decisions D1–D13, 2026-11-03
+Authority: owner's records-batch prompt on PR #215, recorded as stated; evidence in the [records report](LAUNCH_RECORDS_REPORT_2026-11-03.md). D1–D9 answer [audit §8](LAUNCH_READINESS_AUDIT_2026-11-02.md#8-قائمة-المالك-الموحدة-والمسار-الحرج-وبرومبت-المتابعة); RAD-094 decisions belong to #216.
+- D1: stay on Supabase FREE with a dashboard activity check before launch; project Active on 2026-11-03 (owner check).
+- D2: O108 (sources, licences, reviewers) before any real exam content; the rest of RAD-063 before public release.
+- D3: RAD-086 encrypted laptop backups suffice; no separate comprehensive copy. D4: the 0200/0300 catalogue preflights suffice for that window; the migration ledger is built before the next DB batch.
+- D5: RAD-041 production isolation runs with two synthetic accounts. D6: accept S1 limits plus the provider evidence (decision 10) for the gate; 047b.4 later.
+- D7: RAD-023 done_when = audit category (b). D8: RAD-060 phase 1 accepted; live close/race/lost-ACK stay open. D9: launch conditions = audit category (a).
+- D10: retire the "new dated snapshot before any next DB change" clause of [item 4](#db-followups-owner-2026-11-01). Replacement: migration fingerprint preflights plus the restored-backup rehearsal; take a new snapshot only if a preflight refuses for drift.
+- D11: RAD-059 old-credential revocation is accepted on the [2026-11-01 Supavisor evidence](#rad086-supavisor-finding-owner-2026-11-01); window steps 7–8 were skipped.
+- D12: TEST/ACK — one consolidated alternate ACK covers all signals on the same email channel.
+- D13: absence drill — the 30-minute wait may be compressed for simulation; the 30-minute rule itself is unchanged.
+No live SQL, Variables, gate, LOGIN, secret or Scheduler permission follows from these records; the gate stays closed (W1–W8 in the [gate runbook](ASSESS_GATE_OPEN_RUNBOOK.md)).
 
 <a id="code-health-pins-owner-2026-11-03"></a>
 ### RAD-094 — pinned dead exports، 2026-11-03
