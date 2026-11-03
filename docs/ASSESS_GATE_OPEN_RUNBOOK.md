@@ -7,7 +7,7 @@
 - **CLOSE (§8) is executable now** from reviewed sources: the phone stop packet, its verification and the cloud steps.
 - **OPEN is blocked at §4.** Several worker-enablement steps have no reviewed source in the repository. They are marked **MISSING** below. Do not improvise them, and do not run §5 (gate open) while any MISSING item is unresolved.
 - Steps §1–§3 are read-only. You may run them to confirm readiness, but they open nothing.
-- The owner-stated D11 (RAD-059 old-credential revocation accepted on the 2026-11-01 Supavisor evidence) is **not yet recorded in DECISIONS**. Record it after #213, in the next state batch.
+- D11 (RAD-059 old-credential revocation accepted on the 2026-11-01 Supavisor evidence) is recorded in [launch records](DECISIONS.md#launch-records-owner-2026-11-03).
 
 | ID | MISSING item | Why there is no reviewed source | Lifting trigger |
 |---|---|---|---|
@@ -36,13 +36,13 @@
 | P2 | CI and Deploy Pages green on the merge commit | **Evidenced 2026-11-03 (owner-stated, redacted).** Actions: both workflows succeed on that commit; no bypass | same |
 | P3 | Owner phone check after deploy | **Evidenced 2026-11-03 (owner-stated, redacted).** Login, Practice, Assess entry, approved Terms/disclosures, personal v3 re-consent with synthetic accounts | same; [G7](LAUNCH_READINESS_AUDIT_2026-11-02.md#3-الشروط-المفتوحة-بحسب-المهمة) |
 | P4 | 0200 and 0300 applied once; successor checks pass | **Evidenced 2026-11-03 (owner-stated, redacted).** Window steps 5–6: every `ok=true` | [window §5–6](RAD-085_RAD-059_WINDOW_RUNBOOK.md#5-apply-0200-exactly-once-verify-before-proceeding) |
-| P5 | Old-credential revocation accepted | D11 (owner-stated); recorded in DECISIONS before opening | [Supavisor rule](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01) |
-| P6 | RAD-041 isolation: three phases | `pending`: checks 1,2; `approved`: `TOTAL 4 checks: PASS 4 FAIL 0 UNKNOWN 0`; `suspended`: 1,6,5 PASS; no FAIL/UNKNOWN | [RAD-041 runbook §3](RAD-041_LIVE_ISOLATION_RUNBOOK.md#3-المراحل-الثلاث-بالترتيب) |
-| P7 | Channels: TEST signal received by each responder; human ACK `ACK / id / UTC / owner\|alternate / action / next check` | Encrypted log rows for budget email, the three alert policies and the Supabase Usage read; receipt proven, not just Save | [decisions 1–2, 6](DECISIONS.md#rad059-alternate-owner-2026-11-02) |
-| P8 | Alternate appointed; drill done | Appoint/remove, stop from the alternate account, 30-minute absence rule, critical immediate containment | [alternate §5](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#5-alternate-and-channels-drill-then-a-separate-promotion-pr) |
+| P5 | Old-credential revocation accepted | **Evidenced 2026-11-03 (owner-stated, redacted).** [D11](DECISIONS.md#launch-records-owner-2026-11-03) recorded | [Supavisor rule](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01) |
+| P6 | RAD-041 isolation: three phases | **Evidenced 2026-11-03 (owner-stated, redacted).** 9/9 PASS. `pending`: checks 1,2; `approved`: `TOTAL 4 checks: PASS 4 FAIL 0 UNKNOWN 0`; `suspended`: 1,6,5 PASS; no FAIL/UNKNOWN | [RAD-041 runbook §3](RAD-041_LIVE_ISOLATION_RUNBOOK.md#3-المراحل-الثلاث-بالترتيب) |
+| P7 | Channels: TEST signal received by each responder; human ACK `ACK / id / UTC / owner\|alternate / action / next check` | **PARTIAL 2026-11-03:** mechanism proven with an owner-controlled test account; a real human alternate is not yet appointed; provider-native alert/budget delivery unproven. Encrypted log rows for budget email, the three alert policies and the Supabase Usage read; receipt proven, not just Save | [decisions 1–2, 6](DECISIONS.md#rad059-alternate-owner-2026-11-02) |
+| P8 | Alternate appointed; drill done | **PARTIAL 2026-11-03:** mechanism proven with an owner-controlled test account; a real human alternate is not yet appointed; provider-native alert/budget delivery unproven. Appoint/remove, stop from the alternate account, 30-minute absence rule, critical immediate containment | [alternate §5](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#5-alternate-and-channels-drill-then-a-separate-promotion-pr) |
 | P9 | FREE plan inactivity pause checked | Dashboard shows the project active; plan for activity under one week | [decision 11](DECISIONS.md#rad059-alternate-owner-2026-11-02) |
 | P10 | Fresh RAD-086 backup the same day | **Evidenced 2026-11-03 (owner-stated, redacted).** `laptop-backup.mjs verify daily` passes. Repeat on the opening day if it is later. | [RAD-086](RAD-086_LAPTOP_BACKUP_RUNBOOK.md) |
-| P11 | Open owner decisions D1–D9 recorded (content/O108, FREE, RAD-047, G8) | DECISIONS entries exist | [audit §8](LAUNCH_READINESS_AUDIT_2026-11-02.md#8-قائمة-المالك-الموحدة-والمسار-الحرج-وبرومبت-المتابعة) |
+| P11 | Open owner decisions D1–D9 recorded (content/O108, FREE, RAD-047, G8) | **Evidenced 2026-11-03 (owner-stated, redacted).** [D1–D9](DECISIONS.md#launch-records-owner-2026-11-03) recorded | [audit §8](LAUNCH_READINESS_AUDIT_2026-11-02.md#8-قائمة-المالك-الموحدة-والمسار-الحرج-وبرومبت-المتابعة) |
 | P12 | W1–W8 resolved by merged reviewed PRs; permission sentence 0.3 written | PR links in the encrypted log | this page |
 
 ## 2. Laptop shell (WSL Ubuntu, `~/RAD-LAB`) — offline checks first
