@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 412,
-  "updated_at": "2026-11-02T20:28:25.385Z",
+  "revision": 413,
+  "updated_at": "2026-11-03T03:55:17.236Z",
   "timezone": "UTC",
-  "next_id": "RAD-094",
+  "next_id": "RAD-095",
   "tasks": [
     {
       "id": "RAD-001",
@@ -850,6 +850,17 @@
       "source_ref": "docs/DECISIONS.md#test-cleanup-owner-2026-11-02؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md",
       "waiting_on": "reviewer",
       "done_when": "PR مدمجة وCI خضراء؛ جميع الحراس محفوظة وقياس الوفر والشواهد السلبية موثقة."
+    },
+    {
+      "id": "RAD-094",
+      "title": "Code Health قبل الإطلاق",
+      "status": "blocked",
+      "priority": "medium",
+      "description": "توقف قبل التنفيذ: Knip يكشف صادرات غير مستخدمة في owner-data المثبت؛ حذفها يغير pin والاستثناء يحتاج قرارًا محددًا. قياسات main محفوظة؛ البوابات والتنظيف وخريطة المزايا وReuse check لم تنفذ.",
+      "source_ref": "docs/CODE_HEALTH_REPORT_2026-11-03.md؛ docs/CODE_HEALTH_BASELINE_2026-11-03.json",
+      "waiting_on": "owner",
+      "blocker": "شرط STOP: حذف ATTEMPT_COLUMNS وNOTE_COLUMNS يحتاج ملفًا مثبتًا؛ PA_FOREARM ضمن نموذج خارج النطاق. يحدد المالك معالجة الرموز ووحدة سقف الحجم.",
+      "done_when": "PR مدمجة بعد #213؛ CI والبوابات الأربع خضراء؛ تنظيف بلا تغير سلوك وخريطة مزايا وReuse check ومقاييس وصور للقياس فقط."
     }
   ]
 }
