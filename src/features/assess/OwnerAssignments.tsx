@@ -88,10 +88,10 @@ function AssignmentList() {
           </div>
         </div>}
       </li>)}</ul>
-      <div className="flex flex-wrap gap-2">
+      {(cursor || page.next) && <div className="flex flex-wrap gap-2">
         <button className={control} disabled={busy || !cursor} onClick={() => void run(null)}>{t("first")}</button>
         <button className={control} disabled={busy || !page.next} onClick={() => void run(page.next)}>{t("next")}</button>
-      </div>
+      </div>}
     </>}
   </section>;
 }

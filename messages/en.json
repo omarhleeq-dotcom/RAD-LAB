@@ -2442,5 +2442,41 @@
     "writeLimit": "Some data could not be saved because your account has reached a saving limit. Your current work is kept on this page. Please try saving again later.",
     "blocked": "Some accounts could not be erased and still need owner action. Their original deadlines remain in force. Resolve their rights and run finalise again.",
     "more": "More accounts may remain. Run finalise again to continue the batch."
+  },
+  "ownerUx": {
+    "statusBar": "Owner status",
+    "pendingCount": "{count, plural, =0 {No accounts awaiting approval} one {# account awaiting approval} other {# accounts awaiting approval}}",
+    "gradingCount": "{count, plural, =0 {Nothing awaiting grading} one {# answer set awaiting grading} other {# answer sets awaiting grading}}",
+    "gradingMore": "{count}+ answer sets awaiting grading",
+    "tabs": {
+      "students": "Students",
+      "groups": "Groups",
+      "assess": "Assess",
+      "practice": "Practice results",
+      "surveys": "Surveys",
+      "safety": "Safety & log"
+    },
+    "filterLabel": "Show students",
+    "filter": {
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "suspended": "Suspended",
+      "deletion": "Pending deletion",
+      "supervisors": "Supervisors"
+    },
+    "codeHelp": "Practice results, notes, survey answers and the deletion list show only this participant code, never the name or email (privacy rule).",
+    "codeLabel": "Participant codes",
+    "codeNotice": "Results and notes show participant codes only, for privacy. To see whose code it is, open the student in Students.",
+    "supervisorRole": "Supervisor role",
+    "supervisorManage": "Assign or withdraw supervisor",
+    "searchToChoose": "Search by name or email to choose.",
+    "filters": "Filters",
+    "assign": "Assign an assessment",
+    "published": "Published assignments",
+    "content": "Questions and content"
+  },
+  "assessConsentUi": {
+    "showText": "Show consent text"
   }
 }

@@ -22,8 +22,7 @@ export default async function OwnerPage({ params }: PageProps<"/[locale]/owner">
       <h1 className="text-3xl font-bold">{t("title")}</h1>
       <p className="mt-3 text-muted">{t("intro")}</p>
       <div className="mt-6">
-        <OwnerPanel />
-        {P1_AVAILABLE && <P1Session role="owner" />}
+        <OwnerPanel supervisors={P1_AVAILABLE ? <P1Session role="owner" /> : null} />
       </div>
     </div>
   );
