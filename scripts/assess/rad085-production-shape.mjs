@@ -20,8 +20,10 @@ export function productionShapeSql() {
 // triggers are covered separately by the full pinned RAD-086 catalogue rehearsal.
 export function productionApplicationSql() {
  const blocks=productionSchema.split(/(?=^--\n-- Name: )/m).slice(1);
- return "set check_function_bodies=false;set search_path='';\ncreate schema auth;create schema assess;\n"+blocks.filter(block=>{
+ return "set check_function_bodies=false;set search_path='';\n"+blocks.filter(block=>{
   const header=block.split('\n')[1];
-  return /; Schema: (auth|assess|public);/.test(header);
+  return /; Schema: (auth|assess|public);/.test(header)
+   || /^-- Name: (auth|assess); Type: SCHEMA; Schema: -;/.test(header)
+   || /^-- Name: SCHEMA (auth|assess|public); Type: ACL; Schema: -;/.test(header);
  }).map(block=>block.replace(/^\\(?:un)?restrict .*$/gm,'')).join('\n');
 }
