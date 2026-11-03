@@ -132,6 +132,22 @@ test('real CRLF catalogue -> RAD-086 empty backup -> unchanged rehearse path, ev
     assert.equal(result.rows_restored, 0);
     assert.equal(result.teardown_pass, 1);
     console.log(JSON.stringify({ real_catalogue: result }));
+    for(const [file,table] of configuration) {
+      const statements=[...readFileSync('supabase/migrations/'+file,'utf8').matchAll(new RegExp(`^insert into assess\\.${table} [^;]+;`,'gm'))];
+      assert.equal(statements.length,1);q('set role postgres;'+statements[0][0]);
+    }
+    q('set role postgres;'+readFileSync('supabase/manual/rad085-sharing-policy-live-p1.sql','utf8'));
+    for(const file of (await import('./rad062-db-day.mjs')).verifyMigrations()) q('set role postgres;'+readFileSync('supabase/migrations/'+file,'utf8'));
+    q('set role postgres;'+readFileSync('supabase/migrations/20261102000100_rad062_supervisor_grading_authorization.sql','utf8'));
+    q('set role postgres;'+readFileSync('supabase/migrations/20261102000200_rad059_emergency_alternate.sql','utf8'));
+    const old=execFileSync('git',['show','3d812890330b9f0d7bf7e0c943a5d988fa25e679:supabase/migrations/20261102000300_rad085_rights_write_disclosures.sql'],{encoding:'utf8'});
+    let refused=false;
+    try{q('set role postgres;'+old);}catch(e){refused=String(e.stderr).includes('RAD085 reviewed post-0200 catalogue required');}
+    assert.equal(refused,true,'old 0300 must fail on the complete production fixture');
+    q('set role postgres;'+readFileSync('supabase/migrations/20261102000300_rad085_rights_write_disclosures.sql','utf8'));
+    const ready=q('set role postgres;'+readFileSync('supabase/checks/rad085-review-ready.sql','utf8')).split('\n').filter(line=>line.includes('|'));
+    assert.equal(ready.length,11);assert.ok(ready.every(line=>line.endsWith('|t')));
+    console.log(JSON.stringify({production_window:{old_0300_refused:1,new_0300_committed:1,successor_rows_ok:11}}));
   } finally {
     Client.prototype.connect=originalConnect;
     try {

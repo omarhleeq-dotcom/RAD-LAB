@@ -80,8 +80,7 @@ jobs:
         run: node --test scripts/assess/rad062-laptop-rehearsal.test.mjs scripts/assess/rad062-data-precheck.test.mjs
       - name: Required 0200 then 0300 window on synthetic encrypted RAD-086 backup (no skip)
         run: node --test scripts/assess/rad085-window-rehearsal.test.mjs
-      - name: Required real CRLF production catalogue rehearsal (empty RAD-086 backup; no skip)
-        if: steps.rehearsals.outputs.full == 'true'
+      - name: Required real CRLF production catalogue and 0200 to 0300 regression (empty RAD-086 backup; no skip)
         run: node --test scripts/assess/rad062-catalogue-rehearsal.test.mjs
       - name: Required P10 PostgreSQL 17.11 locale matrix image (no skip)
         run: docker pull postgres:17.11-bookworm@sha256:839fbb5a4942a7758dd93e18b42ea5649807491a0545b5eeeb8f0b8bb11857a5
@@ -101,7 +100,8 @@ jobs:
         run: python3 -B -m unittest discover -s scripts/assess -p test_upload_worker_secret.py
       - name: Test read-only connection probe (synthetic only)
         run: node --test scripts/assess/connection-probe.test.mjs
-      - run: npm test
+      - name: Required DB lane including production fixture calibration in embedded and pinned Supabase 17.11 ICU (no skip)
+        run: npm test
         env:
           CI_TEST_LANE: db
   docs:
