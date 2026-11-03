@@ -1,9 +1,16 @@
 import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { expect, it } from 'vitest';
+import {EMERGENCY_AVAILABLE} from '../emergency/availability';
+import {RAD085_REVIEW_AVAILABLE,ASSESS_WRITTEN_CONSENT_VERSION} from '../assess/review-availability';
+import {CONSENT_VERSION} from '../pilot/consent';
 
 // Owner-reviewed literal contract. Never construct this expectation from the live manifest.
 it('pins all required/deferred migrations, checks and the promoted marker', () => {
+ expect(EMERGENCY_AVAILABLE).toBe(true);
+ expect(RAD085_REVIEW_AVAILABLE).toBe(true);
+ expect(ASSESS_WRITTEN_CONSENT_VERSION).toBe('assess-written-2026-11-02-v3');
+ expect(CONSENT_VERSION).toBe('2026-11-02');
  const manifest = JSON.parse(readFileSync('scripts/pages/frontend-schema.json', 'utf8'));
  expect(manifest.requiredMigrations).toEqual([
   '20261015000100_pilot_accounts.sql',
@@ -38,21 +45,22 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   '20261030000700_rad062_manual_grading.sql',
   '20261030000800_rad062_erasure_operations.sql',
   '20261102000100_rad062_supervisor_grading_authorization.sql',
+  '20261102000200_rad059_emergency_alternate.sql',
+  '20261102000300_rad085_rights_write_disclosures.sql',
  ]);
- expect(manifest.deferredMigrations).toEqual({"20261102000200_rad059_emergency_alternate.sql":{"sha256":"4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610","reason":"RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.","serverModules":["src/features/assess/rad059-alternate.test.ts"]},"20261102000300_rad085_rights_write_disclosures.sql":{"sha256":"707362db6890b027bcfee29c07f644fdb207d58e56d52803a4dab0a0dd1baee1","reason":"RAD-085 R1/R2/S1/P2/P3 deferred after 0200; owner must approve S1 values and EN/AR disclosure drafts before the laptop window.","serverModules":["src/features/assess/rad085-review-fixes.test.ts"]}});
+ expect(manifest.deferredMigrations).toEqual({}); // Owner-approved window promotion: restore the exact empty deferred pin.
  expect(manifest.checks).toEqual([
   'supabase/checks/training-ready.sql',
   'supabase/checks/comparison-ready.sql',
   'supabase/checks/assess-mixed-ready.sql',
   'supabase/checks/assess-practical-ready.sql',
-  'supabase/checks/rad062-p1-b-m09-ready.sql',
+  'supabase/checks/rad085-review-ready.sql',
   'supabase/checks/assess-history-ready.sql',
   'supabase/checks/assess-retention-ready.sql',
   'supabase/checks/owner-dashboard-ready.sql',
   'supabase/checks/owner-deletion-surveys-ready.sql',
-  'supabase/checks/rad062-m09-ready.sql',
  ]);
  expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], {
   encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' },
- }).trim()).toBe('pilot-v1:001c0cf80c1a4530e7144edfe252912c34ce3859f56c1e47a59524b1cae713e3');
+ }).trim()).toBe('pilot-v1:3d8b505ca8605f99f226475ced8e7aa1db576a5829c66cc5e6499e1aab4c18b7');
 });

@@ -4,11 +4,12 @@ import type {Client,QueryResult} from 'pg';
 import {catalogueFixture,fixture,blocked,modes,id,sql,type Mode} from './rad062-m09-fixture';
 const name='20261102000300_rad085_rights_write_disclosures.sql';
 const migration=sql(name),alternate=sql('20261102000200_rad059_emergency_alternate.sql');
+const {productionShapeSql}=await import('../../../scripts/assess/'+'rad085-production-shape.mjs') as {productionShapeSql:()=>string};
 const ready=readFileSync('supabase/checks/rad085-review-ready.sql','utf8');
 async function slots(c:Client){await c.query("do $$begin if not exists(select 1 from pg_roles where rolname='assess_job_a') then create role assess_job_a nologin;end if;if not exists(select 1 from pg_roles where rolname='assess_job_b') then create role assess_job_b nologin;end if;end$$;");}
 async function setup(mode:Mode){
  const db=await catalogueFixture(mode);
- try{await db.admin.query(sql());await slots(db.admin);await db.admin.query(alternate);await db.admin.query(migration);return db;}
+ try{await db.admin.query(sql());await slots(db.admin);await db.admin.query(productionShapeSql());await db.admin.query(alternate);await db.admin.query(migration);return db;}
  catch(e){await db.close();throw e;}
 }
 type Db=Awaited<ReturnType<typeof setup>>;
@@ -38,7 +39,7 @@ describe.each(modes)('RAD085 ordering and account isolation %s',mode=>{
  it('M09 -> 0200 -> 0300; 0300 before 0200 is refused without partial objects; exact successor',async()=>{
   const db=await catalogueFixture(mode);
   try{
-   await db.admin.query(sql());await slots(db.admin);
+   await db.admin.query(sql());await slots(db.admin);await db.admin.query(productionShapeSql());
    const snapshot=async()=>(await db.admin.query("select p.oid::regprocedure::text signature,pg_get_functiondef(p.oid) def,p.proacl from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','assess') order by 1")).rows;
    const before=await snapshot();
    await expect(db.admin.query(migration)).rejects.toMatchObject({code:'55000',message:'RAD085 post-0200 catalogue required'});
@@ -65,7 +66,7 @@ describe.each(modes)('RAD085 ordering and account isolation %s',mode=>{
  it('post-0200 ACL drift refuses before any objects, preserving all catalogue changes',async()=>{
   const db=await catalogueFixture(mode);
   try{
-   await db.admin.query(sql());await slots(db.admin);await db.admin.query(alternate);
+   await db.admin.query(sql());await slots(db.admin);await db.admin.query(productionShapeSql());await db.admin.query(alternate);
    await db.admin.query('revoke insert on public.events from authenticated');
    await expect(db.admin.query(migration)).rejects.toMatchObject({code:'55000'});await db.admin.query('rollback');
    expect((await db.admin.query("select to_regclass('assess.pilot_write_limits') missing")).rows[0].missing).toBeNull();
@@ -75,7 +76,7 @@ describe.each(modes)('RAD085 ordering and account isolation %s',mode=>{
  it('unreviewed future-table default ACL aborts the entire install without partial objects',async()=>{
   const db=await catalogueFixture(mode);
   try{
-   await db.admin.query(sql());await slots(db.admin);await db.admin.query(alternate);
+   await db.admin.query(sql());await slots(db.admin);await db.admin.query(productionShapeSql());await db.admin.query(alternate);
    await db.admin.query('create role rad085_synthetic_grantee nologin;alter default privileges in schema assess grant select on tables to rad085_synthetic_grantee');
    const before=(await db.admin.query("select pg_get_functiondef('public.owner_account_deletion_v1(text,uuid,uuid,integer)'::regprocedure) def")).rows[0].def;
    await expect(db.admin.query(migration)).rejects.toMatchObject({code:'55000',message:'RAD085 unreviewed new-object ACL'});await db.admin.query('rollback');
@@ -362,7 +363,7 @@ describe.each(modes)('RAD085 personal written-answer consent %s',mode=>{
  it('v2 is insufficient for supervisor and owner; personal v3 restores grading; stale versions denied',async()=>{
   const {db,s}=await fixture(mode);
   try{
-   await slots(db.admin);await db.admin.query(alternate);await db.admin.query(migration);
+   await slots(db.admin);await db.admin.query(productionShapeSql());await db.admin.query(alternate);await db.admin.query(migration);
    expect(await db.rpc(3,'consent_v3')).toEqual({accepted:false});
    for(const who of [1,2]){
     await expect(db.rpc(who,'manual_read_v1',[s])).rejects.toMatchObject({code:'42501'});

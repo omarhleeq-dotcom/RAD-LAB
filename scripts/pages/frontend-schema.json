@@ -33,36 +33,22 @@
     "20261030000600_rad062_lifecycle_v2.sql",
     "20261030000700_rad062_manual_grading.sql",
     "20261030000800_rad062_erasure_operations.sql",
-    "20261102000100_rad062_supervisor_grading_authorization.sql"
+    "20261102000100_rad062_supervisor_grading_authorization.sql",
+    "20261102000200_rad059_emergency_alternate.sql",
+    "20261102000300_rad085_rights_write_disclosures.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/assess-mixed-ready.sql",
     "supabase/checks/assess-practical-ready.sql",
-    "supabase/checks/rad062-p1-b-m09-ready.sql",
+    "supabase/checks/rad085-review-ready.sql",
     "supabase/checks/assess-history-ready.sql",
     "supabase/checks/assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
-    "supabase/checks/owner-deletion-surveys-ready.sql",
-    "supabase/checks/rad062-m09-ready.sql"
+    "supabase/checks/owner-deletion-surveys-ready.sql"
   ],
-  "deferredMigrations": {
-    "20261102000200_rad059_emergency_alternate.sql": {
-      "sha256": "4246d046edc0913adbed66992263226cdcc11ef92bd60895155c245ad4f9f610",
-      "reason": "RAD-059 dormant until a later owner apply window and separate promotion; request phases use the existing authenticated timeout.",
-      "serverModules": [
-        "src/features/assess/rad059-alternate.test.ts"
-      ]
-    },
-    "20261102000300_rad085_rights_write_disclosures.sql": {
-      "sha256": "707362db6890b027bcfee29c07f644fdb207d58e56d52803a4dab0a0dd1baee1",
-      "reason": "RAD-085 R1/R2/S1/P2/P3 deferred after 0200; owner must approve S1 values and EN/AR disclosure drafts before the laptop window.",
-      "serverModules": [
-        "src/features/assess/rad085-review-fixes.test.ts"
-      ]
-    }
-  },
+  "deferredMigrations": {},
   "explicitBoundaries": [
     "src/features/pilot/owner-data.ts"
   ],
@@ -189,7 +175,7 @@
       "guard": {
         "path": "src/features/emergency/availability.ts",
         "symbol": "EMERGENCY_AVAILABLE",
-        "sha256": "2d9f0bce02f0dfb5cfb6d82b8146173c435ee2543fe37d01b4c08b3cdc6e66de"
+        "sha256": "f9649cd682ea017b4defa759291d8c120f33f85fc32c6733914896981bfb11e1"
       },
       "boundaries": {
         "src/features/emergency/browser-adapter.ts": "bf2824776e358dc44fda15c1dd28ec211f0e4c4e41585b18ec02ad658cc348ab"
@@ -207,7 +193,7 @@
       "guard": {
         "path": "src/features/assess/review-availability.ts",
         "symbol": "RAD085_REVIEW_AVAILABLE",
-        "sha256": "1df16a2913151a8d76ca6e169b2d88083ba945661f4a780a93957757b51e67c2"
+        "sha256": "8cd3e5e8ead67310f0c3442d25462f5218a2070b3c04488d3b53cdc3d56cfee4"
       },
       "boundaries": {
         "src/features/assess/written-consent.ts": "9f9e673e2b2e3bd0b483adc690a7d559f7096413b71fbbbda83fc0a12f0c02c6"

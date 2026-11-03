@@ -43,8 +43,8 @@ async function runCase(productionVersion, locale) {
   const db = await openLocalDatabase('postgres', { through: 'latest', productionVersion, locale });
   let client;
   try {
-    // Byte-for-byte same fixture statements as the existing locale regression.
-    await db.exec(`create role assess_job_a nologin; create role assess_job_b nologin;
+    // Current synthetic Auth surface; required 0200 may already have created the closed slots.
+    await db.exec(`do $$begin if not exists(select 1 from pg_roles where rolname='assess_job_a') then create role assess_job_a nologin;end if;if not exists(select 1 from pg_roles where rolname='assess_job_b') then create role assess_job_b nologin;end if;end$$;
         alter table auth.users add column banned_until timestamptz;
         create table auth.sessions(user_id uuid); create table auth.refresh_tokens(user_id uuid);`);
     const [cfg] = await db.query("select current_setting('unix_socket_directories') host,current_setting('port') port,current_database() database,current_setting('server_version_num')::int version");

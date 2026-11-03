@@ -6,15 +6,19 @@ Use WSL Ubuntu on the owner laptop, repository `~/RAD-LAB`, the existing encrypt
 
 ## 1. Freeze both reviewed heads and prepare the shell (offline)
 
-The executable preparation source is pinned below to commit `8edbee944402e351a15c628ae182afa7f5649203` from PR A. The promotion source is pinned to commit `3cf6621337b5e901e19a7e2fb27989c1feb388fa` from [Draft PR B #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213). Review both pinned commits and final PR documentation before the window. PR A must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
+The owner STOP on 2026-11-03 applied nothing live. The executable preparation source is re-pinned below to commit `a0898c286a7c6ebaac0f235a4f576d755586f4cf` from [calibration Draft #217](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/217). The promotion review candidate is pinned to commit `7a6d8583afd6f1ed7e096acb1f292102183e83e3` on `rad085/calibration-promotion-review`, a two-parent merge of the calibration code into the existing promotion source.
+
+This is a review ref; [Draft PR B #213](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/213) remains unchanged until #217 merges. Merge order: #217 into main first; then merge main into #213 with a normal merge commit, resolving its manifest in favor of the reviewed promotion classifications. No rebase, squash, force-push or promotion merge. Verify the resulting code/marker against this candidate and re-pin if it differs.
+
+Review both pinned commits and final PR documentation before the window. #217 must first be merged; review this pinned source and the final runbook together. Keep this source for steps1–9. Never use PR B's checkout for SQL. Have the promotion reviewed and locally available before live apply; it remains Draft/unmerged pending evidence.
 
 ```bash
 set -euo pipefail
 set +x
 umask 077
 cd ~/RAD-LAB
-export RAD_WINDOW_PREP_SHA='8edbee944402e351a15c628ae182afa7f5649203'
-export RAD_WINDOW_PROMOTION_SHA='3cf6621337b5e901e19a7e2fb27989c1feb388fa'
+export RAD_WINDOW_PREP_SHA='a0898c286a7c6ebaac0f235a4f576d755586f4cf'
+export RAD_WINDOW_PROMOTION_SHA='7a6d8583afd6f1ed7e096acb1f292102183e83e3'
 [[ "$RAD_WINDOW_PREP_SHA" =~ ^[0-9a-f]{40}$ ]]
 [[ "$RAD_WINDOW_PROMOTION_SHA" =~ ^[0-9a-f]{40}$ ]]
 test -z "$(git status --porcelain)"
@@ -43,7 +47,7 @@ NODE
 NEXT_PUBLIC_SUPABASE_URL=https://vlacestfruxooznrcjqc.supabase.co node scripts/pages/pilot-schema-gate.mjs --print-marker
 ```
 
-Expected `reviewed_deferred_migrations=2` and current marker `pilot-v1:001c0cf80c1a4530e7144edfe252912c34ce3859f56c1e47a59524b1cae713e3`. Independently compare the currently deployed marker/project in dashboard metadata. STOP for dirty/unreviewed source or a mismatched marker. Required CI must include both embedded and pinned Supabase17.11 ICU modes and the encrypted backup rehearsal; local “Not run” is not proof. Inspect PR B's exact manifest, successor, guards and marker offline now; step10 must already be coordinated with owner/reviewer.
+Expected `reviewed_deferred_migrations=2` and current marker `pilot-v1:001c0cf80c1a4530e7144edfe252912c34ce3859f56c1e47a59524b1cae713e3`. Independently compare the currently deployed marker/project in dashboard metadata. STOP for dirty/unreviewed source or a mismatched marker. Required CI for these new heads must include both embedded and pinned Supabase17.11 ICU modes and the encrypted backup rehearsal; local “Not run” is not proof. Inspect PR B's exact manifest, successor, guards and marker offline now; step10 must already be coordinated with owner/reviewer.
 
 ## 2. Select the protected connection and evidence directory
 
@@ -126,7 +130,7 @@ node scripts/ops/laptop-backup.mjs verify daily
 )
 ```
 
-Expected verified fresh encrypted daily/latest backup. Rehearsal counts: pre_m09_checks=10, order_refused=1, refusal_unchanged=1, alternate_committed=1, alternate_ready=1, review_committed=1, review_ready=1, unchanged_checks=8, baseline_preserved=1, reviewed_added_fks=7, teardown_pass=1. It restores into the pinned Supabase17.11 ICU image with `--network=none`, `--pull=never`, no published ports, then removes the target/volume/socket. Restore checks counts/roles/ICU and journals evidence under RAD-086. Missing image/tool, any STOP or absent teardown proof blocks live apply. No restore to live, no third backup copy, no row payload export. Keep catalogue evidence encrypted locally under existing retention. The rehearsal verifies both migration SHAs against the reviewed deferred manifest before any migration query.
+Expected verified fresh encrypted daily/latest backup. Rehearsal counts: pre_m09_checks=10, order_refused=1, refusal_unchanged=1, alternate_committed=1, alternate_ready=1, review_committed=1, review_ready=1, unchanged_checks=8, baseline_preserved=1, reviewed_added_fks=7, teardown_pass=1. It restores into the pinned Supabase17.11 ICU image with `--network=none`, `--pull=never`, no published ports, then removes the target/volume/socket. Restore checks counts/roles/ICU and journals evidence under RAD-086. Missing image/tool, any STOP or absent teardown proof blocks live apply. No restore to live, no third backup copy, no row payload export. Keep catalogue evidence encrypted locally under existing retention. The rehearsal verifies both migration SHAs against the reviewed deferred manifest before any migration query. On STOP it names the `inspectWindow` step and allowlisted false preflight `check_names`, without rows, bodies, selectors or secrets. See the [calibration evidence](RAD-085_PREFLIGHT_CALIBRATION_REPORT_2026-11-03.md).
 
 ## 5. Apply 0200 exactly once; verify before proceeding
 
@@ -236,6 +240,6 @@ Expected STOPPED twice, zero worker backends/unheld sessions, NOLOGIN, every suc
 
 ## 10. Coordinated promotion, normal automation and owner checks
 
-Only after the owner accepts steps1–9 evidence: on GitHub review the exact PR B code commit already frozen at step1 and confirm that later commits only finalize documentation and its separately derived marker. The owner alone sets repository Settings → Secrets and variables → Actions → Variables → `PILOT_SCHEMA_VERIFIED` to **that exact reviewed PR B marker**: `pilot-v1:a3d6a4050f7d7a232bea9dac5f8bdeacb1ef5baec6bef5cd6091fed89bb65123`, then merges the separately approved promotion in this same window. No agent Variable/merge action. Expected deploy/schema gate failure before this Variable change is never bypassed. PR B moves both migrations to required, replaces the obsolete check pair with rad085-review-ready.sql, keeps the eight valid checks, enables both literal guards and pins the new marker. It must not be merged before live evidence.
+Only after #217 is merged, main has been merged into #213 with a merge commit, required CI passes and the owner accepts steps1–9 evidence: on GitHub review the exact PR B code commit already frozen at step1 and confirm that later commits only finalize documentation and its separately derived marker. The owner alone sets repository Settings → Secrets and variables → Actions → Variables → `PILOT_SCHEMA_VERIFIED` to **that exact reviewed PR B marker**: `pilot-v1:3d8b505ca8605f99f226475ced8e7aa1db576a5829c66cc5e6499e1aab4c18b7`, then merges the separately approved promotion in this same window. No agent Variable/merge action. Expected deploy/schema gate failure before this Variable change is never bypassed. PR B moves both migrations to required, replaces the obsolete check pair with rad085-review-ready.sql, keeps the eight valid checks, enables both literal guards and pins the new marker. It must not be merged before live evidence.
 
 Expected normal required CI and Deploy Pages success; owner phone checks login/Practice/Assess entry, approved Terms/disclosures and personal v3 re-consent with synthetic accounts. Follow the [alternate appointment/removal and channels/ACK drill](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#5-alternate-and-channels-drill-then-a-separate-promotion-pr) and daily rights/erasure follow-up. Gate stays closed, worker NOLOGIN, secret DISABLED; promotion alone closes neither RAD-059 nor RAD-085 and grants no real-exam launch. No manual deployment, frontend rollback, old SQL rerun or restoration over erased data. Any post-COMMIT recovery requires a reviewed forward change and separate owner action.
