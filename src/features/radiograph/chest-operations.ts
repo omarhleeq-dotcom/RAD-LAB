@@ -95,4 +95,3 @@ export function jawOverlay(spec: RadiographAssetSpec, u: number, v: number): num
   const ridge = Math.exp(-(((v - vb) / 0.008) ** 2)) * TUNING.jaw.ridge;
   return (soft + ridge) * side;
 }
-
