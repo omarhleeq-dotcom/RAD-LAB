@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 433,
-  "updated_at": "2026-11-04T19:00:00Z",
+  "revision": 434,
+  "updated_at": "2026-11-04T19:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-101",
+  "next_id": "RAD-102",
   "tasks": [
     {
       "id": "RAD-001",
@@ -920,6 +920,16 @@
       "source_ref": "docs/DECISIONS.md#result-references-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md",
       "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف.",
       "completion_evidence": "#232 مدمج بيد المالك (قراءة GitHub 2026-11-04)؛ التقرير docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md؛ قول المالك 2026-11-04: دمج #231 و#232 وفحصهما على الهاتف وهما يعملان."
+    },
+    {
+      "id": "RAD-101",
+      "title": "رسم إعداد القدم: شق النسيج الرخو بين الإصبعين 1 و2",
+      "status": "review",
+      "priority": "medium",
+      "description": "أُوقف الإصلاح (C) بعد التشخيص: شق AP بين الإصبعين 1 و2 موجود في بيانات التتبع نفسها (رؤوس 21–29 من soft-tissue، أثر عتبة Otsu في تراكب الإصبعين) وظاهر عند AP 0؛ نتوءات المائل 55–70 وتقاطعات AP −8…−15 من حركة الأشعة. الإصلاح النظيف يحتاج تصحيح بيانات التتبع أو رقمًا جديدًا؛ ينتظر اختيار المالك بين الخيارات في التقرير.",
+      "source_ref": "docs/archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md؛ docs/DECISIONS.md#radiograph-foot-edges-owner-2026-11-04",
+      "waiting_on": "owner",
+      "done_when": "قرار المالك بخيار من التقرير، ثم Draft يجعل خط النسيج الرخو بلا شق أو نتوء عند كل محطة مع اختبار يفشل على main ويقتصر التغيير على مفاتيح scene| للقدم."
     }
   ]
 }
