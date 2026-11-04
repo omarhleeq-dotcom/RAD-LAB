@@ -18,7 +18,7 @@ RAD-103: المرحلة B في Draft ‏#237 ([التقرير](archive/reports/2
 
 ## المتابعة
 
-إطلاق Practice فقط يوم الخميس؛ بعده نافذة لابتوب واحدة وفق [الدليل](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md) بجملة إذن المالك ([القرار](DECISIONS.md#assess-window-owner-2026-11-03))؛ لا إذن حي من الدمج.
+نافذة 11-04 وقفت ([التقرير](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md)): خيار A لابتوب؛ نافذة جديدة؛ البوابة مغلقة وNOLOGIN وDISABLED. RAD-104: [Brevo](BREVO_SIGNUP_NOTIFY_PLAN.md).
 
 ## الإغلاقات المعلقة
 
