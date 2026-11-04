@@ -1,17 +1,15 @@
 /**
  * Foot detector-view drawing from the TRACED outlines (RAD-072 2b; owner decision DECISIONS #rad072-2b-owner-2026-10-23). Pure (no React):
  * the outlines in `foot-outlines.json` (traced from A-027 / A-029, approved by the owner; illustrative, drawing-only, not a measurement)
- * are moved by the EXISTING lower-limb model (`features/lower-limb-model/lower-limb-model.ts`, unchanged): `footAnchors` (the displacement
- * anchors of the toes and the metatarsals) with the band weights of the result image (`footShiftPx`), the same functions that displace the
- * result image, so the drawing moves the same parts in the same direction.
+ * are moved by the EXISTING lower-limb model (`features/lower-limb-model/lower-limb-model.ts`, unchanged), through the same ray shifts that
+ * displace the result image, so the drawing moves the same parts in the same direction by the same amount.
  *
- * Rigid bones (owner finding #13, "foot rotation shows unnatural bones"). The model displaces the toe rows and the metatarsal rows by band
- * and leaves the tarsal rows still, so a bone that spans two weights is sheared by the result image's warp (diagnosis: oblique MT5 up to 21°
- * at −15, AP MT5 8° at +15). The drawing does NOT reproduce the shear: every bone is moved as a RIGID piece by the displacement the model
- * gives at its own centroid (a toe's bones by the displacement at its proximal phalanx), so no bone is ever bent or resized, and the
- * direction and amount follow the result image at that bone. The joint spaces travel with the bones that own them (an MTP joint with the
- * mean of its toe and metatarsal). The tarsals are not displaced by the model and stay put. The shear of the result image itself is a model
- * limit (not changed here; options in the Phase B report).
+ * Rigid rays (owner finding #13; owner decision DECISIONS #radiograph-foot-edges-owner-2026-11-04, item 4). Every bone is moved as a
+ * RIGID piece, never bent or resized. Each metatarsal ray, the metatarsal AND its toe's phalanges, moves by ONE displacement: the ray
+ * shift the result image uses (the model's metatarsal anchor of that ray, `footAnchors(...).metatarsal`, the plan's band 2 read by
+ * `footRayAnchors` in `features/radiograph/limb-effects.ts`), so a toe always moves with its metatarsal and never by its own toe anchors.
+ * The joint spaces travel with the bones that own them. The tarsals are not displaced and stay put. The result image's declared limits
+ * (the 5th-ray base hold-back, the soft-tissue step at the outer base edge) are not drawn: the drawing shows the rays rigidly.
  * The soft tissue follows its nearest traced bone. Sesamoids (`drawn: false`) are not drawn.
  *
  * Left / right: both images are a RIGHT foot and the foot exams are fixed-side R. A left-foot case would pass `mirror: true` (x reflected
@@ -19,9 +17,7 @@
  */
 import outlines from "./foot-outlines.json";
 import { footAnchors, footValue, FOOT_MODEL, type FootKind } from "@/features/lower-limb-model/lower-limb-model";
-import { FOOT_AP_DISPLACEMENT, FOOT_OBLIQUE_DISPLACEMENT } from "@/features/positioning/drawing-data";
-import { footShiftPx } from "./lower-limb-visual";
-import { centroid, closeOnBorder, followNearest, type DrawnPart as SharedPart, type Pt } from "./outline-geometry";
+import { closeOnBorder, followNearest, type DrawnPart as SharedPart, type Pt } from "./outline-geometry";
 
 export type { Pt, FootKind };
 type Group = "soft" | "phalanges" | "metatarsals" | "tarsals" | "sesamoids" | "joints" | "prominences";
@@ -37,40 +33,26 @@ export interface FootOutlineDrawing {
 const structures = (kind: FootKind) => outlines.views[kind].structures as unknown as Structure[];
 const isBone = (s: Structure) => s.group !== "soft" && s.group !== "joints" && s.points.length > 2;
 const drawn = (s: Structure) => s.drawn !== false && s.points.length > 2;
-const bandsOf = (kind: FootKind) => {
-  const lm = (kind === "ap" ? FOOT_AP_DISPLACEMENT : FOOT_OBLIQUE_DISPLACEMENT);
-  return lm && "bands" in lm ? lm.bands : [];
-};
 
 /** The ray (1…5) a structure belongs to: `t3-distal` → toe 3, `mt3` → metatarsal 3, `t3-mtp` → both. */
 const toeOf = (id: string) => /^t(\d)-/.exec(id)?.[1];
 const mtOf = (id: string) => /^mt(\d)$/.exec(id)?.[1];
 
 /**
- * The rigid displacement (image px, x only) of each moving ray: key `t{n}` for a toe (read at its proximal phalanx), `mt{n}` for a
- * metatarsal (read at its centroid). Everything else (tarsals) is 0.
+ * The rigid displacement (image px, x only) of each moving ray, the result image's own ray shift (metatarsal anchor du × image width):
+ * key `mt{n}` for metatarsal n and `t{n}` for its toe, always equal (the toe moves with its ray). Everything else (tarsals) is 0.
  */
 export function footRigidShifts(kind: FootKind, consoleDeg: number): Record<string, number> {
-  const M = FOOT_MODEL[kind];
-  const a = footAnchors(kind, footValue(kind, consoleDeg));
-  const lists = [a.toes, a.metatarsal];
-  const bands = bandsOf(kind);
-  const at = (s: Structure | undefined) => (s ? footShiftPx(...centroid(s.points), M.widthPx, M.heightPx, bands, lists) : 0);
-  const all = structures(kind);
-  const find = (id: string) => all.find((s) => s.id === id);
-  // (footShiftPx takes x, y first)
+  const ray = footAnchors(kind, footValue(kind, consoleDeg)).metatarsal;
   const out: Record<string, number> = {};
-  for (let n = 1; n <= 5; n++) {
-    out[`t${n}`] = at(find(`t${n}-proximal`));
-    out[`mt${n}`] = at(find(`mt${n}`));
-  }
+  for (let n = 1; n <= 5; n++) out[`t${n}`] = out[`mt${n}`] = (ray[n - 1]?.du ?? 0) * FOOT_MODEL[kind].widthPx;
   return out;
 }
 
 /** The displacement (image px) of one structure under the rigid shifts. */
 function shiftOf(s: Structure, rigid: Record<string, number>): number {
   const mt = mtOf(s.id), toe = toeOf(s.id);
-  if (/^t\d-mtp$/.test(s.id)) return (rigid[`t${toe}`]! + rigid[`mt${toe}`]!) / 2; // the joint between a toe and its metatarsal head
+  if (/^t\d-mtp$/.test(s.id)) return (rigid[`t${toe}`]! + rigid[`mt${toe}`]!) / 2; // the joint between a toe and its metatarsal head (one ray shift)
   if (toe) return rigid[`t${toe}`]!;
   if (mt) return rigid[`mt${mt}`]!;
   if (s.id === "tmt-1") return rigid.mt1!; // the first tarsometatarsal line travels with its metatarsal base
