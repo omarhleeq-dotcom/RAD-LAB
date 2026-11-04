@@ -228,7 +228,7 @@ node scripts/assess/recovery-attestation.mjs --manifest-sha256 <RAD_W4_MANIFEST 
 
 **Expected:** stderr `PASS: issuedAt … expiresAt …`, then `Created version [M]`; write M and both times in the log. Any `STOP <reason>` means nothing was sent. The worker refuses a clock ahead of Cloud Run (`issuedAt > now`); keep the shell clock synchronised.
 
-6.3 W4 step 7, with the option A network flags added because the worker must reach the IPv6 direct host:
+6.3 W4 step 7, with the option A network flags added because the worker must reach the IPv6 direct host. **Order (window 2026-11-05, [owner amendment](DECISIONS.md#assess-window-2026-11-05-owner)):** Cloud Run refuses a Job that references a DISABLED secret version, so first Enable version N of `assess-worker-config` (slot still NOLOGIN, nothing executes), then read the `volumes:` list of `gcloud run jobs describe assess-worker --region=europe-west3 --format=yaml` and remove every unmounted leftover volume with `--remove-volume=<name>` in the update below; `--set-secrets` does not remove old volumes.
 
 ```bash
 gcloud run jobs update assess-worker --region=europe-west3 \
@@ -241,7 +241,7 @@ gcloud run jobs update assess-worker --region=europe-west3 \
 
 Answer **N** to any execute prompt; never `--execute-now`.
 
-6.4 W4 step 8 binding check: `gcloud run jobs describe assess-worker --region=europe-west3 --format=yaml`. **Expected:** the image ends in the step 3 digest; 1/1/0/300 s/1 CPU/512Mi; both secret versions numeric (N, M); network `radlab-egress`, subnet `radlab-egress-ew3`, egress all-traffic; zero executions.
+6.4 W4 step 8 binding check (also count volumes: each must be mounted; leftovers from earlier `--set-secrets` calls are removed, not tolerated): `gcloud run jobs describe assess-worker --region=europe-west3 --format=yaml`. **Expected:** the image ends in the step 3 digest; 1/1/0/300 s/1 CPU/512Mi; both secret versions numeric (N, M); network `radlab-egress`, subnet `radlab-egress-ew3`, egress all-traffic; zero executions.
 **STOP → rollback:** disable versions M and N (Secret Manager → Versions → Disable); never execute the Job. End the window.
 
 ## 7. Enable, LOGIN, readiness, one bounded run (B, L; 20 min)
@@ -250,7 +250,7 @@ Answer **N** to any execute prompt; never `--execute-now`.
 |---|---|---|---|
 | 7.1 (4.2) | Secret Manager → `assess-worker-config` → version N → Enable | N ENABLED, every other version DISABLED | disable N |
 | 7.2 (4.3) | `owner_sql -f supabase/manual/assess-grading-worker-login.sql` | one row `assess-grading-worker-login/1 \| t \| t`, COMMIT | gate runbook §8 |
-| 7.3 (4.5) | gate runbook §3.2, then `owner_sql -f supabase/checks/assess-grading-worker-ready.sql` | nine checks `ok=t`; every worker-ready row `t` | §8 |
+| 7.3 (4.5) | gate runbook §3.2, then `owner_sql -f supabase/checks/assess-grading-worker-ready.sql` | nine checks `ok=t`; every worker-ready row `t`. After W1 the review-ready `functions` actual is `445cb753be66f07d7b5d5eee22cec0e2` (`5fcd5e71…` only without the W1 grants): `ok=f` on that one row is the owner-accepted state until the [proposed fix](DECISIONS.md#rad085-review-ready-proposal-2026-11-05) lands | §8 |
 | 7.4 | monitor before: `owner_sql -f supabase/checks/assess-operations-monitor.sql` | `grading` 0, failed 0 (empty queue) | §8 |
 | 7.5 (4.6) | Cloud Run → Jobs → `assess-worker` → Execute once (or `gcloud run jobs execute assess-worker --region=europe-west3 --wait`) | one execution succeeded; its log has one line with `"outcome":"COMPLETE","code":"complete"` and `graded` 0; then zero running | §8; never re-execute |
 | 7.6 | 7.4 again | unchanged counts | §8 |
@@ -278,7 +278,7 @@ SQL
 
    **Expected:** `gate_open=t`, then COMMIT. Write the UTC time. Any error or lost connection is UNKNOWN → §8 at once; never rerun.
 4. Phone as the synthetic participant: v3 consent, start, answer, submit. **Expected:** the submitted screen; monitor `grading` 1.
-5. One bounded Execute as in 7.5. **Expected:** `COMPLETE`, `graded` 1; the result is visible to the synthetic participant; monitor `grading` 0 and failed 0; zero running executions.
+5. One bounded Execute as in 7.5. **Expected:** `COMPLETE`, `graded` 1; the result is visible to the synthetic participant in the "سجل التقييم" tab (not on the exam page); monitor `grading` 0 and failed 0; zero running executions.
 6. Close at once: gate runbook [§8](ASSESS_GATE_OPEN_RUNBOOK.md#8-close--rollback--reviewed-executable-now), steps 1–5 (step 9 below). Write the UTC close time. Open time target ≤ 15 min; hard limit 30 min.
 
 **STOP → rollback:** any other screen, count or log line, or reaching the end time → §8 at once. Synthetic rows follow normal retention and the existing owner deletion path.
@@ -308,6 +308,8 @@ Follow the [phone runbook alert section](RAD-059_PHONE_RUNBOOK.md#تشغيل-ا�
 **STOP → rollback:** a missing metric or label, a paid or custom metric prompt, or no receipt → do not improvise; delete only a policy this step created, and record P7 PARTIAL with the reason.
 
 ## After the window — before any real student
+
+Normal operation after this window is governed by [OD1–OD9](DECISIONS.md#assess-self-service-owner-2026-11-05) and the [self-service design](ASSESS_SELF_SERVICE_DESIGN.md); the bullets below remain the interim rules until its phases are approved and the final switch-on window is done.
 
 - Appoint a real human alternate and run the short drill ([alternate runbook §5](RAD-059_ALTERNATE_LAPTOP_RUNBOOK.md#5-alternate-and-channels-drill-then-a-separate-promotion-pr)). Until then only synthetic smoke may run.
 - First real exam window procedure: a scheduled window with the owner present; a new attestation version and Job update (6.2–6.4); 7.1–7.3 again; the gate runbook §0.3 sentence; §5; small cohort first; [W6 cadence](ASSESS_GATE_W_PACKAGES.md#5-w6--scheduler-decision-proposal) inside 24 h; §8 right after.
