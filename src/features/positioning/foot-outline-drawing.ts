@@ -10,7 +10,9 @@
  * `footRayAnchors` in `features/radiograph/limb-effects.ts`), so a toe always moves with its metatarsal and never by its own toe anchors.
  * The joint spaces travel with the bones that own them. The tarsals are not displaced and stay put. The result image's declared limits
  * (the 5th-ray base hold-back, the soft-tissue step at the outer base edge) are not drawn: the drawing shows the rays rigidly.
- * The soft tissue follows its nearest traced bone. Sesamoids (`drawn: false`) are not drawn.
+ * The soft tissue follows its nearest traced bone. Where unequal ray shifts make neighbouring toes overlap, that run crosses itself; the drawing
+ * keeps the outer path round the overlapping toes and drops the tucked-in loop (`untangle`, geometry only, no tolerance; owner decision
+ * DECISIONS #radiograph-foot-edges-owner-2026-11-04, item 7). Sesamoids (`drawn: false`) are not drawn.
  *
  * Left / right: both images are a RIGHT foot and the foot exams are fixed-side R. A left-foot case would pass `mirror: true` (x reflected
  * about the traced soft tissue's centre after the projection). RTL never mirrors anatomy.
@@ -60,6 +62,37 @@ function shiftOf(s: Structure, rigid: Record<string, number>): number {
   return 0; // tarsals (not displaced by the model), intercuneiform and cuneonavicular lines
 }
 
+/** The point where segments ab and cd cross (a proper crossing, not a shared end), or null. */
+function crossing(a: Pt, b: Pt, c: Pt, d: Pt): Pt | null {
+  const r = [b[0] - a[0], b[1] - a[1]], s = [d[0] - c[0], d[1] - c[1]];
+  const den = r[0]! * s[1]! - r[1]! * s[0]!;
+  if (den === 0) return null;
+  const t = ((c[0] - a[0]) * s[1]! - (c[1] - a[1]) * s[0]!) / den, u = ((c[0] - a[0]) * r[1]! - (c[1] - a[1]) * r[0]!) / den;
+  return t > 0 && t < 1 && u > 0 && u < 1 ? [a[0] + t * r[0]!, a[1] + t * r[1]!] : null;
+}
+
+/**
+ * A simple polyline from one that crosses itself: at the first segment that a later one crosses, the path goes straight to the crossing point and
+ * on along that later segment, dropping the loop between (the part of the soft-tissue line tucked under an overlapping toe). Repeated until no
+ * segment crosses another. A simple line (every traced run at the base poses) comes back unchanged.
+ */
+export function untangle(pts: Pt[]): Pt[] {
+  let out = pts;
+  for (let changed = true; changed; ) {
+    changed = false;
+    search: for (let i = 0; i + 1 < out.length; i++)
+      for (let j = i + 2; j + 1 < out.length; j++) {
+        const x = crossing(out[i]!, out[i + 1]!, out[j]!, out[j + 1]!);
+        if (x) {
+          out = [...out.slice(0, i + 1), x, ...out.slice(j + 1)];
+          changed = true;
+          break search;
+        }
+      }
+  }
+  return out;
+}
+
 /** Centre x (image px) about which a left-foot case would be mirrored: the middle of the traced soft tissue. */
 function mirrorAxis(kind: FootKind): number {
   const xs = structures(kind).filter((s) => s.group === "soft").flatMap((s) => s.points.map((p) => p[0]));
@@ -86,7 +119,8 @@ export function footOutlineDrawing(kind: FootKind, consoleDeg: number, opts: { m
   const soft = all.filter((s) => s.group === "soft").map((s): DrawnPart => {
     const closure = closeOnBorder(s.points[s.points.length - 1]!, s.points[0]!, W, H);
     const follow = (pts: Pt[]) => followNearest(pts, bonesBase, nearestShift);
-    return fx({ id: s.id, group: "soft", closed: false, copy: 0, copies: 1, points: follow(s.points), fillPoints: follow([...s.points, ...closure]) });
+    const points = untangle(follow(s.points));
+    return fx({ id: s.id, group: "soft", closed: false, copy: 0, copies: 1, points, fillPoints: [...points, ...follow(closure)] });
   });
   return { soft, bones: bonesBase.map(part).map(fx), joints: all.filter((s) => s.group === "joints" && drawn(s)).map(part).map(fx) };
 }
