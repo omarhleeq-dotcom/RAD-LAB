@@ -14,7 +14,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
-- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
 - [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03))
@@ -1542,6 +1542,14 @@ Authority: owner's Session 4 prompt, option C; applies [D-R3](#radiograph-plan-o
 - SID positions come only from existing data: the student's SID and the exam's full-credit SID band. The object-to-detector gap is a declared UI drawing convention, never exam data, never shown.
 - Out of scope: tube angle, off-axis distortion, numeric magnification (option B), patient-image pixels, scoring, new dependencies.
 - Owner follow-up 2026-11-04: the "longer" summary adds that geometry is not worse there and the problem is exposure (existing high-SID feedback explains it); Arabic terms «البقعة البؤرية» (focal spot) and «شبه الظل» (penumbra) are owner-confirmed.
+
+<a id="radiograph-foot-edges-owner-2026-11-04"></a>
+## Radiograph foot edges and QA tools — owner decisions 2026-11-04
+Authority: owner's Session 3b prompt, answering the open items of the [Session 3 report](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3_2026-11-03.md#7-المفتوح); tracked by RAD-098.
+1. Foot shear option (a): per-metatarsal base edges for the RESULT IMAGE may be derived from the owner-reviewed CC0-derived `foot-outlines.json`. Still illustrative, not a measurement; no other change of use ([asset record](ASSET_PROVENANCE_AND_LICENSES.md#art-rad072-limb-trace-2b--traced-wrist-and-foot-outlines-and-review-overlays-2026-10-23-rad-072-2b-phase-a)).
+2. `clip-margin-only` golden: find the cause first; re-capture only that one file if the cause is proven benign and unrelated to product logic. Never change a tolerance.
+3. `run-matrix.mjs`: update its out-of-date page checks to the current UI.
+No assets, zones, medical values, scores, verdicts or checks change from this record; D-R1–D-R3 still apply.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03
