@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 439,
-  "updated_at": "2026-11-04T23:45:00.001Z",
+  "revision": 440,
+  "updated_at": "2026-11-04T23:59:00Z",
   "timezone": "UTC",
   "next_id": "RAD-105",
   "tasks": [
@@ -943,13 +943,13 @@
     },
     {
       "id": "RAD-104",
-      "title": "إشعار Brevo للمالك عند تسجيل طالب جديد (تصميم)",
-      "status": "planned",
+      "title": "إشعار Brevo للمالك عند تسجيل طالب جديد (الخيار C: ملخص مجدول)",
+      "status": "review",
       "priority": "low",
-      "description": "تصميم فقط، لا تنفيذ: بريد بلا بيانات شخصية («تسجيل جديد» + العدد الإجمالي)، بريد واحد كل 10 دقائق، لا يعيق التسجيل. الخيارات A (مشغّل + pg_net) وB (Webhook ← Edge Function) وC (ملخص مجدول) تنتظر اختيار المالك.",
-      "source_ref": "docs/BREVO_SIGNUP_NOTIFY_PLAN.md؛ docs/DECISIONS.md#brevo-signup-notify-proposal-2026-11-04؛ docs/PILOT_SUPABASE_SETUP.md#3-بريد-التأكيد-smtp--نُفِّذ-بـ-brevo-2026-10-15-المالك",
+      "description": "الخيار C مُعدّ في Draft: حزمة SQL يطبقها المالك (مشغّل على auth.users ← طابور خاص، pg_cron كل 10 دقائق، Vault، مفتاح OFF) مع تراجع وفحص واختبارات PGlite. ينتظر مراجعة المالك وتطبيقه بالدليل؛ لا شيء مطبق حيًا.",
+      "source_ref": "docs/DECISIONS.md#brevo-signup-notify-owner-2026-11-04؛ docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md؛ docs/archive/reports/2026-11/RAD-104_BREVO_DIGEST_2026-11-04.md",
       "waiting_on": "owner",
-      "done_when": "يختار المالك الخيار وتُنفَّذ الخطة في مهمة مراجعة منفصلة بـQA، أو يقرر الإسقاط."
+      "done_when": "يطبّق المالك الحزمة بالدليل: الفحص كله true، بريد تجريبي 201 بلا بيانات شخصية، ثم المفتاح ON؛ أو يقرر التراجع."
     }
   ]
 }
