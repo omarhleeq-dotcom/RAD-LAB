@@ -12,7 +12,7 @@
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
 
-RAD-098 الجلسة3: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3_2026-11-03.md) — صور golden الست في Draft؛ إصلاح قص القدم متوقف حتى يقرر المالك مصدر حواف الأشعة.
+RAD-098 الجلسة4: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION4_2026-11-04.md) — مفسّر «لماذا؟» لهندسة SID في Draft مع استثناء هاشات النتيجة المثبت؛ حواف القدم (3b) وdenseZones باقيان.
 
 ## المتابعة
 
