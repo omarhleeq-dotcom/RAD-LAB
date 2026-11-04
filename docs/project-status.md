@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 432,
-  "updated_at": "2026-11-04T18:00:00Z",
+  "revision": 433,
+  "updated_at": "2026-11-04T20:00:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-101",
+  "next_id": "RAD-102",
   "tasks": [
     {
       "id": "RAD-001",
@@ -920,6 +920,16 @@
       "source_ref": "docs/DECISIONS.md#result-references-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md",
       "waiting_on": "owner",
       "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف."
+    },
+    {
+      "id": "RAD-101",
+      "title": "تبسيط محاكي الهاتف: تدقيق ونموذجان وخطة (وثائق فقط)",
+      "status": "planned",
+      "priority": "medium",
+      "description": "مدخل المالك 2026-11-04: الطلاب يرون محاكي الهاتف معقدًا. أُنجز في Draft تدقيق وثائقي فقط: الجرد، سبب صفوف التسميات (قرار A1)، نموذجان EN/AR وخطة مراحل. لم يُنفذ أي كود؛ تلميحات Practice باقية.",
+      "source_ref": "docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
+      "waiting_on": "owner",
+      "done_when": "يختار المالك الخيار ويقرر تعديل A1، ثم تُدمج المراحل المعتمدة بفحوصها ويؤكد المالك الهاتف."
     }
   ]
 }
