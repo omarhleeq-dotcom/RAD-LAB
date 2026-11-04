@@ -1541,6 +1541,7 @@ Authority: owner's Session 4 prompt, option C; applies [D-R3](#radiograph-plan-o
 - No numbers for magnification or OID. The patient radiograph is never changed (D-R3).
 - SID positions come only from existing data: the student's SID and the exam's full-credit SID band. The object-to-detector gap is a declared UI drawing convention, never exam data, never shown.
 - Out of scope: tube angle, off-axis distortion, numeric magnification (option B), patient-image pixels, scoring, new dependencies.
+- Owner follow-up 2026-11-04: the "longer" summary adds that geometry is not worse there and the problem is exposure (existing high-SID feedback explains it); Arabic terms «البقعة البؤرية» (focal spot) and «شبه الظل» (penumbra) are owner-confirmed.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03

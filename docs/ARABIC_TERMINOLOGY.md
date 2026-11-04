@@ -473,3 +473,12 @@ Keys: `radiograph` credit of `src/data/cases/shoulder-grashey-radiograph.ts` and
 ## Session alternate stop page — 2026-11-03 (DRAFT, pending owner / educator review)
 
 New `emergency` chrome keys, machine-assisted: `menuEntry` / `pageTitle` «إيقاف الطوارئ»؛ `pageIntro` «أنت البديل المعيّن»؛ `startStop` «بدء إيقاف الطوارئ»؛ `dialogTitle` «تأكيد إيقاف الطوارئ»؛ `dialogCancel` «إلغاء»؛ `stopNow` «إيقاف الآن»؛ `pageUnavailable` «إيقاف الطوارئ غير متاح لهذا الحساب.». Existing emergency text unchanged.
+
+## RAD-098 Session 4 — SID geometry explainer (owner-confirmed 2026-11-04)
+
+Keys: `result.sidGeometry.*`. Authority: [owner decision](DECISIONS.md#radiograph-geometry-diagram-owner-2026-11-04). Other explainer wording remains machine-assisted DRAFT.
+
+| English | Arabic | Where | Status |
+|---|---|---|---|
+| Focal spot | البقعة البؤرية | explainer legend | owner-confirmed |
+| Penumbra | شبه الظل | explainer legend | owner-confirmed |

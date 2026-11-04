@@ -258,7 +258,7 @@
       "reference": "Reference",
       "summary": {
         "shorter": "Your SID is shorter than the reference. With the tube closer, the beam spreads more between the object and the detector, so the object's shadow is larger and its edges are less sharp.",
-        "longer": "Your SID is longer than the reference. With the tube farther away, the beam lines are closer to parallel, so the object's shadow is smaller."
+        "longer": "Your SID is longer than the reference. With the tube farther away, the beam lines are closer to parallel, so the object's shadow is smaller. Geometrically this is not worse; the problem in this case is exposure (see the feedback above)."
       },
       "legend": "Top bar: the tube focal spot. Lines: the beam edges. Middle block: the object. Bottom line: the detector, with the shadow on it; its faint ends are the blurred edge (penumbra).",
       "notToScale": "Illustration, not to scale",
