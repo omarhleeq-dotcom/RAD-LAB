@@ -14,7 +14,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
-- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
 - [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03))
@@ -1532,6 +1532,15 @@ Authority: owner's Session 2b prompt; amends D-R2 in [the plan](#radiograph-plan
 - Below the pass band's lower edge, extra noise and detail loss start from 0 at the edge and rise continuously with `exposure.quantumNoise.relative` and the existing TUNING scale, replacing the category steps.
 - No new constants or EI/EIT/DI numbers; never brightness; excess exposure never darkens. Scores, verdicts, checks, EN/AR and alt text stay byte-identical.
 - STOP if anything in-band changes or the edge needs a value not in the data.
+
+<a id="radiograph-geometry-diagram-owner-2026-11-04"></a>
+## Radiograph SID geometry explainer — owner decision 2026-11-04
+Authority: owner's Session 4 prompt, option C; applies [D-R3](#radiograph-plan-owner-2026-11-03); tracked by RAD-098.
+- A separate, collapsible "Why?" explainer shows two schematic diagrams side by side, "Your setting" and "Reference": tube focal spot, beam lines, a generic object, detector and the projected shadow.
+- Smaller SID gives a visibly larger, less sharp shadow; larger SID a smaller one. Labelled "Illustration, not to scale" in EN and AR.
+- No numbers for magnification or OID. The patient radiograph is never changed (D-R3).
+- SID positions come only from existing data: the student's SID and the exam's full-credit SID band. The object-to-detector gap is a declared UI drawing convention, never exam data, never shown.
+- Out of scope: tube angle, off-axis distortion, numeric magnification (option B), patient-image pixels, scoring, new dependencies.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03
