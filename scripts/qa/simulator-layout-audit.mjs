@@ -43,8 +43,31 @@ const snapshot = (page) => page.evaluate(() => {
     .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( fill="transparent")/g, "<rect HIT$1")
     .replace(/<circle cx="([^"]*)" cy="([^"]*)" r="[^"]*" fill="transparent"/g, '<circle cx="$1" cy="$2" r="HIT" fill="transparent"')
     .replace(/<rect x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"( rx="3")/g, "<rect HANDLE$1");
-  const svgs = [...document.querySelectorAll("main svg")].filter((s) => s.closest("section[aria-labelledby='pos-heading']") || s.closest("[role='tabpanel']"))
-    .filter((s) => !s.closest("button") && !s.hasAttribute("data-ui-icon")).map((s) => clean(s.outerHTML)).sort();
+  // RAD-101 (owner 2026-11-04): on the phone the frame labels move out of the drawing into label bands (SVGs with
+  // text[data-phone-frame-label]) and the centring names into the legend. Bands are excluded; label pills (a <g> holding only
+  // <text> and its pill rect[rx="5"][opacity="0.82"]) and the detector's orientation arrows (<g> of line+polygon+line+polygon in
+  // svg[role=group]) are stripped from both layouts before the byte comparison, and their texts are compared separately; a <g>
+  // left empty by that stripping (the desktop-only wrapper of those labels) goes with them.
+  const labels = [];
+  const strip = (s) => {
+    const c = s.cloneNode(true);
+    const parents = new Set();
+    const drop = (g) => { if (g.parentElement) parents.add(g.parentElement); g.remove(); };
+    if (s.matches("svg[role=group]")) c.querySelectorAll("g").forEach((g) => { if ([...g.children].map((e) => e.localName).join() === "line,polygon,line,polygon") drop(g); });
+    c.querySelectorAll("g > text").forEach((t) => {
+      const g = t.parentElement;
+      if ([...g.children].every((e) => e === t || e.matches('rect[rx="5"][opacity="0.82"]'))) { labels.push(t.textContent); drop(g); }
+    });
+    for (const p of parents) for (let g = p; g && g !== c && g.localName === "g" && g.children.length === 0;) { const up = g.parentElement; g.remove(); g = up; }
+    return c;
+  };
+  const drawn = [...document.querySelectorAll("main svg")].filter((s) => s.closest("section[aria-labelledby='pos-heading']") || s.closest("[role='tabpanel']"))
+    .filter((s) => !s.closest("button") && !s.hasAttribute("data-ui-icon"));
+  const svgs = drawn.filter((s) => !s.querySelector("text[data-phone-frame-label]")).map((s) => clean(strip(s).outerHTML)).sort();
+  drawn.filter((s) => s.querySelector("text[data-phone-frame-label]")).forEach((s) => s.querySelectorAll("text[data-phone-frame-label]")
+    .forEach((t) => labels.push(t.textContent.replace(/^\u2191 /, "").replace(/ \u2193$/, ""))));
+  // Centring names in the phone legend: the only legend spans that wrap their own swatch.
+  document.querySelectorAll("section[aria-labelledby='pos-heading'] ul > li > span:has(> span[aria-hidden].border-dashed)").forEach((e) => labels.push(e.textContent.trim()));
   const label = (el) => {
     if (el.labels?.length) return [...el.labels].map((l) => l.textContent.trim()).join(" ");
     return el.getAttribute("aria-label") ?? el.closest("label")?.textContent.trim() ?? "";
@@ -52,7 +75,7 @@ const snapshot = (page) => page.evaluate(() => {
   const controls = [...document.querySelectorAll("main input, main select, main textarea")]
     .filter((el) => !el.closest("form"))
     .map((el) => `${el.type}|${el.name}|${label(el)}`);
-  return { svgs, controls };
+  return { svgs, controls, labels: labels.sort() };
 });
 
 // Visible marker centre (normalised to the detector SVG box) and the hit areas of the marker, the field handles and the crosshair.
@@ -142,6 +165,9 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} console readiness`, await page.getByText(`${m.console.readiness.title}:`).first().isVisible());
     } else {
       ok(`${tag} same scene drawings as desktop`, JSON.stringify(snap.svgs) === JSON.stringify(ref.svgs), `${snap.svgs.length} vs ${ref.svgs.length}`);
+      const missing = ref.labels.filter((l, i, a) => a.filter((x) => x === l).length > snap.labels.filter((x) => x === l).length);
+      const extra = snap.labels.filter((l, i, a) => a.filter((x) => x === l).length > ref.labels.filter((x) => x === l).length);
+      ok(`${tag} same scene label texts as desktop (drawing, bands, legend)`, JSON.stringify(snap.labels) === JSON.stringify(ref.labels), JSON.stringify({ missing, extra }));
       ok(`${tag} every control kept (labels, ids/names, order)`, JSON.stringify(snap.controls.slice().sort()) === JSON.stringify(ref.controls.slice().sort()),
         JSON.stringify({ phoneOnly: snap.controls.filter((c) => !ref.controls.includes(c)), desktopOnly: ref.controls.filter((c) => !snap.controls.includes(c)) }));
       // Case-details sheet: it auto-opened once when the case loaded; "Start" closes it and focus returns to the (i) button.
