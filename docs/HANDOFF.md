@@ -12,7 +12,7 @@
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
 
-RAD-098 الجلسة3b: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md) — أشعة القدم صلبة في Draft؛ ينتظر المالك قرار أصابع رسم الإعداد وclip-margin-only.
+RAD-098: [الجلسة4](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION4_2026-11-04.md) مدمجة؛ [3b](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md) في Draft؛ التالي 3c وdenseZones.
 
 ## المتابعة
 

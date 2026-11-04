@@ -19,6 +19,8 @@ import { criticalForCheck, orderFixes } from "./result-presentation";
 import type { RenderPlan } from "@/features/radiograph/plan";
 import { displayTarget, formatResultObserved } from "./result-values";
 import { ResultImage } from "./ResultImage";
+import { sidExplainerInput } from "./sid-geometry";
+import { SidGeometryExplainer } from "@/features/radiograph/SidGeometryExplainer";
 import type { CheckOutcome, CheckResult, EvaluationResult } from "./types";
 
 interface Props {
@@ -110,7 +112,9 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   );
   const item = (k: CheckResult) => {
     const critical = criticalForCheck(k, radCase, result.criticalFindings);
-    const target = displayTarget(radCase.rules.find((r) => r.id === k.ruleId), radCase, locale);
+    const rule = radCase.rules.find((r) => r.id === k.ruleId);
+    const target = displayTarget(rule, radCase, locale);
+    const sidWhy = sidExplainerInput(rule, settings.sidCm, k.outcome);
     const label = localize(k.label, locale);
     const labelIncludesNotScored = [t("notScored"), t("notPartOfScore")].some((phrase) =>
       label.toLocaleLowerCase(locale).includes(phrase.toLocaleLowerCase(locale)));
@@ -138,6 +142,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
           )}
           {needsNotDrawnLabel(k.ruleId, k.outcome, plan) && <p data-testid="not-drawn" className="mt-1 text-xs text-muted">{t("notDrawn")}</p>}
           {variants(k.ruleId)}
+          {sidWhy && <SidGeometryExplainer input={sidWhy} />}
           <ul className="mt-2 space-y-2">{effects(k.ruleId)}</ul>
           {evidence(k.evidence)}
           {critical.map((f) => <div key={f.id} data-critical={f.id} className="mt-2 space-y-1 border-t border-line pt-2 text-sm text-ink">
