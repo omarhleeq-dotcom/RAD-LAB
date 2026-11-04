@@ -12,9 +12,9 @@ import type { RadiographAssetSpec } from "@/domain/radiograph";
  * the landmark placement.
  *
  * The anterior chest is on the viewer's left and the spine on the right (the lateral display convention of this
- * simulator, see `positioning.markerSide` in the exam). No `midlineU`, `scapulae`, `jaw` or `denseZones`: a lateral has
- * no frontal midline and the chin / arm overlays are not drawn in this version (the checks are scored and labelled
- * "not drawn"); low penetration is therefore scored but not drawn either.
+ * simulator, see `positioning.markerSide` in the exam). No `midlineU`, `scapulae` or `jaw`: a lateral has no frontal
+ * midline and the chin / arm overlays are not drawn in this version (the checks are scored and labelled "not drawn").
+ * `denseZones` (owner decision radiograph-densezones-owner-2026-11-04) let low penetration be drawn.
  */
 export const chestLateralRadiograph: RadiographAssetSpec = {
   id: "chest-lateral-baseline",
@@ -36,4 +36,9 @@ export const chestLateralRadiograph: RadiographAssetSpec = {
   anatomyBox: { u1: 0.1, v1: 0.19, u2: 0.82, v2: 0.84 },
   lungApexV: 0.2,
   diaphragmDomeV: 0.755,
+  // Read by eye from this image, approximate: TODO(medical-review): have an educator confirm the zones.
+  denseZones: [
+    { cu: 0.69, cv: 0.53, ru: 0.1, rv: 0.31 }, // thoracic spine (vertebral bodies)
+    { cu: 0.38, cv: 0.64, ru: 0.23, rv: 0.15 }, // heart + retrocardiac region
+  ],
 };
