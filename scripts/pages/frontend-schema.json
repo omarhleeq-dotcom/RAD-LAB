@@ -73,7 +73,7 @@
     "src/features/pilot/OwnerDirectory.tsx": "d059c752aeb1922a4252c80c6756e736fdea31f8e01f7f77d8a2689ba9a61f71",
     "src/features/pilot/OwnerActivity.tsx": "7f68910266b3bd9b1a51c96629a3a558cb9ba4593c883b6d2d39b972bc41c464",
     "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
-    "src/features/pilot/OwnerPanel.tsx": "890a357219f56d639f09895b7dcb1f89f79ebb58899d0c24f34b306db4ee8205",
+    "src/features/pilot/OwnerPanel.tsx": "c3e0478ef2b76907f85298fee7058b53fc2e6b762f18dc1fba09b00fe7edfdc3",
     "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
     "src/features/pilot/c2-contract.ts": "2ea21fcb5b638ccc29dd5bea00801ba0c2d0216b4a6d99c6774255c55a4a91e0",
     "src/features/assess/OwnerAssessPanel.tsx": "39a70f3b5bb956ebee5b395b5d04bec6a98d45d80c1cb21a1227315b09d22649",

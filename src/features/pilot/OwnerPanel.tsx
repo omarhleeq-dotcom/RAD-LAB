@@ -12,10 +12,10 @@ import { useSessionAccount } from "./SessionGate";
 import { OwnerAssessPanel } from "@/features/assess/OwnerAssessPanel";
 import { OwnerDirectory, OwnerSearchSeed, ownerButton as btn } from "./OwnerDirectory";
 import { OwnerTraining } from "./OwnerTraining";
-import { directoryPage, FIRST, type DirectoryPerson } from "./owner-dashboard-data";
+import { directoryPage, FIRST, type DirectoryPerson, type Position } from "./owner-dashboard-data";
 import { useC2Adapter } from "./C2Session";
 import { DeactivateAccount, OwnerDeletion } from "./OwnerDeletion";
-import { OwnerSurveys } from "./OwnerSurveys";
+import { findParticipant, LOOKUP_PAGES, OwnerSurveys, type Lookup } from "./OwnerSurveys";
 import { Chip, Fold } from "./OwnerUi";
 import {EmergencySession} from '@/features/emergency/EmergencySession';
 const tabs=["students","groups","assess","practice","surveys","safety"] as const;
@@ -38,6 +38,7 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
  const [tab,setTab]=useState<Tab>("students"),[version,setVersion]=useState(0);
  const [busy,setBusy]=useState<string|null>(null),[warn,setWarn]=useState<string|null>(null),[error,setError]=useState(false);
  const [filter,setFilter]=useState<Filter>("all"),[seed,setSeed]=useState(""),[emergencyOpen,setEmergencyOpen]=useState(false);
+ const [who,setWho]=useState<{code:string;request:number;result:Lookup<DirectoryPerson>|null}|null>(null);
  const [counts,setCounts]=useState<{version:number;value:Counts|null}|null>(null),[queue,setQueue]=useState<{count:number;more:boolean}|null>(null);
  useEffect(()=>{const sync=()=>setTab(tabFromUrl());sync();window.addEventListener("popstate",sync);return()=>window.removeEventListener("popstate",sync);},[]);
  const ownerId=state.kind==="signedIn"?state.userId:"";
@@ -47,6 +48,13 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
   try{const c=await getPilotClient();if(!c)throw new Error();const page=await directoryPage(c,"","",FIRST);if(active)setCounts({version,value:page.counts});}
   catch{if(active)setCounts({version,value:null});}
  })();return()=>{active=false;};},[isOwner,version]);
+ // "Who is this?" (RAD-099): runs only on request, pages the same bounded directory read, stops at the first exact code match.
+ const lookupCode=who?.code??null,lookupRequest=who?.request??0;
+ useEffect(()=>{if(!isOwner||!lookupCode)return;let active=true;void (async()=>{
+  let result:Lookup<DirectoryPerson>={kind:"error"};
+  try{const c=await getPilotClient();if(c)result=await findParticipant(lookupCode,(position:Position)=>directoryPage(c,"","",position),FIRST);}catch{/* error state */}
+  if(active)setWho(w=>w?.request===lookupRequest?{...w,result}:w);
+ })();return()=>{active=false;};},[isOwner,lookupCode,lookupRequest]);
  async function setStatus(p:DirectoryPerson,target:ProfileStatus) {
   setBusy(p.userId);
   try {const c=await getPilotClient();if(!c)throw new Error();if(target==="approved") {
@@ -63,26 +71,9 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
  if(state.kind==="signedOut")return <p data-testid="owner-signed-out">{t("signInFirst")} <Link href="/account">{t("goAccount")}</Link></p>;
  if(!isOwner)return <p role="alert" data-testid="owner-denied">{t("denied")}</p>;
  const when=(s:string|null)=>s?formatStamp(new Date(s)):t("never");
- function go(next:Tab) {history.pushState(null,"",`?tab=${next}`);setTab(next);}
- const known=counts?.value??null;
- const filterLabel=(f:Filter)=>f==="pending"||f==="approved"||f==="suspended"?`${ux(`filter.${f}`)}${known?` (${known[f]})`:""}`:ux(`filter.${f}`);
- const waiting=c2("loading");
- return <section data-testid="owner-list" className="min-w-0 space-y-4">
-  <div role="region" aria-label={ux("statusBar")} data-testid="owner-status" className="sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b border-line bg-paper px-4 py-2">
-   {known?<button type="button" className={btn} onClick={()=>{setFilter("pending");go("students");}}>{ux("pendingCount",{count:known.pending})}</button>:<span className="text-sm text-muted" role="status">{counts?d("error"):d("loading")}</span>}
-   {queue&&<button type="button" className={btn} onClick={()=>go("assess")}>{ux(queue.more?"gradingMore":"gradingCount",{count:queue.count})}</button>}
-   <a href="?tab=safety#owner-emergency" data-testid="owner-emergency-button" className={`${danger} ms-auto`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();history.pushState(null,"","?tab=safety#owner-emergency");setTab("safety");setEmergencyOpen(true);requestAnimationFrame(()=>document.getElementById("owner-emergency")?.scrollIntoView());}}>{e("stopTitle")}</a>
-  </div>
-  <nav aria-label={d("tabs")} className="flex flex-wrap gap-2">{tabs.map(s=><a key={s} href={`?tab=${s}`} aria-current={tab===s?"page":undefined} className={`${btn} inline-flex items-center ${tab===s?"bg-paper ring-2 ring-brand":""}`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();go(s);}}>{ux(`tabs.${s}`)}</a>)}</nav>
-  {tab==="students"&&<section aria-labelledby="owner-students-title" className="min-w-0 space-y-3">
-   <div className="flex items-center justify-between gap-2"><h2 id="owner-students-title" className="text-xl font-semibold">{ux("tabs.students")}</h2><button className={btn} onClick={()=>setVersion(v=>v+1)}>{t("refresh")}</button></div>
-   <div role="group" aria-label={ux("filterLabel")} className="flex flex-wrap gap-2">{filters.map(f=><button key={f} type="button" aria-pressed={filter===f} className={`${btn} ${filter===f?"bg-paper ring-2 ring-brand":""}`} onClick={()=>{setFilter(f);if(f!=="supervisors")setSeed("");}}>{filterLabel(f)}</button>)}</div>
-   {error&&<p role="alert">{t("errors.action")}</p>}
-   {filter==="deletion"?(adapter?<OwnerDeletion adapter={adapter} ownerId={ownerId} onChanged={()=>setVersion(v=>v+1)}/>:<p role="status">{waiting}</p>)
-   :filter==="supervisors"?<OwnerSearchSeed.Provider value={seed}>{supervisors??<p role="status">{c2("unavailable")}</p>}</OwnerSearchSeed.Provider>
-   :<OwnerDirectory revision={version} status={filter==="all"?"":filter}>{p=>{
+ function card(p:DirectoryPerson,open=false) {
     const actions=actionsFor(p,ownerId);
-    return <details data-testid="owner-student">
+    return <details data-testid="owner-student" open={open||undefined}>
      <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 py-1">
       <span className="min-w-0"><strong className="block break-words">{p.name||d("unnamed")}</strong>{!p.name&&<bdi className="block break-all text-sm text-muted">{p.email}</bdi>}</span>
       <Chip tone={p.status==="pending"?"warn":"plain"}>{t(`status.${p.status}`)}</Chip>
@@ -102,12 +93,36 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
       <ParticipantActivity code={p.code} userId={p.userId} filters={EMPTY_FILTERS} version={version}/>
      </div>
     </details>;
-   }}</OwnerDirectory>}
+ }
+ function go(next:Tab) {history.pushState(null,"",`?tab=${next}`);setTab(next);}
+ const known=counts?.value??null;
+ const filterLabel=(f:Filter)=>f==="pending"||f==="approved"||f==="suspended"?`${ux(`filter.${f}`)}${known?` (${known[f]})`:""}`:ux(`filter.${f}`);
+ const waiting=c2("loading");
+ return <section data-testid="owner-list" className="min-w-0 space-y-4">
+  <div role="region" aria-label={ux("statusBar")} data-testid="owner-status" className="sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b border-line bg-paper px-4 py-2">
+   {known?<button type="button" className={btn} onClick={()=>{setFilter("pending");go("students");}}>{ux("pendingCount",{count:known.pending})}</button>:<span className="text-sm text-muted" role="status">{counts?d("error"):d("loading")}</span>}
+   {queue&&<button type="button" className={btn} onClick={()=>go("assess")}>{ux(queue.more?"gradingMore":"gradingCount",{count:queue.count})}</button>}
+   <a href="?tab=safety#owner-emergency" data-testid="owner-emergency-button" className={`${danger} ms-auto`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();history.pushState(null,"","?tab=safety#owner-emergency");setTab("safety");setEmergencyOpen(true);requestAnimationFrame(()=>document.getElementById("owner-emergency")?.scrollIntoView());}}>{e("stopTitle")}</a>
+  </div>
+  <nav aria-label={d("tabs")} className="flex flex-wrap gap-2">{tabs.map(s=><a key={s} href={`?tab=${s}`} aria-current={tab===s?"page":undefined} className={`${btn} inline-flex items-center ${tab===s?"bg-paper ring-2 ring-brand":""}`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();go(s);}}>{ux(`tabs.${s}`)}</a>)}</nav>
+  {tab==="students"&&<section aria-labelledby="owner-students-title" className="min-w-0 space-y-3">
+   <div className="flex items-center justify-between gap-2"><h2 id="owner-students-title" className="text-xl font-semibold">{ux("tabs.students")}</h2><button className={btn} onClick={()=>setVersion(v=>v+1)}>{t("refresh")}</button></div>
+   <div role="group" aria-label={ux("filterLabel")} className="flex flex-wrap gap-2">{filters.map(f=><button key={f} type="button" aria-pressed={filter===f} className={`${btn} ${filter===f?"bg-paper ring-2 ring-brand":""}`} onClick={()=>{setFilter(f);if(f!=="supervisors")setSeed("");}}>{filterLabel(f)}</button>)}</div>
+   {who&&<section aria-labelledby="owner-who-title" data-testid="owner-who" className="min-w-0 space-y-2 rounded-lg border border-brand p-3">
+    <h3 id="owner-who-title" tabIndex={-1} className="font-semibold">{ux("who.title")} <bdi className="font-mono" dir="ltr">{who.code}</bdi></h3>
+    {!who.result?<p role="status">{ux("who.searching")}</p>:who.result.kind==="found"?card(who.result.person,true)
+     :<p role={who.result.kind==="error"?"alert":"status"}>{who.result.kind==="error"?t("errors.action"):ux(`who.${who.result.kind}`,{count:LOOKUP_PAGES*20})}</p>}
+    <div className="flex flex-wrap gap-2"><button type="button" className={btn} onClick={()=>go("surveys")}>{ux("who.back")}</button><button type="button" className={btn} onClick={()=>setWho(null)}>{ux("who.close")}</button></div>
+   </section>}
+   {error&&<p role="alert">{t("errors.action")}</p>}
+   {filter==="deletion"?(adapter?<OwnerDeletion adapter={adapter} ownerId={ownerId} onChanged={()=>setVersion(v=>v+1)}/>:<p role="status">{waiting}</p>)
+   :filter==="supervisors"?<OwnerSearchSeed.Provider value={seed}>{supervisors??<p role="status">{c2("unavailable")}</p>}</OwnerSearchSeed.Provider>
+   :<OwnerDirectory revision={version} status={filter==="all"?"":filter}>{p=>card(p)}</OwnerDirectory>}
   </section>}
   {tab==="groups"&&<OwnerAssessPanel key={`groups:${ownerId}`} section="groups"/>}
   {tab==="assess"&&<OwnerAssessPanel key={`assess:${ownerId}`} section="assess" onQueue={(count,more)=>setQueue({count,more})}/>}
   {tab==="practice"&&<OwnerTraining key={version}/>}
-  {tab==="surveys"&&(adapter?<OwnerSurveys adapter={adapter} ownerId={ownerId}/>:<p role="status">{waiting}</p>)}
+  {tab==="surveys"&&(adapter?<OwnerSurveys adapter={adapter} ownerId={ownerId} onLookup={code=>{setWho(w=>({code,request:(w?.request??0)+1,result:null}));go("students");requestAnimationFrame(()=>document.getElementById("owner-who-title")?.focus());}}/>:<p role="status">{waiting}</p>)}
   {tab==="safety"&&<section aria-labelledby="owner-safety-title" className="min-w-0 space-y-3">
    <h2 id="owner-safety-title" className="text-xl font-semibold">{ux("tabs.safety")}</h2>
    <div id="owner-emergency"><Fold title={e("ownerTitle")} open={emergencyOpen} onToggle={setEmergencyOpen} testId="owner-emergency"><EmergencySession owner/></Fold></div>

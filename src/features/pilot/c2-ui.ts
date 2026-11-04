@@ -11,7 +11,7 @@ export type Deletion = {id:string;code:string;days:number;expires:string};
 export type Question = {id:string;kind:'rating'|'text';label:string;optional:boolean};
 export type Definition = {locale:string;scoring:'sus'|'none';citation?:string;questions:Question[]};
 export type SurveyVersion = {id:string;survey_type:string;version:number;definition:Definition};
-export type Round = {id:string;survey_type:string;version:number;closed_at:string;answered:number;pending:number};
+export type Round = {id:string;survey_type:string;version:number;opened_at:string;closed_at:string;answered:number;pending:number};
 export type Answer = {id:string;participant_code:string;round_id:string;survey_type:string;version:number;answered_at:string;answers:Record<string,string|number>;score:number|null};
 export type Pending = {id:string;round_id:string;survey_type:string;version:number;definition:Definition};
 export type Submission = {id:string;answers:Record<string,string|number>};
@@ -69,8 +69,8 @@ export function parseVersion(v:unknown):SurveyVersion {
  return {id:v.id,survey_type:v.survey_type,version:v.version,definition:parseDefinition(v.definition)};
 }
 export function parseRound(v:unknown):Round {
- if(!record(v)||!text(v.id)||!text(v.survey_type)||!integer(v.version)||v.version<1||(v.closed_at!=='infinity'&&!stamp(v.closed_at))||!integer(v.answered)||!integer(v.pending))return invalid();
- return {id:v.id,survey_type:v.survey_type,version:v.version,closed_at:v.closed_at as string,answered:v.answered,pending:v.pending};
+ if(!record(v)||!text(v.id)||!text(v.survey_type)||!integer(v.version)||v.version<1||!stamp(v.opened_at)||(v.closed_at!=='infinity'&&!stamp(v.closed_at))||!integer(v.answered)||!integer(v.pending))return invalid();
+ return {id:v.id,survey_type:v.survey_type,version:v.version,opened_at:v.opened_at,closed_at:v.closed_at as string,answered:v.answered,pending:v.pending};
 }
 export function parseAnswer(v:unknown):Answer {
  if(!record(v)||!text(v.id)||!text(v.participant_code)||!text(v.round_id)||!text(v.survey_type)||!integer(v.version)||!stamp(v.answered_at)||!record(v.answers)||Object.keys(v.answers).length>10||!Object.values(v.answers).every(a=>typeof a==='string'?a.length<=1000:integer(a)&&a>=1&&a<=5)||(v.score!==null&&(typeof v.score!=='number'||!Number.isFinite(v.score)||v.score<0||v.score>100)))return invalid();

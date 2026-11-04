@@ -17,7 +17,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03))
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03)), [owner surveys UX](#owner-surveys-ux-owner-2026-11-04)
 
 ## Active Binding Decisions
 
@@ -1584,3 +1584,13 @@ Authority: owner decisions on Draft #223, recorded as stated; amends the [window
 - Smoke account: a RAD-041 synthetic account that is NOT appointed as alternate.
 - No alternate is appointed now: the owner removed the test appointment on 2026-11-03. A real human alternate is appointed and drilled before any real exam window.
 No live action follows from this record; the PR stays Draft.
+
+<a id="owner-surveys-ux-owner-2026-11-04"></a>
+### Owner surveys UX (RAD-099, option A), 2026-11-04
+Authority: owner's RAD-099 task prompt and the owner's answer on the pin question in the same session, recorded as stated.
+1. Survey answers keep showing the participant CODE only; the [pilot privacy rule](#pilot-policy) is unchanged. Each answer gets a "Who is this?" action that opens that participant's existing card in the Students tab (owner-only, existing data path). No name or email is shown in the surveys tab.
+2. Replace the survey launch controls with a guided flow (choose survey, summary, confirm) and show rounds as readable cards.
+3. Pin: only the `src/features/pilot/OwnerPanel.tsx` sha256 in `scripts/pages/frontend-schema.json` may change, on the [RAD-094 rule](#code-health-pins-owner-2026-11-03); marker and browser→server call set stay identical. No other pin, check or manifest change.
+4. The lookup runs only when "Who is this?" is tapped, pages the existing directory RPC, stops at the first match and is capped at 200 accounts; beyond the cap it says plainly the code was not found there and to search manually.
+5. S-STD-3 ceiling: the 200-account cap; lifting trigger is a server-side search by code (a later, separately reviewed RPC change).
+UI only: no live SQL, migration or RPC change. The PR stays Draft.
