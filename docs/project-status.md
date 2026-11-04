@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 428,
-  "updated_at": "2026-11-04T13:00:00Z",
+  "revision": 429,
+  "updated_at": "2026-11-04T16:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-099",
   "tasks": [
@@ -896,8 +896,8 @@
       "title": "خطة محرك صورة الأشعة بأربع جلسات",
       "status": "planned",
       "priority": "high",
-      "description": "D-R1 (#224) وD-R2 المعدّل (#225) والجلسة3 (#226) والجلسة4 (#227، مفسّر «لماذا؟» لهندسة SID) مدمجة. الجلسة3b في Draft: أشعة القدم صلبة حتى حواف قواعدها المشتقة من المخططات (قرار المالك أ)، عشرة صفوف شهود فقط، وrun-matrix محدّث؛ clip-margin-only سببه منطق منتج فلم يُلتقط. التالي: 3c (أصابع رسم الإعداد، clip-margin-only، التوثيق) ثم denseZones.",
-      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md؛ docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION4_2026-11-04.md؛ docs/DECISIONS.md#radiograph-geometry-diagram-owner-2026-11-04",
+      "description": "D-R1 (#224) وD-R2 المعدّل (#225) والجلسات3 (#226) و4 (#227) و3b (#228) مدمجة. الجلسة3c في Draft: أصابع رسم الإعداد تتحرك مع مشطها بإزاحة شعاع الصورة نفسها (هاشات scene| للقدم فقط)، وأعيد التقاط clip-margin-only وحده، وحُدّث ENGINE_GUIDE وأداتا QA. التالي: denseZones.",
+      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md؛ docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md؛ docs/DECISIONS.md#radiograph-foot-edges-owner-2026-11-04",
       "waiting_on": "owner",
       "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة."
     }
