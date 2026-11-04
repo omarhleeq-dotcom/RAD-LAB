@@ -117,3 +117,56 @@ it('owner appointment section still refreshes its existing snapshot when visibil
   await act(async()=>document.dispatchEvent(new Event('visibilitychange')));expect(read).toHaveBeenCalledTimes(2);
  }finally{await act(async()=>root.unmount());host.remove();vi.mocked(bindEmergency).mockReset();}
 });
+
+it('RAD-095: owner opens and confirms the same stop flow; a visibility rebind keeps the running receipt',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);document.body.append(host);
+ auth.state.profile.role='owner';auth.state.consentVersion=CONSENT_VERSION;
+ const access=vi.spyOn(f.port,'access');vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ const click=(text:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===text)!.click();
+ try{
+  await act(async()=>root.render(localized('en',createElement(EmergencySession,{owner:true}))));
+  const stop=host.querySelector('[data-testid="emergency-stop"]')!;
+  expect(stop.textContent).toContain(en.emergency.ownerIntro);expect(stop.textContent).not.toContain(en.emergency.pageIntro);
+  expect(host.querySelector('[data-testid="emergency-owner"]')).not.toBeNull();expect(host.querySelector('dialog')!.open).toBe(false);
+  await act(async()=>click(en.emergency.startStop));expect(host.querySelector('dialog')!.open).toBe(true);
+  expect(([...host.querySelectorAll('button')].find(b=>b.textContent===en.emergency.stopNow) as HTMLButtonElement).disabled).toBe(true);
+  await act(async()=>host.querySelector<HTMLInputElement>('dialog input')!.click());
+  f.drop();await act(async()=>click(en.emergency.stopNow));
+  expect(host.textContent).toContain(en.emergency.unknown);expect(f.phases).toEqual([1]);
+  await act(async()=>document.dispatchEvent(new Event('visibilitychange')));
+  expect(host.textContent).toContain(en.emergency.unknown);expect(host.querySelector('[data-testid="stop-result"]')).not.toBeNull();
+  await act(async()=>click(en.emergency.continue));
+  expect(host.querySelector('[data-testid="stop-result"]')!.textContent).toBe(en.emergency.status.STOPPED);expect(f.phases).toEqual([1,2,3,4,5,6]);
+  expect(access).not.toHaveBeenCalled();
+ }finally{await act(async()=>root.unmount());host.remove();vi.mocked(bindEmergency).mockReset();}
+});
+
+it('RAD-095: the owner status-bar request opens the confirmation dialog in Arabic; non-owners never see the owner stop',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);document.body.append(host);
+ auth.state.profile.role='owner';auth.state.consentVersion=CONSENT_VERSION;
+ vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ try{
+  await act(async()=>root.render(localized('ar',createElement(EmergencySession,{owner:true,openRequest:1}))));
+  expect(host.querySelector('dialog')!.open).toBe(true);expect(host.textContent).toContain(ar.emergency.ownerIntro);expect(host.textContent).toContain(ar.emergency.confirmStop);
+  expect(f.phases).toEqual([]);
+  await act(async()=>root.unmount());
+  for(const role of ['participant','supervisor']){
+   auth.state.profile.role=role;vi.mocked(bindEmergency).mockClear();
+   const other=createRoot(host);
+   await act(async()=>other.render(localized('en',createElement(EmergencySession,{owner:true,openRequest:1}))));
+   expect(host.innerHTML).toBe('');expect(bindEmergency).not.toHaveBeenCalled();
+   await act(async()=>other.unmount());
+  }
+ }finally{host.remove();vi.mocked(bindEmergency).mockReset();}
+});
+
+it('RAD-095: the alternate page keeps its own intro and no owner wording',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);
+ auth.state.profile.role='participant';auth.state.consentVersion=CONSENT_VERSION;
+ vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ try{
+  await act(async()=>root.render(localized('en',createElement(EmergencyAlternateScope,null,createElement(EmergencyPage)))));
+  expect(host.textContent).toContain(en.emergency.pageIntro);expect(host.textContent).not.toContain(en.emergency.ownerIntro);
+  expect(host.querySelector('[data-testid="emergency-owner"]')).toBeNull();expect(host.querySelector('dialog')!.open).toBe(false);
+ }finally{await act(async()=>root.unmount());vi.mocked(bindEmergency).mockReset();}
+});
