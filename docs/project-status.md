@@ -924,12 +924,12 @@
     {
       "id": "RAD-101",
       "title": "تبسيط محاكي الهاتف: تدقيق ونموذجان وخطة (وثائق فقط)",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "medium",
-      "description": "مدخل المالك 2026-11-04: الطلاب يرون محاكي الهاتف معقدًا. أُنجز في Draft تدقيق وثائقي فقط: الجرد، سبب صفوف التسميات (قرار A1)، نموذجان EN/AR وخطة مراحل. لم يُنفذ أي كود؛ تلميحات Practice باقية.",
-      "source_ref": "docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#ui-inventory-owner-2026-10-22؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
+      "description": "قرار المالك 2026-11-04 (D1–D6): الخيار 1 دون جدول مراجعة، تسميات الهاتف رقائق وسطر إيضاح (A1 معدّل)، 4 خطوات تنتهي بتعليمات المريض، صفوف ± ظاهرة، «لوح الكتف». المرحلة 1 (التسميات على الهاتف) في Draft مستقل يُدمج بعد إطلاق الخميس؛ المراحل 2–5 لم تبدأ.",
+      "source_ref": "docs/DECISIONS.md#rad101-phone-ui-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
       "waiting_on": "owner",
-      "done_when": "يختار المالك الخيار ويقرر تعديل A1، ثم تُدمج المراحل المعتمدة بفحوصها ويؤكد المالك الهاتف."
+      "done_when": "تُدمج المراحل 1–5 وفق D1–D6 بفحوصها، والتقييم والبصمات خارج D5 ثابتة، ويؤكد المالك الهاتف."
     }
   ]
 }

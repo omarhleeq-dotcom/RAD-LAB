@@ -14,7 +14,7 @@ RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابا
 
 RAD-100: [طي المراجع](archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md) في Draft؛ ينتظر مراجعة المالك وفحص الهاتف.
 
-RAD-101: [تدقيق محاكي الهاتف](archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md) وثائق فقط في Draft؛ ينتظر اختيار المالك (الخيار 1/2) وقرار A1 للتسميات.
+RAD-101: [قرارات D1–D6](DECISIONS.md#rad101-phone-ui-owner-2026-11-04) و[التقرير](archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md)؛ المرحلة 1 Draft مستقل يُدمج بعد الإطلاق.
 
 ## المتابعة
 
