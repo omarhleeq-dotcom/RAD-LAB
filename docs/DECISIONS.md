@@ -1572,6 +1572,7 @@ Authority: owner's RAD-100 prompt; presentation only; tracked by RAD-100.
 - Existing fields and strings only; new strings only for the three control labels (EN/AR). No new or translated medical text, no score, verdict, feedback or patient-image change.
 - Phone: one tap target per control, no stacked nested borders.
 - Declared S-STD-1 exception: result| scene-dom keys may change only after a committed guard proves the result panel's text nodes, in order, equal main's with all disclosures opened; no scene| key, pixel witness, golden or characterisation may change.
+- Owner follow-up 2026-11-04: inside the opened control the credits link text becomes "All sources / كل المصادر" (new key); the "Reference:" source-line prefix and the page-level credits link elsewhere are unchanged.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03

@@ -110,7 +110,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
       <span><span aria-hidden data-ui-label>📚</span> <span data-ui-label>{tEv("referenceToggle")}</span></span><EvidenceBadge status={ev.status} />
     </span>}>
       <div className="space-y-1 text-xs text-muted">
-        <p className="flex flex-wrap gap-x-2"><a href={`/${locale}/credits`} className="underline text-brand-strong">{tEv("reference")}</a>
+        <p className="flex flex-wrap gap-x-2"><a href={`/${locale}/credits`} className="underline text-brand-strong">{tEv("allSources")}</a>
           {publicReference(ev.reference) && <span>{tEv("reference")}: <bdi dir="ltr">{publicReference(ev.reference)}</bdi></span>}</p>
         {ev.note && <ResultDisclosure compact title={<span data-ui-label>{tEv("moreDetails")}</span>}><p>{publicText(ev.note)}</p></ResultDisclosure>}
       </div>
