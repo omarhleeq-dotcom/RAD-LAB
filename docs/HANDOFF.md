@@ -14,6 +14,8 @@ RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابا
 
 RAD-102: [شق القدم](archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md) موقوف بعد التشخيص؛ ينتظر خيار المالك. تسمية «كل المصادر» في Draft نفسه.
 
+RAD-103 (RAD-101 سابقًا): [D1–D7](DECISIONS.md#rad101-phone-ui-owner-2026-11-04)، [التقرير](archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md)؛ التنفيذ ‏Draft واحد.
+
 ## المتابعة
 
 إطلاق Practice فقط يوم الخميس؛ بعده نافذة لابتوب واحدة وفق [الدليل](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md) بجملة إذن المالك ([القرار](DECISIONS.md#assess-window-owner-2026-11-03))؛ لا إذن حي من الدمج.
