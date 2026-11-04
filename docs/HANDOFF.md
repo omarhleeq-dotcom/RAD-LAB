@@ -14,7 +14,7 @@ RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابا
 
 RAD-102: [شق القدم](archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md) موقوف بعد التشخيص؛ ينتظر خيار المالك. تسمية «كل المصادر» في Draft نفسه.
 
-RAD-103 (RAD-101 سابقًا): [D1–D7](DECISIONS.md#rad101-phone-ui-owner-2026-11-04)، [التقرير](archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md)؛ المرحلة B في Draft ‏#237 بعد الإطلاق.
+RAD-103: المرحلة B في Draft ‏#237 ([التقرير](archive/reports/2026-11/RAD-103_STAGE_B_PHONE_SIMULATOR_2026-11-04.md))؛ تنتظر موافقة النصوص وفحص الهاتف، والدمج بعد الإطلاق.
 
 ## المتابعة
 
