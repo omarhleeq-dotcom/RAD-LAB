@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 430,
-  "updated_at": "2026-11-04T17:00:00Z",
+  "revision": 431,
+  "updated_at": "2026-11-04T17:00:00.001Z",
   "timezone": "UTC",
-  "next_id": "RAD-099",
+  "next_id": "RAD-100",
   "tasks": [
     {
       "id": "RAD-001",
@@ -900,6 +900,16 @@
       "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md؛ docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md؛ docs/DECISIONS.md#radiograph-densezones-owner-2026-11-04",
       "waiting_on": "owner",
       "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة."
+    },
+    {
+      "id": "RAD-099",
+      "title": "Owner surveys UX: guided launch, round cards, participant lookup (option A)",
+      "status": "in_progress",
+      "priority": "medium",
+      "description": "UI only on the owner surveys tab: guided launch flow with a duplicate-open guard, readable round cards, explicit 7-day interval floor, and a code-only \"Who is this?\" lookup opening the Students card (200-account cap). No SQL, migration or RPC change.",
+      "source_ref": "docs/DECISIONS.md#owner-surveys-ux-owner-2026-11-04",
+      "waiting_on": "code",
+      "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge."
     }
   ]
 }
