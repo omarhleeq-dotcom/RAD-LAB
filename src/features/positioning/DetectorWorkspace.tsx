@@ -30,6 +30,9 @@ const KEY_STEP_LARGE = 0.1;
 /** Size of the midline / target-zone labels in the top margin band of the limb scenes (S-VIS-1b-6, O54: was 15; ≈ 11.9 px on a 390 px phone). */
 const MARGIN_LABEL_SIZE = 16.5;
 
+/** Phone frame-label chips (RAD-101 D2): the smallest chip font in CSS px. */
+const CHIP_PX = 12;
+
 type DragTarget = { kind: "ray" } | { kind: "marker" } | { kind: "edge"; edge: FieldEdge };
 
 interface Props {
@@ -227,20 +230,14 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
         </g>
   );
 
-  const frameRows = phone && fit;
+  // Phone (fitted and whole-detector views, RAD-101 D2 amending RAD-077 A1): the frame labels are small chips in one row above and one row
+  // below the drawing, at their physical slots (never mirrored); the midline / target-zone guide labels move to the legend line.
+  const frameRows = phone;
   return (
     <>
-    {frameRows && <PhoneFrameLabels>
-      <SceneLabel x={-6} y={-58} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.top) : ts("head")}</SceneLabel>
-    </PhoneFrameLabels>}
-    {frameRows && <PhoneFrameLabels detectorWidth={W}>
+    {frameRows && <PhoneFrameLabels detectorWidth={W} minPx={CHIP_PX}>
+      <SceneLabel x={mid} y={-58} size={LABEL_SIZE.detector}>{`↑ ${labels.axis ? tAny(labels.axis.top) : ts("head")}`}</SceneLabel>
       <Orientation W={W} showGuides={showGuides} projection={settings.projection} />
-    </PhoneFrameLabels>}
-    {frameRows && showGuides && <PhoneFrameLabels>
-      <>
-        <SceneLabel x={W - 4} y={-122} size={figure.marginGuideLabels ? MARGIN_LABEL_SIZE : LABEL_SIZE.detector + 4} anchor="end" fill={SCENE.guide}>{tAny(labels.midlineKey)}</SceneLabel>
-        <SceneLabel x={W - 4} y={-92} size={figure.marginGuideLabels ? MARGIN_LABEL_SIZE : LABEL_SIZE.detector + 4} anchor="end" fill={SCENE.good}>{t("targetZone")}</SceneLabel>
-      </>
     </PhoneFrameLabels>}
     <svg
       ref={svgRef}
@@ -359,11 +356,11 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
 
       {!frameRows && <SceneLabel bounds={phone ? undefined : whole} x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>}
     </svg>
-    {frameRows && <PhoneFrameLabels>
-      <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{labels.axis ? tAny(labels.axis.bottom) : ts("feet")}</SceneLabel>
+    {frameRows && <PhoneFrameLabels detectorWidth={W} minPx={CHIP_PX}>
+      <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{`${labels.axis ? tAny(labels.axis.bottom) : ts("feet")} ↓`}</SceneLabel>
       <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>
     </PhoneFrameLabels>}
-    {showGuides && <MarkerGuideLegend size={positioning.markerSizeCm} />}
+    {showGuides && <MarkerGuideLegend size={positioning.markerSizeCm} centring={frameRows ? { target: t("targetZone"), midline: tAny(labels.midlineKey) } : undefined} />}
     </>
   );
 }

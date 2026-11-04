@@ -53,21 +53,37 @@ export function orientationRows(width: number, detectorWidth: number, measuremen
   return { positions, width, height: rows.length ? top - gap + inset : 1 };
 }
 
-/** Phone fitted view only. Its own pixel-sized SVG bands do not change the detector's viewBox or touch transform. */
-export function PhoneFrameLabels({ children, detectorWidth }: { children: ReactNode; detectorWidth?: number }) {
+/**
+ * Chip scale (RAD-101 D2, amends RAD-077 A1): CSS px per label unit, so the smallest label font of a band renders at `minPx`
+ * (never enlarged above its authored size). Labels keep their relative sizes; the band lays them out in label units.
+ */
+export const chipScale = (minPx: number, fontSizes: readonly number[]) => {
+  const smallest = Math.min(...fontSizes.filter((s) => s > 0));
+  return Number.isFinite(smallest) ? Math.min(1, minPx / smallest) : 1;
+};
+
+/**
+ * Phone only. Its own SVG bands next to the detector do not change the detector's viewBox or touch transform.
+ * `minPx` (RAD-101 D2): draw the labels as small chips whose smallest font is `minPx` CSS px, instead of at 1 label unit = 1 px.
+ */
+export function PhoneFrameLabels({ children, detectorWidth, minPx }: { children: ReactNode; detectorWidth?: number; minPx?: number }) {
   const ref = useRef<SVGSVGElement>(null);
-  const [rows, setRows] = useState<FrameRows>({ positions: {}, width: 1, height: 1 });
+  const [rows, setRows] = useState<FrameRows & { scale: number }>({ positions: {}, width: 1, height: 1, scale: 1 });
   useLayoutEffect(() => {
     const svg = ref.current;
     if (!svg) return;
     const measure = () => {
-      const width = svg.getBoundingClientRect().width;
-      if (!width) return;
-      const measurements = [...svg.querySelectorAll<SVGTextElement>("text[data-phone-frame-label]")].map((t) => {
+      const cssWidth = svg.getBoundingClientRect().width;
+      if (!cssWidth) return;
+      const texts = [...svg.querySelectorAll<SVGTextElement>("text[data-phone-frame-label]")];
+      const measurements = texts.map((t) => {
         const b = t.getBBox();
         return { key: t.dataset.phoneFrameLabel!, x: b.x - t.x.baseVal[0]!.value, y: b.y - t.y.baseVal[0]!.value, width: b.width, height: b.height };
       });
-      const next = detectorWidth === undefined ? frameRows(width, measurements) : orientationRows(width, detectorWidth, measurements);
+      // Bounding boxes are in label units, whatever the viewBox: lay out in units over the CSS width divided by the chip scale.
+      const scale = minPx === undefined ? 1 : chipScale(minPx, texts.map((t) => Number(t.getAttribute("font-size"))));
+      const width = cssWidth / scale;
+      const next = { ...(detectorWidth === undefined ? frameRows(width, measurements) : orientationRows(width, detectorWidth, measurements)), scale };
       setRows((old) => JSON.stringify(old) === JSON.stringify(next) ? old : next);
     };
     measure();
@@ -75,8 +91,8 @@ export function PhoneFrameLabels({ children, detectorWidth }: { children: ReactN
     observer.observe(svg);
     void document.fonts.ready.then(measure);
     return () => observer.disconnect();
-  }, [children, detectorWidth]);
-  return <svg ref={ref} aria-hidden="true" width="100%" height={rows.height} viewBox={`0 0 ${rows.width} ${rows.height}`} style={{ direction: "ltr", pointerEvents: "none" }}>
+  }, [children, detectorWidth, minPx]);
+  return <svg ref={ref} aria-hidden="true" width="100%" height={rows.height * rows.scale} viewBox={`0 0 ${rows.width} ${rows.height}`} style={{ direction: "ltr", pointerEvents: "none" }}>
     <PhoneFrameLabelContext.Provider value={rows}>{children}</PhoneFrameLabelContext.Provider>
   </svg>;
 }
