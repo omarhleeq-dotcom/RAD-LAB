@@ -1554,6 +1554,7 @@ Owner decisions on the [Session 3b report](archive/reports/2026-11/RAD-098_RADIO
 4. Set-up drawing: in the foot AP / oblique set-up drawing each toe moves WITH its metatarsal ray (as in the result image), not by its own toe anchors.
 5. `clip-margin-only`: re-capture approved. Cause: fce75bc (RAD-080, centimetre inputs no longer rounded), intended product behaviour, benign. Tolerances unchanged.
 6. Update ENGINE_GUIDE item 6 and fix the stale checks in `lower-limb-audit.mjs` and `radiograph-performance.mjs`.
+7. Owner option 1 on the [soft-tissue cleft report](archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md#7-المفتوح), 2026-11-04 (RAD-102): correct the AP soft-tissue trace by removing the Otsu seam vertices between toes 1 and 2 (through the trace script), and remove self-intersections of the moved soft-tissue outline in the set-up drawing; no new numbers.
 
 <a id="radiograph-densezones-owner-2026-11-04"></a>
 ## Radiograph denseZones for three assets — owner decision 2026-11-04
