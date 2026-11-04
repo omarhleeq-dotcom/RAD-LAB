@@ -21,6 +21,8 @@ export type CuesProps = Props;
 
 /** Drawing scale of the cue diagram (px per drawing cm): the whole standing patient fits the panel. */
 const CK = 1.25;
+/** Region the scapula label is kept inside (client-side offset only): right of the erect arrow at x 52, the full diagram height. */
+const SCAPULA_LABEL_BOUNDS = { x: 58, y: 0, width: 202, height: 300 };
 
 /**
  * Side-view diagram of the erect patient facing the detector (Chest PA); shows the current chin / shoulder choice in the
@@ -73,7 +75,9 @@ function SideDiagram({ chin, shoulders }: Pick<Props, "chin" | "shoulders">) {
       {/* near arm hanging; the shoulder moves toward the detector when rolled forward, the scapula stays behind */}
       <path d={arm} fill={SCENE.soft} stroke={SCENE.outline} strokeWidth={STROKE.thin} strokeLinejoin="round" />
       <path d={`M ${back + (rolled ? -2 : 4)} ${shoulderY + 2} q -9 22 0 44`} fill="none" stroke={SCENE.boneLine} strokeWidth={STROKE.medium} strokeLinecap="round" />
-      <SceneLabel x={96} y={176} size={LABEL_SIZE.view - 1} anchor="end">{t("scapula")}</SceneLabel>
+      {/* RAD-103 (owner 2026-11-04): kept right of the erect arrow (x 52) after measurement, so a longer label (AR «لوح الكتف»)
+          never crosses it; the authored position and the server markup are unchanged. */}
+      <SceneLabel x={96} y={176} size={LABEL_SIZE.view - 1} anchor="end" bounds={SCAPULA_LABEL_BOUNDS}>{t("scapula")}</SceneLabel>
       {/* anterior chest toward the detector */}
       <SceneArrow x1={170} y1={150} x2={206} y2={150} color={SCENE.beam} />
       <SceneLabel x={188} y={140} size={LABEL_SIZE.view - 1} anchor="middle">{ts("anterior")}</SceneLabel>
