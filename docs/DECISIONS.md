@@ -1550,6 +1550,10 @@ Authority: owner's Session 3b prompt, answering the open items of the [Session 3
 2. `clip-margin-only` golden: find the cause first; re-capture only that one file if the cause is proven benign and unrelated to product logic. Never change a tolerance.
 3. `run-matrix.mjs`: update its out-of-date page checks to the current UI.
 No assets, zones, medical values, scores, verdicts or checks change from this record; D-R1–D-R3 still apply.
+Owner decisions on the [Session 3b report](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md#7-المفتوح), 2026-11-04 (Session 3c prompt):
+4. Set-up drawing: in the foot AP / oblique set-up drawing each toe moves WITH its metatarsal ray (as in the result image), not by its own toe anchors.
+5. `clip-margin-only`: re-capture approved. Cause: fce75bc (RAD-080, centimetre inputs no longer rounded), intended product behaviour, benign. Tolerances unchanged.
+6. Update ENGINE_GUIDE item 6 and fix the stale checks in `lower-limb-audit.mjs` and `radiograph-performance.mjs`.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03
