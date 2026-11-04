@@ -13,6 +13,7 @@ import { DetectorWorkspace } from "./DetectorWorkspace";
 import { normalizedSize, normalizedCentreX, normalizedCentreY } from "./cm-controls";
 import { phoneFit } from "./fit-view";
 import { CHEST_PA_LAYOUT, type SceneLayout } from "./scene-layouts";
+import type { WorkspaceTab } from "@/features/simulation/workspace-tabs";
 
 interface Props {
   radCase: RadCase;
@@ -26,6 +27,8 @@ interface Props {
   slots?: SceneSlots;
   /** Phone layout: the scene header's "Enlarge scene" / "Close" toggle (the enlarged view itself is the workspace's). */
   enlarge?: SceneEnlarge;
+  /** Phone layout: the open step; the view follows it (RAD-101 D4, no manual view switch). */
+  step?: WorkspaceTab;
 }
 
 /** Phone "Enlarge scene": the state lives in the workspace (it hides the tabs and the bar); the buttons are the scene header's. */
@@ -43,14 +46,15 @@ export interface SceneSlots {
   notes: Element | null;
 }
 
-export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots, enlarge }: Props) {
+export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots, enlarge, step = "positioning" }: Props) {
   const t = useTranslations("positioning");
   const tw = useTranslations("workspace");
   const tAny = useTranslations() as unknown as (key: string) => string;
   const { figure, SecondView, Cues, texts } = layout;
   const [guidesOn, setGuidesOn] = useState(true);
-  // Phone only: one of the two views is shown at a time, so the sticky scene stays short. The drawings themselves are unchanged.
-  const [view, setView] = useState<"detector" | "second">("detector");
+  // Phone only: one of the two views is shown at a time, so the scene stays short; it follows the step (RAD-101 D4): Detector shows
+  // the detector, Technique the second view (SID), Position and Patient instructions the exam's choice. The drawings are unchanged.
+  const view = step === "centring" ? "detector" : step === "technique" ? "second" : layout.positionView ?? "detector";
   const phone = slots !== undefined;
   // Phone: the detector view is fitted to the anatomy and the field by default; "Whole detector" shows all of it (the viewBox only).
   const [showWhole, setShowWhole] = useState(false);
@@ -148,52 +152,32 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
         <h2 id="pos-heading" className={phone ? "sr-only" : "font-semibold"}>
           {t("title")}
         </h2>
-        {phone && (
-          <div role="group" aria-label={tw("sceneViews")} className="flex min-w-0 rounded-lg border border-line p-0.5">
-            {(["detector", "second"] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                aria-pressed={view === v}
-                onClick={() => setView(v)}
-                className={clsx(
-                  "min-h-11 min-w-20 rounded-md px-3 text-sm font-semibold",
-                  view === v ? "bg-brand text-white" : "text-ink hover:bg-paper",
-                )}
-              >
-                {v === "detector" ? tw("viewDetector") : layout.secondViewIsTop ? tw("viewTop") : tw("viewSide")}
-              </button>
-            ))}
-          </div>
-        )}
         {phone && enlarge && (
           <button
             ref={enlarge.active ? enlarge.closeRef : enlarge.openRef}
             type="button"
             onClick={enlarge.onToggle}
-            aria-label={enlarge.active ? undefined : tw("enlargeScene")}
-            className={clsx("grid min-h-11 shrink-0 place-items-center rounded-lg border", enlarge.active ? "border-brand bg-brand px-3 text-sm font-bold text-white" : "size-11 border-line text-ink hover:bg-paper")}
+            className={clsx("flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-sm font-semibold", enlarge.active ? "border-brand bg-brand font-bold text-white" : "border-line text-ink hover:bg-paper")}
           >
-            {enlarge.active ? (
-              tw("closeSheet")
-            ) : (
-              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            {!enlarge.active && (
+              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
               </svg>
             )}
+            {enlarge.active ? tw("closeSheet") : tw("zoom")}
           </button>
         )}
         {mode === "practice" &&
           (phone ? (
-            // Compact icon toggle on the same row; still the same checkbox with the same accessible label.
-            <label className={clsx("relative grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg border has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal", guidesOn ? "border-brand bg-brand/10 text-brand-strong" : "border-line text-muted")}>
+            // Compact toggle on the same row with visible text "Aids" (RAD-101 D4); still the same checkbox.
+            <label className={clsx("relative flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-sm font-semibold has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal", guidesOn ? "border-brand bg-brand/10 text-brand-strong" : "border-line text-muted")}>
               <input type="checkbox" className="sr-only" checked={guidesOn} onChange={(e) => setGuidesOn(e.target.checked)} />
-              <span className="sr-only">{t("guides")}</span>
-              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                 <circle cx="12" cy="12" r="3" />
                 {!guidesOn && <path d="M4 4l16 16" />}
               </svg>
+              {tw("aids")}
             </label>
           ) : (
             <label className="flex cursor-pointer items-center gap-2 text-sm has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal">

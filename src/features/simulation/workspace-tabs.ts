@@ -1,10 +1,11 @@
 /**
- * Phone simulator tabs (UI-3, F3/F4): the four control groups and which of them hold an unready readiness item.
- * Pure and React-free; the readiness itself stays a workflow check (`features/technique/readiness.ts`).
+ * Phone simulator steps (UI-3 F3/F4, RAD-101 D3): the four control groups in their order and which of them hold an unready
+ * readiness item. Pure and React-free; the readiness itself stays a workflow check (`features/technique/readiness.ts`).
  */
 import type { ExposureReadiness, ReadinessCategory } from "@/features/technique/readiness";
 
-export const WORKSPACE_TABS = ["positioning", "centring", "patient", "technique"] as const;
+/** D3: 1 Position → 2 Detector → 3 Technique → 4 Patient instructions (given right before the exposure). */
+export const WORKSPACE_TABS = ["positioning", "centring", "technique", "patient"] as const;
 export type WorkspaceTab = (typeof WORKSPACE_TABS)[number];
 
 /** The tab that holds the control a readiness category is about. `system` (exposure already made) belongs to none. */
@@ -25,6 +26,15 @@ export function tabsNeedingAttention(readiness: ExposureReadiness): Set<Workspac
   }
   return tabs;
 }
+
+/** A step chip's state (D3): an unready item ("note") wins over "done" (opened before); otherwise "todo" (not started). */
+export type StepState = "done" | "note" | "todo";
+export function stepState(tab: WorkspaceTab, attention: ReadonlySet<WorkspaceTab>, visited: ReadonlySet<WorkspaceTab>): StepState {
+  return attention.has(tab) ? "note" : visited.has(tab) ? "done" : "todo";
+}
+
+/** The step after `tab`, or null on the last one ("Next" in the bottom bar). */
+export const followingTab = (tab: WorkspaceTab): WorkspaceTab | null => WORKSPACE_TABS[WORKSPACE_TABS.indexOf(tab) + 1] ?? null;
 
 /** Arrow-key target in a horizontal tablist; ArrowRight moves backwards in RTL so it always follows the visual order. */
 export function nextTab(current: WorkspaceTab, key: string, rtl: boolean): WorkspaceTab | null {

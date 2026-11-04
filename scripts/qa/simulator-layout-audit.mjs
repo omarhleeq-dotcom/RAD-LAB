@@ -5,10 +5,12 @@
 //  - the scene SVGs are the same drawings on both layouts (outerHTML compared with React ids removed);
 //  - every form control of the desktop layout exists on the phone layout with the same accessible label, in the same order per group;
 //  - phone (a full-screen app view): the document never scrolls; tablist/tab/tabpanel roles, arrow keys follow the visual order
-//    (mirrored in RTL), the "not ready" dot, 44px targets, tabs and bottom bar visible without scrolling, a one-row scene
-//    header, no keyboard-hint text, fine adjustment collapsed, compact technique rows, the schematic note once (in the case
-//    sheet), the case-details (i) sheet auto-opens once and takes/returns focus like the readiness sheet, Expose shows the
-//    result inside the view, Retry does not reopen the case sheet;
+//    (mirrored in RTL), numbered steps in the D3 order with a done / note / not-started state, 44px targets, steps and bottom bar
+//    visible without scrolling, a one-row scene header with the "Aids" and "Zoom" texts and no view switch, the view following the
+//    step (RAD-101 D4), no keyboard-hint text, fine adjustment collapsed, compact technique rows, the schematic note once (in the
+//    case sheet), the case-details (i) sheet auto-opens once and takes/returns focus, a bottom bar of "Next" + Expose only
+//    (RAD-101 D1; no Next on the last step) with the readiness list in the last step, Expose shows the result inside the view,
+//    Retry does not reopen the case sheet;
 //  - touch (owner phone check 2): hit areas of the side marker, the field handles and the crosshair are >= 44 CSS px, the marker letter is
 //    larger, the marker's visible centre is at the same place on the detector as on desktop, "Enlarge scene" opens a near-full-screen
 //    scene (no tabs or bottom bar, no document scroll, settings kept) and closes with Close or Escape, focus moving in and back;
@@ -21,6 +23,7 @@
 // Screenshots in OUT (default /tmp/rad-lab-qa-ui3). Exit code 1 on any failure.
 import { chromium } from "playwright";
 import { mkdirSync, readFileSync } from "node:fs";
+import { WORKSPACE_TABS } from "./workspace.mjs";
 
 const BASE = process.env.BASE ?? "http://localhost:3100";
 const EXAMS = process.argv.slice(2).length ? process.argv.slice(2) : ["chest-pa-erect", "wrist-pa", "elbow-ap", "knee-ap", "pelvis-ap-supine", "shoulder-grashey-erect"];
@@ -168,6 +171,9 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       const missing = ref.labels.filter((l, i, a) => a.filter((x) => x === l).length > snap.labels.filter((x) => x === l).length);
       const extra = snap.labels.filter((l, i, a) => a.filter((x) => x === l).length > ref.labels.filter((x) => x === l).length);
       ok(`${tag} same scene label texts as desktop (drawing, bands, legend)`, JSON.stringify(snap.labels) === JSON.stringify(ref.labels), JSON.stringify({ missing, extra }));
+      // The phone guides toggle shows the short visible name "Aids" (RAD-101 D4): the same checkbox as the desktop "guides" one.
+      const aids = `checkbox||${m.workspace.aids}`, guides = `checkbox||${m.positioning.guides}`;
+      snap.controls = snap.controls.map((c) => (c === aids ? guides : c));
       ok(`${tag} every control kept (labels, ids/names, order)`, JSON.stringify(snap.controls.slice().sort()) === JSON.stringify(ref.controls.slice().sort()),
         JSON.stringify({ phoneOnly: snap.controls.filter((c) => !ref.controls.includes(c)), desktopOnly: ref.controls.filter((c) => !snap.controls.includes(c)) }));
       // Case-details sheet: it auto-opened once when the case loaded; "Start" closes it and focus returns to the (i) button.
@@ -189,8 +195,12 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       await page.keyboard.press("Escape");
       ok(`${tag} Escape closes the case sheet`, !(await caseDialog.isVisible()));
 
-      // Touch: hit areas >= 44 CSS px, a larger marker letter, and the marker's visible centre where it is on desktop.
+      // Steps not opened yet show "not started" (RAD-101 D3).
+      ok(`${tag} unopened steps not started`, (await page.getByRole("tab").nth(2).textContent()).includes(m.workspace.stepNotStarted), await page.getByRole("tab").nth(2).textContent());
+      // Touch: hit areas >= 44 CSS px, a larger marker letter, and the marker's visible centre where it is on desktop. Dragging on the
+      // detector happens in step 2 "Detector", where the view shows it (RAD-101 D4).
       await pickMarker(page);
+      await page.getByRole("tab").nth(WORKSPACE_TABS.indexOf("centring")).click();
       const tc = await touch(page);
       ok(`${tag} marker hit area >= 44px`, tc.markerHit >= 43.5, String(tc.markerHit));
       ok(`${tag} every field handle hit area >= 44px`, tc.handleHits.length === 8 && tc.handleHits.every((h) => h >= 43.5), tc.handleHits.join(","));
@@ -244,7 +254,7 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
         ok(`${tag} toggling back restores the fit`, (await whole.getAttribute("aria-pressed")) === "false" && (await touch(page)).viewBoxWidth < wholeView.viewBoxWidth);
       }
       // Enlarge scene: near full screen, no tabs or bottom bar, no document scroll, settings kept; focus moves in and back.
-      const enlargeButton = page.getByRole("button", { name: m.workspace.enlargeScene, exact: true });
+      const enlargeButton = page.getByRole("button", { name: m.workspace.zoom, exact: true });
       const markerBefore = await page.locator("input[name='side-marker']:checked").evaluate((el) => el.closest("label").textContent.trim());
       await enlargeButton.click();
       const big = page.getByRole("dialog", { name: m.workspace.enlargeScene });
@@ -268,7 +278,7 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       await axe("enlarged scene");
       await page.keyboard.press("Escape");
       ok(`${tag} Escape closes the enlarged scene`, !(await big.isVisible()) && (await page.getByRole("tablist").isVisible()));
-      ok(`${tag} focus back on Enlarge`, await page.evaluate((c) => document.activeElement?.getAttribute("aria-label") === c, m.workspace.enlargeScene));
+      ok(`${tag} focus back on Zoom`, await page.evaluate((c) => document.activeElement?.textContent?.trim() === c, m.workspace.zoom));
       ok(`${tag} settings kept after closing`, (await page.locator("input[name='side-marker']:checked").evaluate((el) => el.closest("label").textContent.trim())) === markerBefore);
       await enlargeButton.click();
       await page.getByRole("button", { name: m.workspace.closeSheet, exact: true }).click();
@@ -285,25 +295,30 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} top bar controls`, (await page.getByRole("link", { name: m.workspace.backToLibrary }).isVisible()) && (await caseButton.isVisible())
         && (await page.getByRole("button", { name: m.shell.openMenu, exact: true }).isVisible()) && (await page.getByRole("heading", { level: 1 }).isVisible()));
       ok(`${tag} site header hidden`, !(await page.locator(".site-header").isVisible()));
-      // Scene header on one row: the view switch and the guides toggle share a line.
-      const sw = await page.getByRole("group", { name: m.workspace.sceneViews }).boundingBox();
-      const gt = await page.getByLabel(m.positioning.guides).locator("xpath=..").boundingBox();
+      // Scene header on one row: "Zoom" and "Aids" with visible text share a line; no manual view switch (RAD-101 D4).
+      const sw = await enlargeButton.boundingBox();
+      const gt = await page.getByLabel(m.workspace.aids, { exact: true }).locator("xpath=..").boundingBox();
       ok(`${tag} scene header is one row`, Math.abs((sw.y + sw.height / 2) - (gt.y + gt.height / 2)) < 6 && sw.height < 60, JSON.stringify({ sw, gt }));
-      const switchNames = await page.getByRole("group", { name: m.workspace.sceneViews }).getByRole("button").allTextContents();
-      ok(`${tag} short view switch labels`, switchNames[0] === m.workspace.viewDetector && [m.workspace.viewTop, m.workspace.viewSide].includes(switchNames[1]), switchNames.join("|"));
-      ok(`${tag} guides toggle 44px + labelled`, (await gt.height) >= 44 && (await page.getByLabel(m.positioning.guides).count()) === 1);
+      ok(`${tag} Zoom and Aids show their text`, (await enlargeButton.innerText()).trim() === m.workspace.zoom && (await page.getByLabel(m.workspace.aids, { exact: true }).locator("xpath=..").innerText()).trim() === m.workspace.aids);
+      ok(`${tag} no manual view switch`, (await page.locator("section[aria-labelledby='pos-heading'] > div").first().locator("button").count()) === 1);
+      ok(`${tag} guides toggle 44px + labelled`, (await gt.height) >= 44 && (await page.getByLabel(m.workspace.aids, { exact: true }).count()) === 1);
 
       const tabs = page.getByRole("tab");
       ok(`${tag} four tabs`, (await tabs.count()) === 4);
-      const names = Object.values(m.workspace.tabs);
+      const names = WORKSPACE_TABS.map((id) => m.workspace.tabs[id]);
+      // The view follows the step: Detector shows the detector, Technique the second view (SID), the others the exam's choice.
+      const detectorShown = () => page.evaluate(() => !document.querySelector("section[aria-labelledby='pos-heading'] figure:has(svg[role=group])").classList.contains("invisible"));
+      const chestFamily = ["chest-pa-erect", "chest-lateral-erect", "chest-ap-supine"].includes(exam);
       const hintRe = /arrow keys|page up|keyboard|home and end|مفاتيح الأسهم|لوحة المفاتيح/i;
       for (let i = 0; i < 4; i++) {
         const tab = tabs.nth(i);
-        ok(`${tag} tab ${i} label`, (await tab.textContent()).startsWith(names[i]));
+        ok(`${tag} tab ${i} label`, (await tab.textContent()).startsWith(`${i + 1}${names[i]}`), await tab.textContent());
         const box = await tab.boundingBox();
         ok(`${tag} tab ${i} 44px`, box.height >= 44, String(box.height));
         await tab.click();
         ok(`${tag} tab ${i} selected`, (await tab.getAttribute("aria-selected")) === "true");
+        const wantDetector = WORKSPACE_TABS[i] === "centring" || (WORKSPACE_TABS[i] !== "technique" && !chestFamily);
+        ok(`${tag} tab ${i} view follows the step (${wantDetector ? "detector" : "second view"})`, (await detectorShown()) === wantDetector);
         const panel = page.locator(`[id="${await tab.getAttribute("aria-controls")}"]`);
         ok(`${tag} panel ${i} visible + labelled`, (await panel.isVisible()) && (await panel.getAttribute("role")) === "tabpanel" && (await panel.getAttribute("aria-labelledby")) === (await tab.getAttribute("id")));
         const inPanel = await panel.evaluate((p) => [...p.querySelectorAll("input")].map((el) => `${el.type}|${el.name}|${el.labels?.length ? [...el.labels].map((l) => l.textContent.trim()).join(" ") : el.closest("label")?.textContent.trim() ?? ""}`));
@@ -316,18 +331,18 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
         // Tabs and bottom bar are in view without scrolling; the panel scrolls inside only when needed.
         const frame = await page.evaluate(() => {
           const vh = innerHeight, r = (el) => el.getBoundingClientRect();
-          const tab = document.querySelector("[role=tablist]"), bar = document.querySelector("[aria-controls$='-sheet']").parentElement;
+          const tab = document.querySelector("[role=tablist]"), bar = [...document.querySelectorAll("[data-phone-app] button")].find((b) => b.getAttribute("aria-describedby") && !b.closest("dialog")).parentElement;
           return { vh, tabsBottom: r(tab).bottom, barTop: r(bar).top, barBottom: r(bar).bottom };
         });
         ok(`${tag} tab ${i} tabs + bottom bar visible without scrolling`, frame.tabsBottom <= frame.barTop && frame.barBottom <= frame.vh + 1 && frame.tabsBottom > 0, JSON.stringify(frame));
         await noScroll(`tab ${i}`);
         await noOverflow(`tab ${i}`);
         await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-tab${i}.png` });
-        if (i === 1) {
+        if (WORKSPACE_TABS[i] === "centring") {
           ok(`${tag} fine adjustment collapsed by default`, await panel.locator("details").evaluate((d) => !d.open));
           ok(`${tag} touch hint in Centring`, (await panel.innerText()).includes(m.positioning.touchHint));
         }
-        if (i === 3) {
+        if (WORKSPACE_TABS[i] === "technique") {
           const heights = await panel.locator("[role=group][aria-labelledby]").evaluateAll((els) => els.filter((e) => e.querySelector("input[type=range]")).map((e) => e.getBoundingClientRect().height));
           ok(`${tag} technique rows are compact`, heights.length >= 3 && heights.every((h) => h <= 84), heights.join(","));
         }
@@ -342,22 +357,25 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} Home -> first tab`, (await tabs.nth(0).getAttribute("aria-selected")) === "true");
       // Dot: the initial case has an unready item (no marker yet); the dot is announced in the tab name.
       ok(`${tag} attention dot`, (await page.locator("[role=tab]", { hasText: m.workspace.needsAttention }).count()) > 0);
-      // Readiness sheet: opens as a modal, focus moves in, Escape closes and returns focus to the trigger.
-      const trigger = page.locator("[aria-controls$='-sheet']");
-      for (const b of [trigger, page.getByRole("button", { name: m.console.expose, exact: true })]) {
-        const box = await b.boundingBox();
-        ok(`${tag} bar button 44px`, box.height >= 44, String(box.height));
-      }
-      await trigger.click();
-      const dialog = page.getByRole("dialog", { name: m.workspace.readinessDetails });
-      ok(`${tag} sheet open`, await dialog.isVisible());
-      ok(`${tag} sheet focus inside`, await page.evaluate(() => !!document.activeElement?.closest("dialog")));
-      ok(`${tag} sheet lists readiness`, await dialog.getByText(`${m.console.readiness.title}:`).isVisible());
-      await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-sheet.png` });
-      await axe("readiness sheet");
-      await page.keyboard.press("Escape");
-      ok(`${tag} sheet closed`, !(await dialog.isVisible()));
-      ok(`${tag} focus back on trigger`, await page.evaluate(() => document.activeElement?.getAttribute("aria-haspopup") === "dialog" && document.activeElement?.getAttribute("aria-controls")?.endsWith("-sheet")));
+      // Bottom bar (RAD-101 D1): "Next" + Expose only, 44px; Next opens the following step and is absent on the last one, where the
+      // readiness list (a Practice hint) describes Expose. A step left with nothing unready shows "done"; the next is current.
+      const expose = page.getByRole("button", { name: m.console.expose, exact: true });
+      const barButtons = () => expose.locator("xpath=..").getByRole("button");
+      const nextName = (id) => m.workspace.nextStep.replace("{step}", m.workspace.tabs[id]);
+      ok(`${tag} bar has Next + Expose only`, (await barButtons().count()) === 2 && (await barButtons().first().innerText()).includes(nextName("centring")), (await barButtons().allInnerTexts()).join("|"));
+      for (const b of [barButtons().first(), expose]) ok(`${tag} bar button 44px`, (await b.boundingBox()).height >= 44);
+      await barButtons().first().click();
+      ok(`${tag} Next opens step 2`, (await tabs.nth(1).getAttribute("aria-selected")) === "true");
+      ok(`${tag} step 1 shows its state (done or note)`, /\(/.test(await tabs.nth(0).textContent()) && !(await tabs.nth(0).textContent()).includes(m.workspace.stepNotStarted));
+      await tabs.nth(3).click();
+      ok(`${tag} no Next on the last step`, (await barButtons().count()) === 1);
+      const described = await expose.getAttribute("aria-describedby");
+      ok(`${tag} readiness list in the last step describes Expose`, await page.locator("[role=tabpanel]:not([hidden])").getByText(`${m.console.readiness.title}:`).isVisible()
+        && (await page.locator(`[role=tabpanel]:not([hidden]) [id="${described}"]`).count()) === 1);
+      ok(`${tag} no readiness sheet`, (await page.locator("dialog[id$='-sheet']").count()) === 0);
+      await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-last-step.png` });
+      await axe("last step");
+      await tabs.nth(0).click();
       // The menu button opens the site navigation (side menu + language switch).
       await page.getByRole("button", { name: m.shell.openMenu, exact: true }).click();
       ok(`${tag} menu reachable from the top bar`, await page.locator("#mobile-navigation").isVisible());

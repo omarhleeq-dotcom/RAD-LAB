@@ -1,11 +1,11 @@
 // Shared helper for the browser audits: reach a simulator control the way a learner does (RAD-074).
 // Since UI-3 the simulator below 1024 px is a full-screen app view: a modal case sheet opens first, the controls sit in
-// four tabs (only the active tab panel is visible) and "fine adjustment" is a closed <details>. Locating a control by role and
+// four numbered step tabs (only the active tab panel is visible) and "fine adjustment" is a closed <details>. Locating a control by role and
 // name therefore fails while its tab or panel is closed. `reveal` opens the right tab/panel through the real UI (tab click,
 // summary click) and returns the locator; on the desktop layout everything is already visible and it returns at once.
 // No test ids and no store access: only roles, accessible names and the messages files.
 export const PHONE_QUERY = "(max-width: 1023px)"; // SimulationWorkspace.tsx PHONE_QUERY
-export const WORKSPACE_TABS = ["positioning", "centring", "patient", "technique"]; // workspace-tabs.ts
+export const WORKSPACE_TABS = ["positioning", "centring", "technique", "patient"]; // workspace-tabs.ts (RAD-101 D3 step order)
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 export const isPhone = (page) => page.evaluate((q) => matchMedia(q).matches, PHONE_QUERY);
