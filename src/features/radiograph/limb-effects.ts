@@ -33,7 +33,8 @@ import { handLateralShifts, handPaAnchors, oddPart } from "@/features/hand-model
 import { ankleApAnchors, ankleLateralCopies, footAnchors, footValue, kneeApShifts, kneeLateralCopies, oddPart as lowerOddPart } from "@/features/lower-limb-model/lower-limb-model";
 import { wristLateralCopies, wristPaShifts } from "@/features/wrist-model/wrist-model";
 import type { ImageBand, RadiographAssetSpec } from "@/domain/radiograph";
-import { interpolateAnchors as anchorShift } from "@/features/limb-warp/warp";
+import { interpolateAnchors as anchorShift, monotone, type WarpAnchor } from "@/features/limb-warp/warp";
+import footOutlines from "@/features/positioning/foot-outlines.json";
 import { TUNING } from "./tuning";
 
 /** Compatibility interpolation binding; the original limb-warp implementation is unchanged. */
@@ -342,9 +343,68 @@ function windowCopiesValue(bands: (WindowBand & { u1: number; u2: number })[], c
 }
 
 
+/**
+ * Foot rays in the RESULT IMAGE (owner decision DECISIONS #radiograph-foot-edges-owner-2026-11-04, option (a)): each metatarsal ray, with
+ * its toes, moves as ONE rigid piece down to its own base edge; the tarsals are not displaced and no bone is bent along its length.
+ * Pure derivation from the owner-reviewed traced outlines (`foot-outlines.json`, illustrative, not a measurement; no stored numbers):
+ * ray n's line x = a + b·y is the least-squares fit of x on y over the vertices of `mt{n}` and its phalanges (`t{n}-*`, group
+ * "phalanges"), and its base edge is the most proximal vertex row (largest y) of `mt{n}`. Image px of the traced baseline.
+ * Throws when a ray cannot be derived (no metatarsal outline, or no phalanx outline): the owner's STOP condition.
+ */
+export interface FootRay { a: number; b: number; baseY: number }
+type OutlineView = { widthPx: number; heightPx: number; structures: { id: string; group: string; points: number[][] }[] };
+export function deriveFootRays(view: OutlineView): FootRay[] {
+  return [1, 2, 3, 4, 5].map((n) => {
+    const mt = view.structures.find((s) => s.id === `mt${n}`);
+    const toes = view.structures.filter((s) => s.group === "phalanges" && s.id.startsWith(`t${n}-`));
+    if (!mt || mt.points.length < 3 || toes.length === 0) throw Error(`foot ray ${n}: base edge cannot be derived from the outlines`);
+    const pts = [mt, ...toes].flatMap((s) => s.points);
+    const my = pts.reduce((t, p) => t + p[1]!, 0) / pts.length, mx = pts.reduce((t, p) => t + p[0]!, 0) / pts.length;
+    const b = pts.reduce((t, p) => t + (p[1]! - my) * (p[0]! - mx), 0) / pts.reduce((t, p) => t + (p[1]! - my) ** 2, 0);
+    return { a: mx - b * my, b, baseY: Math.max(...mt.points.map((p) => p[1]!)) };
+  });
+}
+const FOOT_VIEWS = { "foot-ap": footOutlines.views.ap, "foot-oblique": footOutlines.views.oblique } as const;
+const FOOT_RAYS = { "foot-ap": deriveFootRays(FOOT_VIEWS["foot-ap"]), "foot-oblique": deriveFootRays(FOOT_VIEWS["foot-oblique"]) };
+
+/**
+ * The displacement anchors of one image row (v = fraction of the height) of a foot: one per ray, on the ray's line, carrying the ray's
+ * rigid shift (`shifts`, fraction of the width, ray order 1…5: the model's metatarsal displacements) above its base edge and fading to 0
+ * over `TUNING.limbRotation.bandSoft` BELOW it (the transition lies past the bone, never inside it). Kept fold-free by `monotone`.
+ */
+export function footRayAnchors(model: keyof typeof FOOT_RAYS, shifts: number[], v: number): WarpAnchor[] {
+  const { widthPx, heightPx } = FOOT_VIEWS[model], s = TUNING.limbRotation.bandSoft;
+  return monotone(FOOT_RAYS[model].map((r, i) => {
+    const edge = r.baseY / heightPx;
+    return { u: (r.a + r.b * v * heightPx) / widthPx, du: (shifts[i] ?? 0) * (1 - smoothstep(edge, edge + s, v)) };
+  }));
+}
+
+/**
+ * Exact source column of output column u for the row warp u = us + interpolateAnchors(anchors, us): the forward map is piecewise linear and
+ * increasing (anchors kept by `monotone`), so it is inverted segment by segment (a ray's line lands exactly on its shifted position; the
+ * shared 4-step fixed-point iteration does not converge where neighbouring rays' shifts differ strongly).
+ */
+function inverseWarp(anchors: WarpAnchor[], u: number): number {
+  const n = anchors.length;
+  if (n === 0) return u;
+  const f = (a: WarpAnchor) => a.u + a.du;
+  if (u <= f(anchors[0]!)) return u - anchors[0]!.du;
+  for (let k = 1; k < n; k++) {
+    const p = anchors[k - 1]!, q = anchors[k]!;
+    if (u <= f(q)) return p.u + ((u - f(p)) / (f(q) - f(p))) * (q.u - p.u);
+  }
+  return u - anchors[n - 1]!.du;
+}
+
 /** Select once per row; weights/windows depend only on the row and immutable plan/asset data.
  * No Float32 intermediates are introduced: weights remain ordinary JS Numbers. */
 export function prepareLimbRow(rot: Rotation, lm: NonNullable<RadiographAssetSpec["limbRotation"]>, sample: Sample, v: number): (u: number) => number {
+  if (lm.kind === "limb-warp" && rot.kind === "limb-warp" && (lm.model === "foot-ap" || lm.model === "foot-oblique")) {
+    // Rigid rays (see `footRayAnchors`): the plan's metatarsal anchors (band 2) give each ray's shift; its toe anchors are not read here.
+    const anchors = footRayAnchors(lm.model, (rot.hand?.anchors?.[1] ?? []).map((a) => a.du), v);
+    return (u) => sample(clamp01(inverseWarp(anchors, u)), v);
+  }
   if ((lm.kind === "hand-pa" && rot.kind === "hand-pa") || (lm.kind === "limb-warp" && rot.kind === "limb-warp")) {
     const weights = lm.bands.map(b => bandWeight(b, v));
     return (u) => {
