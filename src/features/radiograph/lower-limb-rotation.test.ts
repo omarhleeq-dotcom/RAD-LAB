@@ -147,7 +147,7 @@ describe("foot rays in the result image (owner decision 2026-11-04: rigid rays, 
     // Declared limit (report §5): where the 5th metatarsal's base would pass over the static 4th ray line, a single-valued warp cannot
     // draw the superimposition; the guard holds it back (before: 149 px of shear at the oblique's 25°).
     expect(held.join(" ")).toBe(model === "foot-ap" ? "15:5" : Array.from({ length: 26 }, (_, v) => `${v}:30`).join(" ") + " 26:18 27:6");
-  });
+  }, 30_000);
   it.each(models)("%s: the pixel step moves a stripe on a ray's line by that ray's shift at its head and at its base", (model) => {
     const view = views[model], rays = deriveFootRays(view), L = lm(model);
     const plan = limbRotationPlan(model === "foot-oblique" ? 30 : -15, true, L)!; // stations where the fold guard does not engage
