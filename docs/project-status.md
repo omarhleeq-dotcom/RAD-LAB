@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 435,
-  "updated_at": "2026-11-04T20:30:00Z",
+  "revision": 436,
+  "updated_at": "2026-11-04T21:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-103",
+  "next_id": "RAD-104",
   "tasks": [
     {
       "id": "RAD-001",
@@ -930,6 +930,16 @@
       "source_ref": "docs/DECISIONS.md#radiograph-foot-edges-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-102_FOOT_SOFT_TISSUE_2026-11-04.md",
       "waiting_on": "owner",
       "done_when": "Draft مدمج بعد مراجعة المالك لصورة المراجعة: لا شق بين الإصبعين 1 و2 ولا تقاطع ذاتي عند كل محطة، مع تغيّر مفاتيح scene| للقدم فقط، وفحص المالك للهاتف."
+    },
+    {
+      "id": "RAD-103",
+      "title": "تبسيط محاكي الهاتف: مرحلتان (تخطيط ثم تنفيذ واحد) (خُطِّطت باسم RAD-101)",
+      "status": "in_progress",
+      "priority": "medium",
+      "description": "قرار المالك 2026-11-04 (D1–D7): الخيار 1 دون مراجعة، رقائق تسميات وسطر إيضاح (A1 معدّل)، 4 خطوات تنتهي بتعليمات المريض، صفوف ± ظاهرة، «لوح الكتف». المرحلة A (التخطيط، #234) جاهزة لدمج المالك؛ المرحلة B ‏Draft واحد بخمسة commits بعد الدمج ولم تبدأ؛ #237 يُستبدل بها.",
+      "source_ref": "docs/DECISIONS.md#rad101-phone-ui-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
+      "waiting_on": "owner",
+      "done_when": "يُدمج Draft المرحلة B بعد الإطلاق بأمر المالك وفق D1–D7، والتقييم والبصمات خارج مفاتيح الصدر AR في D5 ثابتة، ويؤكد المالك الهاتف."
     }
   ]
 }

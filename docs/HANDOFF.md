@@ -14,6 +14,8 @@ RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابا
 
 RAD-102: [شق القدم](archive/reports/2026-11/RAD-102_FOOT_SOFT_TISSUE_2026-11-04.md) في Draft (الخيار 1)؛ ينتظر مراجعة المالك لصورة المراجعة وفحص الهاتف.
 
+RAD-103 (RAD-101 سابقًا): [D1–D7](DECISIONS.md#rad101-phone-ui-owner-2026-11-04)، [التقرير](archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md)؛ التنفيذ ‏Draft واحد.
+
 ## المتابعة
 
 إطلاق Practice فقط يوم الخميس؛ بعده نافذة لابتوب واحدة وفق [الدليل](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md) بجملة إذن المالك ([القرار](DECISIONS.md#assess-window-owner-2026-11-03))؛ لا إذن حي من الدمج.

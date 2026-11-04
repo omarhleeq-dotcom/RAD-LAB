@@ -14,7 +14,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
-- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04); [result references collapsed](#result-references-owner-2026-11-04)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04); [result references collapsed](#result-references-owner-2026-11-04); [phone simulator RAD-103](#rad101-phone-ui-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
 - [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03)), [owner surveys UX](#owner-surveys-ux-owner-2026-11-04), [owner in-app stop](#owner-inapp-stop-owner-2026-11-04)
@@ -711,7 +711,7 @@ Closed question texts and their scope/evidence are retained in the [closed-quest
 **السلطة:** قرارات المالك الصريحة في المحادثة بعد [مقترح الخطوة1](archive/reports/2026-10/RAD-077_PROPOSAL_2026-10-24.md). التنفيذ والتحقق في [التقرير](archive/reports/2026-10/RAD-077_REPORT_2026-10-24.md). هذه القرارات تضبط المقترح ولا تمنح استثناء بصمات.
 
 - **C1 معتمد:** dark `--art-soft` فقط في `src/app/globals.css`: `#234d59` ← `#3a7380`. light وألوان المحاكي وSVG بلا تغيير.
-- **A1 معتمد للهاتف الملائم فقط:** تسميات الإطار/الاتجاه في صفوف محجوزة ضمن العرض المرئي، بقياس النص واستعمال SceneLabel القائم دون تصغير، والاتجاه LTR في AR. viewBox الكاشف وهندسة اللمس والتشريح والحالة ثابتة. desktop/SSR مطابق بايتًا، ولا تغيير لأي scene/result أو golden/characterisation أو توقع قائم؛ fit-view/touch-geometry/coords تبقى بلا تعديل. عند تعذر ذلك: توقف وإبلاغ، **لا طلب أو افتراض استثناء A1-SVG**. فحص label-collisions بلا تخفيف عتبة، مع التأكد من عدم اصطدام التسميات بالتشريح والإرشادات والمقابض.
+- **A1 معتمد للهاتف الملائم فقط** (**عُدِّل 2026-11-04:** رقائق على حافة الرسم وسطر إيضاح، [D2 في RAD-103، كانت RAD-101](#rad101-phone-ui-owner-2026-11-04)): تسميات الإطار/الاتجاه في صفوف محجوزة ضمن العرض المرئي، بقياس النص واستعمال SceneLabel القائم دون تصغير، والاتجاه LTR في AR. viewBox الكاشف وهندسة اللمس والتشريح والحالة ثابتة. desktop/SSR مطابق بايتًا، ولا تغيير لأي scene/result أو golden/characterisation أو توقع قائم؛ fit-view/touch-geometry/coords تبقى بلا تعديل. عند تعذر ذلك: توقف وإبلاغ، **لا طلب أو افتراض استثناء A1-SVG**. فحص label-collisions بلا تخفيف عتبة، مع التأكد من عدم اصطدام التسميات بالتشريح والإرشادات والمقابض.
 - **خارج الإصلاح الآن:** تجاوز حوض Whole detector بنحو1.4وحدة، ونتيجة تسميات أسفل1440 بند مفتوح فقط.
 - **B أُعيد فتحه نصيًا في RAD-079:** حلّ [قرار المالك 2026-10-25](#rad079-owner-2026-10-25) محل التأجيل بعد بلاغ طالب حقيقي؛ تحليل hash/definitionVersion في المقترح محفوظ. لا تعديل تقييم/feedback، والاستثناء الجديد محصور بالنصوص المسماة.
 - **الإدارة:** يجوز إيداع تحديث RAD-077 في الحالة وHANDOFF ضمن PR نفسه، commit لكل بند، ولوحة قبل/بعد ≤5MB للـPR. في النهاية check كامل مرة واحدة، وexam-audit لكل الأسر المتأثرة في الثيمين، وlabel-collisions EN/AR390 لكل الفحوص17؛ typecheck وlint قبل كل دفع. Draft فقط ثم توقف. لا hosted preview أو DB حي أو hash regeneration.
@@ -1563,6 +1563,18 @@ Authority: owner's Session 2b' prompt; lifts the denseZones gap left by [D-R1](#
 - Structures: chest lateral — thoracic spine; heart and retrocardiac region. Pelvis AP — sacrum; both acetabula with femoral heads. Shoulder Grashey — humeral head with glenoid.
 - The owner (radiography graduate) reviews the zone overlay images before merge.
 - Data only: no new mechanism, constants, TUNING, scores, verdicts or checks; D-R1–D-R3 still apply.
+
+<a id="rad101-phone-ui-owner-2026-11-04"></a>
+## Phone simulator simplification (RAD-103, planned as RAD-101) — owner decisions 2026-11-04
+Authority: owner's answers to §8 of the [RAD-101 audit](archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md), recorded as stated; tracked by RAD-103 (planned as RAD-101; renumbered because #235 had already moved next_id to RAD-103 on main). Amends [A1](#rad077-owner-2026-10-24) and the phone layout of [F3](#ui-inventory-owner-2026-10-22); F4 free navigation in Practice is unchanged.
+- D1 Option 1: figure on top, one step below, no page scrolling. No "Review" table or review sheet, in Practice too. Bottom bar: "Next" and "Expose" only; Expose stays available on every step. The practice page stays within its KiB cap.
+- D2 A1 amended (phone): direction labels become small chips on the figure edge (≥12 px; sides never mirrored in Arabic); "detector midline" and "centering target zone" move to a legend line under the figure.
+- D3 Steps: 1 Position → 2 Detector (sections "Centering & field" | "Marker") → 3 Technique → 4 Patient instructions → Expose. Patient instructions come last because breathing/stillness instructions are given right before exposure. The projection choice moves from Technique to step 1. Each step chip shows its state: done / note / not started.
+- D4 No manual view switcher: the view follows the step. "Aids", "Zoom" and "Full detector" stay as buttons with visible text. Marker-exclusion zones show only in the Marker section.
+- D5 Arabic «اللوح» becomes «لوح الكتف»; named S-STD-2 exception for the affected Arabic chest scene-dom keys, regenerated only through the UPDATE_* path.
+- D6 Fine adjustment always visible as ± rows (centering offsets, field size, SID, kVp, mAs, rotation); dragging on the figure stays; all Practice hints stay.
+- D7 (later the same day) Two stages only: Stage A = planning (#234); Stage B = ONE implementation Draft PR with all of D1–D6 in five ordered commits (labels → steps → Detector sections → ± rows → «لوح الكتف» with AR chest hashes via UPDATE_* only). No Review screen or table anywhere. Stage B starts only after the owner confirms #234 is merged, and merges after the Thursday launch.
+- Unchanged: scoring, feedback, readiness rules, patient and radiograph images, stored coordinates, and desktop DOM and hashes outside D5.
 
 <a id="result-references-owner-2026-11-04"></a>
 ## Result panel references and model notes collapsed — owner decision 2026-11-04
