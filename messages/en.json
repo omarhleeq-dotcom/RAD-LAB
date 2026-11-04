@@ -285,6 +285,9 @@
   "evidence": {
     "label": "Evidence",
     "reference": "Reference",
+    "referenceToggle": "Reference",
+    "moreDetails": "More details",
+    "aboutSimulator": "About this in the simulator",
     "validated": "SOURCE-BASED",
     "common-reference": "COMMON REFERENCE / NOT UNIVERSAL",
     "vendor-protocol-dependent": "VENDOR / LOCAL-PROTOCOL DEPENDENT",

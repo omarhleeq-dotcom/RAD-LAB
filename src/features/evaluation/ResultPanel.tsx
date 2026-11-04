@@ -95,21 +95,33 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
   };
 
   const content = resultContent(radCase, result, plan);
-  const effects = (ruleId?: string) => content.effects(ruleId).map((effect) => (
-    <RadiographEffect key={effect.id} effect={effect} plan={plan} sex={radCase.patient.sex} wording={wordingNsOf(radCase.radiograph.projection)} />
+  const effects = (ruleId?: string, flat = false) => content.effects(ruleId).map((effect) => (
+    <RadiographEffect key={effect.id} effect={effect} plan={plan} sex={radCase.patient.sex} wording={wordingNsOf(radCase.radiograph.projection)} flat={flat} />
   ));
   const variants = (ruleId?: string) => content.variants(ruleId).map((v) => (
     <p key={v} data-variant={v} data-drawn={variantIsDrawn(v, plan)} className="text-xs text-muted">
       {t(`variants.${v}`)}{v !== "correct" && !variantIsDrawn(v, plan) && <> ({t("notDrawnVariant")})</>}
     </p>
   ));
+  // RAD-100 (DECISIONS.md#result-references-owner-2026-11-04): one closed control; the evidence badge stays visible when closed.
+  // Text nodes keep main's order (badge, credits link, source line, note); `data-ui-label` marks the only new strings.
   const evidence = (ev: CheckResult["evidence"]) => (
-    <div className="mt-2 space-y-1 text-xs text-muted">
-      <EvidenceBadge status={ev.status} /> <a href={`/${locale}/credits`} className="underline text-brand-strong">{tEv("reference")}</a>
-      {publicReference(ev.reference) && <p>{tEv("reference")}: <bdi dir="ltr">{publicReference(ev.reference)}</bdi></p>}
-      {ev.note && <p>{publicText(ev.note)}</p>}
-    </div>
+    <ResultDisclosure compact className="mt-1" title={<span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <span><span aria-hidden data-ui-label>📚</span> <span data-ui-label>{tEv("referenceToggle")}</span></span><EvidenceBadge status={ev.status} />
+    </span>}>
+      <div className="space-y-1 text-xs text-muted">
+        <p className="flex flex-wrap gap-x-2"><a href={`/${locale}/credits`} className="underline text-brand-strong">{tEv("reference")}</a>
+          {publicReference(ev.reference) && <span>{tEv("reference")}: <bdi dir="ltr">{publicReference(ev.reference)}</bdi></span>}</p>
+        {ev.note && <ResultDisclosure compact title={<span data-ui-label>{tEv("moreDetails")}</span>}><p>{publicText(ev.note)}</p></ResultDisclosure>}
+      </div>
+    </ResultDisclosure>
   );
+  const about = (ruleId: string) => {
+    const list = effects(ruleId, true);
+    return list.length > 0 && <ResultDisclosure compact className="mt-1" title={<span data-ui-label>{tEv("aboutSimulator")}</span>}>
+      <ul className="space-y-3">{list}</ul>
+    </ResultDisclosure>;
+  };
   const item = (k: CheckResult) => {
     const critical = criticalForCheck(k, radCase, result.criticalFindings);
     const rule = radCase.rules.find((r) => r.id === k.ruleId);
@@ -143,7 +155,7 @@ export function ResultPanel({ radCase, settings, result, onRetry, onRestart }: P
           {needsNotDrawnLabel(k.ruleId, k.outcome, plan) && <p data-testid="not-drawn" className="mt-1 text-xs text-muted">{t("notDrawn")}</p>}
           {variants(k.ruleId)}
           {sidWhy && <SidGeometryExplainer input={sidWhy} />}
-          <ul className="mt-2 space-y-2">{effects(k.ruleId)}</ul>
+          {about(k.ruleId)}
           {evidence(k.evidence)}
           {critical.map((f) => <div key={f.id} data-critical={f.id} className="mt-2 space-y-1 border-t border-line pt-2 text-sm text-ink">
             <p>{localize(f.reason, locale)}</p>
