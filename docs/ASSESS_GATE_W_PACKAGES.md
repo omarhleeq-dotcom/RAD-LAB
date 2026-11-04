@@ -85,14 +85,14 @@ Test file: `scripts/assess/grading-worker-rehearsal.test.mjs`.
 - The attestation is read from `/run/recovery/assess-recovery.json` with no symlink, again on **every** verify call. Its fields must be exactly `contract` (`assess-recovery-attestation/1`), `projectRef` (the ref in the W2 host), `manifestSha256` (this image's manifest), `baselineAt`, `restoresSinceBaseline` (exactly `0`), `issuedAt` and `expiresAt`. All three times must be canonical ISO strings with milliseconds, with `baselineAt ≤ issuedAt ≤ now < expiresAt` and `expiresAt − issuedAt ≤ 48 h`. Anything else ends `STOP quarantined` before any connection, or `STOP unavailable` mid-run, before the next claim or finish. The output is one fixed JSON line with no detail.
 - Mount directories: Cloud Run "doesn't allow you to mount multiple secrets at the same path because two volume mounts can't be mounted at the same location" ([Cloud Run jobs secrets](https://docs.cloud.google.com/run/docs/configuring/jobs/secrets)). So each secret gets its own directory.
 
-**Owner steps (Cloud Shell, after this PR is merged post-launch and D-W5 is recorded; each needs written permission):**
+**Owner steps (steps 1–4 in laptop WSL with Docker Desktop, steps 5–8 in Cloud Shell, after this PR is merged post-launch and D-W5 is recorded; each needs written permission; image route per the [owner decision](DECISIONS.md#assess-push-owner-2026-11-04), commands in the [window runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md#3-w4-image-by-digest-l-20-min)):**
 
-1. `git clone` the repository; `git checkout --detach <promoted merge commit>`; `npm ci`.
+1. On the laptop, in the clone at the pinned commit (`git checkout --detach <promoted merge commit>`): `npm ci`.
 2. Run `node scripts/assess/build-grading-worker.mjs` twice. **Expected:** the same `manifestSha256` both times. Write it down; the attestation needs it.
-3. `docker pull` the pinned `node:24.19.0-bookworm-slim@sha256:a9f5f7c9…` base. Then build with `docker build --network=none -t europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-grading-worker:<commit12> <output dir>`.
-4. Run `gcloud auth configure-docker europe-west3-docker.pkg.dev` and answer **Y** only to this registry prompt. Then `docker push`. Record the pushed `sha256:` digest.
+3. `docker pull` the pinned `node:24.19.0-bookworm-slim@sha256:a9f5f7c9…` base. Then build (laptop Docker server `linux/amd64`) with `docker build --network=none -t europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-grading-worker:<commit12> <output dir>`.
+4. On the laptop, run `gcloud auth configure-docker europe-west3-docker.pkg.dev` and answer **Y** only to this registry prompt. Then `docker push`; confirm the digest in the registry listing. Record the pushed `sha256:` digest.
 5. Once: `gcloud secrets create assess-worker-recovery --project=project-bff9124a-ec31-4d57-bc0 --replication-policy=user-managed --locations=europe-west3`, then grant `roles/secretmanager.secretAccessor` on that secret to the `assess-job` service account only. Repeat the W2.4 IAM review for both secrets.
-6. Before each exam batch, add one attestation version and record its number M. Pipe the JSON on stdin, never in a file or argv: `gcloud secrets versions add assess-worker-recovery --project=project-bff9124a-ec31-4d57-bc0 --data-file=-`. Content: `{"contract":"assess-recovery-attestation/1","projectRef":"vlacestfruxooznrcjqc","manifestSha256":"<step 2>","baselineAt":"<last reconciled baseline>","restoresSinceBaseline":0,"issuedAt":"<now>","expiresAt":"<now + 48 h at most>"}`. Write only `0` if no restore has happened since the baseline. Disable the previous version. The helper [`recovery-attestation.mjs`](../scripts/assess/recovery-attestation.mjs) prints this JSON from the manifest and times, with the same checks as the entrypoint.
+6. Before each exam batch, add one attestation version and record its number M. Pipe the JSON on stdin, never in a file or argv: `gcloud secrets versions add assess-worker-recovery --project=project-bff9124a-ec31-4d57-bc0 --data-file=-`. Content: `{"contract":"assess-recovery-attestation/1","projectRef":"vlacestfruxooznrcjqc","manifestSha256":"<step 2>","baselineAt":"<last reconciled baseline>","restoresSinceBaseline":0,"issuedAt":"<now>","expiresAt":"<now + 48 h at most>"}`. Write only `0` if no restore has happened since the baseline. Disable the previous version. The helper [`recovery-attestation.mjs`](../scripts/assess/recovery-attestation.mjs) prints this JSON from the manifest and times, with the same checks as the entrypoint. Cloud Shell runs it with `--manifest-sha256 <step 2 hash>`, because the manifest file stays on the laptop.
 7. Update the Job by digest: `gcloud run jobs update assess-worker --region=europe-west3 --image=…/assess-grading-worker@sha256:<digest> --tasks=1 --parallelism=1 --max-retries=0 --task-timeout=300s --cpu=1 --memory=512Mi --service-account=assess-job@project-bff9124a-ec31-4d57-bc0.iam.gserviceaccount.com --set-secrets=/run/secrets/assess-worker.json=assess-worker-config:<N>,/run/recovery/assess-recovery.json=assess-worker-recovery:<M>`. Answer **N** to any execute prompt, and never use `--execute-now`. Each new attestation version M needs this update again (`--update-secrets` for that path).
 8. **Digest binding check:** `gcloud run jobs describe assess-worker --region=europe-west3 --format=yaml`. **Expected:** the image line ends in exactly the recorded `@sha256:` digest; limits are 1/1/0/300 s/1 CPU/512Mi; both secret versions are numeric, never `latest`; zero executions.
 
@@ -117,9 +117,9 @@ No page states that a job reaches a public AAAA destination, and no prices were 
 
 **Probe (credential-free):** [`direct-tls-probe.mjs`](../scripts/assess/direct-tls-probe.mjs). It does IPv6 DNS, TCP, a PostgreSQL SSLRequest, and TLS with the pinned Supabase root and a hostname check, then closes. It sends no user, password or query, and mounts no secret. It prints `{outcome, stage, family}` only. Tests: [probe tests](../scripts/assess/direct-tls-probe.test.mjs). The image was built locally and run with no network: Expected `STOP stage dns`, Verified.
 
-**Probe procedure (Cloud Shell, written permission, no Assess state touched):**
+**Probe procedure (step 1 in laptop WSL, steps 2–8 in Cloud Shell, written permission, no Assess state touched):**
 
-1. `node scripts/assess/direct-tls-probe.mjs --build-context ~/assess-ca/prod-ca-2021.crt`, then build and push the image by digest as in W4 steps 3–4, with image name `assess-direct-tls-probe`.
+1. `node scripts/assess/direct-tls-probe.mjs --build-context ~/assess-ca/prod-ca-2021.crt`, then, on the laptop, build and push the image by digest as in W4 steps 3–4 (`--network=none`, pinned base), with image name `assess-direct-tls-probe`; record the registry digest used in step 4.
 2. `gcloud compute networks create radlab-egress --subnet-mode=custom`, then `gcloud compute networks subnets create radlab-egress-ew3 --network=radlab-egress --region=europe-west3 --range=10.8.0.0/26 --stack-type=IPV4_IPV6 --ipv6-access-type=EXTERNAL`. The subnet's IPv6 access type cannot be changed later.
 3. Grant the Cloud Run service agent `roles/compute.publicIpAdmin`. This is a project IAM change, so record it.
 4. `gcloud run jobs create assess-direct-tls-probe --region=europe-west3 --image=…@sha256:<digest> --network=radlab-egress --subnet=radlab-egress-ew3 --vpc-egress=all-traffic --tasks=1 --parallelism=1 --max-retries=0 --task-timeout=60s --cpu=1 --memory=512Mi`. Use no secret. Then execute it once with `--wait`.
@@ -195,8 +195,8 @@ The executable script for these steps, with Expected/STOP and rollback per step,
 |---|---|---|---|
 | 1 | Gate runbook §2–§3 read-only preflight | L, P | R |
 | 2 | Record D-W1, D-W5, D-W6, the W4 verifier decision and W7 scope in DECISIONS | — | owner decision |
-| 3 | W5 probe procedure (network, IAM, probe Job) | CS | written |
-| 4 | Production entrypoint PR merged (W4 lift), then build, push and record the digest | CS | written |
+| 3 | W5 probe procedure (image on the laptop; network, IAM, probe Job in Cloud Shell) | L, CS | written |
+| 4 | Production entrypoint PR merged (W4 lift), then build, push and record the digest (laptop) | L | written |
 | 5 | W1.1 provision, then W1.2 check | L | written; check R |
 | 6 | W1.3 D-W1 TEMP change, then a Practice smoke | L, P | written |
 | 7 | W2.1 metadata read, W2.2 transport, W2.3 check, W2.4 IAM review | L | W2.2 written; others R |

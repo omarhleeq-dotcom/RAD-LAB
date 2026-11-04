@@ -4,7 +4,7 @@
 
 ## Rules for the whole window
 
-- **Devices.** L = laptop WSL Ubuntu shell in `~/RAD-LAB`. B = laptop browser (Cloud Shell tab, Google Cloud console, Supabase dashboard). P = phone. One device at a time; never paste a whole step into a prompt.
+- **Devices.** L = laptop WSL Ubuntu shell in `~/RAD-LAB`, which also runs Docker Desktop for every image build and push. B = laptop browser (Cloud Shell tab, Google Cloud console, Supabase dashboard). P = phone. One device at a time; never paste a whole step into a prompt.
 - **One step at a time.** Compare with **Expected**. A false/null/missing/duplicate row, an error, a timeout, UNKNOWN or an output you do not recognise is **STOP**: run that step's rollback, keep the gate closed, and end the window. No rerun of a mutating command; no improvised fix.
 - **Secrets.** Rule 0.2 of the gate runbook: no password, connection string, email, UUID or secret screenshot in Git, chat, shell arguments or this page. Evidence lines go to the encrypted RAD-086 store; Git receives only redacted times and results.
 - **gcloud prompts.** Answer **N** to every prompt (enable an API, change the default project, execute now), except where a step says **Y**.
@@ -13,9 +13,11 @@
 
 ## Permission sentences (written by the owner, never by an agent)
 
+**Every window is new.** A window starts at step 0 with fresh verification, a fresh step 1.5 backup (its own `baselineAt`) and a new owner-written sentence. The 2026-11-04 window (17:38 UTC, at most 5 h) has ended: never reuse its sentence, `RAD_WINDOW_MAIN`, `baselineAt` or logs.
+
 **Window sentence**, written in the encrypted log and in the session before step 1. Fill the brackets privately:
 
-> I, the RAD-LAB owner, permit the Assess enablement window on [YYYY-MM-DD] from [HH:MM] UTC for at most [H] hours, on Supabase project vlacestfruxooznrcjqc and Google Cloud project project-bff9124a-ec31-4d57-bc0, following ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md at commit [first 12 characters of RAD_WINDOW_MAIN], steps 0–10 in order: the W5 probe, mount check and cleanup; the W4 build and push by digest; W1 provision; the D-W1 TEMP change and a Practice smoke; the W2/W3 credential version; the recovery attestation and Job update by digest; secret Enable; slot LOGIN; one bounded run on an empty queue; close; and the P7 delivery test. Any STOP ends the window with that step's rollback. This sentence does not open assess.launch_gate.
+> I, the RAD-LAB owner, permit the Assess enablement window on [YYYY-MM-DD] from [HH:MM] UTC for at most [H] hours, on Supabase project vlacestfruxooznrcjqc and Google Cloud project project-bff9124a-ec31-4d57-bc0, following ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md at commit [first 12 characters of RAD_WINDOW_MAIN], steps 0–10 in order: the W5 probe image and the W4 image built and pushed by digest from the laptop; the W5 network, probe Job, mount check and cleanup; W1 provision; the D-W1 TEMP change and a Practice smoke; the W2/W3 credential version; the recovery attestation and Job update by digest; secret Enable; slot LOGIN; one bounded run on an empty queue; close; and the P7 delivery test. Any STOP ends the window with that step's rollback. This sentence does not open assess.launch_gate.
 
 **Synthetic smoke sentence** (step 8 only, written just before 8.3):
 
@@ -29,8 +31,8 @@ The gate runbook §0.3 sentence for real students is **not usable in this window
 |---|---|---|---|---|---|
 | 0 | Laptop readiness and connectivity probe | L, B | 20 | read-only | Nothing changed; end the window |
 | 1 | Read-only preflight, P9 Active, P10 fresh backup | L, B | 25 | read-only (backup writes only the laptop store) | Nothing changed; end the window |
-| 2 | W5 probe and mount check, cleanup, D-W5 | B (Cloud Shell) | 45 | window sentence | Delete probe Jobs, dummy secret, subnet, network and the IAM binding; end the window |
-| 3 | W4 build twice, push, record digest | B (Cloud Shell) | 20 | window sentence | Image is unused; record it; end the window |
+| 2 | Docker preflight and probe image (L); W5 network, probe Job, mount check, cleanup, D-W5 (Cloud Shell) | L, B | 45 | window sentence | From 2.3: delete probe Jobs, dummy secret, subnet, network and the IAM binding; before it nothing is created; end the window |
+| 3 | W4 build twice, push, record digest | L | 20 | window sentence | Image is unused; record it; end the window |
 | 4 | W1 provision, check, D-W1 TEMP, Practice smoke | L, P | 15 | window sentence | D-W1 rollback line; slot stays NOLOGIN |
 | 5 | W2.1–W2.4 credential version, checks, IAM review | L | 15 | window sentence | Disable version N; slot stays NOLOGIN |
 | 6 | Recovery secret, attestation, Job update, binding check | B (Cloud Shell) | 20 | window sentence | Disable versions M and N; never execute |
@@ -66,21 +68,22 @@ gcloud config get-value project
 
 **Expected:** a version line; exactly `1` active account (the owner's; do not print it into Git); project `project-bff9124a-ec31-4d57-bc0`. If the project prints `(unset)` or differs, set it with `gcloud config set project project-bff9124a-ec31-4d57-bc0` (allowed here) and answer **N** to any API prompt, then repeat the third command. **STOP** if gcloud is missing or not logged in: `gcloud auth login` is done by the owner in the browser, never from a pasted token.
 
-0.3 CA files (L). Both files are public certificates:
+0.3 CA files (L). Both files are public certificates. **Recovery comes first, then the read:** if the target is missing, install it from the RAD-086 CA only when that source's DER SHA-256 equals the pin; the target is never overwritten, and a different source hash is **STOP** (nothing is written). Then read both:
 
 ```bash
-for f in ~/assess-ca/prod-ca-2021.crt ~/.config/rad-lab-backup/supabase-ca.crt; do
- openssl x509 -in "$f" -outform DER | sha256sum | cut -c1-64; done
+CA_PIN=807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa
+CA_T=~/assess-ca/prod-ca-2021.crt; CA_S=~/.config/rad-lab-backup/supabase-ca.crt
+if [ ! -e "$CA_T" ]; then
+ if [ "$(openssl x509 -in "$CA_S" -outform DER | sha256sum | cut -c1-64)" = "$CA_PIN" ]; then
+  install -d -m 700 ~/assess-ca && install -m 600 "$CA_S" "$CA_T" && echo CA_INSTALLED
+ else echo 'STOP: RAD-086 CA hash differs from the pin; nothing written'; fi
+fi
+stat -c '%a %n' ~/assess-ca "$CA_T"
+for f in "$CA_T" "$CA_S"; do openssl x509 -in "$f" -outform DER | sha256sum | cut -c1-64; done
+[ "$(openssl x509 -in "$CA_T" -outform DER | sha256sum | cut -c1-64)" = "$CA_PIN" ] && echo PIN_OK || echo 'STOP: target hash is not the pin'
 ```
 
-**Expected:** `807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa` for the first file (pinned by the W2 transport and the W5 probe). The second is the RAD-086 CA used by `owner_sql`; it must open with a future `notAfter` ([A6](RAD-086_LAPTOP_BACKUP_RUNBOOK.md#a-one-time-setup-wsl-ubuntu-shell)). **STOP** on any mismatch. In the 2026-11-04 window both files gave this same hash.
-
-If `~/assess-ca/prod-ca-2021.crt` is missing, install it from the RAD-086 CA, and only when that file's DER SHA-256 equals the hash above (directory 700, file 600); any other hash is **STOP**:
-
-```bash
-test "$(openssl x509 -in ~/.config/rad-lab-backup/supabase-ca.crt -outform DER | sha256sum | cut -c1-64)" = 807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa \
- && install -d -m 700 ~/assess-ca && install -m 600 ~/.config/rad-lab-backup/supabase-ca.crt ~/assess-ca/prod-ca-2021.crt
-```
+**Expected:** `CA_INSTALLED` only when the target was missing; modes `700` for the directory and `600` for the file (any other mode is **STOP**); then the pin for the first file (pinned by the W2 transport and the W5 probe) and `PIN_OK`. The second is the RAD-086 CA used by `owner_sql`; it must open with a future `notAfter` ([A6](RAD-086_LAPTOP_BACKUP_RUNBOOK.md#a-one-time-setup-wsl-ubuntu-shell)). **STOP** on `STOP:` output, an `openssl` error or any hash that is not the pin. In the 2026-11-04 window both files gave the pin.
 
 0.4 `owner_sql` and connectivity probe (L). Unlock the encrypted evidence volume, then run the **unchanged** [window step 2 block](RAD-085_RAD-059_WINDOW_RUNBOOK.md#2-select-the-protected-connection-and-evidence-directory) with the private placeholders filled as follows, without printing them: `PGHOST` from the `poolerHost` key of `~/.config/rad-lab-backup/config.json` (for example `export PGHOST="$(node -p "require(process.env.HOME+'/.config/rad-lab-backup/config.json').poolerHost")"`; the command substitution prints nothing), and `RAD_WINDOW_EVIDENCE` a directory under `$HOME` on the BitLocker-encrypted disk. Then:
 
@@ -109,22 +112,40 @@ node scripts/ops/laptop-backup.mjs run && node scripts/ops/laptop-backup.mjs ver
 **Expected:** the B2 JSON line with `count_errors` 0, then `{"verified_files":2,…}`. Write the backup completion time in the log as a canonical UTC string with milliseconds; it is `baselineAt` for step 6 ([review decision](DECISIONS.md#assess-window-review-owner-2026-11-03)).
 **STOP → rollback:** nothing was changed. End the window.
 
-## 2. W5 probe, mount check and D-W5 (Cloud Shell; 45 min)
+## 2. W5 probe, mount check and D-W5 (L for the image, Cloud Shell for the cloud steps; 45 min)
 
-2.1 Upload `~/assess-ca/prod-ca-2021.crt` to Cloud Shell (Cloud Shell menu → Upload) and place it at `~/assess-ca/prod-ca-2021.crt`; any copy whose DER hash matches step 0.3 is accepted. Clone and pin:
+**Image route** ([owner decision](DECISIONS.md#assess-push-owner-2026-11-04)): both images are built and pushed from Docker Desktop in laptop WSL, by digest. Cloud Shell neither builds nor pushes; network, IAM and the probe Jobs stay there. The pinned base, `--network=none` and digest binding are unchanged. The 2026-11-04 Cloud Shell push failure ("connection refused", twice) is not evidence for or against this route.
+
+2.1 Docker and registry preflight (L, read-only; never enable an API):
 
 ```bash
-export PAGER=cat
-git clone https://github.com/omarhleeq-dotcom/RAD-LAB.git ~/RAD-LAB && cd ~/RAD-LAB
-git checkout --detach <RAD_WINDOW_MAIN from step 0.1> && npm ci --no-audit --no-fund
-openssl x509 -in ~/assess-ca/prod-ca-2021.crt -outform DER | sha256sum | cut -c1-64
+export REG=europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime
+docker version --format '{{.Client.Version}} {{.Server.Version}} {{.Server.Os}}/{{.Server.Arch}}'
+gcloud artifacts repositories describe assess-runtime --location=europe-west3 --project=project-bff9124a-ec31-4d57-bc0 --format="value(format)"
+gcloud services list --enabled --project=project-bff9124a-ec31-4d57-bc0 --filter="config.name=artifactregistry.googleapis.com" --format="value(config.name)"
 ```
 
-**Expected:** the same commit and CA hash as step 0. **Cloud Shell blocks:** `set -e` is not used in any Cloud Shell block, because a failing command would close Cloud Shell; read every **Expected** line yourself and **STOP** on any difference.
+**Expected:** a line ending `linux/amd64` (owner-reported before this window: client and server 29.8.2, linux, x86_64; a different version is recorded, not a STOP); `DOCKER`; `artifactregistry.googleapis.com`. Those owner-reported observations prove neither push access nor the cause of the earlier refusal, so they are re-read here. **STOP** on another OS or architecture, an unreachable Docker server, a missing repository, a format other than `DOCKER`, or the API not listed. Nothing was changed.
 
-2.2 Run [W5 probe steps 1–5](ASSESS_GATE_W_PACKAGES.md#4-w5--network-path-decision-needed) exactly. For step 3, the Cloud Run service agent is `service-<PROJECT_NUMBER>@serverless-robot-prod.iam.gserviceaccount.com`; read the number with `gcloud projects describe project-bff9124a-ec31-4d57-bc0 --format="value(projectNumber)"` and compare the agent name with IAM → "Include Google-provided role grants" before granting (Inferred from the Cloud Run docs; not verified live). **Expected:** `{"outcome":"PASS","stage":"complete","family":6}` in the execution log.
+2.2 Probe image (L). The only changes are a temporary build directory and, at the `configure-docker` line, the laptop's Docker config (a credential-helper entry for this one registry):
 
-2.3 Run W5 steps 6–8 (dummy secret, `assess-mount-probe`, type and mode lines). **Expected:** `/run/recovery` `dir`, and `assess-recovery.json` `file`. Then the step 8 cleanup, plus the credential-free TLS probe Job:
+```bash
+cd ~/RAD-LAB
+P1="$(node scripts/assess/direct-tls-probe.mjs --build-context ~/assess-ca/prod-ca-2021.crt)"
+RAD_PROBE_CTX="$(node -p 'JSON.parse(process.argv[1]).output' "$P1")"; echo "$RAD_PROBE_CTX"
+docker pull node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df
+docker build --network=none -t "$REG/assess-direct-tls-probe:${RAD_WINDOW_MAIN:0:12}" "$RAD_PROBE_CTX"
+gcloud auth configure-docker europe-west3-docker.pkg.dev
+docker push "$REG/assess-direct-tls-probe:${RAD_WINDOW_MAIN:0:12}"
+docker inspect --format '{{json .RepoDigests}}' "$REG/assess-direct-tls-probe:${RAD_WINDOW_MAIN:0:12}"
+gcloud artifacts docker images list "$REG" --include-tags --format="value(package,version)"
+```
+
+Run the lines one at a time. Answer **Y** only to the `configure-docker` registry prompt. **Expected:** a `radlab-direct-tls-probe-` directory path; the pull reports the pinned `sha256:a9f5…29df`; a successful build; a push ending `digest: sha256:<64 hex>`; exactly one `…/assess-direct-tls-probe@sha256:<64 hex>` entry; and the registry listing shows that same digest. Record it as `RAD_PROBE_DIGEST` in the log. **STOP** on a `STOP` JSON from the build script, a different base digest, any build or push error (including "connection refused": no retry and no other route), a missing or doubled digest, or a listing that lacks the digest. **STOP → rollback:** the pushed image, if any, is unused; record it. The Docker config entry may be removed by hand. No cloud resource was created; end the window.
+
+2.3 Network, IAM and probe Job (Cloud Shell). Run [W5 probe steps 2–5](ASSESS_GATE_W_PACKAGES.md#4-w5--network-path-decision-needed) exactly, with `--image=$REG/assess-direct-tls-probe@sha256:<RAD_PROBE_DIGEST>` in step 4 (step 1 was done in 2.2). For step 3, the Cloud Run service agent is `service-<PROJECT_NUMBER>@serverless-robot-prod.iam.gserviceaccount.com`; read the number with `gcloud projects describe project-bff9124a-ec31-4d57-bc0 --format="value(projectNumber)"` and compare the agent name with IAM → "Include Google-provided role grants" before granting (Inferred from the Cloud Run docs; not verified live). No `set -e` in any Cloud Shell block, because a failing command would close Cloud Shell; read every **Expected** line and **STOP** on any difference. **Expected:** `{"outcome":"PASS","stage":"complete","family":6}` in the execution log.
+
+2.4 Mount check and cleanup (Cloud Shell). Run W5 steps 6–8 (dummy secret, `assess-mount-probe`, type and mode lines) with the same digest. **Expected:** `/run/recovery` `dir`, and `assess-recovery.json` `file`. Then the step 8 cleanup, plus the credential-free TLS probe Job:
 
 ```bash
 gcloud run jobs delete assess-mount-probe --region=europe-west3
@@ -134,24 +155,35 @@ gcloud run jobs delete assess-direct-tls-probe --region=europe-west3
 
 Answer **Y** only to these three delete prompts. **Expected:** three `Deleted` lines.
 
-2.4 **D-W5, pre-decided:** PASS/complete/6 **and** `file` → option A is accepted; keep `radlab-egress`, `radlab-egress-ew3` and the service-agent role, and continue. **Any other result → STOP the window.** Options B and C stay undecided.
-**STOP → rollback:** delete what exists of the two probe Jobs and the dummy secret (2.3), then `gcloud compute networks subnets delete radlab-egress-ew3 --region=europe-west3`, `gcloud compute networks delete radlab-egress`, and remove the `roles/compute.publicIpAdmin` binding from the service agent. Record the failing stage or type lines only. No Assess state was touched.
+2.5 **D-W5, pre-decided:** PASS/complete/6 **and** `file` → option A is accepted; keep `radlab-egress`, `radlab-egress-ew3` and the service-agent role, and continue. **Any other result → STOP the window.** Options B and C stay undecided.
+**STOP → rollback (from 2.3 on):** delete what exists of the two probe Jobs and the dummy secret (2.4), then `gcloud compute networks subnets delete radlab-egress-ew3 --region=europe-west3`, `gcloud compute networks delete radlab-egress`, and remove the `roles/compute.publicIpAdmin` binding from the service agent. Record the failing stage or type lines only. No Assess state was touched.
 
-## 3. W4 image by digest (Cloud Shell; 20 min)
+## 3. W4 image by digest (L; 20 min)
 
-Run [W4 steps 1–4](ASSESS_GATE_W_PACKAGES.md#3-w4--image-ready-for-review-after-the-launch) in the clone from 2.1: **The push route (Cloud Shell as written, laptop Docker or Cloud Build) is Decision-needed: [report §3](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md#3-قرار-مفتوح-مسار-دفع-الصور).** Until the owner decides, the steps below describe the unchanged written route.
+Run [W4 steps 1–4](ASSESS_GATE_W_PACKAGES.md#3-w4--image-ready-for-review-after-the-launch) in the laptop clone, which is already at `RAD_WINDOW_MAIN` from step 0.1. One line at a time:
 
-```bash
-node scripts/assess/build-grading-worker.mjs; node scripts/assess/build-grading-worker.mjs
-```
-
-**Expected:** two lines with the same `manifestSha256`; write it in the log. Keep the second `output` path as `RAD_W4_OUT`. Then the pinned base pull, `docker build --network=none -t europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-grading-worker:${RAD_WINDOW_MAIN:0:12} "$RAD_W4_OUT"`, `gcloud auth configure-docker europe-west3-docker.pkg.dev` (**Y** to this registry prompt only), `docker push`, and:
+3.1 Build twice and compare (the worker's two-build manifest comparison):
 
 ```bash
-docker inspect --format '{{json .RepoDigests}}' europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-grading-worker:${RAD_WINDOW_MAIN:0:12}
+B1="$(node scripts/assess/build-grading-worker.mjs)"; B2="$(node scripts/assess/build-grading-worker.mjs)"
+H1="$(node -p 'JSON.parse(process.argv[1]).manifestSha256' "$B1")"; H2="$(node -p 'JSON.parse(process.argv[1]).manifestSha256' "$B2")"
+[ -n "$H1" ] && [ "$H1" = "$H2" ] && echo "MANIFEST_SAME $H1" || echo 'STOP: manifest hashes differ'
+RAD_W4_OUT="$(node -p 'JSON.parse(process.argv[1]).output' "$B2")"; echo "$RAD_W4_OUT"
 ```
 
-**Expected:** one `…/assess-grading-worker@sha256:<64 hex>` entry. Record the digest. **STOP** on two different hashes, a build or push error, or more than one digest.
+**Expected:** `MANIFEST_SAME` and one 64-hex hash (write it in the log as `RAD_W4_MANIFEST`; it is not a secret and goes to Cloud Shell for step 6); a `rad085-grading-worker-build-` directory path. **STOP** on `STOP:` or any build error.
+
+3.2 Pinned base, build, push, digest:
+
+```bash
+docker pull node:24.19.0-bookworm-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df
+docker build --network=none -t "$REG/assess-grading-worker:${RAD_WINDOW_MAIN:0:12}" "$RAD_W4_OUT"
+docker push "$REG/assess-grading-worker:${RAD_WINDOW_MAIN:0:12}"
+docker inspect --format '{{json .RepoDigests}}' "$REG/assess-grading-worker:${RAD_WINDOW_MAIN:0:12}"
+gcloud artifacts docker images list "$REG" --include-tags --format="value(package,version)"
+```
+
+`REG` and the registry credential helper come from step 2; if this is a new shell, set `REG` again and, only if pushes now ask for credentials, repeat the `gcloud auth configure-docker europe-west3-docker.pkg.dev` line (**Y** to that registry prompt only). **Expected:** the pinned base digest; a successful build; a push ending `digest: sha256:<64 hex>`; exactly one `…/assess-grading-worker@sha256:<64 hex>` entry, which is the recorded digest; and the registry listing shows the same digest. **STOP** on a different base digest, a build or push error (no retry, no other route), more than one digest, or a digest that differs from the registry's.
 **STOP → rollback:** the pushed image is unused; record it and end the window (step 2 network stays; it changes nothing on its own).
 
 ## 4. W1 provision and D-W1 (L, P; 15 min)
@@ -172,15 +204,15 @@ Run [W2.1–W2.4](ASSESS_GATE_W_PACKAGES.md#2-w2w3--activation-transport-and-new
 
 6.1 W4 step 5 once: create `assess-worker-recovery` and grant the accessor role to `assess-job` only; repeat the W2.4 IAM review for both secrets.
 
-6.2 W4 step 6 with the helper (decision B: `restoresSinceBaseline` 0, at most 48 h). Pass `--no-restore-since-baseline` only if no production restore has happened since `baselineAt`. `baselineAt` is the completion time of the step 1.5 backup verified in this window:
+6.2 W4 step 6 with the helper (decision B: `restoresSinceBaseline` 0, at most 48 h). The helper needs only Node and the pinned clone, with no `npm ci` and no build. In Cloud Shell: `git clone https://github.com/omarhleeq-dotcom/RAD-LAB.git ~/RAD-LAB && cd ~/RAD-LAB` (if `~/RAD-LAB` exists, `cd ~/RAD-LAB && git fetch origin main`), then `git checkout --detach <RAD_WINDOW_MAIN from step 0.1> && git rev-parse HEAD`; **Expected** the same commit. The manifest file stays on the laptop, so use the approved `--manifest-sha256` fallback with the `RAD_W4_MANIFEST` hash from step 3.1. Pass `--no-restore-since-baseline` only if no production restore has happened since `baselineAt`. `baselineAt` is the completion time of the step 1.5 backup verified in **this** window:
 
 ```bash
-node scripts/assess/recovery-attestation.mjs --manifest "$RAD_W4_OUT/manifest.json" \
+node scripts/assess/recovery-attestation.mjs --manifest-sha256 <RAD_W4_MANIFEST from step 3.1> \
  --baseline-at <YYYY-MM-DDTHH:MM:SS.000Z> --valid-hours 48 --no-restore-since-baseline \
  | gcloud secrets versions add assess-worker-recovery --project=project-bff9124a-ec31-4d57-bc0 --data-file=-
 ```
 
-**Expected:** stderr `PASS: issuedAt … expiresAt …`, then `Created version [M]`; write M and both times in the log. If `RAD_W4_OUT` is gone, use `--manifest-sha256 <step 3 hash>` instead. Any `STOP <reason>` means nothing was sent. The worker refuses a clock ahead of Cloud Run (`issuedAt > now`); keep the shell clock synchronised.
+**Expected:** stderr `PASS: issuedAt … expiresAt …`, then `Created version [M]`; write M and both times in the log. Any `STOP <reason>` means nothing was sent. The worker refuses a clock ahead of Cloud Run (`issuedAt > now`); keep the shell clock synchronised.
 
 6.3 W4 step 7, with the option A network flags added because the worker must reach the IPv6 direct host:
 

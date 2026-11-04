@@ -18,7 +18,7 @@ RAD-103: المرحلة B في Draft ‏#237 ([التقرير](archive/reports/2
 
 ## المتابعة
 
-نافذة 11-04 وقفت عند 2.2 ([التقرير](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md)): مسار الدفع قرار للمالك؛ البوابة مغلقة وNOLOGIN وDISABLED. RAD-104: [Brevo](BREVO_SIGNUP_NOTIFY_PLAN.md).
+نافذة 11-04 وقفت ([التقرير](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md)): خيار A لابتوب؛ نافذة جديدة؛ البوابة مغلقة وNOLOGIN وDISABLED. RAD-104: [Brevo](BREVO_SIGNUP_NOTIFY_PLAN.md).
 
 ## الإغلاقات المعلقة
 
