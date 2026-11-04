@@ -14,7 +14,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
-- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
 - [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03))
@@ -1550,6 +1550,14 @@ Authority: owner's Session 3b prompt, answering the open items of the [Session 3
 2. `clip-margin-only` golden: find the cause first; re-capture only that one file if the cause is proven benign and unrelated to product logic. Never change a tolerance.
 3. `run-matrix.mjs`: update its out-of-date page checks to the current UI.
 No assets, zones, medical values, scores, verdicts or checks change from this record; D-R1–D-R3 still apply.
+
+<a id="radiograph-densezones-owner-2026-11-04"></a>
+## Radiograph denseZones for three assets — owner decision 2026-11-04
+Authority: owner's Session 2b' prompt; lifts the denseZones gap left by [D-R1](#radiograph-plan-owner-2026-11-03) ([Session 2 report](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2_2026-11-03.md#7-المفتوح)); tracked by RAD-098.
+- Add `denseZones` to the chest lateral, pelvis AP and shoulder Grashey assets, read by eye from each asset's own image in the existing `{cu,cv,ru,rv}` format and marked TODO(medical-review).
+- Structures: chest lateral — thoracic spine; heart and retrocardiac region. Pelvis AP — sacrum; both acetabula with femoral heads. Shoulder Grashey — humeral head with glenoid.
+- The owner (radiography graduate) reviews the zone overlay images before merge.
+- Data only: no new mechanism, constants, TUNING, scores, verdicts or checks; D-R1–D-R3 still apply.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03
