@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 430,
-  "updated_at": "2026-11-04T17:00:00Z",
+  "revision": 431,
+  "updated_at": "2026-11-04T17:00:00.001Z",
   "timezone": "UTC",
-  "next_id": "RAD-099",
+  "next_id": "RAD-101",
   "tasks": [
     {
       "id": "RAD-001",
@@ -894,12 +894,22 @@
     {
       "id": "RAD-098",
       "title": "خطة محرك صورة الأشعة بأربع جلسات",
-      "status": "planned",
+      "status": "done",
       "priority": "high",
-      "description": "D-R1 (#224) وD-R2 المعدّل (#225) والجلسات 3 (#226) و4 (#227) و3b (#228) و3c (#229) مدمجة. الجلسة 2b' في Draft: denseZones مقروءة بالعين لـChest Lateral وPelvis AP وShoulder Grashey فصار نقص الاختراق مرسومًا؛ تغيّرت 9 صفوف شهود و46 مفتاح scene-dom معلنة فقط. ينتظر مراجعة المالك لصورة المناطق قبل الدمج.",
+      "description": "أُنجزت الجلسات الأربع وتوابعها (#220، #224–#230) ضمن نطاقها المعتمد؛ [تقرير 2b'](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md).",
       "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md؛ docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md؛ docs/DECISIONS.md#radiograph-densezones-owner-2026-11-04",
-      "waiting_on": "owner",
-      "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة."
+      "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة.",
+      "completion_evidence": "#220 و#224 و#225 و#226 و#227 و#228 و#229 و#230 مدمجة (قراءة GitHub 2026-11-04)؛ تقارير الجلسات 1 و2 و2b و2b' و3 و3b و3c و4 في docs/archive/reports/2026-11/؛ إغلاق بأمر المالك في موجّه RAD-100."
+    },
+    {
+      "id": "RAD-100",
+      "title": "لوحة النتيجة: المراجع وشرح النموذج مطوية ومناسبة للطالب",
+      "status": "in_progress",
+      "priority": "medium",
+      "description": "قرار المالك 2026-11-04: كتلة المرجع لكل فحص عنصر مطوي واحد مع شارة الدليل ظاهرة، والملاحظة الطويلة في «تفاصيل أكثر»، وصندوق شرح النموذج مطوي «عن هذا في المحاكي». عرض فقط: لا نص طبي أو درجة جديدة.",
+      "source_ref": "docs/DECISIONS.md#result-references-owner-2026-11-04",
+      "waiting_on": "code",
+      "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف."
     }
   ]
 }

@@ -14,7 +14,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
-- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04); [result references collapsed](#result-references-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
 - [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03))
@@ -1562,6 +1562,16 @@ Authority: owner's Session 2b' prompt; lifts the denseZones gap left by [D-R1](#
 - Structures: chest lateral — thoracic spine; heart and retrocardiac region. Pelvis AP — sacrum; both acetabula with femoral heads. Shoulder Grashey — humeral head with glenoid.
 - The owner (radiography graduate) reviews the zone overlay images before merge.
 - Data only: no new mechanism, constants, TUNING, scores, verdicts or checks; D-R1–D-R3 still apply.
+
+<a id="result-references-owner-2026-11-04"></a>
+## Result panel references and model notes collapsed — owner decision 2026-11-04
+Authority: owner's RAD-100 prompt; presentation only; tracked by RAD-100.
+- Each check's reference block is ONE collapsed control, closed by default: "📚 Reference / 📚 المرجع" plus the existing evidence-status badge, which stays visible when closed.
+- Opened: the existing source line and credits link on one short line; the existing long note sits in a nested "More details / تفاصيل أكثر", closed by default.
+- The per-check model-explanation box (title, text, concept / drawn-amount chips) is a collapsed "About this in the simulator / عن هذا في المحاكي", closed by default.
+- Existing fields and strings only; new strings only for the three control labels (EN/AR). No new or translated medical text, no score, verdict, feedback or patient-image change.
+- Phone: one tap target per control, no stacked nested borders.
+- Declared S-STD-1 exception: result| scene-dom keys may change only after a committed guard proves the result panel's text nodes, in order, equal main's with all disclosures opened; no scene| key, pixel witness, golden or characterisation may change.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03

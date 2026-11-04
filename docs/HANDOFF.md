@@ -12,7 +12,7 @@
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
 
-RAD-098: [3c](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md) مدمجة؛ [2b'](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md) في Draft تنتظر مراجعة المالك.
+RAD-100: [قرار طي المراجع](DECISIONS.md#result-references-owner-2026-11-04) في Draft؛ ينتظر مراجعة المالك وفحص الهاتف.
 
 ## المتابعة
 
