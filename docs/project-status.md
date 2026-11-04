@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 436,
-  "updated_at": "2026-11-04T21:30:00Z",
+  "revision": 438,
+  "updated_at": "2026-11-04T23:45:00Z",
   "timezone": "UTC",
   "next_id": "RAD-104",
   "tasks": [
@@ -934,10 +934,10 @@
     {
       "id": "RAD-103",
       "title": "تبسيط محاكي الهاتف: مرحلتان (تخطيط ثم تنفيذ واحد) (خُطِّطت باسم RAD-101)",
-      "status": "in_progress",
+      "status": "review",
       "priority": "medium",
-      "description": "قرار المالك 2026-11-04 (D1–D7): الخيار 1 دون مراجعة، رقائق تسميات وسطر إيضاح (A1 معدّل)، 4 خطوات تنتهي بتعليمات المريض، صفوف ± ظاهرة، «لوح الكتف». المرحلة A (التخطيط، #234) جاهزة لدمج المالك؛ المرحلة B ‏Draft واحد بخمسة commits بعد الدمج ولم تبدأ؛ #237 يُستبدل بها.",
-      "source_ref": "docs/DECISIONS.md#rad101-phone-ui-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
+      "description": "دُمجت المرحلة A (#234). المرحلة B منفذة في Draft ‏#237: رقائق الحواف، تدقيق التسميات بالنص، 4 خطوات بشريط «التالي» + «تعريض»، قسما الكاشف، صفوف ±، «لوح الكتف» (40 بصمة صدر AR). QA في التقرير. وافق المالك على النصوص والبنود؛ المتبقي: سقف تسمية «لوح الكتف» (§7) وفحص الهاتف والدمج بعد الإطلاق.",
+      "source_ref": "docs/archive/reports/2026-11/RAD-103_STAGE_B_PHONE_SIMULATOR_2026-11-04.md؛ docs/DECISIONS.md#rad101-phone-ui-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
       "waiting_on": "owner",
       "done_when": "يُدمج Draft المرحلة B بعد الإطلاق بأمر المالك وفق D1–D7، والتقييم والبصمات خارج مفاتيح الصدر AR في D5 ثابتة، ويؤكد المالك الهاتف."
     }

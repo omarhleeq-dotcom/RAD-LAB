@@ -1,11 +1,11 @@
 // Shared helper for the browser audits: reach a simulator control the way a learner does (RAD-074).
 // Since UI-3 the simulator below 1024 px is a full-screen app view: a modal case sheet opens first, the controls sit in
-// four tabs (only the active tab panel is visible) and "fine adjustment" is a closed <details>. Locating a control by role and
+// four numbered step tabs (only the active tab panel is visible) and "fine adjustment" is a closed <details>. Locating a control by role and
 // name therefore fails while its tab or panel is closed. `reveal` opens the right tab/panel through the real UI (tab click,
 // summary click) and returns the locator; on the desktop layout everything is already visible and it returns at once.
 // No test ids and no store access: only roles, accessible names and the messages files.
 export const PHONE_QUERY = "(max-width: 1023px)"; // SimulationWorkspace.tsx PHONE_QUERY
-export const WORKSPACE_TABS = ["positioning", "centring", "patient", "technique"]; // workspace-tabs.ts
+export const WORKSPACE_TABS = ["positioning", "centring", "technique", "patient"]; // workspace-tabs.ts (RAD-101 D3 step order)
 
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 export const isPhone = (page) => page.evaluate((q) => matchMedia(q).matches, PHONE_QUERY);
@@ -31,6 +31,13 @@ export async function openTab(page, msgs, id) {
   lastTab.set(page, id);
 }
 
+/** Opens the hidden step-2 section (RAD-101 D3: "Centering & field" | "Marker") that holds `locator`, through its section button. */
+async function openSection(page, locator) {
+  const id = await locator.first().evaluate((el) => el.closest('[hidden]:not([role="tabpanel"])')?.id ?? null, null, { timeout: 500 }).catch(() => null);
+  if (id) await page.locator(`button[aria-controls="${id}"]`).click();
+}
+const SECTION_BUTTONS = 'button[aria-controls$="-section-centring"], button[aria-controls$="-section-marker"]';
+
 /** Opens the closed <details> panels of the visible workspace (fine adjustment) by clicking their summaries. */
 export async function expandDetails(page) {
   const closed = page.locator('[role="tabpanel"]:not([hidden]) details:not([open]) > summary, section[aria-labelledby="pos-heading"] details:not([open]) > summary');
@@ -53,6 +60,7 @@ export async function reveal(page, msgs, locator) {
     if (owner) {
       const id = WORKSPACE_TABS.find((t) => owner.endsWith(`-tab-${t}`));
       if (id) await openTab(page, msgs, id);
+      await openSection(page, locator);
     } else {
       // Role-based locators skip hidden nodes, so there is no panel to ask: try the tabs, last hit first.
       const order = [lastTab.get(page), ...WORKSPACE_TABS].filter((t, i, a) => t && a.indexOf(t) === i);
@@ -60,6 +68,12 @@ export async function reveal(page, msgs, locator) {
         await openTab(page, msgs, id);
         await expandDetails(page);
         if (await seen(locator, 400)) return locator;
+        const sections = page.locator(`[role="tabpanel"]:not([hidden]) :is(${SECTION_BUTTONS})`);
+        for (let i = 0; i < (await sections.count()); i++) {
+          await sections.nth(i).click();
+          await expandDetails(page);
+          if (await seen(locator, 400)) return locator;
+        }
       }
       throw new Error(`control not visible in any phone tab: ${locator}`);
     }

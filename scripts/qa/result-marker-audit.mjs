@@ -85,21 +85,20 @@ for (const device of DEVICES) for (const loc of LOCALES) for (const exam of EXAM
     await page.goto(`${BASE}/${loc}/xray/${exam}/practice`, { waitUntil: "networkidle" });
     if (device === "phone") {
       await page.keyboard.press("Escape");
+      // RAD-101 D3/D4: the detector, its fine adjustment and the marker are all in step 2 "Detector" (marker in its "Marker" section).
+      await page.getByRole("tab", { name: new RegExp(`^${m.workspace.tabs.centring}`) }).click();
       if (zoom === "whole") {
         const whole = page.getByRole("button", { name: m.workspace.wholeDetector, exact: true });
         if (!(await whole.count())) break; // no toggle: the fitted view already shows the whole detector
         await whole.click();
         await page.waitForTimeout(150);
       }
-      await page.getByRole("tab", { name: new RegExp(`^${m.workspace.tabs.centring}`) }).click();
-      const details = page.locator("details", { hasText: m.positioning.fineAdjustPhone });
-      if (await details.count()) await details.first().evaluate((d) => { d.open = true; });
     }
     await setRange(page, m.positioning.centerX, "mid");
     await setRange(page, m.positioning.centerY, "mid");
     await setRange(page, m.positioning.collWidth, "max");
     await setRange(page, m.positioning.collHeight, "max");
-    if (device === "phone") await page.getByRole("tab", { name: new RegExp(`^${m.workspace.tabs.positioning}`) }).click();
+    if (device === "phone") await page.getByRole("button", { name: m.workspace.sectionMarker, exact: true }).click();
     await page.getByRole("radio", { name: place.side, exact: true }).check({ force: true });
     const g = await sceneGeo(page);
     const target = { x: g.det.x + ((place.x + 1) / 2) * g.det.w, y: g.det.y + ((place.y + 1) / 2) * g.det.h };
