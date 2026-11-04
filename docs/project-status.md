@@ -16,7 +16,7 @@
   "revision": 434,
   "updated_at": "2026-11-04T19:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-102",
+  "next_id": "RAD-103",
   "tasks": [
     {
       "id": "RAD-001",
@@ -864,12 +864,12 @@
     {
       "id": "RAD-095",
       "title": "إيقاف الطوارئ للمالك داخل التطبيق",
-      "status": "planned",
+      "status": "review",
       "priority": "medium",
-      "description": "مؤجل بقرار المالك إلى ما بعد إطلاق الخميس. SQL يسمح للمالك بالإيقاف لكن واجهة المالك تعرض إدارة البديل فقط؛ يبقى إيقاف دليل الهاتف مسار المالك. لم يبدأ.",
-      "source_ref": "docs/DECISIONS.md#owner-ux-phase1-owner-2026-11-03؛ docs/OWNER_UX_PHASE1_REPORT_2026-11-03.md",
+      "description": "في Draft بقرار المالك 2026-11-04: تبويب السلامة يعرض للمالك تدفق إيقاف البديل نفسه (التأكيد والمراحل الست والإيصال)، وزر «إيقاف طارئ» يفتح التأكيد؛ صفحة البديل بلا تغيير ودليل الهاتف احتياط. لا SQL أو RPC جديد؛ تغيّرت بصمتا OwnerPanel وEmergencySession فقط. الدمج بعد إطلاق الخميس.",
+      "source_ref": "docs/DECISIONS.md#owner-inapp-stop-owner-2026-11-04؛ src/features/emergency/EmergencySession.tsx؛ src/features/pilot/OwnerPanel.tsx",
       "waiting_on": "owner",
-      "done_when": "أمر المالك بعد الإطلاق بتصميم ونطاق، ثم تنفيذ بموافقة مستقلة واختبار؛ حتى ذلك يبقى دليل الهاتف."
+      "done_when": "Draft مدمج بعد الإطلاق ومراجعة المالك، مع CI أخضر وفحص المالك للهاتف دون تشغيل إيقاف حقيقي."
     },
     {
       "id": "RAD-096",
@@ -922,7 +922,7 @@
       "completion_evidence": "#232 مدمج بيد المالك (قراءة GitHub 2026-11-04)؛ التقرير docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md؛ قول المالك 2026-11-04: دمج #231 و#232 وفحصهما على الهاتف وهما يعملان."
     },
     {
-      "id": "RAD-101",
+      "id": "RAD-102",
       "title": "رسم إعداد القدم: شق النسيج الرخو بين الإصبعين 1 و2",
       "status": "review",
       "priority": "medium",

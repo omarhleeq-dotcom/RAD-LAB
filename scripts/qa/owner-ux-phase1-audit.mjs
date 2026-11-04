@@ -136,13 +136,31 @@ try {
         }
         if (tab === 'practice') { ok(await s.page.getByTestId('practice-filters').evaluate(e => !e.open), `${label}: filters collapsed`); await s.page.getByTestId('owner-training').locator('details summary').filter({ hasText: '75%' }).first().waitFor(); }
         if (tab === 'surveys') await s.page.getByTestId('c2-surveys').waitFor();
-        if (tab === 'safety') ok(await s.page.getByTestId('owner-emergency').evaluate(e => !e.open), `${label}: emergency collapsed by default`);
+        if (tab === 'safety') {
+          // RAD-095: the owner sees the alternate's stop card (owner intro) above the appointment section; no dialog until asked.
+          const card = s.page.getByTestId('emergency-stop'); await card.waitFor();
+          ok(await card.getByText(m.emergency.ownerIntro, { exact: true }).count() === 1 && await card.getByText(m.emergency.pageIntro, { exact: true }).count() === 0, `${label}: owner stop intro`);
+          ok(!(await card.locator('dialog').evaluate(e => e.open)), `${label}: stop dialog closed on plain tab visit`);
+          ok((await card.getByRole('button', { name: m.emergency.startStop, exact: true }).boundingBox()).height >= 44, `${label}: start target >= 44px`);
+          await s.page.getByTestId('emergency-owner').waitFor();
+        }
         await audit(s.page, `${label}-${tab}`);
         if (['assess', 'practice'].includes(tab)) await shot(s.page, `${label}-owner-${tab}`);
       }
       await nav.getByRole('link', { name: ux.tabs.groups, exact: true }).click();
       await stop.click(); await s.page.getByTestId('emergency-owner').waitFor();
-      ok(await s.page.getByTestId('owner-emergency').evaluate(e => e.open), `${label}: emergency button opens the emergency section`);
+      // RAD-095: the status-bar button opens the same confirmation dialog. SYNTHETIC: Stop now is never pressed.
+      const dialog = s.page.getByTestId('emergency-stop').locator('dialog');
+      await s.page.waitForFunction(() => document.querySelector('[data-testid="emergency-stop"] dialog')?.open === true);
+      ok(await dialog.getAttribute('aria-modal') === 'true', `${label}: stop dialog is modal`);
+      ok(await dialog.evaluate(e => e.contains(document.activeElement)), `${label}: focus inside the stop dialog`);
+      const stopNow = dialog.getByRole('button', { name: m.emergency.stopNow, exact: true });
+      ok(await stopNow.isDisabled(), `${label}: Stop now disabled before confirmation`);
+      for (const target of [dialog.getByRole('button', { name: m.emergency.dialogCancel, exact: true }), stopNow, dialog.locator('label')]) ok((await target.boundingBox()).height >= 44, `${label}: dialog target >= 44px`);
+      await dialog.getByRole('checkbox').check(); ok(await stopNow.isEnabled(), `${label}: Stop now enabled only after confirmation`);
+      await audit(s.page, `${label}-stop-dialog`); await shot(s.page, `${label}-owner-stop-dialog`);
+      await s.page.keyboard.press('Escape'); ok(!(await dialog.evaluate(e => e.open)), `${label}: Esc closes the stop dialog`);
+      await s.page.waitForFunction(() => document.querySelector('[data-testid="emergency-stop"] dialog input[type=checkbox]')?.checked === false, null, { timeout: 5000 }); checks++;
       ok(await s.page.getByTestId('emergency-audit').evaluate(e => !e.open), `${label}: audit log collapsed`);
       await s.page.getByTestId('emergency-audit').locator(':scope > summary').click();
       const shown = await s.page.getByTestId('emergency-audit').locator('time').first().textContent();
@@ -150,6 +168,15 @@ try {
       await audit(s.page, `${label}-safety-open`); await shot(s.page, `${label}-owner-safety`);
       assert.deepEqual(writes(s.calls), [], `${label}: no write RPC`); assert.deepEqual(s.errors, [], `${label}: no page errors`);
     } catch (e) { console.error(JSON.stringify({ label, calls: s.calls.map(c => c.fn), errors: s.errors })); throw e; } finally { await s.ctx.close(); }
+  }
+  if (!before) for (const locale of ['en', 'ar']) for (const width of [390, 1440]) {
+    // RAD-095: a non-owner never sees the owner stop or the status-bar button.
+    const label = `${locale}-${width}-participant-owner`, s = await setup(locale, width, { role: 'participant' });
+    try {
+      await s.page.getByTestId('owner-denied').waitFor();
+      ok(await s.page.locator('[data-testid="owner-emergency-button"],[data-testid="emergency-stop"],[data-testid="emergency-owner"]').count() === 0, `${label}: no owner stop`);
+      assert.deepEqual(writes(s.calls), [], `${label}: no write RPC`); assert.deepEqual(s.errors, [], `${label}: no page errors`);
+    } finally { await s.ctx.close(); }
   }
   for (const locale of ['en', 'ar']) for (const width of [390, 1440]) for (const accepted of [false, true]) {
     const m = messages[locale], label = `${locale}-${width}-${accepted ? 'after' : 'before'}-consent`;
