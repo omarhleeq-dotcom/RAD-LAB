@@ -13,7 +13,7 @@ import { PositioningScene } from "@/features/positioning/scenes";
 import { assessReadiness } from "@/features/technique/readiness";
 import { ChoiceControls, ConsolePanel, ProjectionControl } from "@/features/xray-console/ConsolePanel";
 import { ReadinessPanel } from "@/features/xray-console/ReadinessPanel";
-import { WORKSPACE_TABS, followingTab, nextTab, stepState, tabsNeedingAttention, type WorkspaceTab } from "./workspace-tabs";
+import { DETECTOR_SECTIONS, WORKSPACE_TABS, followingTab, nextTab, stepState, tabsNeedingAttention, type DetectorSection, type WorkspaceTab } from "./workspace-tabs";
 
 /** The shell listens for this and opens its navigation dialog (menu + language switch) when its own top bar is hidden. */
 export const OPEN_MENU_EVENT = "radlab:open-menu";
@@ -78,11 +78,12 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
   const base = useId();
   const readinessId = useId();
   const [tab, setTab] = useState<WorkspaceTab>("positioning");
-  const [slots, setSlots] = useState<SceneSlots>({ positioning: null, centring: null, notes: null });
+  const [section, setSection] = useState<DetectorSection>("centring");
+  const [slots, setSlots] = useState<SceneSlots>({ positioning: null, centring: null, marker: null, notes: null });
   // Stable callback refs: a new function per render would detach and re-attach the target on every update.
-  const [{ positioning: attachPositioning, centring: attachCentring, notes: attachNotes }] = useState(() => {
+  const [{ positioning: attachPositioning, centring: attachCentring, marker: attachMarker, notes: attachNotes }] = useState(() => {
     const target = (key: SlotKey) => (el: HTMLDivElement | null) => setSlots((s) => (s[key] === el ? s : { ...s, [key]: el }));
-    return { positioning: target("positioning"), centring: target("centring"), notes: target("notes") };
+    return { positioning: target("positioning"), centring: target("centring"), marker: target("marker"), notes: target("notes") };
   });
   const tabRefs = useRef<Partial<Record<WorkspaceTab, HTMLButtonElement | null>>>({});
   const panels = useRef<HTMLDivElement>(null);
@@ -138,7 +139,15 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
     caseStart.current?.focus();
   };
 
-  const following = followingTab(tab);
+  // "Next" in step 2 opens its "Marker" section first (RAD-101 D3); entering step 2 with Next starts at "Centering & field".
+  const toMarker = tab === "centring" && section === "centring";
+  const following = toMarker ? null : followingTab(tab);
+  const next = () => {
+    if (toMarker) return setSection("marker");
+    if (!following) return;
+    if (following === "centring") setSection("centring");
+    select(following);
+  };
   const panel = (id: WorkspaceTab) => ({
     id: `${base}-panel-${id}`,
     role: "tabpanel" as const,
@@ -190,6 +199,7 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
               slots={slots}
               enlarge={{ active: enlarged, onToggle: () => setEnlarged(!enlarged), openRef: enlargeOpen, closeRef: enlargeClose }}
               step={tab}
+              section={section}
             />
             <div role="tablist" aria-label={t("tabsLabel")} className={clsx("grid-cols-4", enlarged ? "hidden" : "grid")}>
               {WORKSPACE_TABS.map((id, n) => (
@@ -228,8 +238,24 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
                 <ChoiceControls radCase={radCase} settings={settings} onChange={onChange} locked={locked} />
               </div>
             </div>
-            <div {...panel("centring")}>
-              <div ref={attachCentring} className="rounded-lg border border-line bg-panel p-3" />
+            <div {...panel("centring")} className="space-y-3">
+              <div role="group" aria-label={t("tabs.centring")} className="grid grid-cols-2 gap-1 rounded-lg border border-line p-0.5">
+                {DETECTOR_SECTIONS.map((id) => (
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={section === id}
+                    aria-controls={`${base}-section-${id}`}
+                    onClick={() => setSection(id)}
+                    className={clsx("min-h-11 rounded-md px-2 text-sm font-semibold", section === id ? "bg-brand text-white" : "text-ink hover:bg-paper")}
+                  >
+                    {t(id === "centring" ? "sectionCentring" : "sectionMarker")}
+                  </button>
+                ))}
+              </div>
+              {/* One section shows at a time; in the DOM the marker comes first, as in the desktop reading order. */}
+              <div id={`${base}-section-marker`} hidden={section !== "marker"} ref={attachMarker} className="rounded-lg border border-line bg-panel p-3" />
+              <div id={`${base}-section-centring`} hidden={section !== "centring"} ref={attachCentring} className="rounded-lg border border-line bg-panel p-3" />
             </div>
             <div {...panel("technique")}>
               <ConsolePanel radCase={radCase} settings={settings} mode={mode} onChange={onChange} onExpose={onExpose} locked={locked} phone />
@@ -246,13 +272,13 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
           </div>
 
           <div inert={enlarged} className="flex shrink-0 items-center gap-2 border-t border-console-line bg-console px-3 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] text-console-text">
-            {!locked && following && (
+            {!locked && (following || toMarker) && (
               <button
                 type="button"
-                onClick={() => select(following)}
+                onClick={next}
                 className="flex min-h-11 min-w-0 flex-1 items-center justify-center gap-1 rounded-md border border-console-line px-3 text-sm font-semibold text-white hover:bg-console-raise"
               >
-                <span className="truncate">{t("nextStep", { step: t(`tabs.${following}`) })}</span>
+                <span className="truncate">{t("nextStep", { step: toMarker ? t("sectionMarker") : t(`tabs.${following!}`) })}</span>
                 <span aria-hidden className="rtl:-scale-x-100">›</span>
               </button>
             )}
@@ -263,7 +289,7 @@ export function PhoneWorkspace({ radCase, settings, mode, onChange, onExpose, lo
               aria-describedby={locked ? undefined : readinessId}
               className={clsx(
                 "min-h-11 rounded-md bg-signal px-5 py-2 font-bold tracking-widest text-ink hover:brightness-110 disabled:cursor-not-allowed disabled:bg-console-line disabled:text-console-text",
-                (locked || !following) && "flex-1",
+                (locked || !(following || toMarker)) && "flex-1",
               )}
             >
               {locked ? tc("locked") : tc("expose")}

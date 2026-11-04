@@ -54,7 +54,9 @@
     "zoom": "Zoom",
     "nextStep": "Next: {step}",
     "stepDone": "done",
-    "stepNotStarted": "not started"
+    "stepNotStarted": "not started",
+    "sectionCentring": "Centering & field",
+    "sectionMarker": "Marker"
   },
   "positioning": {
     "detector": "Detector / Bucky",

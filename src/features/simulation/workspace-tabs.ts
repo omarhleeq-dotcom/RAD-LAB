@@ -8,9 +8,12 @@ import type { ExposureReadiness, ReadinessCategory } from "@/features/technique/
 export const WORKSPACE_TABS = ["positioning", "centring", "technique", "patient"] as const;
 export type WorkspaceTab = (typeof WORKSPACE_TABS)[number];
 
-/** The tab that holds the control a readiness category is about. `system` (exposure already made) belongs to none. */
+/**
+ * The tab that holds the control a readiness category is about. `system` (exposure already made) belongs to none.
+ * `positioning` holds only the missing side marker, which sits in step 2 "Detector" (section "Marker", RAD-101 D3).
+ */
 const CATEGORY_TAB: Record<ReadinessCategory, WorkspaceTab | null> = {
-  positioning: "positioning",
+  positioning: "centring",
   patient: "patient",
   technique: "technique",
   aec: "technique",
@@ -32,6 +35,10 @@ export type StepState = "done" | "note" | "todo";
 export function stepState(tab: WorkspaceTab, attention: ReadonlySet<WorkspaceTab>, visited: ReadonlySet<WorkspaceTab>): StepState {
   return attention.has(tab) ? "note" : visited.has(tab) ? "done" : "todo";
 }
+
+/** Step 2 "Detector" sections (RAD-101 D3/D4); the marker-exclusion zones show only in "Marker". */
+export const DETECTOR_SECTIONS = ["centring", "marker"] as const;
+export type DetectorSection = (typeof DETECTOR_SECTIONS)[number];
 
 /** The step after `tab`, or null on the last one ("Next" in the bottom bar). */
 export const followingTab = (tab: WorkspaceTab): WorkspaceTab | null => WORKSPACE_TABS[WORKSPACE_TABS.indexOf(tab) + 1] ?? null;

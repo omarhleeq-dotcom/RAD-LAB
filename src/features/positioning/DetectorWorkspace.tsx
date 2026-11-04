@@ -47,6 +47,9 @@ interface Props {
   phone?: boolean;
   /** Phone only: show the detector fitted to the anatomy and the field (the viewBox only; stored coordinates are unaffected). Omitted/false = the whole detector. */
   fit?: boolean;
+  /** Phone (RAD-101 D4): false hides the marker-exclusion zones and marker square and their legend lines (outside the "Marker"
+   *  section). Omitted = shown with the guides, as on desktop. */
+  markerGuides?: boolean;
 }
 
 const EDGE_CURSOR: Record<FieldEdge, string> = {
@@ -83,7 +86,7 @@ function keyDelta(e: KeyboardEvent): [number, number] | null {
  * Touch: Chromium only honours `touch-action` on the root <svg>, not on SVG children, so the workspace
  * suppresses touch panning while editable (and releases it once locked); the surrounding gutter still scrolls.
  */
-export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = CHEST_PA_FIGURE, phone = false, fit = false }: Props) {
+export function DetectorWorkspace({ radCase, settings, onChange, disabled, showGuides, figure = CHEST_PA_FIGURE, phone = false, fit = false, markerGuides = true }: Props) {
   const t = useTranslations("positioning");
   const tAny = useTranslations() as unknown as (key: string) => string;
   const ts = useTranslations("scene");
@@ -301,7 +304,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       )}
 
       {/* Guide strokes sit behind the unchanged marker badge and letter on both layouts. */}
-      {showGuides && <MarkerGuideOverlays radCase={radCase} settings={settings} />}
+      {showGuides && markerGuides && <MarkerGuideOverlays radCase={radCase} settings={settings} />}
       {!phone && markerNode}
 
       {/* outside the collimated field the detector receives no beam */}
@@ -360,7 +363,7 @@ export function DetectorWorkspace({ radCase, settings, onChange, disabled, showG
       <SceneLabel x={44} y={H + (figure.marginGuideLabels ? 29 : 23)} size={LABEL_SIZE.detector}>{`${labels.axis ? tAny(labels.axis.bottom) : ts("feet")} ↓`}</SceneLabel>
       <SceneLabel x={figure.axis ? W + 18 : mid} y={H + (figure.marginGuideLabels ? 24 : 23)} size={figure.axis ? LABEL_SIZE.view : LABEL_SIZE.detector + 2} anchor={figure.axis ? "end" : "middle"}>{ts("detector")}</SceneLabel>
     </PhoneFrameLabels>}
-    {showGuides && <MarkerGuideLegend size={positioning.markerSizeCm} centring={frameRows ? { target: t("targetZone"), midline: tAny(labels.midlineKey) } : undefined} />}
+    {showGuides && <MarkerGuideLegend size={positioning.markerSizeCm} centring={frameRows ? { target: t("targetZone"), midline: tAny(labels.midlineKey) } : undefined} marker={markerGuides} />}
     </>
   );
 }

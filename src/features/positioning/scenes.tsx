@@ -10,7 +10,7 @@ import { getExam } from "@/data/exams";
 import type { RadCase } from "@/domain/case";
 import type { SceneId } from "@/domain/exam";
 import type { SimulationMode, SimulationSettings } from "@/domain/simulation";
-import type { WorkspaceTab } from "@/features/simulation/workspace-tabs";
+import type { DetectorSection, WorkspaceTab } from "@/features/simulation/workspace-tabs";
 import { PelvisScene } from "./PelvisScene";
 import { ShoulderScene } from "./ShoulderScene";
 import { PositioningView, type SceneEnlarge, type SceneSlots } from "./PositioningView";
@@ -28,6 +28,8 @@ export interface SceneProps {
   enlarge?: SceneEnlarge;
   /** Phone layout (RAD-101 D4): the open step; the scene view follows it. Omitted on desktop and in the scene-dom guards. */
   step?: WorkspaceTab;
+  /** Phone layout (RAD-101 D3/D4): the open section of step 2 "Detector". */
+  section?: DetectorSection;
 }
 
 /**

@@ -6,7 +6,8 @@
 //  - every form control of the desktop layout exists on the phone layout with the same accessible label, in the same order per group;
 //  - phone (a full-screen app view): the document never scrolls; tablist/tab/tabpanel roles, arrow keys follow the visual order
 //    (mirrored in RTL), numbered steps in the D3 order with a done / note / not-started state, 44px targets, steps and bottom bar
-//    visible without scrolling, a one-row scene header with the "Aids" and "Zoom" texts and no view switch, the view following the
+//    visible without scrolling, step 2 sections "Centering & field" | "Marker" with the marker-exclusion zones only in "Marker"
+//    (drawings compared there), a one-row scene header with the "Aids" and "Zoom" texts and no view switch, the view following the
 //    step (RAD-101 D4), no keyboard-hint text, fine adjustment collapsed, compact technique rows, the schematic note once (in the
 //    case sheet), the case-details (i) sheet auto-opens once and takes/returns focus, a bottom bar of "Next" + Expose only
 //    (RAD-101 D1; no Next on the last step) with the readiness list in the last step, Expose shows the result inside the view,
@@ -167,10 +168,6 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} console Expose`, await page.getByRole("button", { name: m.console.expose, exact: true }).isVisible());
       ok(`${tag} console readiness`, await page.getByText(`${m.console.readiness.title}:`).first().isVisible());
     } else {
-      ok(`${tag} same scene drawings as desktop`, JSON.stringify(snap.svgs) === JSON.stringify(ref.svgs), `${snap.svgs.length} vs ${ref.svgs.length}`);
-      const missing = ref.labels.filter((l, i, a) => a.filter((x) => x === l).length > snap.labels.filter((x) => x === l).length);
-      const extra = snap.labels.filter((l, i, a) => a.filter((x) => x === l).length > ref.labels.filter((x) => x === l).length);
-      ok(`${tag} same scene label texts as desktop (drawing, bands, legend)`, JSON.stringify(snap.labels) === JSON.stringify(ref.labels), JSON.stringify({ missing, extra }));
       // The phone guides toggle shows the short visible name "Aids" (RAD-101 D4): the same checkbox as the desktop "guides" one.
       const aids = `checkbox||${m.workspace.aids}`, guides = `checkbox||${m.positioning.guides}`;
       snap.controls = snap.controls.map((c) => (c === aids ? guides : c));
@@ -197,10 +194,22 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
 
       // Steps not opened yet show "not started" (RAD-101 D3).
       ok(`${tag} unopened steps not started`, (await page.getByRole("tab").nth(2).textContent()).includes(m.workspace.stepNotStarted), await page.getByRole("tab").nth(2).textContent());
+      // Step 2 "Detector" (RAD-101 D3/D4): the marker-exclusion zones show only in its "Marker" section; the drawings are compared
+      // there, where the phone shows what the desktop shows.
+      const exclusion = () => page.locator("figure svg[role=group]").getByRole("img", { name: m.positioning.markerExclusionGuide, exact: true }).count();
+      const sectionButton = (key) => page.getByRole("button", { name: m.workspace[key], exact: true });
+      await page.getByRole("tab").nth(WORKSPACE_TABS.indexOf("centring")).click();
+      ok(`${tag} Detector opens at Centering & field, without marker-exclusion zones`, (await sectionButton("sectionCentring").getAttribute("aria-pressed")) === "true" && (await exclusion()) === 0);
+      await sectionButton("sectionMarker").click();
+      ok(`${tag} Marker section shows the marker-exclusion zones and the marker choice`, (await exclusion()) === 1 && await page.locator("label:has(input[name='side-marker'])").first().isVisible());
+      const snapM = await snapshot(page);
+      ok(`${tag} same scene drawings as desktop`, JSON.stringify(snapM.svgs) === JSON.stringify(ref.svgs), `${snapM.svgs.length} vs ${ref.svgs.length}`);
+      const missing = ref.labels.filter((l, i, a) => a.filter((x) => x === l).length > snapM.labels.filter((x) => x === l).length);
+      const extra = snapM.labels.filter((l, i, a) => a.filter((x) => x === l).length > ref.labels.filter((x) => x === l).length);
+      ok(`${tag} same scene label texts as desktop (drawing, bands, legend)`, JSON.stringify(snapM.labels) === JSON.stringify(ref.labels), JSON.stringify({ missing, extra }));
       // Touch: hit areas >= 44 CSS px, a larger marker letter, and the marker's visible centre where it is on desktop. Dragging on the
       // detector happens in step 2 "Detector", where the view shows it (RAD-101 D4).
       await pickMarker(page);
-      await page.getByRole("tab").nth(WORKSPACE_TABS.indexOf("centring")).click();
       const tc = await touch(page);
       ok(`${tag} marker hit area >= 44px`, tc.markerHit >= 43.5, String(tc.markerHit));
       ok(`${tag} every field handle hit area >= 44px`, tc.handleHits.length === 8 && tc.handleHits.every((h) => h >= 43.5), tc.handleHits.join(","));
@@ -339,6 +348,7 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
         await noOverflow(`tab ${i}`);
         await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-tab${i}.png` });
         if (WORKSPACE_TABS[i] === "centring") {
+          await page.getByRole("button", { name: m.workspace.sectionCentring, exact: true }).click();
           ok(`${tag} fine adjustment collapsed by default`, await panel.locator("details").evaluate((d) => !d.open));
           ok(`${tag} touch hint in Centring`, (await panel.innerText()).includes(m.positioning.touchHint));
         }
@@ -365,7 +375,12 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
       ok(`${tag} bar has Next + Expose only`, (await barButtons().count()) === 2 && (await barButtons().first().innerText()).includes(nextName("centring")), (await barButtons().allInnerTexts()).join("|"));
       for (const b of [barButtons().first(), expose]) ok(`${tag} bar button 44px`, (await b.boundingBox()).height >= 44);
       await barButtons().first().click();
-      ok(`${tag} Next opens step 2`, (await tabs.nth(1).getAttribute("aria-selected")) === "true");
+      ok(`${tag} Next opens step 2 at Centering & field`, (await tabs.nth(1).getAttribute("aria-selected")) === "true" && (await page.getByRole("button", { name: m.workspace.sectionCentring, exact: true }).getAttribute("aria-pressed")) === "true");
+      ok(`${tag} Next in Centering & field names the Marker section`, (await barButtons().first().innerText()).includes(m.workspace.nextStep.replace("{step}", m.workspace.sectionMarker)));
+      await barButtons().first().click();
+      ok(`${tag} Next opens the Marker section`, (await page.getByRole("button", { name: m.workspace.sectionMarker, exact: true }).getAttribute("aria-pressed")) === "true" && (await barButtons().first().innerText()).includes(nextName("technique")));
+      await barButtons().first().click();
+      ok(`${tag} Next from Marker opens step 3`, (await tabs.nth(2).getAttribute("aria-selected")) === "true");
       ok(`${tag} step 1 shows its state (done or note)`, /\(/.test(await tabs.nth(0).textContent()) && !(await tabs.nth(0).textContent()).includes(m.workspace.stepNotStarted));
       await tabs.nth(3).click();
       ok(`${tag} no Next on the last step`, (await barButtons().count()) === 1);

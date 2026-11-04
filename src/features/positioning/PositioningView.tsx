@@ -13,7 +13,7 @@ import { DetectorWorkspace } from "./DetectorWorkspace";
 import { normalizedSize, normalizedCentreX, normalizedCentreY } from "./cm-controls";
 import { phoneFit } from "./fit-view";
 import { CHEST_PA_LAYOUT, type SceneLayout } from "./scene-layouts";
-import type { WorkspaceTab } from "@/features/simulation/workspace-tabs";
+import type { DetectorSection, WorkspaceTab } from "@/features/simulation/workspace-tabs";
 
 interface Props {
   radCase: RadCase;
@@ -29,6 +29,8 @@ interface Props {
   enlarge?: SceneEnlarge;
   /** Phone layout: the open step; the view follows it (RAD-101 D4, no manual view switch). */
   step?: WorkspaceTab;
+  /** Phone layout (RAD-101 D3/D4): the open section of step 2 "Detector"; the marker-exclusion zones show only in "Marker". */
+  section?: DetectorSection;
 }
 
 /** Phone "Enlarge scene": the state lives in the workspace (it hides the tabs and the bar); the buttons are the scene header's. */
@@ -43,10 +45,12 @@ export interface SceneEnlarge {
 export interface SceneSlots {
   positioning: Element | null;
   centring: Element | null;
+  /** Step 2 "Detector", section "Marker" (RAD-101 D3). */
+  marker: Element | null;
   notes: Element | null;
 }
 
-export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots, enlarge, step = "positioning" }: Props) {
+export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots, enlarge, step = "positioning", section = "centring" }: Props) {
   const t = useTranslations("positioning");
   const tw = useTranslations("workspace");
   const tAny = useTranslations() as unknown as (key: string) => string;
@@ -189,7 +193,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
 
       <div className={phone ? clsx("relative grid bg-console p-2", enlarge?.active ? "[&_svg]:max-h-[calc(100dvh-10rem)]" : fitInfo?.meaningful && !showWhole ? "[&_svg]:max-h-[min(34svh,18rem)]" : "[&_svg]:max-h-[min(24svh,13rem)]") : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
         <figure className={clsx("m-0", phone && view !== "detector" && offView)}>
-          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} phone={phone} fit={phone && !showWhole} />
+          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} phone={phone} fit={phone && !showWhole} markerGuides={!phone || (step === "centring" && section === "marker")} />
           <figcaption className={phone ? "sr-only" : "mt-1 text-center text-xs text-console-text/80"}>{tAny(texts.detectorCaption)}</figcaption>
           {!phone && workspaceHint}
           {phone && (fitInfo?.meaningful || showWhole) ? (
@@ -223,10 +227,10 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
             <div className="grid gap-4">
               {cues && <div className="rounded-lg bg-console p-4">{cues}</div>}
               {rotationField}
-              {markerField}
             </div>,
             slots.positioning,
           )}
+          {place(markerField, slots.marker)}
           {place(
             <div className="grid gap-4">
               <p className="text-sm text-muted">{t("touchHint")}</p>

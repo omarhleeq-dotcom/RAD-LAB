@@ -10,9 +10,10 @@ describe("phone workspace tabs (UI-3)", () => {
     const r = assessReadiness(pa, { ...pa.initialSettings, sideMarker: null, breathing: "no-instruction", motionInstruction: "none" });
     expect(r.items.map((i) => i.id)).toEqual(expect.arrayContaining(["marker-missing", "breathing-not-instructed"]));
     const tabs = tabsNeedingAttention(r);
-    expect(tabs.has("positioning")).toBe(true);
+    // The side marker sits in step 2 "Detector" (RAD-101 D3), so its note is there.
+    expect(tabs.has("centring")).toBe(true);
     expect(tabs.has("patient")).toBe(true);
-    expect(tabs.has("centring")).toBe(false);
+    expect(tabs.has("positioning")).toBe(false);
   });
 
   it("maps technique and AEC items to Technique, and the finished exposure to no tab", () => {

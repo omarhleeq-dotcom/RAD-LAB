@@ -54,7 +54,9 @@
     "zoom": "تكبير",
     "nextStep": "التالي: {step}",
     "stepDone": "تم",
-    "stepNotStarted": "لم تبدأ"
+    "stepNotStarted": "لم تبدأ",
+    "sectionCentring": "التوسيط والمجال",
+    "sectionMarker": "العلامة"
   },
   "positioning": {
     "detector": "الكاشف / البكي",
