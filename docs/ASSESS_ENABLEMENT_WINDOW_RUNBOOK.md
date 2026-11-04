@@ -143,9 +143,23 @@ gcloud artifacts docker images list "$REG" --include-tags --format="value(packag
 
 Run the lines one at a time. Answer **Y** only to the `configure-docker` registry prompt. **Expected:** a `radlab-direct-tls-probe-` directory path; the pull reports the pinned `sha256:a9f5…29df`; a successful build; a push ending `digest: sha256:<64 hex>`; exactly one `…/assess-direct-tls-probe@sha256:<64 hex>` entry; and the registry listing shows that same digest. Record it as `RAD_PROBE_DIGEST` in the log. **STOP** on a `STOP` JSON from the build script, a different base digest, any build or push error (including "connection refused": no retry and no other route), a missing or doubled digest, or a listing that lacks the digest. **STOP → rollback:** the pushed image, if any, is unused; record it. The Docker config entry may be removed by hand. No cloud resource was created; end the window.
 
-2.3 Network, IAM and probe Job (Cloud Shell). Run [W5 probe steps 2–5](ASSESS_GATE_W_PACKAGES.md#4-w5--network-path-decision-needed) exactly, with `--image=$REG/assess-direct-tls-probe@sha256:<RAD_PROBE_DIGEST>` in step 4 (step 1 was done in 2.2). For step 3, the Cloud Run service agent is `service-<PROJECT_NUMBER>@serverless-robot-prod.iam.gserviceaccount.com`; read the number with `gcloud projects describe project-bff9124a-ec31-4d57-bc0 --format="value(projectNumber)"` and compare the agent name with IAM → "Include Google-provided role grants" before granting (Inferred from the Cloud Run docs; not verified live). No `set -e` in any Cloud Shell block, because a failing command would close Cloud Shell; read every **Expected** line and **STOP** on any difference. **Expected:** `{"outcome":"PASS","stage":"complete","family":6}` in the execution log.
+2.3 Network, IAM and probe Job (Cloud Shell). **`REG` exists only in the laptop shell; Cloud Shell is a separate environment, so nothing below uses it.** First carry the recorded digest across by hand and validate it before any network or IAM change (type the 64 hex characters from the 2.2 log; do not paste from a file):
 
-2.4 Mount check and cleanup (Cloud Shell). Run W5 steps 6–8 (dummy secret, `assess-mount-probe`, type and mode lines) with the same digest. **Expected:** `/run/recovery` `dir`, and `assess-recovery.json` `file`. Then the step 8 cleanup, plus the credential-free TLS probe Job:
+```bash
+RAD_PROBE_DIGEST='sha256:<64 hex from 2.2>'
+unset RAD_PROBE_IMAGE
+if [[ "$RAD_PROBE_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+ RAD_PROBE_IMAGE="europe-west3-docker.pkg.dev/project-bff9124a-ec31-4d57-bc0/assess-runtime/assess-direct-tls-probe@${RAD_PROBE_DIGEST}"
+ echo "$RAD_PROBE_IMAGE"
+else echo 'STOP: digest is not sha256:<64 lowercase hex>'; fi
+gcloud artifacts docker images describe "${RAD_PROBE_IMAGE:?STOP: probe image not set}" --format="value(image_summary.digest)"
+```
+
+**Expected:** one image reference ending `@` plus exactly the 2.2 digest (compare it with the 2.2 `docker inspect` line), then the same digest from the registry (read-only). **STOP before step 2 below** on `STOP:` output, a different digest, or a describe error: nothing has been created, so end the window. Re-run this block, with the digest typed again, if Cloud Shell restarts.
+
+Run [W5 probe steps 2–5](ASSESS_GATE_W_PACKAGES.md#4-w5--network-path-decision-needed) exactly, using `--image="${RAD_PROBE_IMAGE:?STOP: probe image not set}"` in step 4 (step 1 was done in 2.2). For step 3, the Cloud Run service agent is `service-<PROJECT_NUMBER>@serverless-robot-prod.iam.gserviceaccount.com`; read the number with `gcloud projects describe project-bff9124a-ec31-4d57-bc0 --format="value(projectNumber)"` and compare the agent name with IAM → "Include Google-provided role grants" before granting (Inferred from the Cloud Run docs; not verified live). No `set -e` in any Cloud Shell block, because a failing command would close Cloud Shell; read every **Expected** line and **STOP** on any difference. **Expected:** `{"outcome":"PASS","stage":"complete","family":6}` in the execution log.
+
+2.4 Mount check and cleanup (Cloud Shell). Run W5 steps 6–8 (dummy secret, `assess-mount-probe`, type and mode lines) with `--image="${RAD_PROBE_IMAGE:?STOP: probe image not set}"` (step 7), set as in 2.3. **Expected:** `/run/recovery` `dir`, and `assess-recovery.json` `file`. Then the step 8 cleanup, plus the credential-free TLS probe Job:
 
 ```bash
 gcloud run jobs delete assess-mount-probe --region=europe-west3
