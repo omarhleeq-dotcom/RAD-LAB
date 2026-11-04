@@ -17,7 +17,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04); [result references collapsed](#result-references-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03)), [owner surveys UX](#owner-surveys-ux-owner-2026-11-04)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03)), [owner surveys UX](#owner-surveys-ux-owner-2026-11-04), [owner in-app stop](#owner-inapp-stop-owner-2026-11-04)
 
 ## Active Binding Decisions
 
@@ -1604,3 +1604,12 @@ Authority: owner's RAD-099 task prompt and the owner's answer on the pin questio
 4. The lookup runs only when "Who is this?" is tapped, pages the existing directory RPC, stops at the first match and is capped at 200 accounts; beyond the cap it says plainly the code was not found there and to search manually.
 5. S-STD-3 ceiling: the 200-account cap; lifting trigger is a server-side search by code (a later, separately reviewed RPC change).
 UI only: no live SQL, migration or RPC change. The PR stays Draft.
+
+<a id="owner-inapp-stop-owner-2026-11-04"></a>
+### Owner in-app emergency stop (RAD-095), 2026-11-04
+Authority: owner decision in the RAD-095 task prompt, recorded as stated; lifts the post-launch deferral in [UX phase 1 item 2](#owner-ux-phase1-owner-2026-11-03); merges only after the Thursday launch.
+1. The owner gets the same in-app stop as the appointed alternate, inside the owner panel Safety tab: the existing stop view, controller, confirmation dialog, six phases, receipt and wording; no second implementation, no new RPC or call name. The red "Emergency stop" button in the owner status bar opens it.
+2. The [phone runbook](RAD-059_PHONE_RUNBOOK.md) stays the documented fallback, and the Google Cloud steps stay owner phone steps ([decision 3](#rad059-alternate-owner-2026-11-02)).
+3. The [alternate page](#alternate-stop-page-owner-2026-11-03) is unchanged.
+4. Pins: on the [RAD-094 rule](#code-health-pins-owner-2026-11-03), only the sha256 values in `scripts/pages/frontend-schema.json` of the changed files `src/features/pilot/OwnerPanel.tsx` and `src/features/emergency/EmergencySession.tsx` may change; the browser rpc/from name set and the pilot marker stay identical. No other pin, check or manifest change. Recorded: OwnerPanel `c3e0478e…dfdc3` → `d35f215a…5095b`; EmergencySession `b5eedaea…eee7` → `f94e1688…177f`.
+Existing SQL already authorises the approved owner (`emergency.eligible_v1` accepts role owner). No live SQL, migration or RPC change; the PR stays Draft.

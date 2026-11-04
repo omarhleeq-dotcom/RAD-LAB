@@ -2452,6 +2452,7 @@
     "menuEntry": "Emergency stop",
     "pageTitle": "Emergency stop",
     "pageIntro": "You are the appointed alternate",
+    "ownerIntro": "You are the owner. This runs the same database stop as the appointed alternate.",
     "startStop": "Start emergency stop",
     "dialogTitle": "Confirm emergency stop",
     "dialogCancel": "Cancel",
