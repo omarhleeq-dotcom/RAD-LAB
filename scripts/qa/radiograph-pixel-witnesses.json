@@ -1887,10 +1887,10 @@
           "patch": {
             "kvp": 50
           },
-          "plan": "bcaef1dcf946d9732e7f6108f12aab1a88f484b13bcc0ad92d45a3bb1584ee53",
-          "soloPlan": "5be1dac2e272122993e6bfa65b6dfa0f537f0eb538b5a24e4e58e94da6902d24",
-          "luma": "148a9fad8d06a6e19df72199224f9534e8e6b8d614da8a7cd96f0de785ffa2f6",
-          "soloLuma": "c90eab1032c5f5776b86367f01a7d645b367ee3979de6e3d12034435725aa034",
+          "plan": "772677ae438bef21b7f5ae79b50aef715097ea1928730a45c9fa1f6bd4473f58",
+          "soloPlan": "a8b790ebf77f51d942669e911bac5304a71437199e2b4c7394107e415771b965",
+          "luma": "0934b6a2ba80583f8c5774b51b725320f8c008f34435296bac6e07c864fc9a43",
+          "soloLuma": "9e97eb1b4d0e9e92e57e40347b4a8245a496ede4ebb9161fd7622537368d7e20",
           "size": [
             840,
             1032
@@ -1898,7 +1898,8 @@
           "effects": [
             "excess-field",
             "centering",
-            "low-exposure"
+            "low-exposure",
+            "low-penetration"
           ]
         },
         "penetration/max": {
@@ -1926,10 +1927,10 @@
           "patch": {
             "kvp": 99
           },
-          "plan": "dbdf687e2ed6671310f7647ccc02bf44bdbc2fedc0b88f0a23f3d746319cd618",
-          "soloPlan": "5be1dac2e272122993e6bfa65b6dfa0f537f0eb538b5a24e4e58e94da6902d24",
-          "luma": "ca05298e3ef375ad876195d119e8155c0864e969ef47f86f6f6c9f1890b62ae7",
-          "soloLuma": "c90eab1032c5f5776b86367f01a7d645b367ee3979de6e3d12034435725aa034",
+          "plan": "766bc5860613e1e538a071642fb85cec8a55f9d151af0a83f5500cc203a9e076",
+          "soloPlan": "a8b790ebf77f51d942669e911bac5304a71437199e2b4c7394107e415771b965",
+          "luma": "5a28fb60687fea50194c12247da7c692d8dabd40ecdbf67e74a9f39d88766efb",
+          "soloLuma": "9e97eb1b4d0e9e92e57e40347b4a8245a496ede4ebb9161fd7622537368d7e20",
           "size": [
             840,
             1032
@@ -1937,7 +1938,8 @@
           "effects": [
             "excess-field",
             "centering",
-            "low-exposure"
+            "low-exposure",
+            "low-penetration"
           ]
         },
         "penetration/before-low": {
@@ -3389,10 +3391,10 @@
             },
             "motionInstruction": "relax-and-move"
           },
-          "plan": "411d0d7babcdf1992bd235cbf3be883c80f8517b64566ddd7e3fbda6d1c77f52",
-          "soloPlan": "411d0d7babcdf1992bd235cbf3be883c80f8517b64566ddd7e3fbda6d1c77f52",
-          "luma": "e5383c6912fa6cbb837eec2e5806b0b9339218ee986465c6335c253fe6654aa8",
-          "soloLuma": "e5383c6912fa6cbb837eec2e5806b0b9339218ee986465c6335c253fe6654aa8",
+          "plan": "665988b9190c421d8cf6edba51f3ede6bf5b3adfd0ed109ac6981a203d788f58",
+          "soloPlan": "665988b9190c421d8cf6edba51f3ede6bf5b3adfd0ed109ac6981a203d788f58",
+          "luma": "a66667137bfbc0cf99501f9d569c131c64e20277790eba8eede5c44b7f1a6999",
+          "soloLuma": "a66667137bfbc0cf99501f9d569c131c64e20277790eba8eede5c44b7f1a6999",
           "size": [
             840,
             1032
@@ -3402,7 +3404,8 @@
             "collimation-clipping",
             "centering",
             "motion",
-            "low-exposure"
+            "low-exposure",
+            "low-penetration"
           ]
         }
       }
@@ -24132,17 +24135,18 @@
           "patch": {
             "kvp": 60
           },
-          "plan": "e6e1a64e144a089751ffcd4ee1d674c60956c3670bfa13b9abdc3b6324ba4b51",
-          "soloPlan": "944be96d0aa1328ccb76430299f20bf28008b4de67859df421f36b8405ce1911",
-          "luma": "ba69a7bb36313eb96182a1355fa2454d4ac827303fcd3bb1276ff4eb4c20d8da",
-          "soloLuma": "af931657ae4689322131a7cf10f2d429b9b30a4285659a9b67fce734526f7e8a",
+          "plan": "5ad0165619677a0cfa7ee9c96fd754fcf302a73122fe9927b34b78f3e1569852",
+          "soloPlan": "ffe155744df9e25c69e6105c1c8f71be27e22c90965c50144efbe464201d3275",
+          "luma": "8368fa3727a2f4b6420ab4b4b01abc18c51822edac4981676a0b7920601a121b",
+          "soloLuma": "b3ab3a978a0fcffb5e8a49511a3d4f7161b977c6f34426ad9636d62f5c3fe0c7",
           "size": [
             1488,
             1210
           ],
           "effects": [
             "excess-field",
-            "low-exposure"
+            "low-exposure",
+            "low-penetration"
           ]
         },
         "penetration/max": {
@@ -24169,17 +24173,18 @@
           "patch": {
             "kvp": 74
           },
-          "plan": "bc8cf427f2f5cfbbb7674e9be3833a2d068b10e5e3b6d2872a548bbc0d4734dc",
-          "soloPlan": "944be96d0aa1328ccb76430299f20bf28008b4de67859df421f36b8405ce1911",
-          "luma": "ac3c9b4f9df2f48ea82f7104ce659d53cc98672501d1713d9ae1176c3a13e8b0",
-          "soloLuma": "af931657ae4689322131a7cf10f2d429b9b30a4285659a9b67fce734526f7e8a",
+          "plan": "94c0fa21cccb26bcbafce7f2c9d499fb33eecb47a48421b686f850d24f410c53",
+          "soloPlan": "ffe155744df9e25c69e6105c1c8f71be27e22c90965c50144efbe464201d3275",
+          "luma": "e1b4250ee15bdb45b80860c281aebca00bf9e72a11bfde835ee4a34e0614834a",
+          "soloLuma": "b3ab3a978a0fcffb5e8a49511a3d4f7161b977c6f34426ad9636d62f5c3fe0c7",
           "size": [
             1488,
             1210
           ],
           "effects": [
             "excess-field",
-            "low-exposure"
+            "low-exposure",
+            "low-penetration"
           ]
         },
         "penetration/before-low": {
@@ -25424,10 +25429,10 @@
             },
             "motionInstruction": "relax-and-move"
           },
-          "plan": "f083fa7c742d9b2701a0b0b4b7ab47723565f1123ff090ec9bb1675c0c6263e5",
-          "soloPlan": "f083fa7c742d9b2701a0b0b4b7ab47723565f1123ff090ec9bb1675c0c6263e5",
-          "luma": "c336b655d6c0f98bb416adc4e6395c2aa7b01ef73ef65566e8105bca27f87f1c",
-          "soloLuma": "c336b655d6c0f98bb416adc4e6395c2aa7b01ef73ef65566e8105bca27f87f1c",
+          "plan": "af447fcc432069ecb5a402fbcdb157413a5ad1f802fbfb0ab31c192327d5de7f",
+          "soloPlan": "af447fcc432069ecb5a402fbcdb157413a5ad1f802fbfb0ab31c192327d5de7f",
+          "luma": "80583468ffc0b571d9ffc076c4268dca6bc5792670e1a54e611518314e16e95a",
+          "soloLuma": "80583468ffc0b571d9ffc076c4268dca6bc5792670e1a54e611518314e16e95a",
           "size": [
             1488,
             1210
@@ -25436,6 +25441,7 @@
             "collimation-clipping",
             "motion",
             "low-exposure",
+            "low-penetration",
             "rotation"
           ]
         }
@@ -25574,17 +25580,18 @@
           "patch": {
             "kvp": 55
           },
-          "plan": "300bf8d1de8867251eb48e84bedfee09e59c834563536ed19787000f2f9da167",
-          "soloPlan": "b817d0ccd3b4c22381bb1d977ce1aa52eebb121567d611eb7495d90ecfc549e3",
-          "luma": "a831a41612099174d0f47f2a38f28a6d35a89fc6366fcd03c3c562090f9069e7",
-          "soloLuma": "856cd316ab24ac7fb5f71cab0e04f712c86cfb275e792de196a8b33be9a31aa2",
+          "plan": "65698ad8d5c3716105ad35af698dc7b6e3ff7dc942ba99b3d4098d35ef84b048",
+          "soloPlan": "a6238977f7ace431fbd2dde035bb371f46703db081ffae98d9f98ed3cc7033b1",
+          "luma": "6441add7d479a35a8a2061a6c96b4bd90b7a8c75048cb2d44f5d695771dd91be",
+          "soloLuma": "14cd21dcb1197dd7113464dd4f265b65b184fa0986b0e63af22467eb832dcfef",
           "size": [
             662,
             809
           ],
           "effects": [
             "excess-field",
-            "low-exposure"
+            "low-exposure",
+            "low-penetration"
           ]
         },
         "penetration/max": {
@@ -25611,17 +25618,18 @@
           "patch": {
             "kvp": 69
           },
-          "plan": "319c2c20a1fa630932d2d6c89efbdfae2aaf8dea240d595e30d3bc8d45e0686e",
-          "soloPlan": "b817d0ccd3b4c22381bb1d977ce1aa52eebb121567d611eb7495d90ecfc549e3",
-          "luma": "83dcbb25acf63d53937eb9a2e8b34b200c8cd371c67635f87791c9124738510a",
-          "soloLuma": "856cd316ab24ac7fb5f71cab0e04f712c86cfb275e792de196a8b33be9a31aa2",
+          "plan": "8115d754baa510d70bc6377bffc3fef6c0a14daa11bfc77b542aa3668c10182b",
+          "soloPlan": "a6238977f7ace431fbd2dde035bb371f46703db081ffae98d9f98ed3cc7033b1",
+          "luma": "3750ef47a073d5c5427b8d280f8abe3103f84269200e48f4d7706605be3b8240",
+          "soloLuma": "14cd21dcb1197dd7113464dd4f265b65b184fa0986b0e63af22467eb832dcfef",
           "size": [
             662,
             809
           ],
           "effects": [
             "excess-field",
-            "low-exposure"
+            "low-exposure",
+            "low-penetration"
           ]
         },
         "penetration/before-low": {
@@ -26989,10 +26997,10 @@
             },
             "motionInstruction": "relax-and-move"
           },
-          "plan": "7468cdb63c7d739a7b3d08127570131b77b0c1639345cbcbeca5a3b8f37c9c59",
-          "soloPlan": "7468cdb63c7d739a7b3d08127570131b77b0c1639345cbcbeca5a3b8f37c9c59",
-          "luma": "34ae47dd803b15948afd9a40a57c45ee0c0d1232169aac10d4a2b02cb51bdb55",
-          "soloLuma": "34ae47dd803b15948afd9a40a57c45ee0c0d1232169aac10d4a2b02cb51bdb55",
+          "plan": "7d10151a07f0e790694c2047582aaf71390820472807134e806cce16aa2653b0",
+          "soloPlan": "7d10151a07f0e790694c2047582aaf71390820472807134e806cce16aa2653b0",
+          "luma": "70afa7ba839173422e0dde70538ef9325a65ed5d1d44d7409f89ba37eea31977",
+          "soloLuma": "70afa7ba839173422e0dde70538ef9325a65ed5d1d44d7409f89ba37eea31977",
           "size": [
             662,
             809
@@ -27001,6 +27009,7 @@
             "collimation-clipping",
             "motion",
             "low-exposure",
+            "low-penetration",
             "rotation"
           ]
         }

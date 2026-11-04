@@ -12,7 +12,7 @@
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
 
-RAD-098: الجلستان4 و3b مدمجتان؛ [3c](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md) في Draft (أصابع رسم الإعداد، clip-margin-only، التوثيق)؛ التالي denseZones.
+RAD-098: [3c](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md) مدمجة؛ [2b'](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md) في Draft تنتظر مراجعة المالك.
 
 ## المتابعة
 
