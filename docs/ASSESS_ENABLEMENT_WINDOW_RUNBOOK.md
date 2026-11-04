@@ -1,6 +1,6 @@
 # Assess enablement — one owner laptop window
 
-**Preparation only. This page grants no permission and nothing in it has been run live.** It is the single ordered script for the window recorded in [the window decision](DECISIONS.md#assess-window-owner-2026-11-03). Sources stay authoritative and are not repeated here in full: the [gate runbook](ASSESS_GATE_OPEN_RUNBOOK.md) (rules §0, preflight §2–§3, order §4, open §5, close §8), the [W packages](ASSESS_GATE_W_PACKAGES.md) (W1–W5 steps and the §9 order), the [W4 report](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md), the [window runbook step 2](RAD-085_RAD-059_WINDOW_RUNBOOK.md#2-select-the-protected-connection-and-evidence-directory), [RAD-086](RAD-086_LAPTOP_BACKUP_RUNBOOK.md) and the [phone runbook](RAD-059_PHONE_RUNBOOK.md). If this page and a source disagree, **STOP** and follow the source.
+**This page grants no permission.** Steps 0–1 ran live once on 2026-11-04 and the window stopped at 2.2 ([report](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md)); steps 2–10 have not run. It is the single ordered script for the window recorded in [the window decision](DECISIONS.md#assess-window-owner-2026-11-03). Sources stay authoritative and are not repeated here in full: the [gate runbook](ASSESS_GATE_OPEN_RUNBOOK.md) (rules §0, preflight §2–§3, order §4, open §5, close §8), the [W packages](ASSESS_GATE_W_PACKAGES.md) (W1–W5 steps and the §9 order), the [W4 report](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md), the [window runbook step 2](RAD-085_RAD-059_WINDOW_RUNBOOK.md#2-select-the-protected-connection-and-evidence-directory), [RAD-086](RAD-086_LAPTOP_BACKUP_RUNBOOK.md) and the [phone runbook](RAD-059_PHONE_RUNBOOK.md). If this page and a source disagree, **STOP** and follow the source.
 
 ## Rules for the whole window
 
@@ -44,7 +44,7 @@ The gate runbook §0.3 sentence for real students is **not usable in this window
 0.1 Shell, source and DNS (L):
 
 ```bash
-set -euo pipefail; set +x; umask 077
+set -euo pipefail; set +x; set +H; umask 077
 export PAGER=cat
 cd ~/RAD-LAB && test -z "$(git status --porcelain)"
 NODE_OPTIONS=--dns-result-order=ipv4first git fetch origin main && git checkout --detach origin/main
@@ -54,7 +54,7 @@ grep -m1 '^nameserver' /etc/resolv.conf && getent ahostsv4 registry.npmjs.org | 
 NODE_OPTIONS=--dns-result-order=ipv4first npm ci --no-audit --no-fund
 ```
 
-**Expected:** a 40-character commit (write it in the log), one `nameserver` line, one IPv4 line, then `added N packages`. **STOP** on a dirty tree, no nameserver or no IPv4 answer: the WSL DNS fix from the earlier window is not active ([cleanup report](TEST_CLEANUP_REPORT_2026-11-02.md); WSL has no IPv6, npm needs `ipv4first`).
+**Expected:** a 40-character commit (write it in the log), one `nameserver` line, one IPv4 line, then `added N packages`. `set +H` turns off bash history expansion, which breaks any command that contains `!` (found live 2026-11-04). **STOP** on a dirty tree, no nameserver or no IPv4 answer: the WSL DNS fix from the earlier window is not active ([cleanup report](TEST_CLEANUP_REPORT_2026-11-02.md); WSL has no IPv6, npm needs `ipv4first`).
 
 0.2 Google Cloud CLI (L):
 
@@ -64,7 +64,7 @@ gcloud auth list --filter=status:ACTIVE --format="value(account)" | wc -l
 gcloud config get-value project
 ```
 
-**Expected:** a version line; exactly `1` active account (the owner's; do not print it into Git); project `project-bff9124a-ec31-4d57-bc0`. If the project differs, run `gcloud config set project project-bff9124a-ec31-4d57-bc0` and answer **N** to any API prompt. **STOP** if gcloud is missing or not logged in: `gcloud auth login` is done by the owner in the browser, never from a pasted token.
+**Expected:** a version line; exactly `1` active account (the owner's; do not print it into Git); project `project-bff9124a-ec31-4d57-bc0`. If the project prints `(unset)` or differs, set it with `gcloud config set project project-bff9124a-ec31-4d57-bc0` (allowed here) and answer **N** to any API prompt, then repeat the third command. **STOP** if gcloud is missing or not logged in: `gcloud auth login` is done by the owner in the browser, never from a pasted token.
 
 0.3 CA files (L). Both files are public certificates:
 
@@ -73,9 +73,16 @@ for f in ~/assess-ca/prod-ca-2021.crt ~/.config/rad-lab-backup/supabase-ca.crt; 
  openssl x509 -in "$f" -outform DER | sha256sum | cut -c1-64; done
 ```
 
-**Expected:** `807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa` for the first file (pinned by the W2 transport and the W5 probe). The second is the RAD-086 CA used by `owner_sql`; it must open with a future `notAfter` ([A6](RAD-086_LAPTOP_BACKUP_RUNBOOK.md#a-one-time-setup-wsl-ubuntu-shell)). **STOP** on any mismatch.
+**Expected:** `807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa` for the first file (pinned by the W2 transport and the W5 probe). The second is the RAD-086 CA used by `owner_sql`; it must open with a future `notAfter` ([A6](RAD-086_LAPTOP_BACKUP_RUNBOOK.md#a-one-time-setup-wsl-ubuntu-shell)). **STOP** on any mismatch. In the 2026-11-04 window both files gave this same hash.
 
-0.4 `owner_sql` and connectivity probe (L). Unlock the encrypted evidence volume, then run the **unchanged** [window step 2 block](RAD-085_RAD-059_WINDOW_RUNBOOK.md#2-select-the-protected-connection-and-evidence-directory) with the private session-pooler placeholders. Then:
+If `~/assess-ca/prod-ca-2021.crt` is missing, install it from the RAD-086 CA, and only when that file's DER SHA-256 equals the hash above (directory 700, file 600); any other hash is **STOP**:
+
+```bash
+test "$(openssl x509 -in ~/.config/rad-lab-backup/supabase-ca.crt -outform DER | sha256sum | cut -c1-64)" = 807025ad50d4ed219d2c9c7d299c004f824eb00cf7f65afef607d07b72e6cafa \
+ && install -d -m 700 ~/assess-ca && install -m 600 ~/.config/rad-lab-backup/supabase-ca.crt ~/assess-ca/prod-ca-2021.crt
+```
+
+0.4 `owner_sql` and connectivity probe (L). Unlock the encrypted evidence volume, then run the **unchanged** [window step 2 block](RAD-085_RAD-059_WINDOW_RUNBOOK.md#2-select-the-protected-connection-and-evidence-directory) with the private placeholders filled as follows, without printing them: `PGHOST` from the `poolerHost` key of `~/.config/rad-lab-backup/config.json` (for example `export PGHOST="$(node -p "require(process.env.HOME+'/.config/rad-lab-backup/config.json').poolerHost")"`; the command substitution prints nothing), and `RAD_WINDOW_EVIDENCE` a directory under `$HOME` on the BitLocker-encrypted disk. Then:
 
 ```bash
 getent ahostsv4 "$PGHOST" | head -1
@@ -104,16 +111,16 @@ node scripts/ops/laptop-backup.mjs run && node scripts/ops/laptop-backup.mjs ver
 
 ## 2. W5 probe, mount check and D-W5 (Cloud Shell; 45 min)
 
-2.1 Upload `~/assess-ca/prod-ca-2021.crt` to Cloud Shell (Cloud Shell menu → Upload) and place it at `~/assess-ca/prod-ca-2021.crt`. Clone and pin:
+2.1 Upload `~/assess-ca/prod-ca-2021.crt` to Cloud Shell (Cloud Shell menu → Upload) and place it at `~/assess-ca/prod-ca-2021.crt`; any copy whose DER hash matches step 0.3 is accepted. Clone and pin:
 
 ```bash
-set -euo pipefail; export PAGER=cat
+export PAGER=cat
 git clone https://github.com/omarhleeq-dotcom/RAD-LAB.git ~/RAD-LAB && cd ~/RAD-LAB
 git checkout --detach <RAD_WINDOW_MAIN from step 0.1> && npm ci --no-audit --no-fund
 openssl x509 -in ~/assess-ca/prod-ca-2021.crt -outform DER | sha256sum | cut -c1-64
 ```
 
-**Expected:** the same commit and CA hash as step 0.
+**Expected:** the same commit and CA hash as step 0. **Cloud Shell blocks:** `set -e` is not used in any Cloud Shell block, because a failing command would close Cloud Shell; read every **Expected** line yourself and **STOP** on any difference.
 
 2.2 Run [W5 probe steps 1–5](ASSESS_GATE_W_PACKAGES.md#4-w5--network-path-decision-needed) exactly. For step 3, the Cloud Run service agent is `service-<PROJECT_NUMBER>@serverless-robot-prod.iam.gserviceaccount.com`; read the number with `gcloud projects describe project-bff9124a-ec31-4d57-bc0 --format="value(projectNumber)"` and compare the agent name with IAM → "Include Google-provided role grants" before granting (Inferred from the Cloud Run docs; not verified live). **Expected:** `{"outcome":"PASS","stage":"complete","family":6}` in the execution log.
 
@@ -132,7 +139,7 @@ Answer **Y** only to these three delete prompts. **Expected:** three `Deleted` l
 
 ## 3. W4 image by digest (Cloud Shell; 20 min)
 
-Run [W4 steps 1–4](ASSESS_GATE_W_PACKAGES.md#3-w4--image-ready-for-review-after-the-launch) in the clone from 2.1:
+Run [W4 steps 1–4](ASSESS_GATE_W_PACKAGES.md#3-w4--image-ready-for-review-after-the-launch) in the clone from 2.1: **The push route (Cloud Shell as written, laptop Docker or Cloud Build) is Decision-needed: [report §3](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md#3-قرار-مفتوح-مسار-دفع-الصور).** Until the owner decides, the steps below describe the unchanged written route.
 
 ```bash
 node scripts/assess/build-grading-worker.mjs; node scripts/assess/build-grading-worker.mjs
