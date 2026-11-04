@@ -251,7 +251,28 @@
     "criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score ({total}) and the category weights are unchanged.",
     "criticalEvidence": "Evidence for this critical finding",
     "criticalConcept": "Concept (common quality criterion)",
-    "criticalImplementation": "Implementation in this simulator"
+    "criticalImplementation": "Implementation in this simulator",
+    "sidGeometry": {
+      "title": "Why? How SID changes the shadow",
+      "yours": "Your setting",
+      "reference": "Reference",
+      "summary": {
+        "shorter": "Your SID is shorter than the reference. With the tube closer, the beam spreads more between the object and the detector, so the object's shadow is larger and its edges are less sharp.",
+        "longer": "Your SID is longer than the reference. With the tube farther away, the beam lines are closer to parallel, so the object's shadow is smaller."
+      },
+      "legend": "Top bar: the tube focal spot. Lines: the beam edges. Middle block: the object. Bottom line: the detector, with the shadow on it; its faint ends are the blurred edge (penumbra).",
+      "notToScale": "Illustration, not to scale",
+      "desc": {
+        "yours": {
+          "shorter": "Schematic of your setting: the tube is closer to the detector than in the reference, so the object's shadow is larger, with wider blurred edges.",
+          "longer": "Schematic of your setting: the tube is farther from the detector than in the reference, so the object's shadow is smaller, with narrower blurred edges."
+        },
+        "reference": {
+          "shorter": "Schematic of the reference: the tube is farther from the detector than in your setting, so the object's shadow is smaller and sharper.",
+          "longer": "Schematic of the reference: the tube is closer to the detector than in your setting, so the object's shadow is larger, with wider blurred edges."
+        }
+      }
+    }
   },
   "categories": {
     "positioning": "Positioning",
