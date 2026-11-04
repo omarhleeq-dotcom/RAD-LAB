@@ -285,6 +285,9 @@
   "evidence": {
     "label": "الدليل",
     "reference": "المرجع",
+    "referenceToggle": "المرجع",
+    "moreDetails": "تفاصيل أكثر",
+    "aboutSimulator": "عن هذا في المحاكي",
     "validated": "مستند إلى مصدر",
     "common-reference": "مرجع شائع / غير عالمي",
     "vendor-protocol-dependent": "يعتمد على الجهاز / البروتوكول المحلي",

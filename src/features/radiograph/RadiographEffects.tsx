@@ -28,13 +28,14 @@ export function RadiographEffects({ plan, sex, wording }: { plan: RenderPlan; se
   );
 }
 
-export function RadiographEffect({ effect: e, plan, sex, wording }: { effect: PlanEffect; plan: RenderPlan; sex: "female" | "male"; wording?: WordingNs }) {
+/** `flat` (RAD-100): no own card border inside a check's collapsed "About this in the simulator" control. */
+export function RadiographEffect({ effect: e, plan, sex, wording, flat = false }: { effect: PlanEffect; plan: RenderPlan; sex: "female" | "male"; wording?: WordingNs; flat?: boolean }) {
   const t = useTranslations("radiograph");
   // Lateral (S12) / AP (S13): their wording where `radiograph.<ns>.effects.<id>` exists, else the common effect text.
   const tt = t as unknown as (key: string, values?: Record<string, unknown>) => string;
   const base = (id: string) => (wording && t.has(`${wording}.effects.${id}.title`) ? `${wording}.effects.${id}` : `effects.${id}`);
   return (
-    <li data-effect={e.id} className="rounded border border-line bg-paper/60 p-3">
+    <li data-effect={e.id} className={flat ? undefined : "rounded border border-line bg-paper/60 p-3"}>
       <h3 className="text-sm font-semibold">{tt(`${base(e.id)}.title`)}</h3>
       <p className="mt-1 text-sm">{tt(`${base(e.id)}.desc`, { sex })}</p>
       {e.id === "collimation-clipping" && plan.marginOnlySides.length > 0 && (

@@ -37,7 +37,7 @@ function scenarios(c: RadCase): [string, Partial<SimulationSettings>][] {
   for (const [m, x, y] of marks) s.push([`marker${m}${x},${y}`, { sideMarker: m as "L", markerPosition: { x, y } }]);
   s.push(["markerNone", { sideMarker: null }], ["markerL0", { sideMarker: "L", markerPosition: c.positioning.defaultMarkerPosition.L }],
     ["markerR0", { sideMarker: "R", markerPosition: c.positioning.defaultMarkerPosition.R }], ["rayOff", { centralRay: { x: 0.3, y: 0.4 } }]);
-  for (const [w, h] of [[0.4, 0.4], [0.6, 0.5], [0.3, 0.4]]) s.push([`coll${w}x${h}`, { collimation: { width: w, height: h } }]);
+  for (const [w, h] of [[0.4, 0.4], [0.6, 0.5], [0.3, 0.4]] as const) s.push([`coll${w}x${h}`, { collimation: { width: w, height: h } }]);
   for (const sid of [102, 120, 200]) s.push([`sid${sid}`, { sidCm: sid }]);
   for (const kvp of [45, 60, 90, 150]) s.push([`kv${kvp}`, { kvp }]);
   s.push(["lowMas", { mas: 0.5 } as never]);
