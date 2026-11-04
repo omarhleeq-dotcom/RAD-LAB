@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 440,
-  "updated_at": "2026-11-04T23:59:00Z",
+  "revision": 441,
+  "updated_at": "2026-11-05T02:30:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-105",
+  "next_id": "RAD-106",
   "tasks": [
     {
       "id": "RAD-001",
@@ -548,10 +548,10 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "review",
       "priority": "high",
-      "description": "الإبطال مقبول (D11). نافذة 2026-11-04: الخطوتان 0–1 نجحتا وتوقفت عند دفع الصورة ([التقرير](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md)). قرر المالك الخيار A (بناء ودفع من اللابتوب)؛ الدليلان محدّثان بلا إذن حي. البوابة مغلقة والعامل NOLOGIN والأسرار DISABLED. باقٍ: نافذة جديدة من الخطوة 0، بديل بشري مُمرَّن، P7.",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md#closure؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-window-owner-2026-11-03؛ docs/DECISIONS.md#assess-window-review-owner-2026-11-03؛ docs/ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md؛ docs/DECISIONS.md#assess-push-owner-2026-11-04",
+      "description": "نافذة 2026-11-04/05 اكتملت: العامل والدخان ناجحان وP7 جزئي ([التقرير](archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md))؛ البوابة مغلقة والعامل NOLOGIN والأسرار DISABLED. بقي إيصال P7 ورفض الاعتماد القديم وتمرين البديل؛ التشغيل الذاتي بلا المالك في RAD-105 (OD1–OD9).",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md#closure؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-window-owner-2026-11-03؛ docs/DECISIONS.md#assess-window-review-owner-2026-11-03؛ docs/ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md؛ docs/DECISIONS.md#assess-push-owner-2026-11-04؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md؛ docs/DECISIONS.md#assess-window-2026-11-05-owner؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05",
       "waiting_on": "owner",
-      "done_when": "بديل بشري حقيقي معيّن ومُمرَّن قبل أي طالب حقيقي في Assess، واستلام تنبيه/ميزانية أصلي من المزوّد (P7)؛ الحساب الثاني للمالك بديل مؤقت فقط حتى ذلك."
+      "done_when": "إيصال P7 الأصلي ورفض الاعتماد القديم وتمرين البديل البشري (OD7) مُنجزة في نافذة التشغيل الأخيرة ضمن RAD-105، أو يقبلها المالك مخاطر مسجّلة."
     },
     {
       "id": "RAD-060",
@@ -886,10 +886,10 @@
       "title": "W4 future verifier: database-held restore epoch (option C)",
       "status": "planned",
       "priority": "medium",
-      "description": "Not implemented. Replace or back the owner no-restore attestation (decision B) with a restore epoch held in the database or a system_identifier check. Needs a migration or binding change in its own reviewed PR. Waits for an owner decision on timing.",
-      "source_ref": "docs/DECISIONS.md#rad085-w4-verifier-owner-2026-11-03؛ docs/RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md",
+      "description": "Direction chosen by OD3 (automatic verifier replaces the 48 h attestation); design in ASSESS_SELF_SERVICE_DESIGN §3: DB epoch+seq plus an external witness, fail closed, shadow then enforcing. Not implemented; needs the owner's go (DS-4) and its own reviewed PR.",
+      "source_ref": "docs/DECISIONS.md#rad085-w4-verifier-owner-2026-11-03؛ docs/RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/ASSESS_SELF_SERVICE_DESIGN.md",
       "waiting_on": "owner",
-      "done_when": "Owner-approved design merged with a rehearsal proving a restored database is refused by the worker; or the owner records that decision B stays."
+      "done_when": "Witness verifier merged with a rehearsal proving a restored database is refused by the worker, and the attestation retired; or the owner keeps decision B."
     },
     {
       "id": "RAD-098",
@@ -950,6 +950,16 @@
       "source_ref": "docs/DECISIONS.md#brevo-signup-notify-owner-2026-11-04؛ docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md؛ docs/archive/reports/2026-11/RAD-104_BREVO_DIGEST_2026-11-04.md",
       "waiting_on": "owner",
       "done_when": "يطبّق المالك الحزمة بالدليل: الفحص كله true، بريد تجريبي 201 بلا بيانات شخصية، ثم المفتاح ON؛ أو يقرر التراجع."
+    },
+    {
+      "id": "RAD-105",
+      "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
+      "status": "planned",
+      "priority": "high",
+      "description": "تصميم فقط (OD1–OD9): نوافذ امتحان يجدولها المشرف، عامل بـScheduler، مُحقق استعادة آلي بدل التصديق، دورة اعتماد، واجهات المشرف والطالب، امتحان من 20 عنصرًا، ودفتر فجوات، ومراحل P0–P7 بنافذة لابتوب أخيرة. لا تنفيذ قبل إذن كل مرحلة.",
+      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/DECISIONS.md#rad085-review-ready-proposal-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md",
+      "waiting_on": "owner",
+      "done_when": "يجيب المالك عن DS-1…DS-10، وتُنفَّذ المراحل P0–P7 بمراجعة، وتنجح نافذة اللابتوب الأخيرة بامتحان يُجدوَل ويُصحَّح دون أي خطوة يدوية."
     }
   ]
 }
