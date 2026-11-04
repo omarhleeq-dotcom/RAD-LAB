@@ -7,17 +7,20 @@ import {EmergencyError,type Candidate,type EmergencyPort,type OwnerSnapshot} fro
 const button='min-h-11 rounded border border-line px-3 py-2 disabled:opacity-50';
 const danger='min-h-11 rounded border border-red-700 bg-red-700 px-3 py-2 font-semibold text-white disabled:opacity-50';
 
-export function EmergencyStopView({port,controller:sharedController}:{port:EmergencyPort;controller?:StopController}) {
+/** `intro` and `openRequest` are owner-panel chrome only; the alternate page uses the defaults. */
+export function EmergencyStopView({port,controller:sharedController,intro='pageIntro',openRequest=0}:{port:EmergencyPort;controller?:StopController;intro?:'pageIntro'|'ownerIntro';openRequest?:number}) {
  const t=useTranslations('emergency'),[confirmed,setConfirmed]=useState(false),[,changed]=useState(0),confirmId=useId();
  const dialog=useRef<HTMLDialogElement>(null),dialogTitle=useId(),warningId=useId(),cloudId=useId();
  const controller=useMemo(()=>sharedController??new StopController(port,()=>changed(n=>n+1)),[port,sharedController]);
  useEffect(()=>()=>{if(!sharedController)controller.clear(false);},[controller,sharedController]);
  const {receipt,busy,issue,operation}=controller.state;
- if(issue==='denied')return <p role="alert">{t('denied')}</p>;
  const result=!!(operation||busy||receipt||issue);
+ // A new owner request opens the same confirmation dialog; never while a stop is already shown.
+ useEffect(()=>{if(openRequest>0&&!result&&dialog.current&&!dialog.current.open)dialog.current.showModal();},[openRequest]); // eslint-disable-line react-hooks/exhaustive-deps
+ if(issue==='denied')return <p role="alert">{t('denied')}</p>;
  const open=()=>{setConfirmed(false);dialog.current?.showModal();};
  return <section data-testid="emergency-stop" aria-label={t('pageTitle')} className="mx-auto my-4 w-full min-w-0 max-w-3xl space-y-3 rounded border border-line bg-panel p-4" style={{overflowWrap:'anywhere'}}>
-  <p>{t('pageIntro')}</p>
+  <p>{t(intro)}</p>
   {!result&&<button className={danger} onClick={open}>{t('startStop')}</button>}
   <dialog ref={dialog} aria-modal="true" aria-labelledby={dialogTitle} aria-describedby={`${warningId} ${cloudId}`} className="m-auto max-h-[90dvh] w-[calc(100%-2rem)] max-w-xl space-y-4 overflow-y-auto rounded border border-line bg-panel p-5 text-ink backdrop:bg-black/40" onClose={()=>setConfirmed(false)} onKeyDown={e=>{
    if(e.key!=='Tab')return;

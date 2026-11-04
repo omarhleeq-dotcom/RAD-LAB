@@ -17,7 +17,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04); [result references collapsed](#result-references-owner-2026-11-04); [phone simulator RAD-101](#rad101-phone-ui-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03)), [owner surveys UX](#owner-surveys-ux-owner-2026-11-04)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03)), [owner surveys UX](#owner-surveys-ux-owner-2026-11-04), [owner in-app stop](#owner-inapp-stop-owner-2026-11-04)
 
 ## Active Binding Decisions
 
@@ -1572,6 +1572,7 @@ Authority: owner's answers to §8 of the [RAD-101 audit](archive/reports/2026-11
 - D4 No manual view switcher: the view follows the step. "Aids", "Zoom" and "Full detector" stay as buttons with visible text. Marker-exclusion zones show only in the Marker section.
 - D5 Arabic «اللوح» becomes «لوح الكتف»; named S-STD-2 exception for the affected Arabic chest scene-dom keys, regenerated only through the UPDATE_* path.
 - D6 Fine adjustment always visible as ± rows (centering offsets, field size, SID, kVp, mAs, rotation); dragging on the figure stays; all Practice hints stay.
+- D7 (later the same day) Two stages only: Stage A = planning (#234); Stage B = ONE implementation Draft PR with all of D1–D6 in five ordered commits (labels → steps → Detector sections → ± rows → «لوح الكتف» with AR chest hashes via UPDATE_* only). No Review screen or table anywhere. Stage B starts only after the owner confirms #234 is merged, and merges after the Thursday launch.
 - Unchanged: scoring, feedback, readiness rules, patient and radiograph images, stored coordinates, and desktop DOM and hashes outside D5.
 
 <a id="result-references-owner-2026-11-04"></a>
@@ -1583,6 +1584,7 @@ Authority: owner's RAD-100 prompt; presentation only; tracked by RAD-100.
 - Existing fields and strings only; new strings only for the three control labels (EN/AR). No new or translated medical text, no score, verdict, feedback or patient-image change.
 - Phone: one tap target per control, no stacked nested borders.
 - Declared S-STD-1 exception: result| scene-dom keys may change only after a committed guard proves the result panel's text nodes, in order, equal main's with all disclosures opened; no scene| key, pixel witness, golden or characterisation may change.
+- Owner follow-up 2026-11-04: inside the opened control the credits link text becomes "All sources / كل المصادر" (new key); the "Reference:" source-line prefix and the page-level credits link elsewhere are unchanged.
 
 <a id="assess-window-owner-2026-11-03"></a>
 ### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03
@@ -1615,3 +1617,12 @@ Authority: owner's RAD-099 task prompt and the owner's answer on the pin questio
 4. The lookup runs only when "Who is this?" is tapped, pages the existing directory RPC, stops at the first match and is capped at 200 accounts; beyond the cap it says plainly the code was not found there and to search manually.
 5. S-STD-3 ceiling: the 200-account cap; lifting trigger is a server-side search by code (a later, separately reviewed RPC change).
 UI only: no live SQL, migration or RPC change. The PR stays Draft.
+
+<a id="owner-inapp-stop-owner-2026-11-04"></a>
+### Owner in-app emergency stop (RAD-095), 2026-11-04
+Authority: owner decision in the RAD-095 task prompt, recorded as stated; lifts the post-launch deferral in [UX phase 1 item 2](#owner-ux-phase1-owner-2026-11-03); merges only after the Thursday launch.
+1. The owner gets the same in-app stop as the appointed alternate, inside the owner panel Safety tab: the existing stop view, controller, confirmation dialog, six phases, receipt and wording; no second implementation, no new RPC or call name. The red "Emergency stop" button in the owner status bar opens it.
+2. The [phone runbook](RAD-059_PHONE_RUNBOOK.md) stays the documented fallback, and the Google Cloud steps stay owner phone steps ([decision 3](#rad059-alternate-owner-2026-11-02)).
+3. The [alternate page](#alternate-stop-page-owner-2026-11-03) is unchanged.
+4. Pins: on the [RAD-094 rule](#code-health-pins-owner-2026-11-03), only the sha256 values in `scripts/pages/frontend-schema.json` of the changed files `src/features/pilot/OwnerPanel.tsx` and `src/features/emergency/EmergencySession.tsx` may change; the browser rpc/from name set and the pilot marker stay identical. No other pin, check or manifest change. Recorded: OwnerPanel `c3e0478e…dfdc3` → `d35f215a…5095b`; EmergencySession `b5eedaea…eee7` → `f94e1688…177f`.
+Existing SQL already authorises the approved owner (`emergency.eligible_v1` accepts role owner). No live SQL, migration or RPC change; the PR stays Draft.

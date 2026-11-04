@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 433,
-  "updated_at": "2026-11-04T20:00:00Z",
+  "revision": 435,
+  "updated_at": "2026-11-04T21:00:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-102",
+  "next_id": "RAD-103",
   "tasks": [
     {
       "id": "RAD-001",
@@ -864,12 +864,12 @@
     {
       "id": "RAD-095",
       "title": "إيقاف الطوارئ للمالك داخل التطبيق",
-      "status": "planned",
+      "status": "review",
       "priority": "medium",
-      "description": "مؤجل بقرار المالك إلى ما بعد إطلاق الخميس. SQL يسمح للمالك بالإيقاف لكن واجهة المالك تعرض إدارة البديل فقط؛ يبقى إيقاف دليل الهاتف مسار المالك. لم يبدأ.",
-      "source_ref": "docs/DECISIONS.md#owner-ux-phase1-owner-2026-11-03؛ docs/OWNER_UX_PHASE1_REPORT_2026-11-03.md",
+      "description": "في Draft بقرار المالك 2026-11-04: تبويب السلامة يعرض للمالك تدفق إيقاف البديل نفسه (التأكيد والمراحل الست والإيصال)، وزر «إيقاف طارئ» يفتح التأكيد؛ صفحة البديل بلا تغيير ودليل الهاتف احتياط. لا SQL أو RPC جديد؛ تغيّرت بصمتا OwnerPanel وEmergencySession فقط. الدمج بعد إطلاق الخميس.",
+      "source_ref": "docs/DECISIONS.md#owner-inapp-stop-owner-2026-11-04؛ src/features/emergency/EmergencySession.tsx؛ src/features/pilot/OwnerPanel.tsx",
       "waiting_on": "owner",
-      "done_when": "أمر المالك بعد الإطلاق بتصميم ونطاق، ثم تنفيذ بموافقة مستقلة واختبار؛ حتى ذلك يبقى دليل الهاتف."
+      "done_when": "Draft مدمج بعد الإطلاق ومراجعة المالك، مع CI أخضر وفحص المالك للهاتف دون تشغيل إيقاف حقيقي."
     },
     {
       "id": "RAD-096",
@@ -904,32 +904,42 @@
     {
       "id": "RAD-099",
       "title": "Owner surveys UX: guided launch, round cards, participant lookup (option A)",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "Draft PR: owner surveys tab: guided launch flow with a duplicate-open guard, readable round cards, explicit 7-day interval floor, and a code-only \"Who is this?\" lookup opening the Students card (200-account cap). No SQL, migration or RPC change. Waits for owner review of the UI and the OwnerPanel pin.",
+      "description": "Guided survey launch, round cards, 7-day floor and code-only lookup merged (#231); [report](archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md).",
       "source_ref": "docs/DECISIONS.md#owner-surveys-ux-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md",
-      "waiting_on": "owner",
-      "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge."
+      "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge.",
+      "completion_evidence": "#231 merged by the owner (GitHub read 2026-11-04); report docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md; owner statement 2026-11-04: merged #231 and #232 and checked both on the phone; they work."
     },
     {
       "id": "RAD-100",
       "title": "لوحة النتيجة: المراجع وشرح النموذج مطوية ومناسبة للطالب",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "في Draft: قرار المالك 2026-11-04: كتلة المرجع لكل فحص عنصر مطوي واحد مع شارة الدليل ظاهرة، والملاحظة الطويلة في «تفاصيل أكثر»، وصندوق شرح النموذج مطوي «عن هذا في المحاكي». عرض فقط: لا نص طبي أو درجة جديدة.",
+      "description": "طُويت كتلة المرجع وشرح النموذج في لوحة النتيجة بحارس نص معروض (#232)؛ [التقرير](archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md).",
       "source_ref": "docs/DECISIONS.md#result-references-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md",
-      "waiting_on": "owner",
-      "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف."
+      "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف.",
+      "completion_evidence": "#232 مدمج بيد المالك (قراءة GitHub 2026-11-04)؛ التقرير docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md؛ قول المالك 2026-11-04: دمج #231 و#232 وفحصهما على الهاتف وهما يعملان."
     },
     {
       "id": "RAD-101",
-      "title": "تبسيط محاكي الهاتف: تدقيق ونموذجان وخطة (وثائق فقط)",
+      "title": "تبسيط محاكي الهاتف: مرحلتان (تخطيط ثم تنفيذ واحد)",
       "status": "in_progress",
       "priority": "medium",
-      "description": "قرار المالك 2026-11-04 (D1–D6): الخيار 1 دون جدول مراجعة، تسميات الهاتف رقائق وسطر إيضاح (A1 معدّل)، 4 خطوات تنتهي بتعليمات المريض، صفوف ± ظاهرة، «لوح الكتف». المرحلة 1 (التسميات على الهاتف) في Draft مستقل يُدمج بعد إطلاق الخميس؛ المراحل 2–5 لم تبدأ.",
+      "description": "قرار المالك 2026-11-04 (D1–D7): الخيار 1 دون مراجعة، رقائق تسميات وسطر إيضاح (A1 معدّل)، 4 خطوات تنتهي بتعليمات المريض، صفوف ± ظاهرة، «لوح الكتف». المرحلة A (التخطيط، #234) جاهزة لدمج المالك؛ المرحلة B ‏Draft واحد بخمسة commits بعد الدمج ولم تبدأ؛ #237 يُستبدل بها.",
       "source_ref": "docs/DECISIONS.md#rad101-phone-ui-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
       "waiting_on": "owner",
-      "done_when": "تُدمج المراحل 1–5 وفق D1–D6 بفحوصها، والتقييم والبصمات خارج D5 ثابتة، ويؤكد المالك الهاتف."
+      "done_when": "يُدمج Draft المرحلة B بعد الإطلاق بأمر المالك وفق D1–D7، والتقييم والبصمات خارج مفاتيح الصدر AR في D5 ثابتة، ويؤكد المالك الهاتف."
+    },
+    {
+      "id": "RAD-102",
+      "title": "رسم إعداد القدم: شق النسيج الرخو بين الإصبعين 1 و2",
+      "status": "review",
+      "priority": "medium",
+      "description": "أُوقف الإصلاح (C) بعد التشخيص: شق AP بين الإصبعين 1 و2 موجود في بيانات التتبع نفسها (رؤوس 21–29 من soft-tissue، أثر عتبة Otsu في تراكب الإصبعين) وظاهر عند AP 0؛ نتوءات المائل 55–70 وتقاطعات AP −8…−15 من حركة الأشعة. الإصلاح النظيف يحتاج تصحيح بيانات التتبع أو رقمًا جديدًا؛ ينتظر اختيار المالك بين الخيارات في التقرير.",
+      "source_ref": "docs/archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md؛ docs/DECISIONS.md#radiograph-foot-edges-owner-2026-11-04",
+      "waiting_on": "owner",
+      "done_when": "قرار المالك بخيار من التقرير، ثم Draft يجعل خط النسيج الرخو بلا شق أو نتوء عند كل محطة مع اختبار يفشل على main ويقتصر التغيير على مفاتيح scene| للقدم."
     }
   ]
 }

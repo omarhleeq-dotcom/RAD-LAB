@@ -16,7 +16,7 @@ import { directoryPage, FIRST, type DirectoryPerson, type Position } from "./own
 import { useC2Adapter } from "./C2Session";
 import { DeactivateAccount, OwnerDeletion } from "./OwnerDeletion";
 import { findParticipant, LOOKUP_PAGES, OwnerSurveys, type Lookup } from "./OwnerSurveys";
-import { Chip, Fold } from "./OwnerUi";
+import { Chip } from "./OwnerUi";
 import {EmergencySession} from '@/features/emergency/EmergencySession';
 const tabs=["students","groups","assess","practice","surveys","safety"] as const;
 type Tab=typeof tabs[number];
@@ -37,7 +37,7 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
  const {state}=useSessionAccount();
  const [tab,setTab]=useState<Tab>("students"),[version,setVersion]=useState(0);
  const [busy,setBusy]=useState<string|null>(null),[warn,setWarn]=useState<string|null>(null),[error,setError]=useState(false);
- const [filter,setFilter]=useState<Filter>("all"),[seed,setSeed]=useState(""),[emergencyOpen,setEmergencyOpen]=useState(false);
+ const [filter,setFilter]=useState<Filter>("all"),[seed,setSeed]=useState(""),[stopRequest,setStopRequest]=useState(0),[safetySeen,setSafetySeen]=useState(false);
  const [who,setWho]=useState<{code:string;request:number;result:Lookup<DirectoryPerson>|null}|null>(null);
  const [counts,setCounts]=useState<{version:number;value:Counts|null}|null>(null),[queue,setQueue]=useState<{count:number;more:boolean}|null>(null);
  useEffect(()=>{const sync=()=>setTab(tabFromUrl());sync();window.addEventListener("popstate",sync);return()=>window.removeEventListener("popstate",sync);},[]);
@@ -95,6 +95,7 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
     </details>;
  }
  function go(next:Tab) {history.pushState(null,"",`?tab=${next}`);setTab(next);}
+ if(tab==="safety"&&!safetySeen)setSafetySeen(true);
  const known=counts?.value??null;
  const filterLabel=(f:Filter)=>f==="pending"||f==="approved"||f==="suspended"?`${ux(`filter.${f}`)}${known?` (${known[f]})`:""}`:ux(`filter.${f}`);
  const waiting=c2("loading");
@@ -102,7 +103,7 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
   <div role="region" aria-label={ux("statusBar")} data-testid="owner-status" className="sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b border-line bg-paper px-4 py-2">
    {known?<button type="button" className={btn} onClick={()=>{setFilter("pending");go("students");}}>{ux("pendingCount",{count:known.pending})}</button>:<span className="text-sm text-muted" role="status">{counts?d("error"):d("loading")}</span>}
    {queue&&<button type="button" className={btn} onClick={()=>go("assess")}>{ux(queue.more?"gradingMore":"gradingCount",{count:queue.count})}</button>}
-   <a href="?tab=safety#owner-emergency" data-testid="owner-emergency-button" className={`${danger} ms-auto`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();history.pushState(null,"","?tab=safety#owner-emergency");setTab("safety");setEmergencyOpen(true);requestAnimationFrame(()=>document.getElementById("owner-emergency")?.scrollIntoView());}}>{e("stopTitle")}</a>
+   <a href="?tab=safety#owner-emergency" data-testid="owner-emergency-button" className={`${danger} ms-auto`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();history.pushState(null,"","?tab=safety#owner-emergency");setTab("safety");setStopRequest(n=>n+1);requestAnimationFrame(()=>document.getElementById("owner-emergency")?.scrollIntoView());}}>{e("stopTitle")}</a>
   </div>
   <nav aria-label={d("tabs")} className="flex flex-wrap gap-2">{tabs.map(s=><a key={s} href={`?tab=${s}`} aria-current={tab===s?"page":undefined} className={`${btn} inline-flex items-center ${tab===s?"bg-paper ring-2 ring-brand":""}`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();go(s);}}>{ux(`tabs.${s}`)}</a>)}</nav>
   {tab==="students"&&<section aria-labelledby="owner-students-title" className="min-w-0 space-y-3">
@@ -123,9 +124,10 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
   {tab==="assess"&&<OwnerAssessPanel key={`assess:${ownerId}`} section="assess" onQueue={(count,more)=>setQueue({count,more})}/>}
   {tab==="practice"&&<OwnerTraining key={version}/>}
   {tab==="surveys"&&(adapter?<OwnerSurveys adapter={adapter} ownerId={ownerId} onLookup={code=>{setWho(w=>({code,request:(w?.request??0)+1,result:null}));go("students");requestAnimationFrame(()=>document.getElementById("owner-who-title")?.focus());}}/>:<p role="status">{waiting}</p>)}
-  {tab==="safety"&&<section aria-labelledby="owner-safety-title" className="min-w-0 space-y-3">
+  {/* RAD-095: once opened, Safety stays mounted (hidden on other tabs) so a running stop is never cleared by a tab change. */}
+  {safetySeen&&<section hidden={tab!=="safety"} aria-labelledby="owner-safety-title" className="min-w-0 space-y-3">
    <h2 id="owner-safety-title" className="text-xl font-semibold">{ux("tabs.safety")}</h2>
-   <div id="owner-emergency"><Fold title={e("ownerTitle")} open={emergencyOpen} onToggle={setEmergencyOpen} testId="owner-emergency"><EmergencySession owner/></Fold></div>
+   <div id="owner-emergency" data-testid="owner-emergency" className="scroll-mt-40"><EmergencySession owner openRequest={stopRequest}/></div>
   </section>}
  </section>;
 }
