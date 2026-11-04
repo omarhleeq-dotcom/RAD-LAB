@@ -12,7 +12,7 @@
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
 
-RAD-098 الجلسة3: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3_2026-11-03.md) — صور golden الست في Draft؛ إصلاح قص القدم متوقف حتى يقرر المالك مصدر حواف الأشعة.
+RAD-098 الجلسة3b: [التقرير](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md) — أشعة القدم صلبة في Draft؛ ينتظر المالك قرار أصابع رسم الإعداد وclip-margin-only.
 
 ## المتابعة
 

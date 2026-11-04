@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 426,
-  "updated_at": "2026-11-03T23:30:00Z",
+  "revision": 427,
+  "updated_at": "2026-11-04T09:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-099",
   "tasks": [
@@ -896,8 +896,8 @@
       "title": "خطة محرك صورة الأشعة بأربع جلسات",
       "status": "planned",
       "priority": "high",
-      "description": "D-R1 (#224) وD-R2 المعدّل (#225) مدمجان. الجلسة3 في Draft: أعيد التقاط صور golden الست فقط؛ قص دوران القدم مثبت لكن إصلاحه متوقف لأن حافة قاعدة كل شعاع غير موجودة في البيانات؛ ينتظر قرار المالك في مصدرها. ثم denseZones والجلسة4.",
-      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3_2026-11-03.md",
+      "description": "D-R1 (#224) وD-R2 المعدّل (#225) والجلسة3 (#226) مدمجة. الجلسة3b في Draft: أشعة القدم صلبة حتى حواف قواعدها المشتقة من المخططات (قرار المالك أ)، عشرة صفوف شهود فقط، وrun-matrix محدّث؛ clip-margin-only سببه منطق منتج فلم يُلتقط. ينتظر المالك: أصابع رسم الإعداد وclip-margin-only. ثم denseZones والجلسة4.",
+      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md",
       "waiting_on": "owner",
       "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة."
     }
