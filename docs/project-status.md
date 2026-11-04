@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 433,
-  "updated_at": "2026-11-04T19:00:00Z",
+  "revision": 436,
+  "updated_at": "2026-11-04T22:00:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-101",
+  "next_id": "RAD-104",
   "tasks": [
     {
       "id": "RAD-001",
@@ -904,22 +904,42 @@
     {
       "id": "RAD-099",
       "title": "Owner surveys UX: guided launch, round cards, participant lookup (option A)",
-      "status": "review",
+      "status": "done",
       "priority": "medium",
-      "description": "Draft PR: owner surveys tab: guided launch flow with a duplicate-open guard, readable round cards, explicit 7-day interval floor, and a code-only \"Who is this?\" lookup opening the Students card (200-account cap). No SQL, migration or RPC change. Waits for owner review of the UI and the OwnerPanel pin.",
+      "description": "Guided survey launch, round cards, 7-day floor and code-only lookup merged (#231); [report](archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md).",
       "source_ref": "docs/DECISIONS.md#owner-surveys-ux-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md",
-      "waiting_on": "owner",
-      "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge."
+      "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge.",
+      "completion_evidence": "#231 merged by the owner (GitHub read 2026-11-04); report docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md; owner statement 2026-11-04: merged #231 and #232 and checked both on the phone; they work."
     },
     {
       "id": "RAD-100",
       "title": "لوحة النتيجة: المراجع وشرح النموذج مطوية ومناسبة للطالب",
+      "status": "done",
+      "priority": "medium",
+      "description": "طُويت كتلة المرجع وشرح النموذج في لوحة النتيجة بحارس نص معروض (#232)؛ [التقرير](archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md).",
+      "source_ref": "docs/DECISIONS.md#result-references-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md",
+      "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف.",
+      "completion_evidence": "#232 مدمج بيد المالك (قراءة GitHub 2026-11-04)؛ التقرير docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md؛ قول المالك 2026-11-04: دمج #231 و#232 وفحصهما على الهاتف وهما يعملان."
+    },
+    {
+      "id": "RAD-102",
+      "title": "رسم إعداد القدم: شق النسيج الرخو بين الإصبعين 1 و2",
       "status": "review",
       "priority": "medium",
-      "description": "في Draft: قرار المالك 2026-11-04: كتلة المرجع لكل فحص عنصر مطوي واحد مع شارة الدليل ظاهرة، والملاحظة الطويلة في «تفاصيل أكثر»، وصندوق شرح النموذج مطوي «عن هذا في المحاكي». عرض فقط: لا نص طبي أو درجة جديدة.",
-      "source_ref": "docs/DECISIONS.md#result-references-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md",
+      "description": "أُوقف الإصلاح (C) بعد التشخيص: شق AP بين الإصبعين 1 و2 موجود في بيانات التتبع نفسها (رؤوس 21–29 من soft-tissue، أثر عتبة Otsu في تراكب الإصبعين) وظاهر عند AP 0؛ نتوءات المائل 55–70 وتقاطعات AP −8…−15 من حركة الأشعة. الإصلاح النظيف يحتاج تصحيح بيانات التتبع أو رقمًا جديدًا؛ ينتظر اختيار المالك بين الخيارات في التقرير.",
+      "source_ref": "docs/archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md؛ docs/DECISIONS.md#radiograph-foot-edges-owner-2026-11-04",
       "waiting_on": "owner",
-      "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف."
+      "done_when": "قرار المالك بخيار من التقرير، ثم Draft يجعل خط النسيج الرخو بلا شق أو نتوء عند كل محطة مع اختبار يفشل على main ويقتصر التغيير على مفاتيح scene| للقدم."
+    },
+    {
+      "id": "RAD-103",
+      "title": "تبسيط محاكي الهاتف: مرحلتان (تخطيط ثم تنفيذ واحد) (خُطِّطت باسم RAD-101)",
+      "status": "in_progress",
+      "priority": "medium",
+      "description": "دُمجت المرحلة A (التخطيط والقرارات D1–D7، #234). المرحلة B جارية في Draft واحد هو #237: رقائق الحواف (commit 1، الرقائق تبقى في الصفوف الملاصقة للشكل) ثم استثناء شرائط تسميات إطار الهاتف من مقارنة «same scene drawings» في تدقيق التخطيط، ثم commits 2–5 (الخطوات، أقسام Detector، صفوف ±، «لوح الكتف»).",
+      "source_ref": "docs/DECISIONS.md#rad101-phone-ui-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
+      "waiting_on": "code",
+      "done_when": "يُدمج Draft المرحلة B بعد الإطلاق بأمر المالك وفق D1–D7، والتقييم والبصمات خارج مفاتيح الصدر AR في D5 ثابتة، ويؤكد المالك الهاتف."
     }
   ]
 }

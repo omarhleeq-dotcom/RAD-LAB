@@ -286,6 +286,7 @@
     "label": "Evidence",
     "reference": "Reference",
     "referenceToggle": "Reference",
+    "allSources": "All sources",
     "moreDetails": "More details",
     "aboutSimulator": "About this in the simulator",
     "validated": "SOURCE-BASED",
