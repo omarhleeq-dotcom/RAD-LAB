@@ -1,5 +1,6 @@
 // Manual synchronous renderer benchmark. Defaults preserve the Session 1 method.
 // node scripts/qa/radiograph-performance.mjs /tmp/performance.json --exam hand-lateral --compare-main --warmups 25 --samples 51 --rounds 5
+// --allow-differ foot-ap/rotation/max (repeatable): an INTENDED main/branch pixel change; it is recorded, not a STOP. Any undeclared difference still stops.
 import { build } from 'esbuild';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
@@ -9,11 +10,12 @@ import { relative, resolve } from 'node:path';
 
 const args = process.argv.slice(2), output = args.shift();
 if (!output) throw Error('Provide a result path outside the repository (never updates witnesses).');
-const options = { warmups: 3, samples: 9, rounds: 1, exam: null, compareMain: false };
+const options = { warmups: 3, samples: 9, rounds: 1, exam: null, compareMain: false, allowDiffer: [] };
 while (args.length) {
   const flag = args.shift();
   if (flag === '--compare-main') options.compareMain = true;
   else if (flag === '--exam') options.exam = args.shift();
+  else if (flag === '--allow-differ') options.allowDiffer.push(args.shift());
   else if (['--warmups', '--samples', '--rounds'].includes(flag)) {
     const key = flag.slice(2), value = Number(args.shift());
     if (!Number.isInteger(value) || value < 1) throw Error('Benchmark counts must be positive integers');
@@ -97,7 +99,9 @@ try {
     for (const { luma, ...values } of result) rows.push({ ...values, lumaSHA256: createHash('sha256').update(Buffer.from(luma, 'base64')).digest('hex') });
     if (options.compareMain) for (const scenario of ['baseline', 'rotation/max']) {
       const pair = rows.filter(r => r.exam === id && r.scenario === scenario);
-      if (pair[0].lumaSHA256 !== pair[1].lumaSHA256) throw Error(`STOP: ${id}/${scenario} main/branch pixels differ`);
+      const same = pair[0].lumaSHA256 === pair[1].lumaSHA256;
+      for (const r of pair) r.mainBranchPixelsEqual = same;
+      if (!same && !options.allowDiffer.includes(`${id}/${scenario}`)) throw Error(`STOP: ${id}/${scenario} main/branch pixels differ (not declared with --allow-differ)`);
     }
     console.log(id, result.map(r => `${r.variant}/${r.scenario}=${r.medianMs.toFixed(2)}`).join(' '));
   }
