@@ -8,7 +8,7 @@
 //    (mirrored in RTL), numbered steps in the D3 order with a done / note / not-started state, 44px targets, steps and bottom bar
 //    visible without scrolling, step 2 sections "Centering & field" | "Marker" with the marker-exclusion zones only in "Marker"
 //    (drawings compared there), a one-row scene header with the "Aids" and "Zoom" texts and no view switch, the view following the
-//    step (RAD-101 D4), no keyboard-hint text, fine adjustment collapsed, compact technique rows, the schematic note once (in the
+//    step (RAD-101 D4), no keyboard-hint text, fine adjustment as visible compact ± rows (D6), compact technique rows, the schematic note once (in the
 //    case sheet), the case-details (i) sheet auto-opens once and takes/returns focus, a bottom bar of "Next" + Expose only
 //    (RAD-101 D1; no Next on the last step) with the readiness list in the last step, Expose shows the result inside the view,
 //    Retry does not reopen the case sheet;
@@ -349,8 +349,14 @@ for (const exam of EXAMS) for (const loc of ["en", "ar"]) {
         await page.screenshot({ path: `${OUT}/${exam}-${loc}-${dev}-tab${i}.png` });
         if (WORKSPACE_TABS[i] === "centring") {
           await page.getByRole("button", { name: m.workspace.sectionCentring, exact: true }).click();
-          ok(`${tag} fine adjustment collapsed by default`, await panel.locator("details").evaluate((d) => !d.open));
+          // RAD-101 D6: fine adjustment always visible as compact ± rows (no <details>), as the technique rows.
+          const rowHeights = await panel.locator("[role=group][aria-labelledby]").evaluateAll((els) => els.filter((e) => e.querySelector("input[type=range]") && e.checkVisibility()).map((e) => e.getBoundingClientRect().height));
+          ok(`${tag} fine adjustment visible as compact ± rows`, (await panel.locator("details").count()) === 0 && rowHeights.length === 4 && rowHeights.every((h) => h <= 84), rowHeights.join(","));
           ok(`${tag} touch hint in Centring`, (await panel.innerText()).includes(m.positioning.touchHint));
+        }
+        if (WORKSPACE_TABS[i] === "positioning") {
+          const rotation = panel.locator("[role=group][aria-labelledby]").filter({ has: page.locator("input[type=range]") });
+          ok(`${tag} rotation is a visible ± row`, (await rotation.count()) === 1 && (await rotation.getByRole("button").count()) === 2 && await rotation.isVisible());
         }
         if (WORKSPACE_TABS[i] === "technique") {
           const heights = await panel.locator("[role=group][aria-labelledby]").evaluateAll((els) => els.filter((e) => e.querySelector("input[type=range]")).map((e) => e.getBoundingClientRect().height));

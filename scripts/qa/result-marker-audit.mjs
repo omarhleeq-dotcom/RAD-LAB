@@ -93,8 +93,6 @@ for (const device of DEVICES) for (const loc of LOCALES) for (const exam of EXAM
         await whole.click();
         await page.waitForTimeout(150);
       }
-      const details = page.locator("details", { hasText: m.positioning.fineAdjustPhone });
-      if (await details.count()) await details.first().evaluate((d) => { d.open = true; });
     }
     await setRange(page, m.positioning.centerX, "mid");
     await setRange(page, m.positioning.centerY, "mid");

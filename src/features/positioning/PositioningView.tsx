@@ -8,6 +8,7 @@ import { RangeField } from "@/components/RangeField";
 import type { RadCase } from "@/domain/case";
 import type { SimulationMode, SimulationSettings, SideMarkerId } from "@/domain/simulation";
 import { centeringStatus } from "@/features/evaluation/centering";
+import { StepField } from "@/features/xray-console/StepField";
 import { roundTo } from "@/features/simulation/coords";
 import { DetectorWorkspace } from "./DetectorWorkspace";
 import { normalizedSize, normalizedCentreX, normalizedCentreY } from "./cm-controls";
@@ -104,6 +105,20 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
       <p className="mt-1 text-xs text-muted">{tAny(texts.rotationHelp)}</p>
     </div>
   );
+  // Phone (RAD-101 D6): the fine adjustment is always visible as compact ± rows (the same sliders, plus − / + buttons) in a
+  // console box, as in Technique; dragging on the figure stays. Desktop keeps its sliders and <details>.
+  const rows = (fields: ReactNode) => <div className="space-y-3 rounded-lg bg-console p-3 text-console-text">{fields}</div>;
+  const rotationRow = rows(
+    <StepField compact label={texts.rotationLabel ? tAny(texts.rotationLabel) : t("rotation")} unit="°" spec={controls.rotationDeg} value={settings.rotationDeg} disabled={disabled} help={tAny(texts.rotationHelp)} onChange={(v) => onChange("rotationDeg", v)} />,
+  );
+  const centringRows = rows(
+    <>
+      <StepField compact label={t("centerX")} unit="cm" spec={{ min: -W / 2, max: W / 2, step: 0.5 }} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: normalizedCentreX(v, W) })} />
+      <StepField compact label={t("centerY")} unit="cm" spec={{ min: 0, max: H, step: 0.5 }} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: normalizedCentreY(v, H) })} />
+      <StepField compact label={t("collWidth")} unit="cm" spec={{ min: Math.ceil(positioning.minCollimation * W), max: W, step: 1 }} value={roundTo(settings.collimation.width * W, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, width: normalizedSize(v, W) })} />
+      <StepField compact label={t("collHeight")} unit="cm" spec={{ min: Math.ceil(positioning.minCollimation * H), max: H, step: 1 }} value={roundTo(settings.collimation.height * H, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, height: normalizedSize(v, H) })} />
+    </>,
+  );
   const markerField = (
     <fieldset disabled={disabled} className="sm:col-span-2">
       <legend className="text-sm font-medium">{t("markerLegend")}</legend>
@@ -127,8 +142,8 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
     </fieldset>
   );
   const centringControls = (
-    <details className="sm:col-span-2" open={!phone}>
-      <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{phone ? t("fineAdjustPhone") : t("fineAdjust")}</summary>
+    <details className="sm:col-span-2" open>
+      <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{t("fineAdjust")}</summary>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <RangeField label={t("centerX")} unit="cm" min={-W / 2} max={W / 2} step={0.5} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: normalizedCentreX(v, W) })} />
         <RangeField label={t("centerY")} unit="cm" min={0} max={H} step={0.5} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: normalizedCentreY(v, H) })} />
@@ -226,7 +241,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
           {place(
             <div className="grid gap-4">
               {cues && <div className="rounded-lg bg-console p-4">{cues}</div>}
-              {rotationField}
+              {rotationRow}
             </div>,
             slots.positioning,
           )}
@@ -234,7 +249,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
           {place(
             <div className="grid gap-4">
               <p className="text-sm text-muted">{t("touchHint")}</p>
-              {centringControls}
+              {centringRows}
             </div>,
             slots.centring,
           )}
