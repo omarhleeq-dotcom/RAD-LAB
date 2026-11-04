@@ -904,11 +904,11 @@
     {
       "id": "RAD-099",
       "title": "Owner surveys UX: guided launch, round cards, participant lookup (option A)",
-      "status": "in_progress",
+      "status": "review",
       "priority": "medium",
-      "description": "UI only on the owner surveys tab: guided launch flow with a duplicate-open guard, readable round cards, explicit 7-day interval floor, and a code-only \"Who is this?\" lookup opening the Students card (200-account cap). No SQL, migration or RPC change.",
-      "source_ref": "docs/DECISIONS.md#owner-surveys-ux-owner-2026-11-04",
-      "waiting_on": "code",
+      "description": "Draft PR: owner surveys tab: guided launch flow with a duplicate-open guard, readable round cards, explicit 7-day interval floor, and a code-only \"Who is this?\" lookup opening the Students card (200-account cap). No SQL, migration or RPC change. Waits for owner review of the UI and the OwnerPanel pin.",
+      "source_ref": "docs/DECISIONS.md#owner-surveys-ux-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md",
+      "waiting_on": "owner",
       "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge."
     }
   ]
