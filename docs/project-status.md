@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 431,
-  "updated_at": "2026-11-04T17:00:00.001Z",
+  "revision": 432,
+  "updated_at": "2026-11-04T18:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-101",
   "tasks": [
@@ -900,6 +900,16 @@
       "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md؛ docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md؛ docs/DECISIONS.md#radiograph-densezones-owner-2026-11-04",
       "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة.",
       "completion_evidence": "#220 و#224 و#225 و#226 و#227 و#228 و#229 و#230 مدمجة (قراءة GitHub 2026-11-04)؛ تقارير الجلسات 1 و2 و2b و2b' و3 و3b و3c و4 في docs/archive/reports/2026-11/؛ إغلاق بأمر المالك في موجّه RAD-100."
+    },
+    {
+      "id": "RAD-099",
+      "title": "Owner surveys UX: guided launch, round cards, participant lookup (option A)",
+      "status": "review",
+      "priority": "medium",
+      "description": "Draft PR: owner surveys tab: guided launch flow with a duplicate-open guard, readable round cards, explicit 7-day interval floor, and a code-only \"Who is this?\" lookup opening the Students card (200-account cap). No SQL, migration or RPC change. Waits for owner review of the UI and the OwnerPanel pin.",
+      "source_ref": "docs/DECISIONS.md#owner-surveys-ux-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md",
+      "waiting_on": "owner",
+      "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge."
     },
     {
       "id": "RAD-100",

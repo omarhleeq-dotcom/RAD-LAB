@@ -1970,6 +1970,49 @@
       "3": "3 — Fair",
       "4": "4 — Good",
       "5": "5 — Excellent"
+    },
+    "surveysUx": {
+      "launch": "Launch survey",
+      "launchTitle": "Launch a survey round",
+      "step1": "Step 1 of 2 · Choose the survey",
+      "step2": "Step 2 of 2 · Check and launch",
+      "checking": "Checking which surveys already have an open round…",
+      "chooseLegend": "Survey",
+      "alreadyOpen": "Already open. Close its current round before launching it again.",
+      "scanCapped": "There are more than {count} rounds, so this page cannot confirm that none is open. Launching is turned off here.",
+      "names": {
+        "SUS": "System Usability Scale (SUS)",
+        "General": "General feedback"
+      },
+      "descriptions": {
+        "SUS": "The standard 10 statements in their original English, each rated 1–5; the server scores it 0–100.",
+        "General": "An overall 1–5 rating plus short written answers: what they liked, what should improve and an optional bug report."
+      },
+      "customDescription": "{count, plural, one {# question} other {# questions}}, as defined on the server.",
+      "nameVersion": "{name} · version {version}",
+      "continue": "Continue",
+      "back": "Back",
+      "confirmLaunch": "Launch",
+      "whoTitle": "Who receives it",
+      "who1": "Approved participant accounts that have accepted the current terms and are not pending deletion.",
+      "who2": "Accounts created after surveys were switched on must first have saved at least 5 Practice attempts.",
+      "who3": "Nobody is messaged. An eligible participant is offered the survey the next time they open the home page or Your feedback while signed in.",
+      "who4": "If several rounds are open, each participant is offered the oldest open round first, and answers each round only once.",
+      "intervalTitle": "Minimum interval",
+      "interval": "A participant is offered at most one survey per minimum interval, counted from their last offer or answer, including cancelled offers. The server never allows less than {min} days.",
+      "gapFloor": "The server minimum is {min} days and the maximum is {max} days; this field cannot go below {min}.",
+      "gapUnknown": "The current saved value cannot be read here: the server only returns it when you save.",
+      "gapSaved": "Saved in this session and confirmed by the server: {days} days.",
+      "changed": "Saved.",
+      "roundsTitle": "Rounds",
+      "opened": "Opened {date}",
+      "closedAt": "Closed {date}",
+      "closeConfirm": "Close this round? Participants can no longer answer it, and its pending offers ({pending}) are cancelled. This cannot be undone.",
+      "closeYes": "Yes, close round",
+      "code": "Participant code",
+      "who": "Who is this?",
+      "whoLabel": "Who is this? Open the Students card for code {code}",
+      "whoHelp": "Answers show participant codes only. “Who is this?” opens that participant's card in the Students tab."
     }
   },
   "supervisorReview": {
@@ -2506,7 +2549,15 @@
     "filters": "Filters",
     "assign": "Assign an assessment",
     "published": "Published assignments",
-    "content": "Questions and content"
+    "content": "Questions and content",
+    "who": {
+      "title": "Participant",
+      "searching": "Looking up this participant code…",
+      "missing": "No account with this code was found. It may be pending deletion or deleted.",
+      "capped": "This code was not found in the first {count} accounts. Close this lookup and search the Students list manually.",
+      "back": "Back to surveys",
+      "close": "Close lookup"
+    }
   },
   "assessConsentUi": {
     "showText": "Show consent text"
