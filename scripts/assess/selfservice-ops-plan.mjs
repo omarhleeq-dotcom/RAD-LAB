@@ -18,7 +18,7 @@ export function operationsPlan(c) {
   alertStrategy:{notificationRateLimit:{period:'3600s'},autoClose:'86400s',notificationPrompts:['OPENED']},
   documentation:{mimeType:'text/markdown',content:text}});
  const scope=`resource.labels.project_id="${c.project}" AND resource.labels.location="${c.region}"`;
- const scheduler=`resource.type="cloud_scheduler_job" AND resource.labels.project_id="${c.project}" AND resource.labels.location="${c.region}" AND resource.labels.job_id="assess-worker-tick" AND jsonPayload.@type="type.googleapis.com/google.cloud.scheduler.logging.AttemptFinished" AND jsonPayload.status!="OK"`;
+ const scheduler=`resource.type="cloud_scheduler_job" AND resource.labels.project_id="${c.project}" AND resource.labels.location="${c.region}" AND resource.labels.job_id="assess-worker-tick" AND jsonPayload."@type"="type.googleapis.com/google.cloud.scheduler.logging.AttemptFinished" AND jsonPayload.status!="OK"`;
  const backupScheduler=scheduler.replace('assess-worker-tick','assess-backup-tick');
  const worker=`resource.type="cloud_run_job" AND ${scope} AND resource.labels.job_name="assess-worker" AND (jsonPayload.outcome="STOP" OR severity>=ERROR)`;
  const backup=`resource.type="cloud_run_job" AND ${scope} AND resource.labels.job_name="assess-backup"`;
@@ -47,7 +47,7 @@ export function operationsPlan(c) {
     'Daily encrypted backup failed; keep the reviewed laptop backup. No automatic role/secret/gate changes.'),
    databaseSize:policy('Assess database 70 percent',`${backup} AND jsonPayload.databaseSizeAlert70=true`,
     'Database size reached 70% of the owner-verified plan limit. Compare pg_database_size with Supabase Usage; no automatic deletion or upgrade.')},
-  sourceRestriction:{status:'COST_STOP',activationCommands:[],reason:'Cloud Run static egress requires cost review; direct-host IPv6/IPv4 compatibility and Supabase entitlement remain owner preflight gates.'}};
+  sourceRestriction:{status:'COST_STOP',activationCommands:[],reason:'Review existing dual-stack subnet CIDR scope and Supabase entitlement first; paid static IPv4/NAT or plan changes require owner cost approval. No activation.'}};
 }
 export function main(args=process.argv.slice(2)) {
  if(args.length!==2||args[0]!=='--config')throw Error('arguments');
