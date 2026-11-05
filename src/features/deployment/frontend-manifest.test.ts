@@ -49,6 +49,7 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   '20261102000300_rad085_rights_write_disclosures.sql',
   '20261105000100_rad105_windows.sql',
   '20261105000200_rad105_witness.sql',
+  '20261105000300_rad105_selfservice_s2.sql',
  ]);
  expect(manifest.deferredMigrations).toEqual({}); // Owner-approved window promotion: restore the exact empty deferred pin.
  expect(manifest.checks).toEqual([
@@ -56,14 +57,15 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   'supabase/checks/comparison-ready.sql',
   'supabase/checks/selfservice-assess-mixed-ready.sql',
   'supabase/checks/selfservice-assess-practical-ready.sql',
-  'supabase/checks/selfservice-rad085-review-ready.sql',
+  'supabase/checks/selfservice-s2-rad085-review-ready.sql',
   'supabase/checks/selfservice-assess-history-ready.sql',
   'supabase/checks/selfservice-assess-retention-ready.sql',
   'supabase/checks/owner-dashboard-ready.sql',
   'supabase/checks/owner-deletion-surveys-ready.sql',
   'supabase/checks/selfservice-ready.sql',
+  'supabase/checks/selfservice-s2-ready.sql',
  ]);
  expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], {
   encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' },
- }).trim()).toBe('pilot-v1:2bcdc4dd83982e06f57adb70be8cf7597d18f242ce62e5d09b734ddb3aec2629');
+ }).trim()).toBe('pilot-v1:f863714f4ff2278cebc1e6adc44130683fa6910a96349da3edefa9df388ea560');
 });

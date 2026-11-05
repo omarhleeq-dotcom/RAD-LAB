@@ -37,19 +37,21 @@
     "20261102000200_rad059_emergency_alternate.sql",
     "20261102000300_rad085_rights_write_disclosures.sql",
     "20261105000100_rad105_windows.sql",
-    "20261105000200_rad105_witness.sql"
+    "20261105000200_rad105_witness.sql",
+    "20261105000300_rad105_selfservice_s2.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/selfservice-assess-mixed-ready.sql",
     "supabase/checks/selfservice-assess-practical-ready.sql",
-    "supabase/checks/selfservice-rad085-review-ready.sql",
+    "supabase/checks/selfservice-s2-rad085-review-ready.sql",
     "supabase/checks/selfservice-assess-history-ready.sql",
     "supabase/checks/selfservice-assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
     "supabase/checks/owner-deletion-surveys-ready.sql",
-    "supabase/checks/selfservice-ready.sql"
+    "supabase/checks/selfservice-ready.sql",
+    "supabase/checks/selfservice-s2-ready.sql"
   ],
   "deferredMigrations": {},
   "explicitBoundaries": [

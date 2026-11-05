@@ -29,17 +29,18 @@ node -e "const m=require('./supabase/staged/self-service/MANIFEST.json'),c=requi
 ```bash
 owner_sql -f supabase/migrations/20261105000100_rad105_windows.sql
 owner_sql -f supabase/migrations/20261105000200_rad105_witness.sql
+owner_sql -f supabase/migrations/20261105000300_rad105_selfservice_s2.sql
 ```
 **Expected:** `COMMIT` لكل ملف. تحقق: `select to_regclass('assess.assignment_windows') is not null, to_regclass('assess.restore_epoch') is not null` ← `t | t`. **STOP:** أي خطأ ← لا شيء طُبّق من ذلك الملف؛ أغلق PR الترقية.
 
-بعد الملفين، وفي اتصال واحد، جهّز نص التحقق ثم راجعه قبل تشغيله:
+بعد الملفات الثلاثة، وفي اتصال واحد، جهّز نص التحقق ثم راجعه قبل تشغيله:
 ```bash
-{ printf "%s\n" "set radlab.expected_gate='closed';"; cat supabase/checks/selfservice-rad085-review-ready.sql supabase/checks/selfservice-ready.sql; } > /tmp/rad105-ready.sql
+{ printf "%s\n" "set radlab.expected_gate='closed';"; cat supabase/checks/selfservice-s2-rad085-review-ready.sql supabase/checks/selfservice-ready.sql supabase/checks/selfservice-s2-ready.sql; } > /tmp/rad105-ready.sql
 owner_sql -f /tmp/rad105-ready.sql
 ```
 **Expected:** فحص الكتالوج 11 صفًا ناجحًا، وصفوف `ok` في حزمة النوافذ والشاهد كلها صحيحة. **STOP:** أي فشل أو صف مفقود. لا تطبق النسختين المرحليتين مرة أخرى؛ هما دليل بايتات مطابق للترحيلين. عدادات health تبقى لـlifecycle_version=1؛ الشاهد إضافة مستقلة.
 
-علامة الترقية المرشحة: `pilot-v1:2bcdc4dd83982e06f57adb70be8cf7597d18f242ce62e5d09b734ddb3aec2629`؛ بصمة functions `5105994588a3fb40c96749f0add08e1d` وrelations `fd59fc5eb938c70934f4cf5517c2dae0`. علامة P0 الحية لم تتغير بهذه الجلسة؛ لا تضبط المرشح قبل دليل النافذة.
+علامة الترقية المرشحة: `pilot-v1:f863714f4ff2278cebc1e6adc44130683fa6910a96349da3edefa9df388ea560`؛ بصمة functions `7e002269cb2955541a56c29e3b6a0ce5` وrelations `5c45889099a878446fd3a16a9569940f`. علامة P0 الحية لم تتغير بهذه الجلسة؛ لا تضبط المرشح قبل دليل النافذة.
 
 ## 4. دمج PR الترقية وفتح النشر (GitHub، L)
 4.1 دمج PR الترقية بأمرك بعد CI أخضر. 4.2 اطبع العلامة الجديدة بعنوان مشروعك (`--print-marker`) واضبط `PILOT_SCHEMA_VERIFIED` كما في [دليل P0](ASSESS_P0_MARKER_RUNBOOK.md#2-اضبط-pilot_schema_verified)، ثم أعد تشغيل Deploy Pages. **Expected:** نشر أخضر. **STOP:** فشل البوابة ← لا تتخطّها.
@@ -90,3 +91,7 @@ RAD_PROJECT=<id> RAD_REGION=europe-west3 APPLY=1 RAD_WINDOW_PERMISSION=I-HAVE-TH
 
 ## 16. الإغلاق
 تحقق نهائي: البوابة على الحالة المتوقعة، الشاهد `advance`، لا تنفيذ عالق، كل الأحجام مركّبة، تنبيهات P7 فعالة. **ما يبقى يدويًا بعدها (سقوف S-STD-3):** تدوير الاعتماد عند الاشتباه فقط (أمر واحد)، «قبول القاعدة المستعادة» بعد استعادة حقيقية، «استئناف» بعد أي إيقاف، وقراءة التسعير. لا خطوة أخرى لكل امتحان.
+
+## حد S2 قبل S3/S4
+[عقد S2 ودليله](archive/reports/2026-11/ASSESS_SELF_SERVICE_S2_2026-11-05.md): DB فقط، لم تُطبق حيًا. S3 مشروطة بنجاح S2 وقبولها. Resume بتأكيد مكتوب للمالك والبديل؛ لا يطلق ACTIVE عند الإيقاف أو الحجز التاريخي مجهول المنشأ. قبول الاستعادة للمالك فقط.
+حزمة `supabase/manual/selfservice-notify-install.sql` منفصلة لم تُنفذ؛ الإشعارات OFF. تدمج S4 فحصها وإيصالها في نافذة مأذونة لاحقة؛ لا أسرار أو بريد أو cron حي هنا. request_id يثبت enqueue فقط.

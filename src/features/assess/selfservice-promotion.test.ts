@@ -182,6 +182,38 @@ describe.each(modes)('C1/C2 production promotion %s',mode=>{
    const witness=readFileSync('supabase/checks/selfservice-ready.sql','utf8');
    expect(flatten(await db.admin.query(witness.replaceAll('begin read only;','begin;delete from assess.restore_epoch;'))).filter(r=>!r.ok).map(r=>r.check_name)).toEqual(['witness_singleton']);
    expect((await check()).filter(r=>r.ok!==true)).toEqual([]);
+   // S2 is a separate forward migration. All S1 oracles above remain literal and independent.
+   const beforeS2=await snapshot();
+   await db.admin.query(sql('20261105000300_rad105_selfservice_s2.sql'));
+   const afterS2=await snapshot();
+   const deltaS2=beforeS2.filter(b=>JSON.stringify(b.doc)!==JSON.stringify(afterS2.find(a=>a.kind===b.kind&&a.name===b.name)?.doc)).map(r=>r.name).sort();
+   console.info('S2 changed existing catalogue',mode,JSON.stringify(deltaS2));
+   expect(deltaS2).toEqual(['assess.assignment_window_set_v1(uuid,integer,timestamp with time zone,timestamp with time zone)',
+    'assess.assignment_windows','assess.assignments','assess.owner_resume_v1(text)','assess.sessions','assess.start_v2(uuid,uuid)',
+    'assess.supervisor_appointments','assess.targets','assess.window_deadline_v1(uuid,timestamp with time zone,integer)','emergency.audit','emergency_alternate_read_v1(bigint,integer)'].sort());
+   const addedS2=afterS2.filter(r=>!beforeS2.some(b=>b.kind===r.kind&&b.name===r.name)).map(r=>r.name).sort();
+   console.info('S2 added catalogue',mode,JSON.stringify(addedS2));
+   expect(addedS2).toEqual(['all_students_assignments','assessment_notices','assessment_notify_settings','assignment_accommodations','stop_active_attempts'].map(n=>'assess.'+n).concat([
+    'assignment_schedule_v2(uuid,integer,timestamp with time zone,timestamp with time zone)','extra_time_v1(uuid,uuid,integer)','new_attempt_v1(uuid,uuid)',
+    'notice_dispatch_v1()','notice_post_v1(text,timestamp with time zone)','notice_refresh_v1()','notice_switch_v1(boolean)','own_assignment_v1(uuid)',
+    'pool_recommendation_v1(uuid)','quiz_capability_v1()','quiz_close_v1(uuid,integer)','quiz_page_v1(uuid,integer)','quiz_permission_reset_v1()',
+    'quiz_permission_v1(uuid,boolean)','quiz_permissions_v1(uuid,integer)','quiz_publish_v1(uuid,uuid,timestamp with time zone,timestamp with time zone)',
+    'quiz_recipient_v1(uuid)','s2_audit_v1(text,jsonb,bigint)','selfservice_audit_v1(bigint,integer)','stop_active_capture_v1()'].map(n=>'assess.'+n)).sort());
+   const s2Ready=readFileSync('supabase/checks/selfservice-s2-rad085-review-ready.sql','utf8');
+   const s2Rows=flatten(await db.admin.query(s2Ready));
+   console.info('S2 fresh production fingerprints',mode,JSON.stringify(s2Rows.filter(r=>r.actual)));
+   expect(s2Rows.filter(r=>r.ok!==true)).toEqual([]);
+   for(const change of [
+    'grant execute on function assess.notice_dispatch_v1() to authenticated',
+    'grant execute on function assess.quiz_recipient_v1(uuid) to authenticated',
+    "do $m$declare d text;begin d:=pg_get_functiondef('assess.quiz_publish_v1(uuid,uuid,timestamptz,timestamptz)'::regprocedure);execute replace(d,'and all_students)','and true)');end$m$",
+    'alter table assess.assignment_accommodations disable row level security',
+    'alter table assess.assignment_accommodations drop constraint assignment_accommodations_extra_seconds_check',
+   ]) {
+    const altered=s2Ready.replace('begin read only;','begin;'+change+';');
+    expect(flatten(await db.admin.query(altered)).filter(r=>r.ok!==true).map(r=>r.check_name)).toEqual([change.startsWith('alter table')?'relations':'functions']);
+   }
+   expect(flatten(await db.admin.query(readFileSync('supabase/checks/selfservice-s2-ready.sql','utf8'))).filter(r=>r.ok!==true)).toEqual([]);
   }finally{await db.close();}
  },300000);
 });
