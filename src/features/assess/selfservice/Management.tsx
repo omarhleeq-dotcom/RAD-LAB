@@ -4,6 +4,7 @@ import { SelfServiceError, type Eligibility, type Metadata, type Page, type Perm
 import { StatusBoard, SupervisorSchedule } from './SelfServiceViews';
 import { ammanLocalToUtc, formatAmman, utcToAmmanLocal } from './window-time';
 import type { SelfServiceStrings } from './strings';
+import { useServerClock } from './server-clock';
 const button='min-h-11 rounded border border-line px-3 py-2 disabled:opacity-50';
 type Props={port:SelfServicePort;owner:boolean;strings:SelfServiceStrings;locale:'en'|'ar'};
 export function Management({port,owner,strings:s,locale}:Props) {
@@ -11,6 +12,7 @@ export function Management({port,owner,strings:s,locale}:Props) {
  const [allowed,setAllowed]=useState(false),[busy,setBusy]=useState(true),[message,setMessage]=useState(''),[blocked,setBlocked]=useState(false);
  const [selected,setSelected]=useState<Metadata>(),[version,setVersion]=useState<Metadata>(),[pool,setPool]=useState<Recommendation>(),[versionPool,setVersionPool]=useState<Recommendation>();
  const [status,setStatus]=useState<Status>(),[eligibility,setEligibility]=useState<Page<Eligibility>>();
+ const publicationTime=useServerClock(versions?.serverTime,versions),assignmentTime=useServerClock(status?.now,status);
  const lock=useRef(false),operation=useRef<string|null>(null),live=useRef(true);
  const fail=useCallback((e:unknown)=>{if(live.current){setMessage(e instanceof SelfServiceError?s[e.kind]:s.unknown);setBlocked(true);setAllowed(false);}},[s]);
  const refresh=useCallback(async()=> {
@@ -29,8 +31,8 @@ export function Management({port,owner,strings:s,locale}:Props) {
  }
  const recommendation=(p:Recommendation)=>s.pool.replace('{x}',String(p.selected)).replace('{y}',String(p.available));
  const pager=(next:string|null|undefined,load:(after:string|null)=>Promise<unknown>)=><div className="flex flex-wrap gap-2"><button className={button} disabled={busy} onClick={()=>void run(()=>load(null))}>{s.first}</button>{next&&<button className={button} disabled={busy} onClick={()=>void run(()=>load(next))}>{s.next}</button>}</div>;
- const editable=!!selected&&!!status&&!status.closed&&(!status.closesAt||Date.parse(status.closesAt)>Date.parse(status.now));
- const schedule=selected&&status&&(editable?<SupervisorSchedule key={`${selected.id}:${selected.revision}`} adapter={{available:!blocked,schedule:async(o,c)=>{await port.schedule(selected.id,selected.revision!,selected.opensAt && o===ammanLocalToUtc(utcToAmmanLocal(selected.opensAt))?selected.opensAt:o,selected.closesAt && c===ammanLocalToUtc(utcToAmmanLocal(selected.closesAt))?selected.closesAt:c);await refresh();}}} strings={s} locale={locale} durationSeconds={selected.durationSeconds} nowMs={Date.parse(status.now)} clock={()=>Date.parse(status.now)} initial={selected.opensAt&&selected.closesAt?{opensLocal:utcToAmmanLocal(selected.opensAt),closesLocal:utcToAmmanLocal(selected.closesAt)}:undefined}/>:<p role="status">{s.window}</p>);
+ const editable=!!selected&&!!status&&Number.isFinite(assignmentTime.nowMs)&&!status.closed&&(!status.closesAt||Date.parse(status.closesAt)>assignmentTime.nowMs);
+ const schedule=selected&&status&&(editable?<SupervisorSchedule key={`${selected.id}:${selected.revision}`} adapter={{available:!blocked,schedule:async(o,c)=>{await port.schedule(selected.id,selected.revision!,selected.opensAt && o===ammanLocalToUtc(utcToAmmanLocal(selected.opensAt))?selected.opensAt:o,selected.closesAt && c===ammanLocalToUtc(utcToAmmanLocal(selected.closesAt))?selected.closesAt:c);await refresh();}}} strings={s} locale={locale} durationSeconds={selected.durationSeconds} nowMs={assignmentTime.nowMs} clock={assignmentTime.clock} initial={selected.opensAt&&selected.closesAt?{opensLocal:utcToAmmanLocal(selected.opensAt),closesLocal:utcToAmmanLocal(selected.closesAt)}:undefined}/>:<p role="status">{s.window}</p>);
  return <section className="min-w-0 space-y-5 rounded border border-line p-4" aria-label={s.manage} aria-busy={busy} data-testid="selfservice-management">
   <h2 className="text-xl font-semibold">{s.manage}</h2><p>{s.auditHint}</p>
   {busy&&<p role="status">{s.loading}</p>}{message&&<p role={blocked?'alert':'status'}>{message}</p>}
@@ -45,7 +47,7 @@ export function Management({port,owner,strings:s,locale}:Props) {
    {allowed&&<><h4>{s.versions}</h4>{versions?.rows.length===0&&<p>{s.emptyManage}</p>}
     <ul className="space-y-2">{versions?.rows.map(v=><li key={v.id}><button className={button} aria-pressed={version?.id===v.id} disabled={busy||blocked} onClick={()=>void run(async()=>{const p=await port.recommendation(v.id);if(live.current){setVersion(v);setVersionPool(p);operation.current=crypto.randomUUID();}})}><bdi>{v.name}</bdi></button></li>)}</ul>
     {pager(versions?.next,async after=>{setVersion(undefined);setVersions(await port.metadata('versions',after));})}
-    {version&&versionPool&&<><p>{recommendation(versionPool)}</p><SupervisorSchedule key={version.id} strings={{...s,title:s.publish,schedule:s.publish}} locale={locale} durationSeconds={version.durationSeconds} nowMs={Date.parse(versions?.serverTime??'')} clock={()=>Date.now()} adapter={{available:allowed&&!blocked,schedule:async(o,c)=>{if(!operation.current)throw new SelfServiceError('invalid');await port.publish(version.id,operation.current,o,c);await refresh();operation.current=null;}}}/></>}
+    {version&&versionPool&&<><p>{recommendation(versionPool)}</p><SupervisorSchedule key={version.id} strings={{...s,title:s.publish,schedule:s.publish}} locale={locale} durationSeconds={version.durationSeconds} nowMs={publicationTime.nowMs} clock={publicationTime.clock} adapter={{available:allowed&&!blocked,schedule:async(o,c)=>{if(!operation.current)throw new SelfServiceError('invalid');await port.publish(version.id,operation.current,o,c);await refresh();operation.current=null;}}}/></>}
    </>}
   </section>
   <section className="space-y-3" aria-label={s.manage}><h3 className="font-semibold">{s.manage}</h3>
@@ -58,11 +60,11 @@ export function Management({port,owner,strings:s,locale}:Props) {
    <StatusBoard counts={status.counts} strings={s}/><p><bdi>{formatAmman(status.now,locale)}</bdi></p>{schedule}
    <button className={button} disabled={busy||blocked||!editable} onClick={()=>{if(window.confirm(s.confirmClose))void run(()=>port.close(selected.id,selected.revision!,selected.audience==='all-students'),true);}}>{s.close}</button>
    <ul className="space-y-3">{status.rows.map(row=><li key={row.userId} className="min-w-0 rounded border border-line p-3"><bdi className="break-all">{row.userId}</bdi>
-    <form className="space-y-2" onSubmit={e=>{e.preventDefault();const seconds=Number(new FormData(e.currentTarget).get('seconds'));void run(()=>port.extra(selected.id,row.userId,seconds),true);}}><label className="block">{s.extra}<input name="seconds" className="block min-h-11 w-full rounded border border-line px-3" type="number" min={0} max={86400} step={1} required defaultValue={0} dir="ltr"/></label><button className={button} disabled={busy||blocked||!editable}>{s.saveExtra}</button></form>
+    <form className="space-y-2" onSubmit={e=>{e.preventDefault();const seconds=Number(new FormData(e.currentTarget).get('seconds'));void run(()=>port.extra(selected.id,row.userId,seconds),true);}}><label className="block">{s.extra}<input name="seconds" disabled={busy||blocked||!editable} className="block min-h-11 w-full rounded border border-line px-3" type="number" min={0} max={86400} step={1} required defaultValue={0} dir="ltr"/></label><button className={button} disabled={busy||blocked||!editable}>{s.saveExtra}</button></form>
    </li>)}</ul>
    {pager(status.rows.length===50?status.rows.at(-1)!.userId:null,async after=>{setStatus(await port.status(selected.id,after));})}
    <h4 className="font-semibold">{s.attempts}</h4><p>{s.holds}</p>
-   <ul className="space-y-3">{eligibility?.rows.map(row=><li key={row.sessionId} className="min-w-0 rounded border border-line p-3"><bdi className="break-all">{row.studentId}</bdi><p>{s[row.reason as keyof SelfServiceStrings]}</p>{row.eligible&&<button className={button} disabled={busy||blocked} onClick={()=>void run(()=>port.grant(selected.id,row.sessionId),true)}>{s.grant}</button>}</li>)}</ul>
+   <ul className="space-y-3">{eligibility?.rows.map(row=><li key={row.sessionId} className="min-w-0 rounded border border-line p-3"><bdi className="break-all">{row.studentId}</bdi><p>{s[row.reason as keyof SelfServiceStrings]}</p>{row.eligible&&<button className={button} disabled={busy||blocked||!editable} onClick={()=>void run(()=>port.grant(selected.id,row.sessionId),true)}>{s.grant}</button>}</li>)}</ul>
    {pager(eligibility?.next,async after=>{setEligibility(await port.eligibility(selected.id,after));})}
   </div>}
  </section>;

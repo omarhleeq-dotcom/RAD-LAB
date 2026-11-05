@@ -101,7 +101,7 @@
     "src/features/assess/manual-grading-data.ts": "285fc0e8f2be3c76fd0838cbef23ede79e08789d32ca560df4c9fd2488bd8575",
     "src/features/assess/selfservice/adapter.ts": "349386506711fc5bfa24599c1dc729946e87bcaa4ef924b724c3eaf10a3fd5aa",
     "src/features/assess/selfservice/runner.ts": "587bd24e049594c093321b04c84d6389023f3eb71bea7436fe066b364543e8ee",
-    "src/features/assess/selfservice/SelfServiceSession.tsx": "e56aacbc14b39e8729de22c76d097015ca039f8a1f29b2ec5d06f4d76e9a0722"
+    "src/features/assess/selfservice/SelfServiceSession.tsx": "72b9f9a3149936ef3e3ab93b75c4c1d383b9ce2ac0f26d23a536ced9d91e603b"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",

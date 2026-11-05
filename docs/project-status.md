@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 452,
-  "updated_at": "2026-11-05T16:46:27.373749+00:00",
+  "revision": 453,
+  "updated_at": "2026-11-05T18:35:40.797398+00:00",
   "timezone": "Asia/Amman",
   "next_id": "RAD-106",
   "tasks": [
@@ -955,8 +955,8 @@
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي",
       "status": "review",
       "priority": "high",
-      "description": "S1/S2 مقبولتان. واجهات S3 وعقود القراءة المعتمدة في Draft #242؛ دليل فحوص الرأس في وصف PR؛ تنتظر قبول المراجعة. S4 وP7 لم تبدأ؛ لا تفعيل حي.",
-      "source_ref": "docs/DECISIONS.md#assess-self-service-s3-reads-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_IMPLEMENTATION_2026-11-05.md",
+      "description": "S1/S2 مقبولتان. تصحيح ساعة S3 في Draft #242؛ دليل الفحوص المحلية وCI في التقرير ووصف PR. ينتظر قبول مراجعة التنسيق. S4 وP7 لم تبدأ؛ لا تفعيل حي.",
+      "source_ref": "docs/DECISIONS.md#assess-self-service-s3-clock-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_CLOCK_2026-11-05.md",
       "waiting_on": "reviewer",
       "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
     }

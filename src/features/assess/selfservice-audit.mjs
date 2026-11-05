@@ -28,7 +28,7 @@ try {
   b.onLoad({filter:/.*/,namespace:'synthetic'},args=>({loader:'ts',contents:args.path==='SessionGate'?`
    export const useSessionAccount=()=>({state:{kind:'signedIn',userId:'00000000-0000-0000-0000-000000000001',displayName:'SYNTHETIC Account Name',consentVersion:'2026-11-02',profile:{status:'approved',role:new URLSearchParams(location.search).get('role')==='owner'?'owner':'participant'}}});export const useOptionalSessionAccount=useSessionAccount;
   `:args.path==='EmergencySession'?`export const useEmergencyAlternate=()=>new URLSearchParams(location.search).get('role')==='alternate';`:args.path==='P1Session'?`export const useSupervisorAppointment=()=>new URLSearchParams(location.search).get('role')==='supervisor';`:`
-   const params=new URLSearchParams(location.search),iso=n=>new Date(Date.now()+n).toISOString(),id=n=>'00000000-0000-0000-0000-'+String(n).padStart(12,'0');let enabled=false,submitted=false;window.calls=[];
+   const params=new URLSearchParams(location.search),clockCase=params.has('clock'),serverEpoch=Date.parse('2026-11-05T12:00:00Z'),received=performance.now(),iso=n=>new Date((clockCase?serverEpoch+performance.now()-received:Date.now())+n).toISOString(),fixed=n=>new Date(serverEpoch+n).toISOString(),id=n=>'00000000-0000-0000-0000-'+String(n).padStart(12,'0');let enabled=false,submitted=false;window.calls=[];
    const names=['quiz_capability_v1','quiz_permissions_v1','quiz_permission_v1','quiz_publish_v1','assignment_schedule_v2','pool_recommendation_v1','extra_time_v1','new_attempt_v1','quiz_close_v1','assignment_close_v2','assignment_status_v1','attempt_eligibility_page_v1','student_exams_page_v1','history_page_v2','selfservice_metadata_page_v1','owner_resume_v1','witness_accept_v1','start_v2','command_v2','read_mixed_session_v2','read_practical_session_v2'];
    const originalFetch=fetch;globalThis.fetch=(input,init)=>String(input)==='https://synthetic.supabase.co/rest/v1/'?Promise.resolve(new Response(JSON.stringify({paths:params.has('unavailable')?{}:Object.fromEntries(names.map(n=>['/rpc/'+n,{}]))}),{status:200})):originalFetch(input,init);
    const envelope=rows=>({version:1,rows,next:null,serverTime:iso(0)});
@@ -37,13 +37,14 @@ try {
     if(name==='quiz_capability_v1')return params.get('role')==='owner'||enabled;
     if(name==='quiz_permissions_v1')return [{user_id:id(2),all_students:enabled,all_students_key:id(4)}];
     if(name==='quiz_permission_v1'){enabled=args.p_enabled;return null;}
-    if(name==='selfservice_metadata_page_v1')return envelope(params.has('empty')?[]:args.p_kind==='versions'?[{id:id(9),name:'SYNTHETIC questions',track:'mixed',durationSeconds:3600}]:[{id:id(5),name:'SYNTHETIC group',track:'mixed',durationSeconds:3600,versionId:id(9),revision:1,audience:'groups',opensAt:iso(3600000),closesAt:iso(10800000),closedAt:params.has('closed')?iso(0):null}]);
+    if(name==='selfservice_metadata_page_v1')return envelope(params.has('empty')?[]:args.p_kind==='versions'?[{id:id(9),name:'SYNTHETIC questions',track:'mixed',durationSeconds:3600}]:[{id:id(5),name:'SYNTHETIC group',track:'mixed',durationSeconds:3600,versionId:id(9),revision:1,audience:'groups',opensAt:clockCase?fixed(-1000):iso(3600000),closesAt:clockCase?fixed(20000):iso(10800000),closedAt:params.has('closed')?iso(0):null}]);
     if(name==='pool_recommendation_v1')return {version:1,selected:2,available:3,recommended:true,defaultWindowSeconds:7200,maxWindowSeconds:604800};
-    if(name==='assignment_status_v1')return {counts:{notStarted:1,inProgress:1,submitted:1,graded:1,missed:1},rows:[{userId:id(3),state:'not-started'}],now:iso(0),opensAt:iso(3600000),closesAt:iso(10800000),closed:params.has('closed')};
+    if(name==='assignment_status_v1')return {counts:{notStarted:1,inProgress:1,submitted:1,graded:1,missed:1},rows:[{userId:id(3),state:'not-started'}],now:iso(0),opensAt:clockCase?fixed(-1000):iso(3600000),closesAt:clockCase?fixed(20000):iso(10800000),closed:params.has('closed')};
     if(name==='attempt_eligibility_page_v1')return envelope([{sessionId:id(6),studentId:id(3),eligible:false,reason:'unknown-history',serverTime:iso(0)},{sessionId:id(7),studentId:id(3),eligible:true,reason:'eligible',serverTime:iso(0)}]);
     if(name==='student_exams_page_v1'){
      if(params.has('loading'))return new Promise(()=>{});if(params.has('empty'))return envelope([]);
      const base={name:'SYNTHETIC',track:params.get('family')==='full-practical'?'full-practical':'mixed',audience:'all-students',opensAt:iso(-3600000),closesAt:iso(3600000),closed:false,sessionId:null,state:null,deadline:null,expiresAt:null,held:false,resultReady:false,grading:false,replacementGranted:false};
+     if(clockCase)return envelope([{...base,id:id(1),name:'Clock upcoming',opensAt:fixed(10000),closesAt:fixed(20000)},{...base,id:id(2),name:'Clock active',sessionId:id(30),state:'active',deadline:fixed(15000),closesAt:fixed(20000)}]);
      const rows=[{...base,id:id(1),name:'Upcoming',opensAt:iso(1800000)},{...base,id:id(2),name:'Open'},{...base,id:id(3),name:'Active',sessionId:id(30),state:'active',deadline:iso(1800000)},{...base,id:id(4),name:'Submitted',sessionId:id(31),state:'grading'},{...base,id:id(5),name:'Grading',sessionId:id(32),state:'grading',grading:true},{...base,id:id(6),name:'Graded',sessionId:id(33),state:'graded',resultReady:true,expiresAt:iso(86400000)},{...base,id:id(7),name:'Missed',closesAt:iso(-1)},{...base,id:id(8),name:'Expired',sessionId:id(34),state:'active',deadline:iso(-1)},{...base,id:id(9),name:'Cancelled',closed:true},{...base,id:id(10),name:'Held',sessionId:id(35),state:'grading-failed',held:true}];return envelope(params.has('family')?[rows[1]]:rows);
     }
     if(name==='history_page_v2')return {rows:[{name:'SYNTHETIC',track:'mixed',submittedAt:new Date().toISOString(),grade:{visibility:'hidden'}}],next:null};
@@ -77,6 +78,22 @@ try {
   page.on('pageerror',e=>errors.push(e.message));await context.route('**/*',route=>{assert.equal(new URL(route.request().url()).origin,base,'external request forbidden');return route.continue();});
   const go=async query=>{await page.goto(base+'/?locale='+locale+'&'+query);await page.waitForFunction(()=>!!window.text);return page.evaluate(()=>window.text);};
   const audit=async label=>{if(process.env.RAD105_AUDIT_LABELS&&!process.env.RAD105_AUDIT_LABELS.split(',').includes(label))return;const c=pageChecks(page,axe,ok,locale+'/'+width);await c.axe(label);await c.noOverflow(label);await page.screenshot({path:'/tmp/rad105-s3-'+locale+'-'+width+'-'+label+'.jpg',fullPage:true,type:'jpeg',quality:75});audits++;};
+  if(process.env.RAD105_CLOCK_ONLY==='1'){
+   await page.clock.install({time:new Date('2026-11-05T13:00:00Z')});
+   let s=await go('mode=student&clock');await page.locator('[data-state=upcoming]').waitFor();await audit('clock-upcoming');
+   const reads=await page.evaluate(()=>window.calls.length);
+   await page.clock.runFor(10000);await page.locator('[data-state=open]').waitFor();await audit('clock-open');
+   await page.clock.setSystemTime(new Date('2026-11-06T12:00:00Z'));await page.clock.runFor(5000);await page.locator('[data-state=expired]').waitFor();await audit('clock-expired');
+   await page.clock.setSystemTime(new Date('2026-11-04T12:00:00Z'));await page.clock.runFor(5000);await page.locator('[data-state=missed]').waitFor();await audit('clock-missed');
+   ok('list clock has no RPC refresh/write',await page.evaluate(n=>window.calls.length===n,reads));
+   s=await go('mode=manage&role=owner&clock');await page.getByRole('button',{name:'SYNTHETIC questions',exact:true}).click();await page.locator('[data-testid=selfservice-schedule]').waitFor();await audit('clock-publish');
+   await page.clock.setSystemTime(new Date('2026-11-06T12:00:00Z'));await page.getByRole('button',{name:s.publish,exact:true}).click();
+   await page.waitForFunction(()=>window.calls.some(c=>c.name==='quiz_publish_v1'));ok('one deliberate publish under wall skew',await page.evaluate(()=>window.calls.filter(c=>c.name==='quiz_publish_v1').length===1));
+   await page.getByRole('button',{name:'SYNTHETIC group — '+s.group,exact:true}).click();await page.locator('[data-testid=selfservice-schedule]').waitFor();await audit('clock-assignment');
+   const before=await page.evaluate(()=>window.calls.length);await page.clock.runFor(20000);await page.locator('[data-testid=selfservice-schedule]').waitFor({state:'detached'});
+   ok('window close disables extra time',await page.getByRole('button',{name:s.saveExtra,exact:true}).isDisabled());ok('window close disables close',await page.getByRole('button',{name:s.close,exact:true}).isDisabled());ok('window close disables grant',await page.getByRole('button',{name:s.grant,exact:true}).isDisabled());await audit('clock-readonly');
+   ok('window clock issues no RPC',await page.evaluate(n=>window.calls.length===n,before));ok('no clock runtime errors',errors.length===0,errors.join(';'));await context.close();continue;
+  }
   let s=await go('mode=manage&role=owner');await page.getByRole('heading',{name:s.permissions,exact:true}).waitFor();await audit('owner');
   await page.getByRole('button',{name:s.allow,exact:true}).click();await page.getByRole('button',{name:s.revoke,exact:true}).waitFor();await page.getByRole('button',{name:s.revoke,exact:true}).click();await page.getByRole('button',{name:s.allow,exact:true}).waitFor();
   await page.getByRole('button',{name:'SYNTHETIC questions',exact:true}).click();await page.locator('[data-testid=selfservice-schedule]').waitFor();await audit('publish');

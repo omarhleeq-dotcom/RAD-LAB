@@ -63,7 +63,7 @@ function Student({binding,locale}:{binding:Binding;locale:'en'|'ar'}) {
  return <section className="space-y-3" aria-label={s.manage} aria-busy={busy}>
   <button className="min-h-11 rounded border border-line px-3" disabled={busy} onClick={()=>void load()}>{s.refresh}</button>
   {busy&&<p role="status">{s.loading}</p>}{error&&<p role="alert">{error}</p>}
-  {page&&<StudentExamList enabled busy={busy} items={page.rows} strings={s} locale={locale} historyHref="?history=1" onStart={id=>{if(!busy)void start(id);}}/>}
+  {page&&<StudentExamList enabled busy={busy} items={page.rows} serverTime={page.serverTime} strings={s} locale={locale} historyHref="?history=1" onStart={id=>{if(!busy)void start(id);}}/>}
   {page?.next&&<button className="min-h-11 rounded border border-line px-3" disabled={busy} onClick={()=>void load(page.next)}>{s.next}</button>}
  </section>;
 }

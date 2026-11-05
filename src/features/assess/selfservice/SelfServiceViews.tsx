@@ -1,6 +1,7 @@
 "use client";
 /** RAD-105 P2: dormant self-service screens. Presentational and adapter-injected: no database call lives here, and nothing in the app imports this file until the P7 promotion. */
 import { useState, useId } from "react";
+import { useServerClock } from "./server-clock";
 import { ammanLocalToUtc, defaultWindow, formatAmman, latestFullStart, validateWindow } from "./window-time";
 import { studentExamKind, type SessionInfo, type WindowInfo } from "./student-state";
 import { SelfServiceError } from "./contracts";
@@ -45,11 +46,12 @@ export function StatusBoard({ counts, strings }: { counts: StatusCounts; strings
 }
 
 export type StudentItem = { id: string; name: string; window: WindowInfo | null; session: SessionInfo | null; sessionId?: string | null; track?: "mixed" | "full-practical"; audience?: "group" | "all-students" };
-export function StudentExamList({ enabled, items, strings, locale, historyHref, onStart, busy = false }: { enabled: boolean; items: StudentItem[]; strings: SelfServiceStrings; locale: "en" | "ar"; historyHref: string; onStart: (id: string) => void; busy?: boolean }) {
+export function StudentExamList({ enabled, items, strings, locale, historyHref, onStart, busy = false, serverTime }: { enabled: boolean; items: StudentItem[]; strings: SelfServiceStrings; locale: "en" | "ar"; historyHref: string; onStart: (id: string) => void; busy?: boolean; serverTime?: string }) {
+ const { nowMs } = useServerClock(serverTime ?? items.find(item => item.window)?.window?.now, items);
  if (!enabled) return null;
  if (items.length === 0) return <p role="status" data-testid="selfservice-empty">{strings.empty}</p>;
  return <ul className="space-y-3" data-testid="selfservice-exams">{items.map(item => {
-  const kind = studentExamKind(item.window, item.session);
+  const kind = studentExamKind(item.window && { ...item.window, now: Number.isFinite(nowMs) ? new Date(nowMs).toISOString() : '' }, item.session);
   const w = item.window;
   return <li key={item.id} className="space-y-2 rounded border border-line p-4" data-state={kind}>
    <h3 className="font-semibold" dir="auto">{item.name}</h3>
