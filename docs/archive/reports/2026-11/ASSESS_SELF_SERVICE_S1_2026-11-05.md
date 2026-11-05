@@ -37,7 +37,7 @@ Verified على المرشح: typecheck وlint والبناء وcredits ‏19/19
 Not run (مساحة Docker): Supabase 17.11 المحلية؛ فشل فك الصورة بـno space left on device، دون صورة بديلة أو تخفيف الاختبار.
 Verified عبر [CI المرشح](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41973403138): build وdocs ناجحان، وDB فشل في تمرين العامل عند acl-tls قبل DB lane الجديدة. Deploy توقف عند بوابة marker بالسبب المتوقع.
 Not run (توقف المسار قبلها): DB lane الكاملة ومعايرة Supabase للمرشح؛ لا توصف C1/C2 بأنهما مكتملان.
-Verified: docs:sync مرتين (الثاني 0)، docs:check، status:check --require-previous وgit diff --check قبل السحب؛ تُعاد على حد التسليم.
+Verified على حد التسليم بعد السحب: docs:sync مرتين (الثاني 0)، docs:check، status:check --require-previous وgit diff --check؛ شجرة الكود تطابق حد ما قبل الترقية بايتًا ببايت.
 Not run (S4): browser/axe/family EN/AR390/1440. Not run (خارج الإذن): SQL حي، Google Cloud، Vault، Brevo، Variables.
 
 ## 7. المفتوح
