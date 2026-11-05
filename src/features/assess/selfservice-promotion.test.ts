@@ -7,10 +7,7 @@ import type {QueryResult} from 'pg';
 import {openRad085Database} from './rad085-local-db';
 import {catalogueFixture,modes,sql} from './rad062-m09-fixture';
 const {productionApplicationSql}=await import('../../../scripts/assess/'+'rad085-production-shape.mjs') as {productionApplicationSql:()=>string};
-const {ledger,successor,gatePredicate}=await import('../../../scripts/assess/'+'selfservice-gate-checks.mjs') as {
- ledger:{files:Record<string,{sha256:string;kind:string;replacements:{from:string;count:number}[]}>};
- successor:(file:string)=>string; gatePredicate:string;
-};
+import {ledger,successor,gatePredicate} from '../../../scripts/assess/selfservice-gate-checks.mjs';
 const migration=sql('20261102000300_rad085_rights_write_disclosures.sql');
 const old=execFileSync('git',['show','3d812890330b9f0d7bf7e0c943a5d988fa25e679:supabase/migrations/20261102000300_rad085_rights_write_disclosures.sql'],{encoding:'utf8'});
 const preflight=(source:string)=>source.slice(source.indexOf('with functions as ('),source.indexOf(' ) reviewed),false)'));
