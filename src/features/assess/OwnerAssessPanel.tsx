@@ -1,5 +1,6 @@
 "use client";
-import { SelfServiceSession } from "./selfservice/SelfServiceSession";
+import dynamic from "next/dynamic";
+const SelfServiceSession=dynamic(()=>import("./selfservice/SelfServiceSession").then(m=>m.SelfServiceSession),{ssr:false});
 import { OwnerDirectory } from "@/features/pilot/OwnerDirectory";
 import { Fold, Pager } from "@/features/pilot/OwnerUi";
 import { ResultDisclosure } from "@/features/evaluation/ResultDisclosure";
