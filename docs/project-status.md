@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 442,
-  "updated_at": "2026-11-05T03:00:00Z",
+  "revision": 443,
+  "updated_at": "2026-11-05T03:10:00Z",
   "timezone": "UTC",
   "next_id": "RAD-106",
   "tasks": [
@@ -946,7 +946,7 @@
       "title": "إشعار Brevo للمالك عند تسجيل طالب جديد (الخيار C: ملخص مجدول)",
       "status": "done",
       "priority": "low",
-      "description": "أُنجز: إشعار Brevo للتسجيل (الخيار C)؛ [الدليل](archive/status-archive.md#rad-104).",
+      "description": "أُنجز: إشعار Brevo للتسجيل (الخيار C)؛ الدليل في completion_evidence.",
       "source_ref": "docs/DECISIONS.md#brevo-signup-notify-owner-2026-11-04؛ docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md؛ docs/archive/reports/2026-11/RAD-104_BREVO_DIGEST_2026-11-04.md",
       "completion_evidence": "تحقق خارجي بإفادة المالك 2026-11-04: طُبّقت الحزمة، الفحص 6/6 ok، وصل بريد send_test، ووصل ملخص 23:50 UTC (HTTP 201) لتسجيل تجريبي فعلي في البريد الوارد. لا عناوين في Git. المرجع: docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md."
     },
