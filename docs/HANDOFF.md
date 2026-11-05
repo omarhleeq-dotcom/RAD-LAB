@@ -5,7 +5,7 @@
 ## ملخص الحالة
 
 - **الاتجاه الحالي:** إطلاق الخميس2026-11-05 Practice فقط والبوابة مغلقة ([القرار](DECISIONS.md#launch-practice-only-owner-2026-11-03))؛ سجلات D1–D13 في [التقرير](LAUNCH_RECORDS_REPORT_2026-11-03.md).
-- **ينتظر المالك:** استثناء فحص health في [عائق S1](archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md#7-المفتوح)؛ القرارات والخطة مسجلتان.
+- **ينتظر المالك:** مراجعة [S1 التصحيحية](archive/reports/2026-11/ASSESS_SELF_SERVICE_CORRECTIVE_S1_2026-11-05.md) بعد اكتمالها؛ استثناء health الضيق معتمد.
 - **ينتظر مراجِعًا:** [حزم W1–W8](ASSESS_GATE_W_PACKAGES.md) و[تقريرها](RAD-085_GATE_W_REPORT_2026-11-03.md): قُبل D-W6 والانحرافان، ورُفض W8.
 - **مرجع Git:** `docs:context`؛ Draft فقط؛ لا SQL حي أو Variables أو أسرار من هذه الدفعة.
 - **مخاطر معلنة:** البوابة مغلقة والعامل NOLOGIN والأسرار DISABLED؛ التصديق محدود ونافذة P7 لم تُنفّذ؛ إيصال P7 وتمرين البديل لم يُجرَيا.
@@ -18,7 +18,7 @@ RAD-103: المرحلة B في Draft ‏#237 ([التقرير](archive/reports/2
 
 ## المتابعة
 
-RAD-105: [خطة S1–S4](ASSESS_SELF_SERVICE_DESIGN.md#12-current-hardening-and-delivery) في Draft الترقية؛ [تقرير S1](archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md) يحوي التالي والفحوص.
+RAD-105: [الخطة](ASSESS_SELF_SERVICE_DESIGN.md#12-current-hardening-and-delivery)؛ [التصحيح والفحوص](archive/reports/2026-11/ASSESS_SELF_SERVICE_CORRECTIVE_S1_2026-11-05.md).
 
 ## الإغلاقات المعلقة
 

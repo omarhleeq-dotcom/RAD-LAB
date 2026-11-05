@@ -13,7 +13,7 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 446,
+  "revision": 447,
   "updated_at": "2026-11-05T06:00:00.001Z",
   "timezone": "Asia/Amman",
   "next_id": "RAD-106",
@@ -953,13 +953,12 @@
     {
       "id": "RAD-105",
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
-      "status": "blocked",
+      "status": "in_progress",
       "priority": "high",
-      "description": "دُمج #241؛ #242 يبقى Draft مع C3. قرارات التقوية وخطة S1–S4 مسجلتان؛ سُحبت ترقية C1/C2 بعد فشل فحص health الدقيق المحمي في CI. S2 لا تبدأ قبل رفع العائق؛ P7 نافذة منفصلة.",
-      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-hardening-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md",
-      "waiting_on": "owner",
-      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي.",
-      "blocker": "فحص rad085-worker-rehearsal يطابق health_v1 بأربعة حقول؛ P5 تضيف witness. يلزم استثناء صريح لتحديث الفحص وإثبات العقد الجديد أو تصميم متوافق، لا تغيير توقع لتمرير CI ضمن الإذن الحالي."
+      "description": "تصحيح S1 في Draft #242: حفظ نطاق عدادات v1، تحقق صارم للشاهد والصلاحيات ثم ترقية C1/C2 وإثبات CI. C3 والقرارات محفوظة؛ S2 بعد النجاح وقبول المراجعة فقط.",
+      "source_ref": "docs/DECISIONS.md#assess-self-service-corrective-s1-owner-2026-11-05؛ docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_CORRECTIVE_S1_2026-11-05.md",
+      "waiting_on": "code",
+      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
     }
   ]
 }

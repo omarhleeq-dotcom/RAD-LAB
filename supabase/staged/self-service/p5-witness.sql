@@ -23,7 +23,7 @@ insert into assess.restore_epoch default values;
 alter table assess.restore_epoch enable row level security;
 revoke all on assess.restore_epoch from public,anon,authenticated,assess_worker;
 
--- Same counters as before plus the witness tick. CREATE OR REPLACE keeps the owner and every existing grant.
+-- Same lifecycle-v1 counters as before plus the witness tick. CREATE OR REPLACE keeps the owner and every existing grant.
 create or replace function assess.health_v1() returns jsonb
 language plpgsql volatile security definer set search_path='' as $$
 declare h jsonb; r assess.restore_epoch;
@@ -31,7 +31,7 @@ begin
  select jsonb_build_object('failed',count(*) filter(where state='grading-failed'),
    'alert',count(*) filter(where state='grading-failed' and submitted_at<=clock_timestamp()-interval '24 hours'),
    'overdue',count(*) filter(where state='active' and deadline<=clock_timestamp()),
-   'purgeDue',count(*) filter(where expires_at<=clock_timestamp())) into h from assess.sessions;
+   'purgeDue',count(*) filter(where expires_at<=clock_timestamp())) into h from assess.sessions where lifecycle_version=1;
  update assess.restore_epoch set seq=seq+1 where singleton returning * into r;
  return h||jsonb_build_object('witness',jsonb_build_object('epoch',r.epoch,'seq',r.seq,'now',clock_timestamp(),'acceptedAt',r.accepted_at,
    'credentialValidUntil',(select u.rolvaliduntil from pg_catalog.pg_roles u where u.rolname=session_user)));
