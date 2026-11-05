@@ -1,16 +1,48 @@
 # RAD-105 — S1 التصحيحية (مسودة)، 2026-11-05
 
 ## 1. الانحرافات والميزانية
-28 مسارًا محددًا قبل التحرير، وروجعت قبل توصيل عدّاء التثبيت: حزمة selfservice-ready تجمع الفحصين الجديدين، والمسار المحرر هو rad062-db-day.mjs؛ لا زيادة في العدد؛ ثم أُدمج الجرد في المولد وحالات health المستقلة في ملف الترقية لإتاحة تثبيت مسار C1 في اختبارَي الاسم والمحو؛ [الاستثناء الضيق](../../../DECISIONS.md#assess-self-service-corrective-s1-owner-2026-11-05) مسجل في أول commit تصحيحي. التقرير السابق محفوظ كتاريخ.
+28 ملفًا بالضبط؛ روجعت المسارات قبل كل إعادة توزيع: جُمعت حزمة الجاهزية، وأُدمج الجرد في المولد، وبقيت حالات health مستقلة داخل ملف الترقية. أتاح ذلك عدّاء CLOSED وتثبيت مسار C1 في اختبارَي الاسم والمحو دون تجاوز السقف.
+[التفويض الضيق](../../../DECISIONS.md#assess-self-service-corrective-s1-owner-2026-11-05) في أول commit تصحيحي adf7740؛ التقرير السابق لم يُعدّل. المسارات النهائية:
+```text
+docs/ASSESS_P7_LAPTOP_RUNBOOK.md
+docs/ASSESS_SELF_SERVICE_DESIGN.md
+docs/DECISIONS.md
+docs/HANDOFF.md
+docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_CORRECTIVE_S1_2026-11-05.md
+docs/archive/reports/README.md
+docs/project-status.md
+scripts/assess/rad062-db-day.mjs
+scripts/assess/rad085-worker-rehearsal.mjs
+scripts/assess/selfservice-gate-checks.d.mts
+scripts/assess/selfservice-gate-checks.mjs
+scripts/pages/frontend-schema.json
+src/features/assess/rad062-erasure-operations.test.ts
+src/features/assess/rad062-name.test.ts
+src/features/assess/rad062-supervisor-catalogue.test.ts
+src/features/assess/selfservice-p2.test.ts
+src/features/assess/selfservice-promotion.test.ts
+src/features/deployment/frontend-manifest.test.ts
+supabase/checks/selfservice-assess-history-ready.sql
+supabase/checks/selfservice-assess-mixed-ready.sql
+supabase/checks/selfservice-assess-practical-ready.sql
+supabase/checks/selfservice-assess-retention-ready.sql
+supabase/checks/selfservice-rad085-review-ready.sql
+supabase/checks/selfservice-ready.sql
+supabase/migrations/20261105000100_rad105_windows.sql
+supabase/migrations/20261105000200_rad105_witness.sql
+supabase/staged/self-service/MANIFEST.json
+supabase/staged/self-service/p5-witness.sql
+```
 
 ## 2. المنجز والمستبعد
-Verified: الرأس المحلي والبعيد يطابقان الرأس المراجع؛ #242 Draft على main، وC3 محفوظ. تصحيح SQL قبل تغيير توقع التمرين؛ C1/C2 أعيد تنفيذهما ومرشحهما ينتظر دليل CI والمراجعة. S2 والعمل الحي خارج النطاق.
+Verified: البداية من الرأس المراجع 0935365 بعد تطابق المحلي والبعيد؛ #242 Draft على main، دون إعادة كتابة التاريخ أو فقد عمل لاحق. C3 والقرارات محفوظة.
+Verified: أُصلحت عدادات v1 قبل توقع التمرين؛ أُعيدت C1/C2 وأُثبتتا في CI. لا S2، ولا SQL حي أو سحابة أو أسرار أو Variables أو نشر يدوي أو دمج أو Ready.
 
 ## 3. حالة المهمة
-RAD-105 review/reviewer؛ تفويض المالك رفع العائق المحدد فقط، دون استثناء لفحوص أخرى أو ترحيلات مطبقة. قبول المراجعة لم يُسجل.
+RAD-105 review/reviewer؛ نجاح C1/C2 لا يعني تطبيقهما حيًا أو إكمال RAD-105. قبول المراجعة لم يُسجل؛ S2 مشروطة به وبنجاح C1/C2.
 
 ## 4. التغييرات المشتركة وScale
-Verified: أُعيد شرط lifecycle_version=1 أولًا؛ digest ‏P5 أصبح `85b76e3b08a04794e9bcc384c0b7c31ed0e375f445f52a2a92cf5a57689857da`، والترحيل مطابق له بايتًا ببايت.
+Verified: شرط lifecycle_version=1 محفوظ للعدادات الأربعة؛ digest ‏P5 ‏`85b76e3b08a04794e9bcc384c0b7c31ed0e375f445f52a2a92cf5a57689857da`، والترحيل مطابق للمصدر المصحح بايتًا ببايت.
 
 | البصمة | P0 → المرشح المصحح | السبب |
 |---|---|---|
@@ -18,30 +50,30 @@ Verified: أُعيد شرط lifecycle_version=1 أولًا؛ digest ‏P5 أصب
 | relations | `95ae71fb2b1b1c45707cb6247ef6e95a` → `fd59fc5eb938c70934f4cf5517c2dae0` | جدولان مضافان فقط؛ أُعيد قياسها ولم تتغير عن المرشح المسحوب |
 | marker | علامة P0 → `pilot-v1:2bcdc4dd83982e06f57adb70be8cf7597d18f242ce62e5d09b734ddb3aec2629` | بايتات ترحيل P5 المصحح وفحص بصمته؛ ترحيلان وخمسة خلفاء وحزمة جاهزية ذات معاملتين؛ تصحيح إحالة تعليق فحص النوافذ |
 
-Verified: ليست إعادة استخدام لبصمات مسحوبة؛ أزيلت pins أثناء المعايرة واستُخرجت القيم من مخطط الإنتاج الاصطناعي. تغيرت قوائم المانيفست وعلامته فقط في اختبارات frontend-manifest وrad062-supervisor-catalogue وselfservice-p2 ومسار الخليفة فقط في rad062-name وrad062-erasure-operations؛ بصمة M09 الأصلية ثابتة.
-Scale: حدود التصميم والقرارات وC3 محفوظة؛ لا صلاحية عامل سادسة أو منح جدول، وgate successors صارمة؛ فحصا الإيقاف يبقيان CLOSED.
+Verified: عُيّرت القيم من جديد، وأثبتها PG18 وSupabase17؛ لا إعادة استخدام للمرشح المسحوب. ترحيلان وخمسة خلفاء وحزمة جاهزية بمعاملتين؛ جمع الحزمتين بايتًا ببايت لم يغير تيار hash للعلامة، لأن أسماء checks لا تُهشَّم.
+Verified: تغييرات الاختبارات القديمة هي قوائم/علامة المانيفست في frontend-manifest وrad062-supervisor-catalogue وselfservice-p2، ومسار خليفة واحد في rad062-name وrad062-erasure-operations؛ فحوص الاسم والمحو والبايتات والهاتف بقيت كما هي.
+Verified: الأصل SQL/الترحيلات المطبقة وحزم الهاتف وC3 مطابقة للأصل. عدّاء التثبيت يعلن CLOSED صراحة ويرفض الإعداد المتعارض ويستعيد السابق؛ checkRows لم يتغير. الخلفاء المباشرون يرفضون غياب/فساد/تعارض التوقع وصف البوابة المفقود/المتعدد/المشوّه؛ فحصا الإيقاف يبقيان CLOSED.
+Scale: لا صلاحية عامل سادسة أو منح جدول؛ حدود التصميم محفوظة. علامة P0 الحية والـVariable لم تتغيرا؛ لا تضبط المرشح قبل دليل P7.
 
 ## 5. الطب والتقييم
-لا محتوى طبي أو درجات جديدة؛ عزل عدادات v1 عن v2 هو التصحيح المطلوب.
+Verified: لا محتوى طبي أو منطق درجات جديد. الإصلاح لعدادات تشغيلية معزولة حسب lifecycle؛ XLSX يبقى لدى المالك ولا يُرفع، وrandom_pool v2 والمسارات الثلاثة محفوظة.
 
 ## 6. التحقق
-Verified: اختبارات العدادات والشاهد والصلاحيات المستقلة وP1/P5 ‏20/20، وtsc وlint للملف الجديد؛ فحوص الوثائق والحالة وsync مرتين ناجحة.
-Verified: معايرة embedded واختبار هوية البايتات 2/2 بعد التصحيح؛ typecheck وlint والبناء ناجحة (تحذيران قائمان في simulator-layout-audit).
-Not run (لم يكتمل محليًا): التمرين الكامل توقف داخل تجهيز مدخلات Docker بعد نجاح الشاهد وACL/TLS وتركيب المسارين؛ cleanup=true، لا تأكيد مخفف. Supabase 17.11 غير متاحة محليًا بعد فشل فك صورتها سابقًا بسبب المساحة؛ التمرين الكامل وDB lane مطلوبان في CI.
-Verified: الاختبارات المعنية 79 ناجحة في 9 ملفات؛ بعد التقوية أُعيدت حالات العقد والترقية 4/4؛ health:source بلا أخطاء وhealth:test ‏9/9.
-Verified: `CI_TEST_LANE=unit npm run check` ناجح (2596/2596)؛ بعد توصيل العدّاء نجحت ست حالات ترقية/مانيفست، واختبار explicit-latest embedded القائم دون تعديل، وtsc وhealth:source؛ checkRows مطابق للأصل.
-Not run (وقت إعداد الدفعة): CI للرأس المعدل؛ دليل الرأس النهائي ونتائجه يُسجلان في [وصف PR وفحوصه](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks)، ولا يُستنتجان من نجاح embedded.
-Not run (خارج الإذن): SQL حي، سحابة، أسرار، Variables، نشر يدوي، دمج وReady.
-
-Verified: CI أكمل تمرين العامل بـPASS/complete وcleanup=true، وتمرين صورة التصحيح؛ توقف بعدها docs:test لأن عدّاء التثبيت لم يمرر CLOSED للخلفاء. صُحح الإدخال بسياسة التثبيت الصريحة دون تعديل checkRows أو توقعات الاختبارات؛ يلزم CI جديد.
-
-Verified على الرأس السابق: DB lane كاملة أعطت 1103 نجاحًا وفشلين فقط في مسار manifest.checks القديم (rad062-erasure-operations:354 وrad062-name:37). حُدث مسار الخليفة وحده؛ بقية التأكيدات ثابتة. حالات health ما زالت مستقلة في fixtures والأوراكل رغم ضمها إلى ملف الترقية؛ والجرد يحفظ كل digest وتصنيف في المولد نفسه.
+Verified: pre-P5 تطابق حرفي لأربعة حقول؛ v1/v2 من إصدارات صحيحة تعطي 1 لكل عداد قبل/بعد P5؛ إزالة الشرط اصطناعيًا تعطي 2 وتفشل الأوراكل. تقدم الشاهد لا يغير العدادات.
+Verified: توقع التمرين المصرح به يتحقق من الحقول الخمسة فقط، مفاتيح الشاهد كلها، epoch مطابق، seq +1/+2، حدود ساعة DB، acceptedAt وcredentialValidUntil من القاعدة؛ لا تجاهل لحقول زائدة.
+Verified: أدوار غير مخولة لا تستدعي health ولا تقرأ restore_epoch؛ الدور المقيد يملك خمس عمليات بالضبط؛ missing/malformed/stale witnesses توقف enforcing قبل maintain/claim. ACL/TLS/revocation/redaction/cleanup الأصلية محفوظة.
+Verified محليًا: 79 حالة ذات صلة، ثم حالات التقوية والتوصيل والمسار؛ check في unit lane ‏2596/2596، tsc/lint/build، health:source بلا أخطاء وhealth:test ‏9/9. الحالات غير المختارة محليًا ليست دليل نجاح لها.
+Verified: [CI للرأس البرمجي d119316](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/41982077194) أخضر: unit/build/docs/db/check؛ DB lane كاملة 1105/1105 في 126 ملفًا، ومعايرة البصمات متطابقة في embedded وSupabase17. التمرين الكامل PASS/complete وcleanup=true، وتمرين صورة التصحيح وdocs:test مكتملة بلا تخفيف أو skip.
+Verified: النتيجة النهائية للرأس المسلّم بعد commit التقرير تُوثَّق في [فحوص #242 ووصفه](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks). Deploy يظل محظورًا عند Require verified pilot schema للسبب المتوقع، لا طلب لتغيير Variable.
+Verified: docs:sync مرتين (الثاني 0)، docs:check، status:check --require-previous وgit diff --check. تحذيرا lint قائمان وتحذيرات حجم الوثائق لا تعني فشلًا.
+Not run (لم يكتمل محليًا): Docker input-container أوقف التمرين عند recovery-gate بعد نجاح SQL/ACL/TLS، مع cleanup=true؛ Supabase17 تعذر فكها للمساحة. CI المطلوب أعلاه أكمل البيئتين والتمرين والمسار الكامل.
+Not run (S4/خارج الإذن): browser/axe/family EN/AR390/1440؛ أي SQL حي أو موارد سحابية أو أسرار أو Variables أو نشر يدوي أو merge/Ready.
 
 ## 7. المفتوح
-المرشح المصحح يحتاج اكتمال CI وقبول المراجعة؛ لا تعارض عقد محمي إضافي مثبت. P0 الحية لم تتغير؛ S2 بعد نجاح C1/C2 وقبول المراجعة فقط.
+لا عائق شفري متبقٍ لهذه الدفعة بعد CI؛ قبول المراجعة معلّق. صُحح نقص CLOSED في عدّاء التثبيت وتثبيت مساري المانيفست؛ لم يُغيّر عقد محمي آخر. P7 وS2–S4 لم تُنفذ.
 
 ## 8. قائمة المالك والنص التالي
-التفويض والقرارات مسجلة؛ لا إعادة سؤال عنها. نص S2 المشروط:
+C1/C2 جاهزتان للمراجعة في Draft؛ لا إعادة سؤال عن القرارات المسجلة. بعد قبول المراجعة ونجاح فحوص الرأس الحالي فقط، استخدم النص التالي:
 
 ```text
 Mode: implement (session 2 of 4), RAD-105 Assess self-service, Draft PR #242 only.
