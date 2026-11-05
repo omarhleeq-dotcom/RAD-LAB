@@ -2,7 +2,7 @@
 
 **لا يمنح هذا الملف أي إذن حي.** يكتب المالك جملة إذن جديدة في بداية النافذة؛ أي `STOP` ينهي النافذة بلا تحايل. القرار: [OD1–OD9](DECISIONS.md#assess-self-service-owner-2026-11-05) و[التسليم](DECISIONS.md#assess-self-service-delivery-owner-2026-11-05)؛ التصميم: [ASSESS_SELF_SERVICE_DESIGN](ASSESS_SELF_SERVICE_DESIGN.md). الملفات المرحلية في `supabase/staged/self-service/` (بصماتها في `MANIFEST.json`). الأوامر المجرَّبة سابقًا مُحال إليها في [دليل النافذة](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md) بدل تكرارها.
 
-**ما لا يدخل النافذة:** ① **PR الترقية** (Draft منفصل، يُحضَّر ويُراجع قبل النافذة ولا يُدمج إلا بعد الخطوة 3): ينقل `p1`/`p5` إلى `supabase/migrations` بطابع زمني جديد، يضيفهما إلى `frontend-schema.json` ويضيف فحوص جاهزيتهما، ويستبدل فحوص «البوابة مغلقة» الـ20 في `supabase/checks` بفحوص «الحالة المتوقعة» (العدّ الفعلي: 20 ملفًا)، ويفتح شاشات P2 خلف كشف القدرة مع محوّل `p2-adapter.ts.txt` وتحديث بصمة الحدود، ويضع مدخل `p5-entry-r1.mjs` في `scripts/assess/grading-worker-main.mjs` ويحدّث توقعات اختبارات الصورة، ويرفع سقف الاعتماد (انظر أدناه). علامة `pilot-v1` تتغير هناك فقط. ② **امتحان الـ20 عنصرًا**: متوقف (P6)، لا تُنفَّذ الخطوة 15 قبل أن يقرّر المالك.
+**ما لا يدخل النافذة:** ① **PR الترقية** (Draft منفصل، يُحضَّر ويُراجع قبل النافذة ولا يُدمج إلا بعد الخطوة 3): ينقل `p1`/`p5` إلى `supabase/migrations` بطابع زمني جديد، يضيفهما إلى `frontend-schema.json` ويضيف فحوص جاهزيتهما، ويصنف مراجع البوابة العشرين: 16 فحص حالة بخلفاء صارمين، مرجعان لجرد الجدول، وفحصا إيقاف يظلان CLOSED، ويفتح شاشات P2 خلف كشف القدرة مع محوّل `p2-adapter.ts.txt` وتحديث بصمة الحدود، ويضع مدخل `p5-entry-r1.mjs` في `scripts/assess/grading-worker-main.mjs` ويحدّث توقعات اختبارات الصورة، ويرفع سقف الاعتماد (انظر أدناه). علامة `pilot-v1` تتغير هناك فقط. ② **امتحان الـ20 عنصرًا**: متوقف (P6)، لا تُنفَّذ الخطوة 15 قبل أن يقرّر المالك.
 
 **الاعتماد (قرار المالك المستبدِل لـDS-5):** بلا انتهاء (`VALID UNTIL 'infinity'`) والتنبيهات المرتبطة بالانتهاء محذوفة؛ تطبيقه في PR الترقية فقط (الأماكن الخمسة المحمية + العلامة الجديدة). لذلك تُنفَّذ الخطوة 7.1 بأمر التدوير الذي يعدّله PR الترقية؛ قبل دمجه لا يوجد أمر بلا انتهاء، ولا تُشغَّل 7.1 بقيمة أخرى.
 
@@ -27,10 +27,19 @@ node -e "const m=require('./supabase/staged/self-service/MANIFEST.json'),c=requi
 
 ## 3. تطبيق SQL المرحلي (L) — كل ملف معاملة واحدة تتراجع كاملة عند الفشل
 ```bash
-owner_sql -f supabase/staged/self-service/p1-windows.sql
-owner_sql -f supabase/staged/self-service/p5-witness.sql
+owner_sql -f supabase/migrations/20261105000100_rad105_windows.sql
+owner_sql -f supabase/migrations/20261105000200_rad105_witness.sql
 ```
 **Expected:** `COMMIT` لكل ملف. تحقق: `select to_regclass('assess.assignment_windows') is not null, to_regclass('assess.restore_epoch') is not null` ← `t | t`. **STOP:** أي خطأ ← لا شيء طُبّق من ذلك الملف؛ أغلق PR الترقية.
+
+بعد الملفين، وفي اتصال واحد، جهّز نص التحقق ثم راجعه قبل تشغيله:
+```bash
+{ printf "%s\n" "set radlab.expected_gate='closed';"; cat supabase/checks/selfservice-rad085-review-ready.sql supabase/checks/selfservice-windows-ready.sql supabase/checks/selfservice-witness-ready.sql; } > /tmp/rad105-ready.sql
+owner_sql -f /tmp/rad105-ready.sql
+```
+**Expected:** فحص الكتالوج 11 صفًا ناجحًا، وصفوف `ok` في فحصي النوافذ والشاهد كلها صحيحة. **STOP:** أي فشل أو صف مفقود. لا تطبق النسختين المرحليتين مرة أخرى؛ هما دليل بايتات مطابق للترحيلين. عدادات health تبقى لـlifecycle_version=1؛ الشاهد إضافة مستقلة.
+
+علامة الترقية المرشحة: `pilot-v1:2bcdc4dd83982e06f57adb70be8cf7597d18f242ce62e5d09b734ddb3aec2629`؛ بصمة functions `5105994588a3fb40c96749f0add08e1d` وrelations `fd59fc5eb938c70934f4cf5517c2dae0`. علامة P0 الحية لم تتغير بهذه الجلسة؛ لا تضبط المرشح قبل دليل النافذة.
 
 ## 4. دمج PR الترقية وفتح النشر (GitHub، L)
 4.1 دمج PR الترقية بأمرك بعد CI أخضر. 4.2 اطبع العلامة الجديدة بعنوان مشروعك (`--print-marker`) واضبط `PILOT_SCHEMA_VERIFIED` كما في [دليل P0](ASSESS_P0_MARKER_RUNBOOK.md#2-اضبط-pilot_schema_verified)، ثم أعد تشغيل Deploy Pages. **Expected:** نشر أخضر. **STOP:** فشل البوابة ← لا تتخطّها.
@@ -53,7 +62,7 @@ RAD_PROJECT=<id> RAD_REGION=europe-west3 APPLY=1 RAD_WINDOW_PERMISSION=I-HAVE-TH
 7.3 **رفض الاعتماد القديم:** إن كان ملف الاعتماد القديم متاحًا محليًا: NOLOGIN ← انتظار ≥ 120 ث ← محاولة اتصال واحدة بالقديم من اللابتوب ← يجب أن تُرفض؛ ثم أعد LOGIN. غير متاح ← سجّل **Not run** (لا تُفعِّل سرًّا قديمًا لأجله).
 
 ## 8. فتح البوابة (مفتاح الإيقاف العام) وأول نبضات R1
-8.1 افتح البوابة بالنص المراجع في [دليل فتح البوابة §5](ASSESS_GATE_OPEN_RUNBOOK.md#5-gate-open--exact-reviewed-sql-only-after-4-is-complete-and-03-is-written). 8.2 انتظر 3 نبضات (≥ 15 دقيقة) واقرأ سجل التنفيذات. **Expected:** `outcome":"COMPLETE"` و`"witness":{"mode":"shadow","result":"init"}` ثم `"advance"`، ولا حقل أيام متبقية (الاعتماد بلا انتهاء). **STOP:** `STOP`/`witness-unreadable`/`db-witness-missing` ← أغلق البوابة (§8 هناك) وأبلغ: يعني مسار الشاهد (الشبكة أو الدور) لا يعمل.
+8.1 افتح البوابة بالنص المراجع في [دليل فتح البوابة §5](ASSESS_GATE_OPEN_RUNBOOK.md#5-gate-open--exact-reviewed-sql-only-after-4-is-complete-and-03-is-written). 8.2 فحوص خلفاء التشغيل تتطلب `set radlab.expected_gate='open';` في الاتصال نفسه. الغياب/القيمة غير الصالحة/الحالة المخالفة/الصفوف المتعددة تفشل. فحصا الإيقاف الطارئ يبقيان CLOSED دائمًا. 8.3 انتظر 3 نبضات (≥ 15 دقيقة) واقرأ سجل التنفيذات. **Expected:** `outcome":"COMPLETE"` و`"witness":{"mode":"shadow","result":"init"}` ثم `"advance"`، ولا حقل أيام متبقية (الاعتماد بلا انتهاء). **STOP:** `STOP`/`witness-unreadable`/`db-witness-missing` ← أغلق البوابة (§8 هناك) وأبلغ: يعني مسار الشاهد (الشبكة أو الدور) لا يعمل.
 
 ## 9. R2 ثم إثبات الرفض الحي
 9.1 ابنِ وادفع مدخل R2 (نسخة `p5-entry-r2.mjs` مكان المدخل) وحدّث الـJob بالـdigest. **Expected:** `"mode":"enforcing","result":"advance"`. 9.2 إثبات رفض آمن: اكتب بيدك نسخة من `witness.json` بـ`seq` أكبر بـ1000 (أمر `gcloud storage cp`)، انتظر نبضة. **Expected:** `outcome":"STOP"`, `"code":"restore_suspected"` ولا `claim`. ثم أعد الملف الأصلي المحفوظ مسبقًا. **Expected:** نبضة تالية `advance`. **STOP:** نبضة COMPLETE رغم التلاعب ← أغلق البوابة فورًا.

@@ -46,8 +46,9 @@ it('pre-P5 exact compatibility; v2 exclusion; strict witness/clock/epoch/sequenc
   await db.admin.query('begin');
   try{
    await db.admin.query(`do $m$declare d text;begin d:=pg_get_functiondef('assess.health_v1()'::regprocedure);execute replace(d,'from assess.sessions where lifecycle_version=1','from assess.sessions');end$m$`);
-   expect(counters(await health())).toEqual({failed:2,alert:2,overdue:2,purgeDue:2});
-   expect(()=>expect(counters({failed:2,alert:2,overdue:2,purgeDue:2} as Health)).toEqual(expected)).toThrow();
+   const mutated=counters(await health());
+   expect(mutated).toEqual({failed:2,alert:2,overdue:2,purgeDue:2});
+   expect(()=>expect(mutated).toEqual(expected)).toThrow();
   }finally{await db.admin.query('rollback');}
   expect(counters(await health())).toEqual(expected);
  }finally{await db.close();}

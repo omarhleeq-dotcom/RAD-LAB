@@ -244,7 +244,35 @@ try {
   await end(restricted);
   const badTls = new Client({ ...dbConfig, user: config.user, password, ssl: { ca, rejectUnauthorized: true, servername: 'wrong.invalid' } });
   await assert.rejects(() => badTls.connect(), e => e.code === 'ERR_TLS_CERT_ALTNAME_INVALID'); await badTls.end();
-  const good = binding(); assert.deepEqual(await good.call('health_v1', {}), { failed: 0, alert: 0, overdue: 0, purgeDue: 0 }); await good.close();
+  // Corrective S1 owner exception: exact legacy counters plus a strictly checked witness.
+  const good = binding();
+  const witnessBefore = (await admin.query(`select e.epoch::text,e.seq::text,e.accepted_at,r.rolvaliduntil
+    from assess.restore_epoch e cross join pg_roles r where e.singleton and r.rolname='rad085_synthetic_worker'`)).rows;
+  assert.equal(witnessBefore.length, 1);
+  const epoch = witnessBefore[0];
+  const healthBefore = await scalar('select clock_timestamp()');
+  const healthFirst = await good.call('health_v1', {});
+  const healthMiddle = await scalar('select clock_timestamp()');
+  const healthSecond = await good.call('health_v1', {});
+  const healthAfter = await scalar('select clock_timestamp()');
+  for (const [health, advance, lower, upper] of [[healthFirst, 1, healthBefore, healthMiddle], [healthSecond, 2, healthMiddle, healthAfter]]) {
+    assert.deepEqual(Object.keys(health).sort(), ['alert', 'failed', 'overdue', 'purgeDue', 'witness']);
+    const { witness, ...counters } = health;
+    assert.deepEqual(counters, { failed: 0, alert: 0, overdue: 0, purgeDue: 0 });
+    assert.deepEqual(Object.keys(witness).sort(), ['acceptedAt', 'credentialValidUntil', 'epoch', 'now', 'seq']);
+    assert.match(witness.epoch, /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    assert.equal(witness.epoch, epoch.epoch);
+    assert.ok(Number.isSafeInteger(witness.seq)); assert.equal(witness.seq, Number(epoch.seq) + advance);
+    for (const key of ['now', 'acceptedAt', 'credentialValidUntil']) {
+      assert.equal(typeof witness[key], 'string'); assert.ok(Number.isFinite(Date.parse(witness[key])));
+    }
+    assert.equal(Date.parse(witness.acceptedAt), epoch.accepted_at.getTime());
+    assert.equal(Date.parse(witness.credentialValidUntil), epoch.rolvaliduntil.getTime());
+    assert.ok(Date.parse(witness.now) >= lower.getTime() && Date.parse(witness.now) <= upper.getTime());
+    assert.ok(Date.parse(witness.acceptedAt) <= Date.parse(witness.now));
+  }
+  assert.equal(await scalar('select seq::text from assess.restore_epoch where singleton'), String(Number(epoch.seq) + 2));
+  await good.close();
   command('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-days', '1', '-subj', '/CN=untrusted-synthetic',
     '-keyout', join(dir, 'untrusted.key'), '-out', join(dir, 'untrusted.crt')]);
   const untrusted = f.createGradingWorkerBinding({ ...config, ca: readFileSync(join(dir, 'untrusted.crt'), 'utf8') });

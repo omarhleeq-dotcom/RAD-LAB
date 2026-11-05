@@ -47,20 +47,24 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   '20261102000100_rad062_supervisor_grading_authorization.sql',
   '20261102000200_rad059_emergency_alternate.sql',
   '20261102000300_rad085_rights_write_disclosures.sql',
+  '20261105000100_rad105_windows.sql',
+  '20261105000200_rad105_witness.sql',
  ]);
  expect(manifest.deferredMigrations).toEqual({}); // Owner-approved window promotion: restore the exact empty deferred pin.
  expect(manifest.checks).toEqual([
   'supabase/checks/training-ready.sql',
   'supabase/checks/comparison-ready.sql',
-  'supabase/checks/assess-mixed-ready.sql',
-  'supabase/checks/assess-practical-ready.sql',
-  'supabase/checks/rad085-review-ready.sql',
-  'supabase/checks/assess-history-ready.sql',
-  'supabase/checks/assess-retention-ready.sql',
+  'supabase/checks/selfservice-assess-mixed-ready.sql',
+  'supabase/checks/selfservice-assess-practical-ready.sql',
+  'supabase/checks/selfservice-rad085-review-ready.sql',
+  'supabase/checks/selfservice-assess-history-ready.sql',
+  'supabase/checks/selfservice-assess-retention-ready.sql',
   'supabase/checks/owner-dashboard-ready.sql',
   'supabase/checks/owner-deletion-surveys-ready.sql',
+  'supabase/checks/selfservice-windows-ready.sql',
+  'supabase/checks/selfservice-witness-ready.sql',
  ]);
  expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], {
   encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' },
- }).trim()).toBe('pilot-v1:466390675b4ac3c32c56c242ec02eeebfe5a745f7bfcc37f57b955576fb23d19');
+ }).trim()).toBe('pilot-v1:2bcdc4dd83982e06f57adb70be8cf7597d18f242ce62e5d09b734ddb3aec2629');
 });
