@@ -1732,3 +1732,10 @@ Authority: owner's S2 prompt. Corrective S1 at `f91cfd0b78c496b3b81e512e37aebdc0
 S2 is DB-only C4 plus approved items 2/3/4/5/9 under [hardening](#assess-self-service-hardening-owner-2026-11-05): permissioned all-students publishing, 2-hour/7-day windows, target-only notices OFF, authoritative ACTIVE-at-stop replacement eligibility, typed owner/alternate Resume, bounded audited extra time.
 Preserve C1/C2, lifecycle-v1 health counters, strict witnesses, C3, applied migrations and phone packets. Recalibrate legitimate schema/marker changes; no old pin reuse or weakened assertions.
 [Implementation/evidence](archive/reports/2026-11/ASSESS_SELF_SERVICE_S2_2026-11-05.md). Draft #242 only on main; no S3/S4, live SQL/cloud/Vault/Brevo, secrets/Variables, deployment, merge or Ready authority. S3 requires S2 passing and review acceptance; owner-held XLSX through QuestionImport stays outside Git.
+
+<a id="assess-self-service-s3-review-2026-11-05"></a>
+### Assess self-service — S2 accepted; S3 UI contract STOP, 2026-11-05
+Authority: owner's S3 prompt and environment-recovery instruction. Coordination review accepts S2 at `bb56661ea9f7c330e917f424af549a1b34731957`; owner independently verified final-head CI, DB 1116/1116, unit 2596/2596, complete worker rehearsal/cleanup, protected bytes and both fingerprint environments.
+S3 C5 UI only is authorised; no repeated product approval is needed. Candidate remains `pilot-v1:c147c107631b68898e4715c8e3a104bfe6bf9b082950665539c61c8021f4ced1`; live P0/Variables unchanged.
+[Recovery and contract evidence](archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_2026-11-05.md): proxy works with command network permission; clean accepted head fetched. S3 product edits stopped: no browser-readable session identity/ACTIVE-at-stop eligibility contract exists for the required new-attempt picker.
+A proposed bounded own-assignment read is described in the report, not authorised or implemented. It needs narrow DB-contract scope and fresh fingerprint/mutation verification before full S3 can proceed. S2 acceptance is retained; no protected assertion changed. Draft #242 only; S4/P7 and all live actions remain outside scope.

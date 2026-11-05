@@ -953,12 +953,13 @@
     {
       "id": "RAD-105",
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
-      "status": "review",
+      "status": "blocked",
       "priority": "high",
-      "description": "S1 التصحيحية مقبولة. قاعدة S2 لـC4 والبنود 2/3/4/5/9 في Draft #242؛ تنتظر قبول مراجعتها قبل S3؛ دليل فحوص الرأس في وصف PR. واجهات S3 وبنية S4 وP7 لم تنفذ؛ لا تفعيل حي.",
-      "source_ref": "docs/DECISIONS.md#assess-self-service-s2-owner-2026-11-05؛ docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S2_2026-11-05.md",
-      "waiting_on": "reviewer",
-      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
+      "description": "S1/S2 مقبولتان في Draft #242. استعيد وصول Git؛ S3 متوقفة قبل تعديل المنتج لغياب عقد قراءة أهلية ACTIVE-at-stop ومعرّف المحاولة. S4 وP7 لم تبدأ؛ لا تفعيل حي.",
+      "source_ref": "docs/DECISIONS.md#assess-self-service-s3-review-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_2026-11-05.md",
+      "waiting_on": "owner",
+      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي.",
+      "blocker": "المالك: إذن ضيق لعقد قراءة own-assignment محدود يعيد sessionId وأهلية ACTIVE-at-stop؛ العقد المقبول يمنع القراءة المباشرة ولا يعرضهما في RPC الحالة."
     }
   ]
 }
