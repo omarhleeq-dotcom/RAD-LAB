@@ -70,6 +70,9 @@ test('SELECT-only RLS policy: complete real encrypted dump/restore, exact ACL/da
   for(const sql of ['insert into public.plain values(3,\'bad\')','select nextval(\'public.serial\')','create table public.bad(x int)','set role postgres'])await assert.rejects(backup.query(sql),{code:'42501'});
   await assert.rejects(backupArchive({...c,inventorySha256:'0'.repeat(64)},backup,{root,env,upload:async()=>assert.fail('must not upload')}),/backup_snapshot/);
   await assert.rejects(backupArchive(c,backup,{root,env,upload:async()=>{throw Error('SYNTHETIC_PRIVATE_ERROR');}}),/backup_upload/);
+  await admin.query("create function public.synthetic_writer() returns int language plpgsql security definer as $$begin insert into public.plain values(9,'bad');return 1;end$$");
+  await assert.rejects(backupArchive(c,backup,{root,env,upload:async()=>assert.fail('must not upload')}),/backup_privileges/);
+  await admin.query('drop function public.synthetic_writer()');
   await admin.query('create policy restrict_backup on public.private as restrictive for select to assess_backup using(false)');
   await assert.rejects(backupArchive(c,backup,{root,env,upload:async()=>assert.fail('must not upload')}),/backup_snapshot/);
   assert.equal(readdirSync(root).filter(x=>x.startsWith('assess-backup-')).length,0);

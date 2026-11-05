@@ -24,6 +24,16 @@ export async function scheduledRehearsal(c) {
   // Required original v1 image finishes its last pending work before migration/switch.
   assert.equal((await worker()).report.counts.graded,1);
   owner('alter role assess_job_b nologin;');
+  // The original W4 catalogue intentionally contains no application singleton data
+  // beyond launch_gate. Seed the same reviewed baseline inserts as the independent
+  // production-calibration test; do not weaken any migration precondition.
+  for(const[file,table]of [['20261026000100_assess_supervisor_scope.sql','scope_lock'],
+   ['20261027000100_assess_management_erasure.sql','erasure_fk_contract'],['20261026000100_assess_supervisor_scope.sql','sharing_policy']]){
+   const statements=[...read('supabase/migrations/'+file).matchAll(new RegExp(`^insert into assess\\.${table} [^;]+;`,'gm'))];
+   assert.equal(statements.length,1);owner(statements[0][0]);
+  }
+  owner(read('supabase/manual/rad085-sharing-policy-live-p1.sql'));
+  assert.equal(su('select count(*) from assess.erasure_fk_contract where inventory=assess.d3_fk_inventory_v1()'),'1');
   const m=JSON.parse(read('scripts/pages/frontend-schema.json'));
   for(const file of m.requiredMigrations.filter(f=>f>='20261030000100_rad062_full_name.sql'))owner(read('supabase/migrations/'+file));
   for(const n of [1,2,3]){
@@ -107,20 +117,20 @@ export async function scheduledRehearsal(c) {
   };
   su('update assess.launch_gate set enabled=true;');
   const sessions=[0,1,2].map(submit);
-  setInputs(3);r=await worker(env,images[2]);assert.equal(r.report.outcome,'COMPLETE',JSON.stringify(r.report));assert.equal(r.report.counts.graded,3);
+  setInputs(3);r=await worker(env,images[2],false);assert.equal(r.report.outcome,'COMPLETE',JSON.stringify(r.report));assert.equal(r.report.counts.graded,3);
   assert.equal(r.report.witness.result,'advance');assert.equal(r.report.health.v1.failed,0);assert.equal(r.report.health.v2.failed,0);
   for(const s of sessions){assert.equal(su(`select state from assess.sessions where id='${s}'`),'graded');assert.equal(su(`select count(*) from assess.results where session_id='${s}'`),'1');assert.equal(su(`select earned_n::text||'/'||earned_d::text from assess.results where session_id='${s}'`).replace(/\.0+(?=\/|$)/g,''),'0/1');assert.equal(su(`select count(*) from assess.session_details where session_id='${s}'`),'0');}
   checks.push('r3-no-attestation-three-start-v2-submit-tracks-grade-on-restricted-image');
   // Privilege drift and revocation stop before maintenance/claim; pending work survives.
   const pending=submit(0);
-  for(const grant of ['grant execute on function assess.health_v1() to assess_grading_worker','grant select on assess.sessions to assess_grading_worker','grant execute on function assess.worker_health_v2() to assess_grading_worker with grant option']){
-   su(grant);r=await worker(env,images[2]);assert.equal(r.report.outcome,'STOP');
-   su(grant.includes('with grant option')?'revoke grant option for execute on function assess.worker_health_v2() from assess_grading_worker':grant.startsWith('grant execute')?'revoke execute on function assess.health_v1() from assess_grading_worker':'revoke select on assess.sessions from assess_grading_worker');
+  for(const grant of ['grant execute on function assess.health_v1() to assess_grading_worker','grant select on assess.sessions to assess_grading_worker','grant execute on function assess.worker_health_v2() to assess_grading_worker with grant option','grant assess_worker to assess_grading_worker with admin false,inherit false,set true']){
+   su(grant);r=await worker(env,images[2],false);assert.equal(r.report.outcome,'STOP');
+   su(grant.startsWith('grant assess_worker')?'revoke assess_worker from assess_grading_worker':grant.includes('with grant option')?'revoke grant option for execute on function assess.worker_health_v2() from assess_grading_worker':grant.startsWith('grant execute')?'revoke execute on function assess.health_v1() from assess_grading_worker':'revoke select on assess.sessions from assess_grading_worker');
    assert.equal(su(`select state from assess.sessions where id='${pending}'`),'grading');
   }
-  su('alter role assess_job_b nologin;');r=await worker(env,images[2]);assert.equal(r.report.outcome,'STOP');su('alter role assess_job_b login;');
+  su('alter role assess_job_b nologin;');r=await worker(env,images[2],false);assert.equal(r.report.outcome,'STOP');su('alter role assess_job_b login;');
   const row=JSON.parse(su(`select jsonb_build_object('projectRef','${ref}','epoch',epoch,'seq',seq+100,'updatedAt',clock_timestamp()) from assess.restore_epoch`));
-  control(row);r=await worker(env,images[2]);assert.equal(r.report.witness.result,'restore-suspected');assert.equal(su(`select state from assess.sessions where id='${pending}'`),'grading');
+  control(row);r=await worker(env,images[2],false);assert.equal(r.report.witness.result,'restore-suspected');assert.equal(su(`select state from assess.sessions where id='${pending}'`),'grading');
   control({...row,seq:0});
   checks.push('acl-function-and-table-drift-nologin-stale-witness-no-claim');
   // Actual five-operation binding under the intended image tests stale lease + finish replay.
@@ -143,7 +153,7 @@ export async function scheduledRehearsal(c) {
   holder.stdin.write('begin;lock table assess.sessions in share mode;select 1;\n');
   try{
    for(let n=0;su("select count(*) from pg_locks where relation='assess.sessions'::regclass and mode='ShareLock' and granted")!=='1';n++){if(n>100)throw Error('signal_lock_missing');await new Promise(r=>setTimeout(r,25));}
-   const before=new Set(owned),running=worker(env,images[2]);
+   const before=new Set(owned),running=worker(env,images[2],false);
    for(let n=0;su("select count(*) from pg_stat_activity where usename='assess_job_b' and wait_event_type='Lock'")!=='1';n++){if(n>200)throw Error('signal_worker_not_waiting');await new Promise(r=>setTimeout(r,25));}
    const name=[...owned].find(x=>!before.has(x)&&x.startsWith(prefix+'-run-'));assert.ok(name);
    docker(['kill','--signal=TERM',name]);holder.stdin.end('commit;\n');
@@ -152,7 +162,7 @@ export async function scheduledRehearsal(c) {
    assert.equal(su(`select count(*) from assess.results where session_id='${signalSession}'`),'0');
   }finally{if(!holder.stdin.destroyed)holder.stdin.end('rollback;\n');}
   su('select assess.freeze_v2();alter role assess_job_b nologin;');
-  r=await worker(env,images[2]);assert.equal(r.report.outcome,'STOP');
+  r=await worker(env,images[2],false);assert.equal(r.report.outcome,'STOP');
   assert.equal(su("select count(*) from pg_stat_activity where usename='assess_job_b'"),'0');
   assert.equal(su(`select emergency_held_at is not null from assess.sessions where id='${signalSession}'`),'t');
   checks.push('finish-replay-exactly-one-stale-token-denied-emergency-stop-cleanup');

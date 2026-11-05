@@ -19,6 +19,7 @@ export function operationsPlan(c) {
   documentation:{mimeType:'text/markdown',content:text}});
  const scope=`resource.labels.project_id="${c.project}" AND resource.labels.location="${c.region}"`;
  const scheduler=`resource.type="cloud_scheduler_job" AND resource.labels.project_id="${c.project}" AND resource.labels.location="${c.region}" AND resource.labels.job_id="assess-worker-tick" AND jsonPayload.@type="type.googleapis.com/google.cloud.scheduler.logging.AttemptFinished" AND jsonPayload.status!="OK"`;
+ const backupScheduler=scheduler.replace('assess-worker-tick','assess-backup-tick');
  const worker=`resource.type="cloud_run_job" AND ${scope} AND resource.labels.job_name="assess-worker" AND (jsonPayload.outcome="STOP" OR severity>=ERROR)`;
  const backup=`resource.type="cloud_run_job" AND ${scope} AND resource.labels.job_name="assess-backup"`;
  return {contract:'rad105-s4-operations-plan/1',dryRun:true,liveReady:false,
@@ -30,7 +31,7 @@ export function operationsPlan(c) {
   iam:{backupRuntime:{bucketRole:'roles/storage.objectCreator',bucket:c.bucket,secretRole:'roles/secretmanager.secretAccessor',secret:'assess-backup',
    forbidden:['object get/list/delete','project-level grants','grading secret','encryption private key']},
    scheduler:{targetJob:'assess-backup',role:'roles/run.invoker',resourceLevel:true}},
-  backupSchedule:{state:'PAUSED',schedule:'17 2 * * *',timeZone:'Etc/UTC',retryConfig:{retryCount:0,maxRetryDuration:'0s'},
+  backupSchedule:{id:'assess-backup-tick',state:'PAUSED',schedule:'17 2 * * *',timeZone:'Etc/UTC',retryConfig:{retryCount:0,maxRetryDuration:'0s'},
    httpTarget:{uri:`https://run.googleapis.com/v2/projects/${c.project}/locations/${c.region}/jobs/assess-backup:run`,httpMethod:'POST',
     oauthToken:{serviceAccountEmail:`assess-scheduler@${c.project}.iam.gserviceaccount.com`}}},
   backupJob:{defaultDryRun:true,imageDigestRequired:true,taskCount:1,parallelism:1,maxRetries:0,timeoutSeconds:900,memory:'1Gi',scratch:{path:'/work',medium:'MEMORY',uid:999,mode:'0700'}},
@@ -42,7 +43,7 @@ export function operationsPlan(c) {
    laptopWindowBackupRequired:true},
   alerts:{postStop:policy('Assess scheduled failure',`(${scheduler}) OR (${worker})`,
     'Assess scheduling or grading failed. The stop may be intentional. Check emergency stop, NOLOGIN, disabled secret and execution state; follow RAD-059. Never auto-resume or replay. One notification per hour per existing channel.'),
-   backupFailure:policy('Assess backup failure',`${backup} AND (jsonPayload.outcome="STOP" OR severity>=ERROR)`,
+   backupFailure:policy('Assess backup failure',`(${backup} AND (jsonPayload.outcome="STOP" OR jsonPayload.dryRun=true OR severity>=ERROR)) OR (${backupScheduler})`,
     'Daily encrypted backup failed; keep the reviewed laptop backup. No automatic role/secret/gate changes.'),
    databaseSize:policy('Assess database 70 percent',`${backup} AND jsonPayload.databaseSizeAlert70=true`,
     'Database size reached 70% of the owner-verified plan limit. Compare pg_database_size with Supabase Usage; no automatic deletion or upgrade.')},

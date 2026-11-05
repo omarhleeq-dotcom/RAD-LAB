@@ -46,6 +46,17 @@ it('atomic role successor refuses unfinished v1, open gate and LOGIN; wrapper is
    await expect(db.admin.query(packet)).rejects.toMatchObject({code:'55000'});await db.admin.query('rollback');
    expect(await grants()).toEqual(original);await db.admin.query('delete from assess.sessions where id=$1',[id(802)]);
   }
+  for(const field of ['held','leased']){
+   await db.admin.query(`insert into assess.sessions(id,assignment_id,user_id,ordinal,state,started_at,submitted_at,emergency_held_at,lease,lease_until)
+    values($1,$2,$3,1,'void',clock_timestamp(),clock_timestamp(),case when $4='held' then clock_timestamp() end,
+    case when $4='leased' then $5::uuid end,case when $4='leased' then clock_timestamp()+interval '1 minute' end)`,[id(802),id(801),id(3),field,id(803)]);
+   await expect(db.admin.query(packet)).rejects.toMatchObject({code:'55000'});await db.admin.query('rollback');expect(await grants()).toEqual(original);
+   await db.admin.query('delete from assess.sessions where id=$1',[id(802)]);
+  }
+  await db.admin.query('alter role assess_job_b login');
+  const backend=await db.connect('s4-existing-worker','assess_job_b');
+  try{await db.admin.query('alter role assess_job_b nologin');await expect(db.admin.query(packet)).rejects.toMatchObject({code:'55000'});await db.admin.query('rollback');expect(await grants()).toEqual(original);}
+  finally{await backend.end();}
   for(const mutation of ['update assess.launch_gate set enabled=true','alter role assess_job_b login']){
    await db.admin.query(mutation);await expect(db.admin.query(packet)).rejects.toMatchObject({code:'55000'});await db.admin.query('rollback');
    expect(await grants()).toEqual(original);await db.admin.query('update assess.launch_gate set enabled=false;alter role assess_job_b nologin');

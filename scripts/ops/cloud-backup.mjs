@@ -27,7 +27,12 @@ export async function backupArchive(c,db,{run=execFileSync,runAsync=asyncExec,up
    n.nspname not in ('pg_catalog','information_schema') and n.nspname !~ '^pg_toast' and c.relkind in ('r','p','v','m','f') and
    has_table_privilege(current_user,c.oid,'INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')) or
    has_database_privilege(current_user,current_database(),'CREATE,TEMP') or exists(select 1 from pg_namespace where
-   nspname not like 'pg_%' and nspname<>'information_schema' and has_schema_privilege(current_user,oid,'CREATE')) bad`)).rows[0].bad;
+   nspname not like 'pg_%' and nspname<>'information_schema' and has_schema_privilege(current_user,oid,'CREATE')) or
+   exists(select 1 from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname not in ('pg_catalog','information_schema')
+    and n.nspname !~ '^pg_toast' and has_schema_privilege(current_user,n.oid,'USAGE') and has_function_privilege(current_user,p.oid,'EXECUTE')
+    and (n.nspname in ('vault','pgsodium') or (p.prosecdef and p.provolatile='v' and p.prorettype not in ('trigger'::regtype,'event_trigger'::regtype)))) or
+   exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='vault' and c.relname='decrypted_secrets'
+    and has_schema_privilege(current_user,n.oid,'USAGE') and has_table_privilege(current_user,c.oid,'SELECT')) bad`)).rows[0].bad;
   if(bad)throw Error();
   stage='snapshot';await db.query('begin isolation level repeatable read read only');
   await db.query("set local statement_timeout='120s';set local lock_timeout='5s';set local row_security=on");
@@ -76,7 +81,7 @@ export async function main(args=process.argv.slice(2)) {
  if(args.length!==1||args[0]!=='--run')throw Error('arguments');
  // Runtime only: fixed Secret Manager mount, O_NOFOLLOW; no URL/env/argv credential fallback.
  const path='/run/secrets/assess-backup.json',fd=openSync(path,constants.O_RDONLY|constants.O_NOFOLLOW);let c;
- try{if(fstatSync(fd).size>65536)throw Error();c=JSON.parse(readFileSync(fd,'utf8'));}finally{closeSync(fd);}
+ try{const stat=fstatSync(fd);if(!stat.isFile()||stat.size<1||stat.size>65536)throw Error();c=JSON.parse(readFileSync(fd,'utf8'));}finally{closeSync(fd);}
  const keys=['bucket','ca','database','host','inventorySha256','password','planLimitBytes','port','recipient','user'];
  if(!c||Object.keys(c).sort().join()!==keys.sort().join()||c.user!=='assess_backup'||c.database!=='postgres'||c.port!==5432||
   c.host!=='db.vlacestfruxooznrcjqc.supabase.co'||typeof c.password!=='string'||!c.password||/[\r\n]/.test(c.password)||!c.ca?.includes('-----BEGIN CERTIFICATE-----')||

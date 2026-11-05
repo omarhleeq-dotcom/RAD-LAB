@@ -18,7 +18,7 @@ test('private bounded retention, no key/read/delete privilege; schedules and ale
  assert.equal(p.iam.backupRuntime.bucketRole,'roles/storage.objectCreator');assert.equal(p.backupContract.publicRecipientOnly,true);
  assert.equal(p.backupSchedule.state,'PAUSED');assert.equal(p.backupSchedule.retryConfig.retryCount,0);
  for(const a of Object.values(p.alerts)){assert.equal(a.enabled,false);assert.equal(a.alertStrategy.notificationRateLimit.period,'3600s');assert.deepEqual(a.alertStrategy.notificationPrompts,['OPENED']);}
- assert.match(p.alerts.postStop.documentation.content,/stop may be intentional/);assert.deepEqual(p.sourceRestriction.activationCommands,[]);
+ assert.match(p.alerts.postStop.documentation.content,/stop may be intentional/);assert.match(p.alerts.backupFailure.conditions[0].conditionMatchedLog.filter,/jsonPayload.dryRun=true/);assert.match(p.alerts.backupFailure.conditions[0].conditionMatchedLog.filter,/assess-backup-tick/);assert.deepEqual(p.sourceRestriction.activationCommands,[]);
 });
 test('exact 70% boundary, large sizes, invalid/unknown never healthy',()=>{
  assert.equal(sizeSignal(349999999,500000000).databaseSizeAlert70,false);assert.equal(sizeSignal(350000000,500000000).databaseSizeAlert70,true);

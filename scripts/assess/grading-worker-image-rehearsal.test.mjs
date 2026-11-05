@@ -211,12 +211,12 @@ test('W4 production grading image: refusals, re-read verifier, one bounded run a
             fs.renameSync(tmp,dir+'/'+file);
           }});`], JSON.stringify(files));
     }
-    async function worker(env = [], selectedImage = image) {
+    async function worker(env = [], selectedImage = image, includeRecovery = true) {
       const name = `${prefix}-run-${randomBytes(3).toString('hex')}`; owned.add(name);
       const began = performance.now();
       const child = spawn('docker', ['--host=unix:///var/run/docker.sock', 'run', '--name', name, '--network', network, '--read-only', '--cap-drop=ALL',
         '--security-opt=no-new-privileges', '--pids-limit=64', '--cpus=1', '--memory=512m', '--tmpfs', '/tmp:rw,noexec,nosuid,size=8m',
-        '--mount', `type=volume,src=${secretsVolume},dst=/run/secrets,readonly`, '--mount', `type=volume,src=${recoveryVolume},dst=/run/recovery,readonly`,
+        '--mount', `type=volume,src=${secretsVolume},dst=/run/secrets,readonly`, ...(includeRecovery ? ['--mount', `type=volume,src=${recoveryVolume},dst=/run/recovery,readonly`] : []),
         ...env, selectedImage], { env: dockerEnv, stdio: ['ignore', 'pipe', 'pipe'] });
       let stdout = '', stderr = '';
       child.stdout.on('data', b => stdout += b); child.stderr.on('data', b => stderr += b);
