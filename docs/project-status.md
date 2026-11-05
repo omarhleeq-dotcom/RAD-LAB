@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 441,
-  "updated_at": "2026-11-05T02:30:00Z",
+  "revision": 442,
+  "updated_at": "2026-11-05T03:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-106",
   "tasks": [
@@ -944,22 +944,21 @@
     {
       "id": "RAD-104",
       "title": "إشعار Brevo للمالك عند تسجيل طالب جديد (الخيار C: ملخص مجدول)",
-      "status": "review",
+      "status": "done",
       "priority": "low",
-      "description": "الخيار C مُعدّ في Draft: حزمة SQL يطبقها المالك (مشغّل على auth.users ← طابور خاص، pg_cron كل 10 دقائق، Vault، مفتاح OFF) مع تراجع وفحص واختبارات PGlite. ينتظر مراجعة المالك وتطبيقه بالدليل؛ لا شيء مطبق حيًا.",
+      "description": "أُنجز: إشعار Brevo للتسجيل (الخيار C)؛ [الدليل](archive/status-archive.md#rad-104).",
       "source_ref": "docs/DECISIONS.md#brevo-signup-notify-owner-2026-11-04؛ docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md؛ docs/archive/reports/2026-11/RAD-104_BREVO_DIGEST_2026-11-04.md",
-      "waiting_on": "owner",
-      "done_when": "يطبّق المالك الحزمة بالدليل: الفحص كله true، بريد تجريبي 201 بلا بيانات شخصية، ثم المفتاح ON؛ أو يقرر التراجع."
+      "completion_evidence": "تحقق خارجي بإفادة المالك 2026-11-04: طُبّقت الحزمة، الفحص 6/6 ok، وصل بريد send_test، ووصل ملخص 23:50 UTC (HTTP 201) لتسجيل تجريبي فعلي في البريد الوارد. لا عناوين في Git. المرجع: docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md."
     },
     {
       "id": "RAD-105",
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
       "status": "planned",
       "priority": "high",
-      "description": "تصميم فقط (OD1–OD9): نوافذ امتحان يجدولها المشرف، عامل بـScheduler، مُحقق استعادة آلي بدل التصديق، دورة اعتماد، واجهات المشرف والطالب، امتحان من 20 عنصرًا، ودفتر فجوات، ومراحل P0–P7 بنافذة لابتوب أخيرة. لا تنفيذ قبل إذن كل مرحلة.",
+      "description": "تصميم معتمد (DS-1…DS-10 نعم). P0 في Draft ‏#241 (إصلاح بصمة review-ready وعلامة pilot-v1 الجديدة)؛ P1–P6 لم تبدأ بعد؛ P7 نافذة مالك حية بإذن كتابي. SQL مرحلي خارج manifest حتى P7.",
       "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/DECISIONS.md#rad085-review-ready-proposal-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md",
       "waiting_on": "owner",
-      "done_when": "يجيب المالك عن DS-1…DS-10، وتُنفَّذ المراحل P0–P7 بمراجعة، وتنجح نافذة اللابتوب الأخيرة بامتحان يُجدوَل ويُصحَّح دون أي خطوة يدوية."
+      "done_when": "تُدمج P0–P6 بمراجعة (SQL مرحلي بلا تغيير علامة بعد P0)، وتنجح نافذة P7 بامتحان يُجدوَل ويُصحَّح دون خطوة يدوية."
     }
   ]
 }
