@@ -27,13 +27,9 @@ node -e "const m=require('./supabase/staged/self-service/MANIFEST.json'),c=requi
 
 ## 3. تطبيق SQL المرحلي (L) — كل ملف معاملة واحدة تتراجع كاملة عند الفشل
 ```bash
-owner_sql -f supabase/migrations/20261105000100_rad105_windows.sql
-owner_sql -f supabase/migrations/20261105000200_rad105_witness.sql
+owner_sql -f supabase/staged/self-service/p1-windows.sql
+owner_sql -f supabase/staged/self-service/p5-witness.sql
 ```
-**Expected:** `COMMIT` لكل ملف. النسختان المرحليتان محفوظتان كدليل بايتات؛ لا تطبّقهما مرة ثانية. بعد التطبيق، في الاتصال نفسه اضبط `set radlab.expected_gate='closed';` ثم شغّل `supabase/checks/selfservice-rad085-review-ready.sql` (11 صفًا ناجحًا) و`selfservice-windows-ready.sql` و`selfservice-witness-ready.sql` (صفوف `ok` ناجحة). لا تنسخ تصريح الحالة إلى اتصال آخر؛ غياب التصريح يفشل الفحص.
-
-علامة C1/C2: `pilot-v1:b1b4f90e5da90ba789a2be5ad66bf991790ff1234d1f86f4b7450e2bcb8170e1`؛ بصمتا الخلف `functions=16be493671c8050ffa9bdb0e229198b2` و`relations=fd59fc5eb938c70934f4cf5517c2dae0`. **STOP:** أي `ok=false` أو غياب صف.
-
 **Expected:** `COMMIT` لكل ملف. تحقق: `select to_regclass('assess.assignment_windows') is not null, to_regclass('assess.restore_epoch') is not null` ← `t | t`. **STOP:** أي خطأ ← لا شيء طُبّق من ذلك الملف؛ أغلق PR الترقية.
 
 ## 4. دمج PR الترقية وفتح النشر (GitHub، L)
@@ -57,7 +53,7 @@ RAD_PROJECT=<id> RAD_REGION=europe-west3 APPLY=1 RAD_WINDOW_PERMISSION=I-HAVE-TH
 7.3 **رفض الاعتماد القديم:** إن كان ملف الاعتماد القديم متاحًا محليًا: NOLOGIN ← انتظار ≥ 120 ث ← محاولة اتصال واحدة بالقديم من اللابتوب ← يجب أن تُرفض؛ ثم أعد LOGIN. غير متاح ← سجّل **Not run** (لا تُفعِّل سرًّا قديمًا لأجله).
 
 ## 8. فتح البوابة (مفتاح الإيقاف العام) وأول نبضات R1
-8.1 افتح البوابة بالنص المراجع في [دليل فتح البوابة §5](ASSESS_GATE_OPEN_RUNBOOK.md#5-gate-open--exact-reviewed-sql-only-after-4-is-complete-and-03-is-written). 8.2 فحوص التشغيل تستخدم `set radlab.expected_gate='open';` في الاتصال نفسه؛ ملفات المانيفست `selfservice-assess-*-ready.sql` خلفاء فحوص الحالة، ولا تثبت runtime. فحصا `assess-emergency-stopped*.sql` يبقيان مغلقين دائمًا؛ لا بديل متساهل لهما. 8.3 انتظر 3 نبضات (≥ 15 دقيقة) واقرأ سجل التنفيذات. **Expected:** `outcome":"COMPLETE"` و`"witness":{"mode":"shadow","result":"init"}` ثم `"advance"`، ولا حقل أيام متبقية (الاعتماد بلا انتهاء). **STOP:** `STOP`/`witness-unreadable`/`db-witness-missing` ← أغلق البوابة (§8 هناك) وأبلغ: يعني مسار الشاهد (الشبكة أو الدور) لا يعمل.
+8.1 افتح البوابة بالنص المراجع في [دليل فتح البوابة §5](ASSESS_GATE_OPEN_RUNBOOK.md#5-gate-open--exact-reviewed-sql-only-after-4-is-complete-and-03-is-written). 8.2 انتظر 3 نبضات (≥ 15 دقيقة) واقرأ سجل التنفيذات. **Expected:** `outcome":"COMPLETE"` و`"witness":{"mode":"shadow","result":"init"}` ثم `"advance"`، ولا حقل أيام متبقية (الاعتماد بلا انتهاء). **STOP:** `STOP`/`witness-unreadable`/`db-witness-missing` ← أغلق البوابة (§8 هناك) وأبلغ: يعني مسار الشاهد (الشبكة أو الدور) لا يعمل.
 
 ## 9. R2 ثم إثبات الرفض الحي
 9.1 ابنِ وادفع مدخل R2 (نسخة `p5-entry-r2.mjs` مكان المدخل) وحدّث الـJob بالـdigest. **Expected:** `"mode":"enforcing","result":"advance"`. 9.2 إثبات رفض آمن: اكتب بيدك نسخة من `witness.json` بـ`seq` أكبر بـ1000 (أمر `gcloud storage cp`)، انتظر نبضة. **Expected:** `outcome":"STOP"`, `"code":"restore_suspected"` ولا `claim`. ثم أعد الملف الأصلي المحفوظ مسبقًا. **Expected:** نبضة تالية `advance`. **STOP:** نبضة COMPLETE رغم التلاعب ← أغلق البوابة فورًا.
@@ -78,7 +74,7 @@ RAD_PROJECT=<id> RAD_REGION=europe-west3 APPLY=1 RAD_WINDOW_PERMISSION=I-HAVE-TH
 مشرف اصطناعي يجدول **ثلاثة** امتحانات من الواجهة، كلٌّ بعد ~15 دقيقة ومدته 10 دقائق، لطالب اصطناعي: (أ) أسئلة فقط (اختيار واحد)، (ب) مختلط بجزء محاكي واحد، (ج) عملي كامل. لا تلمس شيئًا. **Expected لكلٍّ منها:** يفتح عند الوقت، يُسلَّم، يصحّحه المُجدوِل، تظهر النتيجة في «سجل التقييم» وصفحة الامتحان تعرض الرابط، ويُغلق عند `closes_at`؛ وكذلك «اختبار كل الطلاب» للمسار الأول. **STOP:** أي خطوة تحتاج يدك ← الهدف لم يتحقق لذلك المسار.
 
 ## 14. الإيقاف والاستئناف
-زر «إيقاف طارئ» (المالك أو البديل) ← المراحل الست تنجح؛ ثم «استئناف» بالتأكيد المكتوب `RESUME ASSESS`. **Expected:** `loginEnabled: true`, `gateOpen: true` ونبضة `COMPLETE`. (إن عطّلت السر يدويًا فعِّله أنت: الاستئناف لا يلمس Google.) «قبول القاعدة المستعادة» لا يُجرَّب حيًّا (مثبت في CI).
+زر «إيقاف طارئ» (المالك) ← المراحل الست تنجح؛ ثم «استئناف» بالتأكيد المكتوب `RESUME ASSESS`. **Expected:** `loginEnabled: true`, `gateOpen: true` ونبضة `COMPLETE`. (إن عطّلت السر يدويًا فعِّله أنت: الاستئناف لا يلمس Google.) «قبول القاعدة المستعادة» لا يُجرَّب حيًّا (مثبت في CI).
 
 ## 15. أول امتحان حقيقي: 20 عنصرًا من ملف XLSX يحتفظ به المالك
 بقرار المالك ([التسجيل](DECISIONS.md#assess-self-service-review-owner-2026-11-05)): العناصر العشرون من تأليفك في ملف XLSX بأعمدة `QuestionImport` الحالية، **لا يُرفع إلى Git ولا يُلصق نصه في أي مكان**. 15.1 داخل التطبيق (حساب المالك أو مشرف): الاستيراد عبر شاشة الاستيراد الموجودة ← معاينة ← تحقق الواجهة. **Expected:** 20 عنصرًا صالحًا، لا أخطاء. **STOP:** أي خطأ تحقق ← لا تعدّل الملف بنص طبي من عندي. 15.2 مراجعتك الواحدة للعناصر الـ20 وتسجيل القبول (DS-6). 15.3 النشر ثم الإرسال: «اختبار كل الطلاب» (ميزة منفصلة، مالك دائمًا أو مشرف بإذن) بنافذة تضعها أنت. **Expected:** الاختبار يظهر لكل حساب معتمد وموافق على الخصوصية ولا لغيره. بعد النافذة: لا خطوة يدوية.

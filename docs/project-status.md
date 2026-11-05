@@ -13,9 +13,9 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 445,
-  "updated_at": "2026-11-05T08:00:00Z",
-  "timezone": "UTC",
+  "revision": 446,
+  "updated_at": "2026-11-05T06:00:00.001Z",
+  "timezone": "Asia/Amman",
   "next_id": "RAD-106",
   "tasks": [
     {
@@ -953,12 +953,13 @@
     {
       "id": "RAD-105",
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
-      "status": "in_progress",
+      "status": "blocked",
       "priority": "high",
-      "description": "دُمج #241؛ الترقية Draft #242 وفق خطة S1–S4. S1: القرارات وC1/C2؛ ثم قاعدة C4 والتقوية، واجهات C5، بنية وتدقيق C6 وتقرير C7؛ P7 نافذة مالك منفصلة. أول امتحان XLSX عبر QuestionImport، وإثبات المسارات الثلاثة مطلوب.",
+      "description": "دُمج #241؛ #242 يبقى Draft مع C3. قرارات التقوية وخطة S1–S4 مسجلتان؛ سُحبت ترقية C1/C2 بعد فشل فحص health الدقيق المحمي في CI. S2 لا تبدأ قبل رفع العائق؛ P7 نافذة منفصلة.",
       "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-hardening-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md",
-      "waiting_on": "code",
-      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
+      "waiting_on": "owner",
+      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي.",
+      "blocker": "فحص rad085-worker-rehearsal يطابق health_v1 بأربعة حقول؛ P5 تضيف witness. يلزم استثناء صريح لتحديث الفحص وإثبات العقد الجديد أو تصميم متوافق، لا تغيير توقع لتمرير CI ضمن الإذن الحالي."
     }
   ]
 }
