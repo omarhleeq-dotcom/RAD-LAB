@@ -41,7 +41,7 @@ const start = (db: Db, op = 100) => db.call<Session>('start_v2', [id(51), id(op)
 it('staged files are digest-pinned and outside the applied manifest and migrations', () => {
  const pins = JSON.parse(readFileSync(dir + 'MANIFEST.json', 'utf8')) as { status: string; files: Record<string, string> };
  expect(pins.status).toBe('staged');
- expect(Object.keys(pins.files).sort()).toEqual(readdirSync(dir).filter(f => f.endsWith('.sql')).sort());
+ expect(Object.keys(pins.files).sort()).toEqual(readdirSync(dir).filter(f => f !== 'MANIFEST.json').sort());
  for (const [file, sha] of Object.entries(pins.files)) {
   expect(createHash('sha256').update(readFileSync(dir + file)).digest('hex'), file).toBe(sha);
   expect(readdirSync('supabase/migrations')).not.toContain(file);
