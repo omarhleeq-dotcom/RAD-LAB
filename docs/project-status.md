@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 443,
-  "updated_at": "2026-11-05T03:10:00Z",
+  "revision": 444,
+  "updated_at": "2026-11-05T06:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-106",
   "tasks": [
@@ -886,8 +886,8 @@
       "title": "W4 future verifier: database-held restore epoch (option C)",
       "status": "planned",
       "priority": "medium",
-      "description": "Direction chosen by OD3 (automatic verifier replaces the 48 h attestation); design in ASSESS_SELF_SERVICE_DESIGN §3: DB epoch+seq plus an external witness, fail closed, shadow then enforcing. Not implemented; needs the owner's go (DS-4) and its own reviewed PR.",
-      "source_ref": "docs/DECISIONS.md#rad085-w4-verifier-owner-2026-11-03؛ docs/RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/ASSESS_SELF_SERVICE_DESIGN.md",
+      "description": "Witness verifier implemented as staged code (R1 shadow, R2 enforcing, R3 retire attestation) in Draft #241 with SQL and worker tests. Not live: needs the P7 window and the promotion PR.",
+      "source_ref": "docs/DECISIONS.md#rad085-w4-verifier-owner-2026-11-03؛ docs/RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/ASSESS_P7_LAPTOP_RUNBOOK.md",
       "waiting_on": "owner",
       "done_when": "Witness verifier merged with a rehearsal proving a restored database is refused by the worker, and the attestation retired; or the owner keeps decision B."
     },
@@ -955,10 +955,10 @@
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
       "status": "planned",
       "priority": "high",
-      "description": "تصميم معتمد (DS-1…DS-10 نعم). P0 في Draft ‏#241 (إصلاح بصمة review-ready وعلامة pilot-v1 الجديدة)؛ P1–P6 لم تبدأ بعد؛ P7 نافذة مالك حية بإذن كتابي. SQL مرحلي خارج manifest حتى P7.",
-      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/DECISIONS.md#rad085-review-ready-proposal-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md",
+      "description": "P0–P6 منفذة مرحليًا في Draft ‏#241 (SQL خارج المانيفست، شاشات خاملة، عامل بدفعة وشاهد استعادة، سكربت Scheduler). P6 توقفت: عنصران فقط. P7 نافذة مالك حية بإذن كتابي؛ PR ترقية منفصل قبلها.",
+      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/DECISIONS.md#rad085-review-ready-proposal-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md؛ docs/ASSESS_P7_LAPTOP_RUNBOOK.md؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_P0_P6_2026-11-05.md؛ docs/DECISIONS.md#assess-self-service-deviations-2026-11-05",
       "waiting_on": "owner",
-      "done_when": "تُدمج P0–P6 بمراجعة (SQL مرحلي بلا تغيير علامة بعد P0)، وتنجح نافذة P7 بامتحان يُجدوَل ويُصحَّح دون خطوة يدوية."
+      "done_when": "يجيب المالك عن الانحرافات، يُدمج PR الترقية، وتنجح نافذة P7 بامتحان يُجدوَل ويُصحَّح بلا خطوة يدوية."
     }
   ]
 }
