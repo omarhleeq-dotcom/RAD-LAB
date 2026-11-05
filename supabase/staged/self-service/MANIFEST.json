@@ -1,0 +1,7 @@
+{
+  "status": "staged",
+  "note": "RAD-105: staged SQL, NOT in scripts/pages/frontend-schema.json and NOT in supabase/migrations until the P7 promotion. Digests are reviewed pins.",
+  "files": {
+    "p1-windows.sql": "f947d024ce8b4f194a9579670cf0db8d5f5f8ab126dd81459c19e8e4fe6024da"
+  }
+}
