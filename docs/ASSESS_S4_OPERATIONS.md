@@ -7,7 +7,7 @@ No live authority. [S3 acceptance](DECISIONS.md#assess-self-service-s4-owner-202
 | Boundary | Verified source / resulting contract |
 |---|---|
 | Original production image | `grading-worker.Dockerfile` runs `grading-worker-main.mjs`, built from server-worker.ts. Its binding/grants are v1 only. These original files/assertions remain available. |
-| Scheduler | Existing `p4-scheduler.sh`: OAuth POST to the one Cloud Run Job every five minutes, no platform retries. It selects no lifecycle or RPC. A successful tick alone proves no grading. |
+| Scheduler | Existing `p4-scheduler.sh`: OAuth POST to the one Cloud Run Job every five minutes, no platform retries. It selects no lifecycle or RPC. Creation can enable the schedule: the owner runbook requires immediate pause and zero executions while CLOSED/NOLOGIN/secret DISABLED before credential activation. A successful tick alone proves no grading. |
 | S2/S3 | start_v2 creates lifecycle2. Original v1 claims/maintenance exclude it; manual v2 DB tests do not prove scheduled automation. The synthetic preflight reproduces this gap. |
 | Successor build | `node scripts/assess/build-grading-worker.mjs --selfservice-r1` (then r2/r3). Same pinned Dockerfile/base, non-root, manifest hashes, exact six-key Secret Manager payload, reviewed direct host/TLS/slot. Each staged entry requires its own manifest.selfservice value. |
 | Exact five operations | maintain_v2(integer), claim_v2(), finish_v2(uuid,uuid,text,text), fail_v2(uuid,uuid), worker_health_v2(). No table, recovery, authoring, manual-score or sixth-function grant. |

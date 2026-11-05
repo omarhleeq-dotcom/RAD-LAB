@@ -9,6 +9,7 @@ Verified: تحقق GitHub والجلب المحدود من #242 Draft على mai
 Verified: مراجعة العقود معًا كشفت أن الصورة ومداخل R1/R2/R3 والجدولة تسلك v1 بينما الواجهة تنشئ v2؛ claim_v1 لا يلتقطها. الاختبارات اليدوية القديمة ليست إثبات أتمتة.
 Verified: [استثناء المالك الضيق](../../../DECISIONS.md#assess-self-service-s4-worker-owner-2026-11-05) لخليفة العامل بخمس عمليات فقط؛ لا جدول/إدارة/عضوية إضافية للعامل.
 Verified: محول v2 مجدول، wrapper صحة/شاهد منفصل العدادات، بناء R1/R2/R3 مميز بالمانيفست، وحزمة تبديل ذرية وفحص خليفة. الأصل v1 محفوظ.
+Verified: جرى توضيح pause فوري بعد إنشاء Scheduler مع CLOSED/NOLOGIN/سر DISABLED وصفر executions قبل تفعيل الاعتماد؛ النص لا يفترض إنشاء PAUSED.
 Verified: مخطط بنية يطبع dry-run فقط: bucket خاص، احتفاظ محدود، Scheduler يومية PAUSED، وسياسات تنبيه DISABLED للقنوات القائمة.
 Verified: runner نسخ مشفر خامل افتراضيًا؛ المخزن لا يستقبل إلا age archive كاملًا بعد نجاح المراحل. مفتاح فك التشفير خارج job وGit.
 مستبعد: كل إجراء حي وSQL/cloud/Vault/Brevo/provider/cron أو أسرار/Variables/نشر يدوي/merge/Ready. P7 لم تبدأ، وAssess ليست operational.
