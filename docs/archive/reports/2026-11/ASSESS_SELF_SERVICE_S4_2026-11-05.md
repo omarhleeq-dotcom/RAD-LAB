@@ -11,7 +11,7 @@ Verified: الصورة ومداخل R1/R2/R3 كانت تستخدم v1، بينم
 Verified: نُفّذ [استثناء العامل الضيق](../../../DECISIONS.md#assess-self-service-s4-worker-owner-2026-11-05): خمس عمليات فقط، بلا جدول/إدارة/عضوية إضافية للعامل؛ عقود وتأكيدات v1 محفوظة.
 Verified: بناء خليفة R1/R2/R3، binding مقيد، health/witness منفصل العدادات، حزمة تبديل ذرية وفحص جاهزية؛ الصورة المقصودة صححت المسارات الثلاثة.
 Verified: runner نسخ مشفر وسياق صورة خاملان افتراضيًا؛ مخطط bucket خاص واحتفاظ محدود وجدولة PAUSED وتنبيهات DISABLED للقنوات القائمة.
-Verified: دليل P7 موحد لكل خطوة Expected/STOP/rollback؛ إنشاء Scheduler قد يكون ENABLED، لذا يلزم pause فوري وصفر executions مع CLOSED/NOLOGIN/سر DISABLED قبل تفعيل الاعتماد.
+Verified: دليل P7 موحد لكل خطوة Expected/STOP/rollback؛ ربط Job بعد تجهيز/تمكين N/M مع NOLOGIN، ومسار Resume قبل13، وcounts من authoring_references مع readiness منفصلة؛ إنشاء Scheduler قد يكون ENABLED، لذا يلزم pause فوري وصفر executions مع CLOSED/NOLOGIN/سر DISABLED قبل تفعيل الاعتماد.
 مستبعد: SQL/cloud/Vault/Brevo حي، أسرار/Variables، provider/cron، نشر يدوي، merge/Ready/auto-merge؛ P7 لم تبدأ وAssess ليست operational.
 
 ## 3. حالة البنود
@@ -49,11 +49,11 @@ Verified: فشلا marker S3 وتسميتي R1/R2 القديمين صُححا ب
 Verified: أُعيد استخدام أدلة S3 EN/AR390/1440 وaxe/family/clock لثبات UI، وفق أمر المالك؛ لم يُكرر المتصفح بلا سبب.
 Not run محليًا: صورة Supabase17 وصورة النسخ النهائية توقفتا عند ENOSPC في vfs؛ الأولى أثبتتها CI المطلوبة، والثانية تبقى فجوة. سياقا النسخ متطابقان، لكن ذلك ليس برهان صورة؛ نُظفت cache هذه المحاولة فقط.
 Verified: Deploy يتوقف عند Require verified pilot schema، قبل Build/deploy؛ لا Variable تغيرت. آخر دفعة توثيق/مخطط تحتاج فحص رأسها المدفوع، ومرجعه النهائي [وصف وفحوص #242](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks).
-Not run: استلام بريد/suppression لمدة ساعة، SQL/cloud/Vault/Brevo، فحص هاتف، جدولة أو مصدر فعلي وP7؛ لا سلطة حية في هذه الدفعة.
+Not run: حذف lifecycle بعد مدة الاحتفاظ الفعلية، واستلام بريد/suppression لمدة ساعة، SQL/cloud/Vault/Brevo، فحص هاتف، جدولة أو مصدر فعلي وP7؛ لا سلطة حية في هذه الدفعة.
 
 ## 7. الفجوات والتكلفة
 Not run: اعتماد حزمة SELECT/RLS المحددة؛ SELECT وحده يخفي الصفوف وrow_security=off يرفضها. `--enable-row-security` مشروط بسياسة true SELECT للدور وحده ورفض restrictive/inventory drift؛ لا قبول dump ناقصة.
-Not run: اكتمال Auth/extension/Vault وإعدادات المزوّد وتغطية كل LOB/sequence والأدوار على الصورة الإنتاجية؛ لا BYPASSRLS/إدارة/عضوية للنسخ ضمن المقترح. لا استبدال لنسخة اللابتوب قبل هذه الأدلة والفشل/الاستلام.
+Not run: اكتمال Auth/extension/Vault وإعدادات المزوّد وتغطية كل LOB/sequence والأدوار على الصورة الإنتاجية؛ بروفة النسخ ساكنة وقراءة sequence ليست MVCC، فتزامنها مع dump لم يُثبت؛ لا BYPASSRLS/إدارة/عضوية للنسخ ضمن المقترح. لا استبدال لنسخة اللابتوب قبل هذه الأدلة والفشل/الاستلام.
 Inferred: قد تسمح شبكة dual-stack القائمة بتقييد IPv6 CIDR بلا NAT جديد؛ العنوان الفردي ephemeral وsubnet ليست عزلًا لدور واحد. جرد CIDR ومشاركيها وأهلية الحساب ووصول اللابتوب والبديل والنسخ غير متحقق.
 Verified: Google لا تسعّر نطاق IPv6 الخارجي للsubnet كعنوان؛ تكاليف النقل تبقى. بديلIPv4/NAT يحتاج COST STOP:0.005USD/ساعة للعنوان (~3.60/720ساعة) و0.045USD/GiB، فوق gateway/egress.
 Verified: Supabase Free معلنة0USD و500MB، Pro من25USD/شهر؛ IPv4 المباشرة0.0055USD/ساعة (~4USD/شهر). لا تُفترض ترقية أو أهلية أو فاتورة صفرية؛ [المصادر الحالية](../../../ASSESS_S4_OPERATIONS.md#source-restrictions--cost-stop-sources-read-2026-11-05).
