@@ -34,10 +34,10 @@ owner_sql -f supabase/migrations/20261105000200_rad105_witness.sql
 
 بعد الملفين، وفي اتصال واحد، جهّز نص التحقق ثم راجعه قبل تشغيله:
 ```bash
-{ printf "%s\n" "set radlab.expected_gate='closed';"; cat supabase/checks/selfservice-rad085-review-ready.sql supabase/checks/selfservice-windows-ready.sql supabase/checks/selfservice-witness-ready.sql; } > /tmp/rad105-ready.sql
+{ printf "%s\n" "set radlab.expected_gate='closed';"; cat supabase/checks/selfservice-rad085-review-ready.sql supabase/checks/selfservice-ready.sql; } > /tmp/rad105-ready.sql
 owner_sql -f /tmp/rad105-ready.sql
 ```
-**Expected:** فحص الكتالوج 11 صفًا ناجحًا، وصفوف `ok` في فحصي النوافذ والشاهد كلها صحيحة. **STOP:** أي فشل أو صف مفقود. لا تطبق النسختين المرحليتين مرة أخرى؛ هما دليل بايتات مطابق للترحيلين. عدادات health تبقى لـlifecycle_version=1؛ الشاهد إضافة مستقلة.
+**Expected:** فحص الكتالوج 11 صفًا ناجحًا، وصفوف `ok` في حزمة النوافذ والشاهد كلها صحيحة. **STOP:** أي فشل أو صف مفقود. لا تطبق النسختين المرحليتين مرة أخرى؛ هما دليل بايتات مطابق للترحيلين. عدادات health تبقى لـlifecycle_version=1؛ الشاهد إضافة مستقلة.
 
 علامة الترقية المرشحة: `pilot-v1:2bcdc4dd83982e06f57adb70be8cf7597d18f242ce62e5d09b734ddb3aec2629`؛ بصمة functions `5105994588a3fb40c96749f0add08e1d` وrelations `fd59fc5eb938c70934f4cf5517c2dae0`. علامة P0 الحية لم تتغير بهذه الجلسة؛ لا تضبط المرشح قبل دليل النافذة.
 

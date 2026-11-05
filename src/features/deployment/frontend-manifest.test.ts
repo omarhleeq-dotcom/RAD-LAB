@@ -61,8 +61,7 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   'supabase/checks/selfservice-assess-retention-ready.sql',
   'supabase/checks/owner-dashboard-ready.sql',
   'supabase/checks/owner-deletion-surveys-ready.sql',
-  'supabase/checks/selfservice-windows-ready.sql',
-  'supabase/checks/selfservice-witness-ready.sql',
+  'supabase/checks/selfservice-ready.sql',
  ]);
  expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], {
   encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' },

@@ -49,8 +49,7 @@
     "supabase/checks/selfservice-assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
     "supabase/checks/owner-deletion-surveys-ready.sql",
-    "supabase/checks/selfservice-windows-ready.sql",
-    "supabase/checks/selfservice-witness-ready.sql"
+    "supabase/checks/selfservice-ready.sql"
   ],
   "deferredMigrations": {},
   "explicitBoundaries": [

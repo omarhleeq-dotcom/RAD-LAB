@@ -8,6 +8,7 @@ import {openRad085Database} from './rad085-local-db';
 import {catalogueFixture,modes,sql} from './rad062-m09-fixture';
 const {productionApplicationSql}=await import('../../../scripts/assess/'+'rad085-production-shape.mjs') as {productionApplicationSql:()=>string};
 import {ledger,successor,gatePredicate} from '../../../scripts/assess/selfservice-gate-checks.mjs';
+const {checks}=await import('../../../scripts/assess/'+'rad062-db-day.mjs') as {checks:(db:unknown,files?:string[])=>Promise<{checks_passed:number}>};
 const migration=sql('20261102000300_rad085_rights_write_disclosures.sql');
 const old=execFileSync('git',['show','3d812890330b9f0d7bf7e0c943a5d988fa25e679:supabase/migrations/20261102000300_rad085_rights_write_disclosures.sql'],{encoding:'utf8'});
 const preflight=(source:string)=>source.slice(source.indexOf('with functions as ('),source.indexOf(' ) reviewed),false)'));
@@ -108,7 +109,7 @@ describe.each(modes)('C1/C2 production promotion %s',mode=>{
    const rows=await check();
    console.info('C1 production fingerprints',mode,JSON.stringify(rows.filter(r=>r.actual)));
    expect(rows.filter(r=>r.ok!==true)).toEqual([]);expect(rows).toHaveLength(11);
-   for(const file of ['selfservice-windows-ready.sql','selfservice-witness-ready.sql']) expect(flatten(await db.admin.query(readFileSync('supabase/checks/'+file,'utf8'))).filter(r=>r.ok!==true)).toEqual([]);
+   for(const file of ['selfservice-ready.sql']) expect(flatten(await db.admin.query(readFileSync('supabase/checks/'+file,'utf8'))).filter(r=>r.ok!==true)).toEqual([]);
    // Unspecified/invalid expectation, wrong state, absent row and corrupted multi-row gate all fail.
    for(const actual of [false,true]) {
     await setGate(actual);
@@ -142,6 +143,19 @@ describe.each(modes)('C1/C2 production promotion %s',mode=>{
    await setGate(true);
    for(const file of ['assess-emergency-stopped.sql','assess-emergency-stopped-v2.sql']) expect(successor(file)).toBe(readFileSync('supabase/checks/'+file,'utf8'));
    await setGate(false);
+   // The existing installation runner explicitly declares CLOSED, restores its input, and cannot accept OPEN.
+   await db.admin.query('reset radlab.expected_gate');
+   expect(await checks(db.admin,['supabase/checks/selfservice-rad085-review-ready.sql','supabase/checks/selfservice-ready.sql'])).toEqual({checks_passed:2});
+   expect((await db.admin.query('select '+gatePredicate+' ok')).rows[0].ok).toBe(false);
+   for(const setting of ['open','INVALID']) {
+    await db.admin.query("select set_config('radlab.expected_gate',$1,false)",[setting]);
+    await expect(checks(db.admin,['supabase/checks/selfservice-ready.sql'])).rejects.toThrow('closed_installation_check_required');
+    expect((await db.admin.query("select current_setting('radlab.expected_gate') v")).rows[0].v).toBe(setting);
+   }
+   await db.admin.query('reset radlab.expected_gate');await setGate(true);
+   await expect(checks(db.admin,['supabase/checks/selfservice-rad085-review-ready.sql'])).rejects.toThrow('required_check_failed:');
+   expect((await db.admin.query('select '+gatePredicate+' ok')).rows[0].ok).toBe(false);
+   await setGate(false);await db.admin.query("set radlab.expected_gate='closed'");
    const w1="create role assess_grading_worker nologin;grant execute on function assess.maintain_v1(integer),assess.claim_v1(),assess.finish_v1(uuid,uuid,text,text),assess.fail_v1(uuid,uuid),assess.health_v1() to assess_grading_worker;";
    const mutations:[string,string[]][]=[
     [w1,[]],
@@ -160,8 +174,8 @@ describe.each(modes)('C1/C2 production promotion %s',mode=>{
     expect(flatten(await db.admin.query(mutated)).filter(r=>r.ok!==true).map(r=>r.check_name),change).toEqual(expected);
    }
    // Readiness data invariant mutation, independent of catalogue fingerprints.
-   const witness=readFileSync('supabase/checks/selfservice-witness-ready.sql','utf8');
-   expect(flatten(await db.admin.query(witness.replace('begin read only;','begin;delete from assess.restore_epoch;'))).filter(r=>!r.ok).map(r=>r.check_name)).toEqual(['witness_singleton']);
+   const witness=readFileSync('supabase/checks/selfservice-ready.sql','utf8');
+   expect(flatten(await db.admin.query(witness.replaceAll('begin read only;','begin;delete from assess.restore_epoch;'))).filter(r=>!r.ok).map(r=>r.check_name)).toEqual(['witness_singleton']);
    expect((await check()).filter(r=>r.ok!==true)).toEqual([]);
   }finally{await db.close();}
  },300000);
