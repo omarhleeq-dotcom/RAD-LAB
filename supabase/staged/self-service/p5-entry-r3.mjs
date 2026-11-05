@@ -46,11 +46,11 @@ function onStop() {
 }
 process.on('SIGTERM', onStop); process.on('SIGINT', onStop);
 try {
-  let manifestHash, projectRef;
+  let projectRef;
   const result = await executeGradingWorker(async () => {
     if (process.argv.length !== 2 || Object.hasOwn(process.env, 'RAD085_SYNTHETIC_WORKER')) throw Error();
     const bytes = await readFile(new URL('./manifest.json', import.meta.url));
-    const manifest = JSON.parse(bytes); manifestHash = sha(bytes);
+    const manifest = JSON.parse(bytes);
     if (manifest.contract !== 'rad085-grading-worker-build/1' || manifest.localOnly !== false ||
         JSON.stringify(manifest.versions) !== JSON.stringify(workerVersions())) throw Error();
     for (const file of ['worker.cjs', 'grading-worker-main.mjs'])
