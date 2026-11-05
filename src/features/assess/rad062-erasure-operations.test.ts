@@ -351,7 +351,7 @@ it('an unassigned rights-held draft transfers its containing group, preserves ev
 it('M08 required; required bytes/checks, promoted guard/marker and BOTH unchanged emergency packets', () => {
  const base = JSON.parse(execFileSync('git', ['show', '023ec84c15bfd744f317ec079e2587d90e099414:scripts/pages/frontend-schema.json'], { encoding: 'utf8' }));
  // Whole-list promotion pin: deployment/frontend-manifest.test.ts.
- expect(manifest.checks).toContain('supabase/checks/selfservice-s3-rad085-review-ready.sql'); // Reviewed window promotion successor.
+ expect(manifest.checks).toContain('supabase/checks/selfservice-s4-rad085-review-ready.sql'); // Reviewed window promotion successor.
  expect(manifest.guardedFeatures.rad062.migrationSha256[file]).toBe(createHash('sha256').update(m08()).digest('hex'));
  expect(manifest.guardedFeatures.rad062.migrations).toContain(file);
  for (const path of [...base.requiredMigrations.map((f: string) => 'supabase/migrations/' + f), ...base.checks,

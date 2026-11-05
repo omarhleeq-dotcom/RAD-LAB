@@ -9,6 +9,7 @@ const operations = {
   finish_v2: [["p_session", "uuid"], ["p_token", "uuid"], ["p_n", "text"], ["p_d", "text"]],
   fail_v2: [["p_session", "uuid"], ["p_token", "uuid"]],
 } as const;
+const scheduledOperations = { ...operations, maintain_v2: [["p_limit", "integer"]], worker_health_v2: [] } as const;
 
 export interface WorkerBinding {
   host: string; port: number; database: string; user: string; password: string;
@@ -30,8 +31,13 @@ export function createGradingWorkerBindingV2(config: WorkerBinding): AssessRpc &
   if (config.sessionPoolerProjectRef !== undefined || (config.connections ?? 1) !== 1) invalid();
   return binding({ ...config, connections: 1 });
 }
-function binding(config: WorkerBinding): AssessRpc & { close(): Promise<void> } {
+export function createScheduledWorkerBindingV2(config: WorkerBinding): AssessRpc & { close(): Promise<void> } {
+  if (config.sessionPoolerProjectRef !== undefined || (config.connections ?? 1) !== 1) invalid();
+  return binding({ ...config, connections: 1 }, true);
+}
+function binding(config: WorkerBinding, scheduled = false): AssessRpc & { close(): Promise<void> } {
   const max = 1;
+  const selected = scheduled ? scheduledOperations : operations;
   const login = config.user;
   if (!/^[a-z0-9][a-z0-9.-]*$/i.test(config.host) || !Number.isInteger(config.port) || config.port < 1 || config.port > 65535 ||
       !config.database || !/^[a-z_][a-z0-9_]*$/.test(config.user) ||
@@ -53,8 +59,8 @@ function binding(config: WorkerBinding): AssessRpc & { close(): Promise<void> } 
   return {
     async call<T>(name: string, args: Record<string, unknown>): Promise<T> {
       if (closing || fault) throw new AssessServiceError("unavailable");
-      if (!Object.hasOwn(operations, name)) invalid();
-      const fields = operations[name as keyof typeof operations];
+      if (!Object.hasOwn(selected, name)) invalid();
+      const fields = selected[name as keyof typeof selected];
       if (!args || Object.keys(args).length !== fields.length || fields.some(([key]) => !Object.hasOwn(args, key))) invalid();
       // No unbounded application queue; scheduling/backoff remains outside this binding.
       if (active >= max) throw new AssessServiceError("limit");
@@ -62,6 +68,7 @@ function binding(config: WorkerBinding): AssessRpc & { close(): Promise<void> } 
       try {
         values = fields.map(([key, cast]) => {
           const value = args[key];
+          if ((cast as string) === "integer") { if (!Number.isInteger(value) || Number(value) < 1 || Number(value) > 100) invalid(); return value; }
           if (typeof value !== "string" || (cast === "uuid" ? !/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value) : !/^\d{1,1000}$/.test(value))) invalid();
           return value;
         });
@@ -92,16 +99,26 @@ function binding(config: WorkerBinding): AssessRpc & { close(): Promise<void> } 
             and not g.rolcreatedb and not g.rolcreaterole and not g.rolreplication)
         ) as allowed from pg_catalog.pg_roles r where r.rolname=session_user`, [login]);
         if (check.rows.length !== 1 || check.rows[0]?.allowed !== true) throw { code: "42501" };
+        if (scheduled) {
+          const direct=await client.query<{ allowed: boolean }>(`select
+            not exists(select 1 from pg_catalog.pg_proc p where p.pronamespace='assess'::regnamespace and has_function_privilege(session_user,p.oid,'EXECUTE'))
+            and not has_database_privilege(session_user,current_database(),'CREATE,TEMP') as allowed`);
+          if(direct.rows.length!==1||direct.rows[0]?.allowed!==true)throw {code:"42501"};
+        }
         await client.query("set local role assess_grading_worker");
         {
           const acl = await client.query<{ allowed: boolean }>(`select
             not exists (select 1 from pg_catalog.pg_proc p join pg_catalog.pg_namespace n on n.oid=p.pronamespace
               where n.nspname='assess' and has_function_privilege(current_user,p.oid,'EXECUTE')
               and p.oid not in ('assess.claim_v2()'::regprocedure,
-                'assess.finish_v2(uuid,uuid,text,text)'::regprocedure,'assess.fail_v2(uuid,uuid)'::regprocedure))
+                'assess.finish_v2(uuid,uuid,text,text)'::regprocedure,'assess.fail_v2(uuid,uuid)'::regprocedure${scheduled ? ", 'assess.maintain_v2(integer)'::regprocedure, 'assess.worker_health_v2()'::regprocedure" : ""}))
+            ${scheduled ? `and (select count(*) from pg_catalog.pg_proc p where p.pronamespace='assess'::regnamespace
+              and has_function_privilege(current_user,p.oid,'EXECUTE'))=5
+              and not exists(select 1 from pg_catalog.pg_proc p cross join lateral aclexplode(p.proacl) a
+                where p.pronamespace='assess'::regnamespace and a.grantee=current_user::regrole and a.is_grantable)` : ""}
             and not exists (select 1 from pg_catalog.pg_class c join pg_catalog.pg_namespace n on n.oid=c.relnamespace
-              where n.nspname in ('assess','public','auth') and c.relkind in ('r','p','v','m','f')
-              and has_table_privilege(current_user,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER'))
+              where n.nspname in ('assess','public','auth'${scheduled ? ", 'emergency'" : ""}) and c.relkind in ('r','p','v','m','f')
+              and (has_table_privilege(current_user,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')${scheduled ? " or has_table_privilege(session_user,c.oid,'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')" : ""}))
             and not has_database_privilege(current_user,current_database(),'CREATE,TEMP')
             and not exists (select 1 from pg_catalog.pg_namespace n where n.nspname not like 'pg_%'
               and n.nspname<>'information_schema' and has_schema_privilege(current_user,n.oid,'CREATE')) as allowed`);

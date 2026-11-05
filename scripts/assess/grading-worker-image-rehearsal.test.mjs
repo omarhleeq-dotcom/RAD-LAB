@@ -12,6 +12,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { build } from 'esbuild';
 import { containerArgs, prepareRolesSql } from '../ops/laptop-restore-test.mjs';
+import { scheduledRehearsal } from './scheduled-worker-image.test.mjs';
 
 const read = path => readFileSync(path, 'utf8');
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -66,7 +67,7 @@ test('W4 production grading image: refusals, re-read verifier, one bounded run a
   const secretsVolume = prefix + '-secrets', recoveryVolume = prefix + '-recovery';
   const dir = mkdtempSync(join(tmpdir(), 'rad085-w4-qa-'));
   const owned = new Set(), evidence = [];
-  let networkCreated = false, imageBuilt = false;
+  let networkCreated = false, imageBuilt = false, successorEvidence;
   try {
     // 1. Reviewed constants agree with the W2 transport; the synthetic entrypoint is not shipped.
     assert.match(read('scripts/assess/rotate-grading-credential.py'), new RegExp(`^DIRECT_HOST = "${DIRECT_HOST.replaceAll('.', '\\.')}"$`, 'm'));
@@ -210,13 +211,13 @@ test('W4 production grading image: refusals, re-read verifier, one bounded run a
             fs.renameSync(tmp,dir+'/'+file);
           }});`], JSON.stringify(files));
     }
-    async function worker(env = []) {
+    async function worker(env = [], selectedImage = image) {
       const name = `${prefix}-run-${randomBytes(3).toString('hex')}`; owned.add(name);
       const began = performance.now();
       const child = spawn('docker', ['--host=unix:///var/run/docker.sock', 'run', '--name', name, '--network', network, '--read-only', '--cap-drop=ALL',
         '--security-opt=no-new-privileges', '--pids-limit=64', '--cpus=1', '--memory=512m', '--tmpfs', '/tmp:rw,noexec,nosuid,size=8m',
         '--mount', `type=volume,src=${secretsVolume},dst=/run/secrets,readonly`, '--mount', `type=volume,src=${recoveryVolume},dst=/run/recovery,readonly`,
-        ...env, image], { env: dockerEnv, stdio: ['ignore', 'pipe', 'pipe'] });
+        ...env, selectedImage], { env: dockerEnv, stdio: ['ignore', 'pipe', 'pipe'] });
       let stdout = '', stderr = '';
       child.stdout.on('data', b => stdout += b); child.stderr.on('data', b => stderr += b);
       const code = await new Promise((resolve, reject) => { child.once('error', reject); child.once('exit', resolve); });
@@ -318,6 +319,7 @@ test('W4 production grading image: refusals, re-read verifier, one bounded run a
     assert.equal(su("select count(*) from pg_stat_activity where usename='assess_job_b'"), '0', 'the run exited and closed its session');
     assert.equal(su('select enabled from assess.launch_gate'), 'f');
     evidence.push('one-bounded-run-graded-exactly-one-as-assess_job_b-tls-scram');
+    successorEvidence = await scheduledRehearsal({command,docker,su,owner,config,inputs,worker,network,dir,owned,secretsVolume,recoveryVolume,db,prefix});
     console.log(JSON.stringify({ contract: 'rad085-grading-image-rehearsal/1', outcome: 'PASS', manifestSha256, localImageId: info.Id,
       evidence, providerVerified: false, runtimeOrLaunchVerified: false }));
   } finally {
@@ -326,5 +328,13 @@ test('W4 production grading image: refusals, re-read verifier, one bounded run a
     if (networkCreated) try { docker(['network', 'rm', network]); } catch { /* best effort */ }
     if (imageBuilt) try { docker(['image', 'rm', '-f', image]); } catch { /* best effort */ }
     rmSync(dir, { recursive: true, force: true });
+    for(const name of owned){
+      let present=false;
+      try{docker(name.startsWith('volume:')?['volume','inspect',name.slice(7)]:['container','inspect',name]);present=true;}catch{/* absent is expected */}
+      assert.equal(present,false,'cleanup resource remains');
+    }
   }
+  let networkRemains=false;try{docker(['network','inspect',network]);networkRemains=true;}catch{/* absent */}
+  assert.equal(networkRemains,false,'cleanup network remains');
+  if(successorEvidence)console.log(JSON.stringify({...successorEvidence,cleanup:true}));
 });

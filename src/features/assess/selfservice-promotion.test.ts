@@ -231,6 +231,21 @@ describe.each(modes)('C1/C2 production promotion %s',mode=>{
     "do $m$declare d text;begin d:=pg_get_functiondef('assess.attempt_eligibility_page_v1(uuid,uuid,integer)'::regprocedure);execute replace(d,'p_limit not between 1 and 100','p_limit not between 1 and 101');end$m$",
    ]) expect(flatten(await db.admin.query(s3Ready.replace('begin read only;','begin;'+change+';'))).filter(r=>r.ok!==true).map(r=>r.check_name)).toEqual(['functions']);
    expect(flatten(await db.admin.query(readFileSync('supabase/checks/selfservice-s3-ready.sql','utf8'))).filter(r=>r.ok!==true)).toEqual([]);
+   const beforeS4=await snapshot();
+   await db.admin.query(sql('20261105000600_rad105_worker_health.sql'));
+   const afterS4=await snapshot();
+   expect(beforeS4.filter(b=>JSON.stringify(b.doc)!==JSON.stringify(afterS4.find(a=>a.kind===b.kind&&a.name===b.name)?.doc))).toEqual([]);
+   expect(afterS4.filter(a=>!beforeS4.some(b=>a.kind===b.kind&&a.name===b.name)).map(a=>a.name)).toEqual(['assess.worker_health_v2()']);
+   const s4Ready=readFileSync('supabase/checks/selfservice-s4-rad085-review-ready.sql','utf8');
+   const s4Rows=flatten(await db.admin.query(s4Ready));
+   console.info('S4 independent production fingerprints',mode,JSON.stringify(s4Rows.filter(r=>r.actual)));
+   expect(s4Rows.filter(r=>r.ok!==true)).toEqual([]);
+   for(const change of [
+    'grant execute on function assess.worker_health_v2() to authenticated',
+    "alter function assess.worker_health_v2() set work_mem='8MB'",
+    "do $m$declare d text;begin d:=pg_get_functiondef('assess.worker_health_v2()'::regprocedure);execute replace(d,'old-''witness''','old');end$m$",
+   ])expect(flatten(await db.admin.query(s4Ready.replace('begin read only;','begin;'+change+';'))).filter(r=>r.ok!==true).map(r=>r.check_name)).toEqual(['functions']);
+
 
   }finally{await db.close();}
  },300000);

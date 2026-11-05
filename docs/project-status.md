@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 453,
-  "updated_at": "2026-11-05T18:35:40.797398+00:00",
+  "revision": 454,
+  "updated_at": "2026-11-05T21:21:38.404957+00:00",
   "timezone": "Asia/Amman",
   "next_id": "RAD-106",
   "tasks": [
@@ -953,12 +953,13 @@
     {
       "id": "RAD-105",
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي",
-      "status": "review",
+      "status": "blocked",
       "priority": "high",
-      "description": "S1/S2 مقبولتان. تصحيح ساعة S3 في Draft #242؛ دليل الفحوص المحلية وCI في التقرير ووصف PR. ينتظر قبول مراجعة التنسيق. S4 وP7 لم تبدأ؛ لا تفعيل حي.",
-      "source_ref": "docs/DECISIONS.md#assess-self-service-s3-clock-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_CLOCK_2026-11-05.md",
-      "waiting_on": "reviewer",
-      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
+      "description": "S1/S2/S3 مقبولة. S4 بدأت: خليفة عامل v2 باستثناء ضيق معتمد؛ قراءة backup المحمية تنتظر الاعتماد، وإثبات الصورة وCI قيد التحقق. النسخ والتنبيهات وتقرير كلفة المصدر مرحلية. P7 لم تبدأ؛ لا تشغيل حي.",
+      "source_ref": "docs/DECISIONS.md#assess-self-service-s4-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_2026-11-05.md",
+      "waiting_on": "owner",
+      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي.",
+      "blocker": "اعتماد سياسة قراءة backup المحددة، وإتمام CI وبروفة الصورة المقيدة للمسارات الثلاثة قبل مراجعة S4."
     }
   ]
 }
