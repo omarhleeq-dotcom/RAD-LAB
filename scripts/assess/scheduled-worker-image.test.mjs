@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import { build } from 'esbuild';
 const read=p=>readFileSync(p,'utf8');
 const sha=b=>createHash('sha256').update(b).digest('hex');
+const dockerEnv={...process.env};for(const key of ['DOCKER_HOST','DOCKER_CONTEXT','DOCKER_TLS','DOCKER_TLS_VERIFY','DOCKER_CERT_PATH'])delete dockerEnv[key];
 const id=n=>`00000000-0000-0000-0000-${String(n).padStart(12,'0')}`;
 export async function scheduledRehearsal(c) {
  const {docker,su,owner,config,inputs,worker,network,dir,owned,secretsVolume,prefix}=c;
@@ -81,9 +82,9 @@ export async function scheduledRehearsal(c) {
     const u=new URL(q.url,'https://storage.googleapis.com');if(u.searchParams.get('ifGenerationMatch')!==String(generation)){r.writeHead(412);r.end();return;}
     value=JSON.parse(body);generation++;r.end('{}');});};http.createServer(serve).listen(80);https.createServer(tls,serve).listen(443);`;
   owned.add(mock);
-  const child=execFileSync('docker',['--host=unix:///var/run/docker.sock','run','-d','--name',mock,'--network',network,
+  const child=docker(['run','-d','--name',mock,'--network',network,
    '--network-alias','metadata.google.internal','--network-alias','storage.googleapis.com','--read-only','--cap-drop=ALL','--cap-add=NET_BIND_SERVICE',
-   '--security-opt=no-new-privileges','--mount',`type=volume,src=${mockVolume},dst=/fixture,readonly`,'--entrypoint=node',images[0],'-e',source],{encoding:'utf8'});
+   '--security-opt=no-new-privileges','--mount',`type=volume,src=${mockVolume},dst=/fixture,readonly`,'--entrypoint=node',images[0],'-e',source]);
   assert.ok(child.trim());
   for(let n=0;;n++){try{docker(['exec',mock,'node','-e',"fetch('http://127.0.0.1/fixture-state').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1));"]);break;}catch{if(n>=100)throw Error('mock_not_ready');await new Promise(r=>setTimeout(r,25));}}
   const control=value=>docker(['exec','-i',mock,'node','-e',
@@ -154,21 +155,38 @@ export async function scheduledRehearsal(c) {
   checks.push('acl-function-and-table-drift-nologin-stale-witness-no-claim');
   // Actual five-operation binding under the intended image tests stale lease + finish replay.
   const direct=prefix+'-direct';owned.add(direct);
-  const code=`const f=require('/app/worker.cjs'),fs=require('fs'),c=JSON.parse(fs.readFileSync('/run/secrets/assess-worker.json'));
+  const code=`const expired=false;let sawFinish=false;const f=require('/app/worker.cjs'),fs=require('fs'),c=JSON.parse(fs.readFileSync('/run/secrets/assess-worker.json'));
    const project=c.host.split('.')[1];const store=f.gcsWitnessStore(project+'-assess-witness','witness.json',async()=>{
     const r=await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token',{headers:{'Metadata-Flavor':'Google'}});if(!r.ok)throw Error();return(await r.json()).access_token;},fetch);
    (async()=>{const result=await f.executeGradingWorker(async()=>c,new AbortController().signal,async()=>{},config=>{
     const w=f.createScheduledWorkerBindingV2(config);return{close:()=>w.close(),call:async(name,args)=>{
+     if(expired&&name==='finish_v2'){sawFinish=true;process.stdout.write('READY\\n');await new Promise(r=>process.stdin.once('data',r));}
      const value=await w.call(name,args);if(name==='finish_v2'){
       await w.call(name,args);const other=f.createScheduledWorkerBindingV2(config);let denied=false;
       try{await other.call(name,{...args,p_token:'00000000-0000-0000-0000-000000000000'});}catch{denied=true;}finally{await other.close();}
-      if(!denied)throw Error();}return value;}};},undefined,{batch:20,budgetMs:240000,witness:{mode:'enforcing',projectRef:project,store}});
-    if(result.outcome!=='COMPLETE'||result.counts.graded!==1||result.witness.result!=='advance')throw Error();process.stdout.write('PASS');})().catch(()=>process.exitCode=1);`;
+      if(!denied)throw Error();}return value;}};},undefined,{batch:expired?1:20,budgetMs:240000,witness:{mode:'enforcing',projectRef:project,store}});
+    if(result.witness.result!=='advance'||(expired?(!sawFinish||result.outcome!=='STOP'||result.code!=='grading_uncertain'||result.counts.failed!==1):(result.outcome!=='COMPLETE'||result.counts.graded!==1)))throw Error();process.stdout.write('PASS');})().catch(()=>process.exitCode=1);`;
   assert.equal(docker(['run','--name',direct,'--network',network,'--read-only','--cap-drop=ALL',
    '--mount',`type=volume,src=${secretsVolume},dst=/run/secrets,readonly`,...env,'--entrypoint=node',images[2],'-e',code]),'PASS');
   assert.equal(su(`select count(*) from assess.results where session_id='${pending}'`),'1');
+  const expiredSession=submit(2),expiryName=prefix+'-expired-lease';owned.add(expiryName);
+  await new Promise((resolve,reject)=>{
+   const child=spawn('docker',['--host=unix:///var/run/docker.sock','run','-i','--name',expiryName,'--network',network,'--read-only','--cap-drop=ALL',
+    '--mount',`type=volume,src=${secretsVolume},dst=/run/secrets,readonly`,...env,'--entrypoint=node',images[2],'-e',code.replace('const expired=false','const expired=true')],{env:dockerEnv,stdio:['pipe','pipe','pipe']});
+   let stdout='',stderr='',released=false;
+   const timer=setTimeout(()=>{child.kill();reject(Error('lease_fixture_deadline'));},30000);
+   child.once('error',error=>{clearTimeout(timer);reject(error);});child.stderr.on('data',b=>stderr+=b);
+   child.stdout.on('data',b=>{stdout+=b;if(!released&&stdout.includes('READY\n')){released=true;
+    try{assert.equal(su(`select count(*) from assess.sessions where id='${expiredSession}' and lease is not null and lease_until>clock_timestamp()`),'1');
+     su(`update assess.sessions set lease_until=clock_timestamp()-interval '1 second' where id='${expiredSession}'`);child.stdin.end('continue\n');
+    }catch(error){clearTimeout(timer);child.kill();reject(error);}}});
+   child.once('exit',status=>{clearTimeout(timer);try{assert.equal(status,0);assert.equal(stderr,'');assert.equal(stdout,'READY\nPASS');resolve();}catch(error){reject(error);}});
+  });
+  assert.equal(su(`select count(*) from assess.results where session_id='${expiredSession}'`),'0');
+  assert.equal(su(`select count(*) from assess.session_details where session_id='${expiredSession}'`),'1');
+  checks.push('real-expired-lease-refused-through-enforcing-image-host-no-replay');
   const signalSession=submit(1);
-  const holder=spawn('docker',['--host=unix:///var/run/docker.sock','exec','-i',c.db,'psql','-X','-q','-v','ON_ERROR_STOP=1','-U','supabase_admin','-d','postgres'],{stdio:['pipe','pipe','pipe']});
+  const holder=spawn('docker',['--host=unix:///var/run/docker.sock','exec','-i',c.db,'psql','-X','-q','-v','ON_ERROR_STOP=1','-U','supabase_admin','-d','postgres'],{env:dockerEnv,stdio:['pipe','pipe','pipe']});
   holder.stdin.write('begin;lock table assess.sessions in share mode;select 1;\n');
   try{
    for(let n=0;su("select count(*) from pg_locks where relation='assess.sessions'::regclass and mode='ShareLock' and granted")!=='1';n++){if(n>100)throw Error('signal_lock_missing');await new Promise(r=>setTimeout(r,25));}

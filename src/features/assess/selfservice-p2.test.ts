@@ -96,8 +96,8 @@ describe('mounted only through the schema-detected S3 entry', () => {
    for (const a of args) { expect(adapter, a).toContain(a); expect(decl, a).toContain(a); }
   }
  });
- it('the deploy schema gate accepts the freshly calibrated S3 marker', () => {
-  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:ddb4de0e9e50414239f8ebc0046d84608579928bbf7f3543721cb0c1ce960e4b' } });
+ it('the deploy schema gate accepts the freshly calibrated S4 marker', () => {
+  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:8c8207de423ba717b4607f3d9cd029f2f16436f4f6e4b8df06679eff3cc2dedc' } });
   expect(run.status, run.stderr).toBe(0);
  });
 });
