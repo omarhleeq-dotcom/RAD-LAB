@@ -1,5 +1,5 @@
-// STAGED (RAD-105 P3): scheduled entrypoint = the reviewed W4 entry plus ONE change: batch <= 20 attempts or 240 s.
-// Promotion (P7) replaces scripts/assess/grading-worker-main.mjs with this file and rebuilds the image.
+// STAGED (RAD-105 P3/P5) R3: witness ENFORCING, attestation retired (RAD-097 done). Batch <= 20 attempts or 240 s.
+// Promotion (P7) copies exactly one of r1/r2/r3 over scripts/assess/grading-worker-main.mjs and rebuilds the image.
 // RAD-085 W4 production grading entrypoint. Reviewed destination only: the W2 direct host,
 // port 5432, database postgres, slot assess_job_b; no pooler, URL, env or flag fallback.
 // Recovery verifier: owner decision B (DECISIONS#rad085-w4-verifier-owner-2026-11-03), an
@@ -7,15 +7,12 @@
 import { open, readFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { executeGradingWorker, workerVersions, WORKER_VERSION } from './worker.cjs';
+import { executeGradingWorker, workerVersions, WORKER_VERSION, gcsWitnessStore } from './worker.cjs';
 const DIRECT_HOST = 'db.vlacestfruxooznrcjqc.supabase.co';
-const CONFIG_PATH = '/run/secrets/assess-worker.json', RECOVERY_PATH = '/run/recovery/assess-recovery.json';
+const CONFIG_PATH = '/run/secrets/assess-worker.json';
 const CONFIG_KEYS = ['ca', 'database', 'host', 'password', 'port', 'user'];
-const ATTESTATION_KEYS = ['baselineAt', 'contract', 'expiresAt', 'issuedAt', 'manifestSha256', 'projectRef', 'restoresSinceBaseline'];
-const MAX_SPAN = 48 * 3600 * 1000;
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const exact = (o, keys) => !!o && typeof o === 'object' && !Array.isArray(o) && Object.keys(o).sort().join() === keys.join();
-const instant = v => typeof v === 'string' && Number.isFinite(Date.parse(v)) && new Date(v).toISOString() === v ? Date.parse(v) : NaN;
 async function json(path) {
   // O_NOFOLLOW: a symbolic link at the final component is refused (ELOOP), never followed.
   const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
@@ -28,6 +25,13 @@ async function json(path) {
     return JSON.parse(buffer.subarray(0, n).toString('utf8'));
   } finally { await file.close(); }
 }
+// RAD-105 P5: external restore witness. Bucket is derived from the W2 project ref; the token comes from the Cloud Run metadata server.
+async function metadataToken() {
+  const r = await fetch('http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token', { headers: { 'Metadata-Flavor': 'Google' } });
+  if (!r.ok) throw Error();
+  return (await r.json()).access_token;
+}
+const gcs = ref => gcsWitnessStore(`${ref}-assess-witness`, 'witness.json', metadataToken, fetch);
 const stop = new AbortController(); let deadline, finished = false;
 const report = value => { if (!finished) { finished = true; process.stdout.write(JSON.stringify(value) + '\n'); } };
 function onStop() {
@@ -58,14 +62,7 @@ try {
     projectRef = /^db\.([a-z0-9]{20})\.supabase\.co$/.exec(config.host)?.[1];
     if (!projectRef) throw Error();
     return config;
-  }, stop.signal, async () => {
-    // Re-read on every call: a disabled secret version or a changed file stops the run.
-    const a = await json(RECOVERY_PATH), now = Date.now();
-    const baseline = instant(a?.baselineAt), issued = instant(a?.issuedAt), expires = instant(a?.expiresAt);
-    if (!exact(a, ATTESTATION_KEYS) || a.contract !== 'assess-recovery-attestation/1' || a.projectRef !== projectRef ||
-        typeof a.manifestSha256 !== 'string' || a.manifestSha256 !== manifestHash || a.restoresSinceBaseline !== 0 ||
-        !(baseline <= issued) || !(issued <= now) || !(now < expires) || !(expires - issued <= MAX_SPAN)) throw Error();
-  }, undefined, undefined, { batch: 20, budgetMs: 240_000 });
+  }, stop.signal, async () => {}, undefined, undefined, { batch: 20, budgetMs: 240_000, witness: { mode: 'enforcing', get projectRef() { return projectRef; }, store: { read: () => gcs(projectRef).read(), write: (v, g) => gcs(projectRef).write(v, g) } } });
   report(result);
   process.exitCode = result.code === 'stopped' ? 130 : result.outcome === 'COMPLETE' ? 0 : 1;
 } catch { report({ contract: WORKER_VERSION, outcome: 'STOP', code: 'unavailable', runtimeOrLaunchVerified: false }); process.exitCode = 1; }

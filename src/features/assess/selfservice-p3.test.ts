@@ -41,9 +41,15 @@ it('STOP still wins in batch mode', async () => {
  const stop = new AbortController(); stop.abort(); const f = fake(5);
  expect(await run(f, { batch: 20, budgetMs: 1000 }, stop.signal)).toMatchObject({ code: 'stopped' }); expect(claims(f)).toBe(0);
 });
-it('the staged scheduled entry differs from the reviewed W4 entry only by the options and its header', () => {
- const main = readFileSync('scripts/assess/grading-worker-main.mjs', 'utf8'), staged = readFileSync('supabase/staged/self-service/p3-grading-worker-main.mjs', 'utf8');
- const normal = staged.replace(/^\/\/ STAGED[^\n]*\n\/\/ Promotion[^\n]*\n/, '').replace('  }, undefined, undefined, { batch: 20, budgetMs: 240_000 });', '  });');
- expect(normal).toBe(main);
- expect(staged).toContain('{ batch: 20, budgetMs: 240_000 }');
+it('the staged entries (R1 shadow, R2 enforcing, R3 enforcing without attestation) differ from the reviewed W4 entry only as documented', () => {
+ const main = readFileSync('scripts/assess/grading-worker-main.mjs', 'utf8');
+ const entry = (n: string) => readFileSync(`supabase/staged/self-service/p5-entry-${n}.mjs`, 'utf8');
+ const [r1, r2, r3] = ['r1', 'r2', 'r3'].map(entry) as [string, string, string];
+ for (const t of [r1, r2, r3]) { expect(t).toContain('batch: 20, budgetMs: 240_000'); expect(t).toContain('gcsWitnessStore'); expect(t).toContain("-assess-witness"); expect(t).not.toMatch(/process\.env\.(?!RAD085_SYNTHETIC_WORKER)/); }
+ expect(r1).toContain("mode: 'shadow'"); expect(r2).toContain("mode: 'enforcing'"); expect(r3).toContain("mode: 'enforcing'");
+ expect(r1.replace("mode: 'shadow'", "mode: 'enforcing'").replace(/R1: [^\n]*/, '')).toBe(r2.replace(/R2: [^\n]*/, ''));
+ for (const t of [r1, r2]) { expect(t).toContain('RECOVERY_PATH'); expect(t).toContain('restoresSinceBaseline'); }
+ expect(r3).not.toContain('RECOVERY_PATH'); expect(r3).not.toContain('restoresSinceBaseline');
+ // Everything the reviewed W4 entry guards stays: destination constants, O_NOFOLLOW reads, manifest and file-hash checks, shutdown handling.
+ for (const must of ["const DIRECT_HOST = 'db.", "O_NOFOLLOW", "rad085-grading-worker-build/1", "manifest.files[file]", "shutdown_uncertain", "assess_job_b"]) { expect(main).toContain(must); for (const t of [r1, r2, r3]) expect(t).toContain(must); }
 });

@@ -4,7 +4,10 @@
   "files": {
     "p1-windows.sql": "f947d024ce8b4f194a9579670cf0db8d5f5f8ab126dd81459c19e8e4fe6024da",
     "p2-adapter.ts.txt": "53bf81edf8d184c2782c3105bb880d5e5259556fbb911d1b0c26a4482ecd9a2e",
-    "p3-grading-worker-main.mjs": "0ae452e2644550ca7ba8fa2553f943f7f56950a67f3c27349d082bca39e7b607",
-    "p4-scheduler.sh": "bbd01346d76b3d22f01499e78c0cdc9c051561afb961ff4707c3c099ebf28ba5"
+    "p4-scheduler.sh": "bbd01346d76b3d22f01499e78c0cdc9c051561afb961ff4707c3c099ebf28ba5",
+    "p5-entry-r1.mjs": "ff9d527622b97492b88a40ddc9ed6f21f9ca02e030c1648044592ebabf9b8ad3",
+    "p5-entry-r2.mjs": "6331c461317eb4559ffd6b798b26ddc47c3c8aaa3f2e1f86185dc34d6cfcbdf2",
+    "p5-entry-r3.mjs": "d55ff7014ba9581643622cd5109d7eb6fae9b1481679519ded22d021cedbfec2",
+    "p5-witness.sql": "73ec18cbe8ebf65b673bb70b65b0156f5f190f6c2ef63fd3de1af6f93437b33a"
   }
 }

@@ -3,7 +3,7 @@ import { expect, it } from 'vitest';
 import { spawnSync } from 'node:child_process';
 
 const script = 'supabase/staged/self-service/p4-scheduler.sh';
-const run = (env: Record<string, string>) => spawnSync('bash', [script], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin', ...env } });
+const run = (env: Record<string, string>) => spawnSync('bash', [script], { encoding: 'utf8', env: { PATH: '/usr/bin:/bin', NODE_ENV: 'test', ...env } });
 const base = { RAD_PROJECT: 'demo-project', RAD_REGION: 'europe-west3' };
 
 it('dry run prints the reviewed commands in order and runs nothing', () => {
