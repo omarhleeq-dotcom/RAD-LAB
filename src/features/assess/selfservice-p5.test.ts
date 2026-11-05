@@ -1,7 +1,7 @@
 /** RAD-105 P5: restore witness decision, REST store, worker fail-closed behaviour, and the staged epoch/accept/resume SQL. Synthetic only. */
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { executeGradingWorker } from './server-worker';
+import { executeGradingWorker, gcsWitnessStore as bundledGcsWitnessStore } from './server-worker';
 import { gcsWitnessStore, judgeWitness, parseDbWitness, type StoredWitness, type WitnessStore } from './witness';
 import { fixture, id } from './selfservice-fixture';
 
@@ -34,6 +34,7 @@ describe('judgeWitness', () => {
 });
 
 describe('gcsWitnessStore', () => {
+ it('is the same store the worker bundle exports to the staged entries', () => expect(bundledGcsWitnessStore).toBe(gcsWitnessStore));
  const fetchFor = (script: Array<{ status: number; headers?: Record<string, string>; body?: string }>, seen: Array<{ url: string; init?: { method?: string; headers?: Record<string, string>; body?: string } }> = []) => async (url: string, init?: { method?: string; headers?: Record<string, string>; body?: string }) => {
   seen.push({ url, init }); const r = script.shift()!;
   return { status: r.status, headers: { get: (n: string) => r.headers?.[n.toLowerCase()] ?? null }, text: async () => r.body ?? '' };
