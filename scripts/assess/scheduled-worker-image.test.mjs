@@ -24,6 +24,10 @@ export async function scheduledRehearsal(c) {
   // Required original v1 image finishes its last pending work before migration/switch.
   assert.equal((await worker()).report.counts.graded,1);
   owner('alter role assess_job_b nologin;');
+  assert.equal(su("select count(*) from pg_stat_activity where usename in ('assess_job_a','assess_job_b')"),'0');
+  // W4 provisions W1 on the historical catalogue. Rehearse the original migration
+  // order with the slot closed: M09 precedes W1. Never relax its frozen ACL oracle.
+  owner('revoke execute on function assess.maintain_v1(integer),assess.claim_v1(),assess.finish_v1(uuid,uuid,text,text),assess.fail_v1(uuid,uuid),assess.health_v1() from assess_grading_worker;');
   // The original W4 catalogue intentionally contains no application singleton data
   // beyond launch_gate. Seed the same reviewed baseline inserts as the independent
   // production-calibration test; do not weaken any migration precondition.
@@ -33,9 +37,16 @@ export async function scheduledRehearsal(c) {
    assert.equal(statements.length,1);owner(statements[0][0]);
   }
   owner(read('supabase/manual/rad085-sharing-policy-live-p1.sql'));
+  // Match the reviewed fixture operator privileges, never worker membership.
+  su('grant assess_job_a to postgres with admin option,inherit false,set false;grant pg_signal_backend to postgres;');
   assert.equal(su('select count(*) from assess.erasure_fk_contract where inventory=assess.d3_fk_inventory_v1()'),'1');
   const m=JSON.parse(read('scripts/pages/frontend-schema.json'));
-  for(const file of m.requiredMigrations.filter(f=>f>='20261030000100_rad062_full_name.sql'))owner(read('supabase/migrations/'+file));
+  for(const file of m.requiredMigrations.filter(f=>f>='20261030000100_rad062_full_name.sql')){
+   if(file==='20261102000100_rad062_supervisor_grading_authorization.sql')for(const row of owner(read('supabase/checks/rad062-ready.sql')))assert.match(row,/\|t$/,row);
+   owner(read('supabase/migrations/'+file));
+  }
+  owner('grant execute on function assess.maintain_v1(integer),assess.claim_v1(),assess.finish_v1(uuid,uuid,text,text),assess.fail_v1(uuid,uuid),assess.health_v1() to assess_grading_worker;');
+  assert.equal(su("select count(*) from pg_proc where pronamespace='assess'::regnamespace and has_function_privilege('assess_grading_worker',oid,'EXECUTE')"),'5');
   for(const n of [1,2,3]){
    const builds=[0,1].map(()=>JSON.parse(execFileSync(process.execPath,['scripts/assess/build-grading-worker.mjs',`--selfservice-r${n}`],{encoding:'utf8'})));
    contexts.push(...builds.map(b=>b.output));
@@ -53,6 +64,14 @@ export async function scheduledRehearsal(c) {
   // TLS witness fixture: same production URLs, HTTP metadata token and generation CAS.
   c.command('openssl',['req','-x509','-newkey','rsa:2048','-nodes','-days','1','-subj','/CN=storage.googleapis.com',
    '-addext','subjectAltName=DNS:storage.googleapis.com','-keyout',join(dir,'storage.key'),'-out',join(dir,'storage.crt')]);
+  // A private named volume handles GitHub's uid1001 vs the production uid1000.
+  // The fake TLS private key is mounted only in the witness fixture, never the worker.
+  const mockVolume=prefix+'-mock-tls',init=prefix+'-mock-init';
+  docker(['volume','create',mockVolume]);owned.add('volume:'+mockVolume);owned.add(init);
+  docker(['run','-i','--name',init,'--network=none','--read-only','--user=0:0','--cap-drop=ALL','--cap-add=CHOWN',
+   '--mount',`type=volume,src=${mockVolume},dst=/fixture`,'--entrypoint=node',images[0],'-e',
+   "const fs=require('fs');let s='';process.stdin.on('data',b=>s+=b);process.stdin.on('end',()=>{const x=JSON.parse(s);fs.chmodSync('/fixture',0o700);for(const[k,v]of Object.entries(x)){fs.writeFileSync('/fixture/'+k,v,{mode:0o600});fs.chownSync('/fixture/'+k,1000,1000);}fs.chownSync('/fixture',1000,1000);});"],
+   JSON.stringify({'storage.key':read(join(dir,'storage.key')),'storage.crt':read(join(dir,'storage.crt'))}));
   const source=`const http=require('http'),https=require('https'),fs=require('fs');let value=null,generation=0;
    const tls={key:fs.readFileSync('/fixture/storage.key'),cert:fs.readFileSync('/fixture/storage.crt')};const serve=(q,r)=>{let body='';q.on('data',b=>body+=b);q.on('end',()=>{
     if(q.url==='/fixture-state'){if(q.method==='POST'){const x=JSON.parse(body);value=x;generation++;}r.end(JSON.stringify(value));return;}
@@ -63,8 +82,8 @@ export async function scheduledRehearsal(c) {
     value=JSON.parse(body);generation++;r.end('{}');});};http.createServer(serve).listen(80);https.createServer(tls,serve).listen(443);`;
   owned.add(mock);
   const child=execFileSync('docker',['--host=unix:///var/run/docker.sock','run','-d','--name',mock,'--network',network,
-   '--network-alias','metadata.google.internal','--network-alias','storage.googleapis.com','--read-only','--cap-drop=ALL',
-   '--security-opt=no-new-privileges','--mount',`type=bind,src=${dir},dst=/fixture,readonly`,'--entrypoint=node',images[0],'-e',source],{encoding:'utf8'});
+   '--network-alias','metadata.google.internal','--network-alias','storage.googleapis.com','--read-only','--cap-drop=ALL','--cap-add=NET_BIND_SERVICE',
+   '--security-opt=no-new-privileges','--mount',`type=volume,src=${mockVolume},dst=/fixture,readonly`,'--entrypoint=node',images[0],'-e',source],{encoding:'utf8'});
   assert.ok(child.trim());
   for(let n=0;;n++){try{docker(['exec',mock,'node','-e',"fetch('http://127.0.0.1/fixture-state').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1));"]);break;}catch{if(n>=100)throw Error('mock_not_ready');await new Promise(r=>setTimeout(r,25));}}
   const control=value=>docker(['exec','-i',mock,'node','-e',
@@ -95,7 +114,7 @@ export async function scheduledRehearsal(c) {
     const specs=Object.fromEntries(p.privateItems.map(k=>{if(k.type==='single-choice')return[k.ref.id,{}];const c=CASES.find(c=>c.id===k.caseRef.id);return[k.ref.id,k.type==='full-practical'?settingsSpec(c):Object.fromEntries(k.mutablePaths.map(q=>[q,settingsSpec(c)[q]]))];}));
     return {track,p,specs};});}`},outfile:corpus,bundle:true,platform:'node',format:'cjs',logLevel:'silent'});
   const fixtures=createRequire(import.meta.url)(corpus).publications();
-  su(`update public.profiles set consent_version='2026-10-15',consented_at=clock_timestamp();
+  su(`update public.profiles set display_name='SYNTHETIC Account Name',consent_version='2026-10-15',consented_at=clock_timestamp();
    insert into assess.consents(user_id,version) values('${id(2)}','assess-written-2026-11-02-v3') on conflict do nothing;`);
   const lit=x=>"'"+JSON.stringify(x).replaceAll("'","''")+"'::jsonb";
   for(const[n,{track,p,specs}]of fixtures.entries()){
