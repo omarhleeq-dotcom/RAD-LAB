@@ -2,13 +2,13 @@
   "status": "staged",
   "note": "RAD-105: staged files, NOT in scripts/pages/frontend-schema.json and NOT in supabase/migrations or src until the P7 promotion. Digests are reviewed pins.",
   "files": {
-    "p1-windows.sql": "f947d024ce8b4f194a9579670cf0db8d5f5f8ab126dd81459c19e8e4fe6024da",
+    "p1-windows.sql": "1001aa015948022b15c1bd92a6eb95042aa30e347d740237c55f023ece4a421d",
     "p2-adapter.ts.txt": "53bf81edf8d184c2782c3105bb880d5e5259556fbb911d1b0c26a4482ecd9a2e",
     "p4-scheduler.sh": "bbd01346d76b3d22f01499e78c0cdc9c051561afb961ff4707c3c099ebf28ba5",
     "p5-entry-r1.mjs": "ff9d527622b97492b88a40ddc9ed6f21f9ca02e030c1648044592ebabf9b8ad3",
     "p5-entry-r2.mjs": "6331c461317eb4559ffd6b798b26ddc47c3c8aaa3f2e1f86185dc34d6cfcbdf2",
     "p5-entry-r3.mjs": "fc596f4b271f0bc427cb864a19d6eacccf384e4745e65bf6dfc31dc269cdb771",
-    "p5-witness.sql": "73ec18cbe8ebf65b673bb70b65b0156f5f190f6c2ef63fd3de1af6f93437b33a",
+    "p5-witness.sql": "79ce5b06018978e39394007c0f7f93e5e3dd2425973f8b4697c5217132cd11b0",
     "p6-inventory.sql": "598db5c361ef4bae78ffea99f97ec21a00800261907699cf942f98ed16ce65b7"
   }
 }

@@ -54,7 +54,7 @@ end $$;
 -- It cannot enable a Google secret: if the secret was disabled by hand, the owner re-enables it separately.
 create function assess.owner_resume_v1(p_confirm text) returns jsonb
 language plpgsql security definer set search_path='' as $$
-declare released bigint:=0; still bigint; login boolean:=false;
+declare released bigint:=0; still bigint; active_held bigint; login boolean:=false;
 begin
  perform assess.owner_scope_enter_v1(true);
  if not public.is_owner() then raise exception 'owner only' using errcode='42501'; end if;
@@ -67,10 +67,11 @@ begin
    revision=s.revision+1,lease=null,lease_until=null,retry_at=null,failed_at=null from due where s.id=due.id;
  get diagnostics released=row_count;
  select count(*) into still from assess.sessions where emergency_held_at is not null;
+ select count(*) into active_held from assess.sessions where emergency_held_at is not null and state='active';
  if exists(select 1 from pg_catalog.pg_roles where rolname='assess_job_b') then alter role assess_job_b login; end if;
  select coalesce(rolcanlogin,false) into login from pg_catalog.pg_roles where rolname='assess_job_b';
  update assess.launch_gate set enabled=true;
- return jsonb_build_object('released',released,'stillHeld',still,'gateOpen',true,'loginEnabled',coalesce(login,false));
+ return jsonb_build_object('released',released,'stillHeld',still,'heldActive',active_held,'gateOpen',true,'loginEnabled',coalesce(login,false));
 end $$;
 
 revoke all on function assess.witness_accept_v1(text),assess.owner_resume_v1(text) from public,anon,authenticated,assess_worker;

@@ -61,6 +61,14 @@ it('P1 windows: server-clock open/close, truncation at closes_at, schedule rules
   const opens = (await db.admin.query('select opens_at from assess.assignment_windows')).rows[0].opens_at.toISOString() as string;
   await expect(setWindow(db, r, opens, iso(900000))).rejects.toMatchObject({ code: '55000' }); // shortening with attempts
   r = await setWindow(db, r, opens, iso(2400000)); // extending is allowed
+  // Extending recomputes the ACTIVE attempt's deadline as least(started_at + duration, new closes_at); never shorter.
+  const ext = async () => (await db.admin.query('select s.deadline,s.started_at,w.closes_at from assess.sessions s join assess.assignment_windows w on w.assignment_id=s.assignment_id where s.id=$1', [s.attemptId])).rows[0];
+  let e = await ext();
+  expect(new Date(e.deadline).getTime()).toBe(new Date(e.closes_at).getTime());
+  expect(new Date(e.deadline).getTime()).toBeGreaterThan(new Date(row.deadline).getTime());
+  r = await setWindow(db, r, opens, iso(7200000));
+  e = await ext();
+  expect(new Date(e.deadline).getTime()).toBe(new Date(e.started_at).getTime() + 3600000); // capped by duration, not the 2 h window
 
   // Scoped reads.
   const mine = await db.call<Array<{ assignmentId: string }>>('my_windows_v1', [[id(51)]], 3);
@@ -71,6 +79,7 @@ it('P1 windows: server-clock open/close, truncation at closes_at, schedule rules
   expect(status.counts).toMatchObject({ notStarted: 0, inProgress: 1, submitted: 0, graded: 0, missed: 0 });
   expect(status.rows).toHaveLength(1);
   await expect(db.call('assignment_status_v1', [id(51), null, 50], 3)).rejects.toMatchObject({ code: '42501' });
+  expect((await db.call<{ counts: Record<string, number> }>('assignment_status_v1', [id(51), null, 50], 1)).counts).toMatchObject({ inProgress: 1 }); // the owner may read it too
   await expect(db.call('assignment_status_v1', [id(51), null, 201], 2)).rejects.toMatchObject({ code: '22023' });
 
   // After the window ends the guard refuses a new start and status reports the target as in a finished window.

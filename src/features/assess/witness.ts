@@ -3,7 +3,7 @@ export type DbWitness = { epoch: string; seq: number; now: string; acceptedAt: s
 export type StoredWitness = { projectRef: string; epoch: string; seq: number; updatedAt: string };
 export type WitnessVerdict =
  | { ok: true; action: 'init' | 'advance' | 'adopt'; next: StoredWitness }
- | { ok: false; code: 'db-witness-missing' | 'witness-unreadable' | 'project-mismatch' | 'epoch-mismatch' | 'restore-suspected' };
+ | { ok: false; code: 'db-witness-missing' | 'witness-unreadable' | 'witness-missing' | 'project-mismatch' | 'epoch-mismatch' | 'restore-suspected' };
 const isoMs = (v: unknown) => typeof v === 'string' && Number.isFinite(Date.parse(v)) ? Date.parse(v) : NaN;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 export function parseDbWitness(raw: unknown): DbWitness | null {
@@ -12,12 +12,13 @@ export function parseDbWitness(raw: unknown): DbWitness | null {
   !Number.isFinite(isoMs(w.now)) || !Number.isFinite(isoMs(w.acceptedAt))) return null;
  return { epoch: w.epoch, seq: w.seq as number, now: w.now as string, acceptedAt: w.acceptedAt as string, credentialValidUntil: typeof w.credentialValidUntil === 'string' ? w.credentialValidUntil : null };
 }
-/** stored: null = no object yet (first run); 'unreadable' = any read/parse failure (fails closed). */
-export function judgeWitness(projectRef: string, db: DbWitness | null, stored: StoredWitness | null | 'unreadable'): WitnessVerdict {
+/** stored: null = no object yet; only SHADOW may create the first witness, so a deleted or never-created object cannot silently re-baseline an enforcing run.
+ * 'unreadable' = any read/parse failure (fails closed). */
+export function judgeWitness(projectRef: string, db: DbWitness | null, stored: StoredWitness | null | 'unreadable', mode: 'shadow' | 'enforcing'): WitnessVerdict {
  if (!db) return { ok: false, code: 'db-witness-missing' };
  if (stored === 'unreadable') return { ok: false, code: 'witness-unreadable' };
  const next = (): StoredWitness => ({ projectRef, epoch: db.epoch, seq: db.seq, updatedAt: db.now }); // updatedAt = DB clock
- if (stored === null) return { ok: true, action: 'init', next: next() };
+ if (stored === null) return mode === 'shadow' ? { ok: true, action: 'init', next: next() } : { ok: false, code: 'witness-missing' };
  if (stored.projectRef !== projectRef) return { ok: false, code: 'project-mismatch' };
  if (stored.epoch !== db.epoch) {
   // Only the owner's "Accept restored database" (accepted_at stamped by the DB clock after the last witness write) may change the epoch.

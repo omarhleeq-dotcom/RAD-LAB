@@ -12,21 +12,22 @@ const stored = (over: Partial<StoredWitness> = {}): StoredWitness => ({ projectR
 const ref = 'abcdefghijklmnopqrst';
 
 describe('judgeWitness', () => {
- it('initialises, advances, and uses only DB-clock times', () => {
-  expect(judgeWitness(ref, dbw(), null)).toMatchObject({ ok: true, action: 'init', next: { seq: 10, updatedAt: at(5) } });
-  expect(judgeWitness(ref, dbw(), stored())).toMatchObject({ ok: true, action: 'advance', next: { seq: 10, updatedAt: at(5) } });
-  expect(judgeWitness(ref, dbw({ seq: 8 }), stored())).toMatchObject({ ok: true, action: 'advance' }); // equal is fine
+ it('initialises (shadow only), advances, and uses only DB-clock times', () => {
+  expect(judgeWitness(ref, dbw(), null, 'shadow')).toMatchObject({ ok: true, action: 'init', next: { seq: 10, updatedAt: at(5) } });
+  expect(judgeWitness(ref, dbw(), stored(), 'enforcing')).toMatchObject({ ok: true, action: 'advance', next: { seq: 10, updatedAt: at(5) } });
+  expect(judgeWitness(ref, dbw({ seq: 8 }), stored(), 'enforcing')).toMatchObject({ ok: true, action: 'advance' }); // equal is fine
+  expect(judgeWitness(ref, dbw(), null, 'enforcing')).toEqual({ ok: false, code: 'witness-missing' }); // a missing object never passes enforcing
  });
  it('fails closed on every anomaly', () => {
-  expect(judgeWitness(ref, null, stored())).toEqual({ ok: false, code: 'db-witness-missing' });
-  expect(judgeWitness(ref, dbw(), 'unreadable')).toEqual({ ok: false, code: 'witness-unreadable' });
-  expect(judgeWitness(ref, dbw(), stored({ projectRef: 'zzzzzzzzzzzzzzzzzzzz' }))).toEqual({ ok: false, code: 'project-mismatch' });
-  expect(judgeWitness(ref, dbw({ seq: 7 }), stored())).toEqual({ ok: false, code: 'restore-suspected' }); // database went backwards
-  expect(judgeWitness(ref, dbw({ epoch: E2 }), stored())).toEqual({ ok: false, code: 'epoch-mismatch' }); // different epoch, no owner acceptance
-  expect(judgeWitness(ref, dbw({ epoch: E2, acceptedAt: at(-5) }), stored())).toEqual({ ok: false, code: 'epoch-mismatch' }); // acceptance older than the witness
+  expect(judgeWitness(ref, null, stored(), 'enforcing')).toEqual({ ok: false, code: 'db-witness-missing' });
+  expect(judgeWitness(ref, dbw(), 'unreadable', 'enforcing')).toEqual({ ok: false, code: 'witness-unreadable' });
+  expect(judgeWitness(ref, dbw(), stored({ projectRef: 'zzzzzzzzzzzzzzzzzzzz' }), 'enforcing')).toEqual({ ok: false, code: 'project-mismatch' });
+  expect(judgeWitness(ref, dbw({ seq: 7 }), stored(), 'enforcing')).toEqual({ ok: false, code: 'restore-suspected' }); // database went backwards
+  expect(judgeWitness(ref, dbw({ epoch: E2 }), stored(), 'enforcing')).toEqual({ ok: false, code: 'epoch-mismatch' }); // different epoch, no owner acceptance
+  expect(judgeWitness(ref, dbw({ epoch: E2, acceptedAt: at(-5) }), stored(), 'enforcing')).toEqual({ ok: false, code: 'epoch-mismatch' }); // acceptance older than the witness
  });
  it('adopts a new epoch only after an owner acceptance stamped later by the DB clock', () => {
-  expect(judgeWitness(ref, dbw({ epoch: E2, seq: 0, acceptedAt: at(3) }), stored())).toMatchObject({ ok: true, action: 'adopt', next: { epoch: E2, seq: 0, updatedAt: at(5) } });
+  expect(judgeWitness(ref, dbw({ epoch: E2, seq: 0, acceptedAt: at(3) }), stored(), 'enforcing')).toMatchObject({ ok: true, action: 'adopt', next: { epoch: E2, seq: 0, updatedAt: at(5) } });
  });
  it('rejects malformed database witnesses', () => {
   for (const bad of [{}, { epoch: 'x' }, { epoch: E1, seq: -1, now: at(0), acceptedAt: at(0) }, { epoch: E1, seq: 1.5, now: at(0), acceptedAt: at(0) }, { epoch: E1, seq: 1, now: 'x', acceptedAt: at(0) }]) expect(parseDbWitness(bad)).toBeNull();
@@ -90,6 +91,15 @@ describe('worker with a witness', () => {
   const c2: string[] = [], shadow = await run(memory(stored()), 'shadow', { ...live, seq: 3 }, c2);
   expect(shadow).toMatchObject({ outcome: 'COMPLETE', witness: { mode: 'shadow', result: 'restore-suspected' } }); expect(c2).toContain('maintain_v1');
  });
+ it('a missing witness object: shadow creates it, enforcing stops before any claim and writes nothing', async () => {
+  const shadowStore = memory(null), c1: string[] = [];
+  expect(await run(shadowStore, 'shadow', live, c1)).toMatchObject({ outcome: 'COMPLETE', witness: { mode: 'shadow', result: 'init' } });
+  expect(shadowStore.value).toMatchObject({ epoch: E1, seq: 10, updatedAt: at(5) });
+  const enforcingStore = memory(null), c2: string[] = [];
+  const r = await run(enforcingStore, 'enforcing', live, c2);
+  expect(r).toMatchObject({ outcome: 'STOP', code: 'restore_suspected', witness: { mode: 'enforcing', result: 'witness-missing' }, reconciliationRequired: true });
+  expect(c2).toEqual(['health_v1']); expect(enforcingStore.value).toBeNull();
+ });
  it('without the option nothing changes', async () => {
   const calls: string[] = [];
   const r = await executeGradingWorker(async () => config, new AbortController().signal, async () => {}, make(calls, undefined));
@@ -128,10 +138,15 @@ describe('staged P5 SQL (synthetic PostgreSQL)', () => {
    expect((await db.admin.query('select state,emergency_held_at is not null held from assess.sessions where id=$1', [s.attemptId])).rows[0]).toEqual({ state: 'grading-failed', held: true });
    await expect(db.call('owner_resume_v1', ['RESUME ASSESS'], 2)).rejects.toMatchObject({ code: '42501' });
    await expect(db.call('owner_resume_v1', ['resume'], 1)).rejects.toMatchObject({ code: '22023' });
-   const res = await db.call<{ released: number; stillHeld: number; gateOpen: boolean; loginEnabled: boolean }>('owner_resume_v1', ['RESUME ASSESS'], 1);
-   expect(res).toEqual({ released: 1, stillHeld: 0, gateOpen: true, loginEnabled: true });
+   const res = await db.call<{ released: number; stillHeld: number; heldActive: number; gateOpen: boolean; loginEnabled: boolean }>('owner_resume_v1', ['RESUME ASSESS'], 1);
+   expect(res).toEqual({ released: 1, stillHeld: 0, heldActive: 0, gateOpen: true, loginEnabled: true });
    expect((await db.admin.query('select state,emergency_held_at,retry_at from assess.sessions where id=$1', [s.attemptId])).rows[0]).toEqual({ state: 'grading', emergency_held_at: null, retry_at: null });
    expect((await db.admin.query("select rolcanlogin from pg_roles where rolname='assess_job_b'")).rows[0].rolcanlogin).toBe(true);
+   // A held attempt that is still ACTIVE is anomalous: Resume leaves it held and reports it separately.
+   await db.admin.query('alter table assess.sessions disable trigger rad062_emergency_hold');
+   await db.admin.query("update assess.sessions set state='active',emergency_held_at=clock_timestamp() where id=$1", [s.attemptId]);
+   await db.admin.query('alter table assess.sessions enable trigger rad062_emergency_hold');
+   expect(await db.call('owner_resume_v1', ['RESUME ASSESS'], 1)).toMatchObject({ released: 0, stillHeld: 1, heldActive: 1 });
   } finally { await db.close(); }
  }, 300000);
 });

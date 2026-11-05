@@ -86,6 +86,13 @@ begin
    then raise exception 'attempts exist: extend or close only' using errcode='55000'; end if;
   elsif p_opens<ts-interval '1 minute' or p_closes<=ts then raise exception 'window in the past' using errcode='22023'; end if;
   update assess.assignment_windows set opens_at=p_opens,closes_at=p_closes,changes=changes+1,updated_at=ts where assignment_id=a.id;
+  -- Extending recomputes the deadline of ACTIVE attempts as least(started_at + duration, new closes_at); it never shortens one.
+  if p_closes>w.closes_at then
+   update assess.sessions s set deadline=greatest(s.deadline,least(s.started_at+make_interval(secs=>dur.d),p_closes))
+   from (select (p.document->'assessment'->'policy'->>'durationSeconds')::integer d from assess.publications p
+         join assess.assignments x on x.version_id=p.version_id where x.id=a.id) dur
+   where s.assignment_id=a.id and s.state='active' and s.emergency_held_at is null and dur.d is not null;
+  end if;
  end if;
  update assess.assignments set revision=revision+1 where id=a.id;
  return a.revision+1;
@@ -109,7 +116,7 @@ declare a assess.assignments; w assess.assignment_windows; over boolean;
 begin
  perform assess.scope_enter_v1(false);
  if p_limit is null or p_limit not between 1 and 200 then raise exception 'invalid request' using errcode='22023'; end if;
- select * into a from assess.assignments x where x.id=p_assignment and (x.owner_id=auth.uid()
+ select * into a from assess.assignments x where x.id=p_assignment and (x.owner_id=auth.uid() or public.is_owner()
   or exists(select 1 from assess.assignment_scopes s where s.assignment_id=x.id and s.supervisor_id=auth.uid()));
  if a.id is null then raise exception 'assignment denied' using errcode='42501'; end if;
  select * into w from assess.assignment_windows where assignment_id=a.id;

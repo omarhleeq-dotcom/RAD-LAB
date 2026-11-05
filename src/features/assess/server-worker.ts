@@ -46,7 +46,7 @@ export async function executeGradingWorker(load: () => Promise<unknown>, signal:
           try {
             db = parseDbWitness(((await worker.call<{ witness?: unknown }>("health_v1", {})) ?? {}).witness);
             const read = await w.store.read();
-            const verdict = judgeWitness(w.projectRef, db, read === "unreadable" ? "unreadable" : read.value);
+            const verdict = judgeWitness(w.projectRef, db, read === "unreadable" ? "unreadable" : read.value, w.mode);
             if (!verdict.ok) result = verdict.code;
             else if (read === "unreadable" || !(await w.store.write(verdict.next, read.generation))) result = "witness-write-failed";
             else result = verdict.action;
