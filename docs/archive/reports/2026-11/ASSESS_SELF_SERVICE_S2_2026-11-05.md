@@ -32,7 +32,7 @@ Verified: #242 Draft على main؛ الرأس الأول `f91cfd0b78c496b3b81e51
 Verified: C4 والبنود 2/3/4/5/9 قاعدة فقط؛ [العقد التفصيلي](../../../ASSESS_SELF_SERVICE_DESIGN.md#s2-db-contract-offline-promotion-review-pending). لا UI أو بنية S4 أو إجراء حي أو أسرار أو Variables أو إرسال بريد أو Ready/دمج.
 
 ## 3. حالة المهمة
-RAD-105 review/reviewer؛ S1 مقبولة، S2 تنتظر فحوص الرأس ومراجعتها قبل S3. لا ادعاء إغلاق RAD-105 أو تطبيق SQL. [التفويض](../../../DECISIONS.md#assess-self-service-s2-owner-2026-11-05).
+RAD-105 review/reviewer؛ S1 مقبولة، S2 تنتظر قبول مراجعتها قبل S3؛ دليل فحوص الرأس في وصف #242. لا ادعاء إغلاق RAD-105 أو تطبيق SQL. [التفويض](../../../DECISIONS.md#assess-self-service-s2-owner-2026-11-05).
 
 ## 4. المشتركات وScale
 Verified: جمهور all-students مستقل؛ إذن المشرف OFF وقابل للسحب ومدقق، والمالك بلا إذن إضافي. المستلمون approved + privacy/Assess-consented من الخادم، لا opt-in أو عضوية مجموعة.
@@ -43,9 +43,9 @@ Verified: Resume بتأكيد مكتوب للمالك والبديل؛ يبقي 
 Verified: الإشعارات OFF افتراضيًا، 100 enqueue/دقيقة؛ تحديث موعد غير المرسل، ومنع التكرار بعد الإرسال للتكليف/الهدف نفسه. تحقق الرضا/الموافقة/النطاق تحت الأقفال قبل enqueue؛ لا محتوى أو درجات. request_id لا يثبت الوصول، وطلب pg_net المصفوف لا يمكن سحبه.
 Scale: 1000 هدف، صفحات 100، 10 تعديلات، يوم accommodation وثلاث منح؛ الرفع يحتاج مراجعة مخطط/إعداد وأحمال وخصوصية/احتفاظ. لا إعادة محاولة غير محدودة للمزوّد.
 البصمات الجديدة قِيست من fixture الإنتاج، لا من تعديل توقع كي يمر الاختبار:
-- functions: `5105994588a3fb40c96749f0add08e1d` → `7e002269cb2955541a56c29e3b6a0ce5`؛ خمس دوال قديمة فقط: start، deadline، window_set، Resume، وقارئ audit العام المتوافق؛ 20 دالة مضافة.
+- functions: `5105994588a3fb40c96749f0add08e1d` → `4c2ffc83edb72b5bb168c7c499c062ad`؛ خمس دوال قديمة فقط: start، deadline، window_set، Resume، وقارئ audit العام المتوافق؛ 20 دالة مضافة.
 - relations: `fd59fc5eb938c70934f4cf5517c2dae0` → `5c45889099a878446fd3a16a9569940f`؛ خمسة جداول مضافة وست علاقات معدلة: assignments/audience/index، windows/targets/sessions/triggers، appointments/permission، emergency.audit/action.
-- Candidate: `pilot-v1:f863714f4ff2278cebc1e6adc44130683fa6910a96349da3edefa9df388ea560`؛ ترحيل S2 + خليفة كتالوج جديد + فحص S2. كل تغيير body/check أعيدت معايرته؛ معايرات التطوير مستبدلة، لا pins قديمة معاد استخدامها.
+- Candidate: `pilot-v1:c147c107631b68898e4715c8e3a104bfe6bf9b082950665539c61c8021f4ced1`؛ ترحيل S2 + خليفة كتالوج جديد + فحص S2. كل تغيير body/check أعيدت معايرته؛ معايرات التطوير مستبدلة، لا pins قديمة معاد استخدامها.
 Verified: S1 health والشاهد وC3 محفوظة؛ فحوص S1 مستقلة تسبق تطبيق S2. المانيفست يوجّه فحص الكتالوج إلى خليفة S2؛ تعديلات الاختبارات القديمة قوائم/إحالات/marker فقط، دون تخفيف الاسم/المحو/الهواتف أو الأوراكل الأصلي.
 علامة P0 الحية وVariable لم تتغيرا؛ Deploy متوقع أن يتوقف عند تصديق المخطط حتى نافذة P7 مأذونة.
 
@@ -53,16 +53,16 @@ Verified: S1 health والشاهد وC3 محفوظة؛ فحوص S1 مستقلة 
 Verified: لا محتوى طبي أو تعديل scoring/credits. استُخدمت fixtures هندسية قائمة؛ ليست مراجعة سريرية. أول امتحان حقيقي يبقى XLSX لدى المالك عبر QuestionImport، ولا نصه أو ملفه في Git.
 
 ## 6. التحقق
-Verified: حالات S2 الجديدة العشر ناجحة: C4، consent revocation، dedup/reschedule/cancel، extra-time، held eligibility، الحجز التاريخي، محلل الطوارئ الأصلي والمسارات الثلاثة. في المجموعة ذات الصلة 45/47؛ حالتا marker توقفتا بالمهلة تحت التوازي، دون تغيير المهلة أو التأكيد.
+Verified: الحالات الجديدة 11/11، والمجموعة النهائية 48/48: C4، الرضا/السحب، dedup/reschedule/cancel، extra-time، أهلية الحجز والمسارات الثلاثة. شاهد قفل حقيقي يغيّر deadline أثناء الانتظار ويثبت rollback/رفض الإحياء؛ dispatch يعيد قراءة الموعد والأهلية بعد الأقفال.
 Verified: معايرة PG18 المثبتة نهائيًا نجحت مع طفرات ACL/body/RLS/bounds؛ 20 دالة/5 جداول مضافة وخمس دوال/ست علاقات قائمة معدلة فقط. أوراكل S1 بقي ناجحًا قبل S2؛ غير المختار في هذا التشغيل ليس دليل نجاح.
-Verified: typecheck/lint (تحذيران قائمان)؛ build نجح بعد استعادة المساحة. المحاولة الأولى للبناء فشلت ENOSPC أثناء فك صورة الاختبار، وليست نجاحًا محسوبًا.
-Not run إلى الاكتمال محليًا: Supabase17 pinned image فشلت no space left on device؛ لا صورة بديلة أو skip. DB lane كاملة شُغلت كما هي؛ النتائج النهائية ستُسجل بعد انتهائها.
-Not run بعد: فحوص الرأس المدفوع؛ مصدر دليلها النهائي [فحوص #242 ووصفه](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks). لا يثبت Deploy تطبيقًا حيًا.
+Verified: typecheck/lint (تحذيران قائمان)، build، health:source بلا أخطاء وhealth:test ‏9/9. check الأول 2588/2596، إخفاقاته الثمانية مهلات؛ إعادة ملفاتها تسلسليًا 36/36 دون تغيير مهلة أو golden. البناء الأول فشل ENOSPC ثم نجح بعد استعادة المساحة.
+Verified: DB lane المحلية شُغلت بأكملها: 940 نجاحًا، 139 فشلًا، 36 لم تُنفذ بسبب فشل التهيئة؛ ليست PASS. الصورة المثبتة فشلت ENOSPC، مع مهلات توازٍ محلية؛ لا صورة بديلة ولا skip أو assertion معدل. CI المطلوب هو دليل البيئتين الكامل.
+Verified: [CI للرأس البرمجي الأول](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/42018215243) اجتاز build/docs/unit وكل تمارين العامل/صورته والأقفال؛ مصدر نتيجة الرأس المسلّم النهائية [فحوص #242 ووصفه](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks). Deploy الأول توقف فقط عند Require verified pilot schema؛ لا نشر حي.
 Verified: docs:sync مرتين (0 في الثانية)، docs:check بلا أخطاء، status:check --require-previous وgit diff --check؛ تحذيرات الحجم ليست فشلًا. جميع SQL السابقة وحزم الهاتف وC3 مقارنةً بالرأس المقبول مطابقة للبايتات.
 Not run (خارج S2): EN/AR390/1440 browser/axe/family، live SQL/cloud/Vault/Brevo، secrets/Variables، deployment، merge/Ready.
 
 ## 7. المفتوح
-مراجعة S2 وفحوص الرأس قبل S3؛ S4/P7 لاحقتان. الحجز التاريخي بلا دليل لا يمنح محاولة ولا يُطلق تلقائيًا. تفعيل الإشعارات يحتاج إثبات إيصال فعلي في نافذة مأذونة، لا مجرد request_id.
+قبول مراجعة S2 ونجاح فحوص الرأس المسلّم قبل S3؛ S4/P7 لاحقتان. الحجز التاريخي بلا دليل لا يمنح محاولة ولا يُطلق تلقائيًا. تفعيل الإشعارات يحتاج إثبات إيصال فعلي في نافذة مأذونة، لا مجرد request_id.
 لم يُختصر حكم قائم؛ هل تغير حكم مختصر؟ لا. هل بقي رابط دليله الأصلي؟ نعم؛ التقارير الأصلية والفحوص وحزم الهاتف محفوظة.
 
 ## 8. قائمة المالك والنص التالي

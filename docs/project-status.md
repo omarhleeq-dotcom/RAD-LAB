@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 449,
-  "updated_at": "2026-11-05T11:05:10.300369+00:00",
+  "revision": 450,
+  "updated_at": "2026-11-05T11:32:41.882244+00:00",
   "timezone": "Asia/Amman",
   "next_id": "RAD-106",
   "tasks": [
@@ -955,7 +955,7 @@
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
       "status": "review",
       "priority": "high",
-      "description": "S1 التصحيحية مقبولة. قاعدة S2 لـC4 والبنود 2/3/4/5/9 في Draft #242؛ تنتظر فحوص الرأس ومراجعتها قبل S3. واجهات S3 وبنية S4 وP7 لم تنفذ؛ لا تفعيل حي.",
+      "description": "S1 التصحيحية مقبولة. قاعدة S2 لـC4 والبنود 2/3/4/5/9 في Draft #242؛ تنتظر قبول مراجعتها قبل S3؛ دليل فحوص الرأس في وصف PR. واجهات S3 وبنية S4 وP7 لم تنفذ؛ لا تفعيل حي.",
       "source_ref": "docs/DECISIONS.md#assess-self-service-s2-owner-2026-11-05؛ docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S2_2026-11-05.md",
       "waiting_on": "reviewer",
       "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."

@@ -215,6 +215,8 @@ language plpgsql security definer set search_path='' as $$declare a assess.assig
  select * into w from assess.assignment_windows where assignment_id=a.id for update;
  select * into c from assess.assignment_accommodations where assignment_id=a.id and user_id=p_student for update;
  if c.changes>=10 then raise exception 'accommodation change limit' using errcode='54000'; end if;
+ -- Recheck the database clock only AFTER any session-row lock wait.
+ perform 1 from assess.sessions where assignment_id=a.id and user_id=p_student and state='active' order by id for update;
  -- Never shorten an in-flight deadline, or revive an expired/held attempt.
  if exists(select 1 from assess.sessions where assignment_id=a.id and user_id=p_student and state='active'
   and (emergency_held_at is not null or deadline<=clock_timestamp() or p_seconds<coalesce(c.extra_seconds,0)))
@@ -326,7 +328,9 @@ language plpgsql security definer set search_path='' as $$declare q record; req 
   order by n.assignment_id,n.user_id limit 100 for share of a,w,p,c,u for update of n
  loop
   -- Eligibility and schedule re-read under locks immediately before the pg_net enqueue.
-  if not assess.quiz_recipient_v1(q.user_id) then continue; end if;
+  if not assess.quiz_recipient_v1(q.user_id) or not exists(select 1 from assess.assignments a join assess.assignment_windows w on w.assignment_id=a.id
+   where a.id=q.assignment_id and a.closed_at is null and w.closes_at>clock_timestamp()) then continue; end if;
+  select opens_at into q.opens_at from assess.assignment_windows where assignment_id=q.assignment_id;
   req:=assess.notice_post_v1(q.email,q.opens_at);
   if req is not null then
    update assess.assessment_notices set sent_at=clock_timestamp(),request_id=req where assignment_id=q.assignment_id and user_id=q.user_id;

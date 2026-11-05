@@ -67,5 +67,5 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
  ]);
  expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], {
   encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' },
- }).trim()).toBe('pilot-v1:f863714f4ff2278cebc1e6adc44130683fa6910a96349da3edefa9df388ea560');
+ }).trim()).toBe('pilot-v1:c147c107631b68898e4715c8e3a104bfe6bf9b082950665539c61c8021f4ced1');
 });

@@ -34,7 +34,7 @@ with functions as (
  from pg_class c join pg_namespace n on n.oid=c.relnamespace join pg_roles r on r.oid=c.relowner
  where (n.nspname in ('assess','emergency') or (n.nspname='public' and c.relname in ('profiles','events','attempts','feedback','c2_account_deletions'))) and c.relkind in ('r','p')
 ), fingerprints as (
- select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'7e002269cb2955541a56c29e3b6a0ce5' expected
+ select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'4c2ffc83edb72b5bb168c7c499c062ad' expected
  union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),'5c45889099a878446fd3a16a9569940f'
 )
 select check_name,actual,expected,actual=expected ok from fingerprints

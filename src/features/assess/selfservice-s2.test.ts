@@ -261,3 +261,29 @@ it('historical ambiguous holds are never inferred ACTIVE or auto-released; known
   await expect(db.rpc(2, 'new_attempt_v1', [id(51), s.attemptId])).rejects.toMatchObject({ code: '55000' });
  } finally { await db.close(); }
 }, 300000);
+
+it('extra time rechecks deadline after a real session lock wait, with rollback and no revival', async () => {
+ const db = await setup();
+ const holder = await db.connect('s2-deadline-holder');
+ try {
+  await db.rpc(2, 'assignment_schedule_v2', [id(51), await revision(db), iso(0), null]);
+  await db.admin.query('update assess.launch_gate set enabled=true');
+  const s = await start(db, 100);
+  await holder.query('begin');
+  const pid = (await holder.query('select pg_backend_pid() pid')).rows[0].pid as number;
+  await holder.query('select id from assess.sessions where id=$1 for update', [s.attemptId]);
+  const grant = db.rpc(2, 'extra_time_v1', [id(51), id(3), 600]).then(() => null, (error: unknown) => error);
+  // Observe an actual lock wait, not an arbitrary delay or mocked client clock.
+  let blocked = false;
+  for (let n = 0; n < 300 && !blocked; n++) {
+   blocked = (await db.admin.query('select exists(select 1 from pg_stat_activity where $1=any(pg_blocking_pids(pid))) blocked', [pid])).rows[0].blocked as boolean;
+   if (!blocked) await new Promise(r => setTimeout(r, 10));
+  }
+  expect(blocked).toBe(true);
+  await holder.query("update assess.sessions set deadline=clock_timestamp()-interval '1 second' where id=$1", [s.attemptId]);
+  await holder.query('commit');
+  expect(await grant).toMatchObject({ code: '55000' });
+  expect((await db.admin.query('select deadline<clock_timestamp() expired from assess.sessions where id=$1', [s.attemptId])).rows[0].expired).toBe(true);
+  expect((await db.admin.query('select count(*)::int n from assess.assignment_accommodations')).rows[0].n).toBe(0);
+ } finally { await holder.query('rollback'); await holder.end(); await db.close(); }
+}, 300000);

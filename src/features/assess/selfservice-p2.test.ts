@@ -96,7 +96,7 @@ describe('dormant until the P7 promotion', () => {
   }
  });
  it('the deploy schema gate accepts the C1/C2 promotion marker while P2 remains dormant', () => {
-  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:f863714f4ff2278cebc1e6adc44130683fa6910a96349da3edefa9df388ea560' } });
+  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:c147c107631b68898e4715c8e3a104bfe6bf9b082950665539c61c8021f4ced1' } });
   expect(run.status, run.stderr).toBe(0);
  });
 });
