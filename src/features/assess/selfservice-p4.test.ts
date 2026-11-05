@@ -10,11 +10,13 @@ it('dry run prints the reviewed commands in order and runs nothing', () => {
  const r = run(base);
  expect(r.status, r.stderr).toBe(0);
  const lines = r.stdout.trim().split('\n');
- expect(lines.map(l => l.split(' ').slice(0, 3).join(' '))).toEqual(['DRY: gcloud services', 'DRY ensure: gcloud iam', 'DRY: gcloud run', 'DRY ensure: gcloud scheduler', 'VERIFY (read-only): gcloud']);
+ expect(lines.map(l => l.split(' ').slice(0, 3).join(' '))).toEqual(['DRY: gcloud services', 'DRY ensure: gcloud', 'DRY: gcloud run', 'DRY ensure: gcloud', 'VERIFY (read-only): gcloud']);
  expect(r.stdout).toContain('--schedule=\'*/5 * * * *\'');
  expect(r.stdout).toContain('--uri=https://run.googleapis.com/v2/projects/demo-project/locations/europe-west3/jobs/assess-worker:run');
  expect(r.stdout).toContain('--oauth-service-account-email=assess-scheduler@demo-project.iam.gserviceaccount.com');
  expect(r.stdout).toContain('cloudscheduler.googleapis.com');
+ expect(r.stdout).toContain('gcloud iam service-accounts create assess-scheduler');
+ expect(r.stdout).toContain('gcloud scheduler jobs create http assess-worker-tick');
  expect(r.stdout).toContain('--max-retry-attempts=0');
 });
 it('least privilege: the only binding is roles/run.invoker on the single Job; no project-level role, secret or database access', () => {
