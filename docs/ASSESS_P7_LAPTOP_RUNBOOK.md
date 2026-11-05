@@ -44,7 +44,7 @@ RAD_PROJECT=<id> RAD_REGION=europe-west3 APPLY=1 RAD_WINDOW_PERMISSION=I-HAVE-TH
 6.3 **قبل التفعيل** راجع صفحتي تسعير Cloud Scheduler وCloud Run Jobs (لم أستطع قراءتهما) واكتب أن الكلفة مقبولة؛ ميزانية 5 دولار هي الشبكة الأخيرة.
 
 ## 7. الاعتماد والتصديق (L + Cloud Shell)
-7.1 اعتماد جديد بلا انتهاء: أمر التدوير كما يعدّله PR الترقية (`rotate-grading-credential.py`) كما في [الخطوة 5](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md#5-w2w3-credential-transport-l-15-min) ثم تفعيل الإصدار الجديد، ثم LOGIN والجاهزية (الخطوة 7.1–7.3 هناك). 7.2 تصديق جديد لمرحلتي R1/R2 فقط (`recovery-attestation.mjs` كما في 6.2 هناك). **Expected:** صفوف الجاهزية كلها `t`. **STOP:** أي `f`.
+7.1 اعتماد جديد بلا انتهاء: `python3 -I scripts/assess/rotate-grading-credential.py --no-expiry | owner_sql -f -` كما في [الخطوة 5](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md#5-w2w3-credential-transport-l-15-min) ثم تفعيل الإصدار الجديد، ثم LOGIN والجاهزية (الخطوة 7.1–7.3 هناك). 7.2 تصديق جديد لمرحلتي R1/R2 فقط (`recovery-attestation.mjs` كما في 6.2 هناك). **Expected:** صفوف الجاهزية كلها `t`. **STOP:** أي `f`.
 7.3 **رفض الاعتماد القديم:** إن كان ملف الاعتماد القديم متاحًا محليًا: NOLOGIN ← انتظار ≥ 120 ث ← محاولة اتصال واحدة بالقديم من اللابتوب ← يجب أن تُرفض؛ ثم أعد LOGIN. غير متاح ← سجّل **Not run** (لا تُفعِّل سرًّا قديمًا لأجله).
 
 ## 8. فتح البوابة (مفتاح الإيقاف العام) وأول نبضات R1

@@ -51,7 +51,7 @@ elif verb == "describe": print("DISABLED")
 else: sys.exit(3)
 `);
     chmodSync(join(root, 'bin', 'gcloud'), 0o700);
-    const run = spawnSync('python3', ['-I', '-B', 'scripts/assess/rotate-grading-credential.py', '--valid-days', '30'],
+    const run = spawnSync('python3', ['-I', '-B', 'scripts/assess/rotate-grading-credential.py', '--no-expiry'],
       { env: { PATH: join(root, 'bin') + ':' + process.env.PATH, HOME: join(root, 'home') }, encoding: 'utf8', timeout: 60000 });
     assert.equal(run.status, 0, 'transport STOP');
     const payload = JSON.parse(readFileSync(sink, 'utf8'));

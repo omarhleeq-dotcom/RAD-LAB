@@ -53,7 +53,7 @@ Test file: `scripts/assess/grading-worker-rehearsal.test.mjs`.
 
 - The password is 48 alphanumeric characters from `secrets`, generated in memory. It is never prompted for, never placed in argv or the environment, never written to a file and never printed.
 - The plaintext goes only into a new numeric version of `assess-worker-config`, through `gcloud … versions add --data-file=-`. The payload is `{host: db.<ref>.supabase.co, port 5432, database, user assess_job_b, password, ca}`. The host matches D-W5 option A or B.
-- The new version is disabled immediately and checked with `describe`. Only then is the SQL written to stdout. That SQL sets the password from a locally computed SCRAM-SHA-256 verifier with `VALID UNTIL` of 90 days or less, and the role stays **NOLOGIN**.
+- The new version is disabled immediately and checked with `describe`. Only then is the SQL written to stdout. That SQL sets the password from a locally computed SCRAM-SHA-256 verifier with `VALID UNTIL 'infinity'` (owner decision 2026-11-05: no expiry), and the role stays **NOLOGIN**.
 - Before generating anything, the script refuses: a terminal as stdout, any ENABLED version, unknown metadata or bad arguments. An uncertain upload or disable step means no SQL is sent and no retry happens. It never uses Enable, `latest` or Destroy.
 - Deviation, for review: the task text puts LOGIN in the transport. The package keeps LOGIN for step 4.3 instead, so the slot stays closed until after the secret is enabled. The binding result is the same.
 
@@ -66,7 +66,7 @@ Test file: `scripts/assess/grading-worker-rehearsal.test.mjs`.
 | Step | Command | Expected | STOP if |
 |---|---|---|---|
 | W2.1 | `gcloud secrets versions list assess-worker-config --project=project-bff9124a-ec31-4d57-bc0 --format="table(name,state)"` | every row DISABLED or DESTROYED | any ENABLED row |
-| W2.2 | `set -o pipefail; python3 -I scripts/assess/rotate-grading-credential.py --valid-days 30 \| owner_sql -f -` | stderr `PASS: secret version N added and DISABLED …`; one row `assess-grading-credential/1 \| t \| f`; write N in the encrypted log | any `STOP:`, a non-zero exit or a psql error. Read metadata (W2.1) and disable any new version; never rerun blindly |
+| W2.2 | `set -o pipefail; python3 -I scripts/assess/rotate-grading-credential.py --no-expiry \| owner_sql -f -` | stderr `PASS: secret version N added and DISABLED …`; one row `assess-grading-credential/1 \| t \| f`; write N in the encrypted log | any `STOP:`, a non-zero exit or a psql error. Read metadata (W2.1) and disable any new version; never rerun blindly |
 | W2.3 | W1.2 check | `credential_window=t`, `slot_login=f` | otherwise |
 | W2.4 IAM review | `gcloud secrets get-iam-policy assess-worker-config --project=project-bff9124a-ec31-4d57-bc0` and `gcloud projects get-iam-policy project-bff9124a-ec31-4d57-bc0 --flatten=bindings[].members --filter="bindings.members:assess-job@" --format="value(bindings.role)"` | the secret policy grants `roles/secretmanager.secretAccessor` to the `assess-job` service account only; no project-level Secret Manager role for it | any other member or a project-wide accessor role |
 
