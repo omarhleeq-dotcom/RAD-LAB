@@ -36,8 +36,8 @@ Candidate: `pilot-v1:ddb4de0e9e50414239f8ebc0046d84608579928bbf7f3543721cb0c1ce9
 | HistoryPanel | 2a98829cf8b9 → 0a646299ab40 | حقن قارئ v2 دون تغيير الرؤية |
 | selfservice/adapter | جديد → 349386506711 | كشف المخطط وRPC المعتمدة |
 | selfservice/runner | جديد → 587bd24e0495 | ربط v2 بالقوالب القائمة دون إعادة ترتيب |
-| selfservice/SelfServiceSession | جديد → cc78d310d3cf | جلسة/رضا/قدرات وإلغاء الربط القديم |
-| EmergencySession consumer | f94e16881bd8 → d542f380aa6a | تركيب الاستعادة خلف تفويض المالك/البديل |
+| selfservice/SelfServiceSession | جديد → e56aacbc14b3 | جلسة/رضا/قدرات وإلغاء الربط القديم |
+| EmergencySession consumer | f94e16881bd8 → 56130c1bd85b | تحميل الاستعادة كسولًا خلف تفويض المالك/البديل |
 Verified: SQL المطبقة وS1/S2 والشاهد/health وC3 وحزم الهاتف بلا فرق عن الرأس المقبول؛ لا assertions/goldens/timeouts خُففت.
 توقع P2 للخمول استُبدل بالحارس المأذون ونقاط التركيب المسماة فقط؛ استُثني harness الاصطناعي المسمى، وRPC محصورة في محولين مثبتين. تغييرات name/erasure اختبارات إحالة خليفة فقط.
 
@@ -51,7 +51,7 @@ Verified: اختبارات S3 ذات الصلة15/15: صلاحيات موجبة/
 Verified: معايرة production-fixture PG18 النهائية وخليفة الجاهزية وطفرات S3 ناجحة؛ كل أوراكل S1/S2 الأصلي سبقها ولم يتغير.
 Verified: EN/AR390/1440، 64 تدقيق mounted browser/axe/overflow و196 تحققًا، بما فيها المالك/المشرف/الطالب/السجل/البديل وثلاث عائلات runners؛ لا أخطاء تشغيل. إضافة النافذة المغلقة: أربعة تدقيقات موجهة و80 تحققًا؛ لم تُكرر تدقيقات ناجحة بلا تغيير معني.
 Verified: الصور EN1440 وAR390 فُحصت بصريًا؛ الصور الكاملة محلية /tmp فقط. harness جلسة وRPC اصطناعيتان مع منع الشبكة الخارجية؛ ليس إثبات إنتاج أو هاتف حقيقي.
-Verified: health:source بلا أخطاء/new clones، health:test9/9، والبناء العادي نجح. أدلة check/unit وPages/size وDB الكاملة موثقة في وصف Draft بعد اكتمالها.
+Verified: health:source بلا أخطاء/new clones، health:test9/9، والبناء العادي نجح. اختبار الطوارئ الأصلي2/2 نجح بعد حارس UUID للواجهة الجديدة دون تغيير تأكيداته. أدلة check/unit وPages/size وDB الكاملة موثقة في وصف Draft بعد اكتمالها. قياس الحجم الأول كشف استيرادًا عامًا؛ صُحح بتحميل كسول مع بقاء السقوف الأصلية.
 Not run محليًا: معايرة Supabase17 بعد فشل استخراج الصورة المثبتة بـENOSPC؛ لا صورة بديلة أو skip أو إضعاف. مسار DB الكامل شُغّل؛ إخفاقات البيئة لا تُسجل PASS، والنتيجة النهائية في وصف Draft.
 Verified: مرجع نتائج الرأس المدفوع النهائي هو [فحوص #242 ووصفها](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks)، لا نتائج الرأس السابق؛ Deploy المتوقع عند attestation لا يجيز Variable.
 Verified: docs:sync مرتان والثانية0، docs:check وstatus:check --require-previous وgit diff --check ناجحة؛ التحذيرات الحجمية قائمة. حفظ alias لعنوان S2 أبقى روابط التقرير القديم صالحة.

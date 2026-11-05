@@ -6,6 +6,7 @@ import { needsConsent } from '@/features/pilot/consent';
 import { getPilotClient } from '@/features/pilot/client';
 import { useEmergencyAlternate } from '@/features/emergency/EmergencySession';
 import { useSupervisorAppointment } from '@/features/supervisor/P1Session';
+import { isUuid } from '../data-guards';
 import { AssessConsent } from '../AssessConsent';
 import { HistoryPanel } from '../HistoryPanel';
 import { Runner } from '../AssessPanel';
@@ -21,7 +22,7 @@ type Mode='student'|'manage'|'history'|'recovery';
 type Binding={port:SelfServicePort;runners:ReturnType<typeof bindSelfServiceRunners>};
 export function SelfServiceSession({mode}:{mode:Mode}) {
  const state=useOptionalSessionAccount()?.state,supervisor=useSupervisorAppointment(),alternate=useEmergencyAlternate();
- const identity=state?.kind==='signedIn'&&state.profile.status==='approved'&&!needsConsent(state.consentVersion)?state.userId:null;
+ const identity=state?.kind==='signedIn'&&isUuid(state.userId)&&state.profile.status==='approved'&&!needsConsent(state.consentVersion)?state.userId:null;
  if(!identity||state?.kind!=='signedIn')return null;
  const owner=state.profile.role==='owner';
  if(mode==='manage'&&!owner&&!supervisor||mode==='student'&&owner||mode==='recovery'&&!owner&&!alternate)return null;

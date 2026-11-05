@@ -101,7 +101,7 @@
     "src/features/assess/manual-grading-data.ts": "285fc0e8f2be3c76fd0838cbef23ede79e08789d32ca560df4c9fd2488bd8575",
     "src/features/assess/selfservice/adapter.ts": "349386506711fc5bfa24599c1dc729946e87bcaa4ef924b724c3eaf10a3fd5aa",
     "src/features/assess/selfservice/runner.ts": "587bd24e049594c093321b04c84d6389023f3eb71bea7436fe066b364543e8ee",
-    "src/features/assess/selfservice/SelfServiceSession.tsx": "cc78d310d3cf4ffc66ba36714284d31f2ed65fcf0e69971eccf955f9facae639"
+    "src/features/assess/selfservice/SelfServiceSession.tsx": "e56aacbc14b39e8729de22c76d097015ca039f8a1f29b2ec5d06f4d76e9a0722"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",
@@ -193,7 +193,7 @@
       },
       "consumer": {
         "path": "src/features/emergency/EmergencySession.tsx",
-        "sha256": "d542f380aa6a9df44aeaa0c31f9a6046ac4b93d9b45de8b5939f25fa967a3acb"
+        "sha256": "56130c1bd85b46b84de31981d7f165adebbb3763a55ef0f51d16dce9bbe00fbb"
       }
     },
     "rad085Review": {

@@ -1,5 +1,6 @@
 "use client";
-import {SelfServiceSession} from "../assess/selfservice/SelfServiceSession";
+import dynamic from "next/dynamic";
+const SelfServiceSession=dynamic(()=>import("../assess/selfservice/SelfServiceSession").then(m=>m.SelfServiceSession),{ssr:false});
 import {createContext,useContext,useEffect,useMemo,useState,type ReactNode} from 'react';
 import {useTranslations} from 'next-intl';
 import {useOptionalSessionAccount} from '../pilot/SessionGate';
