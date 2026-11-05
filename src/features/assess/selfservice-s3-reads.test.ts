@@ -76,11 +76,27 @@ it('independent read authorization, target revocation, metadata privacy, capped 
   await teacher.schedule(id(51),revision,opens,new Date(Date.now()+7200000).toISOString());
   await expect(teacher.schedule(id(51),revision,opens,new Date(Date.now()+7200000).toISOString())).rejects.toMatchObject({kind:'conflict'});
   await expect(teacher.schedule(id(51),revision+1,opens,new Date(Date.now()+8*86400000).toISOString())).rejects.toMatchObject({kind:'invalid'});
+  await teacher.extra(id(51),id(3),60);
+  await expect(teacher.extra(id(51),id(1),60)).rejects.toMatchObject({kind:'denied'});
+  const runner=createSelfServiceRunners(transport(db,3)).mixed;
+  const held=await runner.start(id(51),id(70));
+  await db.admin.query("update assess.sessions set deadline=clock_timestamp()-interval '1 second' where id=$1",[held]);
+  await expect(teacher.extra(id(51),id(3),120)).rejects.toMatchObject({kind:'window'});
+  // Restore the synthetic clock condition only; the rejected write did not revive it.
+  await db.admin.query("update assess.sessions set deadline=clock_timestamp()+interval '1 hour' where id=$1",[held]);
+  await db.admin.query('select assess.freeze_v2()');
+  expect((await teacher.eligibility(id(51))).rows.find(r=>r.sessionId===held)).toMatchObject({eligible:true});
+  await teacher.grant(id(51),held);
+  expect((await student.students()).rows[0]).toMatchObject({sessionId:null,session:null});
+  const replacement=await runner.start(id(51),id(71));expect(replacement).not.toBe(held);
+  expect((await runner.read(replacement)).ack.state).toBe('active');
+  expect((await db.admin.query('select emergency_held_at is not null held from assess.sessions where id=$1',[held])).rows[0].held).toBe(true);
   await db.admin.query('delete from assess.targets where assignment_id=$1 and user_id=$2',[id(51),id(3)]);
   expect((await student.students()).rows).toEqual([]);
   for(const name of ['student_exams_page_v1','history_page_v2'])for(const limit of [0,101,null])await expect(db.rpc(3,name,[null,limit])).rejects.toMatchObject({code:'22023'});
   for(const kind of ['versions','assignments','invalid'])for(const limit of [0,101,null])await expect(db.rpc(2,'selfservice_metadata_page_v1',[kind,null,limit])).rejects.toMatchObject({code:'22023'});
   await db.admin.query("insert into assess.assignments(id,owner_id,version_id,audience,closed_at) select ('00000000-0000-0000-0000-'||lpad((1000+n)::text,12,'0'))::uuid,$1,$2,'all-students',clock_timestamp() from generate_series(1,101)n",[id(2),id(50)]);
+  await db.admin.query('insert into assess.all_students_assignments select id from assess.assignments where id>$1',[id(1000)]);
   await db.admin.query('insert into assess.targets select id,$1 from assess.assignments where id>$2',[id(3),id(1000)]);
   const a=await student.students(),b=await student.students(a.next),c=await student.students(b.next);
   expect([a.rows.length,b.rows.length,c.rows.length]).toEqual([50,50,1]);expect(new Set([...a.rows,...b.rows,...c.rows].map(r=>r.id)).size).toBe(101);
