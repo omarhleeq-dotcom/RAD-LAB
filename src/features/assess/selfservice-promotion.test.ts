@@ -214,6 +214,24 @@ describe.each(modes)('C1/C2 production promotion %s',mode=>{
     expect(flatten(await db.admin.query(altered)).filter(r=>r.ok!==true).map(r=>r.check_name)).toEqual([change.startsWith('alter table')?'relations':'functions']);
    }
    expect(flatten(await db.admin.query(readFileSync('supabase/checks/selfservice-s2-ready.sql','utf8'))).filter(r=>r.ok!==true)).toEqual([]);
+   // S3 is additive: every S1/S2 oracle above is preserved and runs first.
+   const beforeS3=await snapshot();
+   await db.admin.query(sql('20261105000400_rad105_eligibility_read.sql'));
+   await db.admin.query(sql('20261105000500_rad105_ui_reads.sql'));
+   const afterS3=await snapshot();
+   expect(beforeS3.filter(b=>JSON.stringify(b.doc)!==JSON.stringify(afterS3.find(a=>a.kind===b.kind&&a.name===b.name)?.doc))).toEqual([]);
+   expect(afterS3.filter(a=>!beforeS3.some(b=>b.kind===a.kind&&b.name===a.name)).map(a=>a.name).sort()).toEqual(['assess.attempt_eligibility_page_v1(uuid,uuid,integer)','assess.student_exams_page_v1(uuid,integer)','assess.history_page_v2(uuid,integer)','assess.selfservice_metadata_page_v1(text,uuid,integer)'].sort());
+   const s3Ready=readFileSync('supabase/checks/selfservice-s3-rad085-review-ready.sql','utf8');
+   const s3Rows=flatten(await db.admin.query(s3Ready));
+   console.info('S3 fresh production fingerprints',mode,JSON.stringify(s3Rows.filter(r=>r.actual)));
+   expect(s3Rows.filter(r=>r.ok!==true)).toEqual([]);
+   for(const change of [
+    'grant execute on function assess.attempt_eligibility_page_v1(uuid,uuid,integer) to anon',
+    "alter function assess.attempt_eligibility_page_v1(uuid,uuid,integer) set work_mem='8MB'",
+    "do $m$declare d text;begin d:=pg_get_functiondef('assess.attempt_eligibility_page_v1(uuid,uuid,integer)'::regprocedure);execute replace(d,'p_limit not between 1 and 100','p_limit not between 1 and 101');end$m$",
+   ]) expect(flatten(await db.admin.query(s3Ready.replace('begin read only;','begin;'+change+';'))).filter(r=>r.ok!==true).map(r=>r.check_name)).toEqual(['functions']);
+   expect(flatten(await db.admin.query(readFileSync('supabase/checks/selfservice-s3-ready.sql','utf8'))).filter(r=>r.ok!==true)).toEqual([]);
+
   }finally{await db.close();}
  },300000);
 });

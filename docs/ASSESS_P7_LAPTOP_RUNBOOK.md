@@ -30,17 +30,19 @@ node -e "const m=require('./supabase/staged/self-service/MANIFEST.json'),c=requi
 owner_sql -f supabase/migrations/20261105000100_rad105_windows.sql
 owner_sql -f supabase/migrations/20261105000200_rad105_witness.sql
 owner_sql -f supabase/migrations/20261105000300_rad105_selfservice_s2.sql
+owner_sql -f supabase/migrations/20261105000400_rad105_eligibility_read.sql
+owner_sql -f supabase/migrations/20261105000500_rad105_ui_reads.sql
 ```
 **Expected:** `COMMIT` لكل ملف. تحقق: `select to_regclass('assess.assignment_windows') is not null, to_regclass('assess.restore_epoch') is not null` ← `t | t`. **STOP:** أي خطأ ← لا شيء طُبّق من ذلك الملف؛ أغلق PR الترقية.
 
-بعد الملفات الثلاثة، وفي اتصال واحد، جهّز نص التحقق ثم راجعه قبل تشغيله:
+بعد الملفات الخمسة، وفي اتصال واحد، جهّز نص التحقق ثم راجعه قبل تشغيله:
 ```bash
-{ printf "%s\n" "set radlab.expected_gate='closed';"; cat supabase/checks/selfservice-s2-rad085-review-ready.sql supabase/checks/selfservice-ready.sql supabase/checks/selfservice-s2-ready.sql; } > /tmp/rad105-ready.sql
+{ printf "%s\n" "set radlab.expected_gate='closed';"; cat supabase/checks/selfservice-s3-rad085-review-ready.sql supabase/checks/selfservice-ready.sql supabase/checks/selfservice-s2-ready.sql supabase/checks/selfservice-s3-ready.sql; } > /tmp/rad105-ready.sql
 owner_sql -f /tmp/rad105-ready.sql
 ```
 **Expected:** فحص الكتالوج 11 صفًا ناجحًا، وصفوف `ok` في حزمة النوافذ والشاهد كلها صحيحة. **STOP:** أي فشل أو صف مفقود. لا تطبق النسختين المرحليتين مرة أخرى؛ هما دليل بايتات مطابق للترحيلين. عدادات health تبقى لـlifecycle_version=1؛ الشاهد إضافة مستقلة.
 
-علامة الترقية المرشحة: `pilot-v1:c147c107631b68898e4715c8e3a104bfe6bf9b082950665539c61c8021f4ced1`؛ بصمة functions `4c2ffc83edb72b5bb168c7c499c062ad` وrelations `5c45889099a878446fd3a16a9569940f`. علامة P0 الحية لم تتغير بهذه الجلسة؛ لا تضبط المرشح قبل دليل النافذة.
+علامة الترقية المرشحة: `pilot-v1:ddb4de0e9e50414239f8ebc0046d84608579928bbf7f3543721cb0c1ce960e4b`؛ بصمة functions `533f4f22d9f07200e6c4dbab596b4dca` وrelations `5c45889099a878446fd3a16a9569940f`. علامة P0 الحية لم تتغير بهذه الجلسة؛ لا تضبط المرشح قبل دليل النافذة.
 
 ## 4. دمج PR الترقية وفتح النشر (GitHub، L)
 4.1 دمج PR الترقية بأمرك بعد CI أخضر. 4.2 اطبع العلامة الجديدة بعنوان مشروعك (`--print-marker`) واضبط `PILOT_SCHEMA_VERIFIED` كما في [دليل P0](ASSESS_P0_MARKER_RUNBOOK.md#2-اضبط-pilot_schema_verified)، ثم أعد تشغيل Deploy Pages. **Expected:** نشر أخضر. **STOP:** فشل البوابة ← لا تتخطّها.
@@ -95,3 +97,8 @@ RAD_PROJECT=<id> RAD_REGION=europe-west3 APPLY=1 RAD_WINDOW_PERMISSION=I-HAVE-TH
 ## حد S2 قبل S3/S4
 [عقد S2 ودليله](archive/reports/2026-11/ASSESS_SELF_SERVICE_S2_2026-11-05.md): DB فقط، لم تُطبق حيًا. S3 مشروطة بنجاح S2 وقبولها. Resume بتأكيد مكتوب للمالك والبديل؛ لا يطلق ACTIVE عند الإيقاف أو الحجز التاريخي مجهول المنشأ. قبول الاستعادة للمالك فقط.
 حزمة `supabase/manual/selfservice-notify-install.sql` منفصلة لم تُنفذ؛ الإشعارات OFF. تدمج S4 فحصها وإيصالها في نافذة مأذونة لاحقة؛ لا أسرار أو بريد أو cron حي هنا. request_id يثبت enqueue فقط.
+
+## حد S3 قبل S4/P7
+S2 مقبولة؛ [تقرير S3](archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_IMPLEMENTATION_2026-11-05.md) يفصل الواجهة وعقود القراءة المعتمدة. فحوص الرأس وقبول S3 مطلوبان قبل S4، ولم تبدأ البنية أو النافذة الحية.
+قبل اختبار الواجهة في الخطوة 13: تأكد أن REST يعرض مخطط assess المأذون؛ كشف غير متاح يعني حالة unavailable دون استدعاء RPC غائبة، لا تجاوز للحارس. تبقى الإصدارات المراجعة المثبتة شرط النشر؛ لا تثبيت محتوى جديد من المتصفح.
+المحاولة البديلة تأتي من دليل الخادم فقط وتُعاد أهلية المنح تحت القفل؛ الحجز القديم لا يُطلق. واجهة الاستئناف للمالك والبديل، وقبول الاستعادة للمالك فقط.

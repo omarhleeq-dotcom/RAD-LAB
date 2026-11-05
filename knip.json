@@ -104,7 +104,8 @@
     "src/features/assess/server-runtime.ts",
     "src/features/assess/server-job.ts",
     "src/features/assess/server-runtime-v2.ts",
-    "scripts/assess/connection-probe.mjs"
+    "scripts/assess/connection-probe.mjs",
+    "src/features/assess/selfservice-audit.mjs"
   ],
   "project": [
     "src/**/*.{ts,tsx,mjs}",

@@ -1739,3 +1739,16 @@ Authority: owner's S3 prompt and environment-recovery instruction. Coordination 
 S3 C5 UI only is authorised; no repeated product approval is needed. Candidate remains `pilot-v1:c147c107631b68898e4715c8e3a104bfe6bf9b082950665539c61c8021f4ced1`; live P0/Variables unchanged.
 [Recovery and contract evidence](archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_2026-11-05.md): proxy works with command network permission; clean accepted head fetched. S3 product edits stopped: no browser-readable session identity/ACTIVE-at-stop eligibility contract exists for the required new-attempt picker.
 A proposed bounded own-assignment read is described in the report, not authorised or implemented. It needs narrow DB-contract scope and fresh fingerprint/mutation verification before full S3 can proceed. S2 acceptance is retained; no protected assertion changed. Draft #242 only; S4/P7 and all live actions remain outside scope.
+
+<a id="assess-self-service-s3-read-owner-2026-11-05"></a>
+### Assess self-service — narrow eligibility read approved, 2026-11-05
+Authority: owner's approval of S3 report §4. Add a versioned read-only RPC for the caller's own assignments, stable pagination capped at 100, studentId/sessionId/eligible/reason/serverTime only, no content or grades.
+Eligibility uses authoritative ACTIVE-at-stop capture, exact held timestamp, current state, expiry, previous grant and three-grant limit; respect availability and revocation. Unknown historical and non-active holds are ineligible. Read authorization must not use write-scoped own_assignment_v1 or direct table grants; new_attempt_v1 remains the locked execution-time authority.
+Use a new forward migration, positive/negative scope/eligibility/paging/stale-read tests and fresh successor fingerprint/marker calibration; preserve applied migrations and protected assertions. Review all remaining S3 UI-to-DB contracts before implementation; report additional material gaps together.
+S2 acceptance remains valid; resume authorised S3 UI after contract review. No S4, live SQL/cloud/provider, secrets/Variables, deployment, merge or Ready. [Implementation evidence](archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_IMPLEMENTATION_2026-11-05.md).
+
+<a id="assess-self-service-s3-reads-owner-2026-11-05"></a>
+### Assess self-service — remaining S3 reads approved, 2026-11-05
+Authority: owner's answer to the combined pre-implementation contract review. Add bounded versioned reads for student assignment/latest-attempt listing, v2 history paging through the existing route and result_v2 visibility, and scoped installed-v2-version/own-assignment metadata.
+Enforce student-own access, supervisor scope, consent and revocation. Metadata exposes no private questions, answers or grading keys. New forward migrations and independent authorization/paging tests; fresh explained calibration, existing RPCs/protected assertions preserved.
+Revise exact budget before editing, record this approval and complete S3. No new publication/grade-writing mechanism, live actions, S4, merge or Ready. This lifts only the additional read gaps reported together; S2 acceptance remains valid.

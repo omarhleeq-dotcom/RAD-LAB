@@ -38,20 +38,23 @@
     "20261102000300_rad085_rights_write_disclosures.sql",
     "20261105000100_rad105_windows.sql",
     "20261105000200_rad105_witness.sql",
-    "20261105000300_rad105_selfservice_s2.sql"
+    "20261105000300_rad105_selfservice_s2.sql",
+    "20261105000400_rad105_eligibility_read.sql",
+    "20261105000500_rad105_ui_reads.sql"
   ],
   "checks": [
     "supabase/checks/training-ready.sql",
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/selfservice-assess-mixed-ready.sql",
     "supabase/checks/selfservice-assess-practical-ready.sql",
-    "supabase/checks/selfservice-s2-rad085-review-ready.sql",
+    "supabase/checks/selfservice-s3-rad085-review-ready.sql",
     "supabase/checks/selfservice-assess-history-ready.sql",
     "supabase/checks/selfservice-assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
     "supabase/checks/owner-deletion-surveys-ready.sql",
     "supabase/checks/selfservice-ready.sql",
-    "supabase/checks/selfservice-s2-ready.sql"
+    "supabase/checks/selfservice-s2-ready.sql",
+    "supabase/checks/selfservice-s3-ready.sql"
   ],
   "deferredMigrations": {},
   "explicitBoundaries": [
@@ -81,21 +84,24 @@
     "src/features/pilot/OwnerPanel.tsx": "d35f215a6443e224a305696b68477055c0742d07b76f1eb21cd2288c7cc5095b",
     "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
     "src/features/pilot/c2-contract.ts": "2ea21fcb5b638ccc29dd5bea00801ba0c2d0216b4a6d99c6774255c55a4a91e0",
-    "src/features/assess/OwnerAssessPanel.tsx": "39a70f3b5bb956ebee5b395b5d04bec6a98d45d80c1cb21a1227315b09d22649",
+    "src/features/assess/OwnerAssessPanel.tsx": "ccd2c6b5c245e5d57a15c2cecb402b07eec2bd14f47a273cf7f93a99f429bc1e",
     "src/features/assess/admin-data.ts": "52ff118a27ef5d09e87cec66642c7e2bf0d4d76717790e08b3c9c14fd5b1b610",
     "src/features/assess/OwnerContentPanel.tsx": "3e0c676a98b1d3774fa0db3c17be42759a2a1dfaaf806f1df6dc26b83d9b40e7",
     "src/features/assess/content-data.ts": "2c2b06add8358339237055326e256366bbe75d0a88b6feb1ea3b49df89817a2f",
     "src/features/assess/runner-data.ts": "39d1d5918ecda9e0541e2a333f4743f1659741f0585bda10d5bfabab5833f1ca",
-    "src/features/assess/HistoryPanel.tsx": "2a98829cf8b922e238a735b13dcfc93f06c83dd444c9e641c341d2305f4b9424",
+    "src/features/assess/HistoryPanel.tsx": "0a646299ab4022bc16dc674927cd35ebca82613533529d91db2ab3a2369a192c",
     "src/features/assess/history-data.ts": "057759a67ae86f91c497528aa5859b468a882f731edfbc10a1ee0c7bf2da671e",
-    "src/features/assess/AssessPanel.tsx": "ecdcf10460d5d53135206f95fa73f9e5597cea7351ed800dd11e22c109cfe71d",
+    "src/features/assess/AssessPanel.tsx": "83b2addd50b4e81c0af6c52147e6065ff20dac551d0817486f9e9abca97ed442",
     "src/features/assess/AssessConsent.tsx": "76c3f451451621283b7c38182f3794be23a69888f8161fa263fa75e6a8a211d8",
     "src/features/assess/practical-data.ts": "a1201b873cea73eb74d9916cb9a03e8f97d4ecb93c011ba5dafccc361330df31",
     "src/features/assess/OwnerAssignments.tsx": "29563b0f0d4f1b85b038c176b04badee33f9bd64ba90555ea276c16843a7dc5d",
     "src/features/assess/owner-assignments.ts": "d48d42288bb2b1d628b5e36103ebad383c08e98e4c61506f2049811ccf7caf3c",
     "src/features/assess/AuthoringEntry.tsx": "2abd42dd80e3a1572d563df78cc7c3f2420b9703b094557ad826fc427fa7af52",
     "src/features/authoring-review/sql-adapter.ts": "d4fd25d7896a6888a37a018bd1317fa1e12cf7e6c44ffcfe775d3c319d8356ea",
-    "src/features/assess/manual-grading-data.ts": "285fc0e8f2be3c76fd0838cbef23ede79e08789d32ca560df4c9fd2488bd8575"
+    "src/features/assess/manual-grading-data.ts": "285fc0e8f2be3c76fd0838cbef23ede79e08789d32ca560df4c9fd2488bd8575",
+    "src/features/assess/selfservice/adapter.ts": "349386506711fc5bfa24599c1dc729946e87bcaa4ef924b724c3eaf10a3fd5aa",
+    "src/features/assess/selfservice/runner.ts": "587bd24e049594c093321b04c84d6389023f3eb71bea7436fe066b364543e8ee",
+    "src/features/assess/selfservice/SelfServiceSession.tsx": "cc78d310d3cf4ffc66ba36714284d31f2ed65fcf0e69971eccf955f9facae639"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",
@@ -187,7 +193,7 @@
       },
       "consumer": {
         "path": "src/features/emergency/EmergencySession.tsx",
-        "sha256": "f94e16881bd8abe7fa775e45e3c8debf0f0e94920329aa862e88ed4a1055177f"
+        "sha256": "d542f380aa6a9df44aeaa0c31f9a6046ac4b93d9b45de8b5939f25fa967a3acb"
       }
     },
     "rad085Review": {

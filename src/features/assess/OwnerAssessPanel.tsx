@@ -1,4 +1,5 @@
 "use client";
+import { SelfServiceSession } from "./selfservice/SelfServiceSession";
 import { OwnerDirectory } from "@/features/pilot/OwnerDirectory";
 import { Fold, Pager } from "@/features/pilot/OwnerUi";
 import { ResultDisclosure } from "@/features/evaluation/ResultDisclosure";
@@ -114,6 +115,7 @@ function Administration({section,onQueue}:{section:Section;onQueue?:(count:numbe
         </section>}
       </>}
       {section==="assess"&&<>
+        <SelfServiceSession mode="manage"/>
         <Fold title={ux("assign")} testId="assess-assign">
           <ResultDisclosure title={`ⓘ ${t("assignment")}`}><p className="text-sm text-muted">{t("assignmentHelp")}</p></ResultDisclosure>
           <Rows title={`1. ${t("versions")}`} data={versions}>{row=><label className="flex min-h-11 items-center gap-2"><input type="radio" name="assess-version" className="size-5 shrink-0" checked={version?.id===row.id} onChange={()=>setVersion(row)}/>{row.name} — {row.version} ({t(row.track!)})</label>}</Rows>

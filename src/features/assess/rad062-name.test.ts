@@ -34,7 +34,7 @@ it('real bundled consumer loads only the reviewed name gate despite a tampered b
  expect(readFileSync(feature.guard.path,'utf8')).toContain('export const RAD062_AVAILABLE: boolean = true;');
  expect(readFileSync('src/features/supervisor/p1-availability.ts','utf8')).toContain('export const P1_AVAILABLE: boolean = true;');
  expect(manifest.deferredMigrations).toEqual({}); // Owner-approved window promotion: restore the exact empty deferred pin.
- expect(manifest.checks).toContain('supabase/checks/selfservice-s2-rad085-review-ready.sql');
+ expect(manifest.checks).toContain('supabase/checks/selfservice-s3-rad085-review-ready.sql');
  expect(manifest.checks).not.toContain('supabase/checks/rad062-m09-ready.sql');
  expect(manifest.checks).not.toContain('supabase/checks/rad085-p1-b-ready.sql');
  for (const file of feature.migrations) {
