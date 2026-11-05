@@ -16,7 +16,9 @@ type Recovery = () => Promise<void>;
 /** The host verifier must freeze and recheck latest external evidence, completed
  * replay/maintenance and revoked capabilities. No launch_gate or snapshot flag. */
 export async function executeGradingWorker(load: () => Promise<unknown>, signal: AbortSignal, verifyRecovery: Recovery,
-  make: (config: WorkerBinding) => Worker = createGradingWorkerBinding, observe?: JobControls["observe"]) {
+  make: (config: WorkerBinding) => Worker = createGradingWorkerBinding, observe?: JobControls["observe"],
+  /** RAD-105 P3, additive: omitted keeps today's one-attempt run. batch is 1..100; budgetMs bounds when a new claim may start. */
+  options?: { batch?: number; budgetMs?: number }) {
   let worker: Worker | undefined;
   let code = "configuration";
   let counts: Record<string, number> | undefined;
@@ -32,7 +34,9 @@ export async function executeGradingWorker(load: () => Promise<unknown>, signal:
       else {
         worker = make(config);
         code = "unavailable";
-        const result = await runAssessJobs(worker, 1, signal, { stopBeforeFinalize: true, verify: verifyRecovery, observe: event => {
+        const batch = options?.batch ?? 1;
+        const result = await runAssessJobs(worker, batch, signal, { stopBeforeFinalize: true, verify: verifyRecovery,
+          ...(options?.budgetMs === undefined ? {} : { deadlineMs: began + options.budgetMs }), ...(batch > 1 ? { maintainLimit: 100 } : {}), observe: event => {
           if (event.phase === "grade") gradeMilliseconds += event.milliseconds;
           if (event.phase === "uncertain") uncertain = true;
           observe?.(event);
@@ -50,7 +54,7 @@ export async function executeGradingWorker(load: () => Promise<unknown>, signal:
   if (signal.aborted && code !== "cleanup_failed") code = "stopped";
   const usage = process.resourceUsage();
   return { contract: WORKER_VERSION, outcome: code === "complete" ? "COMPLETE" : "STOP", code,
-    ...(counts ? { counts } : {}), milliseconds: Math.ceil(performance.now() - began), gradeMilliseconds: Math.ceil(gradeMilliseconds),
+    ...(counts ? { counts } : {}), ...(options?.batch && options.batch > 1 ? { batch: options.batch } : {}), milliseconds: Math.ceil(performance.now() - began), gradeMilliseconds: Math.ceil(gradeMilliseconds),
     resources: { userCpuMicroseconds: usage.userCPUTime, systemCpuMicroseconds: usage.systemCPUTime, maxRssKiB: usage.maxRSS },
     reconciliationRequired: code !== "complete", runtimeOrLaunchVerified: false };
 }

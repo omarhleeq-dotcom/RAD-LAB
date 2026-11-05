@@ -3,6 +3,7 @@
   "note": "RAD-105: staged files, NOT in scripts/pages/frontend-schema.json and NOT in supabase/migrations or src until the P7 promotion. Digests are reviewed pins.",
   "files": {
     "p1-windows.sql": "f947d024ce8b4f194a9579670cf0db8d5f5f8ab126dd81459c19e8e4fe6024da",
-    "p2-adapter.ts.txt": "53bf81edf8d184c2782c3105bb880d5e5259556fbb911d1b0c26a4482ecd9a2e"
+    "p2-adapter.ts.txt": "53bf81edf8d184c2782c3105bb880d5e5259556fbb911d1b0c26a4482ecd9a2e",
+    "p3-grading-worker-main.mjs": "0ae452e2644550ca7ba8fa2553f943f7f56950a67f3c27349d082bca39e7b607"
   }
 }
