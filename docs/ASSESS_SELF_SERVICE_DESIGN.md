@@ -1,6 +1,6 @@
 # Assess self-service exams — design (RAD-105)
 
-**Status: design only. Nothing here is implemented, applied or approved.** No product code, SQL, migration, Google Cloud or Supabase change follows from this file; every phase needs the owner's explicit go ([DECISIONS](DECISIONS.md#assess-self-service-owner-2026-11-05) OD9 resumes Assess *scope*, not any phase). Evidence labels: **Verified** (read in this repository), **Inferred** (reasoned, not run), **Not verified** (outside sources not read here; the phase that depends on it must read them first).
+**Status: implementation authorised for S1–S4; #241 merged; promotion #242 remains Draft.** Current authority: [hardening owner decision](DECISIONS.md#assess-self-service-hardening-owner-2026-11-05), [review](DECISIONS.md#assess-self-service-review-owner-2026-11-05). §12 supersedes earlier recommendations wherever they differ. Nothing is applied by this document. Evidence labels: **Verified** (source/tool evidence), **Inferred** (reasoned), **Not run** (reason given).
 
 Goal (OD1–OD5): a supervisor schedules an exam in the app and it opens, closes and is graded by itself; the owner is needed only for the emergency stop, which overrides everything.
 
@@ -34,7 +34,7 @@ Goal (OD1–OD5): a supervisor schedules an exam in the app and it opens, closes
 | Open, attempts exist | close now; extend only; no shortening below existing latest deadline |
 | After `closes_at` | none (read-only) |
 
-Each change bumps `revision` and writes the existing audit trail; cap on changes per assignment (e.g. 10) to bound churn. Window length default in the UI: 24 h; hard cap 7 days (**DS-2**).
+Each change bumps `revision` and writes the existing audit trail; cap on changes per assignment (e.g. 10) to bound churn. Window length default in the UI: 2 h; hard cap 7 days (**DS-2**).
 
 **Gate semantics (DS-7).** Recommended: the gate stays **enabled permanently** in normal operation and is a pure kill switch (emergency stop closes it; "Resume", §5, reopens it). This keeps the table, ACLs and shapes unchanged. Consequence: the `closed_gate` rows (about a dozen check files) must become "gate state is the expected one" in successor checks (see §9 P0/P1) — they would otherwise fail every preflight.
 
@@ -66,19 +66,9 @@ Each change bumps `revision` and writes the existing audit trail; cap on changes
 
 Alternative not recommended: `pg_control_system().system_identifier` alone — whether an in-place Supabase restore changes it is **Not verified**; kept as an extra field in the witness, not the only check.
 
-## 4. Credential lifecycle (OD4)
+## 4. Credential lifecycle (OD4, current owner ruling)
 
-Facts: version N=2 is valid until 2026-12-04; a Postgres role can change its own password but not its own `VALID UNTIL`; rotation needs DB admin and Secret Manager write; Supavisor caches credentials (revocation needs NOLOGIN + ≥ 120 s wait + proof the old one is rejected — [RAD-059 item 4](DECISIONS.md#rad059-alternate-owner-2026-11-02), [Supavisor finding](DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01)).
-
-| Option | Privilege | Manual work | Failure mode |
-|---|---|---|---|
-| **A (DS-5, recommended): long validity + alert + one command** | none new | ~once a year, existing `rotate-grading-credential.py` wrapped in one reviewed command, ~10 min | expiry: login fails, worker fails closed, grading delayed (no data loss), alerts fire at 60/30/14/7/1 days before |
-| B: automatic rotation | rotator needs `CREATEROLE`-class DB power and Secret Manager version write, so a compromised rotator can mint DB logins | none | rotation half-done = lockout needing the owner anyway |
-| C: GitHub Action one-click | stores DB admin + GCP credentials in GitHub | click | widest secret surface |
-
-Recommendation A: set validity to 365 days when the credential is next issued (final window; replaces N=2's December cliff), alert from the worker's `credential_days_left` log field, owner runs the one command yearly. Lifting trigger to B: owner rejects a yearly step *and* a threat review of the rotator is accepted.
-
-Who holds what: owner = DB admin + GCP owner (laptop/phone); `assess-job` SA = accessor on the two secrets + bucket object access; `assess-scheduler` SA = run this Job; worker role = EXECUTE on the five grading functions + `witness_tick_v1` only (no table grants).
+The grading credential never expires (`VALID UNTIL 'infinity'`); C3 in [#242](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242) implements this offline. Secret Manager, the five-function role, emergency NOLOGIN and one-command rotation on suspicion compensate; no expiry alerts. Connection-source restriction is investigation-only in S4: paid feature/cost increase means STOP with options, enable nothing. No annual rotation requirement remains.
 
 ## 5. Supervisor and student UX (EN/AR; 390 and 1440)
 
@@ -91,7 +81,7 @@ Who holds what: owner = DB admin + GCP owner (laptop/phone); `assess-job` SA = a
 
 **Student:** list shows *upcoming* (opens time), *open* (Start; or *Resume* with time left), *submitted* — **"Your result is in سجل التقييم" with a link** (until graded: "grading in progress, usually a few minutes"), *closed/expired* ("this exam ended; you did not start it" / "your time ended"), *cancelled*, and an *empty* state. The result stays `visibility=after-submission` in the history tab (Verified in the smoke); this closes the 2026-11-05 UX gap with a link, not a new results surface.
 
-**Owner:** the in-app stop is unchanged (OD5). **DS-8 (recommended):** add an owner-only in-app **Resume** (typed confirmation) that reverses exactly the in-app stop effects (gate, NOLOGIN, holds) — without it, resuming after any stop needs SQL on the laptop, which breaks OD1's spirit for the rare case. It cannot enable the Google secret; therefore the in-app stop must not disable it (it cannot today).
+**Owner:** the in-app stop is unchanged (OD5). **DS-8 (recommended):** add an owner/appointed-alternate in-app **Resume** (typed confirmation) that reverses exactly the in-app stop effects (gate, NOLOGIN, holds) — without it, resuming after any stop needs SQL on the laptop, which breaks OD1's spirit for the rare case. It cannot enable the Google secret; therefore the in-app stop must not disable it (it cannot today).
 
 **Strings:** new EN/AR strings only for these screens; no medical text, no score or feedback change.
 
@@ -128,7 +118,7 @@ Who holds what: owner = DB admin + GCP owner (laptop/phone); `assess-job` SA = a
 
 | New exposure | Control |
 |---|---|
-| Worker always armed (LOGIN + secret ENABLED) | DB role = EXECUTE on 5 grading functions + witness tick only; no table grants; egress via the existing VPC path; credential ≤ 365 d; emergency stop NOLOGINs it |
+| Worker always armed (LOGIN + secret ENABLED) | DB role = EXECUTE on 5 grading functions + witness tick only; no table grants; egress via the existing VPC path; no-expiry credential; source restriction investigation in S4; emergency stop NOLOGINs it |
 | Scheduler can run the Job | separate SA, run permission on this one Job; Job has no public invoker |
 | Supervisor-run windows (no owner present) | window cap 7 d, change cap per assignment, server-clock enforcement, supervisor scope = own assignments only (existing `assignment_scopes`), audit rows on every change |
 | Grading load spikes | batch ≤ 20/≤ 240 s, advisory lock, lease + skip locked; paging ≤ 200 for status views; the existing pilot write quotas |
@@ -137,7 +127,7 @@ Who holds what: owner = DB admin + GCP owner (laptop/phone); `assess-job` SA = a
 | Override | per-session emergency hold + gate kill switch + NOLOGIN; owner and alternate in-app, unchanged |
 | Witness bucket tamper | object access only for `assess-job`; no public access; tamper requires GCP privilege (already total) |
 
-Residual (declared): an attacker with GCP owner power defeats everything here; Supabase free-tier has no provider backups (Terms), so the restore path depends on the laptop backups (RAD-086).
+Residual (declared): an attacker with GCP owner power defeats everything here; Supabase free-tier has no provider backups (Terms), so S4 adds daily encrypted backups; laptop backups (RAD-086) remain required for windows until the automatic path is proved.
 
 ## 9. Phased plan (docs/impl; each phase = its own Draft PR, owner go per phase)
 
@@ -156,9 +146,10 @@ Residual (declared): an attacker with GCP owner power defeats everything here; S
 
 **S-STD-3 ceilings and lifting triggers:** batch cap 20 / 240 s per run (lift: sustained pending age > 15 min or cohort > ~200 per window → raise cadence to 1 min or add a second run path); window cap 7 days (lift: a legitimate longer exam, owner decision); 5-minute latency (lift: complaints); yearly manual rotation (lift: DS-5 option B after threat review); restore undetected within one tick (accepted); witness is single-project, single-bucket; supervisor status paging 200 rows (lift: server-side search); unattended windows rely on email alerts only (lift: a paid pager channel, none now).
 
-## 10. Owner checklist (Arabic)
+<a id="10-owner-checklist-arabic"></a>
+## 10. Historical owner checklist (answered; superseded by current decisions)
 
-أجب بنعم/لا أو بالتعديل؛ لكل بند توصية واحدة:
+أُجيبت هذه القائمة؛ لا تُطلب الإجابات مجددًا. القرارات الحالية في §12 وDECISIONS؛ النص التالي سجل التوصيات الأصلية:
 
 1. **DS-1:** هل توافق على المراحل P0–P7 بهذا الترتيب كاستئناف صريح لبرمجة Assess، مع إذن منفصل لكل مرحلة؟ (التوصية: نعم، ابدأ بـP0).
 2. **DS-2:** نافذة الامتحان: انتهاء الوقت عند `closes_at` دون مهلة إضافية، وسقف 7 أيام، والافتراضي 24 ساعة؟ (التوصية: نعم).
@@ -183,3 +174,24 @@ Residual (declared): an attacker with GCP owner power defeats everything here; S
 | Monitoring metric/label names for the "no successful execution in 30 min" alert | **Not verified** | not read; P7 reads the Cloud Run metrics list first, or uses the existing failed/running policies only |
 | Scheduler service-agent token permission for OAuth | **Not verified** | not stated on the page; P7 first tick is the proof |
 
+
+## 12. Current hardening and delivery
+
+Authority: [owner decisions 1–10](DECISIONS.md#assess-self-service-hardening-owner-2026-11-05). This section supersedes the original recommendations in §§1–10; those remain historical rationale. P0 owner-reported production evidence is recorded there (11/11 ok and P0 marker set); no live action was rerun. [#241](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/241) is merged; [#242](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242) targets main after a merge commit from origin/main, no rebase.
+
+| Session | Authorised delivery | Verification / boundary |
+|---|---|---|
+| S1 (this session) | Base state, decisions, this plan; C1 promote P1/P5 SQL, manifest/readiness/fingerprints/marker; C2 successor gate-state checks | Relevant DB lane + mutation proof; docs sync twice, docs/status checks, Draft CI except expected deploy marker block |
+| S2 | DB C4 separate all-students quiz; items 2, 3, 4, 5, 9 | Questions, mixed, full-practical DB lanes; bounded scope/audit/deadline/recipient tests; no live work |
+| S3 | UI C5: owner permissions, supervisor scheduling/extra time/new attempt, student list states/result link, mount P2 screens | EN/AR, current capability guards and manifest pins |
+| S4 | Items 1, 6, 7, 10 infra scripts (dry-run default); C6 browser/axe/family audits EN/AR 390/1440; P7 update; C7 Arabic report | Investigate connection restrictions first, STOP on paid feature/cost increase; enable nothing |
+
+**Contracts to implement in the named sessions (not claims of completion):**
+- S2/S3: 2-hour default window, editable by supervisor with 7-day cap; recommend random pool “X of Y questions”; retain random_pool v2 server-side option shuffle. Add per-student assignment accommodation: bounded/audited extra time, deadline ≤ closes_at unless window extended.
+- S2: target-only notice “You have a new assessment, opens at <time>”; approved + consented accounts, no content/scores. Reuse [RAD-104](BREVO_SIGNUP_NOTIFY_RUNBOOK.md) Vault + pg_cron/pg_net + Brevo; independent kill switch OFF by default. Idempotency/revoked consent/re-scheduling must be tested before activation.
+- S2/S3: own-assignment, bounded, audited new-attempt grant only for attempts active when emergency stop held them. Typed-confirmation Resume for owner and appointed alternate; Accept restored database owner-only. No automatic release of held active attempts via Resume.
+- S4: scheduled Google Cloud daily encrypted DB dump, private bucket, bounded retention, failure alert. Use separate least-privilege `assess_backup` role; credential only in Secret Manager. Prove complete dump/restore and exact read grants without write/admin privileges before live activation; laptop backup remains for windows.
+- S4: post-stop Scheduler failure notifications ≤1/hour, explicitly “stop may be intentional”; DB size at 70% of plan limit to existing alert channels. Restrict grading credential connection sources only after cost investigation; STOP/report options if paid or increased cost, enable nothing.
+- Item 8 supervisor-authored label is REJECTED. No-expiry credential, permissioned all-students quiz, owner XLSX via QuestionImport (never Git), and three-track P7 step 13 remain accepted. No re-asking.
+
+C1/C2 preserve all original checks and applied migrations byte-for-byte. Historical installation and emergency-stop evidence keeps its original meaning; successor expected-state checks must fail on missing gate or unspecified/mismatched expectation. The promotion marker requires new owner evidence after live application in P7; P0 evidence does not attest the new schema.

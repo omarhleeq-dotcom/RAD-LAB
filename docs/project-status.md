@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 444,
-  "updated_at": "2026-11-05T06:00:00Z",
+  "revision": 445,
+  "updated_at": "2026-11-05T08:00:00Z",
   "timezone": "UTC",
   "next_id": "RAD-106",
   "tasks": [
@@ -953,12 +953,12 @@
     {
       "id": "RAD-105",
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
-      "status": "planned",
+      "status": "in_progress",
       "priority": "high",
-      "description": "P0–P6 منفذة مرحليًا في Draft ‏#241 (SQL خارج المانيفست، شاشات خاملة، عامل بدفعة وشاهد استعادة، سكربت Scheduler). P6 توقفت: عنصران فقط. P7 نافذة مالك حية بإذن كتابي؛ PR ترقية منفصل قبلها.",
-      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/DECISIONS.md#rad085-review-ready-proposal-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md؛ docs/ASSESS_P7_LAPTOP_RUNBOOK.md؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_P0_P6_2026-11-05.md؛ docs/DECISIONS.md#assess-self-service-deviations-2026-11-05",
-      "waiting_on": "owner",
-      "done_when": "يجيب المالك عن الانحرافات، يُدمج PR الترقية، وتنجح نافذة P7 بامتحان يُجدوَل ويُصحَّح بلا خطوة يدوية."
+      "description": "دُمج #241؛ الترقية Draft #242 وفق خطة S1–S4. S1: القرارات وC1/C2؛ ثم قاعدة C4 والتقوية، واجهات C5، بنية وتدقيق C6 وتقرير C7؛ P7 نافذة مالك منفصلة. أول امتحان XLSX عبر QuestionImport، وإثبات المسارات الثلاثة مطلوب.",
+      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-hardening-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md",
+      "waiting_on": "code",
+      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
     }
   ]
 }

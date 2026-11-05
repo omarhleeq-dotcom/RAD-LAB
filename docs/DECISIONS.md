@@ -1669,6 +1669,8 @@ Authority: owner's task prompt, recorded as stated; design in [ASSESS_SELF_SERVI
 - Unchanged: [RAD-059 decisions 1–14](#rad059-alternate-owner-2026-11-02) (stop-only alternate, channels, revocation A), the [owner in-app stop](#owner-inapp-stop-owner-2026-11-04), BONTRAGER-9/medical rules, and every AGENTS boundary this record does not name.
 No SQL, migration, secret, Job, Scheduler or code follows from this record.
 
+Current amendments: [hardening and four-session delivery](#assess-self-service-hardening-owner-2026-11-05).
+
 <a id="rad085-review-ready-proposal-2026-11-05"></a>
 ### Proposal only: `rad085-review-ready` functions fingerprint after W1, 2026-11-05
 **No ruling is recorded** (Decision-needed DS-9 in the [design §7](ASSESS_SELF_SERVICE_DESIGN.md#7-gap-ledger)). The promoted check now fails on production: expected `5fcd5e71…`, actual `445cb753…` (the five W1 EXECUTE grants). Recommended: exclude the `assess_grading_worker` grantee from the ACL part of the `functions` fingerprint (value stays `5fcd5e71…` on CI and production); alternative: accept both values. Replacing the value with `445cb753…` alone breaks the CI DB lane (no W1 there; Inferred, not run). Any change to the file changes the `pilot-v1` marker (hash over every manifest check), so the owner must set the new `PILOT_SCHEMA_VERIFIED` before the first Deploy after the merge; the manifest lists the file by path only. It must land before any further preflight. Nothing is applied.
@@ -1682,6 +1684,8 @@ Authority: owner's answers to DS-1…DS-10 and the DS-1 amendment in the same se
 - Hard rule: `main` stays deployable. P0 is the only change that may move the `pilot-v1` marker; new SQL (P1/P3/P5) is staged, digest-pinned and outside the applied manifest until the P7 promotion; the P2 UI calls no RPC that does not exist live and is dormant until P7; no existing check, golden or hash changes except the P0 fingerprint fix. RAD-104 is done on the owner's evidence (packet applied, check 6/6, test mail and a real sign-up digest delivered).
 No SQL, secret, Job, Scheduler or gate action follows from this record.
 
+Current amendments: [hardening and four-session delivery](#assess-self-service-hardening-owner-2026-11-05).
+
 <a id="assess-self-service-deviations-2026-11-05"></a>
 ### Proposal only: self-service deviations needing a ruling, 2026-11-05
 **No ruling is recorded.** (1) DS-5 cannot be met without changing five protected places that cap the grading credential at 90 days (`rotate-grading-credential.py` and its test, `assess-grading-worker-login.sql`, `assess-worker-login-ready.sql`, `assess-grading-worker-ready.sql`, `assess-original-worker-login-stage.sql`). Recommended: P7 uses `--valid-days 90` with rotation at most every 60 days; the promotion PR raises the cap to 365 with a new marker. (2) No advisory lock: the grading binding allows exactly five operations, and lease plus skip-locked claims already make overlap safe. (3) The witness tick rides inside `health_v1` because a sixth worker function would break the W1 grant contract. (4) P6 stopped: the repository holds two reusable non-clinical items; the live count needs the owner's read-only inventory. Evidence: the [P0–P6 report](archive/reports/2026-11/ASSESS_SELF_SERVICE_P0_P6_2026-11-05.md). Nothing is applied.
@@ -1694,3 +1698,20 @@ Authority: owner's review message and answers, recorded as stated; amends [OD1�
 - "All-students quiz" is a SEPARATE feature from group exams. Recipients: every account that is approved AND has accepted the privacy/Assess consent, resolved server-side at publish time; no student opt-in or choice. Senders: the owner always; a supervisor only with a separate "all-students" permission that the owner grants per supervisor in the owner panel (default OFF, revocable, audited), never automatic. Same windows, grading and result path as group exams.
 - P6 unblocked: the first real exam is 20 owner-authored items in an owner-held XLSX matching the existing QuestionImport columns, imported in-app by the owner/supervisor at P7 step 15 through QuestionImport. The file and any item text are never committed.
 - Next: a separate Draft promotion PR (P7 runbook §0). No live action follows from this record.
+
+Current amendments: [hardening and four-session delivery](#assess-self-service-hardening-owner-2026-11-05).
+
+<a id="assess-self-service-hardening-owner-2026-11-05"></a>
+### Assess self-service — hardening owner decisions, 2026-11-05
+Authority: owner's S1 task prompt, recorded as stated; amends the three linked decisions above. Implementation now authorised, delivered in [S1–S4](ASSESS_SELF_SERVICE_DESIGN.md#12-current-hardening-and-delivery); no live authority. Evidence and exact next prompt: [S1 report](archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md).
+1. APPROVED: daily encrypted DB dump by scheduled Google Cloud job to a private bucket, retention and failure alert; replaces routine laptop backup (laptop retained for windows). DB role `assess_backup` must be least-privilege, separate from grading, credential in Secret Manager; exact read grants and restore completeness proved before activation.
+2. APPROVED: default window 2 hours, supervisor-editable, cap 7 days; scheduling recommends random pool “X of Y questions”. Existing server-side per-student option shuffle (random_pool v2) stays.
+3. APPROVED: “You have a new assessment, opens at <time>” via existing Brevo/RAD-104 pattern ([runbook](BREVO_SIGNUP_NOTIFY_RUNBOOK.md)): Vault secrets, pg_cron/pg_net, kill switch OFF by default; only targeted, approved, consented students, no exam content or scores.
+4. APPROVED: supervisor grants a new attempt only for attempts active when emergency stop held them; bounded, audited, own assignments only.
+5. APPROVED: appointed alternate may also use typed-confirmation in-app Resume; supersedes stop-only restriction for this action. Accept restored database remains owner-only.
+6. APPROVED: failed Scheduler notifications after a stop limited to 1/hour; text says the stop may be intentional.
+7. APPROVED: DB size alert at 70% of plan limit through existing alert channels.
+8. REJECTED: supervisor-authored label. Do not implement it.
+9. APPROVED: per-student extra time per assignment, supervisor-set, bounded and audited; deadline never exceeds window unless supervisor extends it.
+10. INVESTIGATE FIRST: restrict sources from which the no-expiry grading credential can connect. If paid feature or any cost increase is required, STOP and report options; enable nothing.
+Retained: no-expiry credential; separate all-students quiz with owner-granted permission per supervisor; first real exam = owner-held XLSX through QuestionImport, never committed; questions/mixed/full-practical all proven at P7 step 13. P0 owner evidence (2026-11-05): production `rad085-review-ready.sql` 11/11 ok, functions `5fcd5e71…`, relations `95ae71fb…`; owner set `PILOT_SCHEMA_VERIFIED` to `pilot-v1:466390675b4ac3c32c56c242ec02eeebfe5a745f7bfcc37f57b955576fb23d19` ([P0](ASSESS_P0_MARKER_RUNBOOK.md)). Owner-reported, not independently rerun here; no addresses or IDs retained.
