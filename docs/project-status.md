@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 457,
-  "updated_at": "2026-11-06T05:52:26.138144+00:00",
+  "revision": 458,
+  "updated_at": "2026-11-06T07:28:15.854264+00:00",
   "timezone": "Asia/Amman",
   "next_id": "RAD-106",
   "tasks": [
@@ -953,11 +953,11 @@
     {
       "id": "RAD-105",
       "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي",
-      "status": "in_progress",
-      "waiting_on": "code",
+      "status": "review",
+      "waiting_on": "reviewer",
       "priority": "high",
-      "description": "S1–S3 مقبولة وخليفة عامل v2 مثبتة. وافق المالك على حزمة SELECT/RLS المحددة واستكمال نسخ S4: تغطية المزوّد والتزامن والصورة قيد التنفيذ في Draft #242. لا تفعيل حي؛ S4 وP7 تنتظران المراجعة.",
-      "source_ref": "docs/DECISIONS.md#assess-self-service-s4-owner-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_2026-11-05.md",
+      "description": "S1–S3 مقبولة والعامل v2 محفوظ. حزمة نسخ S4 وSELECT/RLS واستثناء LOB الثلاث جاهزة للمراجعة مع بروفة صورة ناجحة؛ CI للرأس النهائي بوابة التسليم. جرد/ownership واستعادة المزوّد والإيصالات الحية غير منفذة؛ النسخ الآلي غير مفعل واللابتوب مطلوب. S4 وP7 تنتظران قبول المراجع.",
+      "source_ref": "docs/DECISIONS.md#assess-self-service-s4-backup-lob-owner-2026-11-06؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_BACKUP_2026-11-06.md",
       "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
     }
   ]

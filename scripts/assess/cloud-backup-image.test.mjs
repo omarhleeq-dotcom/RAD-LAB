@@ -35,6 +35,7 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
   su("set radlab.backup_apply='reviewed-select-only';"+packet);
   assert.equal(su("select md5(coalesce(jsonb_agg(to_jsonb(p) order by oid)::text,'[]')) from pg_policy p where polname<>'assess_backup_read_v1'"),oldPolicies);
   assert.equal(sha(await readInventory(db)),sha(before));
+  assert.ok(owner(read('supabase/checks/selfservice-s4-worker-ready.sql')).split('\n').every(s=>s.endsWith('|t')),'five-operation worker readiness must survive the backup packet');
   const post=owner("set radlab.expected_gate='closed';"+read('supabase/checks/selfservice-s4-rad085-review-ready.sql'));
   console.log('BACKUP_CORE_FINGERPRINT_CALIBRATION '+post.replaceAll('\n',';'));
   // Actual provider-owned rows. No real participant, exam or provider setting.

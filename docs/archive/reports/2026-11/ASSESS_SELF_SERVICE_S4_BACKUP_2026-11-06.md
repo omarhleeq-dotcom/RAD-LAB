@@ -32,12 +32,14 @@ Verified: لا تغيير للمحتوى الطبي أو scoring أو server shu
 Verified: أدلة S3 EN/AR390/1440 وaxe/family تُعاد الاستفادة منها لثبات UI؛ لا سبب متعلق بالنسخ لإعادة تصويرها.
 
 ## 6. QA
+Verified: [CI للرأس35bdee0](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/42179941804) ناجح: unit2596/DB1142، type/lint/health وbuild/Pages، والبروفتان الأصلية/المجدولة PASS/complete/cleanup. الدليل الختامي للرأس المدفوع في Checks #242.
 Verified: الاختبارات المحلية الفعلية أثبتت dump/encrypt/restore والمنح السلبية ورفض RPC/SET ROLE وconstructor بعد التصحيح وحفظ وصول الأدوار القائمة؛ كذلك رفض ownership غير متاح وسباق صلاحية بين الحارس وsnapshot.
 Verified: بناء الصورة المثبتة نجح على CI، مع default صفر اتصال/رفع وnon-root وtmpfs وTLS؛ متابعة الاستعادة ومقارنة الجرد قيد التحقق النهائي.
 Verified: Ubuntu-latest أصبح26.04 دون PG16؛ ثُبتت مهمتا DB/backup على24.04، دون تغيير bases/assertions أو حدود15دقيقة. لا cleanup إلا لموارد المهمة.
 Verified: docs sync مرتين (الثانية0)، docs:check/status:check --require-previous وdiff check؛65 مسارًا محميًا مطابقًا، وكل مسارات العامل v2 بلا تغيير. بوابة الإقفال: CI للرأس المدفوع النهائي وكل الاختبارات المطلوبة، ودليله في [Checks #242](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks).
 
 ## 7. الفجوات الدقيقة والتكلفة
+Verified على fixture فقط: حزمة المالك نفسها تعيد postgres غير-superuser؛ ownership غائب لـ25 سياسة و3 constructors، ومنح SELECT غائبة لـ21 كائنًا وUSAGE لـauth؛ إنشاء الدور دون عضوية آلية غير متاح. إعداد البروفة استعمل supabase_admin الموجود اصطناعيًا فقط. لا تُستنتج سلطة postgres الحية؛ يلزم مسار مزوّد مدعوم بسلطة قائمة أو تبقى الآلية متوقفة، دون منح إدارة/عضوية.
 Not run: inventory وownership الفعليان للمزوّد، وحق تثبيت سياسات Auth/Storage ووظائف PG المملوكة للمزوّد وإنشاء دور دون عضوية آلية. [حزمة القراءة فقط](../../../../supabase/checks/selfservice-backup-inventory.sql) جاهزة ولا تُنفذ هنا.
 Not run: restore فعلية مع provider extensions/settings وVault external key؛ استعادة ciphertext لا تثبت فك Vault. Storage metadata ليست object bytes؛ role passwords مستبعدة عمدًا وتدوّر بعد الاستعادة.
 Not run: provider recovery/retention deletion/notification receipt/old-credential rejection/alternate drill/live Scheduler tracks؛ النسخ الآلي غير مفعل واللابتوب مطلوب.
