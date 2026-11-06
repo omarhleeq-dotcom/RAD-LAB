@@ -65,8 +65,8 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
   const config={host:f.host,port:5432,database:'postgres',user:'assess_backup',password,ca:f.ca,bucket:'synthetic-backup-bucket',recipient:'',inventorySha256:sha(withLob),planLimitBytes:500000000};
   // Owner identity remains on the host; only its public recipient enters the job.
   const identity=join(root,'owner-identity');writeFileSync(identity,execFileSync('age-keygen',[],{stdio:'pipe'}),{mode:0o600});config.recipient=execFileSync('age-keygen',['-y',identity],{encoding:'utf8'}).trim();
-  let writes=0;
-  const volumeWrite=(volume,files)=>{const name=prefix+'-init-'+(++writes);owned.add(name);docker(['run','-i','--name',name,'--network=none','--read-only','--user=0:0','--cap-drop=ALL','--cap-add=CHOWN','--mount',`type=volume,src=${volume},dst=/v`,'--entrypoint=node',image,'-e',
+  let writes=0;const initializedVolumes=new Set();
+  const volumeWrite=(volume,files)=>{const first=!initializedVolumes.has(volume);initializedVolumes.add(volume);const name=prefix+'-init-'+(++writes);owned.add(name);docker(['run','-i','--name',name,'--network=none','--read-only',first?'--user=0:0':'--user=999:999','--cap-drop=ALL',...(first?['--cap-add=CHOWN']:[]),'--mount',`type=volume,src=${volume},dst=/v`,'--entrypoint=node',image,'-e',
    "const fs=require('fs');let s='';process.stdin.on('data',b=>s+=b);process.stdin.on('end',()=>{const files=JSON.parse(s);fs.chmodSync('/v',0o700);for(const[k,v]of Object.entries(files)){fs.writeFileSync('/v/'+k,v,{mode:0o600});fs.chownSync('/v/'+k,999,999);}fs.chownSync('/v',999,999);});"],JSON.stringify(files));};
   const setConfig=c=>volumeWrite(secrets,{'assess-backup.json':JSON.stringify(c),'storage-ca.pem':read(join(root,'gcs.crt'))});setConfig(config);
   volumeWrite(mockVolume,{'gcs.key':read(join(root,'gcs.key')),'gcs.crt':read(join(root,'gcs.crt'))});

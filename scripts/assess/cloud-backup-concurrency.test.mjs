@@ -59,3 +59,5 @@ const roleABA=async()=>{};roleABA.roles=true;
 test('role archive read during attribute change is rejected after role reset: actual restore differs from snapshot', {timeout:120000},()=>proof(roleABA,{expectedFailure:'roles'}));
 
 test('concurrent enum schema change refuses publication and cleans', {timeout:120000},()=>proof(async f=>{await f.admin.query("alter type public.backup_state add value 'changed'");},{expectedFailure:'consistency'}));
+
+test('approved system-constructor ACL ABA drift refuses publication', {timeout:120000},()=>proof(async f=>{await f.admin.query('grant execute on function pg_catalog.lo_create(oid) to public;revoke execute on function pg_catalog.lo_create(oid) from public');},{expectedFailure:'consistency'}));
