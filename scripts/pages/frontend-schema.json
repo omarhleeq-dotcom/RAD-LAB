@@ -81,7 +81,7 @@
     "src/features/pilot/owner-dashboard-deferred.ts": "efe0b0a805bb69c1f1dd4e82ea06afb9ae9018066488157a93f496db1883e702",
     "src/features/pilot/OwnerActivity.tsx": "7f68910266b3bd9b1a51c96629a3a558cb9ba4593c883b6d2d39b972bc41c464",
     "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
-    "src/features/pilot/OwnerPanel.tsx": "1c1aa81e0e7e81531145af5cc6d3c8ebedcd9cfc62d5b1e54ea790c35f304a4a",
+    "src/features/pilot/OwnerPanel.tsx": "ec3d540c320b80e1387cd2aa43c7b4759116d693c1dfa4bb39dad071966f0776",
     "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
     "src/features/pilot/c2-contract.ts": "2ea21fcb5b638ccc29dd5bea00801ba0c2d0216b4a6d99c6774255c55a4a91e0",
     "src/features/assess/OwnerAssessPanel.tsx": "25527a1be363c5259379606aeb6eb3bc56458c07882a0a6a93d3bb633454a6e9",

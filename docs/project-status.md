@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 463,
-  "updated_at": "2026-11-06T17:31:05.688Z",
+  "revision": 464,
+  "updated_at": "2026-11-06T21:38:01.574Z",
   "timezone": "Asia/Amman",
   "next_id": "RAD-107",
   "tasks": [
@@ -966,8 +966,8 @@
       "status": "review",
       "waiting_on": "reviewer",
       "priority": "medium",
-      "description": "قُبل P1 بالتنسيق؛ مرشح P2 في Draft #243 يقلل حمولة ملخص Home/Catalogue بإسقاط إضافي مع حفظ500 سجل والحكم والترتيب. ينتظر CI للرأس النهائي ومراجعة التنسيق؛ لا بدءP3، و#242 محفوظ.",
-      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md؛ docs/DECISIONS.md#performance-p2-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P2_2026-11-06.md",
+      "description": "قُبل P1/P2 بالتنسيق؛ مرشح P3 في Draft #243 يفصل تبويبات Owner غير النشطة بقياسات باردة/دافئة وأول استخدام مؤجل. ينتظر مراجعة التنسيق مع توثيق CI للرأس النهائي؛ قياس المكونات لا يثبت أداء الإنتاج، و#242 محفوظ.",
+      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md؛ docs/DECISIONS.md#performance-p2-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P2_2026-11-06.md؛ docs/DECISIONS.md#performance-p3-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P3_2026-11-06.md",
       "done_when": "دفعات أداء مقبولة ومدمجة بأمر المالك، بقياس قبل/بعد وحفظ الصلاحيات والنتائج والصفحات وفحوص EN/AR؛ لا نجاح حي مستنتج من المختبر."
     }
   ]

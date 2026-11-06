@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { useEffect, useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import { Component, useEffect, useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import type { ProfileStatus } from "./account-state";
 import { getPilotClient } from "./client";
@@ -9,9 +10,7 @@ import { ParticipantActivity } from "./OwnerActivity";
 import { EMPTY_FILTERS, readOwnerPage } from "./owner-data";
 import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, parseParticipants } from "./owner-state";
 import { useSessionAccount } from "./SessionGate";
-import { OwnerAssessPanel } from "@/features/assess/OwnerAssessPanel";
 import { OwnerDirectory, OwnerSearchSeed, ownerButton as btn } from "./OwnerDirectory";
-import { OwnerTraining } from "./OwnerTraining";
 import { FIRST, type DirectoryPerson, type Position } from "./owner-dashboard-data";
 import { requestOwnerDirectory } from "./owner-directory-request";
 import { useC2Adapter } from "./C2Session";
@@ -19,6 +18,24 @@ import { DeactivateAccount, OwnerDeletion } from "./OwnerDeletion";
 import { findParticipant, LOOKUP_PAGES, OwnerSurveys, type Lookup } from "./OwnerSurveys";
 import { Chip } from "./OwnerUi";
 import {EmergencySession} from '@/features/emergency/EmergencySession';
+// Inactive tabs must not pull authoring/results and the exam registry into Students.
+// EmergencySession and its stop controller deliberately remain eager.
+const OwnerAssessPanel=dynamic(()=>import("@/features/assess/OwnerAssessPanel").then(m=>m.OwnerAssessPanel),{loading:OwnerTabLoading});
+const OwnerTraining=dynamic(()=>import("./OwnerTraining").then(m=>m.OwnerTraining),{loading:OwnerTabLoading});
+function OwnerTabLoading() {
+ const t=useTranslations("owner.dashboard");
+ return <p role="status">{t("loading")}</p>;
+}
+function OwnerTabError({href}:{href:string}) {
+ const t=useTranslations("owner");
+ return <p role="alert">{t("errors.action")} <a className="underline" href={href}>{t("refresh")}</a></p>;
+}
+/** A failed chunk leaves navigation/stop available; a native reload retries a fresh module graph. */
+class OwnerTabBoundary extends Component<{href:string;children:ReactNode},{failed:boolean}> {
+ state={failed:false};
+ static getDerivedStateFromError(){return {failed:true};}
+ render(){return this.state.failed?<OwnerTabError href={this.props.href}/>:this.props.children;}
+}
 const tabs=["students","groups","assess","practice","surveys","safety"] as const;
 type Tab=typeof tabs[number];
 // Links saved before the restructure keep working.
@@ -123,9 +140,11 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
    :filter==="supervisors"?<OwnerSearchSeed.Provider value={seed}>{supervisors??<p role="status">{c2("unavailable")}</p>}</OwnerSearchSeed.Provider>
    :<OwnerDirectory revision={version} status={filter==="all"?"":filter}>{p=>card(p)}</OwnerDirectory>}
   </section>}
-  {tab==="groups"&&<OwnerAssessPanel key={`groups:${ownerId}`} section="groups"/>}
-  {tab==="assess"&&<OwnerAssessPanel key={`assess:${ownerId}`} section="assess" onQueue={(count,more)=>setQueue({count,more})}/>}
-  {tab==="practice"&&<OwnerTraining key={version}/>}
+  {(tab==="groups"||tab==="assess"||tab==="practice")&&<OwnerTabBoundary key={tab} href={`?tab=${tab}`}>
+   {tab==="groups"&&<OwnerAssessPanel key={`groups:${ownerId}`} section="groups"/>}
+   {tab==="assess"&&<OwnerAssessPanel key={`assess:${ownerId}`} section="assess" onQueue={(count,more)=>setQueue({count,more})}/>}
+   {tab==="practice"&&<OwnerTraining key={version}/>}
+  </OwnerTabBoundary>}
   {tab==="surveys"&&(adapter?<OwnerSurveys adapter={adapter} ownerId={ownerId} onLookup={code=>{setWho(w=>({account:state,code,request:(w?.request??0)+1,result:null}));go("students");requestAnimationFrame(()=>document.getElementById("owner-who-title")?.focus());}}/>:<p role="status">{waiting}</p>)}
   {/* RAD-095: once opened, Safety stays mounted (hidden on other tabs) so a running stop is never cleared by a tab change. */}
   {safetySeen&&<section hidden={tab!=="safety"} aria-labelledby="owner-safety-title" className="min-w-0 space-y-3">
