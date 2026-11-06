@@ -9,7 +9,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Wrist side](#wrist-side-current)
 - [Data and engine separation](#data-and-engine)
 - [Practice/pilot scope](#practice-and-pilot)
-- [Current Assess design](#assess-design)
+- [Current Assess design](#assess-design); [current laptop backup scope and cloud deferral](#assess-self-service-backup-deferred-owner-2026-11-06)
 - [Reference-first and provisional review](#reference-and-source)
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)

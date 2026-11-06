@@ -25,7 +25,7 @@ jobs:
       - name: Required pinned provider-shaped backup fixture (no skip)
         run: docker pull supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d
       - name: Required exact SELECT/RLS and concurrent backup proofs (no skip)
-        run: node --test scripts/assess/cloud-backup.test.mjs scripts/assess/cloud-backup-contract.test.mjs scripts/assess/cloud-backup-concurrency.test.mjs
+        run: node --test scripts/assess/selfservice-ops-plan.test.mjs scripts/assess/cloud-backup.test.mjs scripts/assess/cloud-backup-contract.test.mjs scripts/assess/cloud-backup-concurrency.test.mjs
       - name: Required actual pinned encrypted backup image (no skip)
         run: node --test scripts/assess/cloud-backup-image.test.mjs
       - name: Retained deferred catalogue and RLS regressions

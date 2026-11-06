@@ -1,6 +1,8 @@
 /** S4 contracts: real isolated DB; no provider connection. */
 import { expect,it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync,mkdtempSync,writeFileSync,rmSync } from 'node:fs';
+import {join} from 'node:path';
+import {tmpdir} from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { selfServiceS3Fixture,id,type Session } from './selfservice-fixture';
 it('preflight reproduces successful v1 tick claim leaving submitted v2 work untouched',async()=>{
@@ -14,7 +16,22 @@ it('preflight reproduces successful v1 tick claim leaving submitted v2 work unto
  }finally{await db.close();}
 },300000);
 it('offline S4 plan safety and threshold proofs',()=>{
- expect(()=>execFileSync(process.execPath,['--test','scripts/assess/selfservice-ops-plan.test.mjs'],{stdio:'pipe',timeout:180000})).not.toThrow();
+ const root=mkdtempSync(join(tmpdir(),'rad105-current-plan-'));
+ try{
+  const config={project:'synthetic-project',region:'europe-west3',channels:['projects/synthetic-project/notificationChannels/1','projects/synthetic-project/notificationChannels/2'],planLimitBytes:500000000};
+  const path=join(root,'nonsecret.json');
+  const run=(c:unknown)=>{writeFileSync(path,JSON.stringify(c));return JSON.parse(execFileSync(process.execPath,['scripts/assess/selfservice-ops-plan.mjs','--config',path],{encoding:'utf8',stdio:'pipe'}));};
+  const p=run(config);expect(p.dryRun).toBe(true);expect(p.liveReady).toBe(false);expect(p.backup.mechanism).toBe('reviewed Windows/WSL laptop');
+  expect(p.databaseSize.sourceJob).toBe('assess-worker');expect(p.databaseSize.environment).toEqual({ASSESS_PLAN_LIMIT_BYTES:'500000000'});
+  expect(p.databaseSize.extraRpcGrants).toBe(0);expect(p.databaseSize.extraAdministrativePrivileges).toBe(0);
+  for(const key of ['bucket','iam','backupSchedule','backupJob','backupContract'])expect(p).not.toHaveProperty(key);
+  expect(p.alerts.databaseSize.conditions[0].conditionMatchedLog.filter).toContain('job_name="assess-worker"');
+  expect(p.alerts.databaseSize.conditions[0].conditionMatchedLog.filter).toContain('state="MEASURED"');
+  expect(p.alerts.postStop.conditions[0].conditionMatchedLog.filter).toContain('state="UNKNOWN"');expect(p.alerts.postStop.documentation.content).toContain('stop may be intentional');
+  for(const a of [p.alerts.postStop,p.alerts.databaseSize]){expect(a.enabled).toBe(false);expect(a.notificationChannels).toEqual(config.channels);expect(a.alertStrategy.notificationRateLimit.period).toBe('3600s');expect(a.alertStrategy.notificationPrompts).toEqual(['OPENED']);}
+  for(const bad of [{...config,password:'CANARY'},{...config,bucket:'deferred'},{...config,retentionDays:30},{...config,project:'bad;command'},{...config,region:'--quiet'},{...config,channels:[config.channels[0],config.channels[0]]},{...config,channels:[config.channels[0],'projects/other/notificationChannels/1']},{...config,planLimitBytes:0}])expect(()=>run(bad)).toThrow();
+  expect(()=>execFileSync(process.execPath,['scripts/assess/selfservice-ops-plan.mjs','--apply'],{stdio:'pipe'})).toThrow();
+ }finally{rmSync(root,{recursive:true,force:true});}
  const entries=[1,2,3].map(n=>readFileSync(`supabase/staged/self-service/p5-entry-r${n}.mjs`,'utf8'));
  for(const [n,s]of entries.entries()){expect(s).toContain(`manifest.selfservice !== 'selfservice-r${n+1}'`);expect(s).toContain('executeGradingWorker');}
 },180000);
