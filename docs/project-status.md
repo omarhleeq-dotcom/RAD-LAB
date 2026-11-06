@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 462,
-  "updated_at": "2026-11-06T16:32:18.470Z",
+  "revision": 463,
+  "updated_at": "2026-11-06T17:31:05.688Z",
   "timezone": "Asia/Amman",
   "next_id": "RAD-107",
   "tasks": [
@@ -966,8 +966,8 @@
       "status": "review",
       "waiting_on": "reviewer",
       "priority": "medium",
-      "description": "مرشح P1 في Draft #243: خفض50% للطلبات والبايتات المتطابقة ومهلة15ث؛ تحسن الزمن غير مثبت. طُبق استثناء المالك لبصمات browserBoundaries فقط ضمن12 مسارًا؛ ينتظر CI الكامل ومراجعة التنسيق. ليس قبولًا لـP1 ولا بدء P2؛ #242 محفوظ.",
-      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md",
+      "description": "قُبل P1 بالتنسيق؛ مرشح P2 في Draft #243 يقلل حمولة ملخص Home/Catalogue بإسقاط إضافي مع حفظ500 سجل والحكم والترتيب. ينتظر CI للرأس النهائي ومراجعة التنسيق؛ لا بدءP3، و#242 محفوظ.",
+      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md؛ docs/DECISIONS.md#performance-p2-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P2_2026-11-06.md",
       "done_when": "دفعات أداء مقبولة ومدمجة بأمر المالك، بقياس قبل/بعد وحفظ الصلاحيات والنتائج والصفحات وفحوص EN/AR؛ لا نجاح حي مستنتج من المختبر."
     }
   ]

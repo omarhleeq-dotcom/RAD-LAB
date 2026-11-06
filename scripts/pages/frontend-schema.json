@@ -75,7 +75,7 @@
     "src/features/pilot/PilotSessionKeeper.tsx": "c812951455090fc989fd481ddaadced07e16b2533af8d359e276857779b6fe88",
     "src/features/pilot/useOwnerData.ts": "bd6ef03a4143401f32617e24e1ce1d15466b2953151bfcae55e3ffb44958e534",
     "src/features/pilot/owner-data.ts": "a6b0f47c993869e60c605009d9b7cb483f94bfda3bce83e2e20b1934bb2ea5c4",
-    "src/features/pilot/TrainingSummary.tsx": "67e0146747ad1a8f1e4658b22cece8fe6cd35ded6e33af5592013cf033572e08",
+    "src/features/pilot/TrainingSummary.tsx": "37ebc9354fecb2a3f20eebc040b25fa9156e7834236c5f0635b8cb38b08fa390",
     "src/features/pilot/OwnerTraining.tsx": "5b762de3210540c8327136efc8b2737ffc04cf3932d53edaa6b862ffad13b019",
     "src/features/pilot/owner-dashboard-data.ts": "7eeeefd28b84f9406bd017e547ea2dba1a9db6c308c81199df3b0fdcceaadc10",
     "src/features/pilot/owner-dashboard-deferred.ts": "efe0b0a805bb69c1f1dd4e82ea06afb9ae9018066488157a93f496db1883e702",
@@ -102,7 +102,9 @@
     "src/features/assess/selfservice/adapter.ts": "349386506711fc5bfa24599c1dc729946e87bcaa4ef924b724c3eaf10a3fd5aa",
     "src/features/assess/selfservice/runner.ts": "587bd24e049594c093321b04c84d6389023f3eb71bea7436fe066b364543e8ee",
     "src/features/assess/selfservice/SelfServiceSession.tsx": "72b9f9a3149936ef3e3ab93b75c4c1d383b9ce2ac0f26d23a536ced9d91e603b",
-    "src/features/pilot/owner-directory-request.ts": "c8db5b943086855b19fafdf673be6e029c05ea369e5a1459e8e6cce9cc14c25a"
+    "src/features/pilot/owner-directory-request.ts": "c8db5b943086855b19fafdf673be6e029c05ea369e5a1459e8e6cce9cc14c25a",
+    "src/features/pilot/useSavedSummary.ts": "b26fe008dd5120bd8650c2213303ac25edf2847f9f2f6df53db95f115a0b4c54",
+    "src/features/pilot/saved-summary.ts": "41dd73450c9f5759cecadb332e8191c908072addb927166ff12bee7056845681"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",
