@@ -247,6 +247,38 @@ describe.each(modes)('C1/C2 production promotion %s',mode=>{
    ])expect(flatten(await db.admin.query(s4Ready.replace('begin read only;','begin;'+change+';'))).filter(r=>r.ok!==true).map(r=>r.check_name)).toEqual(['functions']);
 
 
+   // Successor calibration runs only AFTER every protected earlier oracle/mutation.
+   // The approved W1 TEMP redistribution precedes backup creation, as in production.
+   await db.admin.query(readFileSync('supabase/manual/assess-grading-worker-provision.sql','utf8'));
+   await db.admin.query(readFileSync('supabase/manual/assess-grading-worker-public-temp.sql','utf8'));
+   const {readInventory,grantPacket}=await import('../../../scripts/ops/'+'cloud-backup-contract.mjs') as {readInventory:(db:unknown)=>Promise<unknown>;grantPacket:(v:unknown)=>string};
+   const backupPacket=grantPacket(await readInventory(db.admin));
+   const applyBackup="set radlab.backup_apply='reviewed-select-only';"+backupPacket;
+   if(mode==='embedded'){
+    const bootstrap=await db.connect('backup-fixture-bootstrap','rad085_fixture_bootstrap');
+    try{await bootstrap.query(applyBackup);}finally{await bootstrap.end();}
+   }else{
+    const name=execFileSync('docker',['ps','--filter',`name=rad062-m09-${process.pid}-`,'--format','{{.Names}}'],{encoding:'utf8'}).trim();
+    expect(name).toMatch(new RegExp(`^rad062-m09-${process.pid}-[0-9]+$`));
+    execFileSync('docker',['exec','-i',name,'psql','-X','-v','ON_ERROR_STOP=1','-U','supabase_admin','-d','rad_restore','-f','-'],{input:applyBackup,stdio:'pipe',timeout:120000});
+   }
+   await db.admin.query('set search_path=public');
+   const backed=await snapshot();
+   expect(afterS4.filter(b=>b.kind==='function'&&JSON.stringify(b.doc)!==JSON.stringify(backed.find(a=>a.kind===b.kind&&a.name===b.name)?.doc))).toEqual([]);
+   // Only the approved relation ACL/policy fields may change; bodies/columns/FKs stay exact.
+   for(const old of afterS4.filter(b=>b.kind==='relation')){
+    const current=backed.find(a=>a.kind===old.kind&&a.name===old.name)!;
+    const strip=(doc:Record<string,unknown>)=>Object.fromEntries(Object.entries(doc).filter(([k])=>!['acl','policies'].includes(k)));
+    expect(strip(current.doc)).toEqual(strip(old.doc));
+   }
+   const backupReady=readFileSync('supabase/checks/selfservice-s4-backup-rad085-review-ready.sql','utf8');
+   const backupRows=flatten(await db.admin.query(backupReady));
+   console.info('S4 backup independent production fingerprints',mode,JSON.stringify(backupRows.filter(r=>r.actual)));
+   expect(backupRows.filter(r=>r.ok!==true)).toEqual([]);
+   for(const change of ['grant update on assess.sessions to assess_backup','alter policy assess_backup_read_v1 on assess.sessions using(false)','drop policy assess_backup_read_v1 on assess.sessions'])
+    expect(flatten(await db.admin.query(backupReady.replace('begin read only;','begin;'+change+';'))).filter(r=>r.ok!==true).map(r=>r.check_name)).toEqual(['relations']);
+
+
   }finally{await db.close();}
  },300000);
 });

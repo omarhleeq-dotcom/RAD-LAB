@@ -25,7 +25,7 @@ export async function readerFixture(){
  const {readInventory,grantPacket,sha}=await import('../ops/cloud-backup-contract.mjs');
  await f.admin.query(`create schema assess;create table assess.launch_gate(enabled boolean);insert into assess.launch_gate values(false);
   revoke create on schema public from public;revoke temporary on database postgres from public;
-  create role provider_owner nologin;
+  create role provider_owner nologin;create type public.backup_state as enum ('ready');
   create table public.rows(id bigserial primary key,body text);insert into public.rows(body) select 'SYNTHETIC_'||n from generate_series(1,10) n;
   alter table public.rows owner to provider_owner;alter table public.rows enable row level security;alter table public.rows force row level security;
   select setval('public.rows_id_seq',100,true);select lo_from_bytea(42000,decode('000102ff','hex'));
@@ -88,7 +88,7 @@ export async function productionFixture(){
   docker(['exec','-u','root',db,'mkdir','-p','/etc/rad105-backup-tls']);
   for(const file of ['source.key','source.crt'])docker(['cp',join(root,file),db+':/etc/rad105-backup-tls/'+file]);
   docker(['exec','-u','root',db,'sh','-c','chown -R postgres:postgres /etc/rad105-backup-tls && chmod 600 /etc/rad105-backup-tls/source.key']);
-  docker(['exec','-u','root',db,'sed','-i','-e','1i host all assess_backup all reject','-e','1i hostssl postgres assess_backup samenet scram-sha-256','/etc/postgresql/pg_hba.conf']);
+  docker(['exec','-u','root',db,'sed','-i','-e','1i hostssl postgres assess_backup samenet scram-sha-256','-e','1i host all assess_backup all reject','/etc/postgresql/pg_hba.conf']);
   su("alter system set ssl='on';alter system set ssl_cert_file='/etc/rad105-backup-tls/source.crt';alter system set ssl_key_file='/etc/rad105-backup-tls/source.key';select pg_reload_conf();");
   // Query helper executes only inside this isolated Docker network via psql.
   const query=async sql=>JSON.parse(su("set search_path='';set TimeZone='UTC';select coalesce(jsonb_agg(q),'[]'::jsonb) from ("+sql+") q"));

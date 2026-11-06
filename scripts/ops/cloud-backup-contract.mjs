@@ -53,6 +53,10 @@ export const literal=s=>"'"+String(s).replaceAll("'","''")+"'";
 // deliberately absent. Physical catalogue maintenance may conservatively STOP.
 export const fenceSql=`select md5(jsonb_build_object(
  'class',(select jsonb_agg(jsonb_build_array(c.oid,c.xmin::text) order by c.oid) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname not in ('pg_catalog','information_schema') and n.nspname !~ '^pg_(toast|temp)'),
+ 'types',(select jsonb_agg(jsonb_build_array(t.oid,t.xmin::text) order by t.oid) from pg_type t join pg_namespace n on n.oid=t.typnamespace where n.nspname not in ('pg_catalog','information_schema')),
+ 'enums',(select jsonb_agg(jsonb_build_array(oid,xmin::text) order by oid) from pg_enum),
+ 'default_acl',(select jsonb_agg(jsonb_build_array(oid,xmin::text) order by oid) from pg_default_acl),
+ 'event_triggers',(select jsonb_agg(jsonb_build_array(oid,xmin::text) order by oid) from pg_event_trigger),
  'proc',(select jsonb_agg(jsonb_build_array(p.oid,p.xmin::text) order by p.oid) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname not in ('pg_catalog','information_schema')),
  'policy',(select jsonb_agg(jsonb_build_array(oid,xmin::text) order by oid) from pg_policy),
  'sequence',(select jsonb_agg(jsonb_build_array(seqrelid,xmin::text) order by seqrelid) from pg_sequence),

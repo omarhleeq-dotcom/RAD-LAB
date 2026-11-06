@@ -57,3 +57,5 @@ test('schema ABA changes tuple identity and refuses even after body reset', {tim
 },{expectedFailure:'consistency'}));
 const roleABA=async()=>{};roleABA.roles=true;
 test('role archive read during attribute change is rejected after role reset: actual restore differs from snapshot', {timeout:120000},()=>proof(roleABA,{expectedFailure:'roles'}));
+
+test('concurrent enum schema change refuses publication and cleans', {timeout:120000},()=>proof(async f=>{await f.admin.query("alter type public.backup_state add value 'changed'");},{expectedFailure:'consistency'}));

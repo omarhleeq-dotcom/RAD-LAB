@@ -97,7 +97,7 @@ describe('mounted only through the schema-detected S3 entry', () => {
   }
  });
  it('the deploy schema gate accepts the freshly calibrated S4 marker', () => {
-  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:8c8207de423ba717b4607f3d9cd029f2f16436f4f6e4b8df06679eff3cc2dedc' } });
+  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:ab95ba99731206ac60346e243b7cbce6a872fea564343e753ccc65ac6f70b4a2' } });
   expect(run.status, run.stderr).toBe(0);
  });
 });

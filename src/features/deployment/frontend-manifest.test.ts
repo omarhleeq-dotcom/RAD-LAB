@@ -60,7 +60,7 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
   'supabase/checks/comparison-ready.sql',
   'supabase/checks/selfservice-assess-mixed-ready.sql',
   'supabase/checks/selfservice-assess-practical-ready.sql',
-  'supabase/checks/selfservice-s4-rad085-review-ready.sql',
+  'supabase/checks/selfservice-s4-backup-rad085-review-ready.sql',
   'supabase/checks/selfservice-assess-history-ready.sql',
   'supabase/checks/selfservice-assess-retention-ready.sql',
   'supabase/checks/owner-dashboard-ready.sql',
@@ -71,5 +71,5 @@ it('pins all required/deferred migrations, checks and the promoted marker', () =
  ]);
  expect(execFileSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs', '--print-marker'], {
   encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co' },
- }).trim()).toBe('pilot-v1:8c8207de423ba717b4607f3d9cd029f2f16436f4f6e4b8df06679eff3cc2dedc');
+ }).trim()).toBe('pilot-v1:ab95ba99731206ac60346e243b7cbce6a872fea564343e753ccc65ac6f70b4a2');
 });

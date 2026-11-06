@@ -48,7 +48,7 @@
     "supabase/checks/comparison-ready.sql",
     "supabase/checks/selfservice-assess-mixed-ready.sql",
     "supabase/checks/selfservice-assess-practical-ready.sql",
-    "supabase/checks/selfservice-s4-rad085-review-ready.sql",
+    "supabase/checks/selfservice-s4-backup-rad085-review-ready.sql",
     "supabase/checks/selfservice-assess-history-ready.sql",
     "supabase/checks/selfservice-assess-retention-ready.sql",
     "supabase/checks/owner-dashboard-ready.sql",
