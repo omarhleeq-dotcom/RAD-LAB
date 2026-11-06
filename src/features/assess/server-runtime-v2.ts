@@ -31,11 +31,11 @@ export function createGradingWorkerBindingV2(config: WorkerBinding): AssessRpc &
   if (config.sessionPoolerProjectRef !== undefined || (config.connections ?? 1) !== 1) invalid();
   return binding({ ...config, connections: 1 });
 }
-export function createScheduledWorkerBindingV2(config: WorkerBinding): AssessRpc & { close(): Promise<void> } {
+export function createScheduledWorkerBindingV2(config: WorkerBinding, observeDatabaseSize?: (bytes: unknown) => void): AssessRpc & { close(): Promise<void> } {
   if (config.sessionPoolerProjectRef !== undefined || (config.connections ?? 1) !== 1) invalid();
-  return binding({ ...config, connections: 1 }, true);
+  return binding({ ...config, connections: 1 }, true, observeDatabaseSize);
 }
-function binding(config: WorkerBinding, scheduled = false): AssessRpc & { close(): Promise<void> } {
+function binding(config: WorkerBinding, scheduled = false, observeDatabaseSize?: (bytes: unknown) => void): AssessRpc & { close(): Promise<void> } {
   const max = 1;
   const selected = scheduled ? scheduledOperations : operations;
   const login = config.user;
@@ -73,7 +73,8 @@ function binding(config: WorkerBinding, scheduled = false): AssessRpc & { close(
           return value;
         });
       } catch { return invalid(); }
-      const sql = `select assess.${name}(${fields.map(([, cast], i) => `$${i + 1}::${cast}`).join(",")}) as value`;
+      const sample=scheduled&&name==="worker_health_v2"&&observeDatabaseSize!==undefined;
+      const sql = `select assess.${name}(${fields.map(([, cast], i) => `$${i + 1}::${cast}`).join(",")}) as value${sample?", pg_catalog.pg_database_size(current_database())::text as database_bytes":""}`;
       active++;
       let client: PoolClient | undefined;
       let discard = false, committing = false;
@@ -127,10 +128,11 @@ function binding(config: WorkerBinding, scheduled = false): AssessRpc & { close(
         await client.query("set local search_path = ''");
         await client.query("set local statement_timeout = '60s'");
         await client.query("set local lock_timeout = '5s'");
-        const result = await client.query<{ value: T }>(sql, values);
+        const result = await client.query<{ value: T; database_bytes?: string }>(sql, values);
         if (result.rows.length !== 1) throw new Error();
         committing = true;
         await client.query("commit");
+        if(sample)observeDatabaseSize!(result.rows[0]!.database_bytes);
         return result.rows[0]!.value;
       } catch (error) {
         discard = true;

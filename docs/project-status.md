@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 458,
-  "updated_at": "2026-11-06T07:28:15.854264+00:00",
+  "revision": 459,
+  "updated_at": "2026-11-06T13:08:07.931377+00:00",
   "timezone": "Asia/Amman",
   "next_id": "RAD-106",
   "tasks": [
@@ -956,8 +956,8 @@
       "status": "review",
       "waiting_on": "reviewer",
       "priority": "high",
-      "description": "S1–S3 مقبولة والعامل v2 محفوظ. حزمة نسخ S4 وSELECT/RLS واستثناء LOB الثلاث جاهزة للمراجعة مع بروفة صورة ناجحة؛ CI للرأس النهائي بوابة التسليم. جرد/ownership واستعادة المزوّد والإيصالات الحية غير منفذة؛ النسخ الآلي غير مفعل واللابتوب مطلوب. S4 وP7 تنتظران قبول المراجع.",
-      "source_ref": "docs/DECISIONS.md#assess-self-service-s4-backup-lob-owner-2026-11-06؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_BACKUP_2026-11-06.md",
+      "description": "S1–S3 مقبولة؛ تحضير S4 المعدل للمراجعة. النسخ الحالي Windows/WSL، والسحابي وتبعياته مؤجلة بإذن المالك؛ قياس70% من العامل القائم دون امتيازات جديدة. CI للرأس النهائي مطلوب؛ النسخة الحديثة والإيصالات وبقية الأدلة الحية تنتظر عودة المالك باللابتوب. S4 غير مقبولة بعد وP7 لم تبدأ.",
+      "source_ref": "docs/DECISIONS.md#assess-self-service-backup-deferred-owner-2026-11-06؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_AMENDMENT_2026-11-06.md",
       "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
     }
   ]

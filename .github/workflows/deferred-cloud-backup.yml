@@ -1,0 +1,34 @@
+# Owner-deferred regression only: no deploy/provider/provisioning step or secrets.
+# Explicit workflow_dispatch only, independent from current Assess check/attestation.
+name: Deferred cloud backup regression
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Required native backup tools (no skip)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends age postgresql-16 postgresql-client-16
+      - name: Required pinned provider-shaped backup fixture (no skip)
+        run: docker pull supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d
+      - name: Required exact SELECT/RLS and concurrent backup proofs (no skip)
+        run: node --test scripts/assess/cloud-backup.test.mjs scripts/assess/cloud-backup-contract.test.mjs scripts/assess/cloud-backup-concurrency.test.mjs
+      - name: Required actual pinned encrypted backup image (no skip)
+        run: node --test scripts/assess/cloud-backup-image.test.mjs
+      - name: Retained deferred catalogue and RLS regressions
+        run: |
+          node scripts/assess/setup-rad085-postgres.mjs
+          npx vitest run --config vitest.deferred-backup.config.mts

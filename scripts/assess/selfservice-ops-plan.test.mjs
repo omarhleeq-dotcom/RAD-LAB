@@ -26,3 +26,14 @@ test('exact 70% boundary, large sizes, invalid/unknown never healthy',()=>{
  assert.equal(sizeSignal(Number.MAX_SAFE_INTEGER,Number.MAX_SAFE_INTEGER).databaseSizeAlert70,true);
  for(const [b,l]of[[null,10],[NaN,10],[-1,10],[0,0],[0,Infinity],[1.1,10]])assert.throws(()=>sizeSignal(b,l));
 });
+test('amended current CLI requires no cloud backup; worker size uses existing channels and UNKNOWN failure routing',async()=>{
+ const {assessPreparationPlan,main}=await import('./selfservice-ops-plan.mjs');
+ const current={project:c.project,region:c.region,channels:c.channels,planLimitBytes:c.planLimitBytes},p=assessPreparationPlan(current);
+ assert.equal(p.dryRun,true);assert.equal(p.liveReady,false);assert.equal(p.backup.mechanism,'reviewed Windows/WSL laptop');
+ assert.equal(p.databaseSize.sourceJob,'assess-worker');assert.equal(p.databaseSize.environment.ASSESS_PLAN_LIMIT_BYTES,'500000000');assert.equal(p.databaseSize.extraRpcGrants,0);assert.equal(p.databaseSize.extraAdministrativePrivileges,0);
+ assert.match(p.alerts.databaseSize.conditions[0].conditionMatchedLog.filter,/job_name="assess-worker"/);assert.match(p.alerts.databaseSize.conditions[0].conditionMatchedLog.filter,/state="MEASURED"/);
+ assert.match(p.alerts.postStop.conditions[0].conditionMatchedLog.filter,/state="UNKNOWN"/);assert.match(p.alerts.postStop.documentation.content,/stop may be intentional/);
+ for(const a of Object.values(p.alerts)){assert.equal(a.enabled,false);assert.deepEqual(a.notificationChannels,c.channels);assert.equal(a.alertStrategy.notificationRateLimit.period,'3600s');assert.deepEqual(a.alertStrategy.notificationPrompts,['OPENED']);}
+ for(const key of ['bucket','iam','backupSchedule','backupJob','backupContract'])assert.equal(Object.hasOwn(p,key),false);
+ assert.ok(p.blockers.every(x=>!x.includes('cloud')&&!x.includes('backup exact grants')));assert.throws(()=>assessPreparationPlan(c));assert.throws(()=>assessPreparationPlan({...current,password:'CANARY'}));assert.throws(()=>main(['--apply']));
+});

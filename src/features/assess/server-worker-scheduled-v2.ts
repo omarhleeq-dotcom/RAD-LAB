@@ -1,4 +1,5 @@
 /** Approved S4 successor; original v1 host remains unchanged. Import starts nothing. */
+import { databaseSizeMonitor } from './database-size';
 import { parseJobConfig } from './server-job';
 import { createScheduledWorkerBindingV2, type WorkerBinding } from './server-runtime-v2';
 import { runAssessJobsV2 } from './server-service-v2';
@@ -21,18 +22,20 @@ function health(raw: Health) {
  return raw;
 }
 export async function executeGradingWorker(load: () => Promise<unknown>, signal: AbortSignal, verify: () => Promise<void>,
- make: (c: WorkerBinding) => Worker = createScheduledWorkerBindingV2, observe?: JobControls['observe'], options?: Options) {
+ make: (c: WorkerBinding, observeDatabaseSize?: (bytes: unknown) => void) => Worker = createScheduledWorkerBindingV2, observe?: JobControls['observe'], options?: Options) {
  let worker: Worker | undefined, code='configuration', uncertain=false;
  let counts: { graded: number; failed: number } | undefined, finalHealth: Pick<Health,'v1'|'v2'> | undefined;
  let witness: { mode: string; result: string } | undefined;
  const began=performance.now();
+ // Only this nonsecret quota setting is read; credentials/destination remain the exact SM payload.
+ const size=databaseSizeMonitor(process.env.ASSESS_PLAN_LIMIT_BYTES);
  try {
   if (!options || !Number.isInteger(options.batch) || options.batch<1 || options.batch>20 ||
    !Number.isInteger(options.budgetMs) || options.budgetMs<1 || options.budgetMs>240000 || !['shadow','enforcing'].includes(options.witness.mode)) throw Error();
   const config=parseJobConfig(await load());
   code='quarantined'; await verify();
   if (signal.aborted) throw Error();
-  worker=make(config); code='unavailable';
+  worker=make(config,size.enabled?size.observe:undefined); code='unavailable';
   const w=options.witness;
   // Commit the DB tick, then generation-checked external witness, before maintenance or claim.
   const initial=health(await worker.call<Health>('worker_health_v2',{}));
@@ -54,5 +57,5 @@ export async function executeGradingWorker(load: () => Promise<unknown>, signal:
  finally {if(worker)try{await worker.close();}catch{code='cleanup_failed';}}
  if(signal.aborted&&code!=='cleanup_failed')code='stopped';
  return {contract:WORKER_VERSION,outcome:code==='complete'?'COMPLETE':'STOP',code,...(counts?{counts}:{}),...(finalHealth?{health:finalHealth}:{}),
-  ...(witness?{witness}:{}),milliseconds:Math.ceil(performance.now()-began),reconciliationRequired:code!=='complete',runtimeOrLaunchVerified:false};
+  ...(witness?{witness}:{}),databaseSize:size.report(),milliseconds:Math.ceil(performance.now()-began),reconciliationRequired:code!=='complete',runtimeOrLaunchVerified:false};
 }

@@ -127,7 +127,7 @@ The grading credential never expires (`VALID UNTIL 'infinity'`); C3 in [#242](ht
 | Override | per-session emergency hold + gate kill switch + NOLOGIN; owner and alternate in-app, unchanged |
 | Witness bucket tamper | object access only for `assess-job`; no public access; tamper requires GCP privilege (already total) |
 
-Residual (declared): an attacker with GCP owner power defeats everything here; Supabase free-tier has no provider backups (Terms), so S4 adds daily encrypted backups; laptop backups (RAD-086) remain required for windows until the automatic path is proved.
+Residual (declared): an attacker with GCP owner power defeats everything here; Supabase free-tier has no provider backups (Terms), the current owner amendment retains reviewed Windows/WSL laptop backup and defers standalone cloud backup until partial success; the next laptop execution/verification is pending the owner window.
 
 ## 9. Phased plan (docs/impl; each phase = its own Draft PR, owner go per phase)
 
@@ -177,6 +177,8 @@ Residual (declared): an attacker with GCP owner power defeats everything here; S
 
 ## 12. Current hardening and delivery
 
+Current backup scope: [owner amendment](DECISIONS.md#assess-self-service-backup-deferred-owner-2026-11-06) supersedes the earlier cloud dependency only; reviewed Windows/WSL laptop backup remains current, with fresh execution/verification pending.
+
 Authority: [owner decisions 1–10](DECISIONS.md#assess-self-service-hardening-owner-2026-11-05). This section supersedes the original recommendations in §§1–10; those remain historical rationale. P0 owner-reported production evidence is recorded there (11/11 ok and P0 marker set); no live action was rerun. [#241](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/241) is merged; [#242](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242) targets main after a merge commit from origin/main, no rebase.
 
 | Session | Authorised delivery | Verification / boundary |
@@ -184,13 +186,13 @@ Authority: [owner decisions 1–10](DECISIONS.md#assess-self-service-hardening-o
 | S1 (accepted) | Base state, decisions, this plan; C1 promote P1/P5 SQL, manifest/readiness/fingerprints/marker; C2 successor gate-state checks | Relevant DB lane + mutation proof; docs sync twice, docs/status checks, Draft CI except expected deploy marker block |
 | S2 | DB C4 separate all-students quiz; items 2, 3, 4, 5, 9 | Questions, mixed, full-practical DB lanes; bounded scope/audit/deadline/recipient tests; no live work |
 | S3 | UI C5: owner permissions, supervisor scheduling/extra time/new attempt, student list states/result link, mount P2 screens | EN/AR, current capability guards and manifest pins |
-| S4 | Items 1, 6, 7, 10 infra scripts (dry-run default); C6 browser/axe/family audits EN/AR 390/1440; P7 update; C7 Arabic report | Investigate connection restrictions first, STOP on paid feature/cost increase; enable nothing |
+| S4 | Items 6, 7, 10 dry-run preparation; item1 cloud backup deferred; C6 browser/axe/family audits EN/AR 390/1440; P7 update; C7 Arabic report | Investigate connection restrictions first, STOP on paid feature/cost increase; enable nothing |
 
 **Contracts to implement in the named sessions (not claims of completion):**
 - S2/S3: 2-hour default window, editable by supervisor with 7-day cap; recommend random pool “X of Y questions”; retain random_pool v2 server-side option shuffle. Add per-student assignment accommodation: bounded/audited extra time, deadline ≤ closes_at unless window extended.
 - S2: target-only notice “You have a new assessment, opens at <time>”; approved + consented accounts, no content/scores. Reuse [RAD-104](BREVO_SIGNUP_NOTIFY_RUNBOOK.md) Vault + pg_cron/pg_net + Brevo; independent kill switch OFF by default. Idempotency/revoked consent/re-scheduling must be tested before activation.
 - S2/S3: own-assignment, bounded, audited new-attempt grant only for attempts active when emergency stop held them. Typed-confirmation Resume for owner and appointed alternate; Accept restored database owner-only. No automatic release of held active attempts via Resume.
-- S4: scheduled Google Cloud daily encrypted DB dump, private bucket, bounded retention, failure alert. Use separate least-privilege `assess_backup` role; credential only in Secret Manager. Prove complete dump/restore and exact read grants without write/admin privileges before live activation; laptop backup remains for windows.
+- S4 amended: keep the reviewed Windows/WSL laptop backup; fresh backup/checksums/restore/log verification before later live changes. Standalone cloud backup, provider ownership/capacity/restore and its scheduled execution are deferred until partial success and explicit resumption; no assess_backup/SELECT/RLS/constructor ACL prerequisite.
 - S4: post-stop Scheduler failure notifications ≤1/hour, explicitly “stop may be intentional”; DB size at 70% of plan limit to existing alert channels. Restrict grading credential connection sources only after cost investigation; STOP/report options if paid or increased cost, enable nothing.
 - Item 8 supervisor-authored label is REJECTED. No-expiry credential, permissioned all-students quiz, owner XLSX via QuestionImport (never Git), and three-track P7 step 13 remain accepted. No re-asking.
 
@@ -227,6 +229,6 @@ SelfServiceSession is mounted from the existing Assess author/student/history, o
 Reuse: QuestionImport/AuthoringEntry, AssessConsent, existing auto-graded runner controllers/parsers and HistoryPanel; no new authoring, publication installation, grade writer, notification transport or audit store. The presentation adapter validates v2 auto-graded items and supplies the existing view shape without reordering server items/options. Written items remain outside this UI.
 Fresh production-fixture functions `533f4f22d9f07200e6c4dbab596b4dca`; relations independently measured unchanged at `5c45889099a878446fd3a16a9569940f`. Candidate `pilot-v1:ddb4de0e9e50414239f8ebc0046d84608579928bbf7f3543721cb0c1ce960e4b`; live P0/Variable unchanged. Successor catalogue plus additive ACL readiness retain S1/S2 independent oracles; full final evidence/limitations are in the report and Draft description.
 
-### S4 integration preflight (in progress; no live authority)
-S3 including the monotonic clock correction is accepted at the head recorded in [the S4 decision](DECISIONS.md#assess-self-service-s4-owner-2026-11-05). S1/S2 acceptance stands.
-Preflight found the original production image and staged R1/R2/R3 used v1-only maintenance/claim/grading while the UI uses start_v2. The approved S4 successor now packages selectable versioned R1/R2/R3 images with exactly five v2 operations, a separate health/witness wrapper and an atomic closed/NOLOGIN/zero-v1-work grant switch; original v1 contracts/assertions remain. The verified scheduled v2 image is preserved. The approved inventory-pinned SELECT/RLS packet and exact three-constructor PUBLIC ACL exception add backup preparation; source/restore image evidence and actual provider ownership/coverage remain separate gates. Manual v2 tests or a synthetic backup alone do not prove live automation. [Combined contracts, proposed exception, backup/alert preparation and current cost evidence](ASSESS_S4_OPERATIONS.md). No role or protected contract is silently widened; P7 stays blocked until this gap and complete three-track image proof are reviewed.
+### S4 integration preparation (review pending; no live authority)
+S3 and its monotonic clock are accepted; S1/S2 acceptance remains valid. Original v1 contracts/assertions and the five-operation v2 binding remain. The current owner amendment removes cloud backup from required schema/CI/P7 paths; the active manifest again selects exact selfservice-s4-rad085-review-ready.sql with functions `50f46f597788805b0e67bc40c04401d4` and relations `5c45889099a878446fd3a16a9569940f`. No SQL definition/privilege changes are needed for the monitoring separation. Candidate marker is derived from that resulting required set; live P0/Variables remain unchanged.
+DB size is sampled through the existing guarded worker health transaction using the available pg_database_size function; only the separate aggregate report changes. The health/witness contract and five Assess operations stay exact. Missing quota/sample is UNKNOWN through existing failure channels; 70% and one-hour post-stop limits remain. [Current contracts/runbook/evidence](ASSESS_S4_OPERATIONS.md). Laptop backup has no fresh execution evidence in this batch; notification receipts, credential rejection, alternate drill, complete live scenarios and later owner attestation remain pending. Assess is not operational and S4 is not accepted before coordination review.

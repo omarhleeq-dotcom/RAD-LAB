@@ -1,10 +1,9 @@
 // S4 offline preparation. This CLI never executes a provider command, even with APPLY=1.
 import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
-export function sizeSignal(bytes, limit) {
- if (!Number.isSafeInteger(bytes)||bytes<0||!Number.isSafeInteger(limit)||limit<1) throw Error('size');
- return { databaseBytes:bytes,planLimitBytes:limit,databaseSizeAlert70:BigInt(bytes)*10n>=BigInt(limit)*7n };
-}
+import {sizeSignal} from './database-size.mjs';
+export {sizeSignal} from './database-size.mjs';
+// Deferred cloud-backup planner retained for historical regression tests only.
 export function operationsPlan(c) {
  const keys=['project','region','bucket','channels','planLimitBytes','retentionDays'];
  if(!c||Object.keys(c).sort().join()!==keys.sort().join()||!/^([a-z][a-z0-9-]{4,28}[a-z0-9])$/.test(c.project)||
@@ -49,9 +48,31 @@ export function operationsPlan(c) {
     'Database size reached 70% of the owner-verified plan limit. Compare pg_database_size with Supabase Usage; no automatic deletion or upgrade.')},
   sourceRestriction:{status:'COST_STOP',activationCommands:[],reason:'Review existing dual-stack subnet CIDR scope and Supabase entitlement first; paid static IPv4/NAT or plan changes require owner cost approval. No activation.'}};
 }
+// Current Assess path: no backup bucket, role, secret, scheduler or ownership gate.
+export function assessPreparationPlan(c) {
+ const keys=['project','region','channels','planLimitBytes'];
+ if(!c||Object.keys(c).sort().join()!==keys.sort().join()||!/^([a-z][a-z0-9-]{4,28}[a-z0-9])$/.test(c.project)||
+  !/^[a-z]+-[a-z]+[0-9]$/.test(c.region)||!Array.isArray(c.channels)||c.channels.length!==2||new Set(c.channels).size!==2||
+  c.channels.some(x=>typeof x!=='string'||!new RegExp(`^projects/${c.project}/notificationChannels/[0-9]+$`).test(x)))throw Error('config');
+ sizeSignal(0,c.planLimitBytes);
+ const policy=(name,filter,text)=>({displayName:name,enabled:false,combiner:'OR',conditions:[{displayName:name,conditionMatchedLog:{filter}}],notificationChannels:c.channels,
+  alertStrategy:{notificationRateLimit:{period:'3600s'},autoClose:'86400s',notificationPrompts:['OPENED']},documentation:{mimeType:'text/markdown',content:text}});
+ const worker=`resource.type="cloud_run_job" AND resource.labels.project_id="${c.project}" AND resource.labels.location="${c.region}" AND resource.labels.job_name="assess-worker"`;
+ const scheduler=`resource.type="cloud_scheduler_job" AND resource.labels.project_id="${c.project}" AND resource.labels.location="${c.region}" AND resource.labels.job_id="assess-worker-tick" AND jsonPayload."@type"="type.googleapis.com/google.cloud.scheduler.logging.AttemptFinished" AND jsonPayload.status!="OK"`;
+ return{contract:'rad105-assess-preparation-plan/2',dryRun:true,liveReady:false,
+  blockers:['reviewed v2 image/binding and schema attestation','fresh verified Windows/WSL laptop backup','existing channel receipts and rate-limit verification','owner laptop window permission'],
+  backup:{mechanism:'reviewed Windows/WSL laptop',freshEvidence:'PENDING owner window',cloud:'DEFERRED until partial success and explicit resumption'},
+  databaseSize:{sourceJob:'assess-worker',measurementSql:'select pg_database_size(current_database())::text',environment:{ASSESS_PLAN_LIMIT_BYTES:String(c.planLimitBytes)},
+   observation:'initial/final guarded worker health transaction; after COMMIT acknowledgement only',missing:'UNKNOWN routed through existing scheduled-failure policy',extraRpcGrants:0,extraAdministrativePrivileges:0},
+  alerts:{postStop:policy('Assess scheduled failure',`(${scheduler}) OR (${worker} AND (jsonPayload.outcome="STOP" OR severity>=ERROR OR jsonPayload.databaseSize.state="UNKNOWN"))`,
+   'Assess scheduling, grading or size measurement failed. The stop may be intentional. Check emergency stop, NOLOGIN, disabled secret and execution state; follow RAD-059. Never auto-resume or replay. One notification per hour per existing channel.'),
+   databaseSize:policy('Assess database 70 percent',`${worker} AND jsonPayload.databaseSize.state="MEASURED" AND jsonPayload.databaseSize.databaseSizeAlert70=true`,
+   'Database size reached 70% of the owner-verified plan limit. Compare pg_database_size with Supabase Usage; no automatic deletion or upgrade.')},
+  sourceRestriction:{status:'COST_STOP',activationCommands:[],reason:'Reuse reviewed connection-source investigation; no paid service, privilege or network activation.'}};
+}
 export function main(args=process.argv.slice(2)) {
  if(args.length!==2||args[0]!=='--config')throw Error('arguments');
- return operationsPlan(JSON.parse(readFileSync(args[1],'utf8')));
+ return assessPreparationPlan(JSON.parse(readFileSync(args[1],'utf8')));
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href) {
  try{process.stdout.write(JSON.stringify(main(),null,2)+'\n');}catch{process.stderr.write('STOP s4_ops_plan\n');process.exitCode=1;}

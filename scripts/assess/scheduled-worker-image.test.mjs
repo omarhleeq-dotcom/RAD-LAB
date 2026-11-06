@@ -52,6 +52,7 @@ export async function scheduledRehearsal(c) {
    const builds=[0,1].map(()=>JSON.parse(execFileSync(process.execPath,['scripts/assess/build-grading-worker.mjs',`--selfservice-r${n}`],{encoding:'utf8'})));
    contexts.push(...builds.map(b=>b.output));
    assert.equal(read(join(builds[0].output,'manifest.json')),read(join(builds[1].output,'manifest.json')));
+   assert.ok(Object.keys(JSON.parse(read(join(builds[0].output,'manifest.json'))).sources).every(p=>!p.includes('cloud-backup')));
    const image=prefix+`-s4-r${n}:local`;images.push(image);docker(['build','--network=none','-t',image,builds[0].output]);
    const info=JSON.parse(docker(['image','inspect',image]))[0];assert.equal(info.Config.User,'node');
    assert.deepEqual(info.Config.Entrypoint,['node','/app/grading-worker-main.mjs']);
@@ -89,7 +90,8 @@ export async function scheduledRehearsal(c) {
   for(let n=0;;n++){try{docker(['exec',mock,'node','-e',"fetch('http://127.0.0.1/fixture-state').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1));"]);break;}catch{if(n>=100)throw Error('mock_not_ready');await new Promise(r=>setTimeout(r,25));}}
   const control=value=>docker(['exec','-i',mock,'node','-e',
    "let s='';process.stdin.on('data',b=>s+=b);process.stdin.on('end',async()=>{const r=await fetch('http://127.0.0.1/fixture-state',{method:'POST',body:s});if(!r.ok)process.exit(1);});"],JSON.stringify(value));
-  const env=['--env','NODE_EXTRA_CA_CERTS=/run/secrets/storage-ca.pem'];
+  const trustEnv=['--env','NODE_EXTRA_CA_CERTS=/run/secrets/storage-ca.pem'];
+  const env=[...trustEnv,'--env','ASSESS_PLAN_LIMIT_BYTES=1'];
   const setInputs=n=>{
    const manifest=JSON.parse(read(join(contexts[(n-1)*2],'manifest.json'))),now=Date.now();
    inputs({config:JSON.stringify(config),...(n===3?{}:{recovery:JSON.stringify({contract:'assess-recovery-attestation/1',projectRef:ref,
@@ -141,6 +143,15 @@ export async function scheduledRehearsal(c) {
   assert.equal(r.report.witness.result,'advance');assert.equal(r.report.health.v1.failed,0);assert.equal(r.report.health.v2.failed,0);
   for(const s of sessions){assert.equal(su(`select state from assess.sessions where id='${s}'`),'graded');assert.equal(su(`select count(*) from assess.results where session_id='${s}'`),'1');assert.equal(su(`select earned_n::text||'/'||earned_d::text from assess.results where session_id='${s}'`).replace(/\.0+(?=\/|$)/g,''),'0/1');assert.equal(su(`select count(*) from assess.session_details where session_id='${s}'`),'0');}
   checks.push('r3-no-attestation-three-start-v2-submit-tracks-grade-on-restricted-image');
+  assert.equal(r.report.databaseSize.state,'MEASURED');assert.ok(Number.isSafeInteger(r.report.databaseSize.databaseBytes)&&r.report.databaseSize.databaseBytes>0);
+  assert.equal(r.report.databaseSize.planLimitBytes,1);assert.equal(r.report.databaseSize.databaseSizeAlert70,true);
+  for(const values of [trustEnv,[...trustEnv,'--env','ASSESS_PLAN_LIMIT_BYTES=NaN']]){
+   const missing=await worker(values,images[2],false);assert.equal(missing.report.outcome,'COMPLETE');assert.equal(missing.report.counts.graded,0);
+   assert.deepEqual(missing.report.databaseSize,{state:'UNKNOWN',reason:'plan_limit_unknown'});
+  }
+  assert.equal(su("select count(*) from pg_roles where rolname='assess_backup'"),'0');
+  assert.equal(su("select count(*) from pg_proc where pronamespace='assess'::regnamespace and has_function_privilege('assess_grading_worker',oid,'EXECUTE')"),'5');
+  checks.push('worker-size-measured-after-guarded-commit-no-backup-role-unknown-configuration-never-healthy');
   // Privilege drift and revocation stop before maintenance/claim; pending work survives.
   const pending=submit(0);
   for(const grant of ['grant execute on function assess.health_v1() to assess_grading_worker','grant select on assess.sessions to assess_grading_worker','grant execute on function assess.worker_health_v2() to assess_grading_worker with grant option','grant assess_worker to assess_grading_worker with admin false,inherit false,set true']){

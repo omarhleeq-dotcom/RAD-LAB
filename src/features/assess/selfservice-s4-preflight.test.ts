@@ -3,24 +3,18 @@ import { expect,it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { selfServiceS3Fixture,id,type Session } from './selfservice-fixture';
-it('preflight reproduces successful v1 tick claim leaving submitted v2 work untouched; SELECT alone cannot back up RLS rows',async()=>{
+it('preflight reproduces successful v1 tick claim leaving submitted v2 work untouched',async()=>{
  const db=await selfServiceS3Fixture();
  try {
   const s=await db.rpc<Session>(3,'start_v2',[id(51),id(700)]);
   await db.rpc(3,'command_v2',[s.attemptId,id(701),s.ack.revision,{type:'submit'}]);
   expect((await db.admin.query('select assess.claim_v1() c')).rows[0].c).toBeNull();
   expect((await db.admin.query('select state,lifecycle_version from assess.sessions where id=$1',[s.attemptId])).rows[0]).toEqual({state:'grading',lifecycle_version:2});
-  // Synthetic role only. No change to original RLS policies or provider grants.
-  await db.admin.query('create role assess_backup nologin noinherit nosuperuser nobypassrls;grant usage on schema assess to assess_backup;grant select on assess.sessions to assess_backup');
-  await db.admin.query('begin;set local role assess_backup');
-  expect((await db.admin.query('select count(*)::int n from assess.sessions')).rows[0].n).toBe(0);
-  await db.admin.query('set local row_security=off');
-  await expect(db.admin.query('select * from assess.sessions')).rejects.toMatchObject({code:'42501'});
-  await db.admin.query('rollback');
+
  }finally{await db.close();}
 },300000);
 it('offline S4 plan safety and threshold proofs',()=>{
- expect(()=>execFileSync(process.execPath,['--test','scripts/assess/selfservice-ops-plan.test.mjs','scripts/assess/cloud-backup.test.mjs'],{stdio:'pipe',timeout:180000})).not.toThrow();
+ expect(()=>execFileSync(process.execPath,['--test','scripts/assess/selfservice-ops-plan.test.mjs'],{stdio:'pipe',timeout:180000})).not.toThrow();
  const entries=[1,2,3].map(n=>readFileSync(`supabase/staged/self-service/p5-entry-r${n}.mjs`,'utf8'));
  for(const [n,s]of entries.entries()){expect(s).toContain(`manifest.selfservice !== 'selfservice-r${n+1}'`);expect(s).toContain('executeGradingWorker');}
 },180000);
