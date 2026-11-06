@@ -1,4 +1,5 @@
--- S4 approved backup SELECT/policy successor. All earlier oracles remain independently exercised.
+-- S4 backup successor: exact pre-packet and prepared states; original oracles stay independently exercised.
+-- The manual grant packet is outside frontend migrations. Absent role requires the exact original hash; a present role requires the exact prepared hash.
 -- RAD105 successor; set radlab.expected_gate to 'closed' before activation or 'open' in normal operation.
 -- Missing/invalid/mismatched expectation fails closed. No state is changed.
 -- Post-0300 successor for R1/R2/S1/P2/P3; exact catalogue/ACL, read only.
@@ -35,7 +36,7 @@ with functions as (
  where (n.nspname in ('assess','emergency') or (n.nspname='public' and c.relname in ('profiles','events','attempts','feedback','c2_account_deletions'))) and c.relkind in ('r','p')
 ), fingerprints as (
  select 'functions' check_name,md5((select jsonb_agg(to_jsonb(f) order by signature collate "C")::text from functions f)) actual,'50f46f597788805b0e67bc40c04401d4' expected
- union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),'9e9702304abbc3e87e50005468638737'
+ union all select 'relations',md5((select jsonb_agg(to_jsonb(r) order by nspname,relname)::text from relations r)),case when to_regrole('assess_backup') is null then '5c45889099a878446fd3a16a9569940f' else '9e9702304abbc3e87e50005468638737' end
 )
 select check_name,actual,expected,actual=expected ok from fingerprints
 union all select 'identity_inventory',null::text,null::text,(select inventory from assess.erasure_fk_contract where singleton)=assess.d3_fk_inventory_v1()

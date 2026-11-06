@@ -39,9 +39,14 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
    insert into auth.audit_log_entries(id,payload) values('${id(2)}','{"synthetic":true}');
    insert into auth.refresh_tokens(id,token,user_id) values(41,'SYNTHETIC_TOKEN','${id(1)}');select setval('auth.refresh_tokens_id_seq',50,true);
    insert into storage.buckets(id,name) values('synthetic-backup','synthetic-backup');
+   insert into storage.objects(id,bucket_id,name,metadata) values('${id(3)}','synthetic-backup','fixture-only.txt','{"synthetic":true}');
    select vault.create_secret('SYNTHETIC_VAULT_VALUE','synthetic-backup-key','Synthetic fixture only');`);
   // Drift: the committed base pin must reject a newly created required LOB.
-  su("select lo_from_bytea(42000,decode('000102feff','hex'))");
+  su(`select lo_from_bytea(42000,decode('000102feff','hex'));
+   create table realtime.messages_backup_synthetic partition of realtime.messages for values from ('2026-11-01') to ('2026-12-01');
+   alter table realtime.messages_backup_synthetic owner to supabase_realtime_admin;
+   alter table realtime.messages_backup_synthetic enable row level security;alter table realtime.messages_backup_synthetic force row level security;
+   insert into realtime.messages(topic,extension,payload,inserted_at) values('synthetic-backup','broadcast','{"synthetic":true}','2026-11-06');`);
   assert.throws(()=>su("set radlab.backup_apply='reviewed-select-only';"+packet));
   const withLob=await readInventory(db);
   su("set radlab.backup_apply='reviewed-select-only';"+grantPacket(withLob));
@@ -84,9 +89,9 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
    const escape=x=>String(x).split(String.fromCharCode(92)).join(String.fromCharCode(92,92)).split(':').join(String.fromCharCode(92)+':');
    fs.writeFileSync('/work/ca',c.ca,{mode:0o600});fs.writeFileSync('/work/pass',[c.host,c.port,c.database,c.user,c.password].map(escape).join(':')+String.fromCharCode(10),{mode:0o600});
    const env={...process.env,PGHOST:c.host,PGPORT:String(c.port),PGDATABASE:c.database,PGUSER:c.user,PGSSLMODE:'verify-full',PGSSLROOTCERT:'/work/ca',PGPASSFILE:'/work/pass'};
-   const queries=["set role postgres","set role supabase_admin","select assess.worker_health_v2()","select * from vault.decrypted_secrets","insert into storage.buckets(id,name) values('bad','bad')","select nextval('auth.refresh_tokens_id_seq')","select setval('auth.refresh_tokens_id_seq',1)","select lo_put(42000,0,decode('ff','hex'))"];
+   const queries=["set role postgres","set role supabase_admin","select assess.worker_health_v2()","select * from vault.decrypted_secrets","insert into storage.buckets(id,name) values('bad','bad')","select nextval('auth.refresh_tokens_id_seq')","select setval('auth.refresh_tokens_id_seq',1)","select lo_put(42000,0,decode('ff','hex'))","select lo_create(0)","select lo_creat(-1)","select lo_from_bytea(0,decode('ff','hex'))"];
    try{for(const q of queries){const r=cp.spawnSync('psql',['-X','-q','-v','ON_ERROR_STOP=1','-v','VERBOSITY=verbose','-c',q],{env,encoding:'utf8'});if(r.status===0||!r.stderr.includes('42501')){console.log(JSON.stringify({outcome:'STOP',stage:'negative',index:queries.indexOf(q),status:r.status,sqlState:r.stderr.match(/\b[0-9A-Z]{5}:/g),category:r.stderr.includes('pg_hba.conf')?'hba':r.stderr.includes('password')?'authentication':r.stderr.includes('certificate')?'tls':'other'}));process.exitCode=1;return;}}console.log(JSON.stringify({denied:queries.length}));}finally{fs.rmSync('/work/ca',{force:true});fs.rmSync('/work/pass',{force:true});}})();`;
-  const denied=run([],negative);assert.equal(denied.report.denied,8,denied.output);
+  const denied=run([],negative);assert.equal(denied.report.denied,11,denied.output);
   const successful=run();assert.equal(successful.status,0);assert.equal(successful.report.outcome,'COMPLETE',successful.output);assert.equal(successful.report.providerRecoveryVerified,false);
   assert.equal(su("select count(*) from pg_stat_activity where usename='assess_backup'"),'0');
   const b64=docker(['exec',mock,'node','-e',"process.stdout.write(require('fs').readFileSync('/v/backup.age').toString('base64'))"]);writeFileSync(join(root,'backup.age'),Buffer.from(b64,'base64'));
@@ -109,15 +114,20 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
   for(const r of metadata.counts)assert.equal(targetSql(`select count(*) from ${qualified(r)}`,'postgres'),r.rows);
   for(const s of metadata.sequences)assert.equal(targetSql(`select last_value::text||'|'||is_called from ${qualified(s)}`,'postgres'),s.archive.last_value+'|'+(s.archive.is_called?'true':'false'));
   for(const l of metadata.largeObjects)assert.equal(targetSql(`select octet_length(lo_get(${l.id}))::text||'|'||md5(lo_get(${l.id}))`,'postgres'),l.bytes+'|'+l.md5);
+  assert.equal(targetSql("select count(*) from storage.objects",'postgres'),'1');assert.equal(targetSql("select count(*) from realtime.messages",'postgres'),'1');
   assert.equal(targetSql("select count(*) from auth.users",'postgres'),'1');assert.equal(targetSql("select count(*) from vault.secrets",'postgres'),'1');
   // These are ciphertext bytes; no Vault decrypt function or age identity in job.
   assert.equal(targetSql("select md5(secret) from vault.secrets",'postgres'),su('select md5(secret) from vault.secrets'));
   const restoredAdapter={query:async(sql,values=[])=>{if(/^set /i.test(sql))return{rows:[]};return{rows:JSON.parse(targetSql("set search_path='';set TimeZone='UTC';select coalesce(jsonb_agg(q),'[]') from ("+sql.replace(/\$(\d+)/g,(_,n)=>literal(values[Number(n)-1]))+") q",'postgres'))};}};
-  assert.equal(sha(await readInventory(restoredAdapter)),sha(withLob));
+  const restoredInventory=await readInventory(restoredAdapter);
+  console.log('RESTORED_INVENTORY_DIFFERENCES '+JSON.stringify(Object.keys(withLob).filter(k=>sha(withLob[k])!==sha(restoredInventory[k])).map(k=>({key:k,source:withLob[k],restored:restoredInventory[k]}))));
+  assert.equal(sha(restoredInventory),sha(withLob));
+  assert.equal(targetSql("select bool_and(not has_function_privilege('assess_backup',f,'EXECUTE')) from unnest(array['pg_catalog.lo_create(oid)','pg_catalog.lo_creat(integer)','pg_catalog.lo_from_bytea(oid,bytea)']) f",'postgres'),'t');
   assert.deepEqual(await roleMetadata(restoredAdapter),metadata.roles);
   setConfig({...config,ca:read(join(root,'gcs.crt'))});const tls=run();assert.notEqual(tls.status,0);assert.equal(tls.report.outcome,'STOP');setConfig(config);
   docker(['exec',mock,'node','-e',"fetch('http://127.0.0.1/state',{method:'POST'}).then(r=>{if(!r.ok)process.exit(1)})"]);
-  const failed=run();assert.notEqual(failed.status,0);assert.equal(failed.report.outcome,'STOP');assert.equal(su("select count(*) from pg_stat_activity where usename='assess_backup'"),'0');
+  const checked=`require('/app/backup.cjs').main(['--run']).then(x=>{console.log(JSON.stringify({...x,scratchEmpty:require('fs').readdirSync('/work').length===0}));}).catch(()=>{console.log(JSON.stringify({outcome:'STOP',scratchEmpty:require('fs').readdirSync('/work').length===0}));process.exitCode=1;});`;
+  const failed=run([],checked);assert.notEqual(failed.status,0);assert.equal(failed.report.outcome,'STOP');assert.equal(failed.report.scratchEmpty,true);assert.equal(su("select count(*) from pg_stat_activity where usename='assess_backup'"),'0');
   assert.throws(()=>docker(['exec',mock,'node','-e',"require('fs').statSync('/v/backup.age')"]));
   // Last assertion gates candidate calibration; no proof above can be skipped.
   assert.deepEqual(JSON.parse(read('supabase/manual/selfservice-backup-read.inventory.json')),before,'independent inventory calibration must be recorded');

@@ -8,7 +8,7 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
 import { backupArchive,main } from '../ops/cloud-backup.mjs';
-import { readInventory,sha } from '../ops/cloud-backup-contract.mjs';
+import { readInventory,sha,constructorGrants } from '../ops/cloud-backup-contract.mjs';
 import { prepareRolesSql } from '../ops/laptop-restore-test.mjs';
 test('default dry-run reads no credential; unknown flags fail',async()=>{
  assert.deepEqual(await main([]),{contract:'rad105-encrypted-backup/2',dryRun:true,connections:0,uploads:0});
@@ -47,7 +47,7 @@ test('SELECT-only RLS policy: complete real encrypted dump/restore, exact ACL/da
    alter sequence public.serial owner to synthetic_owner;alter large object 42000 owner to synthetic_owner;
    alter default privileges for role synthetic_owner in schema public grant select on tables to synthetic_reader;`);
   const expected=[{s:'public',t:'plain',k:'r',r:false},{s:'public',t:'private',k:'r',r:true},{s:'public',t:'serial',k:'S',r:false}];
-  const inventory=await readInventory(admin);const inventorySha256=sha(inventory);
+  const inventory=await readInventory(admin);await admin.query(constructorGrants(inventory));const inventorySha256=sha(inventory);
   const keys=execFileSync('age-keygen',[],{encoding:'utf8',stdio:'pipe'});const recipient=/public key: (age1\w+)/i.exec(keys)?.[1];
   // age-keygen prints identity to stdout and recipient to stderr; derive public key without ever handing identity to backupArchive.
   const identity=join(root,'identity');writeFileSync(identity,keys,{mode:0o600});
@@ -76,6 +76,7 @@ test('SELECT-only RLS policy: complete real encrypted dump/restore, exact ACL/da
   await restored.query('create database restored template template0');await restored.end();
   execFileSync('pg_restore',['--exit-on-error','--dbname=restored',join(root,'restore','project.dump')],{env:restoreEnv,stdio:'pipe'});
   restored=new pg.Client({host:root,port:55436,user:'postgres',database:'restored'});await restored.connect();
+  assert.equal((await restored.query("select bool_and(not has_function_privilege('assess_backup',f,'EXECUTE')) ok from unnest(array['lo_create(oid)','lo_creat(integer)','lo_from_bytea(oid,bytea)']) f")).rows[0].ok,true);
   const roleState=`select to_jsonb(r)-array['oid','rolpassword'] state from pg_roles r where rolname !~ '^pg_' order by rolname`;
   assert.deepEqual((await restored.query(roleState)).rows,(await admin.query(roleState)).rows);
   const members=`select g.rolname role,u.rolname member,a.rolname grantor,m.admin_option,m.inherit_option,m.set_option
