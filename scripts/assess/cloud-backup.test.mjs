@@ -8,9 +8,10 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import pg from 'pg';
 import { backupArchive,main } from '../ops/cloud-backup.mjs';
+import { readInventory,sha } from '../ops/cloud-backup-contract.mjs';
 import { prepareRolesSql } from '../ops/laptop-restore-test.mjs';
 test('default dry-run reads no credential; unknown flags fail',async()=>{
- assert.deepEqual(await main([]),{contract:'rad105-encrypted-backup/1',dryRun:true,connections:0,uploads:0});
+ assert.deepEqual(await main([]),{contract:'rad105-encrypted-backup/2',dryRun:true,connections:0,uploads:0});
  await assert.rejects(main(['--enable']));
  const context=JSON.parse(execFileSync(process.execPath,['scripts/ops/build-cloud-backup.mjs'],{encoding:'utf8'}));
  try{const m=JSON.parse(readFileSync(join(context.output,'manifest.json'),'utf8'));assert.equal(m.privateKeyIncluded,false);assert.equal(m.defaultDryRun,true);assert.deepEqual(readdirSync(context.output).sort(),['Dockerfile','age','backup-main.cjs','backup.cjs','manifest.json']);
@@ -33,20 +34,20 @@ test('SELECT-only RLS policy: complete real encrypted dump/restore, exact ACL/da
   await admin.query(`create role synthetic_owner nologin noinherit;create role synthetic_reader nologin noinherit;
    alter role synthetic_owner set search_path to public;
    grant synthetic_reader to synthetic_owner with admin false,inherit false,set true;
-   create role assess_backup login noinherit nosuperuser nocreatedb nocreaterole nobypassrls noreplication;
+   create role assess_backup login noinherit nosuperuser nocreatedb nocreaterole nobypassrls noreplication valid until 'infinity';
    revoke create on schema public from public;revoke temporary on database postgres from public;
    create table public.plain(id int primary key,body text);insert into public.plain values(1,'SYNTHETIC_ONE'),(2,'SYNTHETIC_TWO');
    create sequence public.serial;select setval('public.serial',37,true);
    create table public.private(id int primary key references public.plain(id),payload bytea);insert into public.private values(1,decode('00ff4142','hex'));
    alter table public.private enable row level security;alter table public.private force row level security;
    grant usage on schema public to assess_backup;grant select on public.plain,public.private,public.serial to assess_backup;
-   create policy assess_backup_read on public.private for select to assess_backup using(true);
+   create policy assess_backup_read_v1 on public.private for select to assess_backup using(true);
    select lo_from_bytea(42000,decode('000102feff','hex'));grant select on large object 42000 to assess_backup;
    alter table public.plain owner to synthetic_owner;alter table public.private owner to synthetic_owner;
    alter sequence public.serial owner to synthetic_owner;alter large object 42000 owner to synthetic_owner;
    alter default privileges for role synthetic_owner in schema public grant select on tables to synthetic_reader;`);
   const expected=[{s:'public',t:'plain',k:'r',r:false},{s:'public',t:'private',k:'r',r:true},{s:'public',t:'serial',k:'S',r:false}];
-  const inventorySha256=createHash('sha256').update(JSON.stringify(expected)).digest('hex');
+  const inventory=await readInventory(admin);const inventorySha256=sha(inventory);
   const keys=execFileSync('age-keygen',[],{encoding:'utf8',stdio:'pipe'});const recipient=/public key: (age1\w+)/i.exec(keys)?.[1];
   // age-keygen prints identity to stdout and recipient to stderr; derive public key without ever handing identity to backupArchive.
   const identity=join(root,'identity');writeFileSync(identity,keys,{mode:0o600});
@@ -61,7 +62,7 @@ test('SELECT-only RLS policy: complete real encrypted dump/restore, exact ACL/da
   writeFileSync(join(root,'backup.age'),encrypted);
   execFileSync('age',['--decrypt','--identity',identity,'--output',join(root,'bundle.tar'),join(root,'backup.age')],{stdio:'pipe'});
   mkdirSync(join(root,'restore'));execFileSync('tar',['-C',join(root,'restore'),'-xf',join(root,'bundle.tar')]);
-  const meta=JSON.parse(readFileSync(join(root,'restore','metadata.json'),'utf8'));assert.deepEqual(meta.inventory,expected);
+  const meta=JSON.parse(readFileSync(join(root,'restore','metadata.json'),'utf8'));assert.deepEqual(meta.inventory.relations.filter(r=>r.k!=='v').map(({s,t,k,r})=>({s,t,k,r})),expected);
   const sums=JSON.parse(readFileSync(join(root,'restore','checksums.json'),'utf8'));
   for(const[f,h]of Object.entries(sums))assert.equal(createHash('sha256').update(readFileSync(join(root,'restore',f))).digest('hex'),h);
   const rolesSql=readFileSync(join(root,'restore','roles.sql'),'utf8');assert.doesNotMatch(rolesSql,/PASSWORD\s+'/i);

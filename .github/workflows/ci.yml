@@ -1,4 +1,4 @@
-# Unit tests, typecheck, lint and production build only: no secrets, no Playwright, no deployment.
+# Required unit, database, encrypted backup image, docs and build proofs; no secrets or deployment.
 # The browser visual-regression matrix (scripts/qa/run-matrix.mjs) is run manually; see docs/session-5-qa.md.
 name: CI
 on:
@@ -117,6 +117,26 @@ jobs:
         run: npm test
         env:
           CI_TEST_LANE: db
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Required native backup tools (no skip)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends age postgresql-16 postgresql-client-16
+      - name: Required pinned provider-shaped backup fixture (no skip)
+        run: docker pull supabase/postgres:17.11.0.016@sha256:6ce438c186e9f0a0aad707c2151cc0023e26bb7afd57e20080fdcd2bd76ba57d
+      - name: Required exact SELECT/RLS and concurrent backup proofs (no skip)
+        run: node --test scripts/assess/cloud-backup.test.mjs scripts/assess/cloud-backup-contract.test.mjs scripts/assess/cloud-backup-concurrency.test.mjs
+      - name: Required actual pinned encrypted backup image (no skip)
+        run: node --test scripts/assess/cloud-backup-image.test.mjs
   docs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -157,18 +177,18 @@ jobs:
   check:
     name: check
     if: always()
-    needs: [unit, db, docs, build]
+    needs: [unit, db, backup, docs, build]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - name: Require all four jobs to succeed
+      - name: Require all five jobs to succeed
         env:
           RESULTS: ${{ toJSON(needs) }}
         run: |
           python3 - <<'PYTHON'
           import json, os, sys
           results = json.loads(os.environ['RESULTS'])
-          expected = {'unit', 'db', 'docs', 'build'}
+          expected = {'unit', 'db', 'backup', 'docs', 'build'}
           ok = set(results) == expected and all(job['result'] == 'success' for job in results.values())
           if not ok:
               print({name: job['result'] for name, job in results.items()})

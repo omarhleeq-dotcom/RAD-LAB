@@ -17,7 +17,7 @@ const output=mkdtempSync(join(tmpdir(),'rad105-backup-build-'));
 await build({entryPoints:['scripts/ops/cloud-backup.mjs'],outfile:join(output,'backup.cjs'),bundle:true,platform:'node',target:'node24',format:'cjs',logLevel:'silent',
  define:{'process.env.NODE_PG_FORCE_NATIVE':'false'}});
 copyFileSync(age,join(output,'age'));copyFileSync('scripts/ops/cloud-backup.Dockerfile',join(output,'Dockerfile'));
-writeFileSync(join(output,'backup-main.cjs'),`require('./backup.cjs').main().then(x=>process.stdout.write(JSON.stringify(x)+'\\n')).catch(()=>{process.stdout.write('{"contract":"rad105-encrypted-backup/1","outcome":"STOP"}\\n');process.exitCode=1;});\n`);
+writeFileSync(join(output,'backup-main.cjs'),`require('./backup.cjs').main().then(x=>process.stdout.write(JSON.stringify(x)+'\\n')).catch(()=>{process.stdout.write('{"contract":"rad105-encrypted-backup/2","outcome":"STOP"}\\n');process.exitCode=1;});\n`);
 const files={};for(const f of ['backup.cjs','backup-main.cjs','age','Dockerfile'])files[f]=createHash('sha256').update(readFileSync(join(output,f))).digest('hex');
 const manifest={contract:'rad105-backup-build/1',files,ageVersion,defaultDryRun:true,secretMount:'/run/secrets/assess-backup.json',privateKeyIncluded:false,
  requiredScratch:{path:'/work',medium:'memory',uid:999,mode:'0700'},runtimeOrLaunchVerified:false};
