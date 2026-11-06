@@ -80,13 +80,13 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
   const inspect=`const fs=require('fs');console.log(JSON.stringify({uid:process.getuid(),type:fs.statfsSync('/work').type,mode:fs.statSync('/work').mode&511,files:fs.readdirSync('/app').sort(),mounts:fs.readdirSync('/run/secrets').sort()}));`;
   const shape=run([],inspect).report;assert.equal(shape.uid,999);assert.equal(shape.type,0x01021994);assert.equal(shape.mode,0o700);assert.deepEqual(shape.mounts,['assess-backup.json','storage-ca.pem']);assert.deepEqual(shape.files,['backup-main.cjs','backup.cjs','manifest.json']);
   // Negative privileges through the actual image, fixed secret binding and verified TLS.
-  const negative=`const fs=require('fs'),cp=require('child_process');const c=JSON.parse(fs.readFileSync('/run/secrets/assess-backup.json','utf8'));
+  const negative=`(()=>{const fs=require('fs'),cp=require('child_process');const c=JSON.parse(fs.readFileSync('/run/secrets/assess-backup.json','utf8'));
    const escape=x=>String(x).split(String.fromCharCode(92)).join(String.fromCharCode(92,92)).split(':').join(String.fromCharCode(92)+':');
    fs.writeFileSync('/work/ca',c.ca,{mode:0o600});fs.writeFileSync('/work/pass',[c.host,c.port,c.database,c.user,c.password].map(escape).join(':')+String.fromCharCode(10),{mode:0o600});
    const env={...process.env,PGHOST:c.host,PGPORT:String(c.port),PGDATABASE:c.database,PGUSER:c.user,PGSSLMODE:'verify-full',PGSSLROOTCERT:'/work/ca',PGPASSFILE:'/work/pass'};
    const queries=["set role postgres","set role supabase_admin","select assess.worker_health_v2()","select * from vault.decrypted_secrets","insert into storage.buckets(id,name) values('bad','bad')","select nextval('auth.refresh_tokens_id_seq')","select setval('auth.refresh_tokens_id_seq',1)","select lo_put(42000,0,decode('ff','hex'))"];
-   try{for(const q of queries){const r=cp.spawnSync('psql',['-X','-q','-v','ON_ERROR_STOP=1','-v','VERBOSITY=verbose','-c',q],{env,encoding:'utf8'});if(r.status===0||!r.stderr.includes('42501'))throw Error('negative privilege failed');}console.log(JSON.stringify({denied:queries.length}));}finally{fs.rmSync('/work/ca',{force:true});fs.rmSync('/work/pass',{force:true});}`;
-  assert.equal(run([],negative).report.denied,8);
+   try{for(const q of queries){const r=cp.spawnSync('psql',['-X','-q','-v','ON_ERROR_STOP=1','-v','VERBOSITY=verbose','-c',q],{env,encoding:'utf8'});if(r.status===0||!r.stderr.includes('42501')){console.log(JSON.stringify({outcome:'STOP',stage:'negative',index:queries.indexOf(q),status:r.status,sqlState:r.stderr.match(/[0-9A-Z]{5}:/)?.[0]}));process.exitCode=1;return;}}console.log(JSON.stringify({denied:queries.length}));}finally{fs.rmSync('/work/ca',{force:true});fs.rmSync('/work/pass',{force:true});}})();`;
+  const denied=run([],negative);assert.equal(denied.report.denied,8,denied.output);
   const successful=run();assert.equal(successful.status,0);assert.equal(successful.report.outcome,'COMPLETE',successful.output);assert.equal(successful.report.providerRecoveryVerified,false);
   assert.equal(su("select count(*) from pg_stat_activity where usename='assess_backup'"),'0');
   const b64=docker(['exec',mock,'node','-e',"process.stdout.write(require('fs').readFileSync('/v/backup.age').toString('base64'))"]);writeFileSync(join(root,'backup.age'),Buffer.from(b64,'base64'));
