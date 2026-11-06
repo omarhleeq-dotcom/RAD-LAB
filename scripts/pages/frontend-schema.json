@@ -79,10 +79,9 @@
     "src/features/pilot/OwnerTraining.tsx": "5b762de3210540c8327136efc8b2737ffc04cf3932d53edaa6b862ffad13b019",
     "src/features/pilot/owner-dashboard-data.ts": "7eeeefd28b84f9406bd017e547ea2dba1a9db6c308c81199df3b0fdcceaadc10",
     "src/features/pilot/owner-dashboard-deferred.ts": "efe0b0a805bb69c1f1dd4e82ea06afb9ae9018066488157a93f496db1883e702",
-    "src/features/pilot/OwnerDirectory.tsx": "d059c752aeb1922a4252c80c6756e736fdea31f8e01f7f77d8a2689ba9a61f71",
     "src/features/pilot/OwnerActivity.tsx": "7f68910266b3bd9b1a51c96629a3a558cb9ba4593c883b6d2d39b972bc41c464",
     "src/features/pilot/owner-export.ts": "846dfab0b03b9040e18ed54a981c10f00c59ef94370c65f0a1905f523a07c50e",
-    "src/features/pilot/OwnerPanel.tsx": "d35f215a6443e224a305696b68477055c0742d07b76f1eb21cd2288c7cc5095b",
+    "src/features/pilot/OwnerPanel.tsx": "1c1aa81e0e7e81531145af5cc6d3c8ebedcd9cfc62d5b1e54ea790c35f304a4a",
     "src/features/pilot/C2Session.tsx": "4e0965696c54b29317dec5e9890b33271dbdecfe9a36b843581cb8717c91f8d3",
     "src/features/pilot/c2-contract.ts": "2ea21fcb5b638ccc29dd5bea00801ba0c2d0216b4a6d99c6774255c55a4a91e0",
     "src/features/assess/OwnerAssessPanel.tsx": "25527a1be363c5259379606aeb6eb3bc56458c07882a0a6a93d3bb633454a6e9",
@@ -102,7 +101,8 @@
     "src/features/assess/manual-grading-data.ts": "285fc0e8f2be3c76fd0838cbef23ede79e08789d32ca560df4c9fd2488bd8575",
     "src/features/assess/selfservice/adapter.ts": "349386506711fc5bfa24599c1dc729946e87bcaa4ef924b724c3eaf10a3fd5aa",
     "src/features/assess/selfservice/runner.ts": "587bd24e049594c093321b04c84d6389023f3eb71bea7436fe066b364543e8ee",
-    "src/features/assess/selfservice/SelfServiceSession.tsx": "72b9f9a3149936ef3e3ab93b75c4c1d383b9ce2ac0f26d23a536ced9d91e603b"
+    "src/features/assess/selfservice/SelfServiceSession.tsx": "72b9f9a3149936ef3e3ab93b75c4c1d383b9ce2ac0f26d23a536ced9d91e603b",
+    "src/features/pilot/owner-directory-request.ts": "c8db5b943086855b19fafdf673be6e029c05ea369e5a1459e8e6cce9cc14c25a"
   },
   "serverModules": [
     "src/features/assess/server-contracts.ts",
