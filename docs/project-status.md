@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 460,
-  "updated_at": "2026-11-06T14:21:00.973722Z",
+  "revision": 461,
+  "updated_at": "2026-11-06T14:51:22.006Z",
   "timezone": "Asia/Amman",
   "next_id": "RAD-107",
   "tasks": [
@@ -963,11 +963,12 @@
     {
       "id": "RAD-106",
       "title": "تحسين أداء التطبيق بقياسات محددة: الطلبات والتحميل والاستجابة",
-      "status": "in_progress",
-      "waiting_on": "code",
+      "status": "blocked",
+      "waiting_on": "owner",
       "priority": "medium",
-      "description": "أُقفل التدقيق للمعايير31 وبدأ P1 بإذن المالك في Draft #243: قياس قراءات دليل المالك ومشاركتها أثناء الطلب ومهلة محدودة، ضمن12 مسارًا. لم يكتمل التنفيذ أو QA؛ #242 محفوظ ولا تشغيل حي.",
-      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md",
+      "description": "مرشح P1 في Draft #243: مشاركة قراءات الدليل ومهلة15ث مع قياس اصطناعي قبل/بعد. يعوق الإقفال منع تحديث بصمات manifest المحمية؛ ينتظر استثناء المالك وCI للرأس النهائي. لا إتمام أو P2 أو تشغيل حي؛ #242 محفوظ.",
+      "blocker": "الموجه يمنع manifest بينما حارس المخطط يثبت بايتات حدود المصدر المعدلة. يلزم إذن المالك لتحديث browserBoundaries فقط، ثم CI أخضر؛ الدليل في تقرير P1 ووصف #243.",
+      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md",
       "done_when": "دفعات أداء مقبولة ومدمجة بأمر المالك، بقياس قبل/بعد وحفظ الصلاحيات والنتائج والصفحات وفحوص EN/AR؛ لا نجاح حي مستنتج من المختبر."
     }
   ]
