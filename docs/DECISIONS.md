@@ -10,6 +10,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Data and engine separation](#data-and-engine)
 - [Practice/pilot scope](#practice-and-pilot)
 - [Current Assess design](#assess-design); [current laptop backup scope and cloud deferral](#assess-self-service-backup-deferred-owner-2026-11-06)
+- [Measured application performance rounds](#performance-rounds-owner-2026-11-06)
 - [Reference-first and provisional review](#reference-and-source)
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
@@ -1792,3 +1793,12 @@ Authority: owner's explicit scope amendment on Draft #242. Keep the reviewed Win
 This supersedes only the earlier cloud-backup requirement and its dependency edges; historical approvals/evidence remain unchanged. Current Assess must require neither assess_backup nor its SELECT/RLS packet or the three pg_catalog constructor ACL changes. Preserve strict schema/privilege attestation, S1–S3/clock, five-operation v2 worker, stop/witness/recovery/alerts and the exact 70%-of-plan-limit requirement.
 Authorised offline separation: restore the exact backup-free S4 schema oracle/marker; retain deferred tests in an explicitly separate synthetic workflow; measure DB size with the existing worker connection and already-available pg_database_size capability, no new RPC/grant/admin role/service. Preserve health/witness shapes; missing/invalid measurement is UNKNOWN through existing failure channels. Exact amendment budget34 paths declared before edits.
 All live execution is postponed until the owner returns with the laptop. The next fresh laptop backup and its verification remain pending, never inferred from old or synthetic evidence. No live SQL/database/cloud/secret/Scheduler, Variables, activation, deployment, merge, Ready, new PR/worktree/rebase/force-push/subagents or real XLSX import. S4 acceptance requires coordination review; P7 has not started and Assess is not operational.
+
+<a id="performance-rounds-owner-2026-11-06"></a>
+### RAD-106 — measured application performance rounds, 2026-11-06
+Authority: the owner requested review of31 performance criteria before changes, then explicitly asked to start the first development session and open a separate Draft for the rounds. The read-only audit is complete; future changes must suit measured application needs, not add every listed technology.
+Create one separate performance Draft on codex/rad106-performance. Temporarily target claude/rad105-promotion so the accepted #242 tree remains unchanged and its existing unverified-schema gate continues blocking automatic preview deployment; do not change that gate or Variables. After the owner later merges #242, retarget main with a fresh review; neither PR is merged or activated here.
+P1 covers duplicate owner-directory reads and bounded read waiting only, with synthetic before/after evidence, unchanged global counts/DTO/paging/deletion/authorization semantics and no automatic write replay. The linked prompt caps P1 at12 paths; this documentation-only bootstrap is capped at6 paths.
+Later rounds remain conditional on review and measurements: saved-result summary payload, bundle/loading/render profiling and final performance/accessibility verification. Four sessions total including the audit is an estimate, not a speedup guarantee or authority for SQL/image/clinical changes.
+No new framework, Redis/queue service, AI, telemetry/RUM, paid resource, source restriction, cloud backup or broader admin privilege. The current laptop backup and cloud deferral stand. No live database/cloud commands, production access, deployment, merge, Ready, rebase/force-push or additional worktrees/sub-agents; existing CI remains enabled.
+Evidence: [31-item audit](archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md) and [first execution prompt](RAD-106_PERFORMANCE_P1_PROMPT.md). Historical decisions, protected contracts and original evidence remain intact.
