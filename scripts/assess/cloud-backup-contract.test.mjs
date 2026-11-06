@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { nativeFixture } from './cloud-backup-fixture.mjs';
-import { readInventory,grantPacket,readyPacket,assertReader,sha,constructorGrants } from '../ops/cloud-backup-contract.mjs';
+import { readInventory,grantPacket,readyPacket,assertReader,sha,constructorGrants,fenceSql } from '../ops/cloud-backup-contract.mjs';
 test('actual scoped packet: dry-run, additive policies, exact grants, no RPC/SET ROLE/write/default grants; drift rolls back',{timeout:120000},async()=>{
  const f=await nativeFixture();try{
   const a=f.admin;await a.query(`create schema assess;create table assess.launch_gate(enabled boolean);insert into assess.launch_gate values(false);
@@ -50,5 +50,15 @@ test('known PUBLIC LOB constructor gap is real: source role can write outside re
   await f.admin.query("set radlab.backup_apply='reviewed-select-only'");await f.admin.query(grantPacket(await readInventory(f.admin)));
   await f.admin.query("alter role assess_backup login valid until 'infinity'");const corrected=await f.connect('assess_backup');
   for(const q of ['select lo_create(0)','select lo_creat(-1)',"select lo_from_bytea(0,decode('ff','hex'))"])await assert.rejects(corrected.query(q),{code:'42501'});
+ }finally{await f.close();}
+});
+
+test('privilege drift between initial guard and snapshot fence refuses before native dump',{timeout:120000},async()=>{
+ const {readerFixture}=await import('./cloud-backup-fixture.mjs');const {backupArchive}=await import('../ops/cloud-backup.mjs');const f=await readerFixture();let injected=false,uploads=0,nativeCalls=0;
+ try{
+  const identity=execFileSync('age-keygen',[],{stdio:'pipe'}),recipient=execFileSync('age-keygen',['-y'],{input:identity,encoding:'utf8'}).trim();
+  const db={query:async(sql,values)=>{if(sql===fenceSql&&!injected){injected=true;await f.admin.query('alter role assess_backup createdb');}return f.reader.query(sql,values);}};
+  await assert.rejects(backupArchive({recipient,planLimitBytes:500000000,inventorySha256:f.inventorySha256},db,{root:f.root,env:f.env,run(){nativeCalls++;throw Error();},runAsync:async()=>{nativeCalls++;throw Error();},upload:async()=>{uploads++;}}),/backup_snapshot/);
+  assert.equal(injected,true);assert.equal(nativeCalls,0);assert.equal(uploads,0);
  }finally{await f.close();}
 });

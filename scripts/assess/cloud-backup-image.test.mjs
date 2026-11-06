@@ -23,6 +23,9 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
  try{
   const before=await readInventory(db);
   console.log('BACKUP_INVENTORY_CALIBRATION '+JSON.stringify(before));
+  const ownerInventory=JSON.parse(owner(read('supabase/checks/selfservice-backup-inventory.sql')));
+  assert.deepEqual(ownerInventory.inventory,before);assert.equal(ownerInventory.capabilities.operator,'postgres');assert.equal(ownerInventory.capabilities.superuser,false);
+  console.log('BACKUP_OWNER_CAPABILITIES '+JSON.stringify(ownerInventory.capabilities));
   // The same compiler emits the committed packet; pending first calibration is
   // a final assertion failure, never a skipped coverage/permission proof.
   const packet=grantPacket(before);

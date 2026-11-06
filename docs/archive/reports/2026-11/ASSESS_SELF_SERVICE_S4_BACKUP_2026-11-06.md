@@ -2,7 +2,7 @@
 
 ## 1. الانحرافات والميزانية
 Verified: موافقة SELECT/RLS ثم استثناء دوال LOB الثلاث سُجلتا قبل التنفيذ في [DECISIONS](../../../DECISIONS.md#assess-self-service-s4-backup-owner-2026-11-06).
-الميزانية المعلنة33 مسارًا للاستكمال، والسقف المجمع52؛ لا توسعة للعامل أو UI أو حزم الهاتف. العدد النهائي والفحوص قيد الإكمال.
+الميزانية المعلنة33 مسارًا للاستكمال، والسقف المجمع52؛ لا توسعة للعامل أو UI أو حزم الهاتف. المسارات31/33، والمجموع51/52.
 Verified: بقي #242 Draft على main؛ لا rebase أو force-push أو PR جديد أو دمج. S1–S3 مقبولة، وقبول S4/P7 معلق.
 
 ## 2. المنجز والمحذوف
@@ -32,10 +32,10 @@ Verified: لا تغيير للمحتوى الطبي أو scoring أو server shu
 Verified: أدلة S3 EN/AR390/1440 وaxe/family تُعاد الاستفادة منها لثبات UI؛ لا سبب متعلق بالنسخ لإعادة تصويرها.
 
 ## 6. QA
-Verified: الاختبارات المحلية الفعلية أثبتت dump/encrypt/restore والمنح السلبية ورفض RPC/SET ROLE وconstructor بعد التصحيح وحفظ وصول الأدوار القائمة.
-Verified: بناء الصورة المثبتة نجح على CI، مع default صفر اتصال/رفع وnon-root وtmpfs وTLS؛ متابعة الاستعادة ومقارنة الجرد قيد الإكمال.
+Verified: الاختبارات المحلية الفعلية أثبتت dump/encrypt/restore والمنح السلبية ورفض RPC/SET ROLE وconstructor بعد التصحيح وحفظ وصول الأدوار القائمة؛ كذلك رفض ownership غير متاح وسباق صلاحية بين الحارس وsnapshot.
+Verified: بناء الصورة المثبتة نجح على CI، مع default صفر اتصال/رفع وnon-root وtmpfs وTLS؛ متابعة الاستعادة ومقارنة الجرد قيد التحقق النهائي.
 Verified: Ubuntu-latest أصبح26.04 دون PG16؛ ثُبتت مهمتا DB/backup على24.04، دون تغيير bases/assertions أو حدود15دقيقة. لا cleanup إلا لموارد المهمة.
-Not run: إثبات pushed-head النهائي جارٍ؛ لا ادعاء CI أخضر قبل اكتماله. ستُسجل نتيجة docs sync مرتين/check/status/diff في الإقفال.
+Verified: docs sync مرتين (الثانية0)، docs:check/status:check --require-previous وdiff check؛65 مسارًا محميًا مطابقًا، وكل مسارات العامل v2 بلا تغيير. بوابة الإقفال: CI للرأس المدفوع النهائي وكل الاختبارات المطلوبة، ودليله في [Checks #242](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks).
 
 ## 7. الفجوات الدقيقة والتكلفة
 Not run: inventory وownership الفعليان للمزوّد، وحق تثبيت سياسات Auth/Storage ووظائف PG المملوكة للمزوّد وإنشاء دور دون عضوية آلية. [حزمة القراءة فقط](../../../../supabase/checks/selfservice-backup-inventory.sql) جاهزة ولا تُنفذ هنا.

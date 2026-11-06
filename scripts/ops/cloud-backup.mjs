@@ -52,6 +52,7 @@ export async function backupArchive(c,db,{run=execFileSync,runAsync=asyncExec,up
   stage='snapshot';await db.query('begin isolation level repeatable read read only');
   await db.query("set local statement_timeout='120s';set local lock_timeout='5s';set local row_security=on;set local TimeZone='UTC'");
   const inventory=await readInventory(db);if(sha(inventory)!==c.inventorySha256||await fence(db)!==before)throw Error();
+  await assertReader(db,inventory); // Validate privileges again inside the exported snapshot envelope.
   // Hold ACCESS SHARE on every required data table: DML continues; conflicting
   // relation DDL waits or causes a bounded STOP. No table/admin write privilege.
   for(const r of dataRelations(inventory).filter(r=>r.k!=='S'))await db.query(`lock table ${qualified(r)} in access share mode`);
