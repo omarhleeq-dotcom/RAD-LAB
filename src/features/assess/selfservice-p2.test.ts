@@ -43,7 +43,7 @@ describe('window time (UTC storage, Amman display)', () => {
 describe('student exam state', () => {
  it.each([
   [null, null, 'unavailable'], [win(60, 120), null, 'upcoming'], [win(-5, 60), null, 'open'], [win(-120, -60), null, 'missed'], [win(60, 120, true), null, 'cancelled'],
-  [win(-5, 60), sess('active', 30), 'in-progress'], [win(-5, 60), sess('active', -1), 'submitted'], [win(-5, 60), sess('grading', null), 'submitted'],
+  [win(-5, 60), sess('active', 30), 'in-progress'], [win(-5, 60), sess('active', -1), 'expired'], [win(-5, 60), sess('grading', null), 'submitted'],
   [win(-120, -60), sess('grading-failed', null), 'submitted'], [win(-5, 60), sess('grading', null, true), 'graded'], [win(60, 120, true), sess('active', 30), 'in-progress'],
  ] as const)('%#', (w, s, kind) => expect(studentExamKind(w, s)).toBe(kind));
 });
@@ -67,7 +67,7 @@ describe('screens', () => {
  });
  it('supervisor screens are inert when unavailable; status board shows all five counts', () => {
   const off = renderToStaticMarkup(createElement(SupervisorSchedule, { adapter: { available: false, schedule: async () => {} }, strings: s.en, locale: 'en', durationSeconds: 3600, nowMs: Date.parse(now), clock: () => Date.parse(now) }));
-  expect(off).toBe('');
+  expect(off).toContain(s.en.unavailable);
   const on = renderToStaticMarkup(createElement(SupervisorSchedule, { adapter: { available: true, schedule: async () => {} }, strings: s.ar, locale: 'ar', durationSeconds: 3600, nowMs: Date.parse(now), clock: () => Date.parse(now) }));
   expect(on).toContain('type="datetime-local"');
   expect(on).toContain(s.ar.timezone);
@@ -76,16 +76,17 @@ describe('screens', () => {
  });
 });
 
-describe('dormant until the P7 promotion', () => {
+describe('mounted only through the schema-detected S3 entry', () => {
  const files = (dir: string): string[] => readdirSync(dir).flatMap(f => { const p = join(dir, f); return statSync(p).isDirectory() ? files(p) : [p]; });
- const production = files('src').filter(f => /\.(ts|tsx|mjs)$/.test(f) && !f.endsWith('.test.ts') && !f.endsWith('.test.tsx'));
- it('no production file outside the folder imports it or calls the staged RPCs', () => {
+ const production = files('src').filter(f => /\.(ts|tsx|mjs)$/.test(f) && !f.endsWith('.test.ts') && !f.endsWith('.test.tsx') && f !== 'src/features/assess/selfservice-audit.mjs');
+ it('only the reviewed entrypoints mount it; database calls stay in the pinned adapters', () => {
+  const entries=new Set(['src/features/assess/AssessPanel.tsx','src/features/assess/OwnerAssessPanel.tsx','src/features/emergency/EmergencySession.tsx']);
   for (const f of production.filter(p => !p.startsWith('src/features/assess/selfservice/'))) {
    const text = readFileSync(f, 'utf8');
-   expect(text, f).not.toMatch(/selfservice\//);
+   if(!entries.has(f))expect(text, f).not.toMatch(/selfservice\//);
    expect(text, f).not.toMatch(/assignment_window_set_v1|my_windows_v1|assignment_status_v1/);
   }
-  for (const f of production.filter(p => p.startsWith('src/features/assess/selfservice/'))) expect(readFileSync(f, 'utf8'), f).not.toMatch(/\.rpc\(|\.from\(|supabase/);
+  for (const f of production.filter(p => p.startsWith('src/features/assess/selfservice/')&&!['adapter.ts','runner.ts'].some(name=>p.endsWith('/'+name)))) expect(readFileSync(f, 'utf8'), f).not.toMatch(/\.rpc\(|\.from\(|supabase/);
  });
  it('the promotion adapter template matches the staged SQL signatures', () => {
   const adapter = readFileSync('supabase/staged/self-service/p2-adapter.ts.txt', 'utf8'), sql = readFileSync('supabase/staged/self-service/p1-windows.sql', 'utf8');
@@ -95,8 +96,8 @@ describe('dormant until the P7 promotion', () => {
    for (const a of args) { expect(adapter, a).toContain(a); expect(decl, a).toContain(a); }
   }
  });
- it('the deploy schema gate still accepts the P0 marker with these files present', () => {
-  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:466390675b4ac3c32c56c242ec02eeebfe5a745f7bfcc37f57b955576fb23d19' } });
+ it('the deploy schema gate accepts the freshly calibrated S4 marker', () => {
+  const run = spawnSync(process.execPath, ['scripts/pages/pilot-schema-gate.mjs'], { encoding: 'utf8', env: { ...process.env, NEXT_PUBLIC_SUPABASE_URL: 'https://vlacestfruxooznrcjqc.supabase.co', NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_' + 'A'.repeat(24), PILOT_SCHEMA_VERIFIED: 'pilot-v1:8c8207de423ba717b4607f3d9cd029f2f16436f4f6e4b8df06679eff3cc2dedc' } });
   expect(run.status, run.stderr).toBe(0);
  });
 });

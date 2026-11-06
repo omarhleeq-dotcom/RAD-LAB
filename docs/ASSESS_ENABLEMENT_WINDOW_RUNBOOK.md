@@ -211,7 +211,7 @@ gcloud artifacts docker images list "$REG" --include-tags --format="value(packag
 
 ## 5. W2/W3 credential transport (L; 15 min)
 
-Run [W2.1–W2.4](ASSESS_GATE_W_PACKAGES.md#2-w2w3--activation-transport-and-new-secret-version) exactly, with `--valid-days 30` in W2.2. **Expected:** W2.1 no ENABLED row; W2.2 stderr `PASS: secret version N added and DISABLED …` and one row `assess-grading-credential/1 | t | f` (write N in the log); W2.3 `credential_window=t`, `slot_login=f`; W2.4 only `assess-job` holds `roles/secretmanager.secretAccessor` on the secret, with no project-wide Secret Manager role.
+Run [W2.1–W2.4](ASSESS_GATE_W_PACKAGES.md#2-w2w3--activation-transport-and-new-secret-version) exactly, with `--no-expiry` in W2.2. **Expected:** W2.1 no ENABLED row; W2.2 stderr `PASS: secret version N added and DISABLED …` and one row `assess-grading-credential/1 | t | f` (write N in the log); W2.3 `credential_window=t`, `slot_login=f`; W2.4 only `assess-job` holds `roles/secretmanager.secretAccessor` on the secret, with no project-wide Secret Manager role.
 **STOP → rollback:** read W2.1 again and disable every new version; never rerun W2.2. The slot stays NOLOGIN. End the window.
 
 ## 6. Recovery attestation and Job by digest (Cloud Shell; 20 min)
@@ -295,7 +295,7 @@ window <date> <start>-<end> UTC; commit <12>; network 0.4 <home|hotspot>
 W5 PASS/complete/6; mount file; probe resources deleted
 W4 manifestSha256 <64>; digest sha256:<64>
 W1 provisioned; D-W1 applied; Practice smoke ok
-W2 version N=<n> valid-days 30; IAM ok; attestation M=<m> issued <t> expires <t>
+W2 version N=<n> no-expiry; IAM ok; attestation M=<m> issued <t> expires <t>
 4.6 COMPLETE graded 0; smoke <run|not run: no v1 version> open <t> close <t> graded 1
 close STOPPED x2; N and M DISABLED; Scheduler ABSENT; executions 0
 ```

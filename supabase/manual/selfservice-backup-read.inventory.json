@@ -1,0 +1,1747 @@
+{
+  "roleNames": [
+    "anon",
+    "assess_authoring_bridge",
+    "assess_grading_worker",
+    "assess_job_a",
+    "assess_job_b",
+    "assess_worker",
+    "authenticated",
+    "authenticator",
+    "dashboard_user",
+    "pg_checkpoint",
+    "pg_create_subscription",
+    "pg_database_owner",
+    "pg_execute_server_program",
+    "pg_maintain",
+    "pg_monitor",
+    "pg_read_all_data",
+    "pg_read_all_settings",
+    "pg_read_all_stats",
+    "pg_read_server_files",
+    "pg_signal_backend",
+    "pg_stat_scan_tables",
+    "pg_use_reserved_connections",
+    "pg_write_all_data",
+    "pg_write_server_files",
+    "pgbouncer",
+    "postgres",
+    "service_role",
+    "supabase_admin",
+    "supabase_auth_admin",
+    "supabase_etl_admin",
+    "supabase_privileged_role",
+    "supabase_read_only_user",
+    "supabase_realtime_admin",
+    "supabase_replication_admin",
+    "supabase_storage_admin"
+  ],
+  "constructors": [
+    {
+      "owner": "supabase_admin",
+      "signature": "lo_creat(integer)",
+      "definition": "77d509dd2f3c00e8440c059440141c6b",
+      "aclReviewed": true
+    },
+    {
+      "owner": "supabase_admin",
+      "signature": "lo_create(oid)",
+      "definition": "21f4575873ae3486e2d2ad20c60bc8e3",
+      "aclReviewed": true
+    },
+    {
+      "owner": "supabase_admin",
+      "signature": "lo_from_bytea(oid,bytea)",
+      "definition": "b8a3c774f9d3935b8ff13c078a01c78c",
+      "aclReviewed": true
+    }
+  ],
+  "bounded": true,
+  "schemas": [
+    [
+      "assess",
+      "postgres",
+      [
+        [
+          "postgres",
+          "assess_authoring_bridge",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "assess_grading_worker",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "assess_worker",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "authenticated",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "postgres",
+          "CREATE",
+          false
+        ],
+        [
+          "postgres",
+          "postgres",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "auth",
+      "supabase_admin",
+      [
+        [
+          "supabase_admin",
+          "anon",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "authenticated",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "dashboard_user",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "dashboard_user",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "postgres",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "service_role",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_auth_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_auth_admin",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "emergency",
+      "postgres",
+      [
+        [
+          "postgres",
+          "postgres",
+          "CREATE",
+          false
+        ],
+        [
+          "postgres",
+          "postgres",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "extensions",
+      "postgres",
+      [
+        [
+          "postgres",
+          "anon",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "authenticated",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "dashboard_user",
+          "CREATE",
+          false
+        ],
+        [
+          "postgres",
+          "dashboard_user",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "postgres",
+          "CREATE",
+          false
+        ],
+        [
+          "postgres",
+          "postgres",
+          "USAGE",
+          false
+        ],
+        [
+          "postgres",
+          "service_role",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "graphql",
+      "supabase_admin",
+      [
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "graphql_public",
+      "supabase_admin",
+      [
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "pgbouncer",
+      "pgbouncer",
+      [
+        [
+          "pgbouncer",
+          "pgbouncer",
+          "CREATE",
+          false
+        ],
+        [
+          "pgbouncer",
+          "pgbouncer",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "public",
+      "pg_database_owner",
+      [
+        [
+          "pg_database_owner",
+          "PUBLIC",
+          "USAGE",
+          false
+        ],
+        [
+          "pg_database_owner",
+          "anon",
+          "USAGE",
+          false
+        ],
+        [
+          "pg_database_owner",
+          "authenticated",
+          "USAGE",
+          false
+        ],
+        [
+          "pg_database_owner",
+          "pg_database_owner",
+          "CREATE",
+          false
+        ],
+        [
+          "pg_database_owner",
+          "pg_database_owner",
+          "USAGE",
+          false
+        ],
+        [
+          "pg_database_owner",
+          "postgres",
+          "USAGE",
+          false
+        ],
+        [
+          "pg_database_owner",
+          "service_role",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "realtime",
+      "supabase_admin",
+      [
+        [
+          "supabase_admin",
+          "anon",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "authenticated",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "postgres",
+          "USAGE",
+          true
+        ],
+        [
+          "supabase_admin",
+          "service_role",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_realtime_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_realtime_admin",
+          "USAGE",
+          false
+        ]
+      ]
+    ],
+    [
+      "storage",
+      "supabase_admin",
+      [
+        [
+          "supabase_admin",
+          "anon",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "authenticated",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "dashboard_user",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "dashboard_user",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "postgres",
+          "USAGE",
+          true
+        ],
+        [
+          "supabase_admin",
+          "service_role",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_storage_admin",
+          "CREATE",
+          true
+        ],
+        [
+          "supabase_admin",
+          "supabase_storage_admin",
+          "USAGE",
+          true
+        ]
+      ]
+    ],
+    [
+      "vault",
+      "supabase_admin",
+      [
+        [
+          "supabase_admin",
+          "postgres",
+          "USAGE",
+          true
+        ],
+        [
+          "supabase_admin",
+          "service_role",
+          "USAGE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "CREATE",
+          false
+        ],
+        [
+          "supabase_admin",
+          "supabase_admin",
+          "USAGE",
+          false
+        ]
+      ]
+    ]
+  ],
+  "contract": "rad105-backup-inventory/2",
+  "database": {
+    "acl": [
+      [
+        "postgres",
+        "PUBLIC",
+        "CONNECT",
+        false
+      ],
+      [
+        "postgres",
+        "anon",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "assess_authoring_bridge",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "assess_job_a",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "assess_job_b",
+        "CONNECT",
+        false
+      ],
+      [
+        "postgres",
+        "assess_worker",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "authenticated",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "authenticator",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "dashboard_user",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "pgbouncer",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "postgres",
+        "CONNECT",
+        false
+      ],
+      [
+        "postgres",
+        "postgres",
+        "CREATE",
+        false
+      ],
+      [
+        "postgres",
+        "postgres",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "service_role",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_admin",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_auth_admin",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_etl_admin",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_privileged_role",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_read_only_user",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_realtime_admin",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_replication_admin",
+        "TEMPORARY",
+        false
+      ],
+      [
+        "postgres",
+        "supabase_storage_admin",
+        "TEMPORARY",
+        false
+      ]
+    ],
+    "ctype": "en_US.UTF-8",
+    "owner": "postgres",
+    "locale": "en-US",
+    "collate": "en_US.UTF-8",
+    "encoding": "UTF8",
+    "provider": "i",
+    "settingsHash": "d751713988987e9331980363e24189ce"
+  },
+  "relations": [
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "account_stops",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ce6183e98f0a823fd50554ea70dbf107"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "all_students_assignments",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "aaa511af8de169222eabe3d3da426d1b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assessment_notices",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "76738f30660060b13f4bce3106e6c5c9"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assessment_notify_settings",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ee193f05df3ccc3d6194a387a35571d5"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assignment_accommodations",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "30616f2e55537ad9ab2fd2fafd31874c"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assignment_managers",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "7af5d0e75520bc5c5ebdb2a5364c681f"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assignment_review_targets",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "b97758a307d4f21cc256f0632f0ea25b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assignment_reviews",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ec40ae6ce04e4cbe05f0bed649b2a68a"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assignment_scopes",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "8a5eede2ee3e6ca8ce6a13254806c778"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assignment_windows",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "4d14de61060e1f082bca8896a3292498"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "assignments",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "7d9264f77e56dc547695cd18e9da5800"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "authoring_drafts",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "5a152048ef8820b9225b1551f3ae0eb1"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "authoring_holds_v1",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "e90a63b63d617304b254dc73e5a1b33b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "authoring_provenance_v2",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "26f57b00132ea1b728a2d6ac58dc198d"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "authoring_publication_links",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "d44f4a83dd07299d69d44119f6346b0b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "authoring_references",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "1a0c798439acef689828da7e6df58750"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "authoring_reviewed_packages",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "57e9969c04aeef5cbaeed54601997bf9"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "authoring_revisions",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "1665cac4db26b894403560c2254db996"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "capacity_reservations_v1",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "e0be0a6ee188ade37fb34a8af8d7e860"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "consents",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "b8b599e579f0da7e22503fafa107dc00"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "content_candidates_v2",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "1825fb133233c32264290b6a84989d75"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "content_submissions",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "a5cb86edea88835e38de9cc649bff49e"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "erasure_fk_contract",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "14e191339ae8c2ef65c5fa288080b319"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "erasure_rights",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ca52e4843fa9c48c110201eaaa9d6c98"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "erasure_transfers",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "901504843fc2bcc46f525573b18c704c"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "group_join_codes",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "1102606d62dfdc26007c98f96be53011"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "group_join_requests",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "07489f2881090ee0d5c708d60f0722d5"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "group_managers",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "6bbf859a19e48bce7f9b4bef18086097"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "groups",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "5afd99125e1d5f9d98a4577390f0250c"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "join_request_throttles",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "8a2d875f23752a2e122080ce25f33351"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "launch_gate",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "71372e190dbf5723f0ec471e1914cc8e"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "manual_events_v1",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "0f87b5cd03ab743c5e5adf3e323c4c46"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "manual_final_receipts_v1",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "1412254bf77bd919214efd6585d61e6f"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "manual_item_scores_v1",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "2b53009ca3d86f2f783bcf278334e5cf"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "manual_work_v1",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "93db93540eb18ec80c6916b17c61e8f8"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "membership_periods",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "17832a84f2914913e7c079bc3dbad2c7"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "memberships",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "15f8fcf021f915f53c9af95260a1fea9"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "pilot_write_limits",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "e1ad09cdf48a3d72ecc509a6dff944ba"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "pilot_write_usage",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "8829038c49274076e861d3f46e0eb712"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "pool_fences_v2",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "4951080975188c0a198609e112c08122"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "pool_selections_v2",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "1c9da513e92b3af1380b5f08e66712f7"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "practical_presentations",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "a8fffa0545beff143fc0c0ac4cc4963a"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "practice_recordings",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "417b68926f673c59d14747dd84bbefb1"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "publications",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "c110d39d631b11990279177e01b14470"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "receipts",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "f08e7c42d9a6d3251b76db968805c4f8"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "reservations",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ba7f393d99c498eaf2440e69bf17603b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "restore_epoch",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "d0615b7c1b2f4862e709af7f9d2268f6"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "results",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "3be53049a860bfc4126fb7bca6d3c457"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "scope_lock",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "9dff4183a577d2dfaf609b02fd7e9d80"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "session_details",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "db4e9624bdfd44ee5dc01c6846c533e7"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "sessions",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "cc3dc01b2254653e25827faa8217e08c"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "sharing_consents",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "9a58ff9f558dec392a621c1a32cd3fe3"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "sharing_policy",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "4c8b0d34b7009d62131c43987eee1419"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "stop_active_attempts",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "e252c8e98b54f8248e18ec51a11c3811"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "supervisor_appointments",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "915d25dd63319722318a7be5086db721"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "targets",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "36de5a1905bf300d412b74e91604f912"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "version_managers",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "5632e7472dfcb7b99a667c47840b7f45"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "assess",
+      "t": "versions",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ad7fa77134acaf246a0cce7f7102ecdc"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "audit_log_entries",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "86d6d74ed881976eb5e4c447f5c86abf"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "custom_oauth_providers",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "3148826626d785f139be00581a91b8fe"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "flow_state",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "0912ce9a6535a5f77fa354ee27f49c7b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "identities",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "d744e5e65f5a49a8c3ae86926da777da"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "instances",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "25018aef545f804392f440a4b798e36b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "mfa_amr_claims",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "a73139ccc3e3243381e43b013db0491e"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "mfa_challenges",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "4cf35f6d51e3d939217228117e93c070"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "mfa_factors",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "f83f86107270153e45765a21cb4bc10b"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "mfa_recovery_code_sets",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "d3c88054433a68ad3df14dcf08971519"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "mfa_recovery_codes",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "d0b8b351d20444d048a1d03971cd45ed"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "oauth_authorizations",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "78b79d87ceb4f7e12afafea67d388dc3"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "oauth_client_states",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "8744fb3f461dfb4ecc791ac7a8ed460d"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "oauth_clients",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "d9b01eb7f6133af00c2ca33173d786e5"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "oauth_consents",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "3e28f6eadd293aad8058ef5f438bacf0"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "one_time_tokens",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "756fa658ab2957a38f7735ee372ed154"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "refresh_tokens",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "a4b7ae1c8ee3b65ab458305dc84a4598"
+    },
+    {
+      "k": "S",
+      "r": false,
+      "s": "auth",
+      "t": "refresh_tokens_id_seq",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "4fcac3e8cc747970863e440125baf944"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "saml_providers",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "ad3bb589316cf22cca75226e5706fd40"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "saml_relay_states",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "8147bac1d1cb1bffe9397902fd1db500"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "schema_migrations",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "68e225d5550e1ac3cb942cc1665db1a0"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "scim_tokens",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "91142a1322bac79f439ce5319d142b2a"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "scim_users",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "bba956c7b17b0c5a8353827e2aac2d47"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "sessions",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "55ec142f31a71cb511d9610e186a6230"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "sso_domains",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "2536c5f8058b05ca5c454a6861300524"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "sso_providers",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "0a1c5de99ef3a9f8fa05579df2d3a6f4"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "auth",
+      "t": "users",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "2f4539d8ad83fd9c290802ea2223146f"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "webauthn_challenges",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "466eda851c6c39583c00c9e039d58490"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "auth",
+      "t": "webauthn_credentials",
+      "owner": "supabase_auth_admin",
+      "forced": false,
+      "definition": "547d7e3ca6e7f89501793310b34889e8"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "emergency",
+      "t": "appointment",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "b1b90e837267fc10e954f61976f51f89"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "emergency",
+      "t": "audit",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "fb04ccba0a4048364cfabb9c14c9026f"
+    },
+    {
+      "k": "S",
+      "r": false,
+      "s": "emergency",
+      "t": "audit_id_seq",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "f93f7a88bbc1e70e1c823e05cbb81ae9"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "emergency",
+      "t": "operations",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "c85daa18682a3e39f100f687915d1c38"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "emergency",
+      "t": "phases",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "775454c68ff5e68382983de65cceef7a"
+    },
+    {
+      "k": "v",
+      "r": false,
+      "s": "extensions",
+      "t": "pg_stat_statements",
+      "owner": "supabase_admin",
+      "forced": false,
+      "definition": "780eca08a1c548c63049806fddae0ecb"
+    },
+    {
+      "k": "v",
+      "r": false,
+      "s": "extensions",
+      "t": "pg_stat_statements_info",
+      "owner": "supabase_admin",
+      "forced": false,
+      "definition": "1a7b07bfbd0be1f56701d5418183cee8"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "attempts",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "5f9030a0c0481ce93647feb39020ecc9"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "c2_account_deletions",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "897c3cc61723f67afa3cf9f97448376a"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "c2_survey_responses",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "f8a9728d4fe43d8db0f2cf5c6dc7b4d0"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "c2_survey_rounds",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "5fa74b7428ba38c78c26115591c5cb2e"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "c2_survey_settings",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "f0a31c116227a49401affd401fba11c3"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "c2_survey_versions",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "6df0b81d00390abd5538fd4a1ff68b39"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "events",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "9d9ebcbd494af2a93785b9fea405ddf4"
+    },
+    {
+      "k": "S",
+      "r": false,
+      "s": "public",
+      "t": "events_id_seq",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ceb42003b094a9f9cbfe012abdedc83f"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "feedback",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "c443da1a59eac771aae58c23c8c45270"
+    },
+    {
+      "k": "S",
+      "r": false,
+      "s": "public",
+      "t": "feedback_id_seq",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "ceb42003b094a9f9cbfe012abdedc83f"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "pilot_locales",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "061577bdf1c497ee4095e53b9df00eb7"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "public",
+      "t": "profiles",
+      "owner": "postgres",
+      "forced": false,
+      "definition": "df031c147541460984b9f0189324b39d"
+    },
+    {
+      "k": "p",
+      "r": true,
+      "s": "realtime",
+      "t": "messages",
+      "owner": "supabase_realtime_admin",
+      "forced": false,
+      "definition": "38446e987622bc5ce14466b3d55e3f37"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "realtime",
+      "t": "schema_migrations",
+      "owner": "supabase_admin",
+      "forced": false,
+      "definition": "bdb82a76d9a0dba0d36c017bee659992"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "realtime",
+      "t": "subscription",
+      "owner": "supabase_realtime_admin",
+      "forced": false,
+      "definition": "f249fae25f8f03ad8ccf8bd08189978e"
+    },
+    {
+      "k": "S",
+      "r": false,
+      "s": "realtime",
+      "t": "subscription_id_seq",
+      "owner": "supabase_realtime_admin",
+      "forced": false,
+      "definition": "72917d6e20b6bef0a0a3f9af60efbdf7"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "buckets",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "8677267f52ef447b4e1383975b55fc24"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "buckets_analytics",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "38af6a5fd28fbdf9a73634da2b1d3e9e"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "buckets_vectors",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "91be7300205b4e3e01ffc60259e7db4e"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "migrations",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "76423f3646250cc57303067cc3b70b24"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "objects",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "d0ca178fb548f100d507a0ced387cad2"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "s3_multipart_uploads",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "0748d0d31a5e05db69299642c30737e4"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "s3_multipart_uploads_parts",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "d3e06a09bb519578066f917f8366505b"
+    },
+    {
+      "k": "r",
+      "r": true,
+      "s": "storage",
+      "t": "vector_indexes",
+      "owner": "supabase_storage_admin",
+      "forced": false,
+      "definition": "ee5d60970c64cf6110fc97d2097d9bba"
+    },
+    {
+      "k": "v",
+      "r": false,
+      "s": "vault",
+      "t": "decrypted_secrets",
+      "owner": "supabase_admin",
+      "forced": false,
+      "definition": "3d6426e99d157b0fc49fd50bb64d2d97"
+    },
+    {
+      "k": "r",
+      "r": false,
+      "s": "vault",
+      "t": "secrets",
+      "owner": "supabase_admin",
+      "forced": false,
+      "definition": "9119ad56fe0e345908c210c7f8d131b9"
+    }
+  ],
+  "extensions": [
+    [
+      "pg_stat_statements",
+      "1.11",
+      null,
+      "d751713988987e9331980363e24189ce",
+      false
+    ],
+    [
+      "pgcrypto",
+      "1.3",
+      null,
+      "d751713988987e9331980363e24189ce",
+      false
+    ],
+    [
+      "plpgsql",
+      "1.0",
+      null,
+      "d751713988987e9331980363e24189ce",
+      false
+    ],
+    [
+      "supabase_vault",
+      "0.3.1",
+      [
+        "vault.secrets"
+      ],
+      "d5ca2aa4bfc63f2ca7a6ddf5bea1effb",
+      false
+    ],
+    [
+      "uuid-ossp",
+      "1.1",
+      null,
+      "d751713988987e9331980363e24189ce",
+      false
+    ]
+  ],
+  "largeObjects": [],
+  "functionsHash": "ecc4a415f433279d1f028a5884f87e69",
+  "serverVersion": 170011
+}

@@ -9,7 +9,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Wrist side](#wrist-side-current)
 - [Data and engine separation](#data-and-engine)
 - [Practice/pilot scope](#practice-and-pilot)
-- [Current Assess design](#assess-design)
+- [Current Assess design](#assess-design); [current laptop backup scope and cloud deferral](#assess-self-service-backup-deferred-owner-2026-11-06)
 - [Reference-first and provisional review](#reference-and-source)
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
@@ -1669,6 +1669,8 @@ Authority: owner's task prompt, recorded as stated; design in [ASSESS_SELF_SERVI
 - Unchanged: [RAD-059 decisions 1–14](#rad059-alternate-owner-2026-11-02) (stop-only alternate, channels, revocation A), the [owner in-app stop](#owner-inapp-stop-owner-2026-11-04), BONTRAGER-9/medical rules, and every AGENTS boundary this record does not name.
 No SQL, migration, secret, Job, Scheduler or code follows from this record.
 
+Current amendments: [hardening and four-session delivery](#assess-self-service-hardening-owner-2026-11-05).
+
 <a id="rad085-review-ready-proposal-2026-11-05"></a>
 ### Proposal only: `rad085-review-ready` functions fingerprint after W1, 2026-11-05
 **No ruling is recorded** (Decision-needed DS-9 in the [design §7](ASSESS_SELF_SERVICE_DESIGN.md#7-gap-ledger)). The promoted check now fails on production: expected `5fcd5e71…`, actual `445cb753…` (the five W1 EXECUTE grants). Recommended: exclude the `assess_grading_worker` grantee from the ACL part of the `functions` fingerprint (value stays `5fcd5e71…` on CI and production); alternative: accept both values. Replacing the value with `445cb753…` alone breaks the CI DB lane (no W1 there; Inferred, not run). Any change to the file changes the `pilot-v1` marker (hash over every manifest check), so the owner must set the new `PILOT_SCHEMA_VERIFIED` before the first Deploy after the merge; the manifest lists the file by path only. It must land before any further preflight. Nothing is applied.
@@ -1682,6 +1684,8 @@ Authority: owner's answers to DS-1…DS-10 and the DS-1 amendment in the same se
 - Hard rule: `main` stays deployable. P0 is the only change that may move the `pilot-v1` marker; new SQL (P1/P3/P5) is staged, digest-pinned and outside the applied manifest until the P7 promotion; the P2 UI calls no RPC that does not exist live and is dormant until P7; no existing check, golden or hash changes except the P0 fingerprint fix. RAD-104 is done on the owner's evidence (packet applied, check 6/6, test mail and a real sign-up digest delivered).
 No SQL, secret, Job, Scheduler or gate action follows from this record.
 
+Current amendments: [hardening and four-session delivery](#assess-self-service-hardening-owner-2026-11-05).
+
 <a id="assess-self-service-deviations-2026-11-05"></a>
 ### Proposal only: self-service deviations needing a ruling, 2026-11-05
 **No ruling is recorded.** (1) DS-5 cannot be met without changing five protected places that cap the grading credential at 90 days (`rotate-grading-credential.py` and its test, `assess-grading-worker-login.sql`, `assess-worker-login-ready.sql`, `assess-grading-worker-ready.sql`, `assess-original-worker-login-stage.sql`). Recommended: P7 uses `--valid-days 90` with rotation at most every 60 days; the promotion PR raises the cap to 365 with a new marker. (2) No advisory lock: the grading binding allows exactly five operations, and lease plus skip-locked claims already make overlap safe. (3) The witness tick rides inside `health_v1` because a sixth worker function would break the W1 grant contract. (4) P6 stopped: the repository holds two reusable non-clinical items; the live count needs the owner's read-only inventory. Evidence: the [P0–P6 report](archive/reports/2026-11/ASSESS_SELF_SERVICE_P0_P6_2026-11-05.md). Nothing is applied.
@@ -1694,3 +1698,97 @@ Authority: owner's review message and answers, recorded as stated; amends [OD1�
 - "All-students quiz" is a SEPARATE feature from group exams. Recipients: every account that is approved AND has accepted the privacy/Assess consent, resolved server-side at publish time; no student opt-in or choice. Senders: the owner always; a supervisor only with a separate "all-students" permission that the owner grants per supervisor in the owner panel (default OFF, revocable, audited), never automatic. Same windows, grading and result path as group exams.
 - P6 unblocked: the first real exam is 20 owner-authored items in an owner-held XLSX matching the existing QuestionImport columns, imported in-app by the owner/supervisor at P7 step 15 through QuestionImport. The file and any item text are never committed.
 - Next: a separate Draft promotion PR (P7 runbook §0). No live action follows from this record.
+
+Current amendments: [hardening and four-session delivery](#assess-self-service-hardening-owner-2026-11-05).
+
+<a id="assess-self-service-hardening-owner-2026-11-05"></a>
+### Assess self-service — hardening owner decisions, 2026-11-05
+Authority: owner's S1 task prompt, recorded as stated; amends the three linked decisions above. Implementation now authorised, delivered in [S1–S4](ASSESS_SELF_SERVICE_DESIGN.md#12-current-hardening-and-delivery); no live authority. Evidence and exact next prompt: [S1 report](archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md).
+1. APPROVED: daily encrypted DB dump by scheduled Google Cloud job to a private bucket, retention and failure alert; replaces routine laptop backup (laptop retained for windows). DB role `assess_backup` must be least-privilege, separate from grading, credential in Secret Manager; exact read grants and restore completeness proved before activation.
+2. APPROVED: default window 2 hours, supervisor-editable, cap 7 days; scheduling recommends random pool “X of Y questions”. Existing server-side per-student option shuffle (random_pool v2) stays.
+3. APPROVED: “You have a new assessment, opens at <time>” via existing Brevo/RAD-104 pattern ([runbook](BREVO_SIGNUP_NOTIFY_RUNBOOK.md)): Vault secrets, pg_cron/pg_net, kill switch OFF by default; only targeted, approved, consented students, no exam content or scores.
+4. APPROVED: supervisor grants a new attempt only for attempts active when emergency stop held them; bounded, audited, own assignments only.
+5. APPROVED: appointed alternate may also use typed-confirmation in-app Resume; supersedes stop-only restriction for this action. Accept restored database remains owner-only.
+6. APPROVED: failed Scheduler notifications after a stop limited to 1/hour; text says the stop may be intentional.
+7. APPROVED: DB size alert at 70% of plan limit through existing alert channels.
+8. REJECTED: supervisor-authored label. Do not implement it.
+9. APPROVED: per-student extra time per assignment, supervisor-set, bounded and audited; deadline never exceeds window unless supervisor extends it.
+10. INVESTIGATE FIRST: restrict sources from which the no-expiry grading credential can connect. If paid feature or any cost increase is required, STOP and report options; enable nothing.
+Retained: no-expiry credential; separate all-students quiz with owner-granted permission per supervisor; first real exam = owner-held XLSX through QuestionImport, never committed; questions/mixed/full-practical all proven at P7 step 13. P0 owner evidence (2026-11-05): production `rad085-review-ready.sql` 11/11 ok, functions `5fcd5e71…`, relations `95ae71fb…`; owner set `PILOT_SCHEMA_VERIFIED` to `pilot-v1:466390675b4ac3c32c56c242ec02eeebfe5a745f7bfcc37f57b955576fb23d19` ([P0](ASSESS_P0_MARKER_RUNBOOK.md)). Owner-reported, not independently rerun here; no addresses or IDs retained.
+
+<a id="assess-self-service-corrective-s1-owner-2026-11-05"></a>
+### Assess self-service — narrow corrective S1 authorization, 2026-11-05
+Authority: owner's corrective S1 prompt; lifts the [S1 STOP](archive/reports/2026-11/ASSESS_SELF_SERVICE_S1_2026-11-05.md#7-المفتوح) only for this correction, before S2. All [hardening decisions](#assess-self-service-hardening-owner-2026-11-05) and C3 remain in force.
+1. Correct the unapplied P5 `health_v1` SQL FIRST: retain all four original counters and their `lifecycle_version=1` scope, then update its staged manifest digest and promote byte-identical corrected SQL. Applied migrations stay unchanged.
+2. Explicit protected-check exception: update only the health expectation in `scripts/assess/rad085-worker-rehearsal.mjs` for the additional witness, preserving exact counters and strictly checking witness keys, epoch, sequence advancement and DB-clock timestamps. Keep an independent exact four-field pre-P5 assertion; arbitrary extra fields are not accepted.
+3. Add independent synthetic counter/witness/privilege and enforcing-before-claim proofs; the grading binding retains exactly five operations. Preserve every ACL, TLS, revocation, redaction and cleanup assertion. No unrelated protected-check exception follows.
+4. Reimplement/review C1/C2 with strict expected-state successors; emergency-stop checks remain CLOSED. Recalibrate function/relation fingerprints and candidate marker from corrected SQL; do not reuse withdrawn pins. Live P0 marker/Variable stay unchanged.
+5. Maximum 28 declared paths; complete required worker rehearsal, DB lane, check/build, docs sync twice and docs/status/diff checks; verify final-head CI. Existing CI supplies unavailable required local environments, without skips/weakening. Draft #242 only; no S2, live SQL, cloud, secret, Variable, manual deployment, merge or Ready.
+Evidence: owner reports an isolated failed v1 + failed v2 reproduction changed failed/alert/purgeDue from 1 to 2 after P5 dropped M06's predicate. Independent correction evidence and exact conditional S2 prompt: [corrective report](archive/reports/2026-11/ASSESS_SELF_SERVICE_CORRECTIVE_S1_2026-11-05.md).
+
+<a id="assess-self-service-s2-owner-2026-11-05"></a>
+### Assess self-service — S1 acceptance and S2 DB authorization, 2026-11-05
+Authority: owner's S2 prompt. Corrective S1 at `f91cfd0b78c496b3b81e512e37aebdc0d87a3be6` is accepted by the coordination reviewer; owner independently verified final-head CI, complete worker rehearsal, DB lane 1105/1105, protected bytes and corrected marker. The agent also verified the current Draft/head and green CI through GitHub.
+S2 is DB-only C4 plus approved items 2/3/4/5/9 under [hardening](#assess-self-service-hardening-owner-2026-11-05): permissioned all-students publishing, 2-hour/7-day windows, target-only notices OFF, authoritative ACTIVE-at-stop replacement eligibility, typed owner/alternate Resume, bounded audited extra time.
+Preserve C1/C2, lifecycle-v1 health counters, strict witnesses, C3, applied migrations and phone packets. Recalibrate legitimate schema/marker changes; no old pin reuse or weakened assertions.
+[Implementation/evidence](archive/reports/2026-11/ASSESS_SELF_SERVICE_S2_2026-11-05.md). Draft #242 only on main; no S3/S4, live SQL/cloud/Vault/Brevo, secrets/Variables, deployment, merge or Ready authority. S3 requires S2 passing and review acceptance; owner-held XLSX through QuestionImport stays outside Git.
+
+<a id="assess-self-service-s3-review-2026-11-05"></a>
+### Assess self-service — S2 accepted; S3 UI contract STOP, 2026-11-05
+Authority: owner's S3 prompt and environment-recovery instruction. Coordination review accepts S2 at `bb56661ea9f7c330e917f424af549a1b34731957`; owner independently verified final-head CI, DB 1116/1116, unit 2596/2596, complete worker rehearsal/cleanup, protected bytes and both fingerprint environments.
+S3 C5 UI only is authorised; no repeated product approval is needed. Candidate remains `pilot-v1:c147c107631b68898e4715c8e3a104bfe6bf9b082950665539c61c8021f4ced1`; live P0/Variables unchanged.
+[Recovery and contract evidence](archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_2026-11-05.md): proxy works with command network permission; clean accepted head fetched. S3 product edits stopped: no browser-readable session identity/ACTIVE-at-stop eligibility contract exists for the required new-attempt picker.
+A proposed bounded own-assignment read is described in the report, not authorised or implemented. It needs narrow DB-contract scope and fresh fingerprint/mutation verification before full S3 can proceed. S2 acceptance is retained; no protected assertion changed. Draft #242 only; S4/P7 and all live actions remain outside scope.
+
+<a id="assess-self-service-s3-read-owner-2026-11-05"></a>
+### Assess self-service — narrow eligibility read approved, 2026-11-05
+Authority: owner's approval of S3 report §4. Add a versioned read-only RPC for the caller's own assignments, stable pagination capped at 100, studentId/sessionId/eligible/reason/serverTime only, no content or grades.
+Eligibility uses authoritative ACTIVE-at-stop capture, exact held timestamp, current state, expiry, previous grant and three-grant limit; respect availability and revocation. Unknown historical and non-active holds are ineligible. Read authorization must not use write-scoped own_assignment_v1 or direct table grants; new_attempt_v1 remains the locked execution-time authority.
+Use a new forward migration, positive/negative scope/eligibility/paging/stale-read tests and fresh successor fingerprint/marker calibration; preserve applied migrations and protected assertions. Review all remaining S3 UI-to-DB contracts before implementation; report additional material gaps together.
+S2 acceptance remains valid; resume authorised S3 UI after contract review. No S4, live SQL/cloud/provider, secrets/Variables, deployment, merge or Ready. [Implementation evidence](archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_IMPLEMENTATION_2026-11-05.md).
+
+<a id="assess-self-service-s3-reads-owner-2026-11-05"></a>
+### Assess self-service — remaining S3 reads approved, 2026-11-05
+Authority: owner's answer to the combined pre-implementation contract review. Add bounded versioned reads for student assignment/latest-attempt listing, v2 history paging through the existing route and result_v2 visibility, and scoped installed-v2-version/own-assignment metadata.
+Enforce student-own access, supervisor scope, consent and revocation. Metadata exposes no private questions, answers or grading keys. New forward migrations and independent authorization/paging tests; fresh explained calibration, existing RPCs/protected assertions preserved.
+Revise exact budget before editing, record this approval and complete S3. No new publication/grade-writing mechanism, live actions, S4, merge or Ready. This lifts only the additional read gaps reported together; S2 acceptance remains valid.
+
+<a id="assess-self-service-s3-clock-owner-2026-11-05"></a>
+### Assess self-service — S3 clock correction, 2026-11-05
+Authority: owner's corrective follow-up to reviewed head `1a7a7c9cf1d2d62ebe42ce92cb9c1c7a2ecbd967`, and explicit approval to prepare locally despite unavailable Git fetch. Coordination independently confirms this is the open Draft #242 head on main. S2 acceptance remains valid; S3 acceptance is pending this correction, pushed-head CI and review.
+Use a shared server-timestamp/monotonic-elapsed UI clock for student states, editability and schedule/publication validation; fresh responses and visibility rebinding resynchronize it. Database checks remain authoritative. No automatic write RPCs or blind refresh retries. Preserve SQL, authorization, scoring, runner semantics and protected assertions; explain only affected frontend pins.
+[Corrective evidence and remaining checks](archive/reports/2026-11/ASSESS_SELF_SERVICE_S3_CLOCK_2026-11-05.md). Existing branch only; integrate legitimate remote work before normal push once connectivity returns. No network/proxy/TLS/credential changes, S4, live actions, Variables, deployment, merge or Ready.
+
+<a id="assess-self-service-s4-owner-2026-11-05"></a>
+### Assess self-service — S3 accepted; S4 integration review, 2026-11-05
+Authority: owner's S4 prompt. Coordination review accepts S3 including its clock correction at `894e58089a6365848074550973da2a18d80ff715`; owner verified final-head unit2596/2596, DB1139/1139, complete worker rehearsal/cleanup, unchanged fingerprints and candidate. S1/S2 acceptance remains valid.
+S4 authorises offline items1/6/7/10, C6 verification, final P7 preparation and C7 report. No live authority; #242 stays Draft on main. Preserve the laptop-window backup until the automatic path is proved.
+Preflight confirms production and staged R1/R2/R3 use the five-operation v1 binding; Scheduler does not select v2. A successor worker/grant contract requires a separately approved narrow exception; no implicit extra function, table or admin privilege. [Evidence/proposal and cost investigation](ASSESS_S4_OPERATIONS.md).
+Connection-source restrictions stop at investigation if a paid feature or cost increase is needed; continue independent preparation. No live SQL/cloud/Vault/Brevo, secrets, Variables, activation, deployment, merge or Ready.
+[Current S4 evidence and conditional next prompt](archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_2026-11-05.md). Assess is not operational without P7 live evidence; first exam remains owner-held XLSX via QuestionImport outside Git.
+
+<a id="assess-self-service-s4-worker-owner-2026-11-05"></a>
+### Assess self-service — narrow v2 worker successor approved, 2026-11-05
+Authority: owner's explicit S4 reply. Exactly five operations: maintain_v2, claim_v2, finish_v2, fail_v2, and a new health/witness wrapper keeping v1/v2 counters separate. No worker table/admin grants or extra memberships. Original v1 contracts/assertions, TLS, revocation, witness and stop safeguards remain.
+Later live role switch requires CLOSED gate, NOLOGIN, zero worker connections and zero unfinished v1 work including active, held, failed or leased attempts; refuse otherwise. Replace grants atomically without combined sets. Rollback is fail-closed reconciliation without blind replay.
+Authorised: versioned production binding/grant packet and successor readiness/image proofs for questions/mixed/full-practical, witness enforcement, stop, lease/replay, ACL drift and cleanup; fresh independently measured fingerprints/marker. Exact revised budget34 paths declared before edits. S4 preparation only; no live/secret/Variable/deployment/merge/Ready authority.
+
+<a id="assess-self-service-s4-backup-owner-2026-11-06"></a>
+### Assess self-service — scoped backup read and completion approved, 2026-11-06
+Authority: owner's explicit follow-up on Draft #242. Prepare exact inventory-pinned SELECT grants and additive SELECT-only RLS policies solely for assess_backup. Preserve existing policies/roles; no BYPASSRLS, writes, admin privileges, memberships, broad default grants or Vault-decryption access. Prove unauthorized RPC/SET ROLE rejection.
+Authorised offline: actual guarded RLS dump and production-shaped pinned coverage/restore including provider objects, roles, sequences and large objects; define/test concurrent DML, sequence advancement/reset and schema/role changes. Never accept an omitted required object or partial backup as complete. Missing actual provider evidence requires exact gaps plus a bounded owner read-only inventory packet, not live SQL.
+Build/test the actual image through the existing required backup CI path: default zero connections/uploads, non-root memory scratch, verified TLS, encrypted dump/restore, upload failures/cleanup, public encryption material only. Preserve pinned bases/assertions and clean task-owned resources only. Exact follow-up budget33 paths (combined S4 ceiling52) declared before edits; recalibrate legitimate successor fingerprints/marker independently.
+Continue independent work through blocked proofs. Automatic backup remains unactivated and laptop backup required until coverage is proved; S4 acceptance/P7 remain pending review. Preserve verified v2 worker and accepted S1–S3. No live SQL/grants/policies/cloud/provider, secrets, Variables, activation, manual deployment, merge or Ready.
+
+<a id="assess-self-service-s4-backup-lob-owner-2026-11-06"></a>
+### Assess self-service — exact PUBLIC LOB constructor exception approved, 2026-11-06
+Authority: owner's explicit answer approving the three-function proposal in ASSESS_S4_OPERATIONS. Native PostgreSQL17.11 proves PUBLIC EXECUTE on lo_create(oid), lo_creat(integer), lo_from_bytea(oid,bytea) permits assess_backup to create large objects outside read-only transactions; SELECT/RLS cannot deny inherited access.
+Prepare an atomic inventory-pinned ACL packet for exactly those three functions: preserve every existing role's effective EXECUTE through exact named grants, then revoke only PUBLIC EXECUTE, excluding assess_backup. No memberships, admin/grant-option/default grants, function replacement or live action. Require existing provider ownership/authority; refuse otherwise. Future roles require explicit grants; rollback remains fail-closed without automatic PUBLIC regrant.
+Existing declared follow-up budget33/combined52 is unchanged: edits stay in cloud-backup-contract.mjs, cloud-backup.mjs, prepare-cloud-backup.mjs, existing backup fixtures/tests, backup inventory/manual/readiness SQL and the declared docs/calibration paths. Recalibrate candidate inventory/marker only from measured evidence. Preserve worker/S1–S3; S4/P7 remain pending review, no live activation or secrets/Variables/deployment/merge/Ready.
+
+<a id="assess-self-service-backup-deferred-owner-2026-11-06"></a>
+### Assess self-service — laptop backup retained; cloud backup deferred, 2026-11-06
+Authority: owner's explicit scope amendment on Draft #242. Keep the reviewed Windows/WSL laptop backup as the current mechanism. Defer standalone cloud backup and further backup enhancements until at least partial project success and a later explicit resumption; cloud provisioning, provider ownership, cloud capacity/restore and scheduled backup execution are no longer prerequisites for current Assess preparation or deployment attestation.
+This supersedes only the earlier cloud-backup requirement and its dependency edges; historical approvals/evidence remain unchanged. Current Assess must require neither assess_backup nor its SELECT/RLS packet or the three pg_catalog constructor ACL changes. Preserve strict schema/privilege attestation, S1–S3/clock, five-operation v2 worker, stop/witness/recovery/alerts and the exact 70%-of-plan-limit requirement.
+Authorised offline separation: restore the exact backup-free S4 schema oracle/marker; retain deferred tests in an explicitly separate synthetic workflow; measure DB size with the existing worker connection and already-available pg_database_size capability, no new RPC/grant/admin role/service. Preserve health/witness shapes; missing/invalid measurement is UNKNOWN through existing failure channels. Exact amendment budget34 paths declared before edits.
+All live execution is postponed until the owner returns with the laptop. The next fresh laptop backup and its verification remain pending, never inferred from old or synthetic evidence. No live SQL/database/cloud/secret/Scheduler, Variables, activation, deployment, merge, Ready, new PR/worktree/rebase/force-push/subagents or real XLSX import. S4 acceptance requires coordination review; P7 has not started and Assess is not operational.

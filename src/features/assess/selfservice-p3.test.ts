@@ -47,7 +47,11 @@ it('the staged entries (R1 shadow, R2 enforcing, R3 enforcing without attestatio
  const [r1, r2, r3] = ['r1', 'r2', 'r3'].map(entry) as [string, string, string];
  for (const t of [r1, r2, r3]) { expect(t).toContain('batch: 20, budgetMs: 240_000'); expect(t).toContain('gcsWitnessStore'); expect(t).toContain("-assess-witness"); expect(t).not.toMatch(/process\.env\.(?!RAD085_SYNTHETIC_WORKER)/); }
  expect(r1).toContain("mode: 'shadow'"); expect(r2).toContain("mode: 'enforcing'"); expect(r3).toContain("mode: 'enforcing'");
- expect(r1.replace("mode: 'shadow'", "mode: 'enforcing'").replace(/R1: [^\n]*/, '')).toBe(r2.replace(/R2: [^\n]*/, ''));
+ // S4 adds the reviewed image identity: normalize only the two exact R1 labels.
+ expect(r1.replace("mode: 'shadow'", "mode: 'enforcing'")
+  .replace('build-grading-worker.mjs --selfservice-r1', 'build-grading-worker.mjs --selfservice-r2')
+  .replace("manifest.selfservice !== 'selfservice-r1'", "manifest.selfservice !== 'selfservice-r2'")
+  .replace(/R1: [^\n]*/, '')).toBe(r2.replace(/R2: [^\n]*/, ''));
  for (const t of [r1, r2]) { expect(t).toContain('RECOVERY_PATH'); expect(t).toContain('restoresSinceBaseline'); }
  expect(r3).not.toContain('RECOVERY_PATH'); expect(r3).not.toContain('restoresSinceBaseline');
  // Everything the reviewed W4 entry guards stays: destination constants, O_NOFOLLOW reads, manifest and file-hash checks, shutdown handling.

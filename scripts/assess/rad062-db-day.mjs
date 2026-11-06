@@ -93,13 +93,29 @@ export function checkRows(result) {
   if (rows.some(row => Object.entries(row).some(([key, v]) => typeof v === 'boolean' && !nonAssertions.has(key) && v !== true))) throw Error('check_failed');
   return rows.length;
 }
+// This existing laptop/installation lane requires CLOSED (its CLI preflight also enforces it).
+// Supply that explicit policy to successor checks; never infer an expectation from the actual gate.
 export async function checks(db, files = manifest().checks) {
-  let passed = 0;
-  for (const file of files) {
-    try { checkRows(await db.query(readFileSync(file, 'utf8'))); passed++; }
-    catch { await db.query('rollback'); throw Error('required_check_failed:' + file); }
+  const successors = files.some(file => /^supabase\/checks\/selfservice-/.test(file));
+  let previous;
+  if (successors) {
+    previous = (await db.query("select current_setting('radlab.expected_gate',true) value")).rows[0].value;
+    if (previous && previous !== 'closed') throw Error('closed_installation_check_required');
+    await db.query("set radlab.expected_gate='closed'");
   }
-  return { checks_passed: passed };
+  let passed = 0;
+  try {
+    for (const file of files) {
+      try { checkRows(await db.query(readFileSync(file, 'utf8'))); passed++; }
+      catch { await db.query('rollback'); throw Error('required_check_failed:' + file); }
+    }
+    return { checks_passed: passed };
+  } finally {
+    if (successors) {
+      if (previous) await db.query("select set_config('radlab.expected_gate',$1,false)", [previous]);
+      else await db.query('reset radlab.expected_gate');
+    }
+  }
 }
 // Decision C: one new, durable CREATE FUNCTION artefact in each unchanged transaction.
 // These signatures are fixed, unique to their migration, and persist through M08.

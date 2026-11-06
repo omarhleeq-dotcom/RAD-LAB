@@ -1,4 +1,4 @@
-# Unit tests, typecheck, lint and production build only: no secrets, no Playwright, no deployment.
+# Required unit, database, monitoring, docs and build proofs; no secrets or deployment.
 # The browser visual-regression matrix (scripts/qa/run-matrix.mjs) is run manually; see docs/session-5-qa.md.
 name: CI
 on:
@@ -29,7 +29,7 @@ jobs:
         env:
           CI_TEST_LANE: unit
   db:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

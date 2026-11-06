@@ -1,4 +1,5 @@
 "use client";
+import { SelfServiceSession } from "./selfservice/SelfServiceSession";
 import { AuthoringEntry } from "./AuthoringEntry";
 import { ManualGradingEntry } from './ManualGradingEntry';
 import { MANUAL_GRADING_AVAILABLE } from './manual-grading-availability';
@@ -17,7 +18,7 @@ import {Rad062Entry} from "./Rad062Entry";
 import {HistoryPanel} from "./HistoryPanel";
 import {AssessConsent} from "./AssessConsent";
 import {AssessSetup,RunnerView,useRunnerController,runnerButton as button} from "./RunnerView";
-function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>void}) {
+export function Runner({port,attempt,leave}:{port:RunnerPort;attempt:string;leave:()=>void}) {
   const t=useTranslations("assess"),locale=useLocale();
   const c=useRunnerController(changed=>new MixedRunner(port,changed),attempt),s=c.session,issue=c.issue;
   const dir=dirFor(locale);
@@ -74,7 +75,7 @@ const subscribeTrack=(changed:()=>void)=>{window.addEventListener("popstate",cha
 function TrackSelection(){
   const t=useTranslations("assess"),practical=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("track")==="full-practical",()=>null);
   // Changing track remounts its isolated runner. Native navigation protects unacknowledged drafts.
-  return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
+  return <><nav className="mt-5 flex flex-wrap gap-3" aria-label={t("tracks")}><a className={button} aria-current={!practical?"page":undefined} href="?track=mixed">{t("mixed")}</a><a className={button} aria-current={practical?"page":undefined} href="?track=full-practical">{t("practical")}</a></nav><SelfServiceSession mode="student"/>{practical!==null&&<Assigned key={String(practical)} practical={practical}/>}</>;
 }
 export function AssessPanel(){
  const {state}=useSessionAccount(),supervisor=useSupervisorAppointment(),t=useTranslations("assess"),a=useTranslations("assessImport");
@@ -86,8 +87,8 @@ export function AssessPanel(){
    {(supervisor||state.profile.role==="owner")&&<a className={button} href="?author=1" aria-current={author?"page":undefined}>{a("entry")}</a>}
    <a className={button} href="?track=mixed">{t("tracks")}</a><a className={button} href="?history=1">{t("history")}</a>
   </nav>
-  <Rad062Entry>{grading?<ManualGradingEntry/>:author?(supervisor||state.profile.role==="owner")&&<AuthoringEntry/>:<AssessView/>}</Rad062Entry>
+  <Rad062Entry>{grading?<ManualGradingEntry/>:author?(supervisor||state.profile.role==="owner")&&<><AuthoringEntry/><SelfServiceSession mode="manage"/></>:<AssessView/>}</Rad062Entry>
  </div>:<p className="mt-6">{t("approved")}</p>;
 }
 
-function AssessView(){const history=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("history")==="1",()=>null);return history===null?null:history?<HistoryPanel/>:<TrackSelection/>;}
+function AssessView(){const history=useSyncExternalStore(subscribeTrack,()=>new URLSearchParams(location.search).get("history")==="1",()=>null);return history===null?null:history?<><HistoryPanel/><SelfServiceSession mode="history"/></>:<TrackSelection/>;}

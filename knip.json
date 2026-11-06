@@ -104,7 +104,12 @@
     "src/features/assess/server-runtime.ts",
     "src/features/assess/server-job.ts",
     "src/features/assess/server-runtime-v2.ts",
-    "scripts/assess/connection-probe.mjs"
+    "scripts/assess/connection-probe.mjs",
+    "src/features/assess/selfservice-audit.mjs",
+    "src/features/assess/server-worker-scheduled-v2.ts",
+    "scripts/ops/build-cloud-backup.mjs",
+    "scripts/ops/prepare-cloud-backup.mjs",
+    "scripts/assess/deferred-cloud-backup.test.ts"
   ],
   "project": [
     "src/**/*.{ts,tsx,mjs}",
@@ -119,9 +124,11 @@
   "ignoreBinaries": [
     "age",
     "age-keygen",
+    "openssl",
     "patch",
     "pg_dump",
-    "psql"
+    "psql",
+    "pg_restore"
   ],
   "ignoreExportsUsedInFile": true,
   "ignoreUnresolved": [
