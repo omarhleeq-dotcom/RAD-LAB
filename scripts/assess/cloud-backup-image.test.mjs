@@ -105,7 +105,7 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
   const targetSql=(sql,database='postgres')=>docker(['exec','-i',target,'psql','-X','-q','-At','-v','ON_ERROR_STOP=1','-U','supabase_admin','-d',database,'-f','-'],sql).trim();
   targetSql(prepareRolesSql(read(join(root,'restore','roles.sql'))));
   targetSql('drop database postgres with (force);','template1');
-  const toc=docker(['exec','-i',target,'pg_restore','--list'],readFileSync(archive));
+  const toc=docker(['exec','-i',target,'pg_restore','--create','--list'],readFileSync(archive));
   const roleFlags=new Map(JSON.parse(targetSql("select json_agg(json_build_array(rolname,rolsuper)) from pg_roles",'template1')));
   const plan=restorePlan(toc,roleFlags);assert.equal(plan.count,tocEntries(toc).length);
   const list=join(root,'first.list');writeFileSync(list,plan.first);docker(['cp',list,target+':/tmp/first.list']);

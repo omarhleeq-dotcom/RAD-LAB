@@ -9,7 +9,7 @@ export const LOB_CONSTRUCTORS=['pg_catalog.lo_create(oid)','pg_catalog.lo_creat(
 const constructorOids=LOB_CONSTRUCTORS.map(s=>"'"+s+"'::regprocedure").join(',');
 export const constructorsSql=`select coalesce(jsonb_agg(jsonb_build_object('signature',p.oid::regprocedure::text,'owner',pg_get_userbyid(p.proowner),'definition',md5(pg_get_functiondef(p.oid)),'aclReviewed',
  ((select count(*)=2 and bool_and(a.grantor=p.proowner and a.grantee in (0,p.proowner) and a.privilege_type='EXECUTE' and not a.is_grantable) from aclexplode(coalesce(p.proacl,acldefault('f',p.proowner))) a) or
-  (select count(*)=(select count(*) from pg_roles where rolname<>'assess_backup') and bool_and(a.grantor=p.proowner and a.grantee<>0 and pg_get_userbyid(a.grantee)<>'assess_backup' and a.privilege_type='EXECUTE' and not a.is_grantable) from aclexplode(p.proacl) a))) order by p.oid::regprocedure::text),'[]'::jsonb) value from pg_proc p where p.oid in (${constructorOids})`; 
+  (select count(*)=(select count(*) from pg_roles where rolname<>'assess_backup') and bool_and(a.grantor=p.proowner and a.grantee<>0 and pg_get_userbyid(a.grantee)<>'assess_backup' and a.privilege_type='EXECUTE' and not a.is_grantable) from aclexplode(p.proacl) a))) order by p.oid::regprocedure::text),'[]'::jsonb) value from pg_proc p where p.oid in (${constructorOids})`;
 export const inventorySql=`with rel as (
  select n.nspname s,c.relname t,c.relkind k,c.relrowsecurity r,c.relforcerowsecurity forced,
  pg_get_userbyid(c.relowner) owner,

@@ -1,4 +1,61 @@
 {
+  "roleNames": [
+    "anon",
+    "assess_authoring_bridge",
+    "assess_grading_worker",
+    "assess_job_a",
+    "assess_job_b",
+    "assess_worker",
+    "authenticated",
+    "authenticator",
+    "dashboard_user",
+    "pg_checkpoint",
+    "pg_create_subscription",
+    "pg_database_owner",
+    "pg_execute_server_program",
+    "pg_maintain",
+    "pg_monitor",
+    "pg_read_all_data",
+    "pg_read_all_settings",
+    "pg_read_all_stats",
+    "pg_read_server_files",
+    "pg_signal_backend",
+    "pg_stat_scan_tables",
+    "pg_use_reserved_connections",
+    "pg_write_all_data",
+    "pg_write_server_files",
+    "pgbouncer",
+    "postgres",
+    "service_role",
+    "supabase_admin",
+    "supabase_auth_admin",
+    "supabase_etl_admin",
+    "supabase_privileged_role",
+    "supabase_read_only_user",
+    "supabase_realtime_admin",
+    "supabase_replication_admin",
+    "supabase_storage_admin"
+  ],
+  "constructors": [
+    {
+      "owner": "supabase_admin",
+      "signature": "lo_creat(integer)",
+      "definition": "77d509dd2f3c00e8440c059440141c6b",
+      "aclReviewed": true
+    },
+    {
+      "owner": "supabase_admin",
+      "signature": "lo_create(oid)",
+      "definition": "21f4575873ae3486e2d2ad20c60bc8e3",
+      "aclReviewed": true
+    },
+    {
+      "owner": "supabase_admin",
+      "signature": "lo_from_bytea(oid,bytea)",
+      "definition": "b8a3c774f9d3935b8ff13c078a01c78c",
+      "aclReviewed": true
+    }
+  ],
   "bounded": true,
   "schemas": [
     [
