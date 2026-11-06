@@ -7,7 +7,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync,writeFileSync,rmSync,mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { productionFixture } from './cloud-backup-fixture.mjs';
-import { readInventory,grantPacket,sha,literal,qualified,roleMetadata } from '../ops/cloud-backup-contract.mjs';
+import { readInventory,grantPacket,sha,literal,qualified,roleMetadata,readyPacket } from '../ops/cloud-backup-contract.mjs';
 import { prepareRolesSql } from '../ops/laptop-restore-test.mjs';
 import { restorePlan,tocEntries } from '../ops/restore-event-triggers.mjs';
 const read=p=>readFileSync(p,'utf8');
@@ -101,7 +101,7 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
   targetSql(prepareRolesSql(read(join(root,'restore','roles.sql'))));
   targetSql('drop database postgres with (force);','template1');
   const toc=docker(['exec','-i',target,'pg_restore','--list'],readFileSync(archive));
-  const roleFlags=new Map(JSON.parse(targetSql("select json_agg(json_build_array(rolname,rolsuper)) from pg_roles")));
+  const roleFlags=new Map(JSON.parse(targetSql("select json_agg(json_build_array(rolname,rolsuper)) from pg_roles",'template1')));
   const plan=restorePlan(toc,roleFlags);assert.equal(plan.count,tocEntries(toc).length);
   const list=join(root,'first.list');writeFileSync(list,plan.first);docker(['cp',list,target+':/tmp/first.list']);
   docker(['exec','-i',target,'pg_restore','--exit-on-error','--create','--use-list=/tmp/first.list','-U','supabase_admin','--dbname=template1'],readFileSync(archive));
@@ -122,6 +122,7 @@ test('pinned production backup image: least privilege, actual RLS dump/TLS/resto
   // Last assertion gates candidate calibration; no proof above can be skipped.
   assert.deepEqual(JSON.parse(read('supabase/manual/selfservice-backup-read.inventory.json')),before,'independent inventory calibration must be recorded');
   assert.equal(read('supabase/manual/selfservice-backup-read.sql'),packet,'committed packet must be compiler-identical');
+  assert.equal(read('supabase/checks/selfservice-backup-ready.sql'),readyPacket(before),'readiness must be compiler-identical');
   proof={contract:'rad105-backup-image-rehearsal/2',outcome:'PASS',imageId:info.Id,inventorySha256:sha(before),tables:metadata.counts.length,providerEvidence:false};
  }finally{
   for(const c of contexts)rmSync(c,{recursive:true,force:true});await f.close();

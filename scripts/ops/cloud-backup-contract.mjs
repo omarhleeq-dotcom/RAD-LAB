@@ -36,12 +36,17 @@ export function validateInventory(v){
  const keys=['contract','bounded','serverVersion','relations','largeObjects','functionsHash','extensions','database','schemas'];
  if(!v||Object.keys(v).sort().join()!==keys.sort().join())throw Error('inventory_keys');
  if(!v||v.contract!=='rad105-backup-inventory/2'||v.bounded!==true||!Number.isInteger(v.serverVersion)||
- !Array.isArray(v.relations)||!v.relations.length||v.relations.length>MAX_OBJECTS||!Array.isArray(v.largeObjects)||v.largeObjects.length>4096||!Array.isArray(v.extensions)||!Array.isArray(v.schemas)||!v.database||!/^\w{32}$/.test(v.functionsHash))throw Error('inventory');
+ !Array.isArray(v.relations)||!v.relations.length||v.relations.length>MAX_OBJECTS||!Array.isArray(v.largeObjects)||v.largeObjects.length>4096||!Array.isArray(v.extensions)||!Array.isArray(v.schemas)||!v.database||!/^[a-f0-9]{32}$/.test(v.functionsHash))throw Error('inventory');
+ const name=x=>typeof x==='string'&&/^[A-Za-z_][A-Za-z0-9_$]{0,62}$/.test(x);
+ const acl=(a,privileges)=>a===null||(Array.isArray(a)&&a.length<=1024&&a.every(x=>Array.isArray(x)&&x.length===4&&name(x[0])&&name(x[1])&&privileges.includes(x[2])&&typeof x[3]==='boolean'));
+ if(v.schemas.length>256||v.schemas.some(x=>!Array.isArray(x)||x.length!==3||!name(x[0])||!name(x[1])||!acl(x[2],['USAGE','CREATE'])))throw Error('inventory_schemas');
+ const d=v.database;
+ if(Object.keys(d).sort().join()!==['acl','collate','ctype','encoding','locale','owner','provider','settingsHash'].sort().join()||!name(d.owner)||!acl(d.acl,['CONNECT','CREATE','TEMPORARY'])||!/^[a-f0-9]{32}$/.test(d.settingsHash)||!['c','i','b'].includes(d.provider)||!['encoding','collate','ctype'].every(k=>typeof d[k]==='string'&&d[k].length<=128&&!/[\x00-\x1f]/.test(d[k]))||(d.locale!==null&&(typeof d.locale!=='string'||d.locale.length>128||/[\x00-\x1f]/.test(d.locale))))throw Error('inventory_database');
  const names=new Set();for(const r of v.relations){
   if(!r||Object.keys(r).sort().join()!==['s','t','k','r','forced','owner','definition'].sort().join()||!['r','p','S','v','m','f'].includes(r.k)||!['s','t','owner'].every(k=>typeof r[k]==='string'&&/^[A-Za-z_][A-Za-z0-9_$]{0,62}$/.test(r[k]))||typeof r.r!=='boolean'||typeof r.forced!=='boolean'||!/^[a-f0-9]{32}$/.test(r.definition)||names.has(r.s+'.'+r.t))throw Error('inventory');names.add(r.s+'.'+r.t);
  }
  for(const l of v.largeObjects)if(Object.keys(l).sort().join()!==['id','owner','definition'].sort().join()||!/^[1-9][0-9]{0,9}$/.test(l.id)||typeof l.owner!=='string'||!/^[a-f0-9]{32}$/.test(l.definition))throw Error('inventory');
- if(v.extensions.some(e=>!Array.isArray(e)||e.length!==5||e[4]!==false))throw Error('required_extension_filter');
+ if(v.extensions.length>256||v.extensions.some(e=>!Array.isArray(e)||e.length!==5||!/^[a-z][a-z0-9_-]{0,62}$/.test(e[0])||!/^[0-9A-Za-z_.-]{1,32}$/.test(e[1])||(e[2]!==null&&(!Array.isArray(e[2])||e[2].length>MAX_OBJECTS||e[2].some(n=>typeof n!=='string'||n.length>128)))||!/^[a-f0-9]{32}$/.test(e[3])||e[4]!==false))throw Error('required_extension_filter');
  if(v.relations.some(r=>['m','f'].includes(r.k)))throw Error('unsupported_required_relation');
  return v;
 }
@@ -88,6 +93,11 @@ export const readerSafetySql=`select
  (n.nspname in ('assess','emergency','vault','pgsodium') or (n.nspname not in ('pg_catalog','information_schema') and n.nspname !~ '^pg_(temp|toast)' and p.prosecdef and p.prorettype not in ('trigger'::regtype,'event_trigger'::regtype)))) or
  exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='vault' and c.relname='decrypted_secrets' and has_schema_privilege('assess_backup',n.oid,'USAGE') and has_table_privilege('assess_backup',c.oid,'SELECT')) or
  exists(select 1 from pg_largeobject_metadata l cross join lateral aclexplode(coalesce(l.lomacl,acldefault('L',l.lomowner))) a where a.grantee in (0,'assess_backup'::regrole::oid) and (a.privilege_type='UPDATE' or (a.grantee='assess_backup'::regrole and a.is_grantable))) or
+ exists(select 1 from pg_default_acl d cross join lateral aclexplode(d.defaclacl) a where a.grantee='assess_backup'::regrole) or
+ exists(select 1 from pg_namespace n cross join lateral aclexplode(n.nspacl) a where a.grantee='assess_backup'::regrole and a.is_grantable) or
+ exists(select 1 from pg_database d cross join lateral aclexplode(d.datacl) a where a.grantee='assess_backup'::regrole and a.is_grantable) or
+ exists(select 1 from pg_proc p cross join lateral aclexplode(p.proacl) a where a.grantee='assess_backup'::regrole) or
+ exists(select 1 from pg_attribute x cross join lateral aclexplode(x.attacl) a where a.grantee='assess_backup'::regrole) or
  exists(select 1 from pg_class c cross join lateral aclexplode(c.relacl) a where a.grantee='assess_backup'::regrole and a.is_grantable) or exists(select 1 from pg_class where relowner='assess_backup'::regrole) or exists(select 1 from pg_proc where proowner='assess_backup'::regrole) or exists(select 1 from pg_namespace where nspowner='assess_backup'::regrole) or exists(select 1 from pg_database where datdba='assess_backup'::regrole) bad`;
 export function grantPacket(inventory){
  validateInventory(inventory);const expected=literal(JSON.stringify(inventory));
@@ -109,3 +119,11 @@ export const rolesSql=`select jsonb_build_object(
  'comments',(select coalesce(jsonb_agg(jsonb_build_array(r.rolname,shobj_description(r.oid,'pg_authid')) order by r.rolname collate "C") filter(where shobj_description(r.oid,'pg_authid') is not null),'[]'::jsonb) from pg_roles r where rolname<>$1),
  'parameters',(select coalesce(jsonb_agg(jsonb_build_array(parname,(select jsonb_agg(jsonb_build_array(pg_get_userbyid(a.grantor),case when a.grantee=0 then 'PUBLIC' else pg_get_userbyid(a.grantee) end,a.privilege_type,a.is_grantable) order by a.grantor::regrole::text collate "C",a.grantee::regrole::text collate "C",a.privilege_type) from aclexplode(paracl) a)) order by parname collate "C"),'[]'::jsonb) from pg_parameter_acl)) value`;
 export async function roleMetadata(db,excluded=''){return(await db.query(rolesSql,[excluded])).rows[0].value;}
+// Offline, pre-credential readiness. This never enables LOGIN or fixes a failed row.
+export function readyPacket(inventory){
+ validateInventory(inventory);
+ const required=dataRelations(inventory);
+ const checks=required.map(r=>`has_schema_privilege('assess_backup',${literal(r.s)},'USAGE') and has_table_privilege('assess_backup',${literal(qualified(r))},'SELECT')`);
+ const policies=required.filter(r=>r.r).map(r=>`(select count(*) filter(where polname='${POLICY}' and polcmd='r' and polpermissive and polroles=array['assess_backup'::regrole::oid] and pg_get_expr(polqual,polrelid)='true' and polwithcheck is null)=1 and count(*) filter(where not polpermissive and polcmd in ('r','*') and polroles&&array[0::oid,'assess_backup'::regrole::oid])=0 from pg_policy where polrelid=${literal(qualified(r))}::regclass)`);
+ return `-- Generated pre-credential readiness; ALL rows required true. READ ONLY, no activation.\nbegin read only;set local search_path='';set local lock_timeout='2s';set local statement_timeout='10s';\nwith inventory as (${inventorySql}) select 'backup_inventory' check_name,document=${literal(JSON.stringify(inventory))}::jsonb ok from inventory;\nselect 'backup_nologin_no_membership' check_name,exists(select 1 from pg_roles r where rolname='assess_backup' and not(rolcanlogin or rolinherit or rolsuper or rolcreatedb or rolcreaterole or rolreplication or rolbypassrls) and not exists(select 1 from pg_auth_members where member=r.oid or roleid=r.oid)) ok;\nselect 'backup_negative_privileges' check_name,not((${readerSafetySql})) ok;\nselect 'backup_full_row_coverage' check_name,${[...checks,...policies].join(' and ')||'false'} ok;\nselect 'backup_public_lob_constructors_denied' check_name,not exists(select 1 from unnest(array['pg_catalog.lo_create(oid)','pg_catalog.lo_creat(integer)','pg_catalog.lo_from_bytea(oid,bytea)']) f where has_function_privilege('assess_backup',f,'EXECUTE')) ok;\nselect 'backup_closed_zero_connections' check_name,(select count(*)=1 and bool_and(not enabled) from assess.launch_gate) and not exists(select 1 from pg_stat_activity where usename='assess_backup') ok;\nrollback;\n`;
+}

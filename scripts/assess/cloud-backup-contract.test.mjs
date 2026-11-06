@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { nativeFixture } from './cloud-backup-fixture.mjs';
-import { readInventory,grantPacket,assertReader,sha } from '../ops/cloud-backup-contract.mjs';
+import { readInventory,grantPacket,readyPacket,assertReader,sha } from '../ops/cloud-backup-contract.mjs';
 test('actual scoped packet: dry-run, additive policies, exact grants, no RPC/SET ROLE/write/default grants; drift rolls back',{timeout:120000},async()=>{
  const f=await nativeFixture();try{
   const a=f.admin;await a.query(`create schema assess;create table assess.launch_gate(enabled boolean);insert into assess.launch_gate values(false);
@@ -21,6 +21,7 @@ test('actual scoped packet: dry-run, additive policies, exact grants, no RPC/SET
   await a.query("set radlab.backup_apply='reviewed-select-only'");await a.query(packet);
   assert.equal(sha(await readInventory(a)),sha(inv));
   const original=(await a.query("select row_to_json(p) p from pg_policy p where polname='existing_read' order by oid")).rows;assert.deepEqual(original,old);
+  const readiness=(await a.query(readyPacket(inv))).flatMap(x=>x.rows);assert.deepEqual(readiness.filter(r=>r.ok!==true).map(r=>r.check_name),['backup_public_lob_constructors_denied']);
   await a.query("alter role assess_backup login valid until 'infinity'");const reader=await f.connect('assess_backup');await assertReader(reader,inv);
   assert.equal((await reader.query('select count(*) n from provider.rows')).rows[0].n,'2');assert.equal((await reader.query("select encode(lo_get(42000),'hex') b")).rows[0].b,'00feff');
   for(const q of ["insert into provider.rows values(3,'bad')","update provider.rows set body='bad'","delete from provider.rows","truncate provider.rows","select nextval('provider.seq')","select setval('provider.seq',3)",'create table public.bad(id int)','alter table provider.rows disable row level security','select assess.unauthorized()','set role postgres','set role provider_owner'])await assert.rejects(reader.query(q),{code:'42501'});

@@ -558,6 +558,11 @@ if (select
  (n.nspname in ('assess','emergency','vault','pgsodium') or (n.nspname not in ('pg_catalog','information_schema') and n.nspname !~ '^pg_(temp|toast)' and p.prosecdef and p.prorettype not in ('trigger'::regtype,'event_trigger'::regtype)))) or
  exists(select 1 from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='vault' and c.relname='decrypted_secrets' and has_schema_privilege('assess_backup',n.oid,'USAGE') and has_table_privilege('assess_backup',c.oid,'SELECT')) or
  exists(select 1 from pg_largeobject_metadata l cross join lateral aclexplode(coalesce(l.lomacl,acldefault('L',l.lomowner))) a where a.grantee in (0,'assess_backup'::regrole::oid) and (a.privilege_type='UPDATE' or (a.grantee='assess_backup'::regrole and a.is_grantable))) or
+ exists(select 1 from pg_default_acl d cross join lateral aclexplode(d.defaclacl) a where a.grantee='assess_backup'::regrole) or
+ exists(select 1 from pg_namespace n cross join lateral aclexplode(n.nspacl) a where a.grantee='assess_backup'::regrole and a.is_grantable) or
+ exists(select 1 from pg_database d cross join lateral aclexplode(d.datacl) a where a.grantee='assess_backup'::regrole and a.is_grantable) or
+ exists(select 1 from pg_proc p cross join lateral aclexplode(p.proacl) a where a.grantee='assess_backup'::regrole) or
+ exists(select 1 from pg_attribute x cross join lateral aclexplode(x.attacl) a where a.grantee='assess_backup'::regrole) or
  exists(select 1 from pg_class c cross join lateral aclexplode(c.relacl) a where a.grantee='assess_backup'::regrole and a.is_grantable) or exists(select 1 from pg_class where relowner='assess_backup'::regrole) or exists(select 1 from pg_proc where proowner='assess_backup'::regrole) or exists(select 1 from pg_namespace where nspowner='assess_backup'::regrole) or exists(select 1 from pg_database where datdba='assess_backup'::regrole) bad) then raise exception 'backup privileges unsafe; transaction rolled back';end if;
 end $apply$;
 commit;
