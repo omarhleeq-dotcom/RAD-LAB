@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 459,
-  "updated_at": "2026-11-06T13:08:07.931377+00:00",
+  "revision": 464,
+  "updated_at": "2026-11-06T21:38:01.574Z",
   "timezone": "Asia/Amman",
-  "next_id": "RAD-106",
+  "next_id": "RAD-107",
   "tasks": [
     {
       "id": "RAD-001",
@@ -959,6 +959,16 @@
       "description": "S1–S3 مقبولة؛ تحضير S4 المعدل للمراجعة. النسخ الحالي Windows/WSL، والسحابي وتبعياته مؤجلة بإذن المالك؛ قياس70% من العامل القائم دون امتيازات جديدة. CI للرأس النهائي مطلوب؛ النسخة الحديثة والإيصالات وبقية الأدلة الحية تنتظر عودة المالك باللابتوب. S4 غير مقبولة بعد وP7 لم تبدأ.",
       "source_ref": "docs/DECISIONS.md#assess-self-service-backup-deferred-owner-2026-11-06؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_AMENDMENT_2026-11-06.md",
       "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
+    },
+    {
+      "id": "RAD-106",
+      "title": "تحسين أداء التطبيق بقياسات محددة: الطلبات والتحميل والاستجابة",
+      "status": "review",
+      "waiting_on": "reviewer",
+      "priority": "medium",
+      "description": "قُبل P1/P2 بالتنسيق؛ مرشح P3 في Draft #243 يفصل تبويبات Owner غير النشطة بقياسات باردة/دافئة وأول استخدام مؤجل. ينتظر مراجعة التنسيق مع توثيق CI للرأس النهائي؛ قياس المكونات لا يثبت أداء الإنتاج، و#242 محفوظ.",
+      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md؛ docs/DECISIONS.md#performance-p2-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P2_2026-11-06.md؛ docs/DECISIONS.md#performance-p3-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P3_2026-11-06.md",
+      "done_when": "دفعات أداء مقبولة ومدمجة بأمر المالك، بقياس قبل/بعد وحفظ الصلاحيات والنتائج والصفحات وفحوص EN/AR؛ لا نجاح حي مستنتج من المختبر."
     }
   ]
 }

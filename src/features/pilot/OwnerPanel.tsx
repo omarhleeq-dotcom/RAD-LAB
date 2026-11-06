@@ -1,6 +1,7 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { useEffect, useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import { Component, useEffect, useState, type ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import type { ProfileStatus } from "./account-state";
 import { getPilotClient } from "./client";
@@ -9,15 +10,32 @@ import { ParticipantActivity } from "./OwnerActivity";
 import { EMPTY_FILTERS, readOwnerPage } from "./owner-data";
 import { actionsFor, formatStamp, lastActivity, needsConfirmedEmail, parseParticipants } from "./owner-state";
 import { useSessionAccount } from "./SessionGate";
-import { OwnerAssessPanel } from "@/features/assess/OwnerAssessPanel";
 import { OwnerDirectory, OwnerSearchSeed, ownerButton as btn } from "./OwnerDirectory";
-import { OwnerTraining } from "./OwnerTraining";
-import { directoryPage, FIRST, type DirectoryPerson, type Position } from "./owner-dashboard-data";
+import { FIRST, type DirectoryPerson, type Position } from "./owner-dashboard-data";
+import { requestOwnerDirectory } from "./owner-directory-request";
 import { useC2Adapter } from "./C2Session";
 import { DeactivateAccount, OwnerDeletion } from "./OwnerDeletion";
 import { findParticipant, LOOKUP_PAGES, OwnerSurveys, type Lookup } from "./OwnerSurveys";
 import { Chip } from "./OwnerUi";
 import {EmergencySession} from '@/features/emergency/EmergencySession';
+// Inactive tabs must not pull authoring/results and the exam registry into Students.
+// EmergencySession and its stop controller deliberately remain eager.
+const OwnerAssessPanel=dynamic(()=>import("@/features/assess/OwnerAssessPanel").then(m=>m.OwnerAssessPanel),{loading:OwnerTabLoading});
+const OwnerTraining=dynamic(()=>import("./OwnerTraining").then(m=>m.OwnerTraining),{loading:OwnerTabLoading});
+function OwnerTabLoading() {
+ const t=useTranslations("owner.dashboard");
+ return <p role="status">{t("loading")}</p>;
+}
+function OwnerTabError({href}:{href:string}) {
+ const t=useTranslations("owner");
+ return <p role="alert">{t("errors.action")} <a className="underline" href={href}>{t("refresh")}</a></p>;
+}
+/** A failed chunk leaves navigation/stop available; a native reload retries a fresh module graph. */
+class OwnerTabBoundary extends Component<{href:string;children:ReactNode},{failed:boolean}> {
+ state={failed:false};
+ static getDerivedStateFromError(){return {failed:true};}
+ render(){return this.state.failed?<OwnerTabError href={this.props.href}/>:this.props.children;}
+}
 const tabs=["students","groups","assess","practice","surveys","safety"] as const;
 type Tab=typeof tabs[number];
 // Links saved before the restructure keep working.
@@ -38,23 +56,24 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
  const [tab,setTab]=useState<Tab>("students"),[version,setVersion]=useState(0);
  const [busy,setBusy]=useState<string|null>(null),[warn,setWarn]=useState<string|null>(null),[error,setError]=useState(false);
  const [filter,setFilter]=useState<Filter>("all"),[seed,setSeed]=useState(""),[stopRequest,setStopRequest]=useState(0),[safetySeen,setSafetySeen]=useState(false);
- const [who,setWho]=useState<{code:string;request:number;result:Lookup<DirectoryPerson>|null}|null>(null);
- const [counts,setCounts]=useState<{version:number;value:Counts|null}|null>(null),[queue,setQueue]=useState<{count:number;more:boolean}|null>(null);
+ const [who,setWho]=useState<{account:typeof state;code:string;request:number;result:Lookup<DirectoryPerson>|null}|null>(null);
+ const [counts,setCounts]=useState<{account:typeof state;version:number;value:Counts|null}|null>(null),[queue,setQueue]=useState<{count:number;more:boolean}|null>(null);
  useEffect(()=>{const sync=()=>setTab(tabFromUrl());sync();window.addEventListener("popstate",sync);return()=>window.removeEventListener("popstate",sync);},[]);
  const ownerId=state.kind==="signedIn"?state.userId:"";
  const isOwner=state.kind==="signedIn"&&state.profile.role==="owner"&&state.profile.status==="approved";
  // Status bar: the same bounded directory read the Students list already uses (global counts, first page).
- useEffect(()=>{if(!isOwner)return;let active=true;void (async()=>{
-  try{const c=await getPilotClient();if(!c)throw new Error();const page=await directoryPage(c,"","",FIRST);if(active)setCounts({version,value:page.counts});}
-  catch{if(active)setCounts({version,value:null});}
- })();return()=>{active=false;};},[isOwner,version]);
+ useEffect(()=>{if(!isOwner)return;const controller=new AbortController();void (async()=>{
+  try{const page=await requestOwnerDirectory(state,version,"","",FIRST,controller.signal);if(!controller.signal.aborted)setCounts({account:state,version,value:page.counts});}
+  catch{if(!controller.signal.aborted)setCounts({account:state,version,value:null});}
+ })();return()=>controller.abort();},[isOwner,state,version]);
  // "Who is this?" (RAD-099): runs only on request, pages the same bounded directory read, stops at the first exact code match.
- const lookupCode=who?.code??null,lookupRequest=who?.request??0;
- useEffect(()=>{if(!isOwner||!lookupCode)return;let active=true;void (async()=>{
+ const currentWho=who?.account===state?who:null;
+ const lookupCode=currentWho?.code??null,lookupRequest=currentWho?.request??0;
+ useEffect(()=>{if(!isOwner||!lookupCode)return;const controller=new AbortController();void (async()=>{
   let result:Lookup<DirectoryPerson>={kind:"error"};
-  try{const c=await getPilotClient();if(c)result=await findParticipant(lookupCode,(position:Position)=>directoryPage(c,"","",position),FIRST);}catch{/* error state */}
-  if(active)setWho(w=>w?.request===lookupRequest?{...w,result}:w);
- })();return()=>{active=false;};},[isOwner,lookupCode,lookupRequest]);
+  try{result=await findParticipant(lookupCode,(position:Position)=>requestOwnerDirectory(state,version,"","",position,controller.signal),FIRST);}catch{/* error state */}
+  if(!controller.signal.aborted)setWho(w=>w?.request===lookupRequest?{...w,result}:w);
+ })();return()=>controller.abort();},[isOwner,state,version,lookupCode,lookupRequest]);
  async function setStatus(p:DirectoryPerson,target:ProfileStatus) {
   setBusy(p.userId);
   try {const c=await getPilotClient();if(!c)throw new Error();if(target==="approved") {
@@ -96,12 +115,13 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
  }
  function go(next:Tab) {history.pushState(null,"",`?tab=${next}`);setTab(next);}
  if(tab==="safety"&&!safetySeen)setSafetySeen(true);
- const known=counts?.value??null;
+ const currentCounts=counts?.account===state&&counts.version===version?counts:null;
+ const known=currentCounts?.value??null;
  const filterLabel=(f:Filter)=>f==="pending"||f==="approved"||f==="suspended"?`${ux(`filter.${f}`)}${known?` (${known[f]})`:""}`:ux(`filter.${f}`);
  const waiting=c2("loading");
  return <section data-testid="owner-list" className="min-w-0 space-y-4">
   <div role="region" aria-label={ux("statusBar")} data-testid="owner-status" className="sticky top-0 z-20 -mx-4 flex flex-wrap items-center gap-2 border-b border-line bg-paper px-4 py-2">
-   {known?<button type="button" className={btn} onClick={()=>{setFilter("pending");go("students");}}>{ux("pendingCount",{count:known.pending})}</button>:<span className="text-sm text-muted" role="status">{counts?d("error"):d("loading")}</span>}
+   {known?<button type="button" className={btn} onClick={()=>{setFilter("pending");go("students");}}>{ux("pendingCount",{count:known.pending})}</button>:<span className="text-sm text-muted" role="status">{currentCounts?d("error"):d("loading")}</span>}
    {queue&&<button type="button" className={btn} onClick={()=>go("assess")}>{ux(queue.more?"gradingMore":"gradingCount",{count:queue.count})}</button>}
    <a href="?tab=safety#owner-emergency" data-testid="owner-emergency-button" className={`${danger} ms-auto`} onClick={ev=>{if(ev.button!==0||ev.metaKey||ev.ctrlKey||ev.shiftKey||ev.altKey)return;ev.preventDefault();history.pushState(null,"","?tab=safety#owner-emergency");setTab("safety");setStopRequest(n=>n+1);requestAnimationFrame(()=>document.getElementById("owner-emergency")?.scrollIntoView());}}>{e("stopTitle")}</a>
   </div>
@@ -109,10 +129,10 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
   {tab==="students"&&<section aria-labelledby="owner-students-title" className="min-w-0 space-y-3">
    <div className="flex items-center justify-between gap-2"><h2 id="owner-students-title" className="text-xl font-semibold">{ux("tabs.students")}</h2><button className={btn} onClick={()=>setVersion(v=>v+1)}>{t("refresh")}</button></div>
    <div role="group" aria-label={ux("filterLabel")} className="flex flex-wrap gap-2">{filters.map(f=><button key={f} type="button" aria-pressed={filter===f} className={`${btn} ${filter===f?"bg-paper ring-2 ring-brand":""}`} onClick={()=>{setFilter(f);if(f!=="supervisors")setSeed("");}}>{filterLabel(f)}</button>)}</div>
-   {who&&<section aria-labelledby="owner-who-title" data-testid="owner-who" className="min-w-0 space-y-2 rounded-lg border border-brand p-3">
-    <h3 id="owner-who-title" tabIndex={-1} className="font-semibold">{ux("who.title")} <bdi className="font-mono" dir="ltr">{who.code}</bdi></h3>
-    {!who.result?<p role="status">{ux("who.searching")}</p>:who.result.kind==="found"?card(who.result.person,true)
-     :<p role={who.result.kind==="error"?"alert":"status"}>{who.result.kind==="error"?t("errors.action"):ux(`who.${who.result.kind}`,{count:LOOKUP_PAGES*20})}</p>}
+   {currentWho&&<section aria-labelledby="owner-who-title" data-testid="owner-who" className="min-w-0 space-y-2 rounded-lg border border-brand p-3">
+    <h3 id="owner-who-title" tabIndex={-1} className="font-semibold">{ux("who.title")} <bdi className="font-mono" dir="ltr">{currentWho.code}</bdi></h3>
+    {!currentWho.result?<p role="status">{ux("who.searching")}</p>:currentWho.result.kind==="found"?card(currentWho.result.person,true)
+     :<p role={currentWho.result.kind==="error"?"alert":"status"}>{currentWho.result.kind==="error"?t("errors.action"):ux(`who.${currentWho.result.kind}`,{count:LOOKUP_PAGES*20})}</p>}
     <div className="flex flex-wrap gap-2"><button type="button" className={btn} onClick={()=>go("surveys")}>{ux("who.back")}</button><button type="button" className={btn} onClick={()=>setWho(null)}>{ux("who.close")}</button></div>
    </section>}
    {error&&<p role="alert">{t("errors.action")}</p>}
@@ -120,10 +140,12 @@ function OwnerPanelSession({supervisors}:{supervisors?:ReactNode}) {
    :filter==="supervisors"?<OwnerSearchSeed.Provider value={seed}>{supervisors??<p role="status">{c2("unavailable")}</p>}</OwnerSearchSeed.Provider>
    :<OwnerDirectory revision={version} status={filter==="all"?"":filter}>{p=>card(p)}</OwnerDirectory>}
   </section>}
-  {tab==="groups"&&<OwnerAssessPanel key={`groups:${ownerId}`} section="groups"/>}
-  {tab==="assess"&&<OwnerAssessPanel key={`assess:${ownerId}`} section="assess" onQueue={(count,more)=>setQueue({count,more})}/>}
-  {tab==="practice"&&<OwnerTraining key={version}/>}
-  {tab==="surveys"&&(adapter?<OwnerSurveys adapter={adapter} ownerId={ownerId} onLookup={code=>{setWho(w=>({code,request:(w?.request??0)+1,result:null}));go("students");requestAnimationFrame(()=>document.getElementById("owner-who-title")?.focus());}}/>:<p role="status">{waiting}</p>)}
+  {(tab==="groups"||tab==="assess"||tab==="practice")&&<OwnerTabBoundary key={tab} href={`?tab=${tab}`}>
+   {tab==="groups"&&<OwnerAssessPanel key={`groups:${ownerId}`} section="groups"/>}
+   {tab==="assess"&&<OwnerAssessPanel key={`assess:${ownerId}`} section="assess" onQueue={(count,more)=>setQueue({count,more})}/>}
+   {tab==="practice"&&<OwnerTraining key={version}/>}
+  </OwnerTabBoundary>}
+  {tab==="surveys"&&(adapter?<OwnerSurveys adapter={adapter} ownerId={ownerId} onLookup={code=>{setWho(w=>({account:state,code,request:(w?.request??0)+1,result:null}));go("students");requestAnimationFrame(()=>document.getElementById("owner-who-title")?.focus());}}/>:<p role="status">{waiting}</p>)}
   {/* RAD-095: once opened, Safety stays mounted (hidden on other tabs) so a running stop is never cleared by a tab change. */}
   {safetySeen&&<section hidden={tab!=="safety"} aria-labelledby="owner-safety-title" className="min-w-0 space-y-3">
    <h2 id="owner-safety-title" className="text-xl font-semibold">{ux("tabs.safety")}</h2>

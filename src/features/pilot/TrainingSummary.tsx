@@ -5,7 +5,7 @@ import { MODALITIES } from "@/data/modalities";
 import { getExam } from "@/data/exams";
 import { localize } from "@/lib/localized";
 import { rankLastResults, reviewTarget, savedExamResults } from "./saved-results";
-import { useSavedResults } from "./useSavedResults";
+import { useSavedSummary } from "./useSavedSummary";
 import { Link } from "@/i18n/navigation";
 import { getPilotClient } from "./client";
 import { PILOT } from "./config";
@@ -54,7 +54,7 @@ export function TrainingSummary() {
   const locale = useLocale();
   const { state } = useSessionAccount();
   const user = PILOT && state.kind === "signedIn" && state.profile.status === "approved" ? state.userId : null;
-  const { data } = useSavedResults(user);
+  const { data, summary } = useSavedSummary(user);
   const name = state.kind === "signedIn" ? state.displayName : null;
   const groups = savedExamResults(data?.rows ?? []);
   const ranked = rankLastResults(data?.rows ?? []);
@@ -72,7 +72,7 @@ export function TrainingSummary() {
       {weakest && <Link href={weakest.href} className="home-action"><strong>{t("reviewExam")}</strong><span>{weakest.title}</span><span aria-hidden="true">←</span></Link>}
       {MODALITIES.filter(m => m.status === "available").map(m => <Link key={m.id} href={`/${m.id}`} className="home-action"><strong>{ts("library")}</strong><span>{localize(m.name, locale)}</span><span aria-hidden="true">←</span></Link>)}
     </nav>
-    {data && data.summary.attempts > 0 && <SummaryCards data={data.summary} />}
+    {summary && summary.attempts > 0 && <SummaryCards data={summary} />}
     {data?.next && <p className="text-sm text-muted">{t("recentScope", { count: data.rows.length })}</p>}
   </>;
 }

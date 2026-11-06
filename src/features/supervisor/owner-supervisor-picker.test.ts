@@ -9,8 +9,9 @@ import { CONSENT_VERSION } from '../pilot/consent';
 import { ReviewError, type ReviewAdapter, type Snapshot } from '../supervisor-review/contracts';
 import { OwnerSupervisorPicker, appointmentReason } from './OwnerSupervisorPicker';
 import { P1View } from './P1Session';
-const f = vi.hoisted(() => ({ rpc: vi.fn(), user: 'owner' }));
-vi.mock('../pilot/SessionGate', () => ({ useSessionAccount: () => ({ state: { kind: 'signedIn', userId: f.user, profile: { role: 'owner', status: 'approved' }, consentVersion: CONSENT_VERSION } }) }));
+const f = vi.hoisted(() => ({ rpc: vi.fn(), user: 'owner', state: { kind: 'signedIn', userId: 'owner', profile: { role: 'owner', status: 'approved' }, consentVersion: '' } }));
+// SessionProvider retains one state object until account/authorization changes.
+vi.mock('../pilot/SessionGate', () => ({ useSessionAccount: () => { f.state.userId = f.user; f.state.consentVersion = CONSENT_VERSION; return { state: f.state }; } }));
 vi.mock('../pilot/client', () => ({ getPilotClient: async () => ({ rpc: f.rpc }) }));
 Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
 let root: Root | undefined;
