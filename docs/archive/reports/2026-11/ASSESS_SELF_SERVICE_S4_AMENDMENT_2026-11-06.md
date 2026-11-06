@@ -29,9 +29,11 @@ Verified: لا UI أو محتوى طبي أو scoring أو server shuffle أو �
 Verified: v1 وعقد الصحة والشاهد الأصليان محفوظان، وv2 ما زال خمس عمليات مع stop/replay/lease/ACL/witness/cleanup؛ التعديل إضافة تقرير حجم إجمالي فقط.
 
 ## 6. QA
+Verified: [CI لرأس التنفيذ6aedb4c](https://github.com/omarhleeq-dotcom/RAD-LAB/actions/runs/42223201622) ناجح: unit2596/DB1144، typecheck/lint/health وbuild/Pages؛ بروفة الصورة الفعلية PASS/cleanup=true بما فيها قياس العامل وUNKNOWN دون دور نسخ.
 Verified محليًا: اختبارات العتبة-1/exact/+1 وUNKNOWN، CLI الحالي بلا موارد نسخ، رفض المفاتيح/الأوامر الزائدة، وحراس المداخل المرحلية الأصلية؛ معايرة embedded للمخطط الحالي ناجحة.
 Verified: fingerprints الحالية functions50f46f597788805b0e67bc40c04401d4 وrelations5c45889099a878446fd3a16a9569940f؛ المؤشر المشتق pilot-v1:8c8207de423ba717b4607f3d9cd029f2f16436f4f6e4b8df06679eff3cc2dedc. لا P0/Variable حي تغيرت.
 Not run محليًا: build/typegen عبر Next تعثر على cache SWC في بيئة Node24؛ CI المدعوم Node22 هو بوابة typecheck/build المطلوبة. لا تبديل ثقة أو تخفيف assertion لتجاوز ذلك.
+Verified محليًا: كل نص oracles الترقية الأصلي قبل كتلة النسخ مطابق حرفيًا؛ المداخل الثلاثة وMANIFEST وv1 وحزمة الدور وترحيل الصحة/fingerprint الحالي لم تتغير. بناءR3 مرتين متطابق ولا يضم cloud-backup في مصادره.
 بوابة التسليم: docs:sync مرتين ثم docs/status --require-previous وdiff، وفحوص المستودع وصورة العامل والقياس بالربط المقيد على الرأس المدفوع، مع نتيجة [Checks #242](https://github.com/omarhleeq-dotcom/RAD-LAB/pull/242/checks) الفعلية في وصف المسودة.
 Not run: workflow النسخ المؤجل لم يُفعّل؛ سلامة النقل تُفحص بتحميل مجموعة الاختبارات وحفظ توقعاتها. أدلة النسخ القديمة تبقى تاريخية، لا شرطًا للإقفال الحالي.
 
