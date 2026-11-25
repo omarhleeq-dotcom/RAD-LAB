@@ -8,7 +8,7 @@ import { ExamGraphic } from "./ExamGraphic";
 import { LIBRARY_REGIONS, filterLibrary, graphicOf, shortExamTitle, type LibrarySection } from "./library";
 
 import { useOptionalSessionAccount } from "@/features/pilot/SessionGate";
-import { useSavedResults } from "@/features/pilot/useSavedResults";
+import { useSavedSummary } from "@/features/pilot/useSavedSummary";
 import { savedExamResults } from "@/features/pilot/saved-results";
 import { PILOT } from "@/features/pilot/config";
 
@@ -34,7 +34,7 @@ export function ExamCatalogue({ sections }: { sections: readonly LibrarySection[
   const locale = useLocale();
   const account = useOptionalSessionAccount();
   const state = account?.state;
-  const { data } = useSavedResults(PILOT && state?.kind === "signedIn" && state.profile.status === "approved" ? state.userId : null);
+  const { data } = useSavedSummary(PILOT && state?.kind === "signedIn" && state.profile.status === "approved" ? state.userId : null);
   const results = new Map(savedExamResults(data?.rows ?? []).map(g => [g.exam, g.last]));
   const tt = useTranslations("training");
   const inputId = useId();

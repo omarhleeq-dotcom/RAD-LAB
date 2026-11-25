@@ -7,7 +7,7 @@
 - **الاتجاه الحالي:** إطلاق الخميس2026-11-05 Practice فقط والبوابة مغلقة ([القرار](DECISIONS.md#launch-practice-only-owner-2026-11-03))؛ سجلات D1–D13 في [التقرير](LAUNCH_RECORDS_REPORT_2026-11-03.md).
 - **جارٍ:** [تحضير S4 المعدل](ASSESS_S4_OPERATIONS.md) للمراجعة؛ النسخ السحابي مؤجل، ونسخة اللابتوب الحديثة والتحقق لاحقًا.
 - **ينتظر مراجِعًا:** [حزم W1–W8](ASSESS_GATE_W_PACKAGES.md) و[تقريرها](RAD-085_GATE_W_REPORT_2026-11-03.md): قُبل D-W6 والانحرافان، ورُفض W8.
-- **مرجع Git:** `docs:context`؛ Draft فقط؛ لا SQL حي أو Variables أو أسرار من هذه الدفعة.
+- **مرجع Git:** `docs:context`؛ يقتصر #243 على P1/P2 بعد [رفض تأجيل تحميل التدريب](DECISIONS.md#performance-p3-declined-owner-2026-11-25).
 - **مخاطر معلنة:** البوابة مغلقة والعامل NOLOGIN والأسرار DISABLED؛ التصديق محدود ونافذة P7 لم تُنفّذ؛ إيصال P7 وتمرين البديل لم يُجرَيا.
 
 RAD-094: [Code Health](CODE_HEALTH_REPORT_2026-11-03.md) نُفذت ببوابات KiB وشواهد الرفض؛ تنتظر CI والمراجعة؛ تبقى Draft.
