@@ -11,7 +11,7 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Practice/pilot scope](#practice-and-pilot)
 - [Current Assess design](#assess-design); [current laptop backup scope and cloud deferral](#assess-self-service-backup-deferred-owner-2026-11-06)
 - [Measured application performance rounds](#performance-rounds-owner-2026-11-06)
-- [P3 loading measurements and source pins](#performance-p3-owner-2026-11-06)
+- [RAD-106 P3 declined; retain P1/P2](#performance-p3-declined-owner-2026-11-25)
 - [Reference-first and provisional review](#reference-and-source)
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
@@ -1817,3 +1817,11 @@ Authority: the owner's current instruction accepts P2 at `5a0ae2b2c3b311a9674185
 Measure Owner default and Practice entry before selecting one or two loading improvements; include cold/warm startup, JS/CSS requests/bytes, usable view, first interaction and deferred first use. Node22 only; local synthetic APIs/accounts, production Next output when available, explicitly labelled component fixtures otherwise. Reuse Next dynamic, stores and browser helpers; no dependencies or speculative memoisation/selectors/virtualisation.
 Declared budget9 paths, maximum16 relative to the verified P2 head: OwnerPanel.tsx (one production module), OwnerPanel-loading.test.ts, application-loading-performance.mjs, frontend-schema.json, DECISIONS, HANDOFF, project-status, the dated P3 report and reports index. The report records exact paths and evidence. Preserve request coordinators/readers/hooks/parsers, emergency controller and hidden mounted Safety, identity/revocation, focus, deep links, pagination and saved verdicts.
 Only browserBoundaries pins may change after independent source-graph/hash derivation is recorded. Preserve every other manifest field, SQL/check bytes, marker, gate implementation, Variables and protected expectations; prove wrong pins/attestations fail. No new PR/worktree/subagents, rebase/force-push, #242 changes, SQL/scoring/medical/images/fonts/worker/clock/protocol, telemetry/services/cache/hosting/network changes, live action, manual deployment, Ready or merge. Push this branch, verify complete final-head CI and return an Arabic S-STD-1 report for coordination review; no next phase or production-performance claim.
+
+Superseded for delivery by [the owner's P3 decision](#performance-p3-declined-owner-2026-11-25).
+
+<a id="performance-p3-declined-owner-2026-11-25"></a>
+### RAD-106 — owner declines P3, 2026-11-25
+
+The owner declined deferring the Owner tabs because first use of training must stay responsive. Continue #243 with accepted P1/P2. Restore the P2 OwnerPanel and its frontend schema contract, and remove the P3-only test and measurement harness.
+In the [P3 report](archive/reports/2026-11/RAD-106_PERFORMANCE_P3_2026-11-06.md), median first-use training in the independent component scenario rose from 336 to 1092 ms cold and from 305 to 606 ms warm. The report records the experiment and its limits.

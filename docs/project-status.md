@@ -13,8 +13,8 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 464,
-  "updated_at": "2026-11-06T21:38:01.574Z",
+  "revision": 465,
+  "updated_at": "2026-11-25T18:25:26Z",
   "timezone": "Asia/Amman",
   "next_id": "RAD-107",
   "tasks": [
@@ -966,9 +966,9 @@
       "status": "review",
       "waiting_on": "reviewer",
       "priority": "medium",
-      "description": "قُبل P1/P2 بالتنسيق؛ مرشح P3 في Draft #243 يفصل تبويبات Owner غير النشطة بقياسات باردة/دافئة وأول استخدام مؤجل. ينتظر مراجعة التنسيق مع توثيق CI للرأس النهائي؛ قياس المكونات لا يثبت أداء الإنتاج، و#242 محفوظ.",
-      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md؛ docs/DECISIONS.md#performance-p2-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P2_2026-11-06.md؛ docs/DECISIONS.md#performance-p3-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P3_2026-11-06.md",
-      "done_when": "دفعات أداء مقبولة ومدمجة بأمر المالك، بقياس قبل/بعد وحفظ الصلاحيات والنتائج والصفحات وفحوص EN/AR؛ لا نجاح حي مستنتج من المختبر."
+      "description": "قُبل P1/P2، ورُفض P3 بسبب تأخير أول فتح لتدريب المالك. استُعيد تحميل التبويبات السابق؛ ينتظر #243 نجاح الفحوص ودمج P1/P2.",
+      "source_ref": "docs/DECISIONS.md#performance-rounds-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_AUDIT_2026-11-06.md؛ docs/RAD-106_PERFORMANCE_P1_PROMPT.md؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P1_2026-11-06.md؛ docs/DECISIONS.md#performance-p2-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P2_2026-11-06.md؛ docs/DECISIONS.md#performance-p3-owner-2026-11-06؛ docs/archive/reports/2026-11/RAD-106_PERFORMANCE_P3_2026-11-06.md؛ docs/DECISIONS.md#performance-p3-declined-owner-2026-11-25",
+      "done_when": "دمج P1/P2 في #243 بعد نجاح الفحوص، مع بقاء تحميل تبويبات المالك كما في P2."
     }
   ]
 }
