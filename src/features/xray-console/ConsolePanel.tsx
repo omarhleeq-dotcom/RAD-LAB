@@ -19,7 +19,7 @@ interface Props {
   onChange: <K extends keyof SimulationSettings>(key: K, value: SimulationSettings[K]) => void;
   onExpose: () => void;
   locked: boolean;
-  /** Phone layout (UI-3): the exam's choice controls move to the Positioning tab and readiness / Expose to the bottom bar. */
+  /** Phone layout (UI-3, RAD-101): the projection and the exam's choice controls move to step 1, readiness to step 4 and Expose to the bottom bar. */
   phone?: boolean;
 }
 
@@ -84,6 +84,27 @@ export function ChoiceControls({ radCase, settings, onChange, locked }: Pick<Pro
   ));
 }
 
+/** The projection choice: in the console on desktop; on a phone in step 1 "Position" (RAD-101 D3), in two columns. */
+export function ProjectionControl({ radCase, settings, onChange, locked, phone = false }: Pick<Props, "radCase" | "settings" | "onChange" | "locked" | "phone">) {
+  const t = useTranslations("console");
+  const locale = useLocale();
+  return (
+    <Segmented
+      legend={t("projection")}
+      options={radCase.availableProjections}
+      value={settings.projection}
+      disabled={locked}
+      columns={phone}
+      help={radCase.choiceControls?.some((cc) => cc.projectionLabels) ? t("projectionFollowsPosition") : undefined}
+      onSelect={(v) => onChange("projection", v)}
+      label={(v) => {
+        const own = projectionLabelOf(radCase.choiceControls, settings.choices, v);
+        return own ? localize(own, locale) : t(`projections.${v}`);
+      }}
+    />
+  );
+}
+
 /**
  * Educational, vendor-neutral X-ray console. It only collects settings and shows workflow status;
  * every exposure calculation lives in `features/technique` (pure) and is evaluated on Expose.
@@ -91,7 +112,6 @@ export function ChoiceControls({ radCase, settings, onChange, locked }: Pick<Pro
  */
 export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, locked, phone = false }: Props) {
   const t = useTranslations("console");
-  const locale = useLocale();
   const c = radCase.controls;
   const readinessId = useId();
   const readiness = assessReadiness(radCase, settings, locked ? "result" : "setup");
@@ -114,19 +134,7 @@ export function ConsolePanel({ radCase, settings, mode, onChange, onExpose, lock
       </div>
 
       <div className={phone ? "space-y-3" : "space-y-5"}>
-        <Segmented
-          legend={t("projection")}
-          options={radCase.availableProjections}
-          value={settings.projection}
-          disabled={locked}
-          columns={phone}
-          help={radCase.choiceControls?.some((cc) => cc.projectionLabels) ? t("projectionFollowsPosition") : undefined}
-          onSelect={(v) => onChange("projection", v)}
-          label={(v) => {
-            const own = projectionLabelOf(radCase.choiceControls, settings.choices, v);
-            return own ? localize(own, locale) : t(`projections.${v}`);
-          }}
-        />
+        {!phone && <ProjectionControl radCase={radCase} settings={settings} onChange={onChange} locked={locked} />}
         {!phone && <ChoiceControls radCase={radCase} settings={settings} onChange={onChange} locked={locked} />}
         {c.tubeAngulationDeg && (
           <StepField

@@ -48,8 +48,9 @@ export interface SceneTexts {
 export interface SceneLayout {
   figure: DetectorFigure;
   SecondView: ComponentType<SecondViewProps>;
-  /** Phone scene switch label: the second view is a plan view from above (else a side view). */
-  secondViewIsTop?: boolean;
+  /** Phone (RAD-101 D4): the view shown in the Position and Patient-instructions steps, where rotation and the set-up are
+   *  set. Absent = the detector view (it draws the rotation for limbs, pelvis and shoulder); "second" for the chest family. */
+  positionView?: "second";
   /** The patient-cues panel (chin / shoulders). Absent (S14.1b) for a scene without those cues, e.g. a limb. */
   Cues?: ComponentType<CuesProps>;
   texts: SceneTexts;
@@ -58,7 +59,7 @@ export interface SceneLayout {
 export const CHEST_PA_LAYOUT: SceneLayout = {
   figure: CHEST_PA_FIGURE,
   SecondView: PlanView,
-  secondViewIsTop: true,
+  positionView: "second",
   Cues: PatientCues,
   texts: {
     detectorCaption: "positioning.frontView",
@@ -72,7 +73,7 @@ export const CHEST_PA_LAYOUT: SceneLayout = {
 export const CHEST_LATERAL_LAYOUT: SceneLayout = {
   figure: CHEST_LATERAL_FIGURE,
   SecondView: PlanView,
-  secondViewIsTop: true,
+  positionView: "second",
   Cues: LateralPatientCues,
   texts: {
     detectorCaption: "positioningLateral.sideView",
@@ -86,6 +87,7 @@ export const CHEST_LATERAL_LAYOUT: SceneLayout = {
 export const CHEST_AP_SUPINE_LAYOUT: SceneLayout = {
   figure: CHEST_AP_FIGURE,
   SecondView: ApSupineView,
+  positionView: "second",
   Cues: ApPatientCues,
   texts: {
     detectorCaption: "positioningAp.frontView",
@@ -176,4 +178,4 @@ export const ANKLE_LATERAL_LAYOUT: SceneLayout = lowerLimbLayout(ANKLE_LATERAL_F
 export const PELVIS_LAYOUT: SceneLayout = { figure: PELVIS_FIGURE, SecondView: PelvisSideView, texts: { detectorCaption: "positioningPelvis.detectorCaption", secondViewCaption: "positioningPelvis.sideViewCaption", schematicNote: "positioningPelvis.schematicNote", rotationHelp: "positioningPelvis.rotationHelp", markerConvention: "positioningPelvis.markerConvention", markerHint: "positioningPelvis.markerHint", rotationLabel: "positioningPelvis.rotation" } };
 
 /** Shoulder Grashey (S-SHOULDER-3): detector view of the right shoulder + a plan view of the erect set-up (body turn and the arm choice). */
-export const SHOULDER_LAYOUT: SceneLayout = { figure: SHOULDER_FIGURE, SecondView: ShoulderSideView, secondViewIsTop: true, texts: { detectorCaption: "positioningShoulder.detectorCaption", secondViewCaption: "positioningShoulder.sideViewCaption", schematicNote: "positioningShoulder.schematicNote", rotationHelp: "positioningShoulder.rotationHelp", markerConvention: "positioningShoulder.markerConvention", markerHint: "positioningShoulder.markerHint", rotationLabel: "positioningShoulder.rotation" } };
+export const SHOULDER_LAYOUT: SceneLayout = { figure: SHOULDER_FIGURE, SecondView: ShoulderSideView, texts: { detectorCaption: "positioningShoulder.detectorCaption", secondViewCaption: "positioningShoulder.sideViewCaption", schematicNote: "positioningShoulder.schematicNote", rotationHelp: "positioningShoulder.rotationHelp", markerConvention: "positioningShoulder.markerConvention", markerHint: "positioningShoulder.markerHint", rotationLabel: "positioningShoulder.rotation" } };

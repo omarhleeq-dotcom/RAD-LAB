@@ -21,7 +21,7 @@ import type { FigureProps } from "./detector-figures";
  *    talus and heel outlines move together; the overlap of the distal fibula is not drawn;
  *  - ankle lateral (S14.5): the fibula outline and the talar-dome arc are drawn twice, a far-side copy and a near-side copy (one outline at the base pose);
  *  - foot AP / oblique (RAD-072 2b): drawn from the outlines TRACED from the baselines (`foot-outlines.json`, `foot-outline-drawing.ts`), every bone moved
- *    as a rigid piece by the model's band-weighted displacement at that bone (the toes and the metatarsals; the oblique's value is the deviation of the
+ *    as a rigid piece; each metatarsal and its toe move together by the result image's ray shift (the oblique's value is the deviation of the
  *    plantar angle from 40°), in the limb drawing style of the hand (`outline-layers.tsx`).
  * The knee and ankle outlines are illustrative (read by eye from the baselines). Anatomy is an image convention and is never mirrored by RTL.
  */

@@ -13,10 +13,10 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 415,
-  "updated_at": "2026-11-03T08:09:02.455Z",
+  "revision": 444,
+  "updated_at": "2026-11-05T06:00:00Z",
   "timezone": "UTC",
-  "next_id": "RAD-095",
+  "next_id": "RAD-106",
   "tasks": [
     {
       "id": "RAD-001",
@@ -548,10 +548,10 @@
       "title": "شرط ما قبل تفعيل Assess لناس حقيقيين: المراقبة والإلغاء والتكلفة",
       "status": "review",
       "priority": "high",
-      "description": "الإبطال مقبول (D11). تمرين البديل والقنوات نجح بحساب اختبار يملكه المالك: تعيين/إزالة/إيقاف STOPPED وT1–T7 مع ACK (D12/D13). باقٍ: تعيين بديل بشري حقيقي وتمرين بشري قصير قبل أي فتح، واختبار تنبيه/ميزانية أصلي لدى المزوّد. البوابة مغلقة (W1–W8).",
-      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md#closure؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md",
+      "description": "نافذة 2026-11-04/05 اكتملت: العامل والدخان ناجحان وP7 جزئي ([التقرير](archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md))؛ البوابة مغلقة والعامل NOLOGIN والأسرار DISABLED. بقي إيصال P7 ورفض الاعتماد القديم وتمرين البديل؛ التشغيل الذاتي بلا المالك في RAD-105 (OD1–OD9).",
+      "source_ref": "docs/DECISIONS.md#assess-trial-closeout-owner-2026-10-22؛ docs/archive/reports/2026-10/ASSESS_TRIAL_FINAL_REPORT_2026-10-22.md؛ docs/archive/reports/2026-10/ASSESS_CONTINUOUS_OPERATIONS_2026-10-22.md؛ docs/DECISIONS.md#rad059-stop-owner-2026-10-29؛ docs/RAD-059_OPERATIONS_DESIGN.md؛ docs/archive/reports/2026-10/RAD-059_REPORT_2026-10-29.md؛ docs/RAD-059_PHONE_RUNBOOK.md؛ docs/RAD-059_PHONE_PACKET.md؛ docs/archive/reports/2026-10/RAD-059_OWNER_DRY_RUN_2026-10-29.md؛ docs/archive/reports/2026-10/RAD-060_PHASE1_REPORT_2026-10-29.md#rad059-budget-owner-2026-10-29؛ docs/DECISIONS.md#rad086-supavisor-finding-owner-2026-11-01؛ docs/RAD-086_REPORT_2026-10-31.md#supavisor-finding-2026-11-01؛ docs/archive/reports/2026-10/RAD-062_P10_REPORT_2026-10-30.md#db-day-2026-11-01؛ docs/TEST_CLEANUP_REPORT_2026-11-02.md#owner-closures؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad059-protocol-review-owner-2026-11-02؛ docs/DECISIONS.md#rad059-implementation-owner-2026-11-02؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md#closure؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-window-owner-2026-11-03؛ docs/DECISIONS.md#assess-window-review-owner-2026-11-03؛ docs/ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md؛ docs/DECISIONS.md#assess-push-owner-2026-11-04؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md؛ docs/DECISIONS.md#assess-window-2026-11-05-owner؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05",
       "waiting_on": "owner",
-      "done_when": "بديل بشري حقيقي معيّن وتمرين بشري قصير ناجح، واستلام تنبيه/ميزانية أصلي من المزوّد؛ الإبطال مقبول بـD11 والقنوات/ACK مثبتة2026-11-03."
+      "done_when": "إيصال P7 الأصلي ورفض الاعتماد القديم وتمرين البديل البشري (OD7) مُنجزة في نافذة التشغيل الأخيرة ضمن RAD-105، أو يقبلها المالك مخاطر مسجّلة."
     },
     {
       "id": "RAD-060",
@@ -769,8 +769,8 @@
       "title": "P1 حي: اكتمل mini DB day B وقبول الهاتف؛ متابعة الحقوق والخصوصية",
       "status": "review",
       "priority": "high",
-      "description": "نافذة2026-11-03: 0200 و0300 مرة واحدة، successor11/11 وثمانية فحوص ok، ثم دمج #213 وVariable وCI/Deploy والهاتف؛ [الشواهد](LAUNCH_RECORDS_REPORT_2026-11-03.md). جزء النافذة/الترقية إغلاق معلق بقبول المالك؛ يبقى O4 للحقوق/D3 وبقية الأمن والخصوصية. البوابة مغلقة (W1–W8).",
-      "source_ref": "docs/archive/reports/2026-10/RAD-085_PLAN_2026-10-25.md؛ docs/archive/reports/2026-10/RAD-085_P1_UI_REPORT_2026-10-25.md؛ docs/archive/reports/2026-10/RAD-085_P2_UI_REPORT_2026-10-25.md؛ أمر المالك P2-UI وتأجيل القاعدة2026-10-25؛ docs/archive/reports/2026-10/RAD-085_FULL_PRACTICAL_UI_REPORT_2026-10-25.md؛ أمر المالك full-practical وتأجيل تقييم P1/P2 بتاريخ2026-10-25؛ docs/archive/reports/2026-10/RAD-085_SCENE_PREVIEW_REPORT_2026-10-25.md؛ أمر المالك استكمال المشهد وتوقيت مراجعة الواجهات2026-10-25؛ docs/archive/reports/2026-10/RAD-085_UI_READINESS_REPORT_2026-10-25.md؛ أمر المالك الجرد النهائي وتجهيز مراجعة الواجهات2026-10-25؛ docs/archive/reports/2026-10/RAD-085_SQL_BLOCKER_REPORT_2026-10-26.md؛ قرار المالك SQL المحلي وتأجيل مراجعة الواجهات2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ إذن المالك استثناء توقع F المسمى2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SQL_COMPLETION_REPORT_2026-10-26.md؛ إذن المالك استكمال SQL وCI والاستثناءات المسماة2026-10-26؛ docs/archive/reports/2026-10/RAD-085_P1_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P1 المحلي فقط2026-10-26؛ docs/archive/reports/2026-10/RAD-085_P2_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P2 المحلي فقط2026-10-26؛ docs/archive/reports/2026-10/RAD-085_ASSIGNMENT_BRIDGE_REPORT_2026-10-26.md؛ أمر المالك استكمال محلي للجسر والإسناد والإغلاق2026-10-26؛ إذن المالك المحدد لبصمة SQL الجسر المحلي غير المطبق2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SECURITY_AUDIT_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_APPLICATION_PACKET_2026-10-26.md؛ إذن المالك RAD085-SQL-AUDIT-EXPIRY-DELETE-20261026؛ docs/archive/reports/2026-10/RAD-085_CONNECTION_IDENTITY_2026-10-26.md؛ أمر المالك هوية الاتصال والإبطال المحلي والشواهد الآلية2026-10-26؛ docs/archive/reports/2026-10/RAD-085_ERASURE_REPORT_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_ERASURE_MATRIX_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_ERASURE_RECOVERY_2026-10-26.md؛ قرار المالك المحو والمصالحة والاستثناء RAD085-SQL-ERASURE-LOCAL-20261026؛ docs/archive/reports/2026-10/RAD-085_WORKER_LOCAL_REPORT_2026-10-26.md؛ أمر المالك تجهيز العامل واختباره محليًا للمسارين دون نشر أو Supabase حي2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SHARING_OWNER_REPORT_2026-10-26.md؛ قرارات المالك لاستكمال المشاركة والكاتب2026-10-26؛ docs/archive/reports/2026-10/RAD-085_REMAINING_OPERATIONS_2026-10-26.md؛ اعتماد المالك RAD085-SQL-SHARING-POLICY-LOCAL-20261026 لمقترح e356318 ذي18سطرًا وإضافته واختباره محليًا فقط؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_REPORT_2026-10-27.md؛ أمر المالك P1 supervisor wiring2026-10-27 والتحقق المباشر من دمج #137؛ docs/archive/reports/2026-10/RAD-085_P1_WIRING_REPORT_2026-10-27.md؛ docs/RAD-085_DB_DAY_P1.md؛ docs/RAD-085_TERMS_P1_PROPOSAL.md؛ docs/RAD-085_D3_SQL_GAP.md؛ docs/DECISIONS.md#rad085-db-day-owner-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_D3_REPORT_2026-10-27.md؛ أمر المالك O1–O5 وW1–W3 بتاريخ2026-10-27؛ Draft PR #140؛ docs/archive/reports/2026-10/RAD-085_SECURITY_REVIEW_2026-10-27.md؛ docs/DECISIONS.md#rad085-sec-fixes-owner-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_SEC_FIXES_REPORT_2026-10-27.md؛ docs/DECISIONS.md#rad085-db-day-nolaptop-owner-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_DB_DAY_NOLAPTOP_REPORT_2026-10-27.md؛ أمر المالك B1–B5 وW1–W2 بتاريخ2026-10-27؛ docs/DECISIONS.md#rad085-crlf-readiness-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_CRLF_READINESS_REPORT_2026-10-28.md؛ docs/DECISIONS.md#rad085-trial-removal-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_TRIAL_REMOVAL_REPORT_2026-10-28.md؛ أمر المالك B8 وR1–R6 بتاريخ2026-10-28؛ docs/DECISIONS.md#rad085-auth-fk-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_AUTH_FK_REPORT_2026-10-28.md؛ حقائق المالك الحية وقرار A بتاريخ2026-10-28؛ docs/archive/reports/2026-10/RAD-085_DB_DAY_COMPLETED_2026-10-28.md؛ docs/DECISIONS.md#rad085-mobile-sql-owner-2026-10-28؛ إفادة المالك بإتمام DB day وأمر تحديث #144 بتاريخ 2026-10-28؛ أمر المالك P1 owner UX بتاريخ2026-10-28؛ docs/archive/reports/2026-10/RAD-085_OWNER_PICKER_REPORT_2026-10-28.md؛ docs/DECISIONS.md#rad085-p1-usability-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_P1_USABILITY_A_2026-10-28.md؛ إفادة المالك اختبار الهاتف2026-10-28؛ docs/archive/reports/2026-10/RAD-085_P1_USABILITY_B_2026-10-28.md؛ docs/RAD-085_P1_B_DB_DAY.md؛ Draft PR #151؛ docs/archive/reports/2026-10/RAD-085_P1_B_COMPLETED_2026-10-29.md؛ إفادة المالك بإتمام B وقبول الهاتف2026-10-29؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/RAD-085_P4_D1_REPORT_2026-11-02.md؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad085-owner-approvals-2026-11-02؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/RAD-085_PREFLIGHT_CALIBRATION_REPORT_2026-11-03.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md",
+      "description": "نافذة2026-11-03 والترقية: [الشواهد](LAUNCH_RECORDS_REPORT_2026-11-03.md)، إغلاق معلق بقبول المالك؛ يبقى O4 للحقوق/D3. حزم W ([التقرير](RAD-085_GATE_W_REPORT_2026-11-03.md)): Practice فقط؛ D-W1/D-W5/W7 مؤجلة. W4: المحقق B ومدخل الإنتاج في Draft ([التقرير](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md))، الدمج بعد الإطلاق. البوابة مغلقة.",
+      "source_ref": "docs/archive/reports/2026-10/RAD-085_PLAN_2026-10-25.md؛ docs/archive/reports/2026-10/RAD-085_P1_UI_REPORT_2026-10-25.md؛ docs/archive/reports/2026-10/RAD-085_P2_UI_REPORT_2026-10-25.md؛ أمر المالك P2-UI وتأجيل القاعدة2026-10-25؛ docs/archive/reports/2026-10/RAD-085_FULL_PRACTICAL_UI_REPORT_2026-10-25.md؛ أمر المالك full-practical وتأجيل تقييم P1/P2 بتاريخ2026-10-25؛ docs/archive/reports/2026-10/RAD-085_SCENE_PREVIEW_REPORT_2026-10-25.md؛ أمر المالك استكمال المشهد وتوقيت مراجعة الواجهات2026-10-25؛ docs/archive/reports/2026-10/RAD-085_UI_READINESS_REPORT_2026-10-25.md؛ أمر المالك الجرد النهائي وتجهيز مراجعة الواجهات2026-10-25؛ docs/archive/reports/2026-10/RAD-085_SQL_BLOCKER_REPORT_2026-10-26.md؛ قرار المالك SQL المحلي وتأجيل مراجعة الواجهات2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SQL_REPORT_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_SQL_CONTRACTS_2026-10-26.md؛ إذن المالك استثناء توقع F المسمى2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SQL_COMPLETION_REPORT_2026-10-26.md؛ إذن المالك استكمال SQL وCI والاستثناءات المسماة2026-10-26؛ docs/archive/reports/2026-10/RAD-085_P1_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P1 المحلي فقط2026-10-26؛ docs/archive/reports/2026-10/RAD-085_P2_SQL_REPORT_2026-10-26.md؛ إذن المالك ربط P2 المحلي فقط2026-10-26؛ docs/archive/reports/2026-10/RAD-085_ASSIGNMENT_BRIDGE_REPORT_2026-10-26.md؛ أمر المالك استكمال محلي للجسر والإسناد والإغلاق2026-10-26؛ إذن المالك المحدد لبصمة SQL الجسر المحلي غير المطبق2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SECURITY_AUDIT_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_APPLICATION_PACKET_2026-10-26.md؛ إذن المالك RAD085-SQL-AUDIT-EXPIRY-DELETE-20261026؛ docs/archive/reports/2026-10/RAD-085_CONNECTION_IDENTITY_2026-10-26.md؛ أمر المالك هوية الاتصال والإبطال المحلي والشواهد الآلية2026-10-26؛ docs/archive/reports/2026-10/RAD-085_ERASURE_REPORT_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_ERASURE_MATRIX_2026-10-26.md؛ docs/archive/reports/2026-10/RAD-085_ERASURE_RECOVERY_2026-10-26.md؛ قرار المالك المحو والمصالحة والاستثناء RAD085-SQL-ERASURE-LOCAL-20261026؛ docs/archive/reports/2026-10/RAD-085_WORKER_LOCAL_REPORT_2026-10-26.md؛ أمر المالك تجهيز العامل واختباره محليًا للمسارين دون نشر أو Supabase حي2026-10-26؛ docs/archive/reports/2026-10/RAD-085_SHARING_OWNER_REPORT_2026-10-26.md؛ قرارات المالك لاستكمال المشاركة والكاتب2026-10-26؛ docs/archive/reports/2026-10/RAD-085_REMAINING_OPERATIONS_2026-10-26.md؛ اعتماد المالك RAD085-SQL-SHARING-POLICY-LOCAL-20261026 لمقترح e356318 ذي18سطرًا وإضافته واختباره محليًا فقط؛ docs/DECISIONS.md#rad085-owner-tidy-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_REPORT_2026-10-27.md؛ أمر المالك P1 supervisor wiring2026-10-27 والتحقق المباشر من دمج #137؛ docs/archive/reports/2026-10/RAD-085_P1_WIRING_REPORT_2026-10-27.md؛ docs/RAD-085_DB_DAY_P1.md؛ docs/RAD-085_TERMS_P1_PROPOSAL.md؛ docs/RAD-085_D3_SQL_GAP.md؛ docs/DECISIONS.md#rad085-db-day-owner-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_D3_REPORT_2026-10-27.md؛ أمر المالك O1–O5 وW1–W3 بتاريخ2026-10-27؛ Draft PR #140؛ docs/archive/reports/2026-10/RAD-085_SECURITY_REVIEW_2026-10-27.md؛ docs/DECISIONS.md#rad085-sec-fixes-owner-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_SEC_FIXES_REPORT_2026-10-27.md؛ docs/DECISIONS.md#rad085-db-day-nolaptop-owner-2026-10-27؛ docs/archive/reports/2026-10/RAD-085_DB_DAY_NOLAPTOP_REPORT_2026-10-27.md؛ أمر المالك B1–B5 وW1–W2 بتاريخ2026-10-27؛ docs/DECISIONS.md#rad085-crlf-readiness-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_CRLF_READINESS_REPORT_2026-10-28.md؛ docs/DECISIONS.md#rad085-trial-removal-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_TRIAL_REMOVAL_REPORT_2026-10-28.md؛ أمر المالك B8 وR1–R6 بتاريخ2026-10-28؛ docs/DECISIONS.md#rad085-auth-fk-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_AUTH_FK_REPORT_2026-10-28.md؛ حقائق المالك الحية وقرار A بتاريخ2026-10-28؛ docs/archive/reports/2026-10/RAD-085_DB_DAY_COMPLETED_2026-10-28.md؛ docs/DECISIONS.md#rad085-mobile-sql-owner-2026-10-28؛ إفادة المالك بإتمام DB day وأمر تحديث #144 بتاريخ 2026-10-28؛ أمر المالك P1 owner UX بتاريخ2026-10-28؛ docs/archive/reports/2026-10/RAD-085_OWNER_PICKER_REPORT_2026-10-28.md؛ docs/DECISIONS.md#rad085-p1-usability-owner-2026-10-28؛ docs/archive/reports/2026-10/RAD-085_P1_USABILITY_A_2026-10-28.md؛ إفادة المالك اختبار الهاتف2026-10-28؛ docs/archive/reports/2026-10/RAD-085_P1_USABILITY_B_2026-10-28.md؛ docs/RAD-085_P1_B_DB_DAY.md؛ Draft PR #151؛ docs/archive/reports/2026-10/RAD-085_P1_B_COMPLETED_2026-10-29.md؛ إفادة المالك بإتمام B وقبول الهاتف2026-10-29؛ docs/DECISIONS.md#rad059-alternate-owner-2026-11-02؛ docs/RAD-059_ALTERNATE_REPORT_2026-11-02.md؛ docs/RAD-085_P4_D1_REPORT_2026-11-02.md؛ docs/RAD-085_FIXES_REPORT_2026-11-02.md؛ docs/DECISIONS.md#rad085-owner-approvals-2026-11-02؛ docs/RAD-085_WINDOW_REPORT_2026-11-02.md؛ docs/RAD-085_PREFLIGHT_CALIBRATION_REPORT_2026-11-03.md؛ docs/DECISIONS.md#launch-records-owner-2026-11-03؛ docs/LAUNCH_RECORDS_REPORT_2026-11-03.md؛ docs/ASSESS_GATE_W_PACKAGES.md؛ docs/RAD-085_GATE_W_REPORT_2026-11-03.md؛ docs/DECISIONS.md#launch-practice-only-owner-2026-11-03؛ docs/DECISIONS.md#rad085-w4-verifier-owner-2026-11-03؛ docs/RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md",
       "waiting_on": "owner",
       "done_when": "مراجعة O4 للحقوق/D3 وبقية الأمن والخصوصية؛ P1/P5 مغلقتان بدليل المالك2026-11-02. RAD-086 قبل أول امتحان؛ إلغاء اعتماد العامل ضمن RAD-059."
     },
@@ -860,6 +860,105 @@
       "source_ref": "docs/DECISIONS.md#code-health-pins-owner-2026-11-03؛ docs/DECISIONS.md#code-health-size-owner-2026-11-03؛ docs/CODE_HEALTH_REPORT_2026-11-03.md",
       "waiting_on": "reviewer",
       "done_when": "PR مدمجة بعد #213؛ CI والبوابات الأربع خضراء؛ تنظيف بلا تغير سلوك وخريطة مزايا وReuse check ومقاييس وصور للقياس فقط."
+    },
+    {
+      "id": "RAD-095",
+      "title": "إيقاف الطوارئ للمالك داخل التطبيق",
+      "status": "review",
+      "priority": "medium",
+      "description": "في Draft بقرار المالك 2026-11-04: تبويب السلامة يعرض للمالك تدفق إيقاف البديل نفسه (التأكيد والمراحل الست والإيصال)، وزر «إيقاف طارئ» يفتح التأكيد؛ صفحة البديل بلا تغيير ودليل الهاتف احتياط. لا SQL أو RPC جديد؛ تغيّرت بصمتا OwnerPanel وEmergencySession فقط. الدمج بعد إطلاق الخميس.",
+      "source_ref": "docs/DECISIONS.md#owner-inapp-stop-owner-2026-11-04؛ src/features/emergency/EmergencySession.tsx؛ src/features/pilot/OwnerPanel.tsx",
+      "waiting_on": "owner",
+      "done_when": "Draft مدمج بعد الإطلاق ومراجعة المالك، مع CI أخضر وفحص المالك للهاتف دون تشغيل إيقاف حقيقي."
+    },
+    {
+      "id": "RAD-096",
+      "title": "Post-launch code-health follow-up",
+      "status": "planned",
+      "priority": "medium",
+      "description": "After the 2026-11-05 launch: (1) remove dead symbols kept as knipExceptions in scripts/code-health/policy.json where no pin/hash/guard covers the file; (2) remove ATTEMPT_COLUMNS/NOTE_COLUMNS from owner-data.ts only with an authorised pin change and marker promotion; (3) fix the copy-pasted reason on both detector-figures.tsx longClones entries.",
+      "source_ref": "docs/CODE_HEALTH_REPORT_2026-11-03.md؛ docs/DECISIONS.md#code-health-pins-owner-2026-11-03",
+      "waiting_on": "owner",
+      "done_when": "health:source passes with only justified exceptions, and the new marker is promoted and evidenced."
+    },
+    {
+      "id": "RAD-097",
+      "title": "W4 future verifier: database-held restore epoch (option C)",
+      "status": "planned",
+      "priority": "medium",
+      "description": "Witness verifier implemented as staged code (R1 shadow, R2 enforcing, R3 retire attestation) in Draft #241 with SQL and worker tests. Not live: needs the P7 window and the promotion PR.",
+      "source_ref": "docs/DECISIONS.md#rad085-w4-verifier-owner-2026-11-03؛ docs/RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/ASSESS_P7_LAPTOP_RUNBOOK.md",
+      "waiting_on": "owner",
+      "done_when": "Witness verifier merged with a rehearsal proving a restored database is refused by the worker, and the attestation retired; or the owner keeps decision B."
+    },
+    {
+      "id": "RAD-098",
+      "title": "خطة محرك صورة الأشعة بأربع جلسات",
+      "status": "done",
+      "priority": "high",
+      "description": "أُنجزت الجلسات الأربع وتوابعها (#220، #224–#230) ضمن نطاقها المعتمد؛ [تقرير 2b'](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md).",
+      "source_ref": "docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2BP_2026-11-04.md؛ docs/archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3C_2026-11-04.md؛ docs/DECISIONS.md#radiograph-densezones-owner-2026-11-04",
+      "done_when": "اكتمال الجلسات الأربع ضمن نطاقها المعتمد، ودمج PRs بعد QA والمراجعة، وإثبات العقد السببي مع بقاء حدود الرسم معلنة.",
+      "completion_evidence": "#220 و#224 و#225 و#226 و#227 و#228 و#229 و#230 مدمجة (قراءة GitHub 2026-11-04)؛ تقارير الجلسات 1 و2 و2b و2b' و3 و3b و3c و4 في docs/archive/reports/2026-11/؛ إغلاق بأمر المالك في موجّه RAD-100."
+    },
+    {
+      "id": "RAD-099",
+      "title": "Owner surveys UX: guided launch, round cards, participant lookup (option A)",
+      "status": "done",
+      "priority": "medium",
+      "description": "Guided survey launch, round cards, 7-day floor and code-only lookup merged (#231); [report](archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md).",
+      "source_ref": "docs/DECISIONS.md#owner-surveys-ux-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md",
+      "done_when": "Draft PR with the flow, cards and lookup, passing tests, checks, build and EN/AR 390/1440 axe audits on synthetic data; owner reviews before merge.",
+      "completion_evidence": "#231 merged by the owner (GitHub read 2026-11-04); report docs/archive/reports/2026-11/RAD-099_OWNER_SURVEYS_UX_2026-11-04.md; owner statement 2026-11-04: merged #231 and #232 and checked both on the phone; they work."
+    },
+    {
+      "id": "RAD-100",
+      "title": "لوحة النتيجة: المراجع وشرح النموذج مطوية ومناسبة للطالب",
+      "status": "done",
+      "priority": "medium",
+      "description": "طُويت كتلة المرجع وشرح النموذج في لوحة النتيجة بحارس نص معروض (#232)؛ [التقرير](archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md).",
+      "source_ref": "docs/DECISIONS.md#result-references-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md",
+      "done_when": "Draft مدمج بعد مراجعة المالك مع حارس النص المعروض وتغيّر مفاتيح result| فقط، وفحص المالك للهاتف.",
+      "completion_evidence": "#232 مدمج بيد المالك (قراءة GitHub 2026-11-04)؛ التقرير docs/archive/reports/2026-11/RAD-100_RESULT_REFERENCES_2026-11-04.md؛ قول المالك 2026-11-04: دمج #231 و#232 وفحصهما على الهاتف وهما يعملان."
+    },
+    {
+      "id": "RAD-102",
+      "title": "رسم إعداد القدم: شق النسيج الرخو بين الإصبعين 1 و2",
+      "status": "review",
+      "priority": "medium",
+      "description": "في Draft (الخيار 1): أُزيلت رؤوس الشق 21–29 من تتبع AP عبر سكربت التتبع، وصار خط النسيج الرخو المتحرك بلا تقاطع ذاتي عند كل محطة؛ تغيّرت مفاتيح scene| للقدم وأيقونة foot-ap في المكتبة بموافقة المالك فقط. بقيت ثلمات صغيرة بلا تقاطع عند شبكتي الإصبعين 3/4 و4/5 (حد معلن). ينتظر مراجعة المالك لصورة المراجعة وفحص الهاتف.",
+      "source_ref": "docs/DECISIONS.md#radiograph-foot-edges-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-102_FOOT_SOFT_TISSUE_2026-11-04.md",
+      "waiting_on": "owner",
+      "done_when": "Draft مدمج بعد مراجعة المالك لصورة المراجعة: لا شق بين الإصبعين 1 و2 ولا تقاطع ذاتي عند كل محطة، مع تغيّر مفاتيح scene| للقدم فقط، وفحص المالك للهاتف."
+    },
+    {
+      "id": "RAD-103",
+      "title": "تبسيط محاكي الهاتف: مرحلتان (تخطيط ثم تنفيذ واحد) (خُطِّطت باسم RAD-101)",
+      "status": "review",
+      "priority": "medium",
+      "description": "دُمجت المرحلة A (#234). المرحلة B منفذة في Draft ‏#237: رقائق الحواف، تدقيق التسميات بالنص، 4 خطوات بشريط «التالي» + «تعريض»، قسما الكاشف، صفوف ±، «لوح الكتف» (40 بصمة صدر AR). QA في التقرير. وافق المالك على النصوص والبنود؛ المتبقي: سقف تسمية «لوح الكتف» (§7) وفحص الهاتف والدمج بعد الإطلاق.",
+      "source_ref": "docs/archive/reports/2026-11/RAD-103_STAGE_B_PHONE_SIMULATOR_2026-11-04.md؛ docs/DECISIONS.md#rad101-phone-ui-owner-2026-11-04؛ docs/archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md؛ docs/review/rad-101/؛ docs/DECISIONS.md#rad077-owner-2026-10-24",
+      "waiting_on": "owner",
+      "done_when": "يُدمج Draft المرحلة B بعد الإطلاق بأمر المالك وفق D1–D7، والتقييم والبصمات خارج مفاتيح الصدر AR في D5 ثابتة، ويؤكد المالك الهاتف."
+    },
+    {
+      "id": "RAD-104",
+      "title": "إشعار Brevo للمالك عند تسجيل طالب جديد (الخيار C: ملخص مجدول)",
+      "status": "done",
+      "priority": "low",
+      "description": "أُنجز: إشعار Brevo للتسجيل (الخيار C)؛ الدليل في completion_evidence.",
+      "source_ref": "docs/DECISIONS.md#brevo-signup-notify-owner-2026-11-04؛ docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md؛ docs/archive/reports/2026-11/RAD-104_BREVO_DIGEST_2026-11-04.md",
+      "completion_evidence": "تحقق خارجي بإفادة المالك 2026-11-04: طُبّقت الحزمة، الفحص 6/6 ok، وصل بريد send_test، ووصل ملخص 23:50 UTC (HTTP 201) لتسجيل تجريبي فعلي في البريد الوارد. لا عناوين في Git. المرجع: docs/BREVO_SIGNUP_NOTIFY_RUNBOOK.md."
+    },
+    {
+      "id": "RAD-105",
+      "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
+      "status": "planned",
+      "priority": "high",
+      "description": "P0–P6 منفذة مرحليًا في Draft ‏#241 (SQL خارج المانيفست، شاشات خاملة، عامل بدفعة وشاهد استعادة، سكربت Scheduler). P6 توقفت: عنصران فقط. P7 نافذة مالك حية بإذن كتابي؛ PR ترقية منفصل قبلها.",
+      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/DECISIONS.md#rad085-review-ready-proposal-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md؛ docs/ASSESS_P7_LAPTOP_RUNBOOK.md؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_P0_P6_2026-11-05.md؛ docs/DECISIONS.md#assess-self-service-deviations-2026-11-05",
+      "waiting_on": "owner",
+      "done_when": "يجيب المالك عن الانحرافات، يُدمج PR الترقية، وتنجح نافذة P7 بامتحان يُجدوَل ويُصحَّح بلا خطوة يدوية."
     }
   ]
 }

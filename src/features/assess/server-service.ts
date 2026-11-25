@@ -69,6 +69,10 @@ export interface JobControls {
   verify?: () => Promise<void>;
   /** Best effort, fixed numeric events only. Monitoring cannot change writes. */
   observe?: (event: { phase: "grade" | "uncertain" | "stop"; milliseconds: number }) => void;
+  /** RAD-105 P3, additive: absolute performance.now() after which no further claim starts (default: none). */
+  deadlineMs?: number;
+  /** RAD-105 P3, additive: maintain_v1 batch independent of the claim limit (default: the claim limit). */
+  maintainLimit?: number;
 }
 export async function runAssessJobs(worker:AssessRpc,limit=50,signal?:AbortSignal,controls?:JobControls) {
   if(!Number.isInteger(limit)||limit<1||limit>100)throw new AssessServiceError("invalid");
@@ -78,10 +82,11 @@ export async function runAssessJobs(worker:AssessRpc,limit=50,signal?:AbortSigna
   const emit=(phase:"grade"|"uncertain"|"stop",milliseconds=0)=>{try{controls?.observe?.({phase,milliseconds});}catch{/* No payload or mutation retry on monitor failure. */}};
   await controls?.verify?.();
   if(signal?.aborted&&controls?.stopBeforeFinalize)throw new AssessServiceError("stopped");
-  const maintenance=await safe(()=>worker.call<{expired:number;purged:number;reservationsPurged?:number;consentsPurged?:number}>("maintain_v1",{p_limit:limit}));
+  const maintenance=await safe(()=>worker.call<{expired:number;purged:number;reservationsPurged?:number;consentsPurged?:number}>("maintain_v1",{p_limit:controls?.maintainLimit??limit}));
   let graded=0,failed=0;
   for(let i=0;i<limit;i++) {
     if(signal?.aborted){emit("stop");break;}
+    if(controls?.deadlineMs!==undefined&&performance.now()>=controls.deadlineMs)break;
     await controls?.verify?.();
     if(signal?.aborted&&controls?.stopBeforeFinalize){emit("stop");break;}
     const claim=await safe(()=>worker.call<GradingClaim|null>("claim_v1",{}));if(!claim)break;

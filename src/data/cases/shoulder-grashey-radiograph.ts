@@ -7,5 +7,7 @@ export const shoulderGrasheyRadiograph: RadiographAssetSpec = {
   anatomyBox: SHOULDER_IMAGE.anatomyBox,
   partialCoverageKey: true,
   limbRotation: { kind: "limb-warp", model: "shoulder-grashey", bands: [{ v1: 0.12, v2: 0.46 }] },
+  // Read by eye from this image, approximate: TODO(medical-review): have an educator confirm the zone.
+  denseZones: [{ cu: 0.52, cv: 0.3, ru: 0.25, rv: 0.15 }], // humeral head + glenoid
   render: { pxPerCm: 48, viewMarginCm: 1 },
 };

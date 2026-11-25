@@ -35,6 +35,7 @@ mkdirSync("scripts/qa/golden/images", { recursive: true });
 
 const file = JSON.parse(readFileSync("scripts/qa/scenarios.json", "utf8"));
 const golden = JSON.parse(readFileSync("scripts/qa/golden/matrix.json", "utf8"));
+const caseRules = JSON.parse(readFileSync("scripts/qa/characterisation/chest-pa-case.json", "utf8")).scoring;
 const msgs = { en: JSON.parse(readFileSync("messages/en.json", "utf8")), ar: JSON.parse(readFileSync("messages/ar.json", "utf8")) };
 // Session 8 (D7): patient-instruction labels are sex-aware ICU strings; the case under test is female.
 const forCase = (m) => m.replace(/^\{sex, select, female \{(.*?)\} other \{.*\}\}$/s, "$1");
@@ -137,20 +138,25 @@ async function runScenario(browser, loc, device, sc) {
   const effects = (await canvas.getAttribute("data-effects")).split(" ");
   ok(`${tag}: effects on the canvas equal the golden`, effects.join(" ") === g.effects.join(" "), `${effects} vs ${g.effects}`);
   const cards = await page.locator("[data-effect]").evaluateAll((n) => n.map((x) => x.getAttribute("data-effect")));
-  ok(`${tag}: effect cards match the canvas`, cards.join(" ") === effects.join(" "), cards.join(","));
+  // Current result panel: each effect card appears exactly once, under its check or in the image information (DOM order differs).
+  ok(`${tag}: effect cards match the canvas`, [...cards].sort().join(" ") === [...effects].sort().join(" "), cards.join(","));
 
   // 2. Score ⇔ golden.
-  const scoreText = (await page.locator('[aria-labelledby="result-heading"] [role="status"] div').first().innerText()).trim();
-  ok(`${tag}: score shown equals the golden (${g.score})`, Number(scoreText) === g.score, scoreText);
+  // Current result panel: the total is the LTR number beside the verdict heading ("92.9 / 100").
+  const scoreText = (await page.locator('[aria-labelledby="result-heading"] [role="status"] span[dir="ltr"]').first().innerText()).trim();
+  ok(`${tag}: score shown equals the golden (${g.score})`, Number(scoreText.split("/")[0].trim()) === g.score, scoreText);
 
   // 2b. Pass mark + critical findings ⇔ golden (critical findings gate the pass mark; the number is unchanged).
-  const passLabel = (await page.locator('[aria-labelledby="result-heading"] p.rounded-md').first().innerText()).trim();
-  ok(`${tag}: pass-mark label equals the golden (${g.passed ? "meets" : "below"})`, passLabel === (g.passed ? msgs[loc].result.passed : msgs[loc].result.failed), passLabel);
+  // The verdict is the heading itself; a critical finding over the case's pass threshold reads "critical error".
+  const passLabel = (await page.locator("#result-heading").innerText()).trim();
+  const criticalFail = !g.passed && g.critical.length > 0 && g.score >= caseRules.passThreshold;
+  ok(`${tag}: pass-mark label equals the golden (${g.passed ? "meets" : criticalFail ? "critical" : "below"})`, passLabel === (g.passed ? msgs[loc].result.passed : criticalFail ? msgs[loc].result.criticalFailed : msgs[loc].result.failed), passLabel);
   const critical = await page.locator("[data-critical]").evaluateAll((n) => n.map((x) => x.getAttribute("data-critical")));
   ok(`${tag}: critical findings shown equal the golden (${g.critical.join(",") || "none"})`, critical.join(",") === g.critical.join(","), critical.join(","));
   if (g.critical.length) {
-    const crit = await page.locator("#critical-heading").locator("xpath=..").innerText();
-    ok(`${tag}: critical reason is shown in ${loc.toUpperCase()}`, loc === "ar" ? /[\u0600-\u06FF]/.test(crit) && /دون درجة النجاح/.test(crit) : /below the pass mark/i.test(crit));
+    // The reason and the critical note sit in the check's disclosure (mounted, possibly collapsed: read textContent).
+    const crit = await page.locator("[data-critical]").first().textContent();
+    ok(`${tag}: critical reason is shown in ${loc.toUpperCase()}`, crit.includes(msgs[loc].result.criticalNote.split("{")[0].trim()) && (loc !== "ar" || /[\u0600-\u06FF]/.test(crit)), crit);
   }
 
   // 3. Feedback ⇔ golden: wrong-side flag, 'not drawn' labels, no raw ids.
@@ -159,7 +165,9 @@ async function runScenario(browser, loc, device, sc) {
   ok(`${tag}: wrong-side marker ${g.marker?.wrongSide ? "is" : "is not"} flagged in the feedback`, flagged === !!g.marker?.wrongSide);
   // Fix pass 3: a clip that cuts only the margin of the provisional region is labelled (effect card + under the check), in the picture's text alternative too.
   const marginNotes = await page.locator('[data-testid="clip-margin-note"]').count();
-  ok(`${tag}: 'margin only' clipping notes ${g.marginOnlySides.length ? "present" : "absent"} (golden: ${g.marginOnlySides.join(",") || "none"})`, g.marginOnlySides.length ? marginNotes === 2 : marginNotes === 0);
+  // Current result panel: one note on the clipping effect card (if drawn) and one under the clipping check (if not passed).
+  const expectedNotes = g.marginOnlySides.length ? Number(g.effects.includes("collimation-clipping")) + Number(g.outcomes["collimation-clipping"] !== undefined) : 0;
+  ok(`${tag}: 'margin only' clipping notes ${expectedNotes} (golden: ${g.marginOnlySides.join(",") || "none"})`, marginNotes === expectedNotes, String(marginNotes));
   ok(`${tag}: 'not drawn' labels equal the golden (${g.notDrawn})`, (await page.locator('[data-testid="not-drawn"]').count()) === g.notDrawn);
   ok(`${tag}: no raw setting ids in feedback`, !/\b(pa-erect|ap-erect|lateral-left|no-instruction|rolled-forward|remain-still|deep-inspiration-hold|expiration-hold)\b/.test(resultText));
 

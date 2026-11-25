@@ -12,6 +12,8 @@ import { localize } from "@/lib/localized";
 import { P1SupervisorScope, useSupervisorAppointment } from "@/features/supervisor/P1Session";
 import { P1_AVAILABLE } from "@/features/supervisor/p1-availability";
 
+import {EmergencyAlternateScope,useEmergencyAlternate} from '@/features/emergency/EmergencySession';
+
 function Icon({ kind }: { kind: string }) {
   const paths: Record<string, string> = {
     home: "m3 11 9-8 9 8M5 10v11h5v-7h4v7h5V10",
@@ -25,10 +27,12 @@ function Icon({ kind }: { kind: string }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[kind] ?? paths.library} /></svg>;
 }
 export function AppShell({ children }: { children: ReactNode }) {
-  return <P1SupervisorScope><ShellBody>{children}</ShellBody></P1SupervisorScope>;
+  return <P1SupervisorScope><EmergencyAlternateScope><ShellBody>{children}</ShellBody></EmergencyAlternateScope></P1SupervisorScope>;
 }
 function ShellBody({ children }: { children: ReactNode }) {
   const appointed = useSupervisorAppointment();
+  const alternate = useEmergencyAlternate();
+  const te = useTranslations("emergency");
   const t = useTranslations("shell");
   const tc = useTranslations("common");
   const ta = useTranslations("account");
@@ -49,6 +53,7 @@ function ShellBody({ children }: { children: ReactNode }) {
     ...available.map((modality) => ({ href: `/${modality.id}`, label: available.length === 1 ? t("library") : `${t("library")} · ${localize(modality.name, locale)}`, icon: "library" })),
     ...(PILOT ? [{ href: "/feedback", label: t("feedback"), icon: "assess" }, { href: "/training", label: t("training"), icon: "assess" }, { href: "/account", label: t("account"), icon: "account" }] : []),
     ...(appointed && P1_AVAILABLE && PILOT && approved && account?.state.kind === "signedIn" && account.state.profile.role === "participant" ? [{ href: "/supervisor", label: ts("title"), icon: "assess" }] : []),
+    ...(alternate ? [{ href: "/emergency", label: te("menuEntry"), icon: "assess" }] : []),
     { ...(PILOT ? { href: "/assess" } : {}), label: t("assess"), icon: "assess" },
     { label: t("learn"), icon: "learn" },
     { href: "/credits", label: tc("creditsLink"), icon: "credits" },

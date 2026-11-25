@@ -69,6 +69,19 @@ describe.each(modes)('production fixture 0200 -> 0300 calibration %s (required)'
     finally{await db.admin.query('rollback');}
    }
    await db.admin.query(migration);
+   // W1 (DS-9) through the review-ready check itself: exactly the five EXECUTE grants to assess_grading_worker are
+   // tolerated; any other ACL change must still fail. Each statement set is rolled back by the check's own rollback.
+   const readyFailures=async(change:string)=>((await db.admin.query(change+';\n'+ready)) as unknown as import('pg').QueryResult[])
+    .flatMap(r=>r.rows).filter(r=>r.ok!==true).map(r=>r.check_name);
+   const w1="create role assess_grading_worker nologin;grant execute on function assess.maintain_v1(integer),assess.claim_v1(),assess.finish_v1(uuid,uuid,text,text),assess.fail_v1(uuid,uuid),assess.health_v1() to assess_grading_worker;";
+   for(const [change,expected] of [
+    [w1,[]],
+    [w1+"grant execute on function assess.read_session_v2(uuid) to assess_grading_worker",['functions']],
+    [w1+"grant execute on function assess.health_v1() to assess_grading_worker with grant option",['functions']],
+    [w1+"grant execute on function assess.claim_v1() to authenticated",['functions']],
+    ["create role assess_grading_worker_x nologin;grant execute on function assess.claim_v1() to assess_grading_worker_x",['functions']],
+    ["do $x$declare r record;begin select prosrc,pg_get_functiondef(oid) def into r from pg_proc where oid='assess.claim_v1()'::regprocedure;execute replace(r.def,r.prosrc,r.prosrc||E'\\n-- synthetic body drift');end$x$",['functions']],
+   ] as const) expect(await readyFailures(change)).toEqual(expected);
    const results=await db.admin.query(ready) as unknown as import('pg').QueryResult[];
    const rows=results.flatMap(r=>r.rows);
    expect(rows).toHaveLength(11);expect(rows.filter(r=>r.ok!==true)).toEqual([]);

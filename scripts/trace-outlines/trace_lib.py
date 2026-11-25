@@ -713,9 +713,14 @@ def view(kind, img, bones, blobs, joints, lines, cfg):
                 for st in out if st["group"] not in ("joints",) and len(st["points"]) > 2]
     softs = soft_tissue(img, thr, bone_guard(img.shape, bones_px, SOFT_MARGIN) | hint_mask(img.shape, cfg.get("soft_hint", {}).get(kind, [])), cfg.get("soft_runs", 1), (lambda s: s.get(kind, 0) if isinstance(s, dict) else s)(cfg.get("soft_smooth", 0)))
     for i, soft in reversed(list(enumerate(softs))):
+        note = (f"Otsu threshold {round(float(thr), 1)} of the smoothed image, united with the bone outlines grown by "
+                f"{SOFT_MARGIN} px; open where {cfg.get('soft_open', 'the forearm')} leaves the image")
+        if cfg.get("soft_correct"):
+            # optional, declared owner correction of a traced soft-tissue run (RAD-102, foot AP); absent = the traced run unchanged
+            soft, extra = cfg["soft_correct"](kind, i, soft)
+            note += f"; {extra}" if extra else ""
         out.insert(0, {"id": "soft-tissue" if i == 0 else f"soft-tissue-{i + 1}", "group": "soft", "closed": False, "follows": None,
-                       "note": f"Otsu threshold {round(float(thr), 1)} of the smoothed image, united with the bone outlines grown by "
-                               f"{SOFT_MARGIN} px; open where {cfg.get('soft_open', 'the forearm')} leaves the image", "points": soft})
+                       "note": note, "points": soft})
     bad = soft_inside_bone(out)
     if bad:
         sys.exit(f"{kind}: soft-tissue points inside a bone outline: {bad[:5]}")

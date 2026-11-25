@@ -37,24 +37,26 @@
     "practiceHint": "Adjust the patient and equipment so the image meets the request, then press Expose. Detailed feedback is shown afterwards.",
     "tabsLabel": "Simulator controls",
     "tabs": {
-      "positioning": "Positioning",
-      "centring": "Centring",
-      "patient": "Patient",
-      "technique": "Technique"
+      "positioning": "Position",
+      "centring": "Detector",
+      "technique": "Technique",
+      "patient": "Patient instructions"
     },
     "needsAttention": "has an item that is not ready",
-    "sceneViews": "Scene view",
-    "readinessDetails": "Readiness details",
     "closeSheet": "Close",
     "backToLibrary": "Back to library",
     "caseDetails": "Case details",
     "startCase": "Start",
-    "viewDetector": "Detector",
-    "viewTop": "Top view",
-    "viewSide": "Side view",
     "phoneMenu": "Menu",
     "enlargeScene": "Enlarge scene",
-    "wholeDetector": "Whole detector"
+    "wholeDetector": "Full detector",
+    "aids": "Aids",
+    "zoom": "Zoom",
+    "nextStep": "Next: {step}",
+    "stepDone": "done",
+    "stepNotStarted": "not started",
+    "sectionCentring": "Centering & field",
+    "sectionMarker": "Marker"
   },
   "positioning": {
     "detector": "Detector / Bucky",
@@ -114,7 +116,6 @@
     "alt": "Interactive schematic of the detector with the patient, collimated field, central-ray target and side marker.",
     "markerConvention": "Display convention (PA): the patient's left appears on the viewer's right. Place L on the viewer's right side of the image and R on the left.",
     "touchHint": "Drag the crosshair and handles on the detector",
-    "fineAdjustPhone": "Fine adjustment",
     "markerExclusionGuide": "Marker exclusion area (reference rectangles)",
     "markerSquareGuide": "Measured marker square: {size} cm"
   },
@@ -251,7 +252,28 @@
     "criticalNote": "A critical finding forces “Below the educational pass mark” whatever the numeric score. It is an important error to correct in training, not a clinical decision about the image. The numeric score ({total}) and the category weights are unchanged.",
     "criticalEvidence": "Evidence for this critical finding",
     "criticalConcept": "Concept (common quality criterion)",
-    "criticalImplementation": "Implementation in this simulator"
+    "criticalImplementation": "Implementation in this simulator",
+    "sidGeometry": {
+      "title": "Why? How SID changes the shadow",
+      "yours": "Your setting",
+      "reference": "Reference",
+      "summary": {
+        "shorter": "Your SID is shorter than the reference. With the tube closer, the beam spreads more between the object and the detector, so the object's shadow is larger and its edges are less sharp.",
+        "longer": "Your SID is longer than the reference. With the tube farther away, the beam lines are closer to parallel, so the object's shadow is smaller. Geometrically this is not worse; the problem in this case is exposure (see the feedback above)."
+      },
+      "legend": "Top bar: the tube focal spot. Lines: the beam edges. Middle block: the object. Bottom line: the detector, with the shadow on it; its faint ends are the blurred edge (penumbra).",
+      "notToScale": "Illustration, not to scale",
+      "desc": {
+        "yours": {
+          "shorter": "Schematic of your setting: the tube is closer to the detector than in the reference, so the object's shadow is larger, with wider blurred edges.",
+          "longer": "Schematic of your setting: the tube is farther from the detector than in the reference, so the object's shadow is smaller, with narrower blurred edges."
+        },
+        "reference": {
+          "shorter": "Schematic of the reference: the tube is farther from the detector than in your setting, so the object's shadow is smaller and sharper.",
+          "longer": "Schematic of the reference: the tube is closer to the detector than in your setting, so the object's shadow is larger, with wider blurred edges."
+        }
+      }
+    }
   },
   "categories": {
     "positioning": "Positioning",
@@ -264,6 +286,10 @@
   "evidence": {
     "label": "Evidence",
     "reference": "Reference",
+    "referenceToggle": "Reference",
+    "allSources": "All sources",
+    "moreDetails": "More details",
+    "aboutSimulator": "About this in the simulator",
     "validated": "SOURCE-BASED",
     "common-reference": "COMMON REFERENCE / NOT UNIVERSAL",
     "vendor-protocol-dependent": "VENDOR / LOCAL-PROTOCOL DEPENDENT",
@@ -1098,7 +1124,7 @@
     "sideViewCaption": "Side view of the table set-up",
     "schematicNote": "Schematic illustration — not to scale and not anatomically exact. The bent knee, the arch height, shielding and the grid are shown as context only: they are not scored in this version.",
     "rotationHelpAp": "Turn of the foot about its long axis. Educational visual model: the internal value is scored by its size only (not its direction); the drawing shows the true-AP cue (nearly equal spacing of metatarsals 2–5).",
-    "rotationHelpOblique": "Angle of the plantar surface to the detector (Bontrager p.233: 30°–40°, 40° recommended). Educational visual model: metatarsals 3–5 are drawn closer together or further apart as the angle moves away from 40°. The result image approximates bone movement with a warp, so the 5th metatarsal may look sheared at large rotations; the set-up drawing shows it moving rigidly.",
+    "rotationHelpOblique": "Angle of the plantar surface to the detector (Bontrager p.233: 30°–40°, 40° recommended). Educational visual model: metatarsals 3–5 are drawn closer together or further apart as the angle moves away from 40°. The result image moves each metatarsal with its toes as one rigid piece and keeps the tarsals still; at the smallest angles the base of the 5th metatarsal is held back slightly, because one image cannot show it overlapping.",
     "markerConvention": "Marker: choose the letter of the patient's side (this is the RIGHT foot) and place it on the lateral margin of the field, clear of the foot. No left/right half of the image is checked for a single limb.",
     "markerHint": "Choose the letter of the patient's side, then drag it inside the edge of the field, clear of the foot.",
     "rotationAp": "Foot rotation (turn about the long axis)",
@@ -1946,6 +1972,49 @@
       "3": "3 — Fair",
       "4": "4 — Good",
       "5": "5 — Excellent"
+    },
+    "surveysUx": {
+      "launch": "Launch survey",
+      "launchTitle": "Launch a survey round",
+      "step1": "Step 1 of 2 · Choose the survey",
+      "step2": "Step 2 of 2 · Check and launch",
+      "checking": "Checking which surveys already have an open round…",
+      "chooseLegend": "Survey",
+      "alreadyOpen": "Already open. Close its current round before launching it again.",
+      "scanCapped": "There are more than {count} rounds, so this page cannot confirm that none is open. Launching is turned off here.",
+      "names": {
+        "SUS": "System Usability Scale (SUS)",
+        "General": "General feedback"
+      },
+      "descriptions": {
+        "SUS": "The standard 10 statements in their original English, each rated 1–5; the server scores it 0–100.",
+        "General": "An overall 1–5 rating plus short written answers: what they liked, what should improve and an optional bug report."
+      },
+      "customDescription": "{count, plural, one {# question} other {# questions}}, as defined on the server.",
+      "nameVersion": "{name} · version {version}",
+      "continue": "Continue",
+      "back": "Back",
+      "confirmLaunch": "Launch",
+      "whoTitle": "Who receives it",
+      "who1": "Approved participant accounts that have accepted the current terms and are not pending deletion.",
+      "who2": "Accounts created after surveys were switched on must first have saved at least 5 Practice attempts.",
+      "who3": "Nobody is messaged. An eligible participant is offered the survey the next time they open the home page or Your feedback while signed in.",
+      "who4": "If several rounds are open, each participant is offered the oldest open round first, and answers each round only once.",
+      "intervalTitle": "Minimum interval",
+      "interval": "A participant is offered at most one survey per minimum interval, counted from their last offer or answer, including cancelled offers. The server never allows less than {min} days.",
+      "gapFloor": "The server minimum is {min} days and the maximum is {max} days; this field cannot go below {min}.",
+      "gapUnknown": "The current saved value cannot be read here: the server only returns it when you save.",
+      "gapSaved": "Saved in this session and confirmed by the server: {days} days.",
+      "changed": "Saved.",
+      "roundsTitle": "Rounds",
+      "opened": "Opened {date}",
+      "closedAt": "Closed {date}",
+      "closeConfirm": "Close this round? Participants can no longer answer it, and its pending offers ({pending}) are cancelled. This cannot be undone.",
+      "closeYes": "Yes, close round",
+      "code": "Participant code",
+      "who": "Who is this?",
+      "whoLabel": "Who is this? Open the Students card for code {code}",
+      "whoHelp": "Answers show participant codes only. “Who is this?” opens that participant's card in the Students tab."
     }
   },
   "supervisorReview": {
@@ -2382,6 +2451,15 @@
     }
   },
   "emergency": {
+    "menuEntry": "Emergency stop",
+    "pageTitle": "Emergency stop",
+    "pageIntro": "You are the appointed alternate",
+    "ownerIntro": "You are the owner. This runs the same database stop as the appointed alternate.",
+    "startStop": "Start emergency stop",
+    "dialogTitle": "Confirm emergency stop",
+    "dialogCancel": "Cancel",
+    "stopNow": "Stop now",
+    "pageUnavailable": "Emergency stop is not available for this account.",
     "ownerTitle": "Emergency alternate",
     "ownerHelp": "Appoint one approved account to stop assessments in an emergency. This gives no other authority.",
     "stopTitle": "Emergency stop",
@@ -2442,5 +2520,49 @@
     "writeLimit": "Some data could not be saved because your account has reached a saving limit. Your current work is kept on this page. Please try saving again later.",
     "blocked": "Some accounts could not be erased and still need owner action. Their original deadlines remain in force. Resolve their rights and run finalise again.",
     "more": "More accounts may remain. Run finalise again to continue the batch."
+  },
+  "ownerUx": {
+    "statusBar": "Owner status",
+    "pendingCount": "{count, plural, =0 {No accounts awaiting approval} one {# account awaiting approval} other {# accounts awaiting approval}}",
+    "gradingCount": "{count, plural, =0 {Nothing awaiting grading} one {# answer set awaiting grading} other {# answer sets awaiting grading}}",
+    "gradingMore": "{count}+ answer sets awaiting grading",
+    "tabs": {
+      "students": "Students",
+      "groups": "Groups",
+      "assess": "Assess",
+      "practice": "Practice results",
+      "surveys": "Surveys",
+      "safety": "Safety & log"
+    },
+    "filterLabel": "Show students",
+    "filter": {
+      "all": "All",
+      "pending": "Pending",
+      "approved": "Approved",
+      "suspended": "Suspended",
+      "deletion": "Pending deletion",
+      "supervisors": "Supervisors"
+    },
+    "codeHelp": "Practice results, notes, survey answers and the deletion list show only this participant code, never the name or email (privacy rule).",
+    "codeLabel": "Participant codes",
+    "codeNotice": "Results and notes show participant codes only, for privacy. To see whose code it is, open the student in Students.",
+    "supervisorRole": "Supervisor role",
+    "supervisorManage": "Assign or withdraw supervisor",
+    "searchToChoose": "Search by name or email to choose.",
+    "filters": "Filters",
+    "assign": "Assign an assessment",
+    "published": "Published assignments",
+    "content": "Questions and content",
+    "who": {
+      "title": "Participant",
+      "searching": "Looking up this participant code…",
+      "missing": "No account with this code was found. It may be pending deletion or deleted.",
+      "capped": "This code was not found in the first {count} accounts. Close this lookup and search the Students list manually.",
+      "back": "Back to surveys",
+      "close": "Close lookup"
+    }
+  },
+  "assessConsentUi": {
+    "showText": "Show consent text"
   }
 }

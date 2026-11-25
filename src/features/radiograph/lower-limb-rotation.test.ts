@@ -10,7 +10,10 @@ import {
   FOOT_MODEL, FOOT_OBLIQUE_REFERENCE_DEG, KNEE_AP_MODEL, footAnchors, footValue, interpolateAnchors, kneeApShifts, kneeLateralCopies, lowerLimbDrawnRad,
 } from "@/features/lower-limb-model/lower-limb-model";
 import { LOWER_LIMB_RADIOGRAPHS } from "@/data/cases/lower-limb-radiographs";
-import { limbRotationPlan } from "./limb-effects";
+import { deriveFootRays, footRayAnchors, limbRotationPlan } from "./limb-effects";
+import footOutlines from "@/features/positioning/foot-outlines.json";
+import { TUNING } from "./tuning";
+import { CASES } from "@/data/cases";
 import { limbRotationValue } from "./pipeline";
 
 const lm = (k: keyof typeof LOWER_LIMB_RADIOGRAPHS): LimbRotationLandmarks => LOWER_LIMB_RADIOGRAPHS[k].limbRotation!;
@@ -88,6 +91,75 @@ describe("foot model (AP and medial oblique)", () => {
   });
   it("the model is deterministic", () => {
     expect(JSON.stringify(footAnchors("ap", 7.3))).toBe(JSON.stringify(footAnchors("ap", 7.3)));
+  });
+});
+
+describe("foot rays in the result image (owner decision 2026-11-04: rigid rays, static tarsals)", () => {
+  const views = { "foot-ap": footOutlines.views.ap, "foot-oblique": footOutlines.views.oblique } as const;
+  const models = ["foot-ap", "foot-oblique"] as const;
+  it.each(models)("%s: every ray is derived from the outlines; its base edge is the metatarsal's most proximal vertex", (model) => {
+    const view = views[model];
+    const rays = deriveFootRays(view);
+    expect(rays).toHaveLength(5);
+    rays.forEach((r, i) => {
+      const mt = view.structures.find((s) => s.id === `mt${i + 1}`)!;
+      expect(r.baseY).toBe(Math.max(...mt.points.map((p) => p[1]!)));
+      // the line passes through the metatarsal: its column at the bone's mid row lies inside the bone's horizontal extent
+      const ys = mt.points.map((p) => p[1]!), xs = mt.points.map((p) => p[0]!);
+      const x = r.a + r.b * (Math.min(...ys) + Math.max(...ys)) / 2;
+      expect(x).toBeGreaterThan(Math.min(...xs));
+      expect(x).toBeLessThan(Math.max(...xs));
+    });
+    // deterministic, no stored numbers: a second derivation is identical
+    expect(JSON.stringify(deriveFootRays(view))).toBe(JSON.stringify(rays));
+  });
+  it("STOP condition: a ray without a metatarsal or phalanx outline cannot be derived", () => {
+    const view = footOutlines.views.ap;
+    expect(() => deriveFootRays({ ...view, structures: view.structures.filter((s) => s.id !== "mt3") })).toThrow("foot ray 3");
+    expect(() => deriveFootRays({ ...view, structures: view.structures.filter((s) => !s.id.startsWith("t5-")) })).toThrow("foot ray 5");
+  });
+  it.each(models)("%s: at every console station each ray is rigid down to its base edge and the rows past base + soft edge are still; the fold guard alone may hold back the 5th ray's base", (model) => {
+    const view = views[model], rays = deriveFootRays(view), soft = TUNING.limbRotation.bandSoft;
+    const c = CASES.find((x) => x.id === model)!, ctl = c.controls.rotationDeg;
+    const held: string[] = [];
+    for (let value = ctl.min; value <= ctl.max; value += ctl.step) {
+      const plan = limbRotationPlan(value, true, lm(model));
+      if (!plan) continue;
+      const shifts = plan.hand!.anchors![1]!.map((a) => a.du);
+      let worst = 0;
+      for (let y = 0; y < view.heightPx; y += 2) {
+        const a = footRayAnchors(model, shifts, y / view.heightPx);
+        a.forEach((x, i) => {
+          const r = rays[i]!;
+          expect(x.u).toBeCloseTo((r.a + r.b * y) / view.widthPx, 12); // the ray lines
+          if (y >= r.baseY + soft * view.heightPx) expect(Math.abs(x.du)).toBe(0); // the tarsal rows of that ray do not move
+          if (y <= r.baseY && x.du !== shifts[i]) {
+            // ONE shift for the whole ray (toes, metatarsal) unless the fold guard engages: only ray 5, only in its last 180 rows
+            expect(i).toBe(4);
+            expect(r.baseY - y).toBeLessThan(180);
+            worst = Math.max(worst, Math.abs(x.du - shifts[i]!) * view.widthPx);
+          }
+        });
+        for (let i = 1; i < a.length; i++) expect(a[i]!.u + a[i]!.du).toBeGreaterThan(a[i - 1]!.u + a[i - 1]!.du);
+      }
+      if (worst > 0) held.push(`${value}:${Math.ceil(worst)}`);
+    }
+    // Declared limit (report §5): where the 5th metatarsal's base would pass over the static 4th ray line, a single-valued warp cannot
+    // draw the superimposition; the guard holds it back (before: 149 px of shear at the oblique's 25°).
+    expect(held.join(" ")).toBe(model === "foot-ap" ? "15:5" : Array.from({ length: 26 }, (_, v) => `${v}:30`).join(" ") + " 26:18 27:6");
+  }, 30_000);
+  it.each(models)("%s: the pixel step moves a stripe on a ray's line by that ray's shift at its head and at its base", (model) => {
+    const view = views[model], rays = deriveFootRays(view), L = lm(model);
+    const plan = limbRotationPlan(model === "foot-oblique" ? 30 : -15, true, L)!; // stations where the fold guard does not engage
+    const shifts = plan.hand!.anchors![1]!;
+    const r = rays[4]!, mt = view.structures.find((s) => s.id === "mt5")!;
+    for (const y of [Math.min(...mt.points.map((p) => p[1]!)), r.baseY]) {
+      const v = y / view.heightPx, u0 = (r.a + r.b * y) / view.widthPx;
+      // the centre of the drawn stripe (the stripe is narrow, so its centre is the image of u0 even where the warp stretches)
+      const lit = Array.from({ length: 8001 }, (_, i) => i / 8000).filter((u) => limbRotationValue(plan, L, (x) => (Math.abs(x - u0) < 0.002 ? 200 : 0), u, v) > 0);
+      const out = (lit[0]! + lit.at(-1)!) / 2;
+      expect(Math.abs(out - (u0 + shifts[4]!.du))).toBeLessThan(0.001);
+    }
   });
 });
 

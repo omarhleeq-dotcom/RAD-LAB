@@ -136,6 +136,24 @@ JOINT_CENTRE = {("ap", "t1-mtp"): (222, 616), ("ap", "t2-mtp"): (440, 584), ("ap
 JOINT_HALF = {("ap", "t1-mtp"): 90, ("ap", "t2-mtp"): 55, ("ap", "t3-mtp"): 55, ("ap", "t4-mtp"): 60, ("ap", "t5-mtp"): 50}
 JOINT_G = {key: 6 for key in JOINT_CENTRE}
 SOFT_TOWARD_BG = {"ap": 0.6, "oblique": 0.85}  # curated: the toes' soft tissue is faint
+
+# Owner correction (2026-11-04; DECISIONS #radiograph-foot-edges-owner-2026-11-04 item 7; RAD-102). In the DP/AP the soft tissue of toes 1
+# and 2 overlaps; a darker seam inside that overlap falls under the Otsu cut, so the traced run dips between the toes (a slit, not air:
+# report docs/archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md). The seam vertices are removed, nothing is added: the run
+# goes straight from the web top (394, 126) to toe 2's medial edge (404, 166). The removed run is listed exactly as traced, so the script
+# stops if the trace ever changes there instead of removing anything else. No new number: the coordinates are the traced ones.
+SOFT_SEAM = {"ap": [(392, 186), (356, 300), (348, 368), (336, 386), (354, 404), (382, 382), (378, 340), (386, 316), (392, 202)]}
+
+
+def soft_correct(kind, i, pts):
+    seam = SOFT_SEAM.get(kind) if i == 0 else None
+    if not seam:
+        return pts, None
+    tup = [tuple(p) for p in pts]
+    k = tup.index(seam[0]) if seam[0] in tup else -1
+    if k < 0 or tup[k:k + len(seam)] != seam:
+        sys.exit(f"{kind}: the owner-corrected soft-tissue seam is no longer in the trace; review the correction")
+    return pts[:k] + pts[k + len(seam):], "owner correction 2026-11-04: the seam between toes 1 and 2 removed (RAD-102)"
 BRIGHT_FACTOR = {"ap": 0.6, "oblique": 0.6}
 
 SPEC = {
@@ -143,7 +161,8 @@ SPEC = {
     "out_review": "docs/review/rad-072-foot",
     "sources": SOURCES,
     "views": {"ap": (AP_BONES, AP_BLOBS, AP_JOINTS, AP_LINES), "oblique": (OB_BONES, OB_BLOBS, OB_JOINTS, OB_LINES)},
-    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "joint_centre": JOINT_CENTRE, "joint_half": JOINT_HALF, "joint_g": JOINT_G, "soft_runs": 3, "soft_open": "the silhouette"},
+    "cfg": {"soft_toward_bg": SOFT_TOWARD_BG, "bright_factor": BRIGHT_FACTOR, "joint_centre": JOINT_CENTRE, "joint_half": JOINT_HALF, "joint_g": JOINT_G, "soft_runs": 3, "soft_open": "the silhouette",
+            "soft_correct": soft_correct},
     "header": {
         "region": "foot",
         "side": "RIGHT (both images are a right foot; a left-foot case mirrors the drawing, never the RTL layout)",

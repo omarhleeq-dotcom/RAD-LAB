@@ -1,0 +1,26 @@
+// STAGED (RAD-105 P2). Not compiled and not scanned by the deploy gate. P7 promotion copies this file to
+// src/features/assess/selfservice/adapter.ts AFTER the P1 SQL is live, adds its sha256 to browserBoundaries in
+// scripts/pages/frontend-schema.json, and mounts the screens behind the capability check. Names and parameters
+// must equal the P1 SQL signatures (checked by selfservice-p2.test.ts).
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { ScheduleAdapter } from "./SelfServiceViews";
+
+export function scheduleAdapter(client: SupabaseClient, assignment: { id: string; revision: number }, signal: AbortSignal): ScheduleAdapter {
+  return {
+    available: true,
+    schedule: async (opensAt, closesAt) => {
+      const { error } = await client.schema("assess").rpc("assignment_window_set_v1", { p_assignment: assignment.id, p_revision: assignment.revision, p_opens: opensAt, p_closes: closesAt }).retry(false).abortSignal(signal);
+      if (error) throw new Error("schedule failed");
+    },
+  };
+}
+export async function myWindows(client: SupabaseClient, assignments: string[], signal: AbortSignal): Promise<unknown> {
+  const { data, error } = await client.schema("assess").rpc("my_windows_v1", { p_assignments: assignments }).retry(false).abortSignal(signal);
+  if (error) throw new Error("windows unavailable");
+  return data;
+}
+export async function assignmentStatus(client: SupabaseClient, assignment: string, after: string | null, signal: AbortSignal): Promise<unknown> {
+  const { data, error } = await client.schema("assess").rpc("assignment_status_v1", { p_assignment: assignment, p_after: after, p_limit: 50 }).retry(false).abortSignal(signal);
+  if (error) throw new Error("status unavailable");
+  return data;
+}

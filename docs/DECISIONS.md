@@ -14,9 +14,10 @@ Use this file for the applicable rule, [project-status](project-status.md) for t
 - [Licensing authority](#licence-authority)
 - [Marker rules](#marker-policy)
 - [Rotation and image honesty](#rotation-honesty)
+- [Radiograph four-session plan: D-R1–D-R3](#radiograph-plan-owner-2026-11-03); [D-R2 amended](#radiograph-dr2-amended-owner-2026-11-03); [SID geometry explainer](#radiograph-geometry-diagram-owner-2026-11-04); [foot edges and QA tools](#radiograph-foot-edges-owner-2026-11-04); [denseZones for three assets](#radiograph-densezones-owner-2026-11-04); [result references collapsed](#result-references-owner-2026-11-04); [phone simulator RAD-103](#rad101-phone-ui-owner-2026-11-04)
 - [Scene constraints](#scene-rules)
 - [Workflow standards](#workflow-standard), [D1–D4](#workflow-owner-2026-11-01), [K/M/L and budgets](#workflow-hardening-owner-2026-11-01), [PR automation](#pr-automation-owner-2026-10-29)
-- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03)
+- [Pilot policy](#pilot-policy), [credential revocation](#rad086-supavisor-finding-owner-2026-11-01), [next-change triggers](#db-followups-owner-2026-11-01), [launch records D1–D13](#launch-records-owner-2026-11-03), [Practice-only launch and W decisions](#launch-practice-only-owner-2026-11-03), [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03), [Assess enablement window](#assess-window-owner-2026-11-03) ([review](#assess-window-review-owner-2026-11-03)), [owner surveys UX](#owner-surveys-ux-owner-2026-11-04), [owner in-app stop](#owner-inapp-stop-owner-2026-11-04), [image push route](#assess-push-owner-2026-11-04), [Brevo sign-up digest](#brevo-signup-notify-owner-2026-11-04), [window 11-05 amendments](#assess-window-2026-11-05-owner), [self-service OD1–OD9](#assess-self-service-owner-2026-11-05), [review-ready proposal](#rad085-review-ready-proposal-2026-11-05), [self-service delivery P0–P6](#assess-self-service-delivery-owner-2026-11-05), [self-service deviations](#assess-self-service-deviations-2026-11-05), [owner review of #241](#assess-self-service-review-owner-2026-11-05)
 
 ## Active Binding Decisions
 
@@ -710,7 +711,7 @@ Closed question texts and their scope/evidence are retained in the [closed-quest
 **السلطة:** قرارات المالك الصريحة في المحادثة بعد [مقترح الخطوة1](archive/reports/2026-10/RAD-077_PROPOSAL_2026-10-24.md). التنفيذ والتحقق في [التقرير](archive/reports/2026-10/RAD-077_REPORT_2026-10-24.md). هذه القرارات تضبط المقترح ولا تمنح استثناء بصمات.
 
 - **C1 معتمد:** dark `--art-soft` فقط في `src/app/globals.css`: `#234d59` ← `#3a7380`. light وألوان المحاكي وSVG بلا تغيير.
-- **A1 معتمد للهاتف الملائم فقط:** تسميات الإطار/الاتجاه في صفوف محجوزة ضمن العرض المرئي، بقياس النص واستعمال SceneLabel القائم دون تصغير، والاتجاه LTR في AR. viewBox الكاشف وهندسة اللمس والتشريح والحالة ثابتة. desktop/SSR مطابق بايتًا، ولا تغيير لأي scene/result أو golden/characterisation أو توقع قائم؛ fit-view/touch-geometry/coords تبقى بلا تعديل. عند تعذر ذلك: توقف وإبلاغ، **لا طلب أو افتراض استثناء A1-SVG**. فحص label-collisions بلا تخفيف عتبة، مع التأكد من عدم اصطدام التسميات بالتشريح والإرشادات والمقابض.
+- **A1 معتمد للهاتف الملائم فقط** (**عُدِّل 2026-11-04:** رقائق على حافة الرسم وسطر إيضاح، [D2 في RAD-103، كانت RAD-101](#rad101-phone-ui-owner-2026-11-04)): تسميات الإطار/الاتجاه في صفوف محجوزة ضمن العرض المرئي، بقياس النص واستعمال SceneLabel القائم دون تصغير، والاتجاه LTR في AR. viewBox الكاشف وهندسة اللمس والتشريح والحالة ثابتة. desktop/SSR مطابق بايتًا، ولا تغيير لأي scene/result أو golden/characterisation أو توقع قائم؛ fit-view/touch-geometry/coords تبقى بلا تعديل. عند تعذر ذلك: توقف وإبلاغ، **لا طلب أو افتراض استثناء A1-SVG**. فحص label-collisions بلا تخفيف عتبة، مع التأكد من عدم اصطدام التسميات بالتشريح والإرشادات والمقابض.
 - **خارج الإصلاح الآن:** تجاوز حوض Whole detector بنحو1.4وحدة، ونتيجة تسميات أسفل1440 بند مفتوح فقط.
 - **B أُعيد فتحه نصيًا في RAD-079:** حلّ [قرار المالك 2026-10-25](#rad079-owner-2026-10-25) محل التأجيل بعد بلاغ طالب حقيقي؛ تحليل hash/definitionVersion في المقترح محفوظ. لا تعديل تقييم/feedback، والاستثناء الجديد محصور بالنصوص المسماة.
 - **الإدارة:** يجوز إيداع تحديث RAD-077 في الحالة وHANDOFF ضمن PR نفسه، commit لكل بند، ولوحة قبل/بعد ≤5MB للـPR. في النهاية check كامل مرة واحدة، وexam-audit لكل الأسر المتأثرة في الثيمين، وlabel-collisions EN/AR390 لكل الفحوص17؛ typecheck وlint قبل كل دفع. Draft فقط ثم توقف. لا hosted preview أو DB حي أو hash regeneration.
@@ -1471,3 +1472,225 @@ No live SQL, Variables, gate, LOGIN, secret or Scheduler permission follows from
 السقوف في [budgets.json](budgets.json): home/training/supervisor/account=400؛ practice/owner/assess=500 KiB.
 أي صورة جديدة≤500 KiB؛ الصور الموجودة قياس فقط، بلا تطبيق رجعي أو تغيير صور في هذه الدفعة.
 هذه القرارات ليست مسجلة في #215؛ تبقى PR Draft ولا إذن SQL حي أو Variables أو نشر.
+
+<a id="owner-ux-phase1-owner-2026-11-03"></a>
+### UX المرحلة 1 (#219) — إذن البصمات وتأجيل إيقاف المالك، 2026-11-03
+
+السلطة: قرار المالك على مسودة #219؛ [التقرير](OWNER_UX_PHASE1_REPORT_2026-11-03.md).
+1. إذن وفق [قاعدة RAD-094](#code-health-pins-owner-2026-11-03): تحديث قيم sha256 فقط في `scripts/pages/frontend-schema.json` لملفات المتصفح التي غيرتها #219: OwnerPanel وOwnerDirectory وOwnerActivity وOwnerTraining وOwnerAssessPanel وOwnerAssignments وAssessConsent.
+الأساس: marker مطابق لـmain ومجموعة نداءات المتصفح→الخادم بلا تغيير. لا إذن لأي pin أو check أو تغيير manifest آخر.
+2. إيقاف الطوارئ للمالك داخل التطبيق مؤجل إلى ما بعد إطلاق الخميس؛ يبقى إيقاف [دليل الهاتف](RAD-059_PHONE_RUNBOOK.md) مسار المالك. متابعة مخططة RAD-095.
+ميزانية #219 مُدّت إلى27ملفًا لهذين السجلين فقط؛ تبقى PR Draft بلا دمج أو نشر.
+
+<a id="launch-practice-only-owner-2026-11-03"></a>
+### Launch — Practice-only Thursday and W1–W8 decisions, 2026-11-03
+Authority: owner decisions on Draft #218, recorded as stated; evidence in the [W report](RAD-085_GATE_W_REPORT_2026-11-03.md) and [packages](ASSESS_GATE_W_PACKAGES.md).
+- Launch: Thursday 2026-11-05 launches Practice-only; the Assess gate stays closed (the owner's Addendum 1 item 3 fallback rule, now applied).
+- Deviation 1 accepted: the credential transport keeps the slot NOLOGIN; LOGIN happens only at gate step 4.3.
+- Deviation 2 accepted: the single LOGIN slot is `assess_job_b`, so stop packet v2 and the in-app stop cover it.
+- D-W6 accepted: the Scheduler stays ABSENT; after each exam batch the owner runs N bounded manual executions, sequentially, inside the 24 h grading window.
+- W8 rejected: opening Assess without a worker is not viable.
+- Deferred until after launch, no decision yet: D-W1 (PUBLIC TEMP change), D-W5 (network probe), the W4 production worker entrypoint PR and the W7 written-item production scope.
+- Post-launch code-health follow-up deferred to after the launch (dead-symbol removal, pinned owner-data exports with an authorised marker change, detector-figures clone reason); tracked as the new project-status task.
+No live SQL, Variables, gate, LOGIN, secret, Job or Scheduler permission follows from these records.
+
+<a id="rad085-w4-verifier-owner-2026-11-03"></a>
+### RAD-085 W4 — production recovery verifier, decision B, 2026-11-03
+Authority: owner decision on the W4 Phase A proposal in this session, recorded as stated; evidence in the [W4 report](RAD-085_W4_ENTRYPOINT_REPORT_2026-11-03.md) and [packages §3](ASSESS_GATE_W_PACKAGES.md#3-w4--image-ready-for-review-after-the-launch).
+- Option B: an unsigned no-restore attestation in its own Secret Manager secret (`assess-worker-recovery`, numeric version), trusted through Secret Manager IAM. Option A (signed) and option C (database-held epoch) were not chosen.
+- Expiry cap: `expiresAt − issuedAt` ≤ 48 hours. One attestation version per exam batch covers the batch plus the 24 h grading window.
+- Checks: `projectRef` from the W2 host, `manifestSha256` of the image's own manifest, `restoresSinceBaseline` exactly 0, an exact field set, `issuedAt ≤ now < expiresAt`, re-read and re-checked on every verify call; missing or extra keys and symlinks are refused with no detail in the output.
+- Restore rule: before ANY restore, disable every enabled `assess-worker-recovery` version and keep the Assess gate closed; after a restore, no new attestation is issued until the reconcile is evidenced.
+- Option C is the future lifting path, tracked as RAD-097 (planned, waiting on the owner); not implemented here.
+- The mount layout (separate directories per secret) was checked against the official Cloud Run jobs secrets page.
+- The PR stays Draft and merges only after the Thursday launch. No live SQL, secret, Job, image push or gate permission follows from this record.
+
+<a id="alternate-stop-page-owner-2026-11-03"></a>
+### Alternate emergency stop page — 2026-11-03
+Authority: owner's UX task; presentation/routing only, at most14 files, one Draft PR from latest main; never ready/merge.
+Placement A: `/[locale]/emergency` only; site-menu “Emergency stop” only for the appointed alternate using the existing EmergencySession/browser-adapter `access()` check. Others get neutral “not available”, no stop controls. Remove the SessionGate per-page panel.
+Design2: calm card, title, “You are the appointed alternate”, existing containment status only if already exposed (no new RPC), “Start emergency stop”; accessible modal confirmation (focus trap, Esc/cancel, aria-modal,44px targets) holds existing warning/cloud texts, checkbox and “Stop now”. Receipt/six phases stay on the page; running/results/issues cannot be dismissed; denied path unchanged. Red only on stop actions.
+Existing emergency values, StopController, flow, ACK and Option C semantics remain byte-identical; only menu/page/intro/button/dialog chrome keys may be added, EN/AR synced; Arabic DRAFT per [terminology](ARABIC_TERMINOLOGY.md).
+Supersedes the implemented presentation in SessionGate: `<EmergencySession/>` in the shared provider on every page, and EmergencyView: `<p>{t('warning')}</p><p>{t('cloud')}</p>` fully expanded. [Decisions1–11, including “Option C: one in-app alternate”](#rad059-alternate-owner-2026-11-02) and [12–14](#rad059-implementation-owner-2026-11-02) contain no every-page requirement; any such inferred presentation rule is superseded only. Original authority/evidence links remain.
+Pins: prefer reusing EmergencySession unchanged; if necessary, ONLY sha256 values for changed SessionGate/AppShell/EmergencySession are pre-approved, with printed main/branch markers and identical browser rpc/from/call set. Any other pin/check/manifest change → STOP.
+No RPC/schema/migration/marker/write/dependency change; owner emergency section from #219 unchanged; no guard weakening. Static EN/AR route, noindex and unchanged404 policy; budgets/health gates and full product QA apply.
+
+<a id="radiograph-plan-owner-2026-11-03"></a>
+## Radiograph plan owner decisions — 2026-11-03
+Authority: owner's four-session radiograph prompt; tracked by RAD-098.
+- **D-R1:** Session 2 Priority 1 is fixing the causal contract for effects declared but not drawn.
+- **D-R2:** From Session 2, exposure/noise may respond continuously inside the pass band; score/rubric stays separate. Rotation continuity is a separate later decision. Session 1 changes no pixels.
+- **D-R3:** Deeper geometry (SID/OID magnification, tube angle, off-axis distortion) belongs in a separate, declared explanatory diagram; never fake it on the patient image.
+- Session 1 locks real-asset cross-family luma witnesses before product edits, then extracts/optimises with byte identity. Missing denseZones remains an explicit expected gap until Session 2.
+- Sessions 2–4 continue under these decisions; their detailed implementation scope must be stated in each session. No new exams/images, scoring changes or Assess/pilot work is authorised here.
+
+<a id="radiograph-dr2-amended-owner-2026-11-03"></a>
+## Radiograph D-R2 amended — owner decision 2026-11-03
+Authority: owner's Session 2b prompt; amends D-R2 in [the plan](#radiograph-plan-owner-2026-11-03); tracked by RAD-098.
+- No reference exposure exists in product data and none may be invented ([Session 2 report](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2_2026-11-03.md)).
+- Inside the pass band extra noise stays exactly zero: the correct image and every in-band scenario stay byte-identical.
+- Below the pass band's lower edge, extra noise and detail loss start from 0 at the edge and rise continuously with `exposure.quantumNoise.relative` and the existing TUNING scale, replacing the category steps.
+- No new constants or EI/EIT/DI numbers; never brightness; excess exposure never darkens. Scores, verdicts, checks, EN/AR and alt text stay byte-identical.
+- STOP if anything in-band changes or the edge needs a value not in the data.
+
+<a id="radiograph-geometry-diagram-owner-2026-11-04"></a>
+## Radiograph SID geometry explainer — owner decision 2026-11-04
+Authority: owner's Session 4 prompt, option C; applies [D-R3](#radiograph-plan-owner-2026-11-03); tracked by RAD-098.
+- A separate, collapsible "Why?" explainer shows two schematic diagrams side by side, "Your setting" and "Reference": tube focal spot, beam lines, a generic object, detector and the projected shadow.
+- Smaller SID gives a visibly larger, less sharp shadow; larger SID a smaller one. Labelled "Illustration, not to scale" in EN and AR.
+- No numbers for magnification or OID. The patient radiograph is never changed (D-R3).
+- SID positions come only from existing data: the student's SID and the exam's full-credit SID band. The object-to-detector gap is a declared UI drawing convention, never exam data, never shown.
+- Out of scope: tube angle, off-axis distortion, numeric magnification (option B), patient-image pixels, scoring, new dependencies.
+- Owner follow-up 2026-11-04: the "longer" summary adds that geometry is not worse there and the problem is exposure (existing high-SID feedback explains it); Arabic terms «البقعة البؤرية» (focal spot) and «شبه الظل» (penumbra) are owner-confirmed.
+
+<a id="radiograph-foot-edges-owner-2026-11-04"></a>
+## Radiograph foot edges and QA tools — owner decisions 2026-11-04
+Authority: owner's Session 3b prompt, answering the open items of the [Session 3 report](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3_2026-11-03.md#7-المفتوح); tracked by RAD-098.
+1. Foot shear option (a): per-metatarsal base edges for the RESULT IMAGE may be derived from the owner-reviewed CC0-derived `foot-outlines.json`. Still illustrative, not a measurement; no other change of use ([asset record](ASSET_PROVENANCE_AND_LICENSES.md#art-rad072-limb-trace-2b--traced-wrist-and-foot-outlines-and-review-overlays-2026-10-23-rad-072-2b-phase-a)).
+2. `clip-margin-only` golden: find the cause first; re-capture only that one file if the cause is proven benign and unrelated to product logic. Never change a tolerance.
+3. `run-matrix.mjs`: update its out-of-date page checks to the current UI.
+No assets, zones, medical values, scores, verdicts or checks change from this record; D-R1–D-R3 still apply.
+Owner decisions on the [Session 3b report](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION3B_2026-11-04.md#7-المفتوح), 2026-11-04 (Session 3c prompt):
+4. Set-up drawing: in the foot AP / oblique set-up drawing each toe moves WITH its metatarsal ray (as in the result image), not by its own toe anchors.
+5. `clip-margin-only`: re-capture approved. Cause: fce75bc (RAD-080, centimetre inputs no longer rounded), intended product behaviour, benign. Tolerances unchanged.
+6. Update ENGINE_GUIDE item 6 and fix the stale checks in `lower-limb-audit.mjs` and `radiograph-performance.mjs`.
+7. Owner option 1 on the [soft-tissue cleft report](archive/reports/2026-11/SOURCES_CLOSURES_FOOT_CLEFT_2026-11-04.md#7-المفتوح), 2026-11-04 (RAD-102): correct the AP soft-tissue trace by removing the Otsu seam vertices between toes 1 and 2 (through the trace script), and remove self-intersections of the moved soft-tissue outline in the set-up drawing; no new numbers.
+
+<a id="radiograph-densezones-owner-2026-11-04"></a>
+## Radiograph denseZones for three assets — owner decision 2026-11-04
+Authority: owner's Session 2b' prompt; lifts the denseZones gap left by [D-R1](#radiograph-plan-owner-2026-11-03) ([Session 2 report](archive/reports/2026-11/RAD-098_RADIOGRAPH_SESSION2_2026-11-03.md#7-المفتوح)); tracked by RAD-098.
+- Add `denseZones` to the chest lateral, pelvis AP and shoulder Grashey assets, read by eye from each asset's own image in the existing `{cu,cv,ru,rv}` format and marked TODO(medical-review).
+- Structures: chest lateral — thoracic spine; heart and retrocardiac region. Pelvis AP — sacrum; both acetabula with femoral heads. Shoulder Grashey — humeral head with glenoid.
+- The owner (radiography graduate) reviews the zone overlay images before merge.
+- Data only: no new mechanism, constants, TUNING, scores, verdicts or checks; D-R1–D-R3 still apply.
+
+<a id="rad101-phone-ui-owner-2026-11-04"></a>
+## Phone simulator simplification (RAD-103, planned as RAD-101) — owner decisions 2026-11-04
+Authority: owner's answers to §8 of the [RAD-101 audit](archive/reports/2026-11/RAD-101_PHONE_UI_AUDIT_2026-11-04.md), recorded as stated; tracked by RAD-103 (planned as RAD-101; renumbered because #235 had already moved next_id to RAD-103 on main). Amends [A1](#rad077-owner-2026-10-24) and the phone layout of [F3](#ui-inventory-owner-2026-10-22); F4 free navigation in Practice is unchanged.
+- D1 Option 1: figure on top, one step below, no page scrolling. No "Review" table or review sheet, in Practice too. Bottom bar: "Next" and "Expose" only; Expose stays available on every step. The practice page stays within its KiB cap.
+- D2 A1 amended (phone): direction labels become small chips on the figure edge (≥12 px; sides never mirrored in Arabic); "detector midline" and "centering target zone" move to a legend line under the figure.
+- D3 Steps: 1 Position → 2 Detector (sections "Centering & field" | "Marker") → 3 Technique → 4 Patient instructions → Expose. Patient instructions come last because breathing/stillness instructions are given right before exposure. The projection choice moves from Technique to step 1. Each step chip shows its state: done / note / not started.
+- D4 No manual view switcher: the view follows the step. "Aids", "Zoom" and "Full detector" stay as buttons with visible text. Marker-exclusion zones show only in the Marker section.
+- D5 Arabic «اللوح» becomes «لوح الكتف»; named S-STD-2 exception for the affected Arabic chest scene-dom keys, regenerated only through the UPDATE_* path.
+- D6 Fine adjustment always visible as ± rows (centering offsets, field size, SID, kVp, mAs, rotation); dragging on the figure stays; all Practice hints stay.
+- D7 (later the same day) Two stages only: Stage A = planning (#234); Stage B = ONE implementation Draft PR with all of D1–D6 in five ordered commits (labels → steps → Detector sections → ± rows → «لوح الكتف» with AR chest hashes via UPDATE_* only). No Review screen or table anywhere. Stage B starts only after the owner confirms #234 is merged, and merges after the Thursday launch.
+- Unchanged: scoring, feedback, readiness rules, patient and radiograph images, stored coordinates, and desktop DOM and hashes outside D5.
+
+<a id="result-references-owner-2026-11-04"></a>
+## Result panel references and model notes collapsed — owner decision 2026-11-04
+Authority: owner's RAD-100 prompt; presentation only; tracked by RAD-100.
+- Each check's reference block is ONE collapsed control, closed by default: "📚 Reference / 📚 المرجع" plus the existing evidence-status badge, which stays visible when closed.
+- Opened: the existing source line and credits link on one short line; the existing long note sits in a nested "More details / تفاصيل أكثر", closed by default.
+- The per-check model-explanation box (title, text, concept / drawn-amount chips) is a collapsed "About this in the simulator / عن هذا في المحاكي", closed by default.
+- Existing fields and strings only; new strings only for the three control labels (EN/AR). No new or translated medical text, no score, verdict, feedback or patient-image change.
+- Phone: one tap target per control, no stacked nested borders.
+- Declared S-STD-1 exception: result| scene-dom keys may change only after a committed guard proves the result panel's text nodes, in order, equal main's with all disclosures opened; no scene| key, pixel witness, golden or characterisation may change.
+- Owner follow-up 2026-11-04: inside the opened control the credits link text becomes "All sources / كل المصادر" (new key); the "Reference:" source-line prefix and the page-level credits link elsewhere are unchanged.
+
+<a id="assess-window-owner-2026-11-03"></a>
+### Assess enablement window — D-W1, interim alternate, D-W5 pre-decision, 2026-11-03
+Authority: owner's enablement-window task, recorded as stated; script in the [window runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md); prior records [Practice-only launch](#launch-practice-only-owner-2026-11-03) and [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03).
+- D-W1 accepted: in the window, apply `supabase/manual/assess-grading-worker-public-temp.sql`, then a Practice smoke at once; on any failure run the file's rollback line `grant temporary on database postgres to public;`.
+- Interim alternate: the owner's own second (test) account stays the appointed alternate for now. This is NOT independent coverage.
+- Compensating rule: the Assess gate opens only for a scheduled exam window while the owner is present and monitoring, and closes (gate runbook §8 or gate close) right after; small cohorts first.
+- A real human alternate is appointed and drilled BEFORE real students use Assess; until then only synthetic smoke may run.
+- D-W5 pre-decision: probe `{"outcome":"PASS","stage":"complete","family":6}` plus mount type `file` accepts option A (dual-stack Direct VPC egress) and the window continues. Any other result STOPs the window with nothing else changed; options B and C stay undecided.
+- Execution model: every live enablement step runs in ONE owner laptop window (WSL `~/RAD-LAB`, laptop browser for Cloud Shell and consoles), each step with Expected/STOP.
+- Permission: one consolidated written sentence at the start of the window; the separate gate-open sentence (gate runbook §0.3) only if a real exam window is scheduled.
+This record grants no live action by itself; the owner's written sentence in the window does.
+
+<a id="assess-window-review-owner-2026-11-03"></a>
+### Assess enablement window — owner review of #223, 2026-11-03
+Authority: owner decisions on Draft #223, recorded as stated; amends the [window record](#assess-window-owner-2026-11-03) and the [runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md).
+- Deviations 1–3 accepted: option A network flags on the Job update; deleting the TLS probe Job in cleanup; running `recovery-attestation.mjs` in Cloud Shell, with the `--manifest-sha256` fallback kept.
+- Synthetic smoke exception: the gate may open ONLY for the step-8 synthetic smoke, at most 30 minutes, owner present, synthetic accounts only, closed by gate runbook §8 right after. This is the single exception to "the gate opens only for a scheduled exam window".
+- `baselineAt` is the completion time of the step-1 fresh RAD-086 backup verified in the same window.
+- Smoke account: a RAD-041 synthetic account that is NOT appointed as alternate.
+- No alternate is appointed now: the owner removed the test appointment on 2026-11-03. A real human alternate is appointed and drilled before any real exam window.
+No live action follows from this record; the PR stays Draft.
+
+<a id="owner-surveys-ux-owner-2026-11-04"></a>
+### Owner surveys UX (RAD-099, option A), 2026-11-04
+Authority: owner's RAD-099 task prompt and the owner's answer on the pin question in the same session, recorded as stated.
+1. Survey answers keep showing the participant CODE only; the [pilot privacy rule](#pilot-policy) is unchanged. Each answer gets a "Who is this?" action that opens that participant's existing card in the Students tab (owner-only, existing data path). No name or email is shown in the surveys tab.
+2. Replace the survey launch controls with a guided flow (choose survey, summary, confirm) and show rounds as readable cards.
+3. Pin: only the `src/features/pilot/OwnerPanel.tsx` sha256 in `scripts/pages/frontend-schema.json` may change, on the [RAD-094 rule](#code-health-pins-owner-2026-11-03); marker and browser→server call set stay identical. No other pin, check or manifest change.
+4. The lookup runs only when "Who is this?" is tapped, pages the existing directory RPC, stops at the first match and is capped at 200 accounts; beyond the cap it says plainly the code was not found there and to search manually.
+5. S-STD-3 ceiling: the 200-account cap; lifting trigger is a server-side search by code (a later, separately reviewed RPC change).
+UI only: no live SQL, migration or RPC change. The PR stays Draft.
+
+<a id="owner-inapp-stop-owner-2026-11-04"></a>
+### Owner in-app emergency stop (RAD-095), 2026-11-04
+Authority: owner decision in the RAD-095 task prompt, recorded as stated; lifts the post-launch deferral in [UX phase 1 item 2](#owner-ux-phase1-owner-2026-11-03); merges only after the Thursday launch.
+1. The owner gets the same in-app stop as the appointed alternate, inside the owner panel Safety tab: the existing stop view, controller, confirmation dialog, six phases, receipt and wording; no second implementation, no new RPC or call name. The red "Emergency stop" button in the owner status bar opens it.
+2. The [phone runbook](RAD-059_PHONE_RUNBOOK.md) stays the documented fallback, and the Google Cloud steps stay owner phone steps ([decision 3](#rad059-alternate-owner-2026-11-02)).
+3. The [alternate page](#alternate-stop-page-owner-2026-11-03) is unchanged.
+4. Pins: on the [RAD-094 rule](#code-health-pins-owner-2026-11-03), only the sha256 values in `scripts/pages/frontend-schema.json` of the changed files `src/features/pilot/OwnerPanel.tsx` and `src/features/emergency/EmergencySession.tsx` may change; the browser rpc/from name set and the pilot marker stay identical. No other pin, check or manifest change. Recorded: OwnerPanel `c3e0478e…dfdc3` → `d35f215a…5095b`; EmergencySession `b5eedaea…eee7` → `f94e1688…177f`.
+Existing SQL already authorises the approved owner (`emergency.eligible_v1` accepts role owner). No live SQL, migration or RPC change; the PR stays Draft.
+
+<a id="assess-push-owner-2026-11-04"></a>
+### Assess image push route: option A, laptop Docker, 2026-11-04
+Authority: owner's instruction in the Draft #238 follow-up prompt, recorded as stated; settles the open choice in the [window report](archive/reports/2026-11/ASSESS_WINDOW_2026-11-04.md#3-قرار-مفتوح-مسار-دفع-الصور). Documentation preparation only; it grants no live permission.
+1. Option A is selected: both images (the credential-free TLS probe and the grading worker) are built and pushed by digest from Docker Desktop in laptop WSL. Option B (Cloud Build) is not selected.
+2. Unchanged: the pinned base, `--network=none`, digest binding and the worker's two-build manifest comparison. Network, IAM, probe Jobs, the mount check and the step 6 attestation stay in Cloud Shell; the attestation uses the already approved `--manifest-sha256` fallback with the hash from the laptop build.
+3. Owner-reported read-only observations: Docker client and server 29.8.2 on linux x86_64; repository `assess-runtime` in `europe-west3` exists with format DOCKER; `artifactregistry.googleapis.com` is enabled. They prove neither push access nor the cause of the earlier Cloud Shell refusal; the [runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md#2-w5-probe-mount-check-and-d-w5-l-for-the-image-cloud-shell-for-the-cloud-steps-45-min) step 2.1 re-reads them.
+4. A new window starts at step 0 with fresh verification, a fresh backup and a new owner-written permission sentence; the expired 2026-11-04 window, its commit and its `baselineAt` are never reused.
+5. S-STD-3 ceiling: the laptop push route is untested. Lifting trigger: one window where the push, the digest and the registry listing all agree; on any push failure the choice returns to the owner.
+
+<a id="brevo-signup-notify-proposal-2026-11-04"></a>
+### Proposal only: Brevo new-sign-up notification (RAD-104), 2026-11-04
+**No ruling is recorded.** The owner asked for a design; the options, free-plan limits and hand steps are in the [plan](BREVO_SIGNUP_NOTIFY_PLAN.md). Requirements stated by the owner: the email carries no personal data (only "new sign-up" and the running total), at most one email per 10 minutes, and it never blocks or slows a sign-up. Options A (trigger plus `pg_net`, key in Vault), B (Database Webhook to an Edge Function) and C (scheduled digest) await the owner's choice. Brevo SMTP for auth email ([S-PILOT-6](PILOT_SUPABASE_SETUP.md#3-بريد-التأكيد-smtp--نُفِّذ-بـ-brevo-2026-10-15-المالك)) is unchanged. Nothing is implemented, and no key, SQL or setting changes follow from this entry.
+Superseded by the owner's choice: [option C](#brevo-signup-notify-owner-2026-11-04).
+
+<a id="brevo-signup-notify-owner-2026-11-04"></a>
+### Brevo new-sign-up notification: option C, scheduled digest (RAD-104), 2026-11-04
+Authority: owner's instruction in the RAD-104 implementation prompt, recorded as stated; settles the [proposal](#brevo-signup-notify-proposal-2026-11-04) and the [plan](BREVO_SIGNUP_NOTIFY_PLAN.md) §3.
+1. Option C is selected: an AFTER INSERT trigger adds one row (id and time only) to a private queue, and a `pg_cron` job every 10 minutes sends at most ONE Brevo email through `pg_net`, then marks the rows sent. Options A and B are not selected.
+2. Body only: "N new sign-up(s) since last notice; total accounts: T". No name, email or user UUID is stored or sent.
+3. The trigger never raises; a failure is ignored so sign-up is never blocked. The Brevo API key, sender and recipient live only in Supabase Vault; a missing secret sends nothing. One boolean kill switch, default OFF, flipped by the owner after a test. Sent rows are deleted after 7 days. Private schema, RLS on, no grants to anon/authenticated.
+4. Delivery is an owner-applied SQL packet with exact rollback and a read-only check; no migration, no change to the pilot marker or `frontend-schema.json`. The agent runs no live SQL and makes no Vault or dashboard change.
+5. S-STD-3 ceiling: up to 10 minutes delay and at most 144 emails a day. Lifting trigger: a need to tell sign-ups apart, which needs a new privacy decision.
+
+<a id="assess-window-2026-11-05-owner"></a>
+### Assess enablement window 2026-11-04/05 — owner amendments recorded in the window
+Authority: owner's in-window amendments, recorded as stated (verbatim text stays in the owner's encrypted log); evidence in the [window report](archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md). Amends the [window runbook](ASSESS_ENABLEMENT_WINDOW_RUNBOOK.md) steps 6.3 and 7.3 only.
+- Step 6.3 first failed: Cloud Run refuses a Job that references a DISABLED secret version, and the Job held an unmounted leftover volume for config v1. Amendment: enable N=2 before the Job update (slot still NOLOGIN, no execution) and remove the leftover volume; the update then succeeded. Two more unmounted duplicate volumes (versions 2 and 1) remain.
+- Step 7.3: `rad085-review-ready` `functions` = `445cb753be66f07d7b5d5eee22cec0e2` instead of `5fcd5e713c9e39b74f39ba6a969080d5` because W1 granted EXECUTE on the five grading functions to `assess_grading_worker`; the same fingerprint without that grantee is `5fcd5e71…` (proved live). Accepted by the owner amendment for that window only.
+- D-W1 stays applied (owner kept it). The synthetic smoke exception and the owner emergency stop closing it are as in the [window review](#assess-window-review-owner-2026-11-03).
+- Not run in the window: old-credential rejection, budget/alert receipt test, real-alternate drill.
+No live permission follows; the PR stays Draft.
+
+<a id="assess-self-service-owner-2026-11-05"></a>
+### Assess self-service exams — owner decisions OD1–OD9, 2026-11-05
+Authority: owner's task prompt, recorded as stated; design in [ASSESS_SELF_SERVICE_DESIGN](ASSESS_SELF_SERVICE_DESIGN.md) (tracked as RAD-105). Design only: no phase starts without the owner's go.
+- OD1 Exams are run entirely by supervisors from the app: a supervisor schedules each exam (start/end) and it opens and closes by itself; no exam may need the owner, SQL, a terminal, a gate sentence or a laptop window. OD2 The grading worker runs automatically; no manual Execute. OD3 No manual per-exam recovery attestation; an automatic mechanism replaces it. OD4 No routine manual credential work; at most a rare, one-click or fully automatic path.
+- OD5 The emergency stop (owner and alternate, in-app) stays and overrides everything. OD6 Written items are deferred. OD7 The appointed alternate is a real person (the account already appointed). OD8 First real exam: one 20-question auto-graded exam from the already tested items, assigned to all students. OD9 Close every open Assess gap now so Assess never needs reopening as a project.
+- Supersedes for **normal operation** (the records stay as history and still govern the single final switch-on window): the [compensating rule](#assess-window-owner-2026-11-03) (gate only for a scheduled window with the owner present, small cohorts first) and its per-window written sentence; the 48 h attestation per batch of [W4 verifier B](#rad085-w4-verifier-owner-2026-11-03) (option C, RAD-097, becomes the chosen direction, design in §3); D-W6 manual Execute / Scheduler ABSENT in [Practice-only launch](#launch-practice-only-owner-2026-11-03); "a real human alternate is appointed and drilled before real students" in the [window review](#assess-window-review-owner-2026-11-03) is met by OD7 for the person only: **the drill is not evidenced and remains a gap**.
+- Unchanged: [RAD-059 decisions 1–14](#rad059-alternate-owner-2026-11-02) (stop-only alternate, channels, revocation A), the [owner in-app stop](#owner-inapp-stop-owner-2026-11-04), BONTRAGER-9/medical rules, and every AGENTS boundary this record does not name.
+No SQL, migration, secret, Job, Scheduler or code follows from this record.
+
+<a id="rad085-review-ready-proposal-2026-11-05"></a>
+### Proposal only: `rad085-review-ready` functions fingerprint after W1, 2026-11-05
+**No ruling is recorded** (Decision-needed DS-9 in the [design §7](ASSESS_SELF_SERVICE_DESIGN.md#7-gap-ledger)). The promoted check now fails on production: expected `5fcd5e71…`, actual `445cb753…` (the five W1 EXECUTE grants). Recommended: exclude the `assess_grading_worker` grantee from the ACL part of the `functions` fingerprint (value stays `5fcd5e71…` on CI and production); alternative: accept both values. Replacing the value with `445cb753…` alone breaks the CI DB lane (no W1 there; Inferred, not run). Any change to the file changes the `pilot-v1` marker (hash over every manifest check), so the owner must set the new `PILOT_SCHEMA_VERIFIED` before the first Deploy after the merge; the manifest lists the file by path only. It must land before any further preflight. Nothing is applied.
+
+<a id="assess-self-service-delivery-owner-2026-11-05"></a>
+### Assess self-service — one session, one Draft PR, P0–P6 (amends DS-1), 2026-11-05
+Authority: owner's answers to DS-1…DS-10 and the DS-1 amendment in the same session, recorded as stated; amends [OD1–OD9](#assess-self-service-owner-2026-11-05) delivery only.
+- DS-1…DS-10 answered YES (window truncation at `closes_at`, cap 7 days, default 24 h; Scheduler every 5 min with batch ≤ 20 or ≤ 240 s; external witness R1→R2→R3 with both witness times from the DB clock; 365-day credential; authoring-flow exam reviewed once by the owner; owner-only Resume and "Accept restored database"; DS-9 fingerprint fix; the three accepted risks; P2 consent disclosure acknowledged).
+- DS-7 amended: the gate stays CLOSED until P7; the gate-state checks are not edited here and ship as successor checks inside the P7 promotion packet.
+- DS-1 amended: ONE session and ONE Draft PR deliver P0–P6 in order, one commit per phase, each phase green before the next. P7 stays a live owner window with its own written permission; nothing live follows from the PR.
+- Hard rule: `main` stays deployable. P0 is the only change that may move the `pilot-v1` marker; new SQL (P1/P3/P5) is staged, digest-pinned and outside the applied manifest until the P7 promotion; the P2 UI calls no RPC that does not exist live and is dormant until P7; no existing check, golden or hash changes except the P0 fingerprint fix. RAD-104 is done on the owner's evidence (packet applied, check 6/6, test mail and a real sign-up digest delivered).
+No SQL, secret, Job, Scheduler or gate action follows from this record.
+
+<a id="assess-self-service-deviations-2026-11-05"></a>
+### Proposal only: self-service deviations needing a ruling, 2026-11-05
+**No ruling is recorded.** (1) DS-5 cannot be met without changing five protected places that cap the grading credential at 90 days (`rotate-grading-credential.py` and its test, `assess-grading-worker-login.sql`, `assess-worker-login-ready.sql`, `assess-grading-worker-ready.sql`, `assess-original-worker-login-stage.sql`). Recommended: P7 uses `--valid-days 90` with rotation at most every 60 days; the promotion PR raises the cap to 365 with a new marker. (2) No advisory lock: the grading binding allows exactly five operations, and lease plus skip-locked claims already make overlap safe. (3) The witness tick rides inside `health_v1` because a sixth worker function would break the W1 grant contract. (4) P6 stopped: the repository holds two reusable non-clinical items; the live count needs the owner's read-only inventory. Evidence: the [P0–P6 report](archive/reports/2026-11/ASSESS_SELF_SERVICE_P0_P6_2026-11-05.md). Nothing is applied.
+
+<a id="assess-self-service-review-owner-2026-11-05"></a>
+### Assess self-service — owner review of #241 and decisions, 2026-11-05
+Authority: owner's review message and answers, recorded as stated; amends [OD1–OD9](#assess-self-service-owner-2026-11-05) and [delivery](#assess-self-service-delivery-owner-2026-11-05); settles the [deviations proposal](#assess-self-service-deviations-2026-11-05) item 1.
+- #241 fixes ordered and made: a missing witness object (GCS 404) never passes in enforcing mode (`witness-missing`, STOP before any claim; only shadow may create the first witness); extending `closes_at` recomputes ACTIVE attempts as `least(started_at + duration, new closes_at)` and never shortens; `assignment_status_v1` also admits `public.is_owner()`; `owner_resume_v1` reports held ACTIVE sessions separately (`heldActive`).
+- DS-5 replaced: the grading credential has NO expiry (`VALID UNTIL 'infinity'`). The owner accepts the risk. Compensating controls: Secret Manager only, the 5-function role, the in-app emergency stop (NOLOGIN), one-command rotation on suspicion. Expiry alerts are removed. The five protected places that cap at 90 days and the resulting marker change are approved for the promotion PR only.
+- "All-students quiz" is a SEPARATE feature from group exams. Recipients: every account that is approved AND has accepted the privacy/Assess consent, resolved server-side at publish time; no student opt-in or choice. Senders: the owner always; a supervisor only with a separate "all-students" permission that the owner grants per supervisor in the owner panel (default OFF, revocable, audited), never automatic. Same windows, grading and result path as group exams.
+- P6 unblocked: the first real exam is 20 owner-authored items in an owner-held XLSX matching the existing QuestionImport columns, imported in-app by the owner/supervisor at P7 step 15 through QuestionImport. The file and any item text are never committed.
+- Next: a separate Draft promotion PR (P7 runbook §0). No live action follows from this record.

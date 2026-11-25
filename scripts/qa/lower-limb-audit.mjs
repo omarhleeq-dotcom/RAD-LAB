@@ -74,7 +74,8 @@ for (const loc of ["en", "ar"]) for (const [dev, opts] of Object.entries(DEVICES
     ok(`${tag} ${name}: no breathing group, no chin / shoulder cues`, (await page.getByText(m.patient.breathingLegend).count()) === 0 && (await page.getByText(m.positioning.chinLegend).count()) === 0);
     await click(page.getByRole("button", { name: m.console.expose, exact: true }));
     await page.waitForSelector('[data-testid="radiograph"][data-status="ready"]', { timeout: 20000 });
-    const score = Number((await page.locator('[aria-labelledby="result-heading"] [role="status"] div').first().innerText()).trim());
+    // Current result panel (as run-matrix.mjs): the total is the LTR number beside the verdict heading ("92.9 / 100").
+    const score = Number((await page.locator('[aria-labelledby="result-heading"] [role="status"] span[dir="ltr"]').first().innerText()).split("/")[0].trim());
     const critical = await page.locator("[data-critical]").evaluateAll((n) => n.map((x) => x.getAttribute("data-critical")));
     const alt = await page.locator('[data-testid="radiograph"] canvas').getAttribute("aria-label");
     ok(`${tag} ${name}: alt text is the exam one`, alt.startsWith(m.radiograph[C.projection].alt), alt);

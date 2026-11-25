@@ -8,11 +8,13 @@ import { RangeField } from "@/components/RangeField";
 import type { RadCase } from "@/domain/case";
 import type { SimulationMode, SimulationSettings, SideMarkerId } from "@/domain/simulation";
 import { centeringStatus } from "@/features/evaluation/centering";
+import { StepField } from "@/features/xray-console/StepField";
 import { roundTo } from "@/features/simulation/coords";
 import { DetectorWorkspace } from "./DetectorWorkspace";
 import { normalizedSize, normalizedCentreX, normalizedCentreY } from "./cm-controls";
 import { phoneFit } from "./fit-view";
 import { CHEST_PA_LAYOUT, type SceneLayout } from "./scene-layouts";
+import type { DetectorSection, WorkspaceTab } from "@/features/simulation/workspace-tabs";
 
 interface Props {
   radCase: RadCase;
@@ -26,6 +28,10 @@ interface Props {
   slots?: SceneSlots;
   /** Phone layout: the scene header's "Enlarge scene" / "Close" toggle (the enlarged view itself is the workspace's). */
   enlarge?: SceneEnlarge;
+  /** Phone layout: the open step; the view follows it (RAD-101 D4, no manual view switch). */
+  step?: WorkspaceTab;
+  /** Phone layout (RAD-101 D3/D4): the open section of step 2 "Detector"; the marker-exclusion zones show only in "Marker". */
+  section?: DetectorSection;
 }
 
 /** Phone "Enlarge scene": the state lives in the workspace (it hides the tabs and the bar); the buttons are the scene header's. */
@@ -40,17 +46,20 @@ export interface SceneEnlarge {
 export interface SceneSlots {
   positioning: Element | null;
   centring: Element | null;
+  /** Step 2 "Detector", section "Marker" (RAD-101 D3). */
+  marker: Element | null;
   notes: Element | null;
 }
 
-export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots, enlarge }: Props) {
+export function PositioningView({ radCase, settings, mode, onChange, disabled, layout = CHEST_PA_LAYOUT, slots, enlarge, step = "positioning", section = "centring" }: Props) {
   const t = useTranslations("positioning");
   const tw = useTranslations("workspace");
   const tAny = useTranslations() as unknown as (key: string) => string;
   const { figure, SecondView, Cues, texts } = layout;
   const [guidesOn, setGuidesOn] = useState(true);
-  // Phone only: one of the two views is shown at a time, so the sticky scene stays short. The drawings themselves are unchanged.
-  const [view, setView] = useState<"detector" | "second">("detector");
+  // Phone only: one of the two views is shown at a time, so the scene stays short; it follows the step (RAD-101 D4): Detector shows
+  // the detector, Technique the second view (SID), Position and Patient instructions the exam's choice. The drawings are unchanged.
+  const view = step === "centring" ? "detector" : step === "technique" ? "second" : layout.positionView ?? "detector";
   const phone = slots !== undefined;
   // Phone: the detector view is fitted to the anatomy and the field by default; "Whole detector" shows all of it (the viewBox only).
   const [showWhole, setShowWhole] = useState(false);
@@ -96,6 +105,20 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
       <p className="mt-1 text-xs text-muted">{tAny(texts.rotationHelp)}</p>
     </div>
   );
+  // Phone (RAD-101 D6): the fine adjustment is always visible as compact ± rows (the same sliders, plus − / + buttons) in a
+  // console box, as in Technique; dragging on the figure stays. Desktop keeps its sliders and <details>.
+  const rows = (fields: ReactNode) => <div className="space-y-3 rounded-lg bg-console p-3 text-console-text">{fields}</div>;
+  const rotationRow = rows(
+    <StepField compact label={texts.rotationLabel ? tAny(texts.rotationLabel) : t("rotation")} unit="°" spec={controls.rotationDeg} value={settings.rotationDeg} disabled={disabled} help={tAny(texts.rotationHelp)} onChange={(v) => onChange("rotationDeg", v)} />,
+  );
+  const centringRows = rows(
+    <>
+      <StepField compact label={t("centerX")} unit="cm" spec={{ min: -W / 2, max: W / 2, step: 0.5 }} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: normalizedCentreX(v, W) })} />
+      <StepField compact label={t("centerY")} unit="cm" spec={{ min: 0, max: H, step: 0.5 }} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: normalizedCentreY(v, H) })} />
+      <StepField compact label={t("collWidth")} unit="cm" spec={{ min: Math.ceil(positioning.minCollimation * W), max: W, step: 1 }} value={roundTo(settings.collimation.width * W, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, width: normalizedSize(v, W) })} />
+      <StepField compact label={t("collHeight")} unit="cm" spec={{ min: Math.ceil(positioning.minCollimation * H), max: H, step: 1 }} value={roundTo(settings.collimation.height * H, 1)} disabled={disabled} onChange={(v) => onChange("collimation", { ...settings.collimation, height: normalizedSize(v, H) })} />
+    </>,
+  );
   const markerField = (
     <fieldset disabled={disabled} className="sm:col-span-2">
       <legend className="text-sm font-medium">{t("markerLegend")}</legend>
@@ -119,8 +142,8 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
     </fieldset>
   );
   const centringControls = (
-    <details className="sm:col-span-2" open={!phone}>
-      <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{phone ? t("fineAdjustPhone") : t("fineAdjust")}</summary>
+    <details className="sm:col-span-2" open>
+      <summary className="min-h-6 cursor-pointer py-1 text-sm font-medium">{t("fineAdjust")}</summary>
       <div className="mt-3 grid gap-4 sm:grid-cols-2">
         <RangeField label={t("centerX")} unit="cm" min={-W / 2} max={W / 2} step={0.5} value={roundTo((settings.centralRay.x * W) / 2, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, x: normalizedCentreX(v, W) })} />
         <RangeField label={t("centerY")} unit="cm" min={0} max={H} step={0.5} value={roundTo(((settings.centralRay.y + 1) / 2) * H, 1)} disabled={disabled} onChange={(v) => onChange("centralRay", { ...settings.centralRay, y: normalizedCentreY(v, H) })} />
@@ -148,52 +171,32 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
         <h2 id="pos-heading" className={phone ? "sr-only" : "font-semibold"}>
           {t("title")}
         </h2>
-        {phone && (
-          <div role="group" aria-label={tw("sceneViews")} className="flex min-w-0 rounded-lg border border-line p-0.5">
-            {(["detector", "second"] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                aria-pressed={view === v}
-                onClick={() => setView(v)}
-                className={clsx(
-                  "min-h-11 min-w-20 rounded-md px-3 text-sm font-semibold",
-                  view === v ? "bg-brand text-white" : "text-ink hover:bg-paper",
-                )}
-              >
-                {v === "detector" ? tw("viewDetector") : layout.secondViewIsTop ? tw("viewTop") : tw("viewSide")}
-              </button>
-            ))}
-          </div>
-        )}
         {phone && enlarge && (
           <button
             ref={enlarge.active ? enlarge.closeRef : enlarge.openRef}
             type="button"
             onClick={enlarge.onToggle}
-            aria-label={enlarge.active ? undefined : tw("enlargeScene")}
-            className={clsx("grid min-h-11 shrink-0 place-items-center rounded-lg border", enlarge.active ? "border-brand bg-brand px-3 text-sm font-bold text-white" : "size-11 border-line text-ink hover:bg-paper")}
+            className={clsx("flex min-h-11 shrink-0 items-center gap-1.5 rounded-lg border px-3 text-sm font-semibold", enlarge.active ? "border-brand bg-brand font-bold text-white" : "border-line text-ink hover:bg-paper")}
           >
-            {enlarge.active ? (
-              tw("closeSheet")
-            ) : (
-              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            {!enlarge.active && (
+              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
               </svg>
             )}
+            {enlarge.active ? tw("closeSheet") : tw("zoom")}
           </button>
         )}
         {mode === "practice" &&
           (phone ? (
-            // Compact icon toggle on the same row; still the same checkbox with the same accessible label.
-            <label className={clsx("relative grid size-11 shrink-0 cursor-pointer place-items-center rounded-lg border has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal", guidesOn ? "border-brand bg-brand/10 text-brand-strong" : "border-line text-muted")}>
+            // Compact toggle on the same row with visible text "Aids" (RAD-101 D4); still the same checkbox.
+            <label className={clsx("relative flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border px-3 text-sm font-semibold has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal", guidesOn ? "border-brand bg-brand/10 text-brand-strong" : "border-line text-muted")}>
               <input type="checkbox" className="sr-only" checked={guidesOn} onChange={(e) => setGuidesOn(e.target.checked)} />
-              <span className="sr-only">{t("guides")}</span>
-              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg aria-hidden data-ui-icon viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
                 <circle cx="12" cy="12" r="3" />
                 {!guidesOn && <path d="M4 4l16 16" />}
               </svg>
+              {tw("aids")}
             </label>
           ) : (
             <label className="flex cursor-pointer items-center gap-2 text-sm has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-signal">
@@ -205,7 +208,7 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
 
       <div className={phone ? clsx("relative grid bg-console p-2", enlarge?.active ? "[&_svg]:max-h-[calc(100dvh-10rem)]" : fitInfo?.meaningful && !showWhole ? "[&_svg]:max-h-[min(34svh,18rem)]" : "[&_svg]:max-h-[min(24svh,13rem)]") : "grid gap-4 bg-console p-4 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]"}>
         <figure className={clsx("m-0", phone && view !== "detector" && offView)}>
-          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} phone={phone} fit={phone && !showWhole} />
+          <DetectorWorkspace radCase={radCase} settings={settings} onChange={onChange} disabled={disabled} showGuides={showGuides} figure={figure} phone={phone} fit={phone && !showWhole} markerGuides={!phone || (step === "centring" && section === "marker")} />
           <figcaption className={phone ? "sr-only" : "mt-1 text-center text-xs text-console-text/80"}>{tAny(texts.detectorCaption)}</figcaption>
           {!phone && workspaceHint}
           {phone && (fitInfo?.meaningful || showWhole) ? (
@@ -238,15 +241,15 @@ export function PositioningView({ radCase, settings, mode, onChange, disabled, l
           {place(
             <div className="grid gap-4">
               {cues && <div className="rounded-lg bg-console p-4">{cues}</div>}
-              {rotationField}
-              {markerField}
+              {rotationRow}
             </div>,
             slots.positioning,
           )}
+          {place(markerField, slots.marker)}
           {place(
             <div className="grid gap-4">
               <p className="text-sm text-muted">{t("touchHint")}</p>
-              {centringControls}
+              {centringRows}
             </div>,
             slots.centring,
           )}

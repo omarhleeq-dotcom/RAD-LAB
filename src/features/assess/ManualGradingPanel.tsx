@@ -6,7 +6,7 @@ import type { ManualGradingPort } from './manual-grading-data';
 
 const button = 'min-h-11 max-w-full rounded border border-line px-4 py-2 break-words disabled:opacity-60';
 const literalStyle = { whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', unicodeBidi: 'plaintext' } as const;
-export function ManualGradingPanel({ port, owner = false }: { port: ManualGradingPort; owner?: boolean }) {
+export function ManualGradingPanel({ port, owner = false, onQueue }: { port: ManualGradingPort; owner?: boolean; onQueue?: (count: number, more: boolean) => void }) {
  const t = useTranslations('manualGrading'), locale = useLocale();
  const [, redraw] = useState(0);
  const [controller] = useState(() => new ManualGradingController(port, owner, () => redraw(n => n + 1)));
@@ -20,6 +20,9 @@ export function ManualGradingPanel({ port, owner = false }: { port: ManualGradin
   document.addEventListener('visibilitychange', hide); window.addEventListener('pagehide', pagehide);
   return () => { document.removeEventListener('visibilitychange', hide); window.removeEventListener('pagehide', pagehide); controller.clear(); };
  }, [controller]);
+ // Read-only report of the queue page already loaded here; no extra request.
+ const queueRows = s.queue?.rows.length, queueMore = !!s.queue?.next;
+ useEffect(() => { if (queueRows !== undefined) onQueue?.(queueRows, queueMore); }, [onQueue, queueRows, queueMore]);
  useEffect(() => {
   if (!s.read) return;
   const timeout = setTimeout(() => controller.clear(), Math.max(0, Math.min(2147483647, Date.parse(s.read.finalizeBefore) - Date.now())));

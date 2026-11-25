@@ -11,11 +11,22 @@ import en from '../../../messages/en.json';
 import ar from '../../../messages/ar.json';
 import {EmergencyStopView,EmergencyOwnerView} from './EmergencyView';
 import {EmergencyError,parseReceipt,type EmergencyPort,type Receipt,type OwnerSnapshot} from './contracts';
-import {createEmergencyPort} from './browser-adapter';
+import {bindEmergency,createEmergencyPort} from './browser-adapter';
+import {EmergencyAlternateScope,EmergencyPage,EmergencySession} from './EmergencySession';
+import {CONSENT_VERSION} from '../pilot/consent';
 import {StopController} from './controller';
+const auth=vi.hoisted(()=>({state:{kind:'signedIn',userId:'synthetic',profile:{role:'participant',status:'approved'},consentVersion:''}}));
+vi.mock('../pilot/SessionGate',()=>({useOptionalSessionAccount:()=>({state:auth.state})}));
+vi.mock('../pilot/config',()=>({PILOT:true}));
+vi.mock('./browser-adapter',async original=>({...await original<typeof import('./browser-adapter')>(),bindEmergency:vi.fn()}));
 const who='11111111-1111-1111-1111-111111111111',operation='22222222-2222-2222-2222-222222222222';
 vi.mock('../pilot/OwnerDirectory',()=>({OwnerDirectory:({children}:{children:(p:unknown)=>ReactNode})=>createElement('div',null,children({userId:who,name:'SYNTHETIC Approved Account',email:'private@example.invalid'}))}));
 Object.assign(globalThis,{IS_REACT_ACT_ENVIRONMENT:true});
+// jsdom lacks native dialog lifecycle; browser audit covers modal focus/Esc.
+Object.assign(HTMLDialogElement.prototype,{
+ showModal(this:HTMLDialogElement){this.open=true;},
+ close(this:HTMLDialogElement){this.open=false;this.dispatchEvent(new Event('close'));},
+});
 function snapshot(next=1):Receipt{return {version:1,operation,nextPhase:next,status:next===7?'STOPPED':next>1?'PARTIAL':'PENDING',phases:Array.from({length:next-1},(_,i)=>({phase:i+1 as 1,ok:true})),verification:next===7?{gateClosed:true,loginDisabled:true,missingRoles:0,backendSessions:0,unheldSessions:0}:null,at:'2026-11-02T12:00:00.000Z',cloudStopVerified:false,poolerCacheVerified:false};}
 function fixture(){
  let current:Receipt|null=null,fail=false,denied=false,owner:OwnerSnapshot={appointment:{id:null,name:null,appointedAt:null,revision:0,active:false},audit:[],next:null};const phases:number[]=[],appointments:string[]=[];
@@ -41,8 +52,11 @@ it('denied and cleared sessions discard operation and receipt, including in-flig
 it.each(['en','ar'] as const)('%s confirms stop, presents each phase and offers continue without service undo',async locale=>{
  const f=fixture(),host=document.createElement('div'),root=createRoot(host);const copy=locale==='ar'?ar.emergency:en.emergency;document.body.append(host);
  try{
-  await act(async()=>root.render(localized(locale,createElement(EmergencyStopView,{port:f.port}))));const stop=host.querySelector('button')!;expect(stop.disabled).toBe(true);
-  await act(async()=>{host.querySelector('input')!.click();});f.drop();await act(async()=>stop.click());expect(host.textContent).toContain(copy.unknown);
+  await act(async()=>root.render(localized(locale,createElement(EmergencyStopView,{port:f.port}))));
+  const dialog=host.querySelector('dialog')!;expect(dialog.open).toBe(false);
+  await act(async()=>host.querySelector('button')!.click());expect(dialog.open).toBe(true);
+  const stop=[...dialog.querySelectorAll('button')].find(b=>b.textContent===copy.stopNow)!;expect(stop.disabled).toBe(true);
+  await act(async()=>{host.querySelector('input')!.click();});f.drop();await act(async()=>stop.click());expect(dialog.open).toBe(false);expect(host.textContent).toContain(copy.unknown);
   const next=[...host.querySelectorAll('button')].find(b=>b.textContent===copy.continue)!;await act(async()=>next.click());expect(host.textContent).toContain(copy.status.STOPPED);expect(host.querySelectorAll('li')).toHaveLength(6);
   expect(host.textContent).toContain(copy.cloud);expect(host.textContent).not.toContain(operation);expect(host.textContent).not.toMatch(/\b(undo|resume service)\b/i);
  }finally{await act(async()=>root.unmount());host.remove();}
@@ -73,4 +87,86 @@ it('plain psql proof makes one attempt and classifies mixed/network errors UNKNO
    expect(child.status,child.stderr).toBe(0);expect(child.stdout.trim()).toBe(result);expect(readFileSync(count,'utf8').trim()).toBe('1');expect(child.stdout).not.toContain('synthetic.invalid');
   }
  }finally{rmSync(root,{recursive:true,force:true});}
+});
+
+
+it('dedicated page keeps its receipt and issue across navigation and visibility without phase replay',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);document.body.append(host);
+ auth.state.profile.role='participant';auth.state.consentVersion=CONSENT_VERSION;
+ vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ const render=(page:boolean)=>root.render(localized('en',createElement(EmergencyAlternateScope,null,page?createElement(EmergencyPage):createElement('p',null,'Home'))));
+ try{
+  await act(async()=>render(true));await act(async()=>host.querySelector('button')!.click());await act(async()=>host.querySelector('input')!.click());
+  f.drop();await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent===en.emergency.stopNow)!.click());
+  expect(host.textContent).toContain(en.emergency.unknown);expect(f.phases).toEqual([1]);
+  await act(async()=>render(false));expect(host.querySelector('[data-testid="emergency-stop"]')).toBeNull();
+  await act(async()=>render(true));expect(host.textContent).toContain(en.emergency.unknown);expect(host.querySelector('[data-testid="stop-result"]')).not.toBeNull();
+  await act(async()=>[...host.querySelectorAll('button')].find(b=>b.textContent===en.emergency.continue)!.click());
+  await act(async()=>document.dispatchEvent(new Event('visibilitychange')));
+  await act(async()=>render(false));await act(async()=>render(true));
+  expect(host.textContent).toContain(en.emergency.status.STOPPED);expect(f.phases).toEqual([1,2,3,4,5,6]);
+ }finally{await act(async()=>root.unmount());host.remove();vi.mocked(bindEmergency).mockReset();}
+});
+
+it('owner appointment section still refreshes its existing snapshot when visibility returns',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);document.body.append(host);
+ auth.state.profile.role='owner';auth.state.consentVersion=CONSENT_VERSION;
+ const read=vi.spyOn(f.port,'owner');vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ try{
+  await act(async()=>root.render(localized('en',createElement(EmergencySession,{owner:true}))));expect(read).toHaveBeenCalledTimes(1);
+  await act(async()=>document.dispatchEvent(new Event('visibilitychange')));expect(read).toHaveBeenCalledTimes(2);
+ }finally{await act(async()=>root.unmount());host.remove();vi.mocked(bindEmergency).mockReset();}
+});
+
+it('RAD-095: owner opens and confirms the same stop flow; a visibility rebind keeps the running receipt',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);document.body.append(host);
+ auth.state.profile.role='owner';auth.state.consentVersion=CONSENT_VERSION;
+ const access=vi.spyOn(f.port,'access');vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ const click=(text:string)=>[...host.querySelectorAll('button')].find(b=>b.textContent===text)!.click();
+ try{
+  await act(async()=>root.render(localized('en',createElement(EmergencySession,{owner:true}))));
+  const stop=host.querySelector('[data-testid="emergency-stop"]')!;
+  expect(stop.textContent).toContain(en.emergency.ownerIntro);expect(stop.textContent).not.toContain(en.emergency.pageIntro);
+  expect(host.querySelector('[data-testid="emergency-owner"]')).not.toBeNull();expect(host.querySelector('dialog')!.open).toBe(false);
+  await act(async()=>click(en.emergency.startStop));expect(host.querySelector('dialog')!.open).toBe(true);
+  expect(([...host.querySelectorAll('button')].find(b=>b.textContent===en.emergency.stopNow) as HTMLButtonElement).disabled).toBe(true);
+  await act(async()=>host.querySelector<HTMLInputElement>('dialog input')!.click());
+  f.drop();await act(async()=>click(en.emergency.stopNow));
+  expect(host.textContent).toContain(en.emergency.unknown);expect(f.phases).toEqual([1]);
+  await act(async()=>document.dispatchEvent(new Event('visibilitychange')));
+  expect(host.textContent).toContain(en.emergency.unknown);expect(host.querySelector('[data-testid="stop-result"]')).not.toBeNull();
+  await act(async()=>click(en.emergency.continue));
+  expect(host.querySelector('[data-testid="stop-result"]')!.textContent).toBe(en.emergency.status.STOPPED);expect(f.phases).toEqual([1,2,3,4,5,6]);
+  expect(access).not.toHaveBeenCalled();
+ }finally{await act(async()=>root.unmount());host.remove();vi.mocked(bindEmergency).mockReset();}
+});
+
+it('RAD-095: the owner status-bar request opens the confirmation dialog in Arabic; non-owners never see the owner stop',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);document.body.append(host);
+ auth.state.profile.role='owner';auth.state.consentVersion=CONSENT_VERSION;
+ vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ try{
+  await act(async()=>root.render(localized('ar',createElement(EmergencySession,{owner:true,openRequest:1}))));
+  expect(host.querySelector('dialog')!.open).toBe(true);expect(host.textContent).toContain(ar.emergency.ownerIntro);expect(host.textContent).toContain(ar.emergency.confirmStop);
+  expect(f.phases).toEqual([]);
+  await act(async()=>root.unmount());
+  for(const role of ['participant','supervisor']){
+   auth.state.profile.role=role;vi.mocked(bindEmergency).mockClear();
+   const other=createRoot(host);
+   await act(async()=>other.render(localized('en',createElement(EmergencySession,{owner:true,openRequest:1}))));
+   expect(host.innerHTML).toBe('');expect(bindEmergency).not.toHaveBeenCalled();
+   await act(async()=>other.unmount());
+  }
+ }finally{host.remove();vi.mocked(bindEmergency).mockReset();}
+});
+
+it('RAD-095: the alternate page keeps its own intro and no owner wording',async()=>{
+ const f=fixture(),host=document.createElement('div'),root=createRoot(host);
+ auth.state.profile.role='participant';auth.state.consentVersion=CONSENT_VERSION;
+ vi.mocked(bindEmergency).mockImplementation(async()=>({...f.port}));
+ try{
+  await act(async()=>root.render(localized('en',createElement(EmergencyAlternateScope,null,createElement(EmergencyPage)))));
+  expect(host.textContent).toContain(en.emergency.pageIntro);expect(host.textContent).not.toContain(en.emergency.ownerIntro);
+  expect(host.querySelector('[data-testid="emergency-owner"]')).toBeNull();expect(host.querySelector('dialog')!.open).toBe(false);
+ }finally{await act(async()=>root.unmount());vi.mocked(bindEmergency).mockReset();}
 });

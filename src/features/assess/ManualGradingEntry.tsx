@@ -7,12 +7,12 @@ import { MANUAL_GRADING_AVAILABLE } from './manual-grading-availability';
 import { connectManualGrading, type ManualGradingPort } from './manual-grading-data';
 import { ManualGradingPanel } from './ManualGradingPanel';
 
-export function ManualGradingEntry() {
+export function ManualGradingEntry({ onQueue }: { onQueue?: (count: number, more: boolean) => void } = {}) {
  const { state } = useSessionAccount(), supervisor = useSupervisorAppointment();
  if (!MANUAL_GRADING_AVAILABLE || state.kind !== 'signedIn' || state.profile.status !== 'approved' || (!supervisor && state.profile.role !== 'owner')) return null;
- return <BoundGrading key={state.userId} actor={state.userId} owner={state.profile.role === 'owner'}/>;
+ return <BoundGrading key={state.userId} actor={state.userId} owner={state.profile.role === 'owner'} onQueue={onQueue}/>;
 }
-function BoundGrading({ actor, owner }: { actor: string; owner: boolean }) {
+function BoundGrading({ actor, owner, onQueue }: { actor: string; owner: boolean; onQueue?: (count: number, more: boolean) => void }) {
  const [port, setPort] = useState<ManualGradingPort | null>(null), [unavailable, setUnavailable] = useState(false);
  const t = useTranslations('manualGrading');
  useEffect(() => {
@@ -23,5 +23,5 @@ function BoundGrading({ actor, owner }: { actor: string; owner: boolean }) {
   }).catch(() => { if (active) setUnavailable(true); });
   return () => { active = false; close?.(); };
  }, [actor]);
- return unavailable ? <p role="alert">{t('errors.unavailable')}</p> : port ? <ManualGradingPanel port={port} owner={owner}/> : <p role="status">{t('busy')}</p>;
+ return unavailable ? <p role="alert">{t('errors.unavailable')}</p> : port ? <ManualGradingPanel port={port} owner={owner} onQueue={onQueue}/> : <p role="status">{t('busy')}</p>;
 }

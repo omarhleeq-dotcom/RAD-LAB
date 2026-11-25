@@ -6,5 +6,11 @@ export const pelvisApRadiograph: RadiographAssetSpec = {
   evidence: { status: "educational-simplification", reference: "docs/ASSET_PROVENANCE_AND_LICENSES.md (A-034/A-035/A-036); docs/DECISIONS.md S-PELVIS-1-4; O84/O85", note: "Geometry and rotation depths are illustrative, not measurements. Clinical suitability pending educator review O5." },
   anatomyBox: PELVIS_IMAGE.anatomyBox,
   limbRotation: { kind: "limb-warp", model: "pelvis-ap", bands: [{ v1: 0, v2: 1 }] },
+  // Read by eye from this image, approximate: TODO(medical-review): have an educator confirm the zones.
+  denseZones: [
+    { cu: 0.5, cv: 0.41, ru: 0.12, rv: 0.18 }, // sacrum
+    { cu: 0.235, cv: 0.665, ru: 0.09, rv: 0.11 }, // image-left acetabulum + femoral head
+    { cu: 0.765, cv: 0.665, ru: 0.09, rv: 0.11 }, // image-right acetabulum + femoral head
+  ],
   render: { pxPerCm: 48, viewMarginCm: 1 },
 };

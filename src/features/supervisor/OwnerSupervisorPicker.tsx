@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { OwnerDirectory } from '../pilot/OwnerDirectory';
+import { OwnerDirectory, OwnerSearchSeed } from '../pilot/OwnerDirectory';
 import type { DirectoryPerson } from '../pilot/owner-dashboard-data';
 import type { Command, ReviewAdapter } from '../supervisor-review/contracts';
 import { appCopy } from '../supervisor-review/copy';
@@ -15,10 +15,10 @@ export function appointmentReason(person: DirectoryPerson, appointed: boolean) {
  return null;
 }
 export function OwnerSupervisorPicker({ adapter, act, locale }: { adapter: ReviewAdapter; act: (command: Command) => void; locale: 'en' | 'ar' }) {
- const t = appCopy[locale];
+ const t = appCopy[locale], seed = useContext(OwnerSearchSeed);
  return <section aria-label={t.appointmentSearch} className="min-w-0 space-y-3 rounded-xl border border-line p-4">
   <h3 className="text-lg font-semibold">{t.appointmentSearch}</h3>
-  <OwnerDirectory approvedOnly>{person => <Candidate key={person.userId} person={person} adapter={adapter} act={act} locale={locale}/>}</OwnerDirectory>
+  <OwnerDirectory key={seed} approvedOnly initialSearch={seed}>{person => <Candidate key={person.userId} person={person} adapter={adapter} act={act} locale={locale}/>}</OwnerDirectory>
  </section>;
 }
 function Candidate({ person, adapter, act, locale }: { person: DirectoryPerson; adapter: ReviewAdapter; act: (command: Command) => void; locale: 'en' | 'ar' }) {
