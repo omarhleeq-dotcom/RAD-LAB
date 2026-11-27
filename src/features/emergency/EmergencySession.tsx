@@ -1,4 +1,6 @@
 "use client";
+import dynamic from "next/dynamic";
+const SelfServiceSession=dynamic(()=>import("../assess/selfservice/SelfServiceSession").then(m=>m.SelfServiceSession),{ssr:false});
 import {createContext,useContext,useEffect,useMemo,useState,type ReactNode} from 'react';
 import {useTranslations} from 'next-intl';
 import {useOptionalSessionAccount} from '../pilot/SessionGate';
@@ -27,7 +29,7 @@ export function EmergencySession({owner=false,openRequest=0}:{owner?:boolean;ope
  const identity=PILOT&&state?.kind==='signedIn'&&state.profile.status==='approved'&&!needsConsent(state.consentVersion)
   &&(owner?state.profile.role==='owner':state.profile.role==='participant')?state.userId:null;
  if(!EMERGENCY_AVAILABLE||!identity)return null;
- return owner?<BoundEmergency key={`${identity}:${owner}`} owner={owner} openRequest={openRequest}/>:alternate.port?<EmergencyStopView key={identity} port={alternate.port} controller={alternate.controller??undefined}/>:null;
+ return owner?<><BoundEmergency key={`${identity}:${owner}`} owner={owner} openRequest={openRequest}/><SelfServiceSession mode="recovery"/></>:alternate.port?<><EmergencyStopView key={identity} port={alternate.port} controller={alternate.controller??undefined}/><SelfServiceSession mode="recovery"/></>:null;
 }
 function BoundEmergency({owner,scope,openRequest=0}:{owner:boolean;scope?:ReactNode;openRequest?:number}) {
  const [port,setPort]=useState<EmergencyPort|null>(null),[allowed,setAllowed]=useState(owner),[loading,setLoading]=useState(true),[,changed]=useState(0);

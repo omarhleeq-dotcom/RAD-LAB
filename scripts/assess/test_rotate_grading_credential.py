@@ -60,7 +60,7 @@ class FakeSecretSink:
 
 
 class RotateTest(unittest.TestCase):
-    def run_main(self, sink, arguments=("--valid-days", "30"), tty=False):
+    def run_main(self, sink, arguments=("--no-expiry",), tty=False):
         out, err = Pipe(tty), io.StringIO()
         with patch.object(Path, "read_text", return_value=CA), \
              patch.object(rotate.subprocess, "run", side_effect=sink):
@@ -106,13 +106,14 @@ class RotateTest(unittest.TestCase):
         salt = base64.b64decode(verifier.split("$")[1].split(":")[1])
         self.assertEqual(rotate.scram_verifier(password, salt), verifier)
         self.assertIn("alter role assess_job_b nologin password '", out)
-        self.assertIn("valid until '2026-12-04T08:00:00Z'", out)
+        self.assertIn("valid until 'infinity'", out)
+        self.assertNotIn("interval '90 days'", out)
         self.assertNotIn(" login password", out.replace("nologin password", ""))
         self.assertIn("version 2 added and DISABLED", err)
 
     def test_tty_stdout_and_bad_arguments_stop_before_any_provider_call(self):
-        for arguments, tty in [(("--valid-days", "30"), True), (("--valid-days", "91"), False),
-                               (("--valid-days", "0"), False), ((), False), (("--valid-days", "30", "x"), False)]:
+        for arguments, tty in [(("--no-expiry",), True), (("--valid-days", "30"), False),
+                               (("--no-expiry", "x"), False), ((), False), (("--valid-days", "91"), False)]:
             sink = FakeSecretSink()
             code, out, err = self.run_main(sink, arguments, tty)
             self.assertEqual(code, 1)
@@ -141,9 +142,9 @@ class RotateTest(unittest.TestCase):
 
     def test_activation_sql_refuses_malformed_material(self):
         with self.assertRaises(rotate.Stop):
-            rotate.activation_sql("md5abc' ; drop role postgres; --", "2026-12-04T08:00:00Z")
+            rotate.activation_sql("md5abc' ; drop role postgres; --")
         with self.assertRaises(rotate.Stop):
-            rotate.activation_sql(rotate.scram_verifier("A" * 48, b"0" * 16), "now'")
+            rotate.activation_sql(rotate.scram_verifier("A" * 48, b"0" * 16) + "'")
         with self.assertRaises(rotate.Stop):
             rotate.scram_verifier("short", b"0" * 16)
 

@@ -2,7 +2,7 @@
 
 Usage (after a separate written permission; see docs/ASSESS_GATE_W_PACKAGES.md):
   set -o pipefail
-  python3 -I scripts/assess/rotate-grading-credential.py --valid-days N | owner_sql -f -
+  python3 -I scripts/assess/rotate-grading-credential.py --no-expiry | owner_sql -f -
 
 The password is generated in memory and never printed, prompted, passed in argv/env or
 written to a file. Its plaintext goes ONLY to a NEW numeric Secret Manager version via
@@ -16,7 +16,6 @@ import hashlib
 import hmac
 import json
 import os
-from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import re
 import secrets
@@ -92,8 +91,8 @@ def payload(password, ca):
     return data
 
 
-def activation_sql(verifier, valid_until):
-    if not VERIFIER.fullmatch(verifier) or not re.fullmatch(r"\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ", valid_until):
+def activation_sql(verifier):
+    if not VERIFIER.fullmatch(verifier):
         raise Stop("activation_sql_invalid")
     return f"""begin;
 set local search_path='';
@@ -114,29 +113,26 @@ begin
  end if;
 end
 $guard$;
-alter role {SLOT} nologin password '{verifier}' valid until '{valid_until}';
+alter role {SLOT} nologin password '{verifier}' valid until 'infinity';
 select 'assess-grading-credential/1' as contract,
  exists(select 1 from pg_catalog.pg_roles where rolname='{SLOT}' and not rolcanlogin
-  and rolvaliduntil>now()+interval '1 hour' and rolvaliduntil<=now()+interval '90 days') as credential_window,
+  and rolvaliduntil='infinity') as credential_window,
  exists(select 1 from pg_catalog.pg_roles where rolname='{SLOT}' and rolcanlogin) as slot_login;
 commit;
 """
 
 
 def parse(arguments):
-    if len(arguments) != 2 or arguments[0] != "--valid-days" or not re.fullmatch(r"[1-9][0-9]?", arguments[1]):
-        raise Stop("usage_valid_days_1_to_90")
-    days = int(arguments[1])
-    if days > 90:
-        raise Stop("usage_valid_days_1_to_90")
-    return days
+    # Owner decision 2026-11-05: the grading credential has no expiry; the in-app stop (NOLOGIN) and rotation are the controls.
+    if arguments != ["--no-expiry"]:
+        raise Stop("usage_no_expiry")
 
 
 def main(arguments=None, stdout=None, stderr=None, now=None):
     stdout = stdout or sys.stdout
     stderr = stderr or sys.stderr
     try:
-        days = parse(sys.argv[1:] if arguments is None else arguments)
+        parse(sys.argv[1:] if arguments is None else arguments)
         if stdout.isatty():
             raise Stop("stdout_must_be_piped_to_owner_sql")
         ca = (Path.home() / "assess-ca" / "prod-ca-2021.crt").read_text(encoding="ascii")
@@ -155,8 +151,7 @@ def main(arguments=None, stdout=None, stderr=None, now=None):
             highest = max(highest, int(match.group(2)))
         password = "".join(secrets.choice(ALPHABET) for _ in range(48))
         verifier = scram_verifier(password, secrets.token_bytes(16))
-        valid_until = ((now or datetime.now(timezone.utc)) + timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%SZ")
-        sql = activation_sql(verifier, valid_until)
+        sql = activation_sql(verifier)
         data = payload(password, ca)
         password = None
         name = gcloud("secrets", "versions", "add", SECRET, "--data-file=-",
@@ -173,7 +168,7 @@ def main(arguments=None, stdout=None, stderr=None, now=None):
             raise Stop("new_version_not_disabled_disable_it_now_no_sql_sent")
         stdout.write(sql)
         stdout.flush()
-        stderr.write("PASS: secret version %s added and DISABLED; verifier SQL piped; valid until %s\n" % (number, valid_until))
+        stderr.write("PASS: secret version %s added and DISABLED; verifier SQL piped; credential has no expiry\n" % number)
         stderr.write("Record version %s. LOGIN stays off until step 4.3.\n" % number)
         return 0
     except Stop as error:

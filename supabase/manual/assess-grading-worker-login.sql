@@ -14,8 +14,8 @@ begin
    or not exists(select 1 from pg_catalog.pg_roles r where r.rolname='assess_job_b' and not r.rolcanlogin
      and not r.rolinherit and not r.rolsuper and not r.rolbypassrls and not r.rolcreatedb and not r.rolcreaterole
      and not r.rolreplication and r.rolconnlimit=2
-     -- Provision sets 1970; only the transport sets a future expiry of at most 90 days.
-     and r.rolvaliduntil>now()+interval '1 hour' and r.rolvaliduntil<=now()+interval '90 days'
+     -- Provision sets 1970; only the transport sets 'infinity' (owner decision 2026-11-05: no expiry).
+     and r.rolvaliduntil='infinity'
      and pg_catalog.shobj_description(r.oid,'pg_authid')='radlab-assess-grading-slot/1 database='||pg_catalog.current_database())
    or (select count(*) from pg_catalog.pg_auth_members m where m.member='assess_job_b'::regrole)<>1
    or not exists(select 1 from pg_catalog.pg_auth_members m where m.member='assess_job_b'::regrole

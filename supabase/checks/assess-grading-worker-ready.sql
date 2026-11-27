@@ -43,7 +43,7 @@ checks(check_name,ok) as (
   and not pg_catalog.has_database_privilege('assess_grading_worker',pg_catalog.current_database(),'CREATE,TEMP')
   and not exists(select 1 from pg_catalog.pg_namespace n where n.nspname not like 'pg_%'
    and n.nspname<>'information_schema' and pg_catalog.has_schema_privilege('assess_grading_worker',n.oid,'CREATE'))
- union all select 'credential_window',exists(select 1 from s where rolvaliduntil>now()+interval '1 hour' and rolvaliduntil<=now()+interval '90 days')
+ union all select 'credential_window',exists(select 1 from s where rolvaliduntil='infinity')
  union all select 'slot_login',exists(select 1 from s where rolcanlogin)
  -- Same predicates as the binding login query with session_user = assess_job_b.
  union all select 'binding_login_ready',exists(select 1 from s r where r.rolcanlogin and not r.rolinherit

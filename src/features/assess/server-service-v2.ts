@@ -51,6 +51,7 @@ export async function runAssessJobsV2(worker: AssessRpc, limit = 1, signal?: Abo
  let graded = 0, failed = 0;
  const emit = (phase: 'grade' | 'uncertain' | 'stop', milliseconds = 0) => { try { controls?.observe?.({ phase, milliseconds }); } catch { /* Metadata-only observation cannot change writes. */ } };
  for (let i = 0; i < limit; i++) {
+  if (controls?.deadlineMs !== undefined && performance.now() >= controls.deadlineMs) break;
   await controls?.verify?.();
   if (signal?.aborted) { emit('stop'); break; }
   const claim = await safe(() => worker.call<GradingClaimV2 | null>('claim_v2', {})); if (!claim) break;

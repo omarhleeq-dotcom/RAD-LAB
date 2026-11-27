@@ -1,7 +1,7 @@
 /** RAD-105 P2: pure window helpers. UTC in storage, Asia/Amman for people; mirrors the staged SQL rules (cap 7 days, no past start). */
 export const AMMAN = 'Asia/Amman';
 export const MAX_WINDOW_MS = 7 * 86_400_000;
-export const DEFAULT_WINDOW_MS = 86_400_000;
+export const DEFAULT_WINDOW_MS = 7_200_000;
 const PAST_GRACE_MS = 60_000;
 const parts = (ms: number, timeZone: string) => {
  const out: Record<string, string> = {};
@@ -26,7 +26,16 @@ export function ammanLocalToUtc(local: string): string | null {
   const seen = Date.UTC(+p.year!, +p.month! - 1, +p.day!, +p.hour!, +p.minute!);
   guess += wall - seen;
  }
- return utcToAmmanLocal(new Date(guess).toISOString()) === local ? new Date(guess).toISOString() : null;
+ if (utcToAmmanLocal(new Date(guess).toISOString()) !== local) return null;
+ // Reject a repeated wall-clock minute as well as a missing one. Derive both
+ // neighbouring offsets from IANA data, including Jordan's historical DST.
+ for (const delta of [-86_400_000, 86_400_000]) {
+  const probe = guess + delta, p = parts(probe, AMMAN);
+  const offset = Date.UTC(+p.year!, +p.month! - 1, +p.day!, +p.hour!, +p.minute!) - probe;
+  const alternative = wall - offset;
+  if (alternative !== guess && utcToAmmanLocal(new Date(alternative).toISOString()) === local) return null;
+ }
+ return new Date(guess).toISOString();
 }
 /** Human text in Amman time; Arabic keeps Latin digits for consistency with the rest of the app. */
 export function formatAmman(iso: string, locale: 'en' | 'ar'): string {
@@ -49,7 +58,7 @@ export function latestFullStart(closesIso: string, durationSeconds: number): str
  const c = Date.parse(closesIso);
  return Number.isFinite(c) && durationSeconds > 0 ? new Date(c - durationSeconds * 1000).toISOString() : null;
 }
-/** Default form values: next quarter hour (Amman wall clock) for 24 h. */
+/** Default form values: next quarter hour (Amman wall clock) for 2 h. */
 export function defaultWindow(nowMs: number): { opensLocal: string; closesLocal: string } {
  const start = Math.ceil((nowMs + 60_000) / 900_000) * 900_000;
  return { opensLocal: utcToAmmanLocal(new Date(start).toISOString()), closesLocal: utcToAmmanLocal(new Date(start + DEFAULT_WINDOW_MS).toISOString()) };

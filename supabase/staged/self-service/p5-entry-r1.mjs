@@ -1,5 +1,5 @@
 // STAGED (RAD-105 P3/P5) R1: witness SHADOW (records, never blocks), attestation still required. Batch <= 20 attempts or 240 s.
-// Promotion (P7) copies exactly one of r1/r2/r3 over scripts/assess/grading-worker-main.mjs and rebuilds the image.
+// Build with build-grading-worker.mjs --selfservice-r1. Original v1 production entry remains preserved.
 // RAD-085 W4 production grading entrypoint. Reviewed destination only: the W2 direct host,
 // port 5432, database postgres, slot assess_job_b; no pooler, URL, env or flag fallback.
 // Recovery verifier: owner decision B (DECISIONS#rad085-w4-verifier-owner-2026-11-03), an
@@ -54,7 +54,7 @@ try {
     if (process.argv.length !== 2 || Object.hasOwn(process.env, 'RAD085_SYNTHETIC_WORKER')) throw Error();
     const bytes = await readFile(new URL('./manifest.json', import.meta.url));
     const manifest = JSON.parse(bytes); manifestHash = sha(bytes);
-    if (manifest.contract !== 'rad085-grading-worker-build/1' || manifest.localOnly !== false ||
+    if (manifest.selfservice !== 'selfservice-r1' || manifest.contract !== 'rad085-grading-worker-build/1' || manifest.localOnly !== false ||
         JSON.stringify(manifest.versions) !== JSON.stringify(workerVersions())) throw Error();
     for (const file of ['worker.cjs', 'grading-worker-main.mjs'])
       if (sha(await readFile(new URL('./' + file, import.meta.url))) !== manifest.files[file]) throw Error();

@@ -13,9 +13,9 @@
 {
   "project": "RAD-LAB",
   "format_version": "1.2",
-  "revision": 444,
-  "updated_at": "2026-11-05T06:00:00Z",
-  "timezone": "UTC",
+  "revision": 459,
+  "updated_at": "2026-11-06T13:08:07.931377+00:00",
+  "timezone": "Asia/Amman",
   "next_id": "RAD-106",
   "tasks": [
     {
@@ -952,13 +952,13 @@
     },
     {
       "id": "RAD-105",
-      "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي (تصميم)",
-      "status": "planned",
+      "title": "برنامج امتحانات Assess الذاتية: نوافذ المشرف والعامل الآلي والتحقق التلقائي",
+      "status": "review",
+      "waiting_on": "reviewer",
       "priority": "high",
-      "description": "P0–P6 منفذة مرحليًا في Draft ‏#241 (SQL خارج المانيفست، شاشات خاملة، عامل بدفعة وشاهد استعادة، سكربت Scheduler). P6 توقفت: عنصران فقط. P7 نافذة مالك حية بإذن كتابي؛ PR ترقية منفصل قبلها.",
-      "source_ref": "docs/ASSESS_SELF_SERVICE_DESIGN.md؛ docs/DECISIONS.md#assess-self-service-owner-2026-11-05؛ docs/DECISIONS.md#rad085-review-ready-proposal-2026-11-05؛ docs/archive/reports/2026-11/ASSESS_WINDOW_2026-11-05.md؛ docs/ASSESS_P7_LAPTOP_RUNBOOK.md؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_P0_P6_2026-11-05.md؛ docs/DECISIONS.md#assess-self-service-deviations-2026-11-05",
-      "waiting_on": "owner",
-      "done_when": "يجيب المالك عن الانحرافات، يُدمج PR الترقية، وتنجح نافذة P7 بامتحان يُجدوَل ويُصحَّح بلا خطوة يدوية."
+      "description": "S1–S3 مقبولة؛ تحضير S4 المعدل للمراجعة. النسخ الحالي Windows/WSL، والسحابي وتبعياته مؤجلة بإذن المالك؛ قياس70% من العامل القائم دون امتيازات جديدة. CI للرأس النهائي مطلوب؛ النسخة الحديثة والإيصالات وبقية الأدلة الحية تنتظر عودة المالك باللابتوب. S4 غير مقبولة بعد وP7 لم تبدأ.",
+      "source_ref": "docs/DECISIONS.md#assess-self-service-backup-deferred-owner-2026-11-06؛ docs/archive/reports/2026-11/ASSESS_SELF_SERVICE_S4_AMENDMENT_2026-11-06.md",
+      "done_when": "ترقية مراجعة ومدمجة، ثم دليل P7 للجدولة والتصحيح الآلي للمسارات الثلاثة، والإيقاف والاستئناف والتنبيهات والنسخ الاحتياطي."
     }
   ]
 }

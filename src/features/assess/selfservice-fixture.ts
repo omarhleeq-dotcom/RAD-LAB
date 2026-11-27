@@ -30,3 +30,19 @@ export async function fixture(extra: string[] = []) {
   return db;
  } catch (e) { await db.close(); throw e; }
 }
+
+const { productionShapeSql } = await import('../../../scripts/assess/' + 'rad085-production-shape.mjs') as { productionShapeSql: () => string };
+export async function selfServiceS3Fixture() {
+ const db = await fixture(['20261030000700_rad062_manual_grading.sql', '20261030000800_rad062_erasure_operations.sql', '20261102000100_rad062_supervisor_grading_authorization.sql']);
+ try {
+  await db.admin.query('create role assess_job_a nologin;create role assess_job_b nologin');
+  await db.admin.query(readFileSync('supabase/migrations/20261102000200_rad059_emergency_alternate.sql','utf8'));
+  await db.admin.query(productionShapeSql());
+  for (const f of ['20261102000300_rad085_rights_write_disclosures.sql','20261105000100_rad105_windows.sql','20261105000200_rad105_witness.sql','20261105000300_rad105_selfservice_s2.sql','20261105000400_rad105_eligibility_read.sql','20261105000500_rad105_ui_reads.sql']) await db.admin.query(readFileSync('supabase/migrations/' + f, 'utf8'));
+  await db.admin.query("update public.profiles set consent_version='2026-10-15',consented_at=clock_timestamp()");
+  for(const user of [1,2,3]) await db.rpc(user,'consent_v3',['assess-written-2026-11-02-v3']);
+  await db.rpc(2,'assignment_schedule_v2',[id(51),1,new Date().toISOString(),null]);
+  await db.admin.query('update assess.launch_gate set enabled=true');
+  return db;
+ } catch (e) { await db.close(); throw e; }
+}

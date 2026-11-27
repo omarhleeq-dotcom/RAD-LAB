@@ -100,6 +100,10 @@ describe('worker with a witness', () => {
   expect(r).toMatchObject({ outcome: 'STOP', code: 'restore_suspected', witness: { mode: 'enforcing', result: 'witness-missing' }, reconciliationRequired: true });
   expect(c2).toEqual(['health_v1']); expect(enforcingStore.value).toBeNull();
  });
+ it('a credential without expiry (infinity) reports no days-left field', async () => {
+  const r = await run(memory(stored()), 'enforcing', { ...live, credentialValidUntil: 'infinity' }, []);
+  expect(r).toMatchObject({ outcome: 'COMPLETE', witness: { result: 'advance' } }); expect(r.witness).not.toHaveProperty('credentialDaysLeft');
+ });
  it('without the option nothing changes', async () => {
   const calls: string[] = [];
   const r = await executeGradingWorker(async () => config, new AbortController().signal, async () => {}, make(calls, undefined));

@@ -53,7 +53,7 @@ export async function executeGradingWorker(load: () => Promise<unknown>, signal:
           } catch { result = "witness-unreadable"; }
           const passed = ["init", "advance", "adopt"].includes(result);
           witnessReport = { mode: w.mode, result,
-            ...(db?.credentialValidUntil ? { credentialDaysLeft: Math.floor((Date.parse(db.credentialValidUntil) - Date.parse(db.now)) / 86_400_000) } : {}) };
+            ...(db?.credentialValidUntil && Number.isFinite(Date.parse(db.credentialValidUntil)) ? { credentialDaysLeft: Math.floor((Date.parse(db.credentialValidUntil) - Date.parse(db.now)) / 86_400_000) } : {}) };
           if (!passed && w.mode === "enforcing") { code = "restore_suspected"; throw new Error("witness"); }
         }
         const batch = options?.batch ?? 1;
